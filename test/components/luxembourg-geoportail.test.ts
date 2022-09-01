@@ -6,7 +6,9 @@ import { LuxembourgGeoportail } from '../../src/components/LuxembourgGeoportail'
 describe('LuxembourgGeoportail', () => {
   let element: LuxembourgGeoportail;
   beforeEach(async () => {
-    element = await fixture(html`<luxembourg-geoportail></luxembourg-geoportail>`);
+    element = await fixture(
+      html`<luxembourg-geoportail></luxembourg-geoportail>`
+    );
   });
 
   it('renders a h1', () => {
