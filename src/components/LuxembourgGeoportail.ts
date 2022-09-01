@@ -1,10 +1,9 @@
 import type { TemplateResult } from 'lit';
-import { html } from 'lit';
-import { property, customElement } from 'lit/decorators.js';
-import { TwLitElement } from '../common/TwLitElement';
+import { html, LitElement } from 'lit';
+import { customElement, property } from 'lit/decorators.js';
 
 @customElement('luxembourg-geoportail')
-export class LuxembourgGeoportail extends TwLitElement {
+export class LuxembourgGeoportail extends LitElement {
   @property({ type: String }) title = 'Luxembourg Geoportail';
 
   render(): TemplateResult {
@@ -13,5 +12,9 @@ export class LuxembourgGeoportail extends TwLitElement {
         Hello, ${this.title} !
       </h1>
     `;
+  }
+
+  override createRenderRoot() {
+    return this;
   }
 }
