@@ -1,5 +1,11 @@
 import { html } from 'lit';
-import { fixture, expect } from '@open-wc/testing';
+import {
+  fixture,
+  expect,
+  assert,
+  fixtureSync,
+  elementUpdated,
+} from '@open-wc/testing';
 
 import { LuxembourgGeoportail } from '../../src/components/LuxembourgGeoportail';
 
@@ -11,13 +17,23 @@ describe('LuxembourgGeoportail', () => {
     );
   });
 
-  it('renders a h1', () => {
-    const h1 = element.shadowRoot!.querySelector('h1')!;
-    expect(h1).to.exist;
-    expect(h1.textContent).to.equal('My app');
+  it('is defined', async () => {
+    const el = document.createElement('luxembourg-geoportail');
+    assert.instanceOf(el, LuxembourgGeoportail);
   });
 
-  it('passes the a11y audit', async () => {
-    await expect(element).shadowDom.to.be.accessible();
+  it('can instantiate the component', async () => {
+    const el = await fixture('<luxembourg-geoportail></luxembourg-geoportail>');
+    assert.instanceOf(el, LuxembourgGeoportail);
+  });
+
+  it('renders a h1', async () => {
+    const el = fixtureSync('<luxembourg-geoportail></luxembourg-geoportail>');
+    await elementUpdated(el);
+    // assert.instanceOf(el, LuxembourgGeoportail);
+    const h1 = el.querySelector('h1');
+    expect(h1).to.exist;
+    expect(h1?.textContent).to.equal('Hello, Luxembourg Geoportail !');
+    // expect(el.getAttribute('h1')).to.equal('bar');
   });
 });

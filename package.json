@@ -5,7 +5,7 @@
   "scripts": {
     "lint": "eslint --ext .ts,.html . --ignore-path .gitignore && prettier \"**/*.ts\" --check --ignore-path .gitignore",
     "format": "eslint --ext .ts,.html . --fix --ignore-path .gitignore && prettier \"**/*.ts\" --write --ignore-path .gitignore",
-    "test": "wtr --coverage",
+    "test": "tsc && wtr --coverage",
     "start": "parcel index.html",
     "build": "parcel build index.html && cp -r assets/ dist/"
   },
@@ -18,7 +18,6 @@
     "@babel/core": "^7.18.13",
     "@babel/preset-env": "^7.18.10",
     "@custom-elements-manifest/analyzer": "^0.4.17",
-    "@esm-bundle/chai": "^4.3.4",
     "@open-wc/eslint-config": "^4.3.0",
     "@open-wc/testing": "next",
     "@open-wc/testing-helpers": "^2.1.3",
