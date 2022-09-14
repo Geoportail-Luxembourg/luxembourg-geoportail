@@ -23,3 +23,10 @@
     @apply bg-[length:41px_41px] md:bg-[length:90px_50px];
   }
 }
+
+@layer base {
+  :root {
+    --color-primary: 41 127 185;
+    --color-secondary: 255 255 255;
+  }
+}

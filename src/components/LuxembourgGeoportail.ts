@@ -8,7 +8,9 @@ export class LuxembourgGeoportail extends LitElement {
 
   render(): TemplateResult {
     return html`
-      <h1 class="mx-auto my-4 py-4 text-center shadow-lg text-xl w-1/2">
+      <h1
+        class="mx-auto my-4 py-4 text-center text-primary shadow-primary-light shadow-lg text-xl w-1/2"
+      >
         Hello, ${this.title} !
       </h1>
     `

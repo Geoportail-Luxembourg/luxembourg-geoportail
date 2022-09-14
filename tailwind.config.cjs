@@ -10,6 +10,9 @@ module.exports = {
         'main-primary': '#2980b9',
         'main-secondary': '#97bbd3',
         'main-tertiary': '#1f5d87',
+        primary: 'rgb(var(--color-primary) / 1)',
+        'primary-light': 'rgb(var(--color-primary) / 0.5)',
+        secondary: 'rgb(var(--color-secondary) / 1)',
       },
       fontFamily: {
         sans: 'DINNextLTPro-Condensed, Arial, sans-serif',
