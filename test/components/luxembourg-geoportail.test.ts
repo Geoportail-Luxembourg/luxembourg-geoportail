@@ -30,10 +30,8 @@ describe('LuxembourgGeoportail', () => {
   it('renders a h1', async () => {
     const el = fixtureSync('<luxembourg-geoportail></luxembourg-geoportail>');
     await elementUpdated(el);
-    // assert.instanceOf(el, LuxembourgGeoportail);
     const h1 = el.querySelector('h1');
     expect(h1).to.exist;
-    expect(h1?.textContent).to.equal('Hello, Luxembourg Geoportail !');
-    // expect(el.getAttribute('h1')).to.equal('bar');
+    expect(h1?.textContent).to.contain('Hello, Luxembourg Geoportail !');
   });
 });
