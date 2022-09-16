@@ -1,9 +1,9 @@
 // Components
-import type { TemplateResult } from 'lit';
-import { html, LitElement } from 'lit';
-import { customElement } from 'lit/decorators.js';
+import type { TemplateResult } from 'lit'
+import { html, LitElement } from 'lit'
+import { customElement } from 'lit/decorators.js'
 
-import '../components/LuxembourgGeoportail';
+import '../components/LuxembourgGeoportail'
 
 @customElement('luxembourg-home-page')
 export class LuxembourgHomePage extends LitElement {
@@ -12,10 +12,10 @@ export class LuxembourgHomePage extends LitElement {
       <div class="container">
         <luxembourg-geoportail></luxembourg-geoportail>
       </div>
-    `;
+    `
   }
 
   override createRenderRoot() {
-    return this;
+    return this
   }
 }

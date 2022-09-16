@@ -68,7 +68,9 @@
   },
   "prettier": {
     "singleQuote": true,
-    "arrowParens": "avoid"
+    "arrowParens": "avoid",
+    "trailingComma": "es5",
+    "semi": false
   },
   "husky": {
     "hooks": {
