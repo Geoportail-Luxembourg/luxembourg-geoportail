@@ -7,12 +7,15 @@ module.exports = {
     },
     extend: {
       colors: {
-        'main-primary': '#2980b9',
-        'main-secondary': '#97bbd3',
-        'main-tertiary': '#1f5d87',
-        primary: 'rgb(var(--color-primary) / 1)',
-        'primary-light': 'rgb(var(--color-primary) / 0.5)',
-        secondary: 'rgb(var(--color-secondary) / 1)',
+        'main-primary': 'rgb(var(--main-primary))',
+        'main-secondary': 'rgb(var(--main-secondary))',
+        'main-tertiary': 'rgb(var(--main-tertiary))',
+        'tourisme-primary': 'rgb(var(--tourisme-primary))',
+        'tourisme-secondary': 'rgb(var(--tourisme-secondary))',
+        'tourisme-tertiary': 'rgb(var(--tourisme-tertiary))',
+        primary: 'rgb(var(--color-primary))',
+        secondary: 'rgb(var(--color-secondary))',
+        tertiary: 'rgb(var(--color-tertiary))',
       },
       fontFamily: {
         sans: 'DINNextLTPro-Condensed, Arial, sans-serif',

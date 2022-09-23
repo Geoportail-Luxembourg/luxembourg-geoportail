@@ -16,7 +16,7 @@ export class LayerPanel extends i18nMixin(LitElement) {
           </div>
         </div>
         <!--catalog tab-->
-        <div class="grow p-2.5 bg-main-primary overflow-auto">
+        <div class="grow p-2.5 bg-primary overflow-auto">
           <lux-catalog-tab></lux-catalog-tab>
         </div>
       </div>
