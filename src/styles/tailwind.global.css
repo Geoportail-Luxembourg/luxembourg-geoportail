@@ -26,14 +26,20 @@
 
 @layer base {
   :root {
-    --color-primary: 41 128 185;
-    --color-secondary: 151 187 211;
-    --color-tertiary: 31 93 135;
-    --main-primary: 41 128 185;
-    --main-secondary: 151 187 211;
-    --main-tertiary: 31 93 135;
-    --tourisme-primary: 232 76 61;
-    --tourisme-secondary: 232 140 131;
-    --tourisme-tertiary: 165 15 21;
+    --color-primary: #2980b9;
+    --color-secondary: #97bbd3;
+    --color-tertiary: #1f5d87;
+    --main-primary: #2980b9;
+    --main-secondary: #97bbd3;
+    --main-tertiary: #1f5d87;
+    --tourisme-primary: #e84c3d;
+    --tourisme-secondary: #e88c83;
+    --tourisme-tertiary: #a50f15;
+    --environnement-primary: #558b2f;
+    --environnement-secondary: #85bb5c;
+    --environnement-tertiary: #255d00;
+    --eau-primary: #03a2ac;
+    --eau-secondary: #45cdd6;
+    --eau-tertiary: #078f98;
   }
 }
