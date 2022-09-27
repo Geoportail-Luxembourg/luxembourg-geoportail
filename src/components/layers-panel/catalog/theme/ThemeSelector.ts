@@ -10,9 +10,9 @@ import { LuxThemeService, ThemeService } from './theme.service'
 export class ThemeSelector extends LitElement {
   @state()
   private displayThemeCards = false
-
+  @state()
+  private currentTheme?: LuxTheme
   private themeService: ThemeService
-  private currentTheme: LuxTheme
   private subscription: Subscription
   constructor() {
     super()
@@ -33,7 +33,7 @@ export class ThemeSelector extends LitElement {
         class="bg-tertiary text-white px-2 py-1.5 uppercase cursor-pointer hover:bg-white hover:text-primary"
         @click=${this.toggleThemes}
       >
-        Theme: ${this.currentTheme.name}
+        Theme: ${this.currentTheme?.name}
       </div>
       ${this.displayThemeCards
         ? html` <div class="absolute w-[300] bg-white">

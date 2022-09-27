@@ -3,14 +3,13 @@ import { customElement } from 'lit/decorators.js'
 import { Subscription } from 'rxjs'
 import { LuxTheme } from './theme.model'
 import { LuxThemeService, ThemeService } from './theme.service'
-// import './theme-button.component'
 
 @customElement('lux-theme-switcher')
 export class ThemeSwitcher extends LitElement {
   private themeService: ThemeService
-  private themes: LuxTheme[]
+  private themes?: LuxTheme[]
   private subscription: Subscription
-  private themeColor
+
   constructor() {
     super()
     this.themeService = LuxThemeService
@@ -20,16 +19,14 @@ export class ThemeSwitcher extends LitElement {
     })
   }
   render() {
-    return html`${this.themes.map(
+    return html`${this.themes?.map(
       theme =>
         html`<button
-          class="h-[150] w-1/2 py-4 text-center text-secondary uppercase bg-${theme.name}-primary shadow-primary-light shadow-lg text-xl"
+          class="h-[150] w-1/2 py-4 text-center text-gray-100/40 uppercase bg-${theme.name}-primary shadow-primary-light shadow-lg text-xl"
           @click="${() => this.setTheme(theme)}"
         >
           ${theme.name}
         </button>`
-      // FIXME: assign each button the color of its theme (bg-${theme.name}-primary in classes above does not work)
-      // html`<lux-theme-button theme=${JSON.stringify(theme)}></lux-theme-button>`
     )} `
   }
 

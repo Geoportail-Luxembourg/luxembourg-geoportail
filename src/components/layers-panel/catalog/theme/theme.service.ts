@@ -28,7 +28,7 @@ export class ThemeService {
       // tertiary: '#078f98',
     },
   ]
-  themes$ = new BehaviorSubject<[]>(this.themes)
+  themes$ = new BehaviorSubject<LuxTheme[]>(this.themes)
   currentTheme$ = new BehaviorSubject<LuxTheme>(this.themes[0])
 
   constructor() {
@@ -52,7 +52,7 @@ export class ThemeService {
   //   })
   // }
   setCurrentThemeColors(theme: LuxTheme) {
-    const root = document.querySelector(':root')
+    const root = document.querySelector(':root') as HTMLElement
     const colors = ['primary', 'secondary', 'tertiary']
     colors.forEach(colorTone => {
       const color = getComputedStyle(root).getPropertyValue(
