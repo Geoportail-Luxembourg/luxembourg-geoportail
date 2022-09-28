@@ -45,10 +45,10 @@ export class LayerTreeNode extends LitElement {
       ${this.node.depth === 1
         ? html`
             <div
-              class="cursor-pointer px-2 py-1.5 uppercase bg-main-tertiary ${this
+              class="cursor-pointer px-2 py-1.5 uppercase bg-tertiary ${this
                 .node.expanded
                 ? 'text-white'
-                : 'text-main-secondary'}"
+                : 'text-secondary'}"
               @click="${this.toggleParent}"
             >
               ${this.getLabel()}
@@ -57,7 +57,7 @@ export class LayerTreeNode extends LitElement {
         : this.node.depth > 1 && !this.isMaxDepth()
         ? html`
             <div
-              class="cursor-pointer px-2 py-1.5 mt-px bg-white text-main-primary"
+              class="cursor-pointer px-2 py-1.5 mt-px bg-white text-primary"
               @click="${this.toggleParent}"
             >
               ${this.getLabel()}
@@ -71,8 +71,8 @@ export class LayerTreeNode extends LitElement {
   renderLeaf(): TemplateResult {
     return html`
       <div
-        class="cursor-pointer bg-main-secondary text-main-tertiary px-2 ${this
-          .node.checked
+        class="cursor-pointer bg-secondary text-tertiary px-2 ${this.node
+          .checked
           ? 'font-bold'
           : ''}"
         @click="${this.toggleLayer}"
