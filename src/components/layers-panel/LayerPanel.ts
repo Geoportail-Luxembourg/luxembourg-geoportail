@@ -8,11 +8,11 @@ export class LayerPanel extends LitElement {
   render(): TemplateResult {
     return html`
       <div class="flex flex-col h-full">
-        <div class="h-20">
+        <div class="h-20 shrink-0">
           <div class="lux-panel-title">layers</div>
         </div>
         <!--catalog tab-->
-        <div class="grow p-2.5 bg-main-primary">
+        <div class="grow p-2.5 bg-main-primary overflow-auto">
           <lux-catalog-tab></lux-catalog-tab>
         </div>
       </div>

@@ -11,13 +11,12 @@ import { layerTreeState } from './layer-tree/layer-tree.service'
 import { themesApi } from './themes.api'
 
 @customElement('lux-catalog')
-export class CatalogTab extends LitElement {
+export class Catalog extends LitElement {
   @state()
   private layerTree: LayerTreeNodeModel | undefined
 
   constructor() {
     super()
-    this.listenInteraction()
     themesApi
       .fetchThemes()
       .then(
@@ -28,31 +27,30 @@ export class CatalogTab extends LitElement {
       )
   }
 
-  private listenInteraction() {
-    this.addEventListener('layer-toggle', event => {
-      const nodeId = (event as CustomEvent).detail
-      console.log('layer', nodeId)
-      this.layerTree = layerTreeState.toggleNode(
-        nodeId,
-        this.layerTree as LayerTreeNodeModel,
-        'checked'
-      )
-    })
-
-    this.addEventListener('parent-toggle', event => {
-      const nodeId = (event as CustomEvent).detail
-      console.log('parent', nodeId)
-      this.layerTree = layerTreeState.toggleNode(
-        nodeId,
-        this.layerTree as LayerTreeNodeModel,
-        'expanded'
-      )
-    })
+  private toggleParent(event: Event) {
+    const nodeId = (event as CustomEvent).detail
+    this.layerTree = layerTreeState.toggleNode(
+      nodeId,
+      this.layerTree as LayerTreeNodeModel,
+      'expanded'
+    )
+  }
+  private toggleLayer(event: Event) {
+    const nodeId = (event as CustomEvent).detail
+    this.layerTree = layerTreeState.toggleNode(
+      nodeId,
+      this.layerTree as LayerTreeNodeModel,
+      'checked'
+    )
   }
 
   render(): TemplateResult {
     return html`
-      <lux-layer-tree-node .node="${this.layerTree}"></lux-layer-tree-node>
+      <lux-layer-tree-node
+        .node="${this.layerTree}"
+        @parent-toggle="${this.toggleParent}"
+        @layer-toggle="${this.toggleLayer}"
+      ></lux-layer-tree-node>
     `
   }
 

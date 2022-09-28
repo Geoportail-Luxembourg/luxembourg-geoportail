@@ -40,7 +40,10 @@ export class LayerTreeNode extends LitElement {
       ${this.node.depth === 1
         ? html`
             <div
-              class="cursor-pointer px-2 py-1.5 uppercase bg-main-tertiary text-main-secondary"
+              class="cursor-pointer px-2 py-1.5 uppercase bg-main-tertiary ${this
+                .node.expanded
+                ? 'text-white'
+                : 'text-main-secondary'}"
               @click="${this.toggleParent}"
             >
               ${this.node.name}
@@ -82,7 +85,7 @@ export class LayerTreeNode extends LitElement {
     return this.node.expanded || this.isRoot()
       ? this.node.children?.map((node: LayerTreeNode) => {
           return html`
-            <div class="">
+            <div>
               <lux-layer-tree-node .node="${node}"></lux-layer-tree-node>
             </div>
           `

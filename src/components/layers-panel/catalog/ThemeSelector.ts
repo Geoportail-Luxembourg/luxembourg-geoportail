@@ -2,7 +2,7 @@ import { html, LitElement, TemplateResult } from 'lit'
 import { customElement } from 'lit/decorators'
 
 @customElement('lux-theme-selector')
-export class Catalog extends LitElement {
+export class ThemeSelector extends LitElement {
   render(): TemplateResult {
     return html`
       <div
