@@ -1,7 +1,7 @@
 import type { TemplateResult } from 'lit'
 import { html, LitElement } from 'lit'
 import { customElement } from 'lit/decorators.js'
-import { i18nMixin } from '../../mixins/i18n-lit-element.js'
+import { i18nMixin } from '../../mixins/i18n-lit-element'
 
 @customElement('lux-language-selector')
 export class LanguageSelector extends i18nMixin(LitElement) {
@@ -16,7 +16,7 @@ export class LanguageSelector extends i18nMixin(LitElement) {
     `
   }
 
-  changeLanguages(event) {
+  changeLanguages(event: any) {
     this.changeLanguage(event.target.value)
   }
 

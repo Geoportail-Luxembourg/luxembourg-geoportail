@@ -2,7 +2,6 @@
 import type { TemplateResult } from 'lit'
 import { html, LitElement } from 'lit'
 import { customElement } from 'lit/decorators.js'
-import { i18nMixin, translate } from '../mixins/i18n-lit-element.js'
 
 import '../components/layers-panel/LayerPanel'
 import '../components/nav-bars/LanguageSelector'
@@ -16,9 +15,7 @@ export class LuxembourgHomePage extends LitElement {
           <div class="p-[5px]">
             <img src="./assets/header/gov-light.8b5db4.png" />
           </div>
-          <div class="p-[5px]">
-            <lux-language-selector></lux-language-selector>
-          </div>
+          <lux-language-selector></lux-language-selector>
         </header>
         <main class="flex grow">
           <!--side bar-->
