@@ -1,19 +1,33 @@
 import {LuxBase} from '../lux-base.component.ts';
+import {LuxBgLayerService, BgLayerService} from '../background-layer.service'
 import {html} from 'lit';
 import {customElement, state, property} from 'lit/decorators.js';
 import './background-selector-item.component.ts';
 
 @customElement('background-selector')
-export class BackGroundSelector extends LuxBase {
+export class BackgroundSelector extends LuxBase {
 
   @state() isOpened = false;
   @state() activeLayer = 'white';
+  private bgLayerService;
+  private subscription;
 
   constructor() {
     super();
-    this.bgLayers = ['route', 'topo', 'topo_bw', 'ortho', 'hybrid', 'white'];
+    this.bgLayerService = LuxBgLayerService;
+    this.bgLayers = this.bgLayerService.bgLayers$._value.map((l) => l.name);
+    this.activeLayer = this.bgLayers[0];
+    this.subscription = this.bgLayerService.activeBgLayer$.subscribe(layer => {
+      this.activeLayer = layer
+      this.requestUpdate()
+    });
+    // ['route', 'topo', 'topo_bw', 'ortho', 'hybrid', 'white'];
   }
 
+  disconnectedCallback() {
+    this.subscription.unsubscribe()
+    super.disconnectedCallback()
+  }
   
   render() {
     return html`
@@ -28,7 +42,8 @@ export class BackGroundSelector extends LuxBase {
   }
 
   setBackgroundLayer(layer) {
-    this.activeLayer = layer;
+    // this.activeLayer = layer;
+    this.bgLayerService.activeBgLayer$.next(layer)
     this.isOpened = false;
     console.log(layer);
   }
