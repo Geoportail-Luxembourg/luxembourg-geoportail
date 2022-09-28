@@ -5,7 +5,7 @@ import { customElement } from 'lit/decorators.js'
 
 import '../components/layers-panel/LayerPanel'
 import '../components/nav-bars/LanguageSelector'
-import '../components/background-selector.component';
+import '../components/background-selector/background-selector.component';
 
 @customElement('luxembourg-home-page')
 export class LuxembourgHomePage extends LitElement {

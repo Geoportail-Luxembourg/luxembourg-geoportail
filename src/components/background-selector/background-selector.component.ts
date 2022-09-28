@@ -1,4 +1,4 @@
-import {LuxBase} from './lux-base.component.ts';
+import {LuxBase} from '../lux-base.component.ts';
 import {html} from 'lit';
 import {customElement, state, property} from 'lit/decorators.js';
 import './background-selector-item.component.ts';
