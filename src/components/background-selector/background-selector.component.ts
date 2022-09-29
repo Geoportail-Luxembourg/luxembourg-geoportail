@@ -7,19 +7,19 @@ import './background-selector-item.component.ts';
 @customElement('background-selector')
 export class BackgroundSelector extends LuxBase {
 
-  @state() isOpened = false;
-  @state() activeLayer = 'white';
-  private bgLayerService;
-  private subscription;
+  @state() isOpened = false
+  @state() activeLayer = 'white'
+  private bgLayerService
+  private subscription
 
   constructor() {
-    super();
-    this.bgLayerService = LuxBgLayerService;
-    this.bgLayers = this.bgLayerService.bgLayers$._value.map((l) => l.name);
+    super()
+    this.bgLayerService = LuxBgLayerService
+    this.bgLayers = this.bgLayerService.bgLayers$._value.map((l) => l.name)
     this.subscription = this.bgLayerService.activeBgLayer$.subscribe(layer => {
       this.activeLayer = layer.name
       this.requestUpdate()
-    });
+    })
     // ['route', 'topo', 'topo_bw', 'ortho', 'hybrid', 'white'];
   }
 
@@ -55,17 +55,17 @@ export class BackgroundSelector extends LuxBase {
 
   setBackgroundLayer(layer) {
     this.bgLayerService.activeBgLayer$.next({name: layer})
-    this.isOpened = false;
-    console.log(layer);
+    this.isOpened = false
+    console.log(layer)
   }
 
   toggleSelector() {
-    this.isOpened = ! this.isOpened;
+    this.isOpened = ! this.isOpened
   }
 
   createRenderRoot() {
     // no shadow dom
-    return this;
+    return this
   }
 }
 

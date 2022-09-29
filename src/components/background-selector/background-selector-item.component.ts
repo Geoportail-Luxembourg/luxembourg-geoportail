@@ -5,10 +5,10 @@ import {customElement, property} from 'lit/decorators.js';
 
 @customElement('background-selector-item')
 export class BackGroundSelectorItem extends LuxBase {
-  @property() bgClass = '';
+  @property() bgClass = ''
 
   constructor() {
-    super();
+    super()
   }
 
   render() {
@@ -17,6 +17,6 @@ export class BackGroundSelectorItem extends LuxBase {
   }
   createRenderRoot() {
     // no shadow dom
-    return this;
+    return this
   }
 }
