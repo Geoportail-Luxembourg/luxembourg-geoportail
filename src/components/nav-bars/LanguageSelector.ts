@@ -16,8 +16,11 @@ export class LanguageSelector extends i18nMixin(LitElement) {
     `
   }
 
-  changeLanguages(event: any) {
-    this.changeLanguage(event.target.value)
+  changeLanguages(event: Event) {
+    if (event.target) {
+      const result = (event.target as HTMLInputElement).value
+      this.changeLanguage(result)
+    }
   }
 
   override createRenderRoot() {

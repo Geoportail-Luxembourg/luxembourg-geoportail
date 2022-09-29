@@ -11,7 +11,9 @@ export class LayerPanel extends i18nMixin(LitElement) {
     return html`
       <div class="flex flex-col h-full">
         <div class="h-20 shrink-0">
-          <div class="lux-panel-title">${i18next.t('layers')}</div>
+          <div class="lux-panel-title">
+            ${i18next.t('Layers', { ns: 'client' })}
+          </div>
         </div>
         <!--catalog tab-->
         <div class="grow p-2.5 bg-main-primary overflow-auto">

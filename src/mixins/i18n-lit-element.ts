@@ -22,9 +22,9 @@ export const i18nMixin = <T extends Constructor<LitElement>>(superClass: T) => {
         i18next.init({
           lng: 'fr',
           debug: true,
-          defaultNS: 'app',
+          defaultNS: 'client',
           supportedLngs: ['de', 'en', 'fr', 'lb'],
-          ns: ['app'],
+          ns: ['client', 'legends', 'server', 'tooltips'],
           fallbackLng: 'fr',
           backend: {
             loadPath: '/assets/locales/{{ns}}.{{lng}}.json',
