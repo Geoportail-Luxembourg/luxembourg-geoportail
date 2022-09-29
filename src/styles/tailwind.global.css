@@ -16,4 +16,7 @@
     .lux-panel-title {
         @apply text-white text-title-xl uppercase px-3 pt-1.5
     }
+    .lux-bg-sel {
+        @apply h-10 w-10 md:h-14 md:w-20 p-0.5 rounded-sm cursor-pointer;
+    }
 }
