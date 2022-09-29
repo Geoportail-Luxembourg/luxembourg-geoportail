@@ -1,4 +1,4 @@
-import i18next, { t as translate } from 'i18next'
+import i18next from 'i18next'
 import backend from 'i18next-http-backend'
 import { LitElement } from 'lit'
 
@@ -40,5 +40,3 @@ export const i18nMixin = <T extends Constructor<LitElement>>(superClass: T) => {
   }
   return i18nMixinClass as unknown as Constructor<i18nMixinInterface> & T
 }
-
-export { translate }
