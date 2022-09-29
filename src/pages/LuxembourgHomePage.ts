@@ -24,7 +24,7 @@ export class LuxembourgHomePage extends LitElement {
             <lux-layer-panel></lux-layer-panel>
           </div>
           <div class="grow bg-blue-100"></div>
-          <background-selector absolute right-1 top-1></background-selector>
+          <background-selector class="relative right-1 top-1"></background-selector>
         </main>
       </div>
     `
