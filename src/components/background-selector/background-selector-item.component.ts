@@ -1,4 +1,4 @@
-import { LuxBase } from '../lux-base.component.ts'
+import { LuxBase } from '../lux-base.component'
 import { html } from 'lit'
 import { customElement, property } from 'lit/decorators.js'
 

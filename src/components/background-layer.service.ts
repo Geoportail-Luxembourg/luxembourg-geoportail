@@ -1,6 +1,6 @@
 import { BehaviorSubject } from 'rxjs'
 
-interface LuxBgLayer {
+export interface LuxBgLayer {
   name: string
 }
 
@@ -30,8 +30,8 @@ export class BgLayerService {
 
   constructor() {}
 
-  setBgLayer(theme: LuxBgLayer) {
-    this.currentTheme$.next(bgLayer)
+  setBgLayer(bgLayer: LuxBgLayer) {
+    this.activeBgLayer$.next(bgLayer)
   }
 }
 
