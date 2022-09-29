@@ -34,9 +34,9 @@ export class BackgroundSelector extends LuxBase {
 <div class="flex flex-col md:flex-row ${this.isOpened == true ? 'block' : 'hidden'}">
   ${this.bgLayers.map((layer, index) =>
       html`<background-selector-item
-            class="lux-bg-sel ${''
-                   }${layer == this.activeLayer ? 'border-red-500 border-2' : 'border-black border'} ${''
-                   }hover:bg-cyan-600"
+            class="${'lux-bg-sel '
+                     + (layer == this.activeLayer ? 'border-red-500 border-2' : 'border-black border')
+                     + ' hover:bg-cyan-600'}"
             bgclass="bg-${layer}"
             @click="${() => this.setBackgroundLayer(layer)}">
       </background-selector-item>`)}
@@ -44,10 +44,10 @@ export class BackgroundSelector extends LuxBase {
 <div class="lux-bg-sel border border-black bg-white bg-selector-opener ${''
             }${this.isOpened == true ? 'hidden' : 'block'}"
      @click="${this.toggleSelector}">
-  <img class="h-full w-full rounded-sm ${''
-              }bg-[length:41px_41px] md:bg-[length:90px_50px] ${''
-              }bg-${this.activeLayer}_sm md:bg-${this.activeLayer} ${''
-              }hd:bg-${this.activeLayer}_sm_hi hd_md:bg-${this.activeLayer}_hi">
+  <img class="${'h-full w-full rounded-sm '
+              + 'bg-[length:41px_41px] md:bg-[length:90px_50px] '
+              + 'bg-' + this.activeLayer + '_sm md:bg-' + this.activeLayer
+              + ' hd:bg-' + this.activeLayer + '_sm_hi hd_md:bg-' + this.activeLayer +'_hi'}">
 </div>
 </div>
 `;
