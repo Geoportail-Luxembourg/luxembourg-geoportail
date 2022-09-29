@@ -28,6 +28,7 @@ export class BackgroundSelector extends LuxBase {
   }
 
   render() {
+    // prettier-ignore
     return html`
       <div class="flex flex-row-reverse">
         <div class="flex flex-col md:flex-row ${this.isOpened == true ? 'block' : 'hidden'}">
