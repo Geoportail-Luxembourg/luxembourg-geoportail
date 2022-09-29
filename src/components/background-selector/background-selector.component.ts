@@ -1,5 +1,5 @@
 import {LuxBase} from '../lux-base.component.ts';
-import {LuxBgLayerService, BgLayerService} from '../background-layer.service'
+import {LuxBgLayerService, LuxBgLayer} from '../background-layer.service'
 import {html} from 'lit';
 import {customElement, state, property} from 'lit/decorators.js';
 import './background-selector-item.component.ts';
@@ -16,9 +16,8 @@ export class BackgroundSelector extends LuxBase {
     super();
     this.bgLayerService = LuxBgLayerService;
     this.bgLayers = this.bgLayerService.bgLayers$._value.map((l) => l.name);
-    this.activeLayer = this.bgLayers[0];
     this.subscription = this.bgLayerService.activeBgLayer$.subscribe(layer => {
-      this.activeLayer = layer
+      this.activeLayer = layer.name
       this.requestUpdate()
     });
     // ['route', 'topo', 'topo_bw', 'ortho', 'hybrid', 'white'];
@@ -55,7 +54,7 @@ export class BackgroundSelector extends LuxBase {
   }
 
   setBackgroundLayer(layer) {
-    this.bgLayerService.activeBgLayer$.next(layer)
+    this.bgLayerService.activeBgLayer$.next({name: layer})
     this.isOpened = false;
     console.log(layer);
   }
