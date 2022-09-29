@@ -1,16 +1,15 @@
-import {LitElement} from 'lit';
-import i18next from 'i18next';
-
+import { LitElement } from 'lit'
+import i18next from 'i18next'
 
 export class LuxBase extends LitElement {
-    connectedCallback() {
-        this.i18nLanguageChangedCallback_ = () => this.requestUpdate();
-        i18next.on("languageChanged", this.i18nLanguageChangedCallback_);
-        super.connectedCallback();
-    }
+  connectedCallback() {
+    this.i18nLanguageChangedCallback_ = () => this.requestUpdate()
+    i18next.on('languageChanged', this.i18nLanguageChangedCallback_)
+    super.connectedCallback()
+  }
 
-    disconnectedCallback() {
-        i18next.off("languageChanged", this.i18nLanguageChangedCallback_);
-        super.disconnectedCallback();
-    }
+  disconnectedCallback() {
+    i18next.off('languageChanged', this.i18nLanguageChangedCallback_)
+    super.disconnectedCallback()
+  }
 }

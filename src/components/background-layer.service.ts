@@ -28,8 +28,7 @@ export class BgLayerService {
   bgLayers$ = new BehaviorSubject<LuxBgLayer[]>(this.bgLayers)
   activeBgLayer$ = new BehaviorSubject<LuxBgLayer>(this.bgLayers[0])
 
-  constructor() {
-  }
+  constructor() {}
 
   setBgLayer(theme: LuxBgLayer) {
     this.currentTheme$.next(bgLayer)

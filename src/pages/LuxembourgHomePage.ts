@@ -5,7 +5,7 @@ import { customElement } from 'lit/decorators.js'
 
 import '../components/layers-panel/LayerPanel'
 import '../components/nav-bars/LanguageSelector'
-import '../components/background-selector/background-selector.component';
+import '../components/background-selector/background-selector.component'
 
 @customElement('luxembourg-home-page')
 export class LuxembourgHomePage extends LitElement {
@@ -24,7 +24,9 @@ export class LuxembourgHomePage extends LitElement {
             <lux-layer-panel></lux-layer-panel>
           </div>
           <div class="grow bg-blue-100"></div>
-          <background-selector class="relative right-1 top-1"></background-selector>
+          <background-selector
+            class="relative right-1 top-1"
+          ></background-selector>
         </main>
       </div>
     `
