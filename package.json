@@ -7,9 +7,13 @@
     "format": "eslint --ext .ts,.html . --fix --ignore-path .gitignore && prettier \"**/*.ts\" --write --ignore-path .gitignore",
     "test": "tsc && wtr --coverage",
     "start": "parcel index.html",
-    "build": "parcel build index.html"
+    "build": "parcel build index.html",
+    "i18next-parse": "i18next --config conf/i18next-parser.config.js"
   },
   "dependencies": {
+    "i18next": "^21.9.2",
+    "i18next-http-backend": "^1.4.4",
+    "i18next-parser": "^6.5.0",
     "lit": "^2.1.2",
     "postcss": "^8.4.14",
     "twind": "^0.16.17"
