@@ -3,17 +3,23 @@
 @tailwind utilities;
 
 @font-face {
-    font-family: "DINNextLTPro-Condensed";
-    src: url("https://map.geoportail.lu/static-ngeo/28867F_0_0.c8a814.woff")
-    format("woff");
+  font-family: 'DINNextLTPro-Condensed';
+  src: url('https://map.geoportail.lu/static-ngeo/28867F_0_0.c8a814.woff')
+    format('woff');
 }
 
 @layer components {
-    .lux-primary {
-        @apply bg-main-tertiary text-main-secondary px-2 py-1.5 uppercase
-    }
+  .lux-primary {
+    @apply bg-main-tertiary text-main-secondary px-2 py-1.5 uppercase;
+  }
 
-    .lux-panel-title {
-        @apply text-white text-title-xl uppercase px-3 pt-1.5
-    }
+  .lux-panel-title {
+    @apply text-white text-title-xl uppercase px-3 pt-1.5;
+  }
+  .lux-bg-sel {
+    @apply h-10 w-10 md:h-14 md:w-20 p-0.5 rounded-sm cursor-pointer;
+  }
+  .lux-bg-sel-icon-bg-length {
+    @apply bg-[length:41px_41px] md:bg-[length:90px_50px];
+  }
 }
