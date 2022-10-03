@@ -22,7 +22,7 @@ export class ThemeSwitcher extends LitElement {
     return html`${this.themes?.map(
       theme =>
         html`<button
-          class="h-[150] w-1/2 py-4 text-center text-gray-100/40 uppercase bg-${theme.name}-primary shadow-primary-light shadow-lg text-xl"
+          class="h-[150] w-1/2 py-4 text-center text-gray-100/40 uppercase bg-${theme.name}-primary shadow-primary-light shadow-lg text-xl after:content-${theme.name} after:font-icons"
           @click="${() => this.setTheme(theme)}"
         >
           ${theme.name}

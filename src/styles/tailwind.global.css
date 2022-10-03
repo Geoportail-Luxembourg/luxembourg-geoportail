@@ -8,6 +8,12 @@
     format('woff');
 }
 
+@font-face {
+  font-family: 'geoportail-icons';
+  src: url('https://map.geoportail.lu/static-ngeo/geoportail-icons.6a5340.woff')
+    format('woff');
+}
+
 @layer components {
   .lux-primary {
     @apply bg-tertiary text-secondary px-2 py-1.5 uppercase;
