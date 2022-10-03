@@ -13,7 +13,7 @@ export class BackGroundSelectorItem extends LuxBase {
   render() {
     // prettier-ignore
     return html` <img
-      class="${`h-full w-full rounded-sm bg-[length:41px_41px] md:bg-[length:90px_50px] bg-white ` +
+      class="${`h-full w-full rounded-sm lux-bg-sel-icon-bg-length bg-white ` +
                `${this.bgClass}_sm md:${this.bgClass} hd:${this.bgClass}_sm_hi hd_md:${this.bgClass}_hi`}"
     />`
   }

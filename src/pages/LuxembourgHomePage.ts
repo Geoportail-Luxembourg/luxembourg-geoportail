@@ -25,7 +25,7 @@ export class LuxembourgHomePage extends LitElement {
           </div>
           <div class="grow bg-blue-100"></div>
           <background-selector
-            class="relative right-1 top-1"
+            class="absolute right-1 top-16"
           ></background-selector>
         </main>
       </div>

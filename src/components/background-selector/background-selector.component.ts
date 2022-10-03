@@ -1,28 +1,24 @@
 import { LuxBase } from '../lux-base.component'
-import { LuxBgLayerService, LuxBgLayer } from '../background-layer.service'
+import { bgLayerService, LuxBgLayer } from '../background-layer.service'
 import { html } from 'lit'
 import { customElement, state } from 'lit/decorators.js'
 import './background-selector-item.component'
 
 @customElement('background-selector')
 export class BackgroundSelector extends LuxBase {
-  @state() isOpened = false
+  @state() isOpen = false
   @state() activeLayer = 'white'
-  private bgLayerService
   private bgLayers
   private subscription
 
   constructor() {
     super()
-    this.bgLayerService = LuxBgLayerService
-    this.bgLayers = this.bgLayerService.bgLayers$
+    this.bgLayers = bgLayerService.bgLayers$
       .getValue()
       .map((l: LuxBgLayer) => l.name)
-    this.subscription = this.bgLayerService.activeBgLayer$.subscribe(layer => {
+    this.subscription = bgLayerService.activeBgLayer$.subscribe(layer => {
       this.activeLayer = layer.name
-      this.requestUpdate()
     })
-    // ['route', 'topo', 'topo_bw', 'ortho', 'hybrid', 'white'];
   }
 
   disconnectedCallback() {
@@ -34,7 +30,7 @@ export class BackgroundSelector extends LuxBase {
     // prettier-ignore
     return html`
       <div class="flex flex-row-reverse">
-        <div class="flex flex-col md:flex-row ${this.isOpened == true ? 'block' : 'hidden'}">
+        <div class="${this.isOpen == true ? 'flex flex-col md:flex-row' : 'hidden'}">
           ${this.bgLayers.map(
             (layer: string) =>
               html`<background-selector-item
@@ -47,29 +43,24 @@ export class BackgroundSelector extends LuxBase {
               </background-selector-item>`
           )}
         </div>
-        <div class="${`lux-bg-sel border border-black bg-white ` +
-                      `${this.isOpened == true ? 'hidden' : 'block'}`}"
-             @click="${this.toggleSelector}"
-        >
-          <img
-            class="${'h-full w-full rounded-sm ' +
-                     'bg-[length:41px_41px] md:bg-[length:90px_50px] ' +
-                     `bg-${this.activeLayer}_sm md:bg-${this.activeLayer} ` +
-                     `hd:bg-${this.activeLayer}_sm_hi hd_md:bg-${this.activeLayer}_hi`}"
-          />
-        </div>
+        <background-selector-item
+             class=" ${
+               'lux-bg-sel border border-black bg-white ' +
+               (this.isOpen == true ? 'hidden' : 'block')}"
+             bgclass="bg-${this.activeLayer}"
+             @click="${this.toggleSelector}">
+        </background-selector-item>
       </div>
     `
   }
 
   setBackgroundLayer(layer: string) {
-    this.bgLayerService.activeBgLayer$.next({ name: layer })
-    this.isOpened = false
-    console.log(layer)
+    bgLayerService.activeBgLayer$.next({ name: layer })
+    this.isOpen = false
   }
 
   toggleSelector() {
-    this.isOpened = !this.isOpened
+    this.isOpen = !this.isOpen
   }
 
   createRenderRoot() {

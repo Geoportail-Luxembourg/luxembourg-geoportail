@@ -5,7 +5,7 @@ export interface LuxBgLayer {
 }
 
 export class BgLayerService {
-  bgLayers = [
+  bgLayers: LuxBgLayer[] = [
     {
       name: 'route',
     },
@@ -35,4 +35,4 @@ export class BgLayerService {
   }
 }
 
-export const LuxBgLayerService = new BgLayerService()
+export const bgLayerService = new BgLayerService()
