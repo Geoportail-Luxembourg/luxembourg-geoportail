@@ -2,11 +2,14 @@ interface Metadata {
   is_queryable: boolean
   metadata_id: string
 }
+export type LayerType = 'wms' | 'wfs' | 'geojson'
+
 export interface Layer {
   id: number
   name: string
   layers: string
-  type: 'WMS' | 'WFS'
+  url: string
+  type: LayerType
   metadata?: Metadata
   dimensions?: {}
   imageType?: string
