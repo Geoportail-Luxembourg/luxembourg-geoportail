@@ -1,23 +1,11 @@
 import { html, LitElement } from 'lit'
-import { customElement } from 'lit/decorators.js'
-import { Subscription } from 'rxjs'
+import { customElement, property } from 'lit/decorators.js'
 import { LuxTheme } from './theme.model'
-import { LuxThemeService, ThemeService } from './theme.service'
 
 @customElement('lux-theme-switcher')
 export class ThemeSwitcher extends LitElement {
-  private themeService: ThemeService
-  private themes?: LuxTheme[]
-  private subscription: Subscription
+  @property({ type: Object }) themes: LuxTheme[]
 
-  constructor() {
-    super()
-    this.themeService = LuxThemeService
-    this.subscription = this.themeService.themes$.subscribe(themes => {
-      this.themes = themes
-      this.requestUpdate()
-    })
-  }
   render() {
     return html`${this.themes?.map(
       theme =>
@@ -34,12 +22,11 @@ export class ThemeSwitcher extends LitElement {
   }
 
   setTheme(theme: LuxTheme) {
-    this.themeService.setCurrentTheme(theme)
-  }
-
-  disconnectedCallback() {
-    this.subscription.unsubscribe()
-    super.disconnectedCallback()
+    const event = new CustomEvent(`set-theme`, {
+      bubbles: true,
+      detail: theme,
+    })
+    this.dispatchEvent(event)
   }
 
   override createRenderRoot() {
