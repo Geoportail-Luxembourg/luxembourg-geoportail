@@ -1,18 +1,19 @@
-interface Metadata {
+type Metadata = Partial<{
   is_queryable: boolean
   metadata_id: string
-}
-export type LayerType = 'wms' | 'wfs' | 'geojson'
+  attribution: string
+}>
+export type LayerType = 'WMS' | 'WFS'
 
 export interface Layer {
   id: number
   name: string
   layers: string
-  url: string
+  url?: string
   type: LayerType
+  imageType: string
   metadata?: Metadata
   dimensions?: {}
-  imageType?: string
   style?: string
 }
 export interface Group {
