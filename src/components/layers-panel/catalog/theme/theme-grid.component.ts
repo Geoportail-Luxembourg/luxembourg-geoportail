@@ -2,8 +2,8 @@ import { html, LitElement } from 'lit'
 import { customElement, property } from 'lit/decorators.js'
 import { LuxTheme } from './theme.model'
 
-@customElement('lux-theme-switcher')
-export class ThemeSwitcher extends LitElement {
+@customElement('lux-theme-grid')
+export class ThemeGrid extends LitElement {
   @property({ type: Object }) themes: LuxTheme[]
 
   render() {

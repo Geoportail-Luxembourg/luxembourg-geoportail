@@ -2,7 +2,7 @@ import { html, LitElement, TemplateResult } from 'lit'
 import { customElement, state } from 'lit/decorators'
 import { Subscription } from 'rxjs'
 
-import './theme-switcher.component'
+import './theme-grid.component'
 import './theme-selector-button.component'
 import { LuxTheme } from './theme.model'
 import { LuxThemeService, ThemeService } from './theme.service'
@@ -10,7 +10,7 @@ import { LuxThemeService, ThemeService } from './theme.service'
 @customElement('lux-theme-selector')
 export class ThemeSelector extends LitElement {
   @state()
-  private displayThemeCards = false
+  private isOpen = false
   @state()
   private currentTheme?: LuxTheme
   @state()
@@ -24,7 +24,6 @@ export class ThemeSelector extends LitElement {
     this.currentThemeSubscription = this.themeService.currentTheme$.subscribe(
       theme => {
         this.currentTheme = theme
-        this.requestUpdate()
       }
     )
     this.themesSubscription = this.themeService.themes$.subscribe(themes => {
@@ -33,7 +32,7 @@ export class ThemeSelector extends LitElement {
   }
 
   toggleThemesGrid() {
-    this.displayThemeCards = !this.displayThemeCards
+    this.isOpen = !this.isOpen
   }
 
   render(): TemplateResult {
@@ -43,13 +42,13 @@ export class ThemeSelector extends LitElement {
         themes="${JSON.stringify(this.themes)}"
         currentTheme="${JSON.stringify(this.currentTheme)}"
       ></lux-theme-selector-button>
-      ${this.displayThemeCards
+      ${this.isOpen
         ? html` <div class="absolute w-[300] bg-white">
-            <lux-theme-switcher
+            <lux-theme-grid
               @set-theme="${this.setTheme}"
               themes="${JSON.stringify(this.themes)}"
               class="flex flex-row flex-wrap"
-            ></lux-theme-switcher>
+            ></lux-theme-grid>
           </div>`
         : html``}
     `
