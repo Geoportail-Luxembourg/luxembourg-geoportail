@@ -1,4 +1,6 @@
-export const themesApiFixture = () => ({
+import { ConfigModel } from '../../src/services/themes/themes.model'
+
+export const themesApiFixture = (): ConfigModel => ({
   ogcServers: {
     'source for config://my_maps?category_id=106': {
       url: 'https://ws.geoportail.lu/mymaps?category_id=106',
