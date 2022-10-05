@@ -24,14 +24,14 @@ export class LayerTreeNode extends LitElement {
   toggleLayer() {
     const event = new CustomEvent(`layer-toggle`, {
       bubbles: true,
-      detail: this.node.id,
+      detail: this.node,
     })
     this.dispatchEvent(event)
   }
   toggleParent() {
     const event = new CustomEvent(`parent-toggle`, {
       bubbles: true,
-      detail: this.node.id,
+      detail: this.node,
     })
     this.dispatchEvent(event)
   }
