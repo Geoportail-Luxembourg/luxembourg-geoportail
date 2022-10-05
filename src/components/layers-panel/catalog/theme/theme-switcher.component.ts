@@ -22,10 +22,13 @@ export class ThemeSwitcher extends LitElement {
     return html`${this.themes?.map(
       theme =>
         html`<button
-          class="h-[150] w-1/2 py-4 text-center text-gray-100/40 uppercase bg-${theme.name}-primary shadow-primary-light shadow-lg text-xl after:content-${theme.name} after:font-icons"
+          class="shrink-0 flex flex-col justify-between h-[150] w-1/2 pt-5 pb-1 px-[10] text-start text-gray-100/40 uppercase bg-${theme.name}-primary"
           @click="${() => this.setTheme(theme)}"
         >
-          ${theme.name}
+          <div class="text-2xl">${theme.name}</div>
+          <div
+            class="text-6xl align-baseline after:content-${theme.name} after:font-icons"
+          ></div>
         </button>`
     )} `
   }
