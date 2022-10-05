@@ -1,20 +1,9 @@
+const themes = ['main', 'tourisme', 'environnement', 'eau']
+
 /** @type {import('tailwindcss').Config} */
 module.exports = {
   content: ['index.html', './src/**/*.{html,js,ts}'],
-  safelist: [
-    'bg-main-primary',
-    'bg-tourisme-primary',
-    'bg-environnement-primary',
-    'bg-eau-primary',
-    'main-primary',
-    'tourisme-primary',
-    'environnement-primary',
-    'eau-primary',
-    'after:content-main',
-    'after:content-tourisme',
-    'after:content-environnement',
-    'after:content-eau',
-  ],
+  safelist: generateThemeSafelist(),
   theme: {
     container: {
       center: true,
@@ -24,18 +13,7 @@ module.exports = {
         primary: 'var(--color-primary)',
         secondary: 'var(--color-secondary)',
         tertiary: 'var(--color-tertiary)',
-        'main-primary': 'var(--main-primary)',
-        'main-secondary': 'var(--main-secondary)',
-        'main-tertiary': 'var(--main-tertiary)',
-        'tourisme-primary': 'var(--tourisme-primary)',
-        'tourisme-secondary': 'var(--tourisme-secondary)',
-        'tourisme-tertiary': 'var(--tourisme-tertiary)',
-        'environnement-primary': 'var(--environnement-primary)',
-        'environnement-secondary': 'var(--environnement-secondary)',
-        'environnement-tertiary': 'var(--environnement-tertiary)',
-        'eau-primary': 'var(--eau-primary)',
-        'eau-secondary': 'var(--eau-secondary)',
-        'eau-tertiary': 'var(--eau-tertiary)',
+        ...generateThemeColors(),
       },
       fontFamily: {
         sans: 'DINNextLTPro-Condensed, Arial, sans-serif',
@@ -113,4 +91,21 @@ module.exports = {
     'hd:bg-hybrid_sm_hi',
   ],
   plugins: [],
+}
+
+function generateThemeSafelist() {
+  return themes.flatMap(theme => [
+    `${theme}-primary`,
+    `bg-${theme}-primary`,
+    `after:content-${theme}`,
+  ])
+}
+function generateThemeColors() {
+  return Object.fromEntries(
+    themes.flatMap(theme => [
+      [`${theme}-primary`, `var(--${theme}-primary)`],
+      [`${theme}-secondary`, `var(--${theme}-secondary)`],
+      [`${theme}-tertiary`, `var(--${theme}-tertiary)`],
+    ])
+  )
 }
