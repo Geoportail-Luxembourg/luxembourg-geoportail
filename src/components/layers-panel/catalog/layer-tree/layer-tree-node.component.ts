@@ -1,3 +1,4 @@
+import i18next from 'i18next'
 import { html, LitElement, TemplateResult } from 'lit'
 import { customElement } from 'lit/decorators'
 import { property } from 'lit/decorators.js'
@@ -35,6 +36,10 @@ export class LayerTreeNode extends LitElement {
     this.dispatchEvent(event)
   }
 
+  private getLabel() {
+    return i18next.t(this.node.name, { ns: 'client' })
+  }
+
   renderParent(): TemplateResult {
     return html`
       ${this.node.depth === 1
@@ -46,7 +51,7 @@ export class LayerTreeNode extends LitElement {
                 : 'text-main-secondary'}"
               @click="${this.toggleParent}"
             >
-              ${this.node.name}
+              ${this.getLabel()}
             </div>
           `
         : this.node.depth > 1 && !this.isMaxDepth()
@@ -55,7 +60,7 @@ export class LayerTreeNode extends LitElement {
               class="cursor-pointer px-2 py-1.5 mt-px bg-white text-main-primary"
               @click="${this.toggleParent}"
             >
-              ${this.node.name}
+              ${this.getLabel()}
             </div>
           `
         : ''}
@@ -74,8 +79,10 @@ export class LayerTreeNode extends LitElement {
       >
         <i class="fa fa-info"></i>
         <a>
-          <i class="fa fa-square"></i>
-          ${this.node.name}
+          <i
+            class="fa ${this.node.checked ? 'fa-check-square' : 'fa-square'}"
+          ></i>
+          ${this.getLabel()}
         </a>
       </div>
     `
