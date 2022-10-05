@@ -1,6 +1,6 @@
 import OlMap from 'ol/Map'
 import { pairwise } from 'rxjs'
-import { MapSateListener } from '../../state/map/map.sate.listeners'
+import { MapSateListener } from '../../state/map/map.state.listeners'
 import { mapState } from '../../state/map/map.state'
 import { Openlayers } from './ol.service'
 
