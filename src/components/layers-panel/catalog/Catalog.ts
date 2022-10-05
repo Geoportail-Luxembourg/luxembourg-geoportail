@@ -1,18 +1,14 @@
 import { html, LitElement, TemplateResult } from 'lit'
 import { customElement, state } from 'lit/decorators'
-
-import './layer-tree/layer-tree-node.component'
 import { Subscription } from 'rxjs'
-import { themesService } from '../../../services/themes.service'
+import { themesService } from '../../../services/themes/themes.service'
 import { mapState } from '../../../state/map/map.state'
 import { Layer } from '../../../state/map/map.state.model'
+
+import './layer-tree/layer-tree-node.component'
 import { themesToLayerTree } from './layer-tree/layer-tree.mapper'
-import {
-  LayerTreeNodeModel,
-  ThemeNodeModel,
-} from './layer-tree/layer-tree.model'
+import { LayerTreeNodeModel } from './layer-tree/layer-tree.model'
 import { layerTreeState } from './layer-tree/layer-tree.service'
-import { themesApi } from './themes.api'
 
 @customElement('lux-catalog')
 export class Catalog extends LitElement {
@@ -22,12 +18,8 @@ export class Catalog extends LitElement {
 
   constructor() {
     super()
-
-    themesApi.fetchThemes().then(config => {
-      themesService.themes = config.themes.find(
-        (theme: ThemeNodeModel) => theme.name == 'main'
-      )
-      this.layerTree = themesToLayerTree(themesService.themes)
+    themesService.theme$.subscribe(theme => {
+      this.layerTree = themesToLayerTree(theme)
 
       this.subscription.add(
         mapState.map$.subscribe(mapContext => {
