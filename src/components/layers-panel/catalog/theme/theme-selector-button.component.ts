@@ -4,8 +4,8 @@ import { LuxTheme } from './theme.model'
 
 @customElement('lux-theme-selector-button')
 export class ThemeSelectorButton extends LitElement {
-  @property({ type: Object }) themes: LuxTheme[]
-  @property({ type: Object }) currentTheme: LuxTheme
+  @property({ type: Object }) themes?: LuxTheme[]
+  @property({ type: Object }) currentTheme?: LuxTheme
 
   render() {
     return html` <div

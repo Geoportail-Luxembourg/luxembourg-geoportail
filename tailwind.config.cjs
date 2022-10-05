@@ -3,7 +3,6 @@ const themes = ['main', 'tourisme', 'environnement', 'eau']
 /** @type {import('tailwindcss').Config} */
 module.exports = {
   content: ['index.html', './src/**/*.{html,js,ts}'],
-  safelist: generateThemeSafelist(),
   theme: {
     container: {
       center: true,
@@ -89,6 +88,7 @@ module.exports = {
     'hd:bg-topo_sm_hi',
     'hd:bg-ortho_sm_hi',
     'hd:bg-hybrid_sm_hi',
+    ...generateThemeSafelist(),
   ],
   plugins: [],
 }

@@ -4,7 +4,7 @@ import { LuxTheme } from './theme.model'
 
 @customElement('lux-theme-grid')
 export class ThemeGrid extends LitElement {
-  @property({ type: Object }) themes: LuxTheme[]
+  @property({ type: Object }) themes?: LuxTheme[]
 
   render() {
     return html`${this.themes?.map(
