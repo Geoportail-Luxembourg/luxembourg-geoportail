@@ -1,4 +1,5 @@
-import { LayerTreeNodeModel, ThemeNodeModel } from './layer-tree.model'
+import { ThemeNodeModel } from '../../../../services/themes/themes.model'
+import { LayerTreeNodeModel } from './layer-tree.model'
 
 export function themesToLayerTree(
   node: ThemeNodeModel,
@@ -11,6 +12,6 @@ export function themesToLayerTree(
     depth,
     children: children?.map(child => themesToLayerTree(child, depth + 1)),
     checked: false,
-    expanded: metadata?.is_expanded,
+    expanded: metadata?.is_expanded || false,
   }
 }

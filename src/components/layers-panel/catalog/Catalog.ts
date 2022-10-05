@@ -1,6 +1,7 @@
 import { html, LitElement, TemplateResult } from 'lit'
 import { customElement, state } from 'lit/decorators'
 import { Subscription } from 'rxjs'
+import { ThemeNodeModel } from '../../../services/themes/themes.model'
 import { themesService } from '../../../services/themes/themes.service'
 import { mapState } from '../../../state/map/map.state'
 import { Layer } from '../../../state/map/map.state.model'
@@ -19,7 +20,7 @@ export class Catalog extends LitElement {
   constructor() {
     super()
     themesService.theme$.subscribe(theme => {
-      this.layerTree = themesToLayerTree(theme)
+      this.layerTree = themesToLayerTree(theme as ThemeNodeModel)
 
       this.subscription.add(
         mapState.map$.subscribe(mapContext => {

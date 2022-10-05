@@ -1,9 +1,4 @@
-type Metadata = Partial<{
-  is_queryable: boolean
-  metadata_id: string
-  attribution: string
-}>
-export type LayerType = 'WMS' | 'WFS'
+import { LayerType, Metadata } from '../../services/themes/themes.model'
 
 export interface Layer {
   id: number
