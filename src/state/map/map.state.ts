@@ -4,7 +4,7 @@ import { Layer, MapContext } from './map.state.model'
 const initialState: MapContext = {}
 
 export class MapState {
-  mapContext: MapContext = initialState
+  private mapContext: MapContext = initialState
   map$ = new BehaviorSubject<MapContext>(this.mapContext)
   layers$ = new BehaviorSubject<Layer[]>([])
 
@@ -14,6 +14,7 @@ export class MapState {
       layers: [...(this.mapContext.layers || []), layer],
     }
     this.map$.next(this.mapContext)
+    this.layers$.next(this.mapContext.layers || [])
   }
 
   removeLayer(layerId: number) {

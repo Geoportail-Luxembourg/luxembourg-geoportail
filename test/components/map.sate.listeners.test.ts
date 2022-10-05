@@ -49,6 +49,7 @@ const LAYER_2: Layer = {
   name: 'layer 3',
   type: 'WMS',
   layers: 'layer_3',
+  imageType: 'image/png',
 }
 
 const LAYER_3: Layer = {
@@ -56,6 +57,7 @@ const LAYER_3: Layer = {
   name: 'layer 3',
   type: 'WMS',
   layers: 'layer_3',
+  imageType: 'image/png',
 }
 
 const getEmptyContext = () => ({})

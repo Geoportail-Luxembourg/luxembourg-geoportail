@@ -16,12 +16,6 @@ export interface Layer {
   dimensions?: {}
   style?: string
 }
-export interface Group {
-  id: number
-  icon?: string
-  childrenIds: number[]
-}
-export type LayerTreeNode = Layer | Group
 
 export interface MapContext {
   layers?: Layer[]
