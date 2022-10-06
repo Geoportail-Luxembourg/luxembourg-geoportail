@@ -6,6 +6,7 @@ import { customElement } from 'lit/decorators.js'
 import '../components/layers-panel/LayerPanel'
 import '../components/nav-bars/LanguageSelector'
 import '../components/background-selector/background-selector.component'
+import '../components/map/map.container'
 
 @customElement('luxembourg-home-page')
 export class LuxembourgHomePage extends LitElement {
@@ -23,7 +24,9 @@ export class LuxembourgHomePage extends LitElement {
           <div class="w-80 bg-main-secondary text-white">
             <lux-layer-panel></lux-layer-panel>
           </div>
-          <div class="grow bg-blue-100"></div>
+          <div class="grow bg-blue-100">
+            <lux-map-container></lux-map-container>
+          </div>
           <background-selector
             class="absolute right-1 top-16"
           ></background-selector>

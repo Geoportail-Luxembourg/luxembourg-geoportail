@@ -1,47 +1,58 @@
 import { html, LitElement, TemplateResult } from 'lit'
 import { customElement, state } from 'lit/decorators'
+import { Subscription } from 'rxjs'
+import { ThemeNodeModel } from '../../../services/themes/themes.model'
+import { themesService } from '../../../services/themes/themes.service'
+import { mapState } from '../../../state/map/map.state'
+import { Layer } from '../../../state/map/map.state.model'
 
 import './layer-tree/layer-tree-node.component'
 import { themesToLayerTree } from './layer-tree/layer-tree.mapper'
-import {
-  LayerTreeNodeModel,
-  ThemeNodeModel,
-} from './layer-tree/layer-tree.model'
+import { LayerTreeNodeModel } from './layer-tree/layer-tree.model'
 import { layerTreeState } from './layer-tree/layer-tree.service'
-import { themesApi } from './themes.api'
 
 @customElement('lux-catalog')
 export class Catalog extends LitElement {
   @state()
   private layerTree: LayerTreeNodeModel | undefined
+  private subscription = new Subscription()
 
   constructor() {
     super()
-    themesApi
-      .fetchThemes()
-      .then(
-        config =>
-          (this.layerTree = themesToLayerTree(
-            config.themes.find((theme: ThemeNodeModel) => theme.name == 'main')
-          ))
+    themesService.theme$.subscribe(theme => {
+      this.layerTree = themesToLayerTree(theme as ThemeNodeModel)
+
+      this.subscription.add(
+        mapState.map$.subscribe(mapContext => {
+          this.layerTree = layerTreeState.updateLayers(
+            this.layerTree as LayerTreeNodeModel,
+            mapContext.layers
+          )
+        })
       )
+    })
   }
 
   private toggleParent(event: Event) {
-    const nodeId = (event as CustomEvent).detail
+    const node = (event as CustomEvent).detail
+
     this.layerTree = layerTreeState.toggleNode(
-      nodeId,
+      node.id,
       this.layerTree as LayerTreeNodeModel,
       'expanded'
     )
   }
+
   private toggleLayer(event: Event) {
-    const nodeId = (event as CustomEvent).detail
-    this.layerTree = layerTreeState.toggleNode(
-      nodeId,
-      this.layerTree as LayerTreeNodeModel,
-      'checked'
-    )
+    const node = (event as CustomEvent).detail
+    const layer = themesService.findById(node.id)
+    if (layer) {
+      if (node.checked === true) {
+        mapState.removeLayer(layer.id)
+      } else {
+        mapState.addLayer(layer as unknown as Layer)
+      }
+    }
   }
 
   render(): TemplateResult {
@@ -52,6 +63,11 @@ export class Catalog extends LitElement {
         @layer-toggle="${this.toggleLayer}"
       ></lux-layer-tree-node>
     `
+  }
+
+  disconnectedCallback() {
+    this.subscription.unsubscribe()
+    super.disconnectedCallback()
   }
 
   override createRenderRoot() {

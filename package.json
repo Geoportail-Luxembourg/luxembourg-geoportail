@@ -15,7 +15,9 @@
     "i18next-http-backend": "^1.4.4",
     "i18next-parser": "^6.5.0",
     "lit": "^2.1.2",
+    "ol": "^7.1.0",
     "postcss": "^8.4.14",
+    "rxjs": "^7.5.7",
     "twind": "^0.16.17"
   },
   "devDependencies": {
