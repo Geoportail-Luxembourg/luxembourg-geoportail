@@ -1,12 +1,12 @@
 import { html, LitElement, TemplateResult } from 'lit'
 import { customElement, state } from 'lit/decorators'
 import { Subscription } from 'rxjs'
-import { ThemeNodeModel } from '../../../../services/themes/themes.model'
-import { themesService } from '../../../../services/themes/themes.service'
-import { themingService } from './theming.service'
+import { ThemeNodeModel } from '../../../services/themes/themes.model'
+import { themesService } from '../../../services/themes/themes.service'
+import { themingService } from './theme/theming.service'
 
-import './theme-grid.component'
-import './theme-selector-button.component'
+import './theme/theme-grid.component'
+import './theme/theme-selector-button.component'
 
 @customElement('lux-theme-selector')
 export class ThemeSelector extends LitElement {
