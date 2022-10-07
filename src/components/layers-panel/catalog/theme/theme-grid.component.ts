@@ -1,17 +1,17 @@
 import { html, LitElement } from 'lit'
 import { customElement, property } from 'lit/decorators.js'
-import { LuxTheme } from './theme.model'
+import { ThemeNodeModel } from '../../../../services/themes/themes.model'
 
 @customElement('lux-theme-grid')
 export class ThemeGrid extends LitElement {
-  @property({ type: Object }) themes?: LuxTheme[]
+  @property({ type: Object }) themes?: ThemeNodeModel[]
 
   render() {
     return html`${this.themes?.map(
       theme =>
         html`<button
-          class="shrink-0 flex flex-col justify-between h-[150] w-1/2 pt-5 pb-1 px-[10] text-start text-gray-100/40 uppercase bg-${theme.name}-primary"
-          @click="${() => this.setTheme(theme)}"
+          class="shrink-0 flex flex-col justify-between h-[150] w-1/2 pt-5 pb-1 px-2.5 text-start text-gray-100/40 uppercase bg-${theme.name}-primary hover:bg-[#ccc]"
+          @click="${() => this.setTheme(theme.name)}"
         >
           <div class="text-2xl">${theme.name}</div>
           <div
@@ -21,10 +21,10 @@ export class ThemeGrid extends LitElement {
     )} `
   }
 
-  setTheme(theme: LuxTheme) {
+  setTheme(themeName: string) {
     const event = new CustomEvent(`set-theme`, {
       bubbles: true,
-      detail: theme,
+      detail: themeName,
     })
     this.dispatchEvent(event)
   }

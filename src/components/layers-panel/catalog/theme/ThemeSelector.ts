@@ -1,32 +1,32 @@
 import { html, LitElement, TemplateResult } from 'lit'
 import { customElement, state } from 'lit/decorators'
 import { Subscription } from 'rxjs'
+import { ThemeNodeModel } from '../../../../services/themes/themes.model'
+import { themesService } from '../../../../services/themes/themes.service'
+import { themingService } from './theming.service'
 
 import './theme-grid.component'
 import './theme-selector-button.component'
-import { LuxTheme } from './theme.model'
-import { LuxThemeService, ThemeService } from './theme.service'
 
 @customElement('lux-theme-selector')
 export class ThemeSelector extends LitElement {
   @state()
   private isOpen = false
   @state()
-  private currentTheme?: LuxTheme
+  private currentTheme?: ThemeNodeModel
   @state()
-  private themes?: LuxTheme[]
-  private themeService: ThemeService
+  private themes?: ThemeNodeModel[]
   private currentThemeSubscription: Subscription
   private themesSubscription: Subscription
   constructor() {
     super()
-    this.themeService = LuxThemeService
-    this.currentThemeSubscription = this.themeService.currentTheme$.subscribe(
-      theme => {
+    this.currentThemeSubscription = themesService.theme$.subscribe(theme => {
+      if (theme) {
         this.currentTheme = theme
+        themingService.setCurrentThemeColors(theme)
       }
-    )
-    this.themesSubscription = this.themeService.themes$.subscribe(themes => {
+    })
+    this.themesSubscription = themesService.themes$.subscribe(themes => {
       this.themes = themes
     })
   }
@@ -38,15 +38,17 @@ export class ThemeSelector extends LitElement {
   render(): TemplateResult {
     return html`
       <lux-theme-selector-button
-        @toggle-themes="${this.toggleThemesGrid}"
-        themes="${JSON.stringify(this.themes)}"
-        currentTheme="${JSON.stringify(this.currentTheme)}"
+        @click="${this.toggleThemesGrid}"
+        .themes="${this.themes}"
+        .currentTheme="${this.currentTheme}"
       ></lux-theme-selector-button>
       ${this.isOpen
-        ? html` <div class="absolute w-[300] bg-white">
+        ? html` <div
+            class="absolute w-[310] mt-2 bg-white h-4/5 overflow-y-auto overflow-x-hidden"
+          >
             <lux-theme-grid
               @set-theme="${this.setTheme}"
-              themes="${JSON.stringify(this.themes)}"
+              .themes="${this.themes}"
               class="flex flex-row flex-wrap"
             ></lux-theme-grid>
           </div>`
@@ -55,7 +57,7 @@ export class ThemeSelector extends LitElement {
   }
 
   setTheme(event: CustomEvent) {
-    this.themeService.setCurrentTheme(event.detail)
+    themesService.setTheme(event.detail)
   }
 
   disconnectedCallback() {
