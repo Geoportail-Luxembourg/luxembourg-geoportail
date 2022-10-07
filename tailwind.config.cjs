@@ -1,4 +1,4 @@
-const themes = ['main', 'tourisme', 'environnement', 'eau']
+const themes = ['main', 'tourisme', 'emwelt', 'eau']
 
 /** @type {import('tailwindcss').Config} */
 module.exports = {
@@ -62,7 +62,7 @@ module.exports = {
       content: {
         main: '"\\e02d"',
         tourisme: '"\\e90c"',
-        environnement: '"\\e909"',
+        emwelt: '"\\e909"',
         eau: '"\\e016"',
       },
     },
