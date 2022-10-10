@@ -8,9 +8,15 @@
     format('woff');
 }
 
+@font-face {
+  font-family: 'geoportail-icons';
+  src: url('https://map.geoportail.lu/static-ngeo/geoportail-icons.6a5340.woff')
+    format('woff');
+}
+
 @layer components {
   .lux-primary {
-    @apply bg-main-tertiary text-main-secondary px-2 py-1.5 uppercase;
+    @apply bg-tertiary text-secondary px-2 py-1.5 uppercase;
   }
 
   .lux-panel-title {
@@ -21,5 +27,25 @@
   }
   .lux-bg-sel-icon-bg-length {
     @apply bg-[length:41px_41px] md:bg-[length:90px_50px];
+  }
+}
+
+@layer base {
+  :root {
+    --color-primary: #2980b9;
+    --color-secondary: #97bbd3;
+    --color-tertiary: #1f5d87;
+    --main-primary: #2980b9;
+    --main-secondary: #97bbd3;
+    --main-tertiary: #1f5d87;
+    --tourisme-primary: #e84c3d;
+    --tourisme-secondary: #e88c83;
+    --tourisme-tertiary: #a50f15;
+    --emwelt-primary: #558b2f;
+    --emwelt-secondary: #85bb5c;
+    --emwelt-tertiary: #255d00;
+    --eau-primary: #03a2ac;
+    --eau-secondary: #45cdd6;
+    --eau-tertiary: #078f98;
   }
 }
