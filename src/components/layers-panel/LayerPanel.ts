@@ -1,5 +1,5 @@
-import { html, LitElement, TemplateResult } from 'lit'
-import { customElement } from 'lit/decorators'
+import { html, css, LitElement, TemplateResult } from 'lit'
+import { customElement, state } from 'lit/decorators'
 import i18next from 'i18next'
 import { i18nMixin } from '../../mixins/i18n-lit-element'
 import './catalog/remote-layers/remote-layers'
@@ -7,6 +7,11 @@ import './catalog/CatalogTab'
 
 @customElement('lux-layer-panel')
 export class LayerPanel extends i18nMixin(LitElement) {
+  @state() myLayersOpen = true
+  static styles = css`
+    :tab-selector-active { basis-1/2 bg-primary hover:bg-primary cursor-pointer text-center uppercase }
+    :tab-selector-inactive { basis-1/2 bg-primary hover:bg-primary cursor-pointer text-center uppercase }
+  `
   render(): TemplateResult {
     return html`
       <div class="flex flex-col h-full">
@@ -15,9 +20,32 @@ export class LayerPanel extends i18nMixin(LitElement) {
             ${i18next.t('Layers', { ns: 'client' })}
           </div>
         </div>
+        <!--selector tab-->
+        <div class="flex flex-row gap-2 h-10 text-2xl">
+          <div
+            @click="${() => (this.myLayersOpen = true)}"
+            class="basis-1/2 hover:bg-primary cursor-pointer text-center uppercase  ${this
+              .myLayersOpen
+              ? 'bg-primary'
+              : 'bg-tertiary'}"
+          >
+            ${i18next.t('my_layers', { ns: 'client' })}
+          </div>
+          <div
+            @click="${() => (this.myLayersOpen = false)}"
+            class="basis-1/2 hover:bg-primary cursor-pointer text-center uppercase  ${!this
+              .myLayersOpen
+              ? 'bg-primary'
+              : 'bg-tertiary'}"
+          >
+            ${i18next.t('Catalog', { ns: 'client' })}
+          </div>
+        </div>
         <!--catalog tab-->
         <div class="relative grow p-2.5 bg-primary overflow-auto">
-          <lux-catalog-tab></lux-catalog-tab>
+          ${!this.myLayersOpen
+            ? html`<lux-catalog-tab></lux-catalog-tab>`
+            : html`<lux-layer-manager></lux-layer-manager>`}
         </div>
         <lux-remote-layers></lux-remote-layers>
       </div>
