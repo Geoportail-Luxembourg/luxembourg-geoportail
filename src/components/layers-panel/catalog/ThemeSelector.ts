@@ -58,6 +58,7 @@ export class ThemeSelector extends LitElement {
 
   setTheme(event: CustomEvent) {
     themesService.setTheme(event.detail)
+    this.toggleThemesGrid()
   }
 
   disconnectedCallback() {
