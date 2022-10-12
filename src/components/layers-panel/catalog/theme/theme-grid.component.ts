@@ -1,9 +1,11 @@
 import { html, LitElement } from 'lit'
 import { customElement, property } from 'lit/decorators.js'
 import { ThemeNodeModel } from '../../../../services/themes/themes.model'
+import i18next from 'i18next'
+import { i18nMixin } from '../../../../mixins/i18n-lit-element'
 
 @customElement('lux-theme-grid')
-export class ThemeGrid extends LitElement {
+export class ThemeGrid extends i18nMixin(LitElement) {
   @property({ type: Object }) themes?: ThemeNodeModel[]
 
   render() {
@@ -13,7 +15,7 @@ export class ThemeGrid extends LitElement {
           class="shrink-0 flex flex-col justify-between h-[150] w-1/2 pt-5 pb-1 px-2.5 text-start text-gray-100/40 uppercase bg-${theme.name}-primary hover:bg-[#ccc]"
           @click="${() => this.setTheme(theme.name)}"
         >
-          <div class="text-2xl">${theme.name}</div>
+          <div class="text-2xl">${i18next.t(`${theme.name}`)}</div>
           <div
             class="text-6xl align-baseline after:content-${theme.name} after:font-icons"
           ></div>
