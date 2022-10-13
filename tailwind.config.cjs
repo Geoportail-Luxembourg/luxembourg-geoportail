@@ -1,4 +1,37 @@
-const themes = ['main', 'tourisme', 'emwelt', 'eau']
+const themes = [
+  'main',
+  'tourisme',
+  'emwelt',
+  'eau',
+  'pag',
+  'agriculture',
+  'lenoz',
+  'preizerdaul' /*THEME NOT LISTED ON MIGRATION*/,
+  'wellenstein' /*THEME NOT LISTED ON MIGRATION*/,
+  'lintgen' /*THEME NOT LISTED ON MIGRATION*/,
+  'remich' /*THEME NOT LISTED ON MIGRATION*/,
+  'at',
+  'cadastre_hertzien',
+  'urban_farming',
+  'energie',
+  'atlas_demographique',
+  'logement',
+  'np_our' /*USED ON PROD BUT NOT MIGRATION*/,
+  'geosciences' /*USED ON PROD BUT NOT MIGRATION*/,
+  'ahc' /*USED ON PROD BUT NOT MIGRATION*/,
+]
+
+/** ARE FOLLOWING THEMES NEEDED?
+ * municipalities
+ * Amenagement_du_territoire
+ * Environnement_naturel
+ * Environnement_humain
+ * Occupation_du_sol
+ * intranet-at
+ * prof
+ * go
+ * sig_secours
+ */
 
 /** @type {import('tailwindcss').Config} */
 module.exports = {
@@ -61,9 +94,25 @@ module.exports = {
       },
       content: {
         main: '"\\e02d"',
-        tourisme: '"\\e90c"',
-        emwelt: '"\\e909"',
+        tourisme: '"\\e90c"', //Font: "Geoportail-Grande-Region"
+        emwelt: '"\\e909"', //Font: "Geoportail-Grande-Region"
         eau: '"\\e016"',
+        pag: '"\\e018"',
+        agriculture: '"\\e901"', //Font: "Geoportail-Grande-Region"
+        lenoz: '"\\e01A"',
+        preizerdaul: '"\\e00c"',
+        wellenstein: '"\\e00c"',
+        lintgen: '"\\e00c"',
+        remich: '"\\e00c"',
+        at: '"\\e902"', //Font: "Geoportail-Grande-Region"
+        cadastre_hertzien: '"\\e02d"',
+        urban_farming: '"\\e901"', //Font: "urban-farming"
+        energie: '"\\e906"', //Font: "Geoportail-Grande-Region"
+        atlas_demographique: '"\\e900"', //Font: "statec-icons"
+        logement: '"\\e903"', //Font: "urban-farming"
+        np_our: '"\\e005"',
+        geosciences: '"\\e909"', //Font: "urban-farming"
+        ahc: '"\\e016"',
       },
     },
   },
