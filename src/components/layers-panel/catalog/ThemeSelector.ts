@@ -27,7 +27,9 @@ export class ThemeSelector extends LitElement {
       }
     })
     this.themesSubscription = themesService.themes$.subscribe(themes => {
-      this.themes = themes
+      this.themes = themes.filter(
+        theme => theme.metadata?.display_in_switcher === true
+      )
     })
   }
 
@@ -44,7 +46,7 @@ export class ThemeSelector extends LitElement {
       ></lux-theme-selector-button>
       ${this.isOpen
         ? html` <div
-            class="absolute w-[310] mt-2 bg-white h-4/5 overflow-y-auto overflow-x-hidden"
+            class="absolute w-[310] mt-2 bg-primary h-4/5 overflow-y-auto overflow-x-hidden"
           >
             <lux-theme-grid
               @set-theme="${this.setTheme}"
