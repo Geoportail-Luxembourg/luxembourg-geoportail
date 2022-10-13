@@ -95,5 +95,32 @@
     --ahc-primary: #ff5722;
     --ahc-secondary: #ff8a50;
     --ahc-tertiary: #c41c00;
+    --municipalities-primary: #9e9ac8;
+    --municipalities-secondary: #cbc9e2;
+    --municipalities-tertiary: #756bb1;
+    --Amenagement_du_territoire-primary: #f4511e;
+    --Amenagement_du_territoire-secondary: #ff844c;
+    --Amenagement_du_territoire-tertiary: #b91400;
+    --Environnement_naturel-primary: #879d31;
+    --Environnement_naturel-secondary: #bacd81;
+    --Environnement_naturel-tertiary: #627529;
+    --Environnement_humain-primary: #558b2f;
+    --Environnement_humain-secondary: #85bb5c;
+    --Environnement_humain-tertiary: #255d00;
+    --Occupation_du_sol-primary: #8d6e63;
+    --Occupation_du_sol-secondary: #bd9b8f;
+    --Occupation_du_sol-tertiary: #5e4238;
+    --intranet-at-primary: #9e9ac8;
+    --intranet-at-secondary: #cbc9e2;
+    --intranet-at-tertiary: #756bb1;
+    --prof-primary: #006d2c;
+    --prof-secondary: #99d8c9;
+    --prof-tertiary: #238b45;
+    --go-primary: #555;
+    --go-secondary: #bbb;
+    --go-tertiary: #756bb1;
+    --sig_secours-primary: #2979ff;
+    --sig_secours-secondary: #75a7ff;
+    --sig_secours-tertiary: #004ecb;
   }
 }

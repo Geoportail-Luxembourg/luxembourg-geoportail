@@ -6,10 +6,10 @@ const themes = [
   'pag',
   'agriculture',
   'lenoz',
-  'preizerdaul' /*THEME NOT LISTED ON MIGRATION*/,
-  'wellenstein' /*THEME NOT LISTED ON MIGRATION*/,
-  'lintgen' /*THEME NOT LISTED ON MIGRATION*/,
-  'remich' /*THEME NOT LISTED ON MIGRATION*/,
+  'preizerdaul' /*PRIVATE THEME*/,
+  'wellenstein' /*PRIVATE THEME*/,
+  'lintgen' /*PRIVATE THEME*/,
+  'remich' /*PRIVATE THEME*/,
   'at',
   'cadastre_hertzien',
   'urban_farming',
@@ -19,6 +19,15 @@ const themes = [
   'np_our' /*USED ON PROD BUT NOT MIGRATION*/,
   'geosciences' /*USED ON PROD BUT NOT MIGRATION*/,
   'ahc' /*USED ON PROD BUT NOT MIGRATION*/,
+  'municipalities' /*PRIVATE THEME*/,
+  'Amenagement_du_territoire' /*PRIVATE THEME*/,
+  'Environnement_naturel' /*PRIVATE THEME*/,
+  'Environnement_humain' /*PRIVATE THEME*/,
+  'Occupation_du_sol' /*PRIVATE THEME*/,
+  'intranet-at' /*PRIVATE THEME*/,
+  'prof' /*PRIVATE THEME*/,
+  'go' /*PRIVATE THEME*/,
+  'sig_secours' /*PRIVATE THEME*/,
 ]
 
 /** ARE FOLLOWING THEMES NEEDED?
@@ -113,6 +122,15 @@ module.exports = {
         np_our: '"\\e005"',
         geosciences: '"\\e909"', //Font: "urban-farming"
         ahc: '"\\e016"',
+        municipalities: '"\\e900"', //Font: "Geoportail-Grande-Region"
+        Amenagement_du_territoire: '"\\e902"', //Font: "Geoportail-Grande-Region"
+        Environnement_naturel: '"\\e909"', //Font: "Geoportail-Grande-Region"
+        Environnement_humain: '"\\e906"', //Font: "Geoportail-Grande-Region"
+        Occupation_du_sol: '"\\e90f"', //Font: "Geoportail-Grande-Region"
+        'intranet-at': '"\\e018"',
+        prof: '"\\e00a"',
+        go: '"\\e00b"',
+        sig_secours: '"\\e00a"',
       },
     },
   },
