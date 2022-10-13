@@ -4,14 +4,12 @@ import i18next from 'i18next'
 import { i18nMixin } from '../../mixins/i18n-lit-element'
 import './catalog/remote-layers/remote-layers'
 import './catalog/CatalogTab'
+import './layer-manager/LayerManager'
 
 @customElement('lux-layer-panel')
 export class LayerPanel extends i18nMixin(LitElement) {
   @state() myLayersOpen = true
-  static styles = css`
-    :tab-selector-active { basis-1/2 bg-primary hover:bg-primary cursor-pointer text-center uppercase }
-    :tab-selector-inactive { basis-1/2 bg-primary hover:bg-primary cursor-pointer text-center uppercase }
-  `
+
   render(): TemplateResult {
     return html`
       <div class="flex flex-col h-full">
