@@ -12,12 +12,14 @@ export class ThemeGrid extends i18nMixin(LitElement) {
     return html`${this.themes?.map(
       theme =>
         html`<button
-          class="shrink-0 flex flex-col justify-between h-[150] w-1/2 pt-5 pb-1 px-2.5 text-start text-gray-100/40 uppercase bg-${theme.name}-primary hover:bg-[#ccc]"
+          class="relative shrink-0 h-[150] w-1/2 px-2.5 text-start text-gray-100/40 uppercase bg-${theme.name}-primary hover:bg-[#ccc]"
           @click="${() => this.setTheme(theme.name)}"
         >
-          <div class="text-2xl">${i18next.t(`${theme.name}`)}</div>
+          <div class="text-2xl absolute top-5">
+            ${i18next.t(`${theme.name}`)}
+          </div>
           <div
-            class="text-6xl align-baseline after:content-${theme.name} after:font-icons"
+            class="text-6xl absolute bottom-1 after:content-${theme.name} after:font-icons"
           ></div>
         </button>`
     )} `
