@@ -10,8 +10,7 @@
 
 @font-face {
   font-family: 'geoportail-icons';
-  src: url('https://map.geoportail.lu/static-ngeo/geoportail-icons.6a5340.woff')
-    format('woff');
+  src: url('/assets/fonts/geoportail-icons.woff') format('woff');
 }
 
 @layer components {

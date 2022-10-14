@@ -30,18 +30,6 @@ const themes = [
   'sig_secours' /*PRIVATE THEME*/,
 ]
 
-/** ARE FOLLOWING THEMES NEEDED?
- * municipalities
- * Amenagement_du_territoire
- * Environnement_naturel
- * Environnement_humain
- * Occupation_du_sol
- * intranet-at
- * prof
- * go
- * sig_secours
- */
-
 /** @type {import('tailwindcss').Config} */
 module.exports = {
   content: ['index.html', './src/**/*.{html,js,ts}'],
@@ -103,30 +91,30 @@ module.exports = {
       },
       content: {
         main: '"\\e02d"',
-        tourisme: '"\\e90c"', //Font: "Geoportail-Grande-Region"
-        emwelt: '"\\e909"', //Font: "Geoportail-Grande-Region"
+        tourisme: '"\\e04e"',
+        emwelt: '"\\e04b"',
         eau: '"\\e016"',
         pag: '"\\e018"',
-        agriculture: '"\\e901"', //Font: "Geoportail-Grande-Region"
+        agriculture: '"\\e043"',
         lenoz: '"\\e01A"',
         preizerdaul: '"\\e00c"',
         wellenstein: '"\\e00c"',
         lintgen: '"\\e00c"',
         remich: '"\\e00c"',
-        at: '"\\e902"', //Font: "Geoportail-Grande-Region"
+        at: '"\\e044"',
         cadastre_hertzien: '"\\e02d"',
-        urban_farming: '"\\e901"', //Font: "urban-farming"
-        energie: '"\\e906"', //Font: "Geoportail-Grande-Region"
-        atlas_demographique: '"\\e900"', //Font: "statec-icons"
-        logement: '"\\e903"', //Font: "urban-farming"
+        urban_farming: '"\\e054"',
+        energie: '"\\e048"',
+        atlas_demographique: '"\\e05c"',
+        logement: '"\\e055"',
         np_our: '"\\e005"',
-        geosciences: '"\\e909"', //Font: "urban-farming"
+        geosciences: '"\\e05b"',
         ahc: '"\\e016"',
-        municipalities: '"\\e900"', //Font: "Geoportail-Grande-Region"
-        Amenagement_du_territoire: '"\\e902"', //Font: "Geoportail-Grande-Region"
-        Environnement_naturel: '"\\e909"', //Font: "Geoportail-Grande-Region"
-        Environnement_humain: '"\\e906"', //Font: "Geoportail-Grande-Region"
-        Occupation_du_sol: '"\\e90f"', //Font: "Geoportail-Grande-Region"
+        municipalities: '"\\e042"',
+        Amenagement_du_territoire: '"\\e044"',
+        Environnement_naturel: '"\\e04b"',
+        Environnement_humain: '"\\e048"',
+        Occupation_du_sol: '"\\e051"',
         'intranet-at': '"\\e018"',
         prof: '"\\e00a"',
         go: '"\\e00b"',
