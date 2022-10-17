@@ -4,8 +4,15 @@ import { ThemeNodeModel } from './themes.model'
 
 export class ThemesService {
   private theme: ThemeNodeModel
+  private bgLayers: ThemeNodeModel[]
 
   config$ = from(themesApi.fetchThemes())
+  bgLayers$ = this.config$.pipe(
+    map(config => config),
+    filter(config => !!config),
+    map(config => config?.background_layers),
+    tap(bgLayers => this.bgLayers = bgLayers as ThemeNodeModel[])
+  )
   themes$ = this.config$.pipe(map(config => config?.themes))
   themeName$ = new BehaviorSubject('main')
   theme$ = combineLatest([this.themes$, this.themeName$]).pipe(
@@ -28,6 +35,10 @@ export class ThemesService {
         }
       }
     }
+  }
+
+  findBgLayerById(id: number) {
+    return this.bgLayers.find(l => l.id === id)
   }
 
   setTheme(name: string) {

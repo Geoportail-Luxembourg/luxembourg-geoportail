@@ -1,37 +1,72 @@
-import { BehaviorSubject } from 'rxjs'
+import { Subscription, BehaviorSubject } from 'rxjs'
+import { themesService } from '../services/themes/themes.service'
+import { mapState } from '../state/map/map.state'
+import { Layer } from '../state/map/map.state.model'
 
 export interface LuxBgLayer {
-  name: string
+  name: string,
+  id: number,
 }
 
 export class BgLayerService {
+  private subscription = new Subscription()
+
   bgLayers: LuxBgLayer[] = [
     {
       name: 'route',
+      id: 556,
     },
     {
       name: 'topo',
+      id: 529,
     },
     {
       name: 'topo_bw',
+      id: 502,
     },
     {
       name: 'ortho',
+      id: 530,
     },
     {
       name: 'hybrid',
+      id: 501,
     },
     {
       name: 'white',
+      id: 0,
     },
   ]
   bgLayers$ = new BehaviorSubject<LuxBgLayer[]>(this.bgLayers)
   activeBgLayer$ = new BehaviorSubject<LuxBgLayer>(this.bgLayers[0])
 
-  constructor() {}
+  constructor() {
+    themesService.bgLayers$.subscribe(bgLayers =>
+      this.subscription.add(
+        this.activeBgLayer$.subscribe(layer => {
+          this.setMapBackground(layer)
+        })
+      )
+    )
+  }
+
+  disconnectedCallback() {
+    this.subscription.unsubscribe()
+  }
 
   setBgLayer(bgLayer: LuxBgLayer) {
     this.activeBgLayer$.next(bgLayer)
+  }
+
+  setMapBackground(bgLayer: LuxBgLayer) {
+    let currentLowestLayer = (mapState.getLayer(0))
+    if (currentLowestLayer && this.bgLayers.find(l => l.name === currentLowestLayer.name)) {
+      mapState.removeLayer(0)
+    }
+    let newBgLayer = themesService.findBgLayerById (bgLayer.id)
+    if (newBgLayer) {
+      mapState.insertLayer(newBgLayer as unknown as Layer, 0)
+    }
   }
 }
 

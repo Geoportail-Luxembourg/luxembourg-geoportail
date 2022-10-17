@@ -1,6 +1,7 @@
 import BaseLayer from 'ol/layer/Base'
 import ImageLayer from 'ol/layer/Image'
 import TileLayer from 'ol/layer/Tile'
+import WmtsTileGrid from 'ol/tilegrid/WMTS'
 import OlMap from 'ol/Map'
 import { ImageWMS, WMTS } from 'ol/source'
 import { layersCache } from '../../states/layers/layers.cache'
@@ -35,8 +36,29 @@ function createWmsLayer(layer: Layer): ImageLayer<ImageWMS> {
   return olLayer
 }
 
-export class OpenLayersService {
-  createLayer(spec: Layer): ImageLayer<ImageWMS> | TileLayer<WMTS> {
+function createWmtsLayer(layer: Layer): TileLayer<WMTS> {
+  const { name, layers, imageType, url, id } = layer
+  // options = WMTS.optionsFromCapabilities(capabilities, wmtsConfig)
+  let options = {}
+  var newLayer = new TileLayer({source: new WMTS({
+    urls: [],
+    tileGrid: new WmtsTileGrid({
+      resolutions: [],
+      matrixIds: [],
+    }),
+    layer: 'test',
+    style: 'default',
+    matrixSet: "GLOBAL_WEBMERCATOR",
+  })})
+  // var newLayer = new TileLayer({
+  //   'olcs.extent': {},  // appOlcsExtent,
+  //   source: new WMTS(options)
+  // })
+  return newLayer
+}
+
+export class Openlayers {
+  static createLayer(spec: Layer): ImageLayer<ImageWMS> | TileLayer<WMTS> {
     let layer
     switch (spec.type) {
       case 'WMS': {
