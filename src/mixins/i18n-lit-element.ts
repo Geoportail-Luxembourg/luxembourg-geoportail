@@ -21,7 +21,7 @@ export const i18nMixin = <T extends Constructor<LitElement>>(superClass: T) => {
         i18next.use(backend)
         i18next.init({
           lng: 'fr',
-          debug: true,
+          debug: false,
           defaultNS: 'client',
           supportedLngs: ['de', 'en', 'fr', 'lb'],
           ns: ['client', 'legends', 'server', 'tooltips'],

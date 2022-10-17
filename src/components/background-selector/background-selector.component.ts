@@ -1,11 +1,11 @@
-import { LuxBase } from '../lux-base.component'
 import { bgLayerService, LuxBgLayer } from '../background-layer.service'
-import { html } from 'lit'
+import { html, LitElement } from 'lit'
 import { customElement, state } from 'lit/decorators.js'
 import './background-selector-item.component'
+import { i18nMixin } from '../../mixins/i18n-lit-element'
 
 @customElement('background-selector')
-export class BackgroundSelector extends LuxBase {
+export class BackgroundSelector extends i18nMixin(LitElement) {
   @state() isOpen = false
   @state() activeLayer = 'white'
   private bgLayers
