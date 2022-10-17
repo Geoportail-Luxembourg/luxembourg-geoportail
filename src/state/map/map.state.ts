@@ -17,7 +17,7 @@ export class MapState {
     this.layers$.next(this.mapContext.layers || [])
   }
 
-  removeLayer(layerId: number) {
+  removeLayer(layerId: string) {
     this.mapContext = {
       ...this.mapContext,
       layers:
