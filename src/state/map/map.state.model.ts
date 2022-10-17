@@ -6,7 +6,7 @@ export enum LayerImageType {
 }
 
 export interface Layer {
-  id: string
+  id: number | string
   name: string
   layers: string
   url?: string

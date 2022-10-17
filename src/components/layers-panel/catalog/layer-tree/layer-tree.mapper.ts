@@ -8,7 +8,7 @@ export function themesToLayerTree(
   const { name, id, children, metadata } = node
   return {
     name,
-    id,
+    id: id as string,
     depth,
     children: children?.map(child => themesToLayerTree(child, depth + 1)),
     checked: false,

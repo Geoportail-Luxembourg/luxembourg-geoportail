@@ -67,7 +67,7 @@ export class Openlayers {
     olMap.addLayer(layersCache[id])
   }
 
-  static removeLayer(olMap: OlMap, layerId: number) {
+  static removeLayer(olMap: OlMap, layerId: string) {
     const layerToRemove = olMap
       .getLayers()
       .getArray()
