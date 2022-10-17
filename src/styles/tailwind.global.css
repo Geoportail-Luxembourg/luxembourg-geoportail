@@ -27,6 +27,10 @@
   .lux-bg-sel-icon-bg-length {
     @apply bg-[length:41px_41px] md:bg-[length:90px_50px];
   }
+  .lux-btn {
+    @apply bg-white border text-primary px-2 py-1.5 mt-px hover:bg-primary hover:text-white;
+    border: 1px solid var(--button-bg-color);
+  }
 }
 
 @layer base {
@@ -121,5 +125,7 @@
     --sig_secours-primary: #2979ff;
     --sig_secours-secondary: #75a7ff;
     --sig_secours-tertiary: #004ecb;
+    --button-bg-color: #ccc;
+    --text-color-default: #333;
   }
 }
