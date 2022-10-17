@@ -23,6 +23,7 @@
   "devDependencies": {
     "@babel/core": "^7.18.13",
     "@babel/preset-env": "^7.18.10",
+    "@camptocamp/ogc-client": "^0.3.4",
     "@custom-elements-manifest/analyzer": "^0.4.17",
     "@open-wc/eslint-config": "^4.3.0",
     "@open-wc/testing": "next",
