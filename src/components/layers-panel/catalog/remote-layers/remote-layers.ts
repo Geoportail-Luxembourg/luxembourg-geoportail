@@ -33,10 +33,12 @@ export class RemoteLayer extends LitElement {
 
     this.subscription.add(
       mapState.map$.subscribe(mapContext => {
-        this.layerTree = layerTreeState.updateLayers(
-          this.layerTree as LayerTreeNodeModel,
-          mapContext.layers
-        )
+        this.layerTree = this.layerTree
+          ? layerTreeState.updateLayers(
+              this.layerTree as LayerTreeNodeModel,
+              mapContext.layers
+            )
+          : void 0
       })
     )
   }
