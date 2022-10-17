@@ -2,7 +2,8 @@ import { html, LitElement, TemplateResult } from 'lit'
 import { customElement } from 'lit/decorators'
 import i18next from 'i18next'
 import { i18nMixin } from '../../mixins/i18n-lit-element'
-
+import './catalog/remote-layers/remote-layers'
+import './catalog/remote-layers/remote-layers-catalog'
 import './catalog/CatalogTab'
 
 @customElement('lux-layer-panel')
@@ -18,6 +19,7 @@ export class LayerPanel extends i18nMixin(LitElement) {
         <!--catalog tab-->
         <div class="relative grow p-2.5 bg-primary overflow-auto">
           <lux-catalog-tab></lux-catalog-tab>
+          <lux-remote-layers></lux-remote-layers>
         </div>
       </div>
     `

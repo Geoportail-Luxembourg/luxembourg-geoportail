@@ -1,7 +1,7 @@
 export type LayerTreeToggleProperty = 'checked' | 'expanded'
 
 export interface LayerTreeNodeModel {
-  id: number
+  id: string
   name: string
   checked: boolean
   expanded: boolean
