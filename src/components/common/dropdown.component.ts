@@ -16,11 +16,11 @@ export class Dropdown extends LitElement {
   }
 
   render(): TemplateResult {
-    return html` <select class="lux-btn" @change="${this.onChange}">
+    return html`<select class="lux-btn" @change="${this.onChange}">
       ${this.placeholder
         ? html`<option value="" disabled selected>${this.placeholder}</option>`
         : ''}
-      ${this.options.map(
+      ${this.options?.map(
         option => html`<option value="${option.value}">${option.label}</option>`
       )}
     </select>`
