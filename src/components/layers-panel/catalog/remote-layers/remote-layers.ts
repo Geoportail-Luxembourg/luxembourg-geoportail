@@ -105,8 +105,7 @@ export class RemoteLayer extends LitElement {
         @change="${this.onChangeLayer}"
       ></lux-dropdown>
       <lux-remote-layers-catalog
-        class="absolute right-0 top-52"
-        style="z-index:999"
+        class="absolute right-0 top-52 z-50"
         .layerTree="${this.layerTree}"
         @parent-toggle="${this.toggleParent}"
         @layer-toggle="${this.toggleLayer}"
