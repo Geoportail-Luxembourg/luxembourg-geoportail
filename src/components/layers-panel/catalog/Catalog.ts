@@ -48,7 +48,7 @@ export class Catalog extends LitElement {
     const layer = themesService.findById(node.id)
     if (layer) {
       if (node.checked === true) {
-        mapState.removeLayer(layer.id as string)
+        mapState.removeLayer(layer.id as unknown as string)
       } else {
         mapState.addLayer(layer as unknown as Layer)
       }

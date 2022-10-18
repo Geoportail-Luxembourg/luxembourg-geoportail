@@ -53,7 +53,7 @@ export type Metadata = Partial<{
 export type LayerType = 'WMS' | 'WFS' | 'WMTS'
 
 export interface ThemeNodeModel {
-  id: number | string
+  id: number
   name: string
   icon?: string
   layers?: string

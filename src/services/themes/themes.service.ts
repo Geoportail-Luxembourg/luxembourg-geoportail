@@ -16,7 +16,7 @@ export class ThemesService {
     tap(theme => (this.theme = theme as ThemeNodeModel))
   )
 
-  findById(id: string, node?: ThemeNodeModel): ThemeNodeModel | undefined {
+  findById(id: number, node?: ThemeNodeModel): ThemeNodeModel | undefined {
     node = node || this.theme
     if (node.id === id) {
       return node
