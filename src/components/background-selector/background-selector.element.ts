@@ -11,7 +11,7 @@ import './background-selector-item.element'
 @customElement('lux-background-selector')
 export class BackgroundSelectorElement extends i18nMixin(LitElement) {
   @state() isOpen = false
-  @state() activeLayer: LuxBgLayer = {name: 'white', id:0}
+  @state() activeLayer: LuxBgLayer = { name: 'white', id: 0 }
   private bgLayers: LuxBgLayer[]
   private subscription
 

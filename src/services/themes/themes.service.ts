@@ -11,7 +11,7 @@ export class ThemesService {
     map(config => config),
     filter(config => !!config),
     map(config => config?.background_layers),
-    tap(bgLayers => this.bgLayers = bgLayers as ThemeNodeModel[])
+    tap(bgLayers => (this.bgLayers = bgLayers as ThemeNodeModel[]))
   )
   themes$ = this.config$.pipe(map(config => config?.themes))
   themeName$ = new BehaviorSubject('main')

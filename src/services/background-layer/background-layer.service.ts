@@ -4,8 +4,8 @@ import { mapState } from '../state/map/map.state'
 import { Layer } from '../state/map/map.state.model'
 
 export interface LuxBgLayer {
-  name: string,
-  id: number,
+  name: string
+  id: number
 }
 
 export class BgLayerService {
@@ -59,11 +59,14 @@ export class BgLayerService {
   }
 
   setMapBackground(bgLayer: LuxBgLayer) {
-    const currentLowestLayer = (mapState.getLayer(0))
-    if (currentLowestLayer && this.bgLayers.find(l => l.id === currentLowestLayer.id)) {
+    const currentLowestLayer = mapState.getLayer(0)
+    if (
+      currentLowestLayer &&
+      this.bgLayers.find(l => l.id === currentLowestLayer.id)
+    ) {
       mapState.removeLayer(currentLowestLayer.id)
     }
-    const newBgLayer = themesService.findBgLayerById (bgLayer.id)
+    const newBgLayer = themesService.findBgLayerById(bgLayer.id)
     if (newBgLayer) {
       mapState.insertLayer(newBgLayer as unknown as Layer, 0)
     }
