@@ -13,6 +13,10 @@ import { layerTreeState } from '../layer-tree/layer-tree.service'
 import { mapState } from '../../../../state/map/map.state'
 import i18next from 'i18next'
 import './remote-layers-catalog'
+import {
+  OlClientWmsLayerSummary,
+  RemoteLayerModel,
+} from './remote-layers.model'
 
 @customElement('lux-remote-layers')
 export class RemoteLayer extends LitElement {
@@ -44,24 +48,19 @@ export class RemoteLayer extends LitElement {
     )
   }
 
-  public onChangeWmsEndpoint(event: Event) {
+  public async onChangeWmsEndpoint(event: Event) {
     this.currentWmsUrl = (event.target as HTMLSelectElement).value
 
-    remoteLayersService.getWmsEndpoint(this.currentWmsUrl).then(wmsEndpoint => {
-      this.currentWmsEndpoint = wmsEndpoint
+    const wmsEndpoint = (this.currentWmsEndpoint =
+      await remoteLayersService.getWmsEndpoint(this.currentWmsUrl))
+    const remoteLayers: OlClientWmsLayerSummary[] =
+      (wmsEndpoint && (wmsEndpoint as any).getLayers()) || []
 
-      remoteLayersService
-        .fetchRemoteLayers(wmsEndpoint)
-        .then(
-          data =>
-            data[0] &&
-            (this.layerTree = remoteLayersToLayerTreeMapper(
-              data[0],
-              this.currentWmsUrl
-            ))
-        )
-        .catch(() => (this.layerTree = void 0))
-    })
+    remoteLayers[0] &&
+      (this.layerTree = remoteLayersToLayerTreeMapper(
+        remoteLayers[0],
+        this.currentWmsUrl
+      ))
   }
 
   private toggleParent(event: Event) {
@@ -77,22 +76,21 @@ export class RemoteLayer extends LitElement {
   private toggleLayer(event: Event) {
     const node = (event as CustomEvent).detail
     const { id, name } = node
+    const wmsEndpoint = this.currentWmsEndpoint
 
     if (node.checked === true) {
       mapState.removeLayer(id)
     } else {
-      remoteLayersService
-        .fetchRemoteLayerByName(this.currentWmsEndpoint, name)
-        .then(
-          remoteLayer =>
-            remoteLayer &&
-            mapState.addLayer(
-              remoteLayerToLayer({
-                id,
-                url: remoteLayersService.getProxyfiedUrl(this.currentWmsUrl),
-                remoteLayer,
-              })
-            )
+      const remoteLayer: RemoteLayerModel =
+        wmsEndpoint && (wmsEndpoint as any).getLayerByName(name)
+
+      remoteLayer &&
+        mapState.addLayer(
+          remoteLayerToLayer({
+            id,
+            url: remoteLayersService.getProxyfiedUrl(this.currentWmsUrl),
+            remoteLayer,
+          })
         )
     }
   }
