@@ -2,7 +2,7 @@ import { Layer, LayerImageType } from '../../../../state/map/map.state.model'
 import { LayerTreeNodeModel } from '../layer-tree/layer-tree.model'
 import {
   OlClientWmsLayerSummary,
-  RemoteLayerModel,
+  OlClientWmsLayerFull,
 } from './remote-layers.model'
 
 function sortLayerTreeNoChildrenFirst(
@@ -46,14 +46,14 @@ export function remoteLayerToLayer({
 }: {
   id: string
   url: string
-  remoteLayer: RemoteLayerModel
+  remoteLayer: OlClientWmsLayerFull
 }): Layer {
   const { name } = remoteLayer
 
   return {
     id,
-    name,
-    layers: name,
+    name: name || '',
+    layers: name || '',
     url,
     type: 'WMS',
     imageType: LayerImageType.PNG,
