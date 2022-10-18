@@ -7,16 +7,8 @@ export class Dropdown extends LitElement {
   @property() private placeholder: string
   @property() private options: DropdownOptionModel[] = []
 
-  private onChange(e: Event) {
-    const event = new CustomEvent(`dropdown-change`, {
-      bubbles: true,
-      detail: (e.target as HTMLSelectElement).value,
-    })
-    this.dispatchEvent(event)
-  }
-
   render(): TemplateResult {
-    return html`<select class="lux-btn" @change="${this.onChange}">
+    return html`<select class="lux-btn">
       ${this.placeholder
         ? html`<option value="" disabled selected>${this.placeholder}</option>`
         : ''}
