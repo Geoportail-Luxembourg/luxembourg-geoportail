@@ -59,11 +59,11 @@ export class BgLayerService {
   }
 
   setMapBackground(bgLayer: LuxBgLayer) {
-    let currentLowestLayer = (mapState.getLayer(0))
+    const currentLowestLayer = (mapState.getLayer(0))
     if (currentLowestLayer && this.bgLayers.find(l => l.id === currentLowestLayer.id)) {
       mapState.removeLayer(currentLowestLayer.id)
     }
-    let newBgLayer = themesService.findBgLayerById (bgLayer.id)
+    const newBgLayer = themesService.findBgLayerById (bgLayer.id)
     if (newBgLayer) {
       mapState.insertLayer(newBgLayer as unknown as Layer, 0)
     }

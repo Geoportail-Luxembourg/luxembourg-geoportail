@@ -46,13 +46,14 @@ function createWmtsLayer(layer: Layer): TileLayer<WMTS> {
 
   function getImageExtension_(imageType) {
     console.assert(imageType.indexOf('/'));
-    var imageExt = imageType.split('/')[1];
+    const imageExt = imageType.split('/')[1];
     console.assert(imageExt == 'png' || imageExt == 'jpeg');
     return imageExt;
   }
-  var imageExt = getImageExtension_(layer.imageType)
-  var { name, layers, imageType, url, id } = layer
-  var catalogUrl = url
+  const imageExt = getImageExtension_(layer.imageType)
+  const { name, layers, imageType, id } = layer
+  let { url } = layer
+  const catalogUrl = url
   const isIpv6 = location.search.includes('ipv6=true')
   const domain = (isIpv6) ? "app.geoportail.lu" : "geoportail.lu"
 
@@ -62,9 +63,9 @@ function createWmtsLayer(layer: Layer): TileLayer<WMTS> {
   //     '(min-device-pixel-ratio: 2), ' +
   //     '(min-resolution: 192dpi)'
   // ).matches
-  var isHiDpi_ = false
-  var hasRetina = !!layer['metadata']['hasRetina'] && isHiDpi_
-  var retinaExtension = (hasRetina ? '_hd' : '')
+  const isHiDpi_ = false
+  const hasRetina = !!layer['metadata']['hasRetina'] && isHiDpi_
+  const retinaExtension = (hasRetina ? '_hd' : '')
 
   // TODO: refactor requestScheme
   const requestScheme = 'http'
@@ -78,9 +79,9 @@ function createWmtsLayer(layer: Layer): TileLayer<WMTS> {
       retinaExtension +
       '/{TileMatrixSet}/{TileMatrix}/{TileCol}/{TileRow}.' + imageExt;
   }
-  var projection = getProjection('EPSG:3857');
-  var extent = projection.getExtent();
-  var layer = new TileLayer({
+  const projection = getProjection('EPSG:3857');
+  const extent = projection.getExtent();
+  const layer = new TileLayer({
     'olcs.extent': transformExtent([5.31, 49.38, 6.64, 50.21], 'EPSG:4326', 'EPSG:3857'),
     source: new WMTS({
       url: url,
