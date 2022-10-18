@@ -3,7 +3,6 @@ import { customElement } from 'lit/decorators'
 import i18next from 'i18next'
 import { i18nMixin } from '../../mixins/i18n-lit-element'
 import './catalog/remote-layers/remote-layers'
-import './catalog/remote-layers/remote-layers-catalog'
 import './catalog/CatalogTab'
 
 @customElement('lux-layer-panel')

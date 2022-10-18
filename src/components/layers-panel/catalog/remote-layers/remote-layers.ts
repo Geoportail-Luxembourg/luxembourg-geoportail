@@ -12,6 +12,7 @@ import {
 import { layerTreeState } from '../layer-tree/layer-tree.service'
 import { mapState } from '../../../../state/map/map.state'
 import i18next from 'i18next'
+import './remote-layers-catalog'
 
 @customElement('lux-remote-layers')
 export class RemoteLayer extends LitElement {
