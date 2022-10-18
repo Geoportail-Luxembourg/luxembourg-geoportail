@@ -19,13 +19,13 @@ export class RemoteLayer extends LitElement {
   @state() private wmsLayers: DropdownOptionModel[]
   @state() private layerTree: LayerTreeNodeModel | undefined
   private subscription = new Subscription()
-  private currentwmsUrl: string
+  private currentWmsUrl: string
   private currentWmsEndpoint: Object
 
   constructor() {
     super()
 
-    remoteLayersService.fetchRemoteWms().then(wmsLayers => {
+    remoteLayersService.fetchRemoteWmsEndpoint().then(wmsLayers => {
       this.wmsLayers = wmsLayers.map(({ url, label }) => ({
         label,
         value: url,
@@ -44,10 +44,10 @@ export class RemoteLayer extends LitElement {
     )
   }
 
-  public onChangeLayer(event: Event) {
-    this.currentwmsUrl = (event.target as HTMLSelectElement).value
+  public onChangeWmsEndpoint(event: Event) {
+    this.currentWmsUrl = (event.target as HTMLSelectElement).value
 
-    remoteLayersService.getWmsEndpoint(this.currentwmsUrl).then(wmsEndpoint => {
+    remoteLayersService.getWmsEndpoint(this.currentWmsUrl).then(wmsEndpoint => {
       this.currentWmsEndpoint = wmsEndpoint
 
       remoteLayersService
@@ -57,7 +57,7 @@ export class RemoteLayer extends LitElement {
             data[0] &&
             (this.layerTree = remoteLayersToLayerTreeMapper(
               data[0],
-              this.currentwmsUrl
+              this.currentWmsUrl
             ))
         )
         .catch(() => (this.layerTree = void 0))
@@ -89,7 +89,7 @@ export class RemoteLayer extends LitElement {
             mapState.addLayer(
               remoteLayerToLayer({
                 id,
-                url: remoteLayersService.getProxyfiedUrl(this.currentwmsUrl),
+                url: remoteLayersService.getProxyfiedUrl(this.currentWmsUrl),
                 remoteLayer,
               })
             )
@@ -102,7 +102,7 @@ export class RemoteLayer extends LitElement {
       <lux-dropdown
         .options="${this.wmsLayers}"
         .placeholder="${i18next.t('Predefined wms', { ns: 'client' })}"
-        @change="${this.onChangeLayer}"
+        @change="${this.onChangeWmsEndpoint}"
       ></lux-dropdown>
       <lux-remote-layers-catalog
         class="absolute right-0 top-52 z-50"

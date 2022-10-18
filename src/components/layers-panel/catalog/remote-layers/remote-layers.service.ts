@@ -4,7 +4,7 @@ import { remoteProxyWms } from '../../../../services/map/ol.service'
 import {
   OlClientWmsLayerSummary,
   RemoteLayerModel,
-  RemoteWmsModel,
+  RemoteWmsEndpointModel,
 } from './remote-layers.model'
 
 const forceUseProxy = true
@@ -30,7 +30,7 @@ export class RemoteLayersService {
     return url
   }
 
-  async fetchRemoteWms(): Promise<RemoteWmsModel[]> {
+  async fetchRemoteWmsEndpoint(): Promise<RemoteWmsEndpointModel[]> {
     return new Promise(resolve => resolve(predefinedWmsFixture()))
   }
 

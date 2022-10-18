@@ -1,4 +1,4 @@
-export interface RemoteWmsModel {
+export interface RemoteWmsEndpointModel {
   url: string
   label: string
 }
