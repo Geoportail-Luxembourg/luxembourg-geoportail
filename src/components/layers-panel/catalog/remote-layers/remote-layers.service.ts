@@ -1,12 +1,15 @@
 import { WmsEndpoint } from '@camptocamp/ogc-client'
 import { predefinedWmsFixture } from '../../../../../test/fixtures/predefined-wms.fixture'
 import { remoteProxyWms } from '../../../../services/map/ol.service'
-import { RemoteWmsEndpointModel } from './remote-layers.model'
+import {
+  OlClientWmsEndpoint,
+  RemoteWmsEndpointModel,
+} from './remote-layers.model'
 
 const forceUseProxy = true
 
 export class RemoteLayersService {
-  public async getWmsEndpoint(url: string): Promise<Object> {
+  public async getWmsEndpoint(url: string): Promise<OlClientWmsEndpoint> {
     return await new WmsEndpoint(this.getProxyfiedUrl(url)).isReady()
   }
 

@@ -14,8 +14,8 @@ import { mapState } from '../../../../state/map/map.state'
 import i18next from 'i18next'
 import './remote-layers-catalog'
 import {
+  OlClientWmsEndpoint,
   OlClientWmsLayerSummary,
-  RemoteLayerModel,
 } from './remote-layers.model'
 
 @customElement('lux-remote-layers')
@@ -24,7 +24,7 @@ export class RemoteLayer extends LitElement {
   @state() private layerTree: LayerTreeNodeModel | undefined
   private subscription = new Subscription()
   private currentWmsUrl: string
-  private currentWmsEndpoint: Object
+  private currentWmsEndpoint: OlClientWmsEndpoint
 
   constructor() {
     super()
@@ -54,7 +54,7 @@ export class RemoteLayer extends LitElement {
     const wmsEndpoint = (this.currentWmsEndpoint =
       await remoteLayersService.getWmsEndpoint(this.currentWmsUrl))
     const remoteLayers: OlClientWmsLayerSummary[] =
-      (wmsEndpoint && (wmsEndpoint as any).getLayers()) || []
+      (wmsEndpoint && wmsEndpoint.getLayers()) || []
 
     remoteLayers[0] &&
       (this.layerTree = remoteLayersToLayerTreeMapper(
@@ -81,8 +81,7 @@ export class RemoteLayer extends LitElement {
     if (node.checked === true) {
       mapState.removeLayer(id)
     } else {
-      const remoteLayer: RemoteLayerModel =
-        wmsEndpoint && (wmsEndpoint as any).getLayerByName(name)
+      const remoteLayer = wmsEndpoint && wmsEndpoint.getLayerByName(name)
 
       remoteLayer &&
         mapState.addLayer(
