@@ -45,24 +45,25 @@ export class LayerTreeNode extends i18nMixin(LitElement) {
     return html`
       ${this.node.depth === 1
         ? html`
-            <div
-              class="cursor-pointer px-2 py-1.5 uppercase bg-tertiary ${this
+            <button
+              class="w-full text-left px-2 py-1.5 uppercase bg-tertiary ${this
                 .node.expanded
                 ? 'text-white'
                 : 'text-secondary'}"
+              aria-expanded="${this.node.expanded}"
               @click="${this.toggleParent}"
             >
               ${this.getLabel()}
-            </div>
+            </button>
           `
         : this.node.depth > 1 && !this.isMaxDepth()
         ? html`
-            <div
-              class="cursor-pointer px-2 py-1.5 mt-px bg-white text-primary"
+            <button
+              class="w-full text-left px-2 py-1.5 mt-px bg-white text-primary"
               @click="${this.toggleParent}"
             >
               ${this.getLabel()}
-            </div>
+            </button>
           `
         : ''}
       ${this.isMaxDepth() ? '' : this.renderChildren()}
@@ -71,11 +72,12 @@ export class LayerTreeNode extends i18nMixin(LitElement) {
 
   renderLeaf(): TemplateResult {
     return html`
-      <div
-        class="cursor-pointer bg-secondary text-tertiary px-2 ${this.node
+      <button
+        class="w-full text-left bg-secondary text-tertiary px-2 ${this.node
           .checked
           ? 'font-bold'
           : ''}"
+        aria-expanded="${this.node.expanded}"
         @click="${this.toggleLayer}"
       >
         <i class="fa fa-info"></i>
@@ -85,7 +87,7 @@ export class LayerTreeNode extends i18nMixin(LitElement) {
           ></i>
           ${this.getLabel()}
         </a>
-      </div>
+      </button>
     `
   }
 
