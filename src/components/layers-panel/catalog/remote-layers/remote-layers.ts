@@ -12,7 +12,6 @@ import {
 import { layerTreeState } from '../layer-tree/layer-tree.service'
 import { mapState } from '../../../../state/map/map.state'
 import i18next from 'i18next'
-import './remote-layers-catalog'
 import {
   OlClientWmsEndpoint,
   OlClientWmsLayerSummary,
@@ -101,12 +100,20 @@ export class RemoteLayer extends LitElement {
         .placeholder="${i18next.t('Predefined wms', { ns: 'client' })}"
         @change="${this.onChangeWmsEndpoint}"
       ></lux-dropdown>
-      <lux-remote-layers-catalog
-        class="absolute right-0 top-52 z-50"
-        .layerTree="${this.layerTree}"
-        @parent-toggle="${this.toggleParent}"
-        @layer-toggle="${this.toggleLayer}"
-      ></lux-remote-layers-catalog>
+
+      <div
+        class="absolute right-0 top-52 z-50 bg-white lux-modal"
+        role="dialog"
+      >
+        <div class="lux-modal-header">
+          <h4>${i18next.t('Add external data', { ns: 'client' })}</h4>
+        </div>
+        <lux-layer-tree-node
+          .node="${this.layerTree}"
+          @parent-toggle="${this.toggleParent}"
+          @layer-toggle="${this.toggleLayer}"
+        ></lux-layer-tree-node>
+      </div>
     `
   }
 
