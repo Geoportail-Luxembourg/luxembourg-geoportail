@@ -12,7 +12,7 @@ export class BackGroundSelectorItemElement extends i18nMixin(LitElement) {
 
   render() {
     // prettier-ignore
-    return html` <img
+    return html` <button
       class="${`h-full w-full rounded-sm lux-bg-sel-icon-bg-length bg-white ` +
                `${this.bgClass}_sm md:${this.bgClass} hd:${this.bgClass}_sm_hi hd_md:${this.bgClass}_hi`}"
     />`
