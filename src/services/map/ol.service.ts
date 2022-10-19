@@ -88,7 +88,7 @@ function createWmtsLayer(layer: Layer): TileLayer<WMTS> {
   }
   const projection = getProjection('EPSG:3857')
   const extent = projection.getExtent()
-  const layer = new TileLayer({
+  const tileLayer = new TileLayer({
     'olcs.extent': transformExtent(
       [5.31, 49.38, 6.64, 50.21],
       'EPSG:4326',
@@ -143,12 +143,12 @@ function createWmtsLayer(layer: Layer): TileLayer<WMTS> {
     }),
   })
 
-  layer.set('label', name)
-  layer.set('id', id)
-  layer.type = 'TILE'
+  tileLayer.set('label', name)
+  tileLayer.set('id', id)
+  tileLayer.type = 'TILE'
   //ngeoMiscDecorate.layer(layer);
 
-  return layer
+  return tileLayer
 }
 
 export class Openlayers {
