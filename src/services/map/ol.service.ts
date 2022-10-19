@@ -5,7 +5,7 @@ import OlMap from 'ol/Map'
 import { ImageWMS, WMTS } from 'ol/source'
 import { layersCache } from '../../states/layers/layers.cache'
 import { Layer, LayerId } from '../../states/map/map.state.model'
-import { createBgWmtsLayer } from '../../services/background-layer.wmts-helper'
+import { createBgWmtsLayer } from '../../services/background-layer/background-layer.wmts-helper'
 
 const proxyWmsUrl = 'https://map.geoportail.lu/ogcproxywms'
 export const remoteProxyWms = 'https://map.geoportail.lu/httpsproxy'

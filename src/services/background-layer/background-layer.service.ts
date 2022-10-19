@@ -1,7 +1,7 @@
 import { Subscription, BehaviorSubject } from 'rxjs'
-import { themesService } from '../services/themes/themes.service'
-import { mapState } from '../state/map/map.state'
-import { Layer } from '../state/map/map.state.model'
+import { themesService } from '../themes/themes.service'
+import { mapState } from '../../state/map/map.state'
+import { Layer } from '../../state/map/map.state.model'
 
 export interface LuxBgLayer {
   name: string
