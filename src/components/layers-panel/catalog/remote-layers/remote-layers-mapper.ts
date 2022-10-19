@@ -1,3 +1,4 @@
+import { mapState } from '../../../../state/map/map.state'
 import { Layer, LayerImageType } from '../../../../state/map/map.state.model'
 import { LayerTreeNodeModel } from '../layer-tree/layer-tree.model'
 import {
@@ -26,15 +27,16 @@ export function remoteLayersToLayerTreeMapper(
   depth = 0
 ): LayerTreeNodeModel {
   const { name, children } = node
+  const id = `WMS||${urlWms}${name}`.split('-').join('%2D')
 
   return {
-    id: `WMS||${urlWms}${name}`.split('-').join('%2D'),
+    id,
     name,
     depth,
     children: children
       ?.sort(sortLayerTreeNoChildrenFirst)
       .map(child => remoteLayersToLayerTreeMapper(child, urlWms, depth + 1)),
-    checked: false,
+    checked: mapState.hasLayer(id),
     expanded: false,
   }
 }

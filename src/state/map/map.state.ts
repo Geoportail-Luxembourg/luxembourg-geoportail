@@ -25,6 +25,10 @@ export class MapState {
     }
     this.map$.next(this.mapContext)
   }
+
+  hasLayer(layerId: string) {
+    return !!this.mapContext.layers?.find(layer => layer.id === layerId)
+  }
 }
 
 export const mapState = new MapState()
