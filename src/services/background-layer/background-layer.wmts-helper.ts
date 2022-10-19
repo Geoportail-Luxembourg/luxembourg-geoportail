@@ -5,6 +5,8 @@ import { getTopLeft } from 'ol/extent.js'
 import { WMTS } from 'ol/source'
 import WmtsTileGrid from 'ol/tilegrid/WMTS'
 
+import { bgConfig } from '../../../test/fixtures/background.config.fixture'
+
 export function createBgWmtsLayer(spec) {
 
 }// this function has been ported from the bg layer creation getWmtsLayer in GetWmtsLayerFactory
@@ -32,79 +34,36 @@ function createBgWmtsLayer(layer: Layer): TileLayer<WMTS> {
   // ).matches
   const isHiDpi_ = false
   const hasRetina = !!layer['metadata']['hasRetina'] && isHiDpi_
-  const retinaExtension = hasRetina ? '_hd' : ''
+  // const retinaExtension = hasRetina ? '_hd' : ''
 
   // TODO: refactor requestScheme
   const requestScheme = 'http'
 
-  url =
-    '//wmts{1-2}.' +
-    domain +
-    '/mapproxy_4_v3/wmts/{Layer}' +
-    retinaExtension +
-    '/{TileMatrixSet}/{TileMatrix}/{TileCol}/{TileRow}.' +
-    imageExt
-
-  if (requestScheme === 'https') {
-    url =
-      '//wmts{3-4}.' +
-      domain +
-      '/mapproxy_4_v3/wmts/{Layer}' +
-      retinaExtension +
-      '/{TileMatrixSet}/{TileMatrix}/{TileCol}/{TileRow}.' +
-      imageExt
-  }
-  const projection = getProjection('EPSG:3857')
+  const srv = requestScheme === 'https' ? bgConfig.https_bg_server : bgConfig.http_bg_server
+  const layer_path = `${bgConfig.bg_wmts_server_path}${hasRetina?'_hd':''}`
+  const full_tile_template = `${bgConfig.bg_wmts_tile_template}.${imageExt}`
+  url = `//${srv}.${domain}/${layer_path}/${full_tile_template}`
+  const projection = getProjection(bgConfig.bg_layer_projection)
   const extent = projection.getExtent()
   const tileLayer = new TileLayer({
     'olcs.extent': transformExtent(
-      [5.31, 49.38, 6.64, 50.21],
-      'EPSG:4326',
-      'EPSG:3857'
+      bgConfig.olcs_extent,
+      bgConfig.olcs_extent_projection,
+      bgConfig.bg_layer_projection
     ),
     source: new WMTS({
       url: url,
       tilePixelRatio: hasRetina ? 2 : 1,
       layer: name,
-      matrixSet: 'GLOBAL_WEBMERCATOR_4_V3' + (hasRetina ? '_HD' : ''),
+      matrixSet: `GLOBAL_WEBMERCATOR_4_V3${hasRetina ? '_HD' : ''}`,
       format: imageType,
       requestEncoding: 'REST', // WMTS.RequestEncoding.REST,
       projection: projection,
       tileGrid: new WmtsTileGrid({
         origin: getTopLeft(extent),
         extent: extent,
-        resolutions: [
-          156543.033928, 78271.516964, 39135.758482, 19567.879241, 9783.9396205,
-          4891.96981025, 2445.98490513, 1222.99245256, 611.496226281,
-          305.748113141, 152.87405657, 76.4370282852, 38.2185141426,
-          19.1092570713, 9.55462853565, 4.77731426782, 2.38865713391,
-          1.19432856696, 0.597164283478, 0.298582141739, 0.1492910708695,
-          0.07464553543475,
-        ],
-        matrixIds: [
-          '00',
-          '01',
-          '02',
-          '03',
-          '04',
-          '05',
-          '06',
-          '07',
-          '08',
-          '09',
-          '10',
-          '11',
-          '12',
-          '13',
-          '14',
-          '15',
-          '16',
-          '17',
-          '18',
-          '19',
-          '20',
-          '21',
-        ],
+        resolutions: bgConfig.bg_layer_resolutions,
+        matrixIds: bgConfig.bg_matrix_ids
       }),
       style: 'default',
       crossOrigin: 'anonymous',
