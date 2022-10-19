@@ -9,8 +9,8 @@ import {
 const forceUseProxy = true
 
 export class RemoteLayersService {
-  public async getWmsEndpoint(url: string): Promise<OlClientWmsEndpoint> {
-    return await new WmsEndpoint(this.getProxyfiedUrl(url)).isReady()
+  public getWmsEndpoint(url: string): OlClientWmsEndpoint {
+    return new WmsEndpoint(this.getProxyfiedUrl(url))
   }
 
   public getProxyfiedUrl(url: string) {

@@ -28,8 +28,15 @@
     @apply bg-[length:41px_41px] md:bg-[length:90px_50px];
   }
   .lux-btn {
-    @apply bg-white border text-primary px-2 py-1.5 mt-px hover:bg-primary hover:text-white;
+    @apply bg-white border text-primary py-[6px] px-[12px] mt-px hover:bg-primary hover:text-white leading-snug;
     border: 1px solid var(--button-bg-color);
+  }
+  .lux-input {
+    @apply py-[6px] px-[12px] leading-snug text-white;
+    background-color: var(--color-secondary);
+  }
+  .lux-label {
+    @apply font-bold mb-[5px] inline-block;
   }
 }
 

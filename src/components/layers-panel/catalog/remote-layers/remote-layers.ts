@@ -22,6 +22,7 @@ export class RemoteLayer extends LitElement {
   @state() private wmsLayers: DropdownOptionModel[]
   @state() private layerTree: LayerTreeNodeModel | undefined
   private subscription = new Subscription()
+  private inputWmsUrl: string
   private currentWmsUrl: string
   private currentWmsEndpoint: OlClientWmsEndpoint
 
@@ -47,19 +48,49 @@ export class RemoteLayer extends LitElement {
     )
   }
 
+  public async getWmsEndpoint(url: string) {
+    try {
+      const wmsEndpoint = remoteLayersService.getWmsEndpoint(url)
+
+      await wmsEndpoint.isReady()
+
+      this.currentWmsEndpoint = wmsEndpoint
+      this.currentWmsUrl = url
+    } catch (e) {
+      alert(i18next.t('Impossible de contacter ce WMS', { ns: 'client' }))
+    }
+  }
+
+  public async getWmsLayers() {
+    try {
+      const wmsEndpoint = this.currentWmsEndpoint
+      const remoteLayers: OlClientWmsLayerSummary[] = wmsEndpoint.getLayers()
+
+      remoteLayers[0] &&
+        (this.layerTree = remoteLayersToLayerTreeMapper(
+          remoteLayers[0],
+          this.currentWmsUrl
+        ))
+    } catch (e) {
+      alert(i18next.t('Impossible de contacter ce WMS', { ns: 'client' }))
+    }
+  }
+
   public async onChangeWmsEndpoint(event: Event) {
-    this.currentWmsUrl = (event.target as HTMLSelectElement).value
+    this.currentWmsUrl = this.inputWmsUrl = (
+      event.target as HTMLSelectElement
+    ).value
+    await this.getWmsEndpoint(this.currentWmsUrl)
+    this.getWmsLayers()
+  }
 
-    const wmsEndpoint = (this.currentWmsEndpoint =
-      await remoteLayersService.getWmsEndpoint(this.currentWmsUrl))
-    const remoteLayers: OlClientWmsLayerSummary[] =
-      (wmsEndpoint && wmsEndpoint.getLayers()) || []
+  public onChangeWmsUrl(event: Event) {
+    this.inputWmsUrl = (event.target as HTMLSelectElement).value
+  }
 
-    remoteLayers[0] &&
-      (this.layerTree = remoteLayersToLayerTreeMapper(
-        remoteLayers[0],
-        this.currentWmsUrl
-      ))
+  public async onClickGetLayers() {
+    await this.getWmsEndpoint(this.inputWmsUrl)
+    this.getWmsLayers()
   }
 
   private toggleParent(event: Event) {
@@ -95,24 +126,64 @@ export class RemoteLayer extends LitElement {
 
   render(): TemplateResult {
     return html`
-      <lux-dropdown
-        .options="${this.wmsLayers}"
-        .placeholder="${i18next.t('Predefined wms', { ns: 'client' })}"
-        @change="${this.onChangeWmsEndpoint}"
-      ></lux-dropdown>
-
       <div
-        class="absolute right-0 top-52 z-50 bg-white lux-modal"
+        class="absolute right-0 top-52 z-50 bg-white lux-modal text-black w-[600px]"
         role="dialog"
       >
         <div class="lux-modal-header">
           <h4>${i18next.t('Add external data', { ns: 'client' })}</h4>
         </div>
-        <lux-layer-tree-node
-          .node="${this.layerTree}"
-          @parent-toggle="${this.toggleParent}"
-          @layer-toggle="${this.toggleLayer}"
-        ></lux-layer-tree-node>
+
+        <div class="p-[15px]">
+          <div>
+            <lux-dropdown
+              .options=${this.wmsLayers}
+              .placeholder=${i18next.t('Predefined wms', { ns: 'client' })}
+              @change=${this.onChangeWmsEndpoint}
+            ></lux-dropdown>
+            <input
+              class="lux-input w-[300px]"
+              type="url"
+              placeholder=${i18next.t('Choose or write a WMS url', {
+                ns: 'client',
+              })}
+              .value=${this.currentWmsUrl || ''}
+              @change=${this.onChangeWmsUrl}
+            />
+            <button class="lux-btn" @click=${this.onClickGetLayers}>
+              ${i18next.t('Get the layers', { ns: 'client' })}
+            </button>
+          </div>
+
+          ${this.currentWmsEndpoint
+            ? html`<div>
+                  <span class="lux-label"
+                    >${i18next.t('Description du service :', {
+                      ns: 'client',
+                    })}</span
+                  >
+                  ${this.currentWmsEndpoint.getServiceInfo()?.title}
+                </div>
+                <div>
+                  <span class="lux-label"
+                    >${i18next.t('Access constraints :', {
+                      ns: 'client',
+                    })}</span
+                  >
+                  ${this.currentWmsEndpoint.getServiceInfo()?.constraints}
+                </div>`
+            : ''}
+
+          <div class="overflow-auto max-h-[calc(400px-36px)]">
+            <lux-layer-tree-node
+              class="block p-[10px] mb-[11px]"
+              .node="${this.layerTree}"
+              @parent-toggle="${this.toggleParent}"
+              @layer-toggle="${this.toggleLayer}"
+            ></lux-layer-tree-node>
+          </div>
+          <div></div>
+        </div>
       </div>
     `
   }

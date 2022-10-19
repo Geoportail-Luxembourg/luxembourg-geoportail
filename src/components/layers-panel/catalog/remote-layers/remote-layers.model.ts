@@ -21,8 +21,19 @@ export interface OlClientWmsLayerSummary {
   children: OlClientWmsLayerSummary[]
 }
 
+export interface OlClientGenericEndpointInfo {
+  name: string
+  title: string
+  abstract: string
+  fees: string
+  constraints: string
+  keywords: string[]
+  outputFormats?: string[]
+}
+
 export interface OlClientWmsEndpoint {
   isReady: () => Promise<OlClientWmsEndpoint>
   getLayers: () => OlClientWmsLayerSummary[]
   getLayerByName: (name: string) => OlClientWmsLayerFull | null
+  getServiceInfo: () => OlClientGenericEndpointInfo | null
 }
