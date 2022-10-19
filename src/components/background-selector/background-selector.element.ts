@@ -39,7 +39,7 @@ export class BackgroundSelectorElement extends i18nMixin(LitElement) {
                       class="${`lux-bg-sel ` +
                                `${layer.id === this.activeLayer.id ? 'border-red-500 border-2' : 'border-black border'} ` +
                                `hover:bg-cyan-600`}"
-                      bgclass="bg-${layer.name}"
+                      bgname="${layer.name}"
                       @click="${() => this.setBackgroundLayer(layer)}"
                    >
               </lux-background-selector-item>`
@@ -49,7 +49,9 @@ export class BackgroundSelectorElement extends i18nMixin(LitElement) {
              class=" ${
                'lux-bg-sel border border-black bg-white ' +
                (this.isOpen == true ? 'hidden' : 'block')}"
-             bgclass="bg-${this.activeLayer.name}"
+             aria-expanded="${this.isOpen}"
+             bgtitle="Select BG layer"
+             bgname="${this.activeLayer.name}"
              @click="${this.toggleSelector}">
         </lux-background-selector-item>
       </div>

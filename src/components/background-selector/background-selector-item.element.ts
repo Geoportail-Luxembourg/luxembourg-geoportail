@@ -4,7 +4,8 @@ import { i18nMixin } from '../../mixins/i18n-lit-element'
 
 @customElement('lux-background-selector-item')
 export class BackGroundSelectorItemElement extends i18nMixin(LitElement) {
-  @property() bgClass = ''
+  @property() bgTitle = ''
+  @property() bgName = ''
 
   constructor() {
     super()
@@ -12,9 +13,9 @@ export class BackGroundSelectorItemElement extends i18nMixin(LitElement) {
 
   render() {
     // prettier-ignore
-    return html` <button
+    return html`<button title="${this.bgTitle}${this.bgTitle.length>0?'\n':''}Background layer: ${this.bgName}"
       class="${`h-full w-full rounded-sm lux-bg-sel-icon-bg-length bg-white ` +
-               `${this.bgClass}_sm md:${this.bgClass} hd:${this.bgClass}_sm_hi hd_md:${this.bgClass}_hi`}"
+               `bg-${this.bgName}_sm md:bg-${this.bgName} hd:bg-${this.bgName}_sm_hi hd_md:bg-${this.bgName}_hi`}"
     />`
   }
   createRenderRoot() {
