@@ -48,7 +48,8 @@ export function createBgWmtsLayer(layer: Layer): TileLayer<WMTS> {
   const projection = getProjection(bgConfig.bg_layer_projection)!
   const extent = projection!.getExtent()
   const tileLayer = new TileLayer({
-    'olcs.extent': transformExtent(  //  ??? refused by linter ?
+    'olcs.extent': transformExtent(
+      //  ??? olcs.extent refused by linter because not a parameter ?
       bgConfig.olcs_extent,
       bgConfig.olcs_extent_projection,
       bgConfig.bg_layer_projection
