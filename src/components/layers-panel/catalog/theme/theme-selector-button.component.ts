@@ -18,7 +18,7 @@ export class ThemeSelectorButton extends i18nMixin(LitElement) {
       >
       <button
         href=""
-        class="p-0.5 shrink-0 flex flex-row text-[12px] bg-secondary text-white"
+        class="px-1 py-0.5 shrink-0 flex flex-row text-[12px] bg-secondary text-white"
       >
         <span class="py-[3]">${i18next.t('Changer')}</span>
         <span class="flex flex-row flex-wrap ml-1 w-12">

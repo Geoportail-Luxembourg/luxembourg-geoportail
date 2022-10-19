@@ -12,7 +12,7 @@ export class ThemeGrid extends i18nMixin(LitElement) {
     return html`${this.themes?.map(
       theme =>
         html`<button
-          class="relative shrink-0 h-[150] w-1/2 px-2.5 text-start text-gray-100/40 uppercase bg-${theme.name}-primary hover:bg-[#ccc]"
+          class="relative shrink-0 h-[150] w-1/2 px-2.5 text-start text-gray-100/40 uppercase bg-${theme.name}-primary hover:bg-[#ccc] hover:text-${theme.name}-primary"
           @click="${() => this.setTheme(theme.name)}"
         >
           <div class="text-2xl absolute top-5">

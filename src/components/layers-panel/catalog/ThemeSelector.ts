@@ -52,7 +52,7 @@ export class ThemeSelector extends LitElement {
             <lux-theme-grid
               @set-theme="${this.setTheme}"
               .themes="${this.themes}"
-              class="flex flex-row flex-wrap"
+              class="flex flex-row flex-wrap pl-2.5"
             ></lux-theme-grid>
           </div>`
         : html``}

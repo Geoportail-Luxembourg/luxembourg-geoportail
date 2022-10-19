@@ -152,6 +152,7 @@ function generateThemeSafelist() {
   return themes.flatMap(theme => [
     `${theme}-primary`,
     `bg-${theme}-primary`,
+    `hover:text-${theme}-primary`,
     `after:content-${theme}`,
   ])
 }
