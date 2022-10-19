@@ -44,6 +44,7 @@ export class ThemeSelector extends LitElement {
         @click="${this.toggleThemesGrid}"
         .themes="${this.themes}"
         .currentTheme="${this.currentTheme}"
+        .isOpen="${this.isOpen}"
       ></lux-theme-selector-button>
       ${this.isOpen
         ? html` <div
