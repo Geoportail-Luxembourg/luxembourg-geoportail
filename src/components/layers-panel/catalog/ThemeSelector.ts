@@ -16,19 +16,22 @@ export class ThemeSelector extends LitElement {
   private currentTheme?: ThemeNodeModel
   @state()
   private themes?: ThemeNodeModel[]
-  private currentThemeSubscription: Subscription
-  private themesSubscription: Subscription
+  private subscription: Subscription
   constructor() {
     super()
-    this.currentThemeSubscription = themesService.theme$.subscribe(theme => {
+    this.subscription = themesService.theme$.subscribe(theme => {
       if (theme) {
         this.currentTheme = theme
         themingService.setCurrentThemeColors(theme)
       }
     })
-    this.themesSubscription = themesService.themes$.subscribe(themes => {
-      this.themes = themes
-    })
+    this.subscription.add(
+      themesService.themes$.subscribe(themes => {
+        this.themes = themes.filter(
+          theme => theme.metadata?.display_in_switcher === true
+        )
+      })
+    )
   }
 
   toggleThemesGrid() {
@@ -41,15 +44,16 @@ export class ThemeSelector extends LitElement {
         @click="${this.toggleThemesGrid}"
         .themes="${this.themes}"
         .currentTheme="${this.currentTheme}"
+        .isOpen="${this.isOpen}"
       ></lux-theme-selector-button>
       ${this.isOpen
         ? html` <div
-            class="absolute w-[310] mt-2 bg-white h-4/5 overflow-y-auto overflow-x-hidden"
+            class="absolute inset-x-0 top-14 bottom-0 mt-1 bg-primary overflow-y-auto overflow-x-hidden"
           >
             <lux-theme-grid
               @set-theme="${this.setTheme}"
               .themes="${this.themes}"
-              class="flex flex-row flex-wrap"
+              class="flex flex-row flex-wrap pl-2.5"
             ></lux-theme-grid>
           </div>`
         : html``}
@@ -58,11 +62,11 @@ export class ThemeSelector extends LitElement {
 
   setTheme(event: CustomEvent) {
     themesService.setTheme(event.detail)
+    this.toggleThemesGrid()
   }
 
   disconnectedCallback() {
-    this.currentThemeSubscription.unsubscribe()
-    this.themesSubscription.unsubscribe()
+    this.subscription.unsubscribe()
     super.disconnectedCallback()
   }
 
