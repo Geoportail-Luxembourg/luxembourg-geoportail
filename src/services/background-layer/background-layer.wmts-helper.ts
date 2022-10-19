@@ -5,15 +5,14 @@ import { getTopLeft } from 'ol/extent.js'
 import { WMTS } from 'ol/source'
 import WmtsTileGrid from 'ol/tilegrid/WMTS'
 
+import { Layer } from '../../state/map/map.state.model'
+
 import { bgConfig } from '../../../test/fixtures/background.config.fixture'
 
-export function createBgWmtsLayer(spec) {
-
-}// this function has been ported from the bg layer creation getWmtsLayer in GetWmtsLayerFactory
 // TODO: check that it is valid for all WMTS layers
 // TODO: factory(requestScheme, wmtsUrl)
-function createBgWmtsLayer(layer: Layer): TileLayer<WMTS> {
-  function getImageExtension_(imageType) {
+export function createBgWmtsLayer(layer: Layer): TileLayer<WMTS> {
+  function getImageExtension_(imageType: string) {
     console.assert(imageType.indexOf('/'))
     const imageExt = imageType.split('/')[1]
     console.assert(imageExt == 'png' || imageExt == 'jpeg')
@@ -33,20 +32,24 @@ function createBgWmtsLayer(layer: Layer): TileLayer<WMTS> {
   //     '(min-resolution: 192dpi)'
   // ).matches
   const isHiDpi_ = false
-  const hasRetina = !!layer['metadata']['hasRetina'] && isHiDpi_
+  const hasRetina = !!layer?.metadata?.hasRetina && isHiDpi_
   // const retinaExtension = hasRetina ? '_hd' : ''
 
   // TODO: refactor requestScheme
-  const requestScheme = 'http'
+  const requestScheme = 'https'
 
-  const srv = requestScheme === 'https' ? bgConfig.https_bg_server : bgConfig.http_bg_server
-  const layer_path = `${bgConfig.bg_wmts_server_path}${hasRetina?'_hd':''}`
+  const srv =
+    requestScheme === 'https'
+      ? bgConfig.https_bg_server
+      : bgConfig.http_bg_server
+  const layer_path = `${bgConfig.bg_wmts_server_path}${hasRetina ? '_hd' : ''}`
   const full_tile_template = `${bgConfig.bg_wmts_tile_template}.${imageExt}`
   url = `//${srv}.${domain}/${layer_path}/${full_tile_template}`
-  const projection = getProjection(bgConfig.bg_layer_projection)
-  const extent = projection.getExtent()
+  const projection = getProjection(bgConfig.bg_layer_projection)!
+  const extent = projection!.getExtent()
   const tileLayer = new TileLayer({
-    'olcs.extent': transformExtent(
+    // olcs.extent: transformExtent(    ??? why was this olcs.extent before ?
+    extent: transformExtent(
       bgConfig.olcs_extent,
       bgConfig.olcs_extent_projection,
       bgConfig.bg_layer_projection
@@ -63,7 +66,7 @@ function createBgWmtsLayer(layer: Layer): TileLayer<WMTS> {
         origin: getTopLeft(extent),
         extent: extent,
         resolutions: bgConfig.bg_layer_resolutions,
-        matrixIds: bgConfig.bg_matrix_ids
+        matrixIds: bgConfig.bg_matrix_ids,
       }),
       style: 'default',
       crossOrigin: 'anonymous',
@@ -72,8 +75,8 @@ function createBgWmtsLayer(layer: Layer): TileLayer<WMTS> {
 
   tileLayer.set('label', name)
   tileLayer.set('id', id)
-  tileLayer.type = 'TILE'
-  //ngeoMiscDecorate.layer(layer);
+  // tileLayer.type = 'TILE'
+  // ngeoMiscDecorate.layer(layer);
 
   return tileLayer
 }

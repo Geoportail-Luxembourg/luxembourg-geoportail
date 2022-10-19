@@ -69,7 +69,9 @@ export class BgLayerService {
     const newBgLayer = themesService.findBgLayerById(bgLayer.id)
     if (newBgLayer) {
       if (!(newBgLayer.type === 'WMTS' || newBgLayer.type === 'BG WMTS')) {
-        throw new Error(`Only WMTS BG layers are currently implemented (not ${newBgLayer.type} for ${newBgLayer.name})`)
+        throw new Error(
+          `Only WMTS BG layers are currently implemented (not ${newBgLayer.type} for ${newBgLayer.name})`
+        )
       }
       newBgLayer.type = 'BG WMTS'
       mapState.insertLayer(newBgLayer as unknown as Layer, 0)
