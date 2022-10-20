@@ -1,3 +1,5 @@
+import { WmsEndpoint } from '@camptocamp/ogc-client'
+
 export interface RemoteWmsEndpointModel {
   url: string
   label: string
@@ -31,9 +33,4 @@ export interface OgcClientGenericEndpointInfo {
   outputFormats?: string[]
 }
 
-export class OgcClientWmsEndpoint {
-  isReady: () => Promise<OgcClientWmsEndpoint>
-  getLayers: () => OgcClientWmsLayerSummary[] | null
-  getLayerByName: (name: string) => OgcClientWmsLayerFull | null
-  getServiceInfo: () => OgcClientGenericEndpointInfo | null
-}
+export type OgcClientWmsEndpoint = typeof WmsEndpoint
