@@ -71,8 +71,10 @@ export function createBgWmtsLayer(layer: Layer): TileLayer<WMTS> {
       style: 'default',
       crossOrigin: 'anonymous',
     }),
-    label: name,
-    id,
+    properties: {
+      label: name,
+      id,
+    },
   })
 
   // tileLayer.type = 'TILE'
