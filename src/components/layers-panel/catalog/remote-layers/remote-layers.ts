@@ -70,10 +70,8 @@ export class RemoteLayer extends LitElement {
     }
   }
 
-  public async onChangeWmsEndpoint(event: Event) {
-    this.currentWmsUrl = this.inputWmsUrl = (
-      event.target as HTMLSelectElement
-    ).value
+  public async onChangeWmsEndpoint(event: CustomEvent) {
+    this.currentWmsUrl = this.inputWmsUrl = event.detail.value
     await this.getWmsEndpoint(this.currentWmsUrl)
     this.getWmsLayers()
   }
@@ -130,7 +128,7 @@ export class RemoteLayer extends LitElement {
         </div>
 
         <div class="p-[15px]">
-          <div>
+          <div class="relative">
             <lux-dropdown
               .options=${this.wmsLayers}
               .placeholder=${i18next.t('Predefined wms', { ns: 'client' })}
@@ -145,7 +143,11 @@ export class RemoteLayer extends LitElement {
               .value=${this.currentWmsUrl || ''}
               @change=${this.onChangeWmsUrl}
             />
-            <button class="lux-btn" @click=${this.onClickGetLayers}>
+            <button
+              type="button"
+              class="lux-btn"
+              @click=${this.onClickGetLayers}
+            >
               ${i18next.t('Get the layers', { ns: 'client' })}
             </button>
           </div>
