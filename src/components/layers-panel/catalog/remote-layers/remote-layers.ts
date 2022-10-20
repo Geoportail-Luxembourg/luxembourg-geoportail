@@ -127,7 +127,7 @@ export class RemoteLayer extends LitElement {
   render(): TemplateResult {
     return html`
       <div
-        class="absolute right-0 top-52 z-50 bg-white lux-modal text-black w-[600px]"
+        class="absolute right-0 top-52 z-50 bg-white lux-modal w-[600px] text-[#333]"
         role="dialog"
       >
         <div class="lux-modal-header">
@@ -156,7 +156,7 @@ export class RemoteLayer extends LitElement {
           </div>
 
           ${this.currentWmsEndpoint
-            ? html`<div>
+            ? html` <div class="text-center">
                   <span class="lux-label"
                     >${i18next.t('Description du service :', {
                       ns: 'client',
@@ -164,7 +164,7 @@ export class RemoteLayer extends LitElement {
                   >
                   ${this.currentWmsEndpoint.getServiceInfo()?.title}
                 </div>
-                <div>
+                <div class="text-center">
                   <span class="lux-label"
                     >${i18next.t('Access constraints :', {
                       ns: 'client',

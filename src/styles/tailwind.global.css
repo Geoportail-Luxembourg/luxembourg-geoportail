@@ -32,7 +32,7 @@
     border: 1px solid var(--button-bg-color);
   }
   .lux-input {
-    @apply py-[6px] px-[12px] leading-snug text-white;
+    @apply py-[6px] px-[12px] leading-snug text-white placeholder:text-white border;
     background-color: var(--color-secondary);
   }
   .lux-label {
