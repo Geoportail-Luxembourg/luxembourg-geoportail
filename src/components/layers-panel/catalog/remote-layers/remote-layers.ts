@@ -125,7 +125,7 @@ export class RemoteLayer extends LitElement {
   render(): TemplateResult {
     return html`
       <div
-        class="absolute right-0 top-52 z-50 bg-white lux-modal w-[600px] text-[#333]"
+        class="absolute right-0 top-52 z-50 bg-white lux-modal w-[600px]"
         role="dialog"
       >
         <div class="lux-modal-header">

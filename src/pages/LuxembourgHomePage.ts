@@ -21,7 +21,7 @@ export class LuxembourgHomePage extends LitElement {
         </header>
         <main class="flex grow">
           <!--side bar-->
-          <div class="w-80 bg-secondary text-white">
+          <div class="w-80 bg-secondary">
             <lux-layer-panel></lux-layer-panel>
           </div>
           <div class="grow bg-blue-100">

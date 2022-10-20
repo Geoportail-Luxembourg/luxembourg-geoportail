@@ -13,6 +13,12 @@
   src: url('/assets/fonts/geoportail-icons.woff') format('woff');
 }
 
+@layer base {
+  body {
+    @apply text-default
+  }
+}
+
 @layer components {
   .lux-primary {
     @apply bg-tertiary text-secondary px-2 py-1.5 uppercase;
@@ -64,6 +70,7 @@
 
 @layer base {
   :root {
+    --color-default: #333;
     --color-primary: #2980b9;
     --color-secondary: #97bbd3;
     --color-tertiary: #1f5d87;
