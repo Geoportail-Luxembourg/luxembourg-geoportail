@@ -72,7 +72,7 @@ export class BackgroundSelectorElement extends i18nMixin(LitElement) {
   }
 
   setBackgroundLayer(layer: LuxBgLayer) {
-    bgLayerService.activeBgLayer$.next(layer)
+    bgLayerService.setBgLayer(layer)
     this.isOpen = false
   }
 

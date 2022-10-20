@@ -71,10 +71,10 @@ export function createBgWmtsLayer(layer: Layer): TileLayer<WMTS> {
       style: 'default',
       crossOrigin: 'anonymous',
     }),
+    label: name,
+    id,
   })
 
-  tileLayer.set('label', name)
-  tileLayer.set('id', id)
   // tileLayer.type = 'TILE'
   // ngeoMiscDecorate.layer(layer);
 
