@@ -42,32 +42,48 @@ export class LayerTreeNode extends i18nMixin(LitElement) {
   }
 
   renderParent(): TemplateResult {
-    return html`
+    return html`<div class="mb-px">
       ${this.node.depth === 1
         ? html`
             <button
-              class="w-full text-left px-2 py-1.5 uppercase bg-tertiary ${this
+              class="w-full text-left flex px-2 py-1.5 uppercase bg-tertiary ${this
                 .node.expanded
                 ? 'text-white'
                 : 'text-secondary'}"
               aria-expanded="${this.node.expanded}"
               @click="${this.toggleParent}"
             >
-              ${this.getLabel()}
+              <div class="grow">${this.getLabel()}</div>
+              <div class="leading-6">
+                <div
+                  class="fa-sharp fa-solid fa-chevron-${this.node.expanded
+                    ? 'up'
+                    : 'down'}"
+                ></div>
+              </div>
             </button>
           `
         : this.node.depth > 1 && !this.isMaxDepth()
         ? html`
             <button
-              class="w-full text-left px-2 py-1.5 mt-px bg-white text-primary"
+              class="w-full text-left flex px-2 py-1.5 ${this.node.expanded
+                ? 'bg-secondary text-tertiary'
+                : 'bg-white text-primary'}"
               @click="${this.toggleParent}"
             >
-              ${this.getLabel()}
+              <div class="grow">${this.getLabel()}</div>
+              <div class="leading-6">
+                <div
+                  class="fa-sharp fa-solid fa-${this.node.expanded
+                    ? 'minus'
+                    : 'plus'}"
+                ></div>
+              </div>
             </button>
           `
         : ''}
       ${this.isMaxDepth() ? '' : this.renderChildren()}
-    `
+    </div>`
   }
 
   renderLeaf(): TemplateResult {
@@ -77,16 +93,13 @@ export class LayerTreeNode extends i18nMixin(LitElement) {
           .checked
           ? 'font-bold'
           : ''}"
-        aria-expanded="${this.node.expanded}"
         @click="${this.toggleLayer}"
       >
         <i class="fa fa-info"></i>
-        <a>
-          <i
-            class="fa ${this.node.checked ? 'fa-check-square' : 'fa-square'}"
-          ></i>
-          ${this.getLabel()}
-        </a>
+        <i
+          class="fa ${this.node.checked ? 'fa-check-square' : 'fa-square'}"
+        ></i>
+        <span class="hover:underline">${this.getLabel()}</span>
       </button>
     `
   }
@@ -95,9 +108,7 @@ export class LayerTreeNode extends i18nMixin(LitElement) {
     return this.node.expanded || this.isRoot()
       ? this.node.children?.map((node: LayerTreeNode) => {
           return html`
-            <div>
-              <lux-layer-tree-node .node="${node}"></lux-layer-tree-node>
-            </div>
+            <lux-layer-tree-node .node="${node}"></lux-layer-tree-node>
           `
         })
       : ''
