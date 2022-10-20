@@ -34,29 +34,37 @@ export class BackgroundSelectorElement extends i18nMixin(LitElement) {
 
     function getOpenMenuClasses(layer: LuxBgLayer, that) {
       var openMenuClasses = 'lux-bg-sel hover:bg-cyan-600 '
-      openMenuClasses += layer.id === that.activeLayer.id ? 'border-red-500 border-2' : 'border-black border'
+      openMenuClasses +=
+        layer.id === that.activeLayer.id
+          ? 'border-red-500 border-2'
+          : 'border-black border'
       return openMenuClasses
     }
     const bgLayerComponents = this.bgLayers.map(
       (layer: LuxBgLayer) =>
         html`<lux-background-selector-item
-                class="${getOpenMenuClasses(layer, this)}"
-                bgname="${layer.name}"
-                @click="${() => this.setBackgroundLayer(layer)}"
-              >
-              </lux-background-selector-item>`
+          class="${getOpenMenuClasses(layer, this)}"
+          bgname="${layer.name}"
+          @click="${() => this.setBackgroundLayer(layer)}"
+        >
+        </lux-background-selector-item>`
     )
     return html`
       <div class="flex flex-row-reverse">
         <lux-background-selector-item
-             class=" ${closedMenuClasses}"
-             aria-expanded="${this.isOpen}"
-             bgtitle="Select BG layer"
-             bgname="${this.activeLayer.name}"
-             @click="${this.toggleSelector}">
+          class=" ${closedMenuClasses}"
+          aria-expanded="${this.isOpen}"
+          bgtitle="Select BG layer"
+          bgname="${this.activeLayer.name}"
+          @click="${this.toggleSelector}"
+        >
         </lux-background-selector-item>
 
-        <div class="${this.isOpen == true ? 'flex flex-col md:flex-row' : 'hidden'}">
+        <div
+          class="${this.isOpen == true
+            ? 'flex flex-col md:flex-row'
+            : 'hidden'}"
+        >
           ${bgLayerComponents}
         </div>
       </div>
