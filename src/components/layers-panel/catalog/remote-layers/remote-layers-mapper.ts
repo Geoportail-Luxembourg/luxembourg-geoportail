@@ -50,12 +50,12 @@ export function remoteLayerToLayer({
   url: string
   remoteLayer: OlClientWmsLayerFull
 }): Layer {
-  const { name } = remoteLayer
+  const { name = '' } = remoteLayer
 
   return {
     id,
-    name: name || '',
-    layers: name || '',
+    name,
+    layers: name,
     url,
     type: 'WMS',
     imageType: LayerImageType.PNG,
