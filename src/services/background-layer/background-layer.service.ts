@@ -38,7 +38,7 @@ export class BgLayerService {
     },
   ]
   bgLayers$ = new BehaviorSubject<LuxBgLayer[]>(this.bgLayers)
-  activeBgLayer$ = new BehaviorSubject<LuxBgLayer>(this.bgLayers[0])
+  activeBgLayer$ = new BehaviorSubject<LuxBgLayer>(this.bgLayers[5])
 
   constructor() {
     themesService.bgLayers$.subscribe(bgLayers =>

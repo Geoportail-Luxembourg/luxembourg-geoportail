@@ -29,31 +29,36 @@ export class BackgroundSelectorElement extends i18nMixin(LitElement) {
   }
 
   render() {
-    // prettier-ignore
+    var closedMenuClasses = 'lux-bg-sel border border-black bg-white '
+    closedMenuClasses += this.isOpen == true ? 'hidden' : 'block'
+
+    function getOpenMenuClasses(layer: LuxBgLayer, that) {
+      var openMenuClasses = 'lux-bg-sel hover:bg-cyan-600 '
+      openMenuClasses += layer.id === that.activeLayer.id ? 'border-red-500 border-2' : 'border-black border'
+      return openMenuClasses
+    }
+    const bgLayerComponents = this.bgLayers.map(
+      (layer: LuxBgLayer) =>
+        html`<lux-background-selector-item
+                class="${getOpenMenuClasses(layer, this)}"
+                bgname="${layer.name}"
+                @click="${() => this.setBackgroundLayer(layer)}"
+              >
+              </lux-background-selector-item>`
+    )
     return html`
       <div class="flex flex-row-reverse">
-        <div class="${this.isOpen == true ? 'flex flex-col md:flex-row' : 'hidden'}">
-          ${this.bgLayers.map(
-            (layer: LuxBgLayer) =>
-              html`<lux-background-selector-item
-                      class="${`lux-bg-sel ` +
-                               `${layer.id === this.activeLayer.id ? 'border-red-500 border-2' : 'border-black border'} ` +
-                               `hover:bg-cyan-600`}"
-                      bgname="${layer.name}"
-                      @click="${() => this.setBackgroundLayer(layer)}"
-                   >
-              </lux-background-selector-item>`
-          )}
-        </div>
         <lux-background-selector-item
-             class=" ${
-               'lux-bg-sel border border-black bg-white ' +
-               (this.isOpen == true ? 'hidden' : 'block')}"
+             class=" ${closedMenuClasses}"
              aria-expanded="${this.isOpen}"
              bgtitle="Select BG layer"
              bgname="${this.activeLayer.name}"
              @click="${this.toggleSelector}">
         </lux-background-selector-item>
+
+        <div class="${this.isOpen == true ? 'flex flex-col md:flex-row' : 'hidden'}">
+          ${bgLayerComponents}
+        </div>
       </div>
     `
   }

@@ -13,11 +13,17 @@ export class BackGroundSelectorItemElement extends i18nMixin(LitElement) {
   }
 
   render() {
-    // prettier-ignore
-    return html`<button title="${i18next.t(this.bgTitle)}${this.bgTitle.length>0?'\n':''}${i18next.t('Background layer')}: ${i18next.t(this.bgName)}"
-      class="${`h-full w-full rounded-sm lux-bg-sel-icon-bg-length bg-white ` +
-               `bg-${this.bgName}_sm md:bg-${this.bgName} hd:bg-${this.bgName}_sm_hi hd_md:bg-${this.bgName}_hi`}"
-    />`
+    const localizedTitle = i18next.t(this.bgTitle)
+    const hasTitle = this.bgTitle.length>0
+    const localizedLayerName = `${i18next.t('Background layer')}: ${i18next.t(this.bgName)}`
+    const buttonTitle = `${localizedTitle}${hasTitle?'\n':''}${localizedLayerName}`
+    var buttonClasses = 'h-full w-full rounded-sm lux-bg-sel-icon-bg-length bg-white '
+    buttonClasses += `bg-${this.bgName}_sm `
+    buttonClasses += `md:bg-${this.bgName} `
+    buttonClasses += `hd:bg-${this.bgName}_sm_hi `
+    buttonClasses += `hd_md:bg-${this.bgName}_hi `
+
+    return html`<button title="${buttonTitle}" class="${buttonClasses}"/>`
   }
   createRenderRoot() {
     // no shadow dom
