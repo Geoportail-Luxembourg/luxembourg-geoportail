@@ -48,12 +48,6 @@ export function createBgWmtsLayer(layer: Layer): TileLayer<WMTS> {
   const projection = getProjection(bgConfig.bg_layer_projection)!
   const extent = projection!.getExtent()
   const tileLayer = new TileLayer({
-    // 'olcs.extent': transformExtent(
-    //   //  ??? olcs.extent refused by linter because not a parameter ?
-    //   bgConfig.olcs_extent,
-    //   bgConfig.olcs_extent_projection,
-    //   bgConfig.bg_layer_projection
-    // ),
     source: new WMTS({
       url: url,
       tilePixelRatio: hasRetina ? 2 : 1,
@@ -72,6 +66,12 @@ export function createBgWmtsLayer(layer: Layer): TileLayer<WMTS> {
       crossOrigin: 'anonymous',
     }),
     properties: {
+      // check that olcs.extent is still available for legacy app
+      'olcs.extent': transformExtent(
+        bgConfig.olcs_extent,
+        bgConfig.olcs_extent_projection,
+        bgConfig.bg_layer_projection
+      ),
       label: name,
       id,
     },
