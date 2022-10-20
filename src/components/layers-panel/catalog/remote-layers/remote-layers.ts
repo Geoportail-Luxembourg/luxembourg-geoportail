@@ -164,7 +164,7 @@ export class RemoteLayer extends LitElement {
                       ns: 'client',
                     })}</span
                   >
-                  ${this.currentWmsEndpoint.getServiceInfo()?.title}
+                  ${this.currentWmsEndpoint.getServiceInfo()?.abstract}
                 </div>
                 <div class="text-center">
                   <span class="lux-label"
