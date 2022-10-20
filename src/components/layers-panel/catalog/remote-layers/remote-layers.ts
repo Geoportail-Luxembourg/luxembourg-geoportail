@@ -12,10 +12,7 @@ import {
 import { layerTreeState } from '../layer-tree/layer-tree.service'
 import { mapState } from '../../../../state/map/map.state'
 import i18next from 'i18next'
-import {
-  OlClientWmsEndpoint,
-  OlClientWmsLayerSummary,
-} from './remote-layers.model'
+import { OlClientWmsEndpoint } from './remote-layers.model'
 
 @customElement('lux-remote-layers')
 export class RemoteLayer extends LitElement {
@@ -62,17 +59,14 @@ export class RemoteLayer extends LitElement {
   }
 
   public async getWmsLayers() {
-    try {
-      const wmsEndpoint = this.currentWmsEndpoint
-      const remoteLayers: OlClientWmsLayerSummary[] = wmsEndpoint.getLayers()
+    const wmsEndpoint = this.currentWmsEndpoint
+    const remoteLayers = wmsEndpoint?.getLayers()
 
-      remoteLayers[0] &&
-        (this.layerTree = remoteLayersToLayerTreeMapper(
-          remoteLayers[0],
-          this.currentWmsUrl
-        ))
-    } catch (e) {
-      alert(i18next.t('Impossible de contacter ce WMS', { ns: 'client' }))
+    if (remoteLayers && remoteLayers[0]) {
+      this.layerTree = remoteLayersToLayerTreeMapper(
+        remoteLayers[0],
+        this.currentWmsUrl
+      )
     }
   }
 
@@ -111,9 +105,9 @@ export class RemoteLayer extends LitElement {
     if (node.checked === true) {
       mapState.removeLayer(id)
     } else {
-      const remoteLayer = wmsEndpoint && wmsEndpoint.getLayerByName(name)
+      const remoteLayer = wmsEndpoint?.getLayerByName(name)
 
-      remoteLayer &&
+      if (remoteLayer) {
         mapState.addLayer(
           remoteLayerToLayer({
             id,
@@ -121,6 +115,7 @@ export class RemoteLayer extends LitElement {
             remoteLayer,
           })
         )
+      }
     }
   }
 

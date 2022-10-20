@@ -31,9 +31,9 @@ export interface OlClientGenericEndpointInfo {
   outputFormats?: string[]
 }
 
-export interface OlClientWmsEndpoint {
+export class OlClientWmsEndpoint {
   isReady: () => Promise<OlClientWmsEndpoint>
-  getLayers: () => OlClientWmsLayerSummary[]
+  getLayers: () => OlClientWmsLayerSummary[] | null
   getLayerByName: (name: string) => OlClientWmsLayerFull | null
   getServiceInfo: () => OlClientGenericEndpointInfo | null
 }
