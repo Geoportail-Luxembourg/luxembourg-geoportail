@@ -133,7 +133,7 @@ export class RemoteLayer extends LitElement {
         </div>
 
         <div class="p-[15px]">
-          <div class="relative">
+          <div class="relative text-center">
             <lux-dropdown
               .options=${this.wmsLayers}
               .placeholder=${i18next.t('Predefined wms', { ns: 'client' })}
