@@ -18,6 +18,7 @@ import { OgcClientWmsEndpoint } from './remote-layers.model'
 export class RemoteLayer extends LitElement {
   @state() private wmsLayers: DropdownOptionModel[]
   @state() private layerTree: LayerTreeNodeModel | undefined
+  @state() private isLoading = false
   private subscription = new Subscription()
   private inputWmsUrl: string
   private currentWmsUrl: string
@@ -46,6 +47,8 @@ export class RemoteLayer extends LitElement {
   }
 
   public async getWmsEndpoint(url: string) {
+    this.isLoading = true
+
     try {
       const wmsEndpoint = remoteLayersService.getWmsEndpoint(url)
 
@@ -56,6 +59,8 @@ export class RemoteLayer extends LitElement {
     } catch (e) {
       alert(i18next.t('Impossible de contacter ce WMS', { ns: 'client' }))
     }
+
+    this.isLoading = false
   }
 
   public async getWmsLayers() {
@@ -152,7 +157,7 @@ export class RemoteLayer extends LitElement {
             </button>
           </div>
 
-          ${this.currentWmsEndpoint
+          ${!this.isLoading && this.currentWmsEndpoint
             ? html` <div class="text-center">
                   <span class="lux-label"
                     >${i18next.t('Description du service :', {
@@ -169,17 +174,31 @@ export class RemoteLayer extends LitElement {
                   >
                   ${this.currentWmsEndpoint.getServiceInfo()?.constraints}
                 </div>`
-            : ''}
-
-          <div class="overflow-auto max-h-[calc(400px-36px)]">
-            <lux-layer-tree-node
-              class="block p-[10px] mb-[11px]"
-              .node="${this.layerTree}"
-              @parent-toggle="${this.toggleParent}"
-              @layer-toggle="${this.toggleLayer}"
-            ></lux-layer-tree-node>
-          </div>
-          <div></div>
+            : null}
+          ${this.isLoading
+            ? html`
+                <div class="text-center">
+                  <div class="fa fa-refresh fa-spin"></div>
+                  <span translate
+                    >${i18next.t('Chargement des informations', {
+                      ns: 'client',
+                    })}</span
+                  >
+                </div>
+              `
+            : null}
+          ${!this.isLoading
+            ? html`
+                <div class="overflow-auto max-h-[calc(400px-36px)]">
+                  <lux-layer-tree-node
+                    class="block p-[10px] mb-[11px]"
+                    .node="${this.layerTree}"
+                    @parent-toggle="${this.toggleParent}"
+                    @layer-toggle="${this.toggleLayer}"
+                  ></lux-layer-tree-node>
+                </div>
+              `
+            : null}
         </div>
       </div>
     `
