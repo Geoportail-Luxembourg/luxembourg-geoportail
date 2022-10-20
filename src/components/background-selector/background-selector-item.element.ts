@@ -15,12 +15,14 @@ export class BackGroundSelectorItemElement extends i18nMixin(LitElement) {
   render() {
     const localizedTitle = i18next.t(this.bgTitle)
     const hasTitle = this.bgTitle.length > 0
-    // prettier-ignore
-    const localizedLayerName = `${i18next.t('Background layer')}: ${i18next.t(this.bgName)}`
-    // prettier-ignore
-    const buttonTitle = `${localizedTitle}${hasTitle?'\n':''}${localizedLayerName}`
-    // prettier-ignore
-    var buttonClasses = 'h-full w-full rounded-sm lux-bg-sel-icon-bg-length bg-white '
+    const localizedLayerName = `${i18next.t('Background layer')}: ${i18next.t(
+      this.bgName
+    )}`
+    const buttonTitle = `${localizedTitle}${
+      hasTitle ? '\n' : ''
+    }${localizedLayerName}`
+    let buttonClasses =
+      'h-full w-full rounded-sm lux-bg-sel-icon-bg-length bg-white '
     buttonClasses += `bg-${this.bgName}_sm `
     buttonClasses += `md:bg-${this.bgName} `
     buttonClasses += `hd:bg-${this.bgName}_sm_hi `
