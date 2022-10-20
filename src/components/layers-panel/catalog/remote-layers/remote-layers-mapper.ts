@@ -2,13 +2,13 @@ import { mapState } from '../../../../state/map/map.state'
 import { Layer, LayerImageType } from '../../../../state/map/map.state.model'
 import { LayerTreeNodeModel } from '../layer-tree/layer-tree.model'
 import {
-  OlClientWmsLayerSummary,
-  OlClientWmsLayerFull,
+  OgcClientWmsLayerSummary,
+  OgcClientWmsLayerFull,
 } from './remote-layers.model'
 
 function sortLayerTreeNoChildrenFirst(
-  a: OlClientWmsLayerSummary,
-  b: OlClientWmsLayerSummary
+  a: OgcClientWmsLayerSummary,
+  b: OgcClientWmsLayerSummary
 ) {
   if (a.children && !b.children) {
     return 1
@@ -22,7 +22,7 @@ function sortLayerTreeNoChildrenFirst(
 }
 
 export function remoteLayersToLayerTreeMapper(
-  node: OlClientWmsLayerSummary,
+  node: OgcClientWmsLayerSummary,
   urlWms: string,
   depth = 0
 ): LayerTreeNodeModel {
@@ -48,7 +48,7 @@ export function remoteLayerToLayer({
 }: {
   id: string
   url: string
-  remoteLayer: OlClientWmsLayerFull
+  remoteLayer: OgcClientWmsLayerFull
 }): Layer {
   const { name = '' } = remoteLayer
 

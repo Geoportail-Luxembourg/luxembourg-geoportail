@@ -12,7 +12,7 @@ import {
 import { layerTreeState } from '../layer-tree/layer-tree.service'
 import { mapState } from '../../../../state/map/map.state'
 import i18next from 'i18next'
-import { OlClientWmsEndpoint } from './remote-layers.model'
+import { OgcClientWmsEndpoint } from './remote-layers.model'
 
 @customElement('lux-remote-layers')
 export class RemoteLayer extends LitElement {
@@ -21,7 +21,7 @@ export class RemoteLayer extends LitElement {
   private subscription = new Subscription()
   private inputWmsUrl: string
   private currentWmsUrl: string
-  private currentWmsEndpoint: OlClientWmsEndpoint
+  private currentWmsEndpoint: OgcClientWmsEndpoint
 
   constructor() {
     super()

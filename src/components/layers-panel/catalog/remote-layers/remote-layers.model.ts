@@ -3,7 +3,7 @@ export interface RemoteWmsEndpointModel {
   label: string
 }
 
-export interface OlClientWmsLayerFull {
+export interface OgcClientWmsLayerFull {
   abstract?: string
   attribution?: string
   availableCrs: string[]
@@ -11,17 +11,17 @@ export interface OlClientWmsLayerFull {
   name?: string
   styles: string[]
   title: string
-  children?: OlClientWmsLayerFull[]
+  children?: OgcClientWmsLayerFull[]
 }
 
-export interface OlClientWmsLayerSummary {
+export interface OgcClientWmsLayerSummary {
   name: string
   title: string
   abstract: string
-  children: OlClientWmsLayerSummary[]
+  children: OgcClientWmsLayerSummary[]
 }
 
-export interface OlClientGenericEndpointInfo {
+export interface OgcClientGenericEndpointInfo {
   name: string
   title: string
   abstract: string
@@ -31,9 +31,9 @@ export interface OlClientGenericEndpointInfo {
   outputFormats?: string[]
 }
 
-export class OlClientWmsEndpoint {
-  isReady: () => Promise<OlClientWmsEndpoint>
-  getLayers: () => OlClientWmsLayerSummary[] | null
-  getLayerByName: (name: string) => OlClientWmsLayerFull | null
-  getServiceInfo: () => OlClientGenericEndpointInfo | null
+export class OgcClientWmsEndpoint {
+  isReady: () => Promise<OgcClientWmsEndpoint>
+  getLayers: () => OgcClientWmsLayerSummary[] | null
+  getLayerByName: (name: string) => OgcClientWmsLayerFull | null
+  getServiceInfo: () => OgcClientGenericEndpointInfo | null
 }
