@@ -89,19 +89,20 @@ export class LayerTreeNode extends i18nMixin(LitElement) {
 
   renderLeaf(): TemplateResult {
     return html`
-      <button
-        class="w-full text-left bg-secondary text-tertiary px-2 ${this.node
-          .checked
-          ? 'font-bold'
-          : ''}"
-        @click="${this.toggleLayer}"
-      >
-        <i class="fa fa-info"></i>
-        <i
-          class="fa ${this.node.checked ? 'fa-check-square' : 'fa-square'}"
-        ></i>
-        <span class="hover:underline">${this.getLabel()}</span>
-      </button>
+      <div class="flex bg-secondary text-tertiary px-2">
+        <button class="fa-solid fa-fw fa-fh fa-info leading-6"></button>
+        <button
+          class="w-full text-left  ${this.node.checked ? 'font-bold' : ''}"
+          @click="${this.toggleLayer}"
+        >
+          <i
+            class="fa-solid ${this.node.checked
+              ? 'fa-check-square'
+              : 'fa-square'}"
+          ></i>
+          <span class="hover:underline">${this.getLabel()}</span>
+        </button>
+      </div>
     `
   }
 
