@@ -46,7 +46,7 @@ export class LayerTreeNode extends i18nMixin(LitElement) {
       ${this.node.depth === 1
         ? html`
             <button
-              class="w-full text-left flex px-2 py-1.5 uppercase bg-tertiary ${this
+              class="node-1 w-full text-left flex px-2 py-1.5 uppercase bg-tertiary ${this
                 .node.expanded
                 ? 'text-white'
                 : 'text-secondary'}"
@@ -56,7 +56,7 @@ export class LayerTreeNode extends i18nMixin(LitElement) {
               <div class="grow">${this.getLabel()}</div>
               <div class="leading-6">
                 <div
-                  class="fa-sharp fa-solid fa-chevron-${this.node.expanded
+                  class="fa-sharp fa-solid fa-caret-${this.node.expanded
                     ? 'up'
                     : 'down'}"
                 ></div>
@@ -118,7 +118,14 @@ export class LayerTreeNode extends i18nMixin(LitElement) {
   render(): TemplateResult {
     const node = this.node
     if (node) {
-      return this.isParent() ? this.renderParent() : this.renderLeaf()
+      return html`
+        <style>
+          .node-1:hover .fa-solid {
+            color: white;
+          }
+        </style>
+        ${this.isParent() ? this.renderParent() : this.renderLeaf()}
+      `
     }
     return html``
   }
