@@ -69,6 +69,7 @@ export class LayerTreeNode extends i18nMixin(LitElement) {
               class="w-full text-left flex px-2 py-1.5 ${this.node.expanded
                 ? 'bg-secondary text-tertiary'
                 : 'bg-white text-primary'}"
+              aria-expanded="${this.node.expanded}"
               @click="${this.toggleParent}"
             >
               <div class="grow">${this.getLabel()}</div>
