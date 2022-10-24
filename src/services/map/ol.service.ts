@@ -7,7 +7,7 @@ import { layersCache } from '../../state/layers/layers.cache'
 import { Layer } from '../../state/map/map.state.model'
 
 const proxyWmsUrl = 'https://map.geoportail.lu/ogcproxywms'
-const remoteProxyWms = ''
+export const remoteProxyWms = 'https://map.geoportail.lu/httpsproxy'
 
 function createWmsLayer(layer: Layer): ImageLayer<ImageWMS> {
   const { name, layers, imageType, url, id } = layer
@@ -67,7 +67,7 @@ export class Openlayers {
     olMap.addLayer(layersCache[id])
   }
 
-  static removeLayer(olMap: OlMap, layerId: number) {
+  static removeLayer(olMap: OlMap, layerId: string) {
     const layerToRemove = olMap
       .getLayers()
       .getArray()

@@ -1,7 +1,12 @@
 import { LayerType, Metadata } from '../../services/themes/themes.model'
 
+export enum LayerImageType {
+  PNG = 'image/png',
+  JPG = 'image/jpeg',
+}
+
 export interface Layer {
-  id: number
+  id: number | string
   name: string
   layers: string
   url?: string

@@ -16,7 +16,9 @@ export class OlSynchronizer {
         oldContext
       )
 
-      removedLayers.forEach(layer => Openlayers.removeLayer(map, layer.id))
+      removedLayers.forEach(layer =>
+        Openlayers.removeLayer(map, layer.id as string)
+      )
 
       addedLayerComparisons.forEach(cmp =>
         Openlayers.addLayer(map, cmp.layer, cmp.position)

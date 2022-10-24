@@ -39,6 +39,7 @@ module.exports = {
     },
     extend: {
       colors: {
+        default: 'var(--color-default)',
         primary: 'var(--color-primary)',
         secondary: 'var(--color-secondary)',
         tertiary: 'var(--color-tertiary)',

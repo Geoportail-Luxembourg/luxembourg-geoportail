@@ -1,3 +1,3 @@
 import BaseLayer from 'ol/layer/Base'
 
-export const layersCache: Record<number, BaseLayer> = {}
+export const layersCache: Record<string, BaseLayer> = {}

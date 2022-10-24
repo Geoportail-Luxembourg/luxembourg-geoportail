@@ -17,13 +17,17 @@ export class MapState {
     this.layers$.next(this.mapContext.layers || [])
   }
 
-  removeLayer(layerId: number) {
+  removeLayer(layerId: string) {
     this.mapContext = {
       ...this.mapContext,
       layers:
         this.mapContext.layers?.filter(layer => layer.id !== layerId) || [],
     }
     this.map$.next(this.mapContext)
+  }
+
+  hasLayer(layerId: string) {
+    return !!this.mapContext.layers?.find(layer => layer.id === layerId)
   }
 }
 

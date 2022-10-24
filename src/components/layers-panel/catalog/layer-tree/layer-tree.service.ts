@@ -3,7 +3,7 @@ import { LayerTreeNodeModel, LayerTreeToggleProperty } from './layer-tree.model'
 
 export class LayerTreeService {
   toggleNode(
-    id: number,
+    id: string,
     node: LayerTreeNodeModel,
     propertyName: LayerTreeToggleProperty
   ): LayerTreeNodeModel {
