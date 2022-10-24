@@ -18,8 +18,8 @@ export class LayerPanel extends i18nMixin(LitElement) {
         <!--catalog tab-->
         <div class="relative grow p-2.5 bg-primary overflow-auto">
           <lux-catalog-tab></lux-catalog-tab>
-          <lux-remote-layers></lux-remote-layers>
         </div>
+        <lux-remote-layers></lux-remote-layers>
       </div>
     `
   }
