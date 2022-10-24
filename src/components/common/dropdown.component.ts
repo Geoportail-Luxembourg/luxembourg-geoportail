@@ -50,7 +50,7 @@ export class Dropdown extends LitElement {
             type="button"
             class="lux-btn"
             id="menu-button"
-            aria-expanded="true"
+            aria-expanded=${this.isOpen ? 'true' : 'false'}
             aria-haspopup="true"
             @click=${this.onClickOpenBtn}
           >
