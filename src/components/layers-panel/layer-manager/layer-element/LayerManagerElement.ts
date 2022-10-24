@@ -20,15 +20,19 @@ export class LayerManagerElement extends i18nMixin(LitElement) {
 
   render(): TemplateResult {
     return html`
-      <li class="bg-secondary text-tertiary">
-        <a class="fa fa-reorder"></a>
-        <a class="fa fa-info"></a>
-        ${this.layer.name}
-        <span class="fa fa-ellipsis"></span>
-        <span class="fa fa-trash"></span>
+      <li class="lux-layer-manager-item flex space-x-1.5">
+        <a class="fa-solid fa-bars flex-none"></a>
+        <a class="fa-solid fa-info flex-none"></a>
+        <div class="flex-auto">
+          ${this.layer.name}
+        </div>
+        <span class="fa-solid fa-ellipsis flex-none"></span>
+        <span class="fa-solid fa-trash flex-none" @click="${this.removeLayer()}></span>
       </li>
     `
   }
+
+  removeLayer() {}
 
   override createRenderRoot() {
     return this

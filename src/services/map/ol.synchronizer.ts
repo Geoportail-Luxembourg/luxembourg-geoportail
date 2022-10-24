@@ -24,6 +24,9 @@ export class OlSynchronizer {
         Openlayers.addLayer(map, cmp.layer, cmp.position)
       )
 
+      if (newContext.layers) {
+        Openlayers.reorderLayers(map, newContext.layers)
+      }
       console.log('state change', newContext)
     })
   }

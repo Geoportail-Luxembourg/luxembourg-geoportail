@@ -76,4 +76,14 @@ export class Openlayers {
       olMap.removeLayer(layerToRemove)
     }
   }
+
+  static reorderLayers(olMap: OlMap, layers: Layer[]) {
+    const arrayLayers = olMap.getLayers().getArray()
+    layers.forEach((layer, idx) => {
+      const baseLayer: BaseLayer = arrayLayers.find(
+        mapLayer => mapLayer.get('id') === layer.id
+      )
+      baseLayer.setZIndex(layers.length - idx)
+    })
+  }
 }

@@ -90,8 +90,14 @@
   .lux-collapse.expanded {
     @apply max-h-[3000px];
   }
+  .lux-layer-manager-item {
+    @apply text-base capitalize px-2.5 py-1 my-1 bg-secondary text-tertiary ;
+    align-items: center;
+  }
 }
-
+.fa-solid {
+  vertical-align: middle;
+}
 @layer base {
   :root {
     --color-default: #333;

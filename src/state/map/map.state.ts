@@ -35,6 +35,17 @@ export class MapState {
   hasLayer(layerId: string) {
     return !!this.mapContext.layers?.find(layer => layer.id === layerId)
   }
+  
+  reorderLayers(layersId: number[]) {
+    this.mapContext = {
+      ...this.mapContext,
+      layers: this.mapContext.layers?.sort(
+        (a, b) => layersId.indexOf(a.id) - layersId.indexOf(b.id)
+      ),
+    }
+    this.map$.next(this.mapContext)
+    this.layers$.next(this.mapContext.layers || [])
+  }
 }
 
 export const mapState = new MapState()
