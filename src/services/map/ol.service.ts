@@ -62,13 +62,16 @@ export class Openlayers {
     return layer
   }
 
-  addLayer(olMap: OlMap, layer: Layer) {
+  static cachedLayer(layer: Layer): BaseLayer {
     const { id } = layer
-    const baseLayer: BaseLayer =
-      !layersCache.hasOwnProperty(id) || !layersCache[id]
-        ? this.createLayer(layer)
-        : layersCache[id]
+    
+    return !layersCache.hasOwnProperty(id) || !layersCache[id]
+      ? Openlayers.createLayer(layer)
+      : layersCache[id]
+  }
 
+  static addLayer(olMap: OlMap, layer: Layer) {
+    const baseLayer = Openlayers.cachedLayer(layer)
     olMap.addLayer(baseLayer)
   }
 
@@ -98,6 +101,29 @@ export class Openlayers {
       .getArray()
       .find(layer => layer.get('id') === layerId)
     if (layer) layer.setOpacity(opacity)
+  }
+
+  static setBgLayer(olMap: OlMap, bgLayer: Layer | null) {
+    const mapLayers = olMap.getLayers()
+    const currentBgLayerPos = mapLayers
+      .getArray()
+      .findIndex(layer => layer.get('zIndex') === -1)
+
+    if (currentBgLayerPos >= 0) {
+      if (bgLayer) {
+        const bgBaseLayer = Openlayers.cachedLayer(bgLayer)
+        bgBaseLayer.set('zIndex', -1)
+        mapLayers.setAt(currentBgLayerPos, bgBaseLayer)
+      } else {
+        mapLayers.removeAt(currentBgLayerPos)
+      }
+    } else {
+      if (bgLayer) {
+        const bgBaseLayer = Openlayers.cachedLayer(bgLayer)
+        bgBaseLayer.set('zIndex', -1)
+        olMap.addLayer(bgBaseLayer)
+      }
+    }
   }
 }
 

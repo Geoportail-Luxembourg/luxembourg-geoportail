@@ -17,6 +17,7 @@ export class MapService {
       layers: [
         new TileLayer({
           source: new OSM(),
+          zIndex: -2
         }),
       ],
       target,

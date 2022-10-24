@@ -43,5 +43,8 @@ export class OlSynchronizer {
       }
       console.log('state change', newContext)
     })
+    mapState.bgLayer$.subscribe(bgLayer => {
+      Openlayers.setBgLayer(map, bgLayer)
+    })
   }
 }

@@ -59,13 +59,6 @@ export class BgLayerService {
   }
 
   setMapBackground(bgLayer: LuxBgLayer) {
-    const currentLowestLayer = mapState.getLayer(0)
-    if (
-      currentLowestLayer &&
-      this.bgLayers.find(l => l.id === currentLowestLayer.id)
-    ) {
-      mapState.removeLayer(currentLowestLayer.id)
-    }
     const newBgLayer = themesService.findBgLayerById(bgLayer.id)
     if (newBgLayer) {
       if (!(newBgLayer.type === 'WMTS' || newBgLayer.type === 'BG WMTS')) {
@@ -74,7 +67,9 @@ export class BgLayerService {
         )
       }
       newBgLayer.type = 'BG WMTS'
-      mapState.insertLayer(newBgLayer as unknown as Layer, 0)
+      mapState.setBgLayer(newBgLayer as unknown as Layer)
+    } else {
+      mapState.setBgLayer(null)
     }
   }
 }
