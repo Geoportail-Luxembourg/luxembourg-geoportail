@@ -42,49 +42,66 @@ export class LayerTreeNode extends i18nMixin(LitElement) {
   }
 
   renderParent(): TemplateResult {
-    return html`
+    return html`<div class="mb-px">
       ${this.node.depth === 1
         ? html`
-            <div
-              class="cursor-pointer px-2 py-1.5 uppercase bg-tertiary ${this
+            <button
+              class="node-1 w-full text-left flex px-2 py-1.5 uppercase bg-tertiary ${this
                 .node.expanded
                 ? 'text-white'
                 : 'text-secondary'}"
+              aria-expanded="${this.node.expanded}"
               @click="${this.toggleParent}"
             >
-              ${this.getLabel()}
-            </div>
+              <div class="grow">${this.getLabel()}</div>
+              <div class="leading-6">
+                <div
+                  class="fa-sharp fa-solid fa-caret-${this.node.expanded
+                    ? 'up'
+                    : 'down'}"
+                ></div>
+              </div>
+            </button>
           `
         : this.node.depth > 1 && !this.isMaxDepth()
         ? html`
-            <div
-              class="cursor-pointer px-2 py-1.5 mt-px bg-white text-primary"
+            <button
+              class="w-full text-left flex px-2 py-1.5 ${this.node.expanded
+                ? 'bg-secondary text-tertiary'
+                : 'bg-white text-primary'}"
+              aria-expanded="${this.node.expanded}"
               @click="${this.toggleParent}"
             >
-              ${this.getLabel()}
-            </div>
+              <div class="grow">${this.getLabel()}</div>
+              <div class="leading-6">
+                <div
+                  class="fa-sharp fa-solid fa-${this.node.expanded
+                    ? 'minus'
+                    : 'plus'}"
+                ></div>
+              </div>
+            </button>
           `
         : ''}
       ${this.isMaxDepth() ? '' : this.renderChildren()}
-    `
+    </div>`
   }
 
   renderLeaf(): TemplateResult {
     return html`
-      <div
-        class="cursor-pointer bg-secondary text-tertiary px-2 ${this.node
-          .checked
-          ? 'font-bold'
-          : ''}"
-        @click="${this.toggleLayer}"
-      >
-        <i class="fa fa-info"></i>
-        <a>
+      <div class="flex bg-secondary text-tertiary px-2">
+        <button class="fa-solid fa-fw fa-fh fa-info leading-6"></button>
+        <button
+          class="w-full text-left  ${this.node.checked ? 'font-bold' : ''}"
+          @click="${this.toggleLayer}"
+        >
           <i
-            class="fa ${this.node.checked ? 'fa-check-square' : 'fa-square'}"
+            class="fa-solid ${this.node.checked
+              ? 'fa-check-square'
+              : 'fa-square'}"
           ></i>
-          ${this.getLabel()}
-        </a>
+          <span class="hover:underline">${this.getLabel()}</span>
+        </button>
       </div>
     `
   }
@@ -93,9 +110,7 @@ export class LayerTreeNode extends i18nMixin(LitElement) {
     return this.node.expanded || this.isRoot()
       ? this.node.children?.map((node: LayerTreeNode) => {
           return html`
-            <div>
-              <lux-layer-tree-node .node="${node}"></lux-layer-tree-node>
-            </div>
+            <lux-layer-tree-node .node="${node}"></lux-layer-tree-node>
           `
         })
       : ''
@@ -104,7 +119,14 @@ export class LayerTreeNode extends i18nMixin(LitElement) {
   render(): TemplateResult {
     const node = this.node
     if (node) {
-      return this.isParent() ? this.renderParent() : this.renderLeaf()
+      return html`
+        <style>
+          .node-1:hover .fa-solid {
+            color: white;
+          }
+        </style>
+        ${this.isParent() ? this.renderParent() : this.renderLeaf()}
+      `
     }
     return html``
   }
