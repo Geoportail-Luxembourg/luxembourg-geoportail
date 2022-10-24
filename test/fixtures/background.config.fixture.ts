@@ -1,4 +1,30 @@
 export const bgConfig = {
+  bg_layers: [
+    {
+      name: 'route',
+      id: 556,
+    },
+    {
+      name: 'topo',
+      id: 529,
+    },
+    {
+      name: 'topo_bw',
+      id: 502,
+    },
+    {
+      name: 'ortho',
+      id: 530,
+    },
+    {
+      name: 'hybrid',
+      id: 501,
+    },
+    {
+      name: 'white',
+      id: 0,
+    },
+  ],
   http_bg_server: 'wmts{1-2}',
   https_bg_server: 'wmts{3-4}',
   bg_wmts_server_path: 'mapproxy_4_v3/wmts/{Layer}',

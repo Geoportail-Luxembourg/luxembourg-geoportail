@@ -3,6 +3,8 @@ import { themesService } from '../themes/themes.service'
 import { mapState } from '../../state/map/map.state'
 import { Layer } from '../../state/map/map.state.model'
 
+import { bgConfig } from '../../../test/fixtures/background.config.fixture'
+
 export interface LuxBgLayer {
   name: string
   id: number
@@ -11,32 +13,7 @@ export interface LuxBgLayer {
 export class BgLayerService {
   private subscription = new Subscription()
 
-  bgLayers: LuxBgLayer[] = [
-    {
-      name: 'route',
-      id: 556,
-    },
-    {
-      name: 'topo',
-      id: 529,
-    },
-    {
-      name: 'topo_bw',
-      id: 502,
-    },
-    {
-      name: 'ortho',
-      id: 530,
-    },
-    {
-      name: 'hybrid',
-      id: 501,
-    },
-    {
-      name: 'white',
-      id: 0,
-    },
-  ]
+  bgLayers: LuxBgLayer[] = bgConfig.bg_layers // constant from config
   bgLayers$ = new BehaviorSubject<LuxBgLayer[]>(this.bgLayers)
   activeBgLayer$ = new BehaviorSubject<LuxBgLayer>(this.bgLayers[5])
 
