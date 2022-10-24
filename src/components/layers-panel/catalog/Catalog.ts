@@ -7,15 +7,19 @@ import { mapState } from '../../../state/map/map.state'
 import { Layer } from '../../../state/map/map.state.model'
 
 import './layer-tree/layer-tree-node.component'
+import './layer-metadata/layer-metadata.component'
 import { themesToLayerTree } from './layer-tree/layer-tree.mapper'
 import { LayerTreeNodeModel } from './layer-tree/layer-tree.model'
 import { layerTreeState } from './layer-tree/layer-tree.service'
+import { layerMetadataService } from './layer-metadata/layer-metadata.service'
+import { LayerMetadataModel } from './layer-metadata/layer-metadata.model'
 
 @customElement('lux-catalog')
 export class Catalog extends LitElement {
   @state()
   private layerTree: LayerTreeNodeModel | undefined
   private subscription = new Subscription()
+  @state() private layerMetadata: LayerMetadataModel
 
   constructor() {
     super()
@@ -55,12 +59,25 @@ export class Catalog extends LitElement {
     }
   }
 
+  private async displayLayerMetadata(event: Event) {
+    const node = (event as CustomEvent).detail
+    const layer = themesService.findById(node.id)
+    this.layerMetadata = await layerMetadataService.getLayerMetadata(
+      node,
+      layer
+    )
+  }
+
   render(): TemplateResult {
     return html`
+      <lux-layer-metadata
+        .layerMetadata="${this.layerMetadata}"
+      ></lux-layer-metadata>
       <lux-layer-tree-node
         .node="${this.layerTree}"
         @parent-toggle="${this.toggleParent}"
         @layer-toggle="${this.toggleLayer}"
+        @display-layer-metadata="${this.displayLayerMetadata}"
       ></lux-layer-tree-node>
     `
   }

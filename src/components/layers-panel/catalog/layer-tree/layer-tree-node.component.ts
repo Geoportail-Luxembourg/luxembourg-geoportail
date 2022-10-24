@@ -90,7 +90,10 @@ export class LayerTreeNode extends i18nMixin(LitElement) {
   renderLeaf(): TemplateResult {
     return html`
       <div class="flex bg-secondary text-tertiary px-2">
-        <button class="fa-solid fa-fw fa-fh fa-info leading-6"></button>
+        <button
+          class="fa-solid fa-fw fa-fh fa-info leading-6"
+          @click="${this.displayLayerMetadata}"
+        ></button>
         <button
           class="w-full text-left  ${this.node.checked ? 'font-bold' : ''}"
           @click="${this.toggleLayer}"
@@ -104,6 +107,14 @@ export class LayerTreeNode extends i18nMixin(LitElement) {
         </button>
       </div>
     `
+  }
+
+  displayLayerMetadata() {
+    const event = new CustomEvent(`display-layer-metadata`, {
+      bubbles: true,
+      detail: this.node,
+    })
+    this.dispatchEvent(event)
   }
 
   renderChildren(): TemplateResult {
