@@ -2,11 +2,15 @@
   "name": "luxembourg-geoportail",
   "description": "Luxembourg Geoportail WebApp - Using WC",
   "version": "0.0.1-SNAPSHOT",
-  "module": "dist/module.js",
+  "source": "src/index.ts",
+  "main": "dist/main.js",
+  "module": "dist/module.esm.js",
   "types": "dist/types.d.ts",
   "targets": {
     "esm": {
       "source": "src/module.ts",
+      "distDir": "./dist",
+      "outputFormat": "esmodule",
       "isLibrary": true
     }
   },
@@ -15,11 +19,13 @@
     "format": "eslint --ext .ts,.html . --fix --ignore-path .gitignore && prettier \"**/*.ts\" --write --ignore-path .gitignore",
     "test": "tsc && wtr --coverage",
     "start": "parcel index.html",
-    "build": "parcel build index.html",
+    "build": "parcel build",
     "build:esm": "parcel build --target esm",
     "i18next-parse": "i18next --config conf/i18next-parser.config.js"
   },
   "dependencies": {
+    "@swc/helpers": "^0.4.12",
+    "@camptocamp/ogc-client": "^0.3.4",
     "i18next": "^21.9.2",
     "i18next-http-backend": "^1.4.4",
     "i18next-parser": "^6.5.0",
