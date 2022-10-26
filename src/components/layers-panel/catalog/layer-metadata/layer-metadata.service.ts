@@ -4,6 +4,7 @@ import { LayerTreeNodeModel } from '../layer-tree/layer-tree.model'
 import { LayerMetadataModel } from './layer-metadata.model'
 import {
   getMetadataLinks,
+  getResponsibleParty,
   isoLang2To3,
   stringToHtml,
 } from './layer-metadata.utils'
@@ -89,7 +90,9 @@ export class LayerMetadataService {
       link: getMetadataLinks(metadata.link),
       revisionDate: metadata.revisionDate, //TODO: handle date? (WMS, WMTS)
       keyword: metadata.keyword,
-      responsibleParty: metadata.responsibleParty,
+      responsibleParty: metadata.responsibleParty
+        ? getResponsibleParty(metadata.responsibleParty)
+        : [],
       metadataLink: `${this.geonetworkBaseUrl}/${isoLang2To3(
         language
       )}/catalog.search#/metadata/${metadataUid}`,

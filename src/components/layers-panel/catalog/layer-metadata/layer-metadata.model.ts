@@ -7,7 +7,7 @@ export interface LayerMetadataModel {
   link: string[]
   revisionDate: string
   keyword: string[]
-  responsibleParty: string
+  responsibleParty: string[]
   metadataLink: string
   legendHtml?: HTMLElement
   hasLegend?: boolean

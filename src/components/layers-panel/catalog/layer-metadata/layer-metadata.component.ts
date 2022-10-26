@@ -38,7 +38,7 @@ export class LayerMetadata extends i18nMixin(LitElement) {
                 <dt>${i18next.t('Keywords')}</dt>
                 <dd>${this.layerMetadata.keyword.join(',')}</dd>
                 <dt>${i18next.t('Contact')}</dt>
-                <dd>${this.layerMetadata.responsibleParty}</dd>
+                <dd>${this.layerMetadata.responsibleParty.join(',')}</dd>
                 <dt>${i18next.t('Link to the metadata')}</dt>
                 <dd>${this.layerMetadata.metadataLink}</dd>
                 <!--{{content.geonetworkBaseUrl}}/fre/catalog.search#/metadata/{{content.uid}}-->

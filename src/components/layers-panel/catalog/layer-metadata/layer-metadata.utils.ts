@@ -21,7 +21,7 @@ export function stringToHtml(str: string): HTMLElement {
   return doc.body
 }
 
-export function getMetadataLinks(link: string | string[]) {
+export function getMetadataLinks(link: string | string[]): string[] {
   const links = []
   function splitLink(link: string) {
     const currentLink = link.split('|')
@@ -38,4 +38,19 @@ export function getMetadataLinks(link: string | string[]) {
     splitLink(link)
   }
   return links
+}
+
+export function getResponsibleParty(
+  responsibleParty: string | string[]
+): string[] {
+  const pocs = Array.isArray(responsibleParty)
+    ? responsibleParty
+    : [responsibleParty]
+  const poc = pocs.filter(poc => poc.split('|')[1] === 'metadata')
+  return [
+    poc[0].split('|')[2],
+    poc[0].split('|')[5],
+    poc[0].split('|')[6],
+    poc[0].split('|')[7],
+  ]
 }
