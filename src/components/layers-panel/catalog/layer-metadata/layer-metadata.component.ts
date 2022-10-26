@@ -11,6 +11,7 @@ export class LayerMetadata extends i18nMixin(LitElement) {
   render(): TemplateResult {
     const content = this.layerMetadata
       ? html`
+          <button @click="${this.closeMetadata}">X</button>
           <h1>${i18next.t(`${this.layerMetadata.title}`)}</h1>
           <dl>
             <dt>${i18next.t('Name')}</dt>
@@ -43,6 +44,11 @@ export class LayerMetadata extends i18nMixin(LitElement) {
         `
       : html``
     return content
+  }
+
+  closeMetadata() {
+    const event = new CustomEvent(`close-layer-metadata`)
+    this.dispatchEvent(event)
   }
 
   override createRenderRoot() {

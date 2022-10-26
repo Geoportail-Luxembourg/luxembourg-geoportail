@@ -13,6 +13,7 @@ import { LayerTreeNodeModel } from './layer-tree/layer-tree.model'
 import { layerTreeState } from './layer-tree/layer-tree.service'
 import { layerMetadataService } from './layer-metadata/layer-metadata.service'
 import { LayerMetadataModel } from './layer-metadata/layer-metadata.model'
+import i18next from 'i18next'
 
 @customElement('lux-catalog')
 export class Catalog extends LitElement {
@@ -20,6 +21,7 @@ export class Catalog extends LitElement {
   private layerTree: LayerTreeNodeModel | undefined
   private subscription = new Subscription()
   @state() private layerMetadata: LayerMetadataModel
+  @state() private displayedMetadataNode: LayerTreeNodeModel = undefined
 
   constructor() {
     super()
@@ -34,6 +36,10 @@ export class Catalog extends LitElement {
           )
         })
       )
+    })
+    i18next.on('languageChanged', () => {
+      if (this.displayedMetadataNode)
+        this.displayLayerMetadata(this.displayedMetadataNode)
     })
   }
 
@@ -59,25 +65,31 @@ export class Catalog extends LitElement {
     }
   }
 
-  private async displayLayerMetadata(event: Event) {
-    const node = (event as CustomEvent).detail
+  private async displayLayerMetadata(node: LayerTreeNodeModel) {
     const layer = themesService.findById(node.id)
     this.layerMetadata = await layerMetadataService.getLayerMetadata(
       node,
       layer
     )
+    this.displayedMetadataNode = node
+  }
+
+  private closeMetadata() {
+    this.displayedMetadataNode = undefined
   }
 
   render(): TemplateResult {
     return html`
       <lux-layer-metadata
         .layerMetadata="${this.layerMetadata}"
+        @close-layer-metadata="${this.closeMetadata}"
       ></lux-layer-metadata>
       <lux-layer-tree-node
         .node="${this.layerTree}"
         @parent-toggle="${this.toggleParent}"
         @layer-toggle="${this.toggleLayer}"
-        @display-layer-metadata="${this.displayLayerMetadata}"
+        @display-layer-metadata="${event =>
+          this.displayLayerMetadata(event.detail)}"
       ></lux-layer-tree-node>
     `
   }
