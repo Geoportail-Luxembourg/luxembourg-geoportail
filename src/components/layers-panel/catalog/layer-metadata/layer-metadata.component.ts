@@ -32,11 +32,11 @@ export class LayerMetadata extends i18nMixin(LitElement) {
                 <dt>${i18next.t("Contrainte d'utilisation")}</dt>
                 <dd>${this.layerMetadata.legalConstraints}</dd>
                 <dt>${i18next.t('Url vers la resource')}</dt>
-                <dd>${this.layerMetadata.link}</dd>
+                <dd>${this.layerMetadata.link.join(',')}</dd>
                 <dt>${i18next.t('Revision date')}</dt>
                 <dd>${this.layerMetadata.revisionDate}</dd>
                 <dt>${i18next.t('Keywords')}</dt>
-                <dd>${this.layerMetadata.keyword}</dd>
+                <dd>${this.layerMetadata.keyword.join(',')}</dd>
                 <dt>${i18next.t('Contact')}</dt>
                 <dd>${this.layerMetadata.responsibleParty}</dd>
                 <dt>${i18next.t('Link to the metadata')}</dt>

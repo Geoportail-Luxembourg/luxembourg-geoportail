@@ -20,3 +20,22 @@ export function stringToHtml(str: string): HTMLElement {
   const doc = parser.parseFromString(str, 'text/html')
   return doc.body
 }
+
+export function getMetadataLinks(link: string | string[]) {
+  const links = []
+  function splitLink(link: string) {
+    const currentLink = link.split('|')
+    if (
+      currentLink[3] === 'WWW:LINK-1.0-http--link' &&
+      links.indexOf(currentLink[2]) === -1
+    ) {
+      links.push(currentLink[2])
+    }
+  }
+  if (Array.isArray(link)) {
+    link.forEach(splitLink, this)
+  } else {
+    splitLink(link)
+  }
+  return links
+}

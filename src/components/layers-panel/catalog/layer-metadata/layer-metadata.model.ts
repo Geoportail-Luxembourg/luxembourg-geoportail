@@ -4,7 +4,7 @@ export interface LayerMetadataModel {
   serviceDescription: string
   description: string
   legalConstraints: string
-  link: string
+  link: string[]
   revisionDate: string
   keyword: string[]
   responsibleParty: string

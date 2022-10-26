@@ -1,9 +1,12 @@
 import i18next from 'i18next'
 import { ThemeNodeModel } from '../../../../services/themes/themes.model'
-import { Layer } from '../../../../state/map/map.state.model'
 import { LayerTreeNodeModel } from '../layer-tree/layer-tree.model'
 import { LayerMetadataModel } from './layer-metadata.model'
-import { isoLang2To3, stringToHtml } from './layer-metadata.utils'
+import {
+  getMetadataLinks,
+  isoLang2To3,
+  stringToHtml,
+} from './layer-metadata.utils'
 
 export class LayerMetadataService {
   private geonetworkBaseUrl =
@@ -15,7 +18,6 @@ export class LayerMetadataService {
     node: LayerTreeNodeModel,
     layer?: ThemeNodeModel
   ): Promise<LayerMetadataModel> {
-    console.log(node, layer)
     let title
     let localMetadata
     if (!layer) {
@@ -84,9 +86,9 @@ export class LayerMetadataService {
       serviceDescription: metadata.serviceDescription,
       description: metadata.abstract, //TODO: trustAsHtml? (currently short_trusted_description, trusted_description for teaser)
       legalConstraints: metadata.legalConstraints,
-      link: metadata.link, //TODO: splitLink
+      link: getMetadataLinks(metadata.link),
       revisionDate: metadata.revisionDate, //TODO: handle date? (WMS, WMTS)
-      keyword: metadata.keyword.join(', '),
+      keyword: metadata.keyword,
       responsibleParty: metadata.responsibleParty,
       metadataLink: `${this.geonetworkBaseUrl}/${isoLang2To3(
         language
