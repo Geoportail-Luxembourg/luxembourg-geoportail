@@ -35,11 +35,11 @@
   }
 
   .lux-bg-sel {
-    @apply h-10 w-10 md:h-14 md:w-20 p-0.5 rounded-sm cursor-pointer;
+    @apply h-10 w-10 md:h-14 md:w-24 p-0.5 rounded-sm cursor-pointer bg-white;
   }
-
-  .lux-bg-sel-icon-bg-length {
-    @apply bg-[length:41px_41px] md:bg-[length:90px_50px];
+  
+  .lux-bg-sel-icon {
+    @apply bg-[length:41px_41px] md:bg-[length:90px_50px] border-black border-[0.5px] bg-white;
   }
 
   .lux-outlined {

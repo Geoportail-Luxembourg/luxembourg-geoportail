@@ -29,7 +29,7 @@ export class BackgroundSelectorElement extends i18nMixin(LitElement) {
   }
 
   render() {
-    let closedMenuClasses = 'lux-bg-sel border border-black bg-white '
+    let closedMenuClasses = 'lux-bg-sel border border-black '
     closedMenuClasses += this.isOpen == true ? 'hidden' : 'block'
 
     function getOpenMenuClasses(layer: LuxBgLayer, that: any) {

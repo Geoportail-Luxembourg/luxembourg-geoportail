@@ -21,8 +21,7 @@ export class BackGroundSelectorItemElement extends i18nMixin(LitElement) {
     const buttonTitle = `${localizedTitle}${
       hasTitle ? '\n' : ''
     }${localizedLayerName}`
-    let buttonClasses =
-      'h-full w-full rounded-sm lux-bg-sel-icon-bg-length bg-white '
+    let buttonClasses = 'h-full w-full rounded-sm lux-bg-sel-icon '
     buttonClasses += `bg-${this.bgName}_sm `
     buttonClasses += `md:bg-${this.bgName} `
     buttonClasses += `hd:bg-${this.bgName}_sm_hi `
