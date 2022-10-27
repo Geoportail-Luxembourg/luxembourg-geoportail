@@ -9,7 +9,7 @@ export class ThemesService {
   config$ = from(themesApi.fetchThemes())
   bgLayers$ = this.config$.pipe(
     filter(config => !!config),
-    map(config => config?.background_layers),
+    map(config => config?.background_layers ?? []),
     tap(bgLayers => (this.bgLayers = bgLayers))
   )
   themes$ = this.config$.pipe(map(config => config?.themes))

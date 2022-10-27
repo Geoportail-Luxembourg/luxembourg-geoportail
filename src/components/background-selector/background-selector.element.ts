@@ -1,10 +1,15 @@
 import { html, LitElement } from 'lit'
 import { customElement, state } from 'lit/decorators.js'
 import { i18nMixin } from '../../mixins/i18n-lit-element'
+import { Subscription, BehaviorSubject, combineLatest } from 'rxjs'
+import { themesService } from '../../services/themes/themes.service'
 import {
-  bgLayerService,
-  LuxBgLayer,
+  bgLayersFromThemes,
+  createDefaultBgLayer,
+  setBgLayer,
 } from '../../services/background-layer/background-layer.service'
+import { LuxBgLayer } from '../../services/background-layer/background-layer.service'
+import { mapState } from '../../states/map/map.state'
 
 import './background-selector-item.element'
 
@@ -12,14 +17,18 @@ import './background-selector-item.element'
 export class BackgroundSelectorElement extends i18nMixin(LitElement) {
   @state() isOpen = false
   @state() activeLayer: LuxBgLayer = { name: 'white', id: 0 }
-  private bgLayers: LuxBgLayer[]
+  private bgLayers: LuxBgLayer[] = []
   private subscription
 
   constructor() {
     super()
-    this.bgLayers = bgLayerService.bgLayers$.getValue()
-    this.subscription = bgLayerService.activeBgLayer$.subscribe(layer => {
-      this.activeLayer = layer
+    this.subscription = combineLatest([
+      themesService.bgLayers$,
+      mapState.bgLayer$,
+    ]).subscribe(([bgLayers, layer]) => {
+      this.bgLayers =
+        bgLayers.length > 0 ? bgLayersFromThemes() : [createDefaultBgLayer()]
+      this.activeLayer = new LuxBgLayer(layer?.name, layer?.id)
     })
   }
 
@@ -72,7 +81,7 @@ export class BackgroundSelectorElement extends i18nMixin(LitElement) {
   }
 
   setBackgroundLayer(layer: LuxBgLayer) {
-    bgLayerService.setBgLayer(layer)
+    setBgLayer(layer)
     this.isOpen = false
   }
 
