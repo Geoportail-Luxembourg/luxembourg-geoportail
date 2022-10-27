@@ -62,7 +62,7 @@ export class Openlayers {
     return layer
   }
 
-  static cachedLayer(layer: Layer): BaseLayer {
+  static getLayerFromCache(layer: Layer): BaseLayer {
     const { id } = layer
     
     return !layersCache.hasOwnProperty(id) || !layersCache[id]
@@ -71,7 +71,7 @@ export class Openlayers {
   }
 
   static addLayer(olMap: OlMap, layer: Layer) {
-    const baseLayer = Openlayers.cachedLayer(layer)
+    const baseLayer = Openlayers.getLayerFromCache(layer)
     olMap.addLayer(baseLayer)
   }
 
@@ -111,7 +111,7 @@ export class Openlayers {
 
     if (currentBgLayerPos >= 0) {
       if (bgLayer) {
-        const bgBaseLayer = Openlayers.cachedLayer(bgLayer)
+        const bgBaseLayer = Openlayers.getLayerFromCache(bgLayer)
         bgBaseLayer.set('zIndex', -1)
         mapLayers.setAt(currentBgLayerPos, bgBaseLayer)
       } else {
@@ -119,7 +119,7 @@ export class Openlayers {
       }
     } else {
       if (bgLayer) {
-        const bgBaseLayer = Openlayers.cachedLayer(bgLayer)
+        const bgBaseLayer = Openlayers.getLayerFromCache(bgLayer)
         bgBaseLayer.set('zIndex', -1)
         olMap.addLayer(bgBaseLayer)
       }
