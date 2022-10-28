@@ -46,11 +46,24 @@ export class Catalog extends LitElement {
   private toggleLayer(event: Event) {
     const node = (event as CustomEvent).detail
     const layer = themesService.findById(node.id)
+
     if (layer) {
+      const linked_layers = layer?.metadata?.linked_layers || []
+
       if (node.checked === true) {
-        mapState.removeLayer(layer.id as unknown as string)
+        mapState.removeLayer(layer.id as unknown as string, ...linked_layers)
       } else {
-        mapState.addLayer(layer as unknown as Layer)
+        mapState.addLayer(
+          layer as unknown as Layer,
+          ...linked_layers
+            .map(
+              layerId =>
+                themesService.findById(
+                  parseInt(layerId, 10)
+                ) as unknown as Layer
+            )
+            .filter(layer => layer)
+        )
       }
     }
   }
