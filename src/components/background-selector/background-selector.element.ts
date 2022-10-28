@@ -18,18 +18,25 @@ export class BackgroundSelectorElement extends i18nMixin(LitElement) {
   @state() isOpen = false
   @state() activeLayer: LuxBgLayer = { name: 'white', id: 0 }
   private bgLayers: LuxBgLayer[] = []
-  private subscription
+  private subscription = new Subscription()
 
   constructor() {
     super()
-    this.subscription = combineLatest([
-      themesService.bgLayers$,
-      mapState.bgLayer$,
-    ]).subscribe(([bgLayers, layer]) => {
-      this.bgLayers =
-        bgLayers.length > 0 ? bgLayersFromThemes() : [createDefaultBgLayer()]
-      this.activeLayer = new LuxBgLayer(layer?.name, layer?.id)
-    })
+    this.subscription.add(
+      themesService.bgLayers$.subscribe(bgLayers => {
+        this.bgLayers =
+          bgLayers.length > 0 ? bgLayersFromThemes() : [createDefaultBgLayer()]
+      })
+    )
+    this.subscription.add(
+      combineLatest([themesService.bgLayers$, mapState.bgLayer$]).subscribe(
+        ([bgLayers, layer]) => {
+          if (!layer || bgLayers.find(l => l.id == layer?.id)) {
+            this.activeLayer = LuxBgLayer.fromLayer(layer)
+          }
+        }
+      )
+    )
   }
 
   disconnectedCallback() {

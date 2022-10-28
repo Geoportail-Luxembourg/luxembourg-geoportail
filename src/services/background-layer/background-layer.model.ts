@@ -8,7 +8,8 @@ export class LuxBgLayer {
   id: number
 
   static fromLayer(layer: Layer | null): LuxBgLayer {
-    return new LuxBgLayer(layer?.name, layer?.id)
+    const bgLayer = bgConfig.bg_layers.find(l => l.id == layer?.id)
+    return new LuxBgLayer(bgLayer?.name, bgLayer?.id)
   }
 
   static fromThemeNodeModel(layer: ThemeNodeModel): LuxBgLayer {
