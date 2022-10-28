@@ -52,4 +52,20 @@ export class MapSateListener {
       [] as Layer[]
     )
   }
+
+  static getMutatedLayers(
+    newContext: MapContext,
+    oldContext: MapContext | null
+  ): Layer[] {
+    if (
+      oldContext === null ||
+      !('layers' in newContext) ||
+      !('layers' in oldContext) ||
+      typeof oldContext.layers === 'undefined' ||
+      typeof newContext.layers === 'undefined' ||
+      newContext.layers === oldContext.layers
+    )
+      return []
+    return newContext.layers
+  }
 }

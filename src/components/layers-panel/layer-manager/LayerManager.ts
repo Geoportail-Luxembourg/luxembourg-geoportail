@@ -35,6 +35,7 @@ export class LayerManager extends i18nMixin(LitElement) {
     if (x) {
       this.sortable = Sortable.create(x, {
         dataIdAttr: 'data-id',
+        handle: '.drag-handle',
         onSort: function (event) {
           const items = event.to.children
           mapState.reorderLayers([...items].map(val => Number(val.id)))
@@ -43,12 +44,21 @@ export class LayerManager extends i18nMixin(LitElement) {
     }
   }
 
+  updateLayerOpacity(layerId: number, opacity: number) {
+    mapState.setLayerOpacity(layerId, opacity / 100)
+  }
+
   render(): TemplateResult {
     return html`
       <ul id="sortable-layers">
         ${this.layers.map(
           layer =>
-            html`<li id=${layer.id} data-id="YOPLUAB"><lux-layer-manager-element .layer="${layer}"</lux-layer-manager-element></li>`
+            html` <li id=${layer.id}>
+              <lux-layer-manager-element
+                .layer="${layer}"
+                .updateLayerOpacity="${this.updateLayerOpacity}"
+              ></lux-layer-manager-element>
+            </li>`
         )}
       </ul>
     `

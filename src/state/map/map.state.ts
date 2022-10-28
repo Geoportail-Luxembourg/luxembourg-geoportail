@@ -46,6 +46,20 @@ export class MapState {
     this.map$.next(this.mapContext)
     this.layers$.next(this.mapContext.layers || [])
   }
+
+  setLayerOpacity(layerId: number, opacity: Number) {
+    this.mapContext = {
+      ...this.mapContext,
+      layers: this.mapContext.layers?.map(elt => {
+        if (elt.id === layerId) {
+          return { ...elt, opacity: opacity }
+        }
+        return elt
+      }),
+    }
+    this.map$.next(this.mapContext)
+    this.layers$.next(this.mapContext.layers || [])
+  }
 }
 
 export const mapState = new MapState()

@@ -86,4 +86,12 @@ export class Openlayers {
       baseLayer.setZIndex(layers.length - idx)
     })
   }
+
+  static setLayerOpacity(olMap: OlMap, layerId: number, opacity: number) {
+    const layer = olMap
+      .getLayers()
+      .getArray()
+      .find(layer => layer.get('id') === layerId)
+    if (layer) layer.setOpacity(opacity)
+  }
 }

@@ -11,18 +11,26 @@ export class OlSynchronizer {
         newContext,
         oldContext
       )
+
       const addedLayerComparisons = MapSateListener.getAddedLayers(
         newContext,
         oldContext
       )
 
-      removedLayers.forEach(layer =>
-        Openlayers.removeLayer(map, layer.id as string)
+      const mutatedLayerComparisons = MapSateListener.getMutatedLayers(
+        newContext,
+        oldContext
       )
+
+      removedLayers.forEach(layer => Openlayers.removeLayer(map, layer.id as string))
 
       addedLayerComparisons.forEach(cmp =>
         Openlayers.addLayer(map, cmp.layer, cmp.position)
       )
+
+      mutatedLayerComparisons.forEach(layer => {
+        Openlayers.setLayerOpacity(map, layer.id, layer.opacity)
+      })
 
       if (newContext.layers) {
         Openlayers.reorderLayers(map, newContext.layers)

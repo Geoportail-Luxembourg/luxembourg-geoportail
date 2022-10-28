@@ -15,6 +15,7 @@ export interface Layer {
   metadata?: Metadata
   dimensions?: {}
   style?: string
+  opacity: number
 }
 
 export interface MapContext {
