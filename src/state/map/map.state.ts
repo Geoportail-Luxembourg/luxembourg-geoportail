@@ -12,7 +12,14 @@ export class MapState {
     return this.mapContext.layers || []
   }
 
+  initLayer(layer: Layer) {
+    layer.opacity = 1
+    layer.version = 1
+  }
+
   addLayer(...layers: Layer[]) {
+    layers.forEach(layer => this.initLayer(layer))
+    
     this.mapContext = {
       ...this.mapContext,
       layers: [...new Set([...(this.mapContext.layers || []), ...layers])],
@@ -47,12 +54,12 @@ export class MapState {
     this.layers$.next(this.mapContext.layers || [])
   }
 
-  setLayerOpacity(layerId: number, opacity: Number) {
+  setLayerOpacity(layerId: number, opacity: number) {
     this.mapContext = {
       ...this.mapContext,
       layers: this.mapContext.layers?.map(elt => {
         if (elt.id === layerId) {
-          return { ...elt, opacity: opacity }
+          return { ...elt, opacity: opacity, version: elt.version++ }
         }
         return elt
       }),

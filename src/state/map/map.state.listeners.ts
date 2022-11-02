@@ -7,6 +7,11 @@ function hasLayer(context: MapContext, layer: Layer) {
   return context.layers?.some(l => equalsLayer(layer, l))
 }
 
+function hasChanged(context: MapContext, layer: Layer) {
+  const lyr = context.layers?.find(l => l.id === layer.id)
+  return lyr?.version && lyr?.version !== layer.version
+}
+
 export class MapSateListener {
   static getAddedLayers(
     newContext: MapContext,
@@ -66,6 +71,10 @@ export class MapSateListener {
       newContext.layers === oldContext.layers
     )
       return []
-    return newContext.layers
+    return newContext.layers.reduce(
+      (prev, layer, i) =>
+        !hasChanged(oldContext, layer) ? prev : [...prev, layer],
+      [] as Layer[]
+    )
   }
 }

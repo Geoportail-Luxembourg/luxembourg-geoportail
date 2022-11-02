@@ -18,6 +18,9 @@ export class LayerManagerElement extends i18nMixin(LitElement) {
   private updateLayerOpacity: Function
 
   @property()
+  private draggableClassName: string
+
+  @property()
   private prevOpacity: number
 
   @property()
@@ -31,19 +34,23 @@ export class LayerManagerElement extends i18nMixin(LitElement) {
     return html`
       <li class="lux-layer-manager-item flex item relative">
         <!-- wrap is important here -->
-        <input type="checkbox" id="faq1" class="peer appearance-none hidden" />
-        <a class="fa-solid fa-bars flex-none drag-handle"></a>
+        <input
+          type="checkbox"
+          id="faq-${this.layer.id}"
+          class="peer appearance-none hidden"
+        />
+        <a class="fa-solid fa-bars flex-none ${this.draggableClassName}"></a>
         <a class="fa-solid fa-info flex-none"></a>
-        <label for="faq1" class="cursor-pointer grow">
+        <label for="faq-${this.layer.id}" class="cursor-pointer grow">
           ${this.layer.name}
           <!-- note: grow is used to fill all remaining space of the article -->
         </label>
         <label
-          for="faq1"
+          for="faq-${this.layer.id}"
           class="flex-none invisible fa-solid fa-xmark peer-checked:visible cursor-pointer"
         ></label>
         <label
-          for="faq1"
+          for="faq-${this.layer.id}"
           class="flex-none fa-solid fa-ellipsis peer-checked:hidden cursor-pointer"
         ></label>
         <span
@@ -77,13 +84,13 @@ export class LayerManagerElement extends i18nMixin(LitElement) {
   removeLayer() {}
 
   setLayerInvisible() {
-    console.log('Set invisible')
     if (this.opacity === 0) {
       this.opacity = this.prevOpacity
     } else {
       this.prevOpacity = this.opacity
       this.opacity = 0
     }
+    this.updateLayerOpacity(this.layer.id, this.opacity)
   }
 
   _updateOpacityValue(e: Event) {

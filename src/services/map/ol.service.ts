@@ -48,6 +48,7 @@ export class Openlayers {
     }
     layer.set('metadata', spec.metadata)
     layer.set('queryable_id', spec.id)
+    layer.setOpacity(1)
     if (spec.metadata?.hasOwnProperty('attribution')) {
       const source = layer.getSource()
       source?.setAttributions(spec.metadata.attribution)
