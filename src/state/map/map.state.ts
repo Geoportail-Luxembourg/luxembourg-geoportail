@@ -8,6 +8,10 @@ export class MapState {
   map$ = new BehaviorSubject<MapContext>(this.mapContext)
   layers$ = new BehaviorSubject<Layer[]>([])
 
+  getLayers() {
+    return this.mapContext.layers || []
+  }
+
   addLayer(...layers: Layer[]) {
     this.mapContext = {
       ...this.mapContext,

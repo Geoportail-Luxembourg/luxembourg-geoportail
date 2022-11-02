@@ -1,10 +1,10 @@
 import { html, LitElement, TemplateResult } from 'lit'
 import { customElement, state } from 'lit/decorators'
 import { Subscription } from 'rxjs'
+import { layersServices } from '../../../services/layers/layers.service'
 import { ThemeNodeModel } from '../../../services/themes/themes.model'
 import { themesService } from '../../../services/themes/themes.service'
 import { mapState } from '../../../state/map/map.state'
-import { Layer } from '../../../state/map/map.state.model'
 
 import './layer-tree/layer-tree-node.component'
 import { themesToLayerTree } from './layer-tree/layer-tree.mapper'
@@ -45,27 +45,7 @@ export class Catalog extends LitElement {
 
   private toggleLayer(event: Event) {
     const node = (event as CustomEvent).detail
-    const layer = themesService.findById(node.id)
-
-    if (layer) {
-      const linked_layers = layer?.metadata?.linked_layers || []
-
-      if (node.checked === true) {
-        mapState.removeLayer(layer.id as unknown as string, ...linked_layers)
-      } else {
-        mapState.addLayer(
-          layer as unknown as Layer,
-          ...linked_layers
-            .map(
-              layerId =>
-                themesService.findById(
-                  parseInt(layerId, 10)
-                ) as unknown as Layer
-            )
-            .filter(layer => layer)
-        )
-      }
-    }
+    layersServices.toggleLayer(node.id, !node.checked)
   }
 
   render(): TemplateResult {
