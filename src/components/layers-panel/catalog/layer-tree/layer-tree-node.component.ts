@@ -109,15 +109,27 @@ export class LayerTreeNode extends i18nMixin(LitElement) {
   }
 
   renderChildren(): TemplateResult {
-    return this.node.expanded || this.isRoot()
-      ? html` <div class="${this.node.depth > 1 ? 'pl-2' : ''}  bg-secondary">
-          ${this.node.children?.map((node: LayerTreeNode) => {
-            return html`
-              <lux-layer-tree-node .node="${node}"></lux-layer-tree-node>
-            `
-          })}
-        </div>`
-      : html``
+    const cssClasses = ['bg-secondary']
+
+    if (!this.isRoot()) {
+      cssClasses.push('lux-collapse')
+
+      if (this.node.expanded) {
+        cssClasses.push('expanded')
+      }
+    }
+
+    if (this.node.depth > 1) {
+      cssClasses.push('pl-2')
+    }
+
+    return html` <div class="${cssClasses.join(' ')}">
+      ${this.node.children?.map((node: LayerTreeNode) => {
+        return html`
+          <lux-layer-tree-node .node="${node}"></lux-layer-tree-node>
+        `
+      })}
+    </div>`
   }
 
   render(): TemplateResult {

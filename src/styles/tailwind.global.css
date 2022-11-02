@@ -27,44 +27,62 @@
   .lux-panel-title {
     @apply text-white text-title-xl uppercase px-3 pt-1.5;
   }
+
   .lux-bg-sel {
     @apply h-10 w-10 md:h-14 md:w-20 p-0.5 rounded-sm cursor-pointer;
   }
+
   .lux-bg-sel-icon-bg-length {
     @apply bg-[length:41px_41px] md:bg-[length:90px_50px];
   }
+
   .lux-outlined {
     outline: 5px auto -webkit-focus-ring-color;
     outline-offset: -2px;
   }
+
   .lux-btn {
     @apply bg-white border text-primary py-[6px] px-[12px] hover:bg-primary hover:text-white leading-snug focus:bg-[#e6e6e6] focus:border-[#8c8c8c] focus:[color:var(--color-primary)] focus:lux-outlined;
     border: 1px solid var(--button-bg-color);
   }
+
   .lux-input {
     @apply py-[6px] px-[12px] leading-snug text-white placeholder:text-white border;
     background-color: var(--color-secondary);
   }
+
   .lux-label {
     @apply font-bold mb-[5px] inline-block;
   }
+
   .lux-dropdown {
     @apply inline-block;
   }
+
   .lux-dropdown-list {
     @apply absolute left-0 z-10 bg-white py-[5px] mt-[2px] w-auto;
     border: 1px solid rgba(0, 0, 0, 0.15);
     box-shadow: 0 6px 12px rgb(0 0 0 / 18%);
   }
+
   .lux-dropdown-list-item {
     @apply hover:bg-[#f5f5f5] py-[3px] px-5 cursor-pointer focus:lux-outlined text-left w-full;
   }
+
   .lux-caret {
     @apply inline-block w-0 h-0 align-middle;
     border-top: 4px dashed;
     border-top: 4px solid \9;
     border-right: 4px solid transparent;
     border-left: 4px solid transparent;
+  }
+
+  .lux-collapse {
+    @apply relative max-h-0 overflow-hidden duration-[.70s] transition-[max-height] ease-in-out;
+  }
+
+  .lux-collapse.expanded {
+    @apply max-h-[3000px];
   }
 }
 
