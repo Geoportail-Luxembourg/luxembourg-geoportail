@@ -66,7 +66,7 @@ export class LayerTreeNode extends i18nMixin(LitElement) {
         : this.node.depth > 1 && !this.isMaxDepth()
         ? html`
             <button
-              class="w-full text-left flex px-2 py-1.5 ${this.node.expanded
+              class="w-full text-left flex px-2 py-1.5 pl-2 ${this.node.expanded
                 ? 'bg-secondary text-tertiary'
                 : 'bg-white text-primary'}"
               aria-expanded="${this.node.expanded}"
@@ -89,8 +89,10 @@ export class LayerTreeNode extends i18nMixin(LitElement) {
 
   renderLeaf(): TemplateResult {
     return html`
-      <div class="flex bg-secondary text-tertiary px-2">
-        <button class="fa-solid fa-fw fa-fh fa-info leading-6"></button>
+      <div class="flex text-tertiary pr-2">
+        <button
+          class="self-start before:text-[.85rem] before:transform before:translate-y-[.1rem] before:inline-block fa-solid fa-fw fa-fh fa-info"
+        ></button>
         <button
           class="w-full text-left  ${this.node.checked ? 'font-bold' : ''}"
           @click="${this.toggleLayer}"
@@ -108,12 +110,14 @@ export class LayerTreeNode extends i18nMixin(LitElement) {
 
   renderChildren(): TemplateResult {
     return this.node.expanded || this.isRoot()
-      ? this.node.children?.map((node: LayerTreeNode) => {
-          return html`
-            <lux-layer-tree-node .node="${node}"></lux-layer-tree-node>
-          `
-        })
-      : ''
+      ? html` <div class="${this.node.depth > 1 ? 'pl-2' : ''}  bg-secondary">
+          ${this.node.children?.map((node: LayerTreeNode) => {
+            return html`
+              <lux-layer-tree-node .node="${node}"></lux-layer-tree-node>
+            `
+          })}
+        </div>`
+      : html``
   }
 
   render(): TemplateResult {
