@@ -28,8 +28,6 @@ export class LayersServices {
         mapState.removeLayer(layer.id as unknown as string, ...linkedLayers)
       } else {
         if (layer?.metadata?.exclusion) {
-          console.log(mapState.getLayers())
-
           const excludedLayers = mapState
             .getLayers()
             .filter(_layer =>
