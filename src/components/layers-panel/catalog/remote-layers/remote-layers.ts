@@ -1,7 +1,13 @@
-import { html, LitElement, TemplateResult } from 'lit'
+import {
+  css,
+  CSSResult,
+  html,
+  LitElement,
+  TemplateResult,
+  unsafeCSS,
+} from 'lit'
 import { Subscription } from 'rxjs'
 import { customElement, state } from 'lit/decorators'
-import '../../../common/dropdown.component'
 import { DropdownOptionModel } from '../../../common/dropdown.model'
 import { remoteLayersService } from './remote-layers.service'
 import { LayerTreeNodeModel } from '../layer-tree/layer-tree.model'
@@ -14,6 +20,12 @@ import { mapState } from '../../../../state/map/map.state'
 import i18next from 'i18next'
 import { OgcClientWmsEndpoint } from './remote-layers.model'
 
+import '../../../common/modal.component'
+import '../../../common/dropdown.component'
+
+import cssFa from 'bundle-text:@fortawesome/fontawesome-free/css/all.min.css'
+import cssGlobal from 'bundle-text:./../../../../styles/tailwind.global.css'
+
 @customElement('lux-remote-layers')
 export class RemoteLayer extends LitElement {
   @state() private wmsLayers: DropdownOptionModel[]
@@ -23,6 +35,16 @@ export class RemoteLayer extends LitElement {
   private inputWmsUrl: string
   private currentWmsUrl: string
   private currentWmsEndpoint: OgcClientWmsEndpoint
+
+  static globalStyle: CSSResult = css`
+    ${unsafeCSS(cssGlobal)}
+  `
+
+  static faStyle: CSSResult = css`
+    ${unsafeCSS(cssFa)}
+  `
+
+  static styles: CSSResult[] = [RemoteLayer.globalStyle, RemoteLayer.faStyle]
 
   constructor() {
     super()
@@ -124,15 +146,12 @@ export class RemoteLayer extends LitElement {
 
   render(): TemplateResult {
     return html`
-      <div
-        class="absolute right-0 top-52 z-50 bg-white lux-modal w-[600px]"
-        role="dialog"
-      >
-        <div class="lux-modal-header">
-          <h4>${i18next.t('Add external data', { ns: 'client' })}</h4>
-        </div>
+      <lux-modal>
+        <h4 slot="lux-modal-header">
+          ${i18next.t('Add external data', { ns: 'client' })}
+        </h4>
 
-        <div class="p-[15px]">
+        <div class="p-[15px]" slot="lux-modal-body">
           <div class="relative text-center">
             <lux-dropdown
               .options=${this.wmsLayers}
@@ -200,7 +219,7 @@ export class RemoteLayer extends LitElement {
               `
             : null}
         </div>
-      </div>
+      </lux-modal>
     `
   }
 
