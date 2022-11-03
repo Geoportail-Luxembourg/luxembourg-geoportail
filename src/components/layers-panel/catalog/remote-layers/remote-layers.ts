@@ -19,15 +19,13 @@ import { layerTreeState } from '../layer-tree/layer-tree.service'
 import { mapState } from '../../../../state/map/map.state'
 import i18next from 'i18next'
 import { OgcClientWmsEndpoint } from './remote-layers.model'
+import { StylesMixin } from '../../../../mixins/styles-lit-element'
 
 import '../../../common/modal.component'
 import '../../../common/dropdown.component'
 
-import cssFa from 'bundle-text:@fortawesome/fontawesome-free/css/all.min.css'
-import cssGlobal from 'bundle-text:./../../../../styles/tailwind.global.css'
-
 @customElement('lux-remote-layers')
-export class RemoteLayer extends LitElement {
+export class RemoteLayer extends StylesMixin(LitElement) {
   @state() private wmsLayers: DropdownOptionModel[]
   @state() private layerTree: LayerTreeNodeModel | undefined
   @state() private isLoading = false
@@ -35,16 +33,6 @@ export class RemoteLayer extends LitElement {
   private inputWmsUrl: string
   private currentWmsUrl: string
   private currentWmsEndpoint: OgcClientWmsEndpoint
-
-  static globalStyle: CSSResult = css`
-    ${unsafeCSS(cssGlobal)}
-  `
-
-  static faStyle: CSSResult = css`
-    ${unsafeCSS(cssFa)}
-  `
-
-  static styles: CSSResult[] = [RemoteLayer.globalStyle, RemoteLayer.faStyle]
 
   constructor() {
     super()
@@ -221,9 +209,5 @@ export class RemoteLayer extends LitElement {
         </div>
       </lux-modal>
     `
-  }
-
-  override createRenderRoot() {
-    return this
   }
 }
