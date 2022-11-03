@@ -1,24 +1,11 @@
 /* eslint-disable @typescript-eslint/no-var-requires */
-import {
-  LitElement,
-  TemplateResult,
-  html,
-  css,
-  CSSResult,
-  unsafeCSS,
-} from 'lit'
+import { LitElement, TemplateResult, html } from 'lit'
 import { property, customElement } from 'lit/decorators'
-import cssText from 'bundle-text:./../../styles/tailwind.global.css'
+import { StylesMixin } from '../../mixins/styles-lit-element'
 
 @customElement('lux-modal')
-export class Modal extends LitElement {
+export class Modal extends StylesMixin(LitElement) {
   @property() private isOpen: boolean
-
-  static globalStyle: CSSResult = css`
-    ${unsafeCSS(cssText)}
-  `
-
-  static styles: CSSResult[] = [Modal.globalStyle]
 
   render(): TemplateResult {
     return html`
