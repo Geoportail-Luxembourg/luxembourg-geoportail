@@ -1,16 +1,13 @@
 import { remoteLayersService } from '../remote-layers/remote-layers.service'
+import { IdValues } from './layer-metadata.model'
 
 export class WmsHelperService {
-  async getMetadata(id: string) {
-    const values = id.split('%2D').join('-').split('||')
-    const serviceType = values[0]
-    const wmsUrl = values[1]
-    const layerName = values[2]
-    console.assert(serviceType === 'WMS')
-    const wmsEndpoint = remoteLayersService.getWmsEndpoint(wmsUrl)
+  async getMetadata(idValues: IdValues) {
+    console.assert(idValues.serviceType === 'WMS')
+    const wmsEndpoint = remoteLayersService.getWmsEndpoint(idValues.wmsUrl)
     await wmsEndpoint.isReady()
     const service = wmsEndpoint?.getServiceInfo()
-    const layer = wmsEndpoint?.getLayerByName(layerName)
+    const layer = wmsEndpoint?.getLayerByName(idValues.layerName)
     return {
       title: layer.title,
       description: layer.abstract,

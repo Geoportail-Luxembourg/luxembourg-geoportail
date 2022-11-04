@@ -127,8 +127,6 @@ export class RemoteLayer extends LitElement {
 
   private async displayLayerMetadata(node: LayerTreeNodeModel) {
     const layer = themesService.findById(node.id)
-    console.log(node)
-    node = { ...node, isExternalWms: true }
     this.layerMetadata = await layerMetadataService.getLayerMetadata(
       node,
       layer

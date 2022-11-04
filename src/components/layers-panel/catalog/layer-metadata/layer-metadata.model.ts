@@ -13,3 +13,9 @@ export interface LayerMetadataModel {
   hasLegend?: boolean
   isError?: boolean
 }
+
+export interface IdValues {
+  serviceType: 'WMS' | 'WMTS'
+  wmsUrl: string
+  layerName: string
+}

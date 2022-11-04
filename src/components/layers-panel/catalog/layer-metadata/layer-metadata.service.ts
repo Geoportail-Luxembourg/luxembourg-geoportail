@@ -1,7 +1,7 @@
 import i18next from 'i18next'
 import { ThemeNodeModel } from '../../../../services/themes/themes.model'
 import { LayerTreeNodeModel } from '../layer-tree/layer-tree.model'
-import { LayerMetadataModel } from './layer-metadata.model'
+import { IdValues, LayerMetadataModel } from './layer-metadata.model'
 import {
   getMetadataLinks,
   getResponsibleParty,
@@ -20,38 +20,36 @@ export class LayerMetadataService {
     node: LayerTreeNodeModel,
     layer?: ThemeNodeModel
   ): Promise<LayerMetadataModel> {
-    let title
     let localMetadata
+    let metadata
     if (!layer) {
       // is this case needed for another case than external layers (which have no theme node in theme service)?
-      localMetadata = {
-        metadata_id: node.id,
-        isExternalWms: node.isExternalWms,
+      const values = node.id.split('%2D').join('-').split('||')
+      const idValues: IdValues = {
+        serviceType: values[0],
+        wmsUrl: values[1],
+        layerName: values[2],
+      }
+      if (idValues.serviceType === 'WMS') {
+        metadata = await wmsHelper.getMetadata(idValues)
+      } else if (idValues.serviceType == 'WMTS') {
+        // metadata = appWmtsHelper.getMetadata(metadataUid)
       }
     } else {
-      title = layer.name
       localMetadata = layer.metadata
-    }
-    const metadataUid = localMetadata.metadata_id
 
-    const layerId = layer?.id
-    const legendName =
-      'legend_name' in localMetadata ? localMetadata.legend_name : ''
-    const currentLanguage = i18next.language
-
-    let metadata
-    //TODO: handle WMTS
-    if (localMetadata.isExternalWmts) {
-      // metadata = appWmtsHelper.getMetadata(metadataUid)
-    } else if (localMetadata.isExternalWms) {
-      metadata = await wmsHelper.getMetadata(metadataUid)
-    } else {
+      const currentLanguage = i18next.language
       metadata = await this.getLocalMetadata(
         this.localMetadataBaseUrl,
-        metadataUid,
+        layer.metadata?.metadata_id,
         currentLanguage
       )
-      metadata = { ...metadata, title: title }
+      metadata = { ...metadata, title: layer.name }
+
+      //TODO: legend for external layers?
+      const layerId = layer?.id
+      const legendName =
+        'legend_name' in localMetadata ? localMetadata.legend_name : ''
 
       //could be sent in parallel
       const legendHtml = await this.getLegendHtml(
