@@ -8,7 +8,7 @@
     "module": {
       "includeNodeModules": true,
       "isLibrary": true,
-      "optimize": false
+      "optimize": true
     }
   },
   "scripts": {

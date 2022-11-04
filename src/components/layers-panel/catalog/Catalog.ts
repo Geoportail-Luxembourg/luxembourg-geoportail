@@ -3,6 +3,7 @@ import { customElement, state } from 'lit/decorators'
 import { Subscription } from 'rxjs'
 import { layersServices } from '../../../services/layers/layers.service'
 import { i18nMixin } from '../../../mixins/i18n-lit-element'
+import { StylesMixin } from '../../../mixins/styles-lit-element'
 import { ThemeNodeModel } from '../../../services/themes/themes.model'
 import { themesService } from '../../../services/themes/themes.service'
 import { mapState } from '../../../state/map/map.state'
@@ -13,7 +14,7 @@ import { LayerTreeNodeModel } from './layer-tree/layer-tree.model'
 import { layerTreeState } from './layer-tree/layer-tree.service'
 
 @customElement('lux-catalog')
-export class Catalog extends i18nMixin(LitElement) {
+export class Catalog extends StylesMixin(i18nMixin(LitElement)) {
   @state()
   private layerTree: LayerTreeNodeModel | undefined
   private subscription = new Subscription()
@@ -64,7 +65,7 @@ export class Catalog extends i18nMixin(LitElement) {
     super.disconnectedCallback()
   }
 
-  override createRenderRoot() {
-    return this
-  }
+  // override createRenderRoot() {
+  //   return this
+  // }
 }

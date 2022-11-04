@@ -1,3 +1,4 @@
+import '@fortawesome/fontawesome-free/css/all.min.css'
 import './styles/tailwind.global.css'
 
 export { mapService, MapService } from './services/map/map.service'
