@@ -8,6 +8,7 @@ import {
   isoLang2To3,
   stringToHtml,
 } from './layer-metadata.utils'
+import { wmsHelper } from './wms-helper.service'
 
 export class LayerMetadataService {
   private geonetworkBaseUrl =
@@ -22,51 +23,54 @@ export class LayerMetadataService {
     let title
     let localMetadata
     if (!layer) {
-      //when is this case needed?
-      title = node.name
-      localMetadata = node.metadata // does not exist
+      // is this case needed for another case than external layers (which have no theme node in theme service)?
+      localMetadata = {
+        metadata_id: node.id,
+        isExternalWms: node.isExternalWms,
+      }
     } else {
       title = layer.name
       localMetadata = layer.metadata
     }
     const metadataUid = localMetadata.metadata_id
 
-    const layerId = layer.id
+    const layerId = layer?.id
     const legendName =
       'legend_name' in localMetadata ? localMetadata.legend_name : ''
     const currentLanguage = i18next.language
 
-    //TODO: handle WMTS, WMS
-    // if (localMetadata.isExternalWmts) {
-    //   promises_[promiseKey] = appWmtsHelper.getMetadata(metadataUid);
-    // } else if (localMetadata.isExternalWms) {
-    //   promises_[promiseKey] = appWmsHelper.getMetadata(metadataUid);
-    // } else {
-
-    let metadata = await this.getLocalMetadata(
-      this.localMetadataBaseUrl,
-      metadataUid,
-      currentLanguage
-    )
-    metadata = { ...metadata, title: title }
-
-    //could be sent in parallel
-    const legendHtml = await this.getLegendHtml(
-      this.legendBaseUrl,
-      legendName,
-      layerId,
-      currentLanguage
-    )
-    if (legendHtml) {
-      metadata = {
-        ...metadata,
-        legendHtml: legendHtml,
-        hasLegend: true,
-      }
+    let metadata
+    //TODO: handle WMTS
+    if (localMetadata.isExternalWmts) {
+      // metadata = appWmtsHelper.getMetadata(metadataUid)
+    } else if (localMetadata.isExternalWms) {
+      metadata = await wmsHelper.getMetadata(metadataUid)
     } else {
-      metadata = {
-        ...metadata,
-        hasLegend: false,
+      metadata = await this.getLocalMetadata(
+        this.localMetadataBaseUrl,
+        metadataUid,
+        currentLanguage
+      )
+      metadata = { ...metadata, title: title }
+
+      //could be sent in parallel
+      const legendHtml = await this.getLegendHtml(
+        this.legendBaseUrl,
+        legendName,
+        layerId,
+        currentLanguage
+      )
+      if (legendHtml) {
+        metadata = {
+          ...metadata,
+          legendHtml: legendHtml,
+          hasLegend: true,
+        }
+      } else {
+        metadata = {
+          ...metadata,
+          hasLegend: false,
+        }
       }
     }
     return metadata

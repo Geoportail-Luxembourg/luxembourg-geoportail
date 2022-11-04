@@ -27,7 +27,7 @@ export function remoteLayersToLayerTreeMapper(
   depth = 0
 ): LayerTreeNodeModel {
   const { name, children } = node
-  const id = `WMS||${urlWms}${name}`.split('-').join('%2D')
+  const id = `WMS||${urlWms}||${name}`.split('-').join('%2D')
 
   return {
     id,

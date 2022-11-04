@@ -13,12 +13,15 @@ import { layerTreeState } from '../layer-tree/layer-tree.service'
 import { mapState } from '../../../../state/map/map.state'
 import i18next from 'i18next'
 import { OgcClientWmsEndpoint } from './remote-layers.model'
+import { themesService } from '../../../../services/themes/themes.service'
+import { layerMetadataService } from '../layer-metadata/layer-metadata.service'
 
 @customElement('lux-remote-layers')
 export class RemoteLayer extends LitElement {
   @state() private wmsLayers: DropdownOptionModel[]
   @state() private layerTree: LayerTreeNodeModel | undefined
   @state() private isLoading = false
+  @state() private layerMetadata: LayerMetadataModel
   private subscription = new Subscription()
   private inputWmsUrl: string
   private currentWmsUrl: string
@@ -122,8 +125,23 @@ export class RemoteLayer extends LitElement {
     }
   }
 
+  private async displayLayerMetadata(node: LayerTreeNodeModel) {
+    const layer = themesService.findById(node.id)
+    console.log(node)
+    node = { ...node, isExternalWms: true }
+    this.layerMetadata = await layerMetadataService.getLayerMetadata(
+      node,
+      layer
+    )
+    // this.displayedMetadataNode = node  //TODO: move to UI state
+  }
+
   render(): TemplateResult {
     return html`
+      <lux-layer-metadata
+        .layerMetadata="${this.layerMetadata}"
+        @close-layer-metadata="${this.closeMetadata}"
+      ></lux-layer-metadata>
       <div
         class="absolute right-0 top-52 z-50 bg-white lux-modal w-[600px]"
         role="dialog"
@@ -195,6 +213,8 @@ export class RemoteLayer extends LitElement {
                     .node="${this.layerTree}"
                     @parent-toggle="${this.toggleParent}"
                     @layer-toggle="${this.toggleLayer}"
+                    @display-layer-metadata="${event =>
+                      this.displayLayerMetadata(event.detail)}"
                   ></lux-layer-tree-node>
                 </div>
               `
