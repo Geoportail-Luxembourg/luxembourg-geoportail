@@ -15,6 +15,8 @@ const SAMPLE_LAYERS: Layer[] = [
     layers: 'communes_labels',
     imageType: 'image/png',
     style: 'default',
+    opacity: 1,
+    previousOpacity: 1,
   },
   {
     id: 302,
@@ -28,6 +30,8 @@ const SAMPLE_LAYERS: Layer[] = [
     layers: 'communes',
     imageType: 'image/png',
     style: 'default',
+    opacity: 1,
+    previousOpacity: 1,
   },
   {
     id: 346,
@@ -41,6 +45,8 @@ const SAMPLE_LAYERS: Layer[] = [
     layers: 'cantons_labels',
     imageType: 'image/png',
     style: 'default',
+    opacity: 1,
+    previousOpacity: 1,
   },
 ]
 
@@ -50,6 +56,8 @@ const LAYER_2: Layer = {
   type: 'WMS',
   layers: 'layer_3',
   imageType: 'image/png',
+  opacity: 1,
+  previousOpacity: 1,
 }
 
 const LAYER_3: Layer = {
@@ -58,6 +66,8 @@ const LAYER_3: Layer = {
   type: 'WMS',
   layers: 'layer_3',
   imageType: 'image/png',
+  opacity: 1,
+  previousOpacity: 1,
 }
 
 const getEmptyContext = () => ({})
