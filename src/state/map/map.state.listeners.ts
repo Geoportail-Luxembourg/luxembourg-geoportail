@@ -10,7 +10,7 @@ function hasLayer(context: MapContext, layer: Layer) {
 
 function hasChanged(oldContext: MapContext, layer: Layer) {
   const oldLayer = oldContext.layers?.find(l => l.id === layer.id)
-  return oldLayer?.version && oldLayer?.version !== layer.version
+  return oldLayer === layer
 }
 
 export class MapSateListener {

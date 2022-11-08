@@ -16,7 +16,7 @@ export interface Layer {
   dimensions?: {}
   style?: string
   opacity: number
-  version: number
+  previousOpacity: number
 }
 
 export interface MapContext {

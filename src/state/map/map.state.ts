@@ -13,8 +13,7 @@ export class MapState {
   }
 
   initLayer(layer: Layer) {
-    layer.opacity = layer.metadata?.start_opacity ?? 1
-    layer.version = 1
+    layer.opacity = layer.previousOpacity = layer.metadata?.start_opacity ?? 1
   }
 
   addLayer(...layers: Layer[]) {
@@ -59,11 +58,12 @@ export class MapState {
       ...this.mapContext,
       layers: this.mapContext.layers?.map(elt => {
         if (elt.id === layerId) {
-          return { ...elt, opacity: opacity, version: elt.version++ }
+          return { ...elt, opacity: opacity, previousOpacity: elt.opacity }
         }
         return elt
       }),
     }
+
     this.map$.next(this.mapContext)
     this.layers$.next(this.mapContext.layers || [])
   }

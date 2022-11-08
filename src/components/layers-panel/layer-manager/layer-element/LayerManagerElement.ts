@@ -139,7 +139,9 @@ export class LayerManagerElement extends i18nMixin(LitElement) {
   override connectedCallback() {
     super.connectedCallback()
 
-    this.opacity = (this.layer?.opacity ?? 1) * 100
+    const layerOpacity = this.layer?.opacity ?? 1
+    this.opacity = layerOpacity * 100
+    this.prevOpacity = (this.layer?.previousOpacity ?? layerOpacity) * 100
   }
 
   override createRenderRoot() {
