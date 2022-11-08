@@ -1,11 +1,6 @@
-import { css, html, LitElement, TemplateResult } from 'lit'
-import { customElement, state } from 'lit/decorators'
-import { Subscription } from 'rxjs'
-import { themesService } from '../../../../services/themes/themes.service'
-import { mapState } from '../../../../state/map/map.state'
+import { html, LitElement, TemplateResult } from 'lit'
+import { customElement } from 'lit/decorators'
 import { i18nMixin } from '../../../../mixins/i18n-lit-element'
-import { layerTreeState } from '../../catalog/layer-tree/layer-tree.service'
-import { LayerTreeNodeModel } from '../../catalog/layer-tree/layer-tree.model'
 import { Layer } from '../../../../state/map/map.state.model'
 import { property } from 'lit/decorators.js'
 

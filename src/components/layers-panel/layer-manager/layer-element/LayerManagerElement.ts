@@ -1,13 +1,9 @@
-import { css, html, LitElement, TemplateResult } from 'lit'
-import { customElement, state } from 'lit/decorators'
-import { Subscription } from 'rxjs'
-import { themesService } from '../../../../services/themes/themes.service'
-import { mapState } from '../../../../state/map/map.state'
+import { html, LitElement, TemplateResult } from 'lit'
+import { customElement } from 'lit/decorators'
 import { i18nMixin } from '../../../../mixins/i18n-lit-element'
-import { layerTreeState } from '../../catalog/layer-tree/layer-tree.service'
-import { LayerTreeNodeModel } from '../../catalog/layer-tree/layer-tree.model'
 import { Layer } from '../../../../state/map/map.state.model'
 import { property } from 'lit/decorators.js'
+import i18next from 'i18next'
 
 @customElement('lux-layer-manager-element')
 export class LayerManagerElement extends i18nMixin(LitElement) {
@@ -30,6 +26,10 @@ export class LayerManagerElement extends i18nMixin(LitElement) {
     super()
   }
 
+  private getLabel() {
+    return i18next.t(this.layer.name, { ns: 'client' })
+  }
+
   render(): TemplateResult {
     return html`
       <li class="lux-layer-manager-item flex item relative">
@@ -39,33 +39,42 @@ export class LayerManagerElement extends i18nMixin(LitElement) {
           id="faq-${this.layer.id}"
           class="peer appearance-none hidden"
         />
-        <a class="fa-solid fa-bars flex-none ${this.draggableClassName}"></a>
-        <a class="fa-solid fa-info flex-none"></a>
-        <label for="faq-${this.layer.id}" class="cursor-pointer grow">
-          ${this.layer.name}
+        <button
+          class="fa-solid fa-bars ${this.draggableClassName} cursor-move"
+        ></button>
+        <button class="fa-solid fa-info"></button>
+        <label
+          for="faq-${this.layer.id}"
+          class="cursor-pointer grow  flex-none"
+        >
+          ${this.getLabel()}
           <!-- note: grow is used to fill all remaining space of the article -->
         </label>
         <label
           for="faq-${this.layer.id}"
-          class="flex-none invisible fa-solid fa-xmark peer-checked:visible cursor-pointer"
+          class=" invisible fa-solid fa-xmark peer-checked:visible cursor-pointer flex-none"
         ></label>
         <label
           for="faq-${this.layer.id}"
-          class="flex-none fa-solid fa-ellipsis peer-checked:hidden cursor-pointer"
+          class=" fa-solid fa-ellipsis peer-checked:hidden cursor-pointer flex-none"
+          tabindex="0"
         ></label>
-        <span
+        <button
           class="fa-solid fa-trash flex-none"
-          @click="${this.removeLayer()}"
-        ></span>
+          title="${i18next.t('Remove layer "{{layerName}}"', {
+            ns: 'client',
+            layerName: this.getLabel(),
+          })}"
+          @click="${this.onClickRemove}"
+        ></button>
         <!-- note: checkbox will be triggered even if label is triggered. -->
         <div class="content">
           <!-- note: basis may not work without wrap -->
-          <span
-            class="${this.opacity === 0
-              ? 'fa-eye-slash'
-              : 'fa-eye'} fa-solid flex-none"
+          <button
+            title="${i18next.t('Toggle layer opacity', { ns: 'client' })}"
+            class="${this.opacity === 0 ? 'fa-eye-slash' : 'fa-eye'} fa-solid "
             @click="${this.setLayerInvisible}"
-          ></span>
+          ></button>
           <input
             id="steps-range"
             type="range"
@@ -73,15 +82,23 @@ export class LayerManagerElement extends i18nMixin(LitElement) {
             max="100"
             .value="${this.opacity}"
             step="25"
-            @change=${this._updateOpacityValue}
-            class="w-1/2 h-2 rounded-lg appearance-none cursor-pointer"
+            @change=${this.updateOpacityValue}
+            class="m-2.5 w-16 h-[5px] rounded-lg appearance-none cursor-pointer"
           />
         </div>
       </li>
     `
   }
 
-  removeLayer() {}
+  onClickRemove() {
+    this.dispatchEvent(
+      new CustomEvent('clickRemove', {
+        detail: {
+          value: this.layer.id,
+        },
+      })
+    )
+  }
 
   setLayerInvisible() {
     if (this.opacity === 0) {
@@ -93,13 +110,14 @@ export class LayerManagerElement extends i18nMixin(LitElement) {
     this.updateLayerOpacity(this.layer.id, this.opacity)
   }
 
-  _updateOpacityValue(e: Event) {
+  updateOpacityValue(e: Event) {
     if (e.target) {
       const target = e.target as HTMLTextAreaElement
       this.opacity = parseInt(target.value)
     }
     this.updateLayerOpacity(this.layer.id, this.opacity)
   }
+
   override createRenderRoot() {
     return this
   }

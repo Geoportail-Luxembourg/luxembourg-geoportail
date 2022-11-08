@@ -91,14 +91,13 @@
     @apply max-h-[3000px];
   }
   .lux-layer-manager-item {
-    @apply text-base capitalize px-2.5 py-1 my-1 bg-secondary text-tertiary ;
-    align-items: center;
+    @apply capitalize px-2.5 py-[.3rem] mb-px bg-secondary text-tertiary items-center;
   }
   .item {
     @apply flex items-center gap-x-3 flex-wrap select-none;
   }
   .content {
-    @apply peer-checked:max-h-max max-h-0 peer-checked:p-1 overflow-hidden transition-all select-text;
+    @apply peer-checked:max-h-max max-h-0 overflow-hidden transition-all select-text w-full;
   }
 
 }

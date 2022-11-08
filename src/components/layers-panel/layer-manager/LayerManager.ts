@@ -1,21 +1,17 @@
-import { css, html, LitElement, TemplateResult } from 'lit'
-import { customElement, query, state } from 'lit/decorators'
+import { html, LitElement, TemplateResult } from 'lit'
+import { customElement, state } from 'lit/decorators'
 import { Subscription } from 'rxjs'
-import { themesService } from '../../../services/themes/themes.service'
 import { mapState } from '../../../state/map/map.state'
 import { i18nMixin } from '../../../mixins/i18n-lit-element'
-import { layerTreeState } from '../catalog/layer-tree/layer-tree.service'
-import { LayerTreeNodeModel } from '../catalog/layer-tree/layer-tree.model'
 import { Layer } from '../../../state/map/map.state.model'
 import './layer-element/LayerManagerElement'
-// Default SortableJS
 import Sortable, { SortableEvent } from 'sortablejs'
-import { Openlayers } from '../../../services/map/ol.service'
 
 @customElement('lux-layer-manager')
 export class LayerManager extends i18nMixin(LitElement) {
+  @state() private layers: Layer[]
+
   private subscription = new Subscription()
-  private layers: Layer[]
   private sortable: Sortable
   private draggableClassName = 'drag-handle'
 
@@ -23,8 +19,8 @@ export class LayerManager extends i18nMixin(LitElement) {
     super()
 
     this.subscription.add(
-      mapState.layers$.subscribe(layers => {
-        this.layers = layers
+      mapState.map$.subscribe(mapContext => {
+        this.layers = mapContext.layers ?? []
       })
     )
   }
@@ -49,6 +45,10 @@ export class LayerManager extends i18nMixin(LitElement) {
     mapState.setLayerOpacity(layerId, opacity / 100)
   }
 
+  removeLayer(event: CustomEvent) {
+    mapState.removeLayer(event.detail.value)
+  }
+
   render(): TemplateResult {
     return html`
       <ul id="sortable-layers">
@@ -59,6 +59,7 @@ export class LayerManager extends i18nMixin(LitElement) {
                 .draggableClassName="${this.draggableClassName}"
                 .layer="${layer}"
                 .updateLayerOpacity="${this.updateLayerOpacity}"
+                @clickRemove="${this.removeLayer}"
               ></lux-layer-manager-element>
             </li>`
         )}
