@@ -13,7 +13,7 @@ export class MapState {
   }
 
   initLayer(layer: Layer) {
-    layer.opacity = 1
+    layer.opacity = layer.metadata?.start_opacity ?? 1
     layer.version = 1
   }
 

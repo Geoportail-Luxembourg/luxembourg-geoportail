@@ -17,7 +17,7 @@ export class LayerManagerElement extends i18nMixin(LitElement) {
   private prevOpacity: number
 
   @property()
-  private opacity = 100
+  private opacity: number
 
   @state()
   private isOpen = false
@@ -106,7 +106,7 @@ export class LayerManagerElement extends i18nMixin(LitElement) {
     )
   }
 
-  onToggleVisibility = () => {
+  onToggleVisibility() {
     if (this.opacity === 0) {
       this.opacity = this.prevOpacity
     } else {
@@ -117,7 +117,7 @@ export class LayerManagerElement extends i18nMixin(LitElement) {
     this.dispatchChangeOpacity()
   }
 
-  onChangeOpacity = (event: Event) => {
+  onChangeOpacity(event: Event) {
     if (event.target) {
       this.opacity = parseInt((event.target as HTMLInputElement).value)
 
@@ -125,7 +125,7 @@ export class LayerManagerElement extends i18nMixin(LitElement) {
     }
   }
 
-  dispatchChangeOpacity = () => {
+  dispatchChangeOpacity() {
     this.dispatchEvent(
       new CustomEvent('changeOpacity', {
         detail: {
@@ -134,6 +134,12 @@ export class LayerManagerElement extends i18nMixin(LitElement) {
         },
       })
     )
+  }
+
+  override connectedCallback() {
+    super.connectedCallback()
+
+    this.opacity = (this.layer?.opacity ?? 1) * 100
   }
 
   override createRenderRoot() {

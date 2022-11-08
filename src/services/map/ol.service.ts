@@ -48,7 +48,8 @@ export class Openlayers {
     }
     layer.set('metadata', spec.metadata)
     layer.set('queryable_id', spec.id)
-    layer.setOpacity(1)
+    layer.setOpacity(spec.opacity)
+
     if (spec.metadata?.hasOwnProperty('attribution')) {
       const source = layer.getSource()
       source?.setAttributions(spec.metadata.attribution)
@@ -56,16 +57,15 @@ export class Openlayers {
     return layer
   }
 
-  static addLayer(olMap: OlMap, layer: Layer, position: number) {
-    const layerProps = {
-      zIndex: position,
-      contextLayer: layer,
-    }
+  static addLayer(olMap: OlMap, layer: Layer) {
     const { id } = layer
+    let baseLayer: BaseLayer
+
     if (!layersCache.hasOwnProperty(id) || !layersCache[id]) {
       layersCache[id] = Openlayers.createLayer(layer)
     }
-    olMap.addLayer(layersCache[id])
+    olMap.addLayer((baseLayer = layersCache[id]))
+    baseLayer.setOpacity(layer.opacity)
   }
 
   static removeLayer(olMap: OlMap, layerId: string) {
@@ -81,10 +81,10 @@ export class Openlayers {
   static reorderLayers(olMap: OlMap, layers: Layer[]) {
     const arrayLayers = olMap.getLayers().getArray()
     layers.forEach((layer, idx) => {
-      const baseLayer: BaseLayer = arrayLayers.find(
+      const baseLayer = arrayLayers.find(
         mapLayer => mapLayer.get('id') === layer.id
       )
-      baseLayer.setZIndex(layers.length - idx)
+      baseLayer?.setZIndex(layers.length - idx)
     })
   }
 

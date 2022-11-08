@@ -24,9 +24,7 @@ export class OlSynchronizer {
 
       removedLayers.forEach(layer => Openlayers.removeLayer(map, layer.id as string))
 
-      addedLayerComparisons.forEach(cmp =>
-        Openlayers.addLayer(map, cmp.layer, cmp.position)
-      )
+      addedLayerComparisons.forEach(cmp => Openlayers.addLayer(map, cmp.layer))
 
       mutatedLayerComparisons.forEach(layer => {
         Openlayers.setLayerOpacity(map, layer.id, layer.opacity)
