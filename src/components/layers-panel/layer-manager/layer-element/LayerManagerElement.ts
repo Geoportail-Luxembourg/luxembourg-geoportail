@@ -1,5 +1,5 @@
 import { html, LitElement, TemplateResult } from 'lit'
-import { customElement } from 'lit/decorators'
+import { customElement, state } from 'lit/decorators'
 import { i18nMixin } from '../../../../mixins/i18n-lit-element'
 import { Layer } from '../../../../state/map/map.state.model'
 import { property } from 'lit/decorators.js'
@@ -22,6 +22,9 @@ export class LayerManagerElement extends i18nMixin(LitElement) {
   @property()
   private opacity = 100
 
+  @state()
+  private isOpen = false
+
   constructor() {
     super()
   }
@@ -33,46 +36,40 @@ export class LayerManagerElement extends i18nMixin(LitElement) {
   render(): TemplateResult {
     return html`
       <li class="lux-layer-manager-item flex item relative">
-        <!-- wrap is important here -->
-        <input
-          type="checkbox"
-          id="faq-${this.layer.id}"
-          class="peer appearance-none hidden"
-        />
         <button
           class="fa-solid fa-bars ${this.draggableClassName} cursor-move"
         ></button>
         <button class="fa-solid fa-info"></button>
-        <label
+        <button
           for="faq-${this.layer.id}"
-          class="cursor-pointer grow  flex-none"
+          class="cursor-pointer grow text-left"
+          tabindex="0"
+          @click="${this.onClickToggle}"
         >
           ${this.getLabel()}
-          <!-- note: grow is used to fill all remaining space of the article -->
-        </label>
-        <label
-          for="faq-${this.layer.id}"
-          class=" invisible fa-solid fa-xmark peer-checked:visible cursor-pointer flex-none"
-        ></label>
-        <label
-          for="faq-${this.layer.id}"
-          class=" fa-solid fa-ellipsis peer-checked:hidden cursor-pointer flex-none"
-          tabindex="0"
-        ></label>
+        </button>
         <button
-          class="fa-solid fa-trash flex-none"
+          class="w-3.5 fa-solid ${this.isOpen ? 'fa-xmark' : 'fa-ellipsis'}"
+          @click="${this.onClickToggle}"
+        ></button>
+        <button
+          class="fa-solid fa-trash"
           title="${i18next.t('Remove layer "{{layerName}}"', {
             ns: 'client',
             layerName: this.getLabel(),
           })}"
           @click="${this.onClickRemove}"
         ></button>
-        <!-- note: checkbox will be triggered even if label is triggered. -->
-        <div class="content">
-          <!-- note: basis may not work without wrap -->
+        <div
+          class="lux-layer-manager-item-content ${this.isOpen
+            ? 'max-h-96'
+            : 'max-h-0'}"
+        >
           <button
             title="${i18next.t('Toggle layer opacity', { ns: 'client' })}"
-            class="${this.opacity === 0 ? 'fa-eye-slash' : 'fa-eye'} fa-solid "
+            class="w-5 ${this.opacity === 0
+              ? 'fa-eye-slash'
+              : 'fa-eye'} fa-solid "
             @click="${this.setLayerInvisible}"
           ></button>
           <input
@@ -88,6 +85,18 @@ export class LayerManagerElement extends i18nMixin(LitElement) {
         </div>
       </li>
     `
+  }
+
+  onClickToggle() {
+    this.isOpen = !this.isOpen
+
+    this.dispatchEvent(
+      new CustomEvent('clickToggle', {
+        detail: {
+          value: this.layer.id,
+        },
+      })
+    )
   }
 
   onClickRemove() {

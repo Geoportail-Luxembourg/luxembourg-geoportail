@@ -10,6 +10,7 @@ import Sortable, { SortableEvent } from 'sortablejs'
 @customElement('lux-layer-manager')
 export class LayerManager extends i18nMixin(LitElement) {
   @state() private layers: Layer[]
+  @state() private isLayerOpenId: number
 
   private subscription = new Subscription()
   private sortable: Sortable
@@ -49,6 +50,10 @@ export class LayerManager extends i18nMixin(LitElement) {
     mapState.removeLayer(event.detail.value)
   }
 
+  clickToggleAccordionItem(event: CustomEvent) {
+    this.isLayerOpenId = event.detail.value
+  }
+
   render(): TemplateResult {
     return html`
       <ul id="sortable-layers">
@@ -58,8 +63,10 @@ export class LayerManager extends i18nMixin(LitElement) {
               <lux-layer-manager-element
                 .draggableClassName="${this.draggableClassName}"
                 .layer="${layer}"
+                .isOpen=${this.isLayerOpenId === layer.id}
                 .updateLayerOpacity="${this.updateLayerOpacity}"
                 @clickRemove="${this.removeLayer}"
+                @clickToggle="${this.clickToggleAccordionItem}"
               ></lux-layer-manager-element>
             </li>`
         )}
