@@ -3,13 +3,14 @@ import { Layer, LayerComparison, MapContext } from './map.state.model'
 function equalsLayer(layerA: Layer, layerB: Layer) {
   return layerA === layerB
 }
+
 function hasLayer(context: MapContext, layer: Layer) {
   return context.layers?.some(l => equalsLayer(layer, l))
 }
 
-function hasChanged(context: MapContext, layer: Layer) {
-  const lyr = context.layers?.find(l => l.id === layer.id)
-  return lyr?.version && lyr?.version !== layer.version
+function hasChanged(oldContext: MapContext, layer: Layer) {
+  const oldLayer = oldContext.layers?.find(l => l.id === layer.id)
+  return oldLayer?.version && oldLayer?.version !== layer.version
 }
 
 export class MapSateListener {
