@@ -11,9 +11,6 @@ export class LayerManagerElement extends i18nMixin(LitElement) {
   private layer: Layer
 
   @property()
-  private updateLayerOpacity: Function
-
-  @property()
   private draggableClassName: string
 
   @property()
@@ -70,7 +67,7 @@ export class LayerManagerElement extends i18nMixin(LitElement) {
             class="w-5 ${this.opacity === 0
               ? 'fa-eye-slash'
               : 'fa-eye'} fa-solid "
-            @click="${this.setLayerInvisible}"
+            @click="${this.onToggleVisibility}"
           ></button>
           <input
             id="steps-range"
@@ -79,7 +76,7 @@ export class LayerManagerElement extends i18nMixin(LitElement) {
             max="100"
             .value="${this.opacity}"
             step="25"
-            @change=${this.updateOpacityValue}
+            @change=${this.onChangeOpacity}
             class="m-2.5 w-16 h-[5px] rounded-lg appearance-none cursor-pointer"
           />
         </div>
@@ -109,22 +106,34 @@ export class LayerManagerElement extends i18nMixin(LitElement) {
     )
   }
 
-  setLayerInvisible() {
+  onToggleVisibility = () => {
     if (this.opacity === 0) {
       this.opacity = this.prevOpacity
     } else {
       this.prevOpacity = this.opacity
       this.opacity = 0
     }
-    this.updateLayerOpacity(this.layer.id, this.opacity)
+
+    this.dispatchChangeOpacity()
   }
 
-  updateOpacityValue(e: Event) {
-    if (e.target) {
-      const target = e.target as HTMLTextAreaElement
-      this.opacity = parseInt(target.value)
+  onChangeOpacity = (event: Event) => {
+    if (event.target) {
+      this.opacity = parseInt((event.target as HTMLInputElement).value)
+
+      this.dispatchChangeOpacity()
     }
-    this.updateLayerOpacity(this.layer.id, this.opacity)
+  }
+
+  dispatchChangeOpacity = () => {
+    this.dispatchEvent(
+      new CustomEvent('changeOpacity', {
+        detail: {
+          id: this.layer.id,
+          opacity: this.opacity,
+        },
+      })
+    )
   }
 
   override createRenderRoot() {

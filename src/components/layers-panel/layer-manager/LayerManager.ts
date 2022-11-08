@@ -42,15 +42,15 @@ export class LayerManager extends i18nMixin(LitElement) {
     mapState.reorderLayers([...items].map(val => Number(val.id)))
   }
 
-  updateLayerOpacity(layerId: number, opacity: number) {
-    mapState.setLayerOpacity(layerId, opacity / 100)
+  changeOpacityLayer = (event: CustomEvent) => {
+    mapState.setLayerOpacity(event.detail.id, event.detail.opacity / 100)
   }
 
   removeLayer(event: CustomEvent) {
     mapState.removeLayer(event.detail.value)
   }
 
-  clickToggleAccordionItem(event: CustomEvent) {
+  toggleAccordionItem(event: CustomEvent) {
     this.isLayerOpenId = event.detail.value
   }
 
@@ -64,9 +64,9 @@ export class LayerManager extends i18nMixin(LitElement) {
                 .draggableClassName="${this.draggableClassName}"
                 .layer="${layer}"
                 .isOpen=${this.isLayerOpenId === layer.id}
-                .updateLayerOpacity="${this.updateLayerOpacity}"
                 @clickRemove="${this.removeLayer}"
-                @clickToggle="${this.clickToggleAccordionItem}"
+                @clickToggle="${this.toggleAccordionItem}"
+                @changeOpacity="${this.changeOpacityLayer}"
               ></lux-layer-manager-element>
             </li>`
         )}
