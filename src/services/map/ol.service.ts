@@ -107,12 +107,12 @@ export class Openlayers {
     const mapLayers = olMap.getLayers()
     const currentBgLayerPos = mapLayers
       .getArray()
-      .findIndex(layer => layer.get('zIndex') === -1)
-
+      .findIndex(layer => layer.getZIndex() === -1)
+      
     if (currentBgLayerPos >= 0) {
       if (bgLayer) {
         const bgBaseLayer = Openlayers.getLayerFromCache(bgLayer)
-        bgBaseLayer.set('zIndex', -1)
+        bgBaseLayer.setZIndex(-1)
         mapLayers.setAt(currentBgLayerPos, bgBaseLayer)
       } else {
         mapLayers.removeAt(currentBgLayerPos)
@@ -120,7 +120,7 @@ export class Openlayers {
     } else {
       if (bgLayer) {
         const bgBaseLayer = Openlayers.getLayerFromCache(bgLayer)
-        bgBaseLayer.set('zIndex', -1)
+        bgBaseLayer.setZIndex(-1)
         olMap.addLayer(bgBaseLayer)
       }
     }
