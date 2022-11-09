@@ -90,11 +90,21 @@
   .lux-collapse.expanded {
     @apply max-h-[3000px];
   }
+  
   .lux-layer-manager-item {
     @apply capitalize px-2.5 py-[.25rem] mb-px bg-secondary text-tertiary flex items-center gap-x-2 flex-wrap select-none;
   }
+
   .lux-layer-manager-item-content {
     @apply overflow-hidden transition-all select-text w-full duration-300;
+  }
+
+  .lux-sortable-ghost {
+    @apply before:absolute before:w-full before:h-full before:z-10 before:bg-primary before:content-[''];
+  }
+
+  .lux-sortable-drag {
+    @apply  drop-shadow-md;
   }
 }
 .fa-solid {

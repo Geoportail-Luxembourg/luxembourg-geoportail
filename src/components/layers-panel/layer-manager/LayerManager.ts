@@ -34,6 +34,9 @@ export class LayerManager extends i18nMixin(LitElement) {
     if (sortableLayers) {
       this.sortable = Sortable.create(sortableLayers, {
         dataIdAttr: 'data-id',
+        dragClass: 'lux-sortable-drag',
+        ghostClass: 'lux-sortable-ghost',
+        sort: true,
         handle: `.${this.draggableClassName}`,
         onSort: this.sortMethod.bind(this),
       })
