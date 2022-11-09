@@ -1,15 +1,11 @@
-import { html, LitElement, TemplateResult } from 'lit'
+import { html, TemplateResult } from 'lit'
 import { customElement, state } from 'lit/decorators'
-import { i18nMixin } from '../../../../mixins/i18n-lit-element'
-import { Layer } from '../../../../state/map/map.state.model'
 import { property } from 'lit/decorators.js'
 import i18next from 'i18next'
+import { LayerElement } from '../layer-element'
 
 @customElement('lux-layer-manager-element')
-export class LayerManagerElement extends i18nMixin(LitElement) {
-  @property()
-  private layer: Layer
-
+export class LayerManagerElement extends LayerElement {
   @property()
   private draggableClassName: string
 
@@ -26,21 +22,22 @@ export class LayerManagerElement extends i18nMixin(LitElement) {
     super()
   }
 
-  private getLabel() {
-    return i18next.t(this.layer.name, { ns: 'client' })
-  }
-
   render(): TemplateResult {
     return html`
       <li class="lux-layer-manager-item flex item relative">
         <button
           class="fa-solid fa-bars ${this.draggableClassName} cursor-move"
         ></button>
-        <button class="fa-solid fa-info"></button>
         <button
-          for="faq-${this.layer.id}"
+          class="fa-solid fa-info"
+          title="${i18next.t('Display informations for "{{layerName}}"', {
+            ns: 'client',
+            layerName: this.getLabel(),
+          })}"
+          @click="${this.onClickInfo}"
+        ></button>
+        <button
           class="cursor-pointer grow text-left"
-          tabindex="0"
           @click="${this.onClickToggle}"
         >
           ${this.getLabel()}
@@ -86,24 +83,11 @@ export class LayerManagerElement extends i18nMixin(LitElement) {
 
   onClickToggle() {
     this.isOpen = !this.isOpen
-
-    this.dispatchEvent(
-      new CustomEvent('clickToggle', {
-        detail: {
-          value: this.layer.id,
-        },
-      })
-    )
+    this.dispatchCustomEvent('clickToggle')
   }
 
   onClickRemove() {
-    this.dispatchEvent(
-      new CustomEvent('clickRemove', {
-        detail: {
-          value: this.layer.id,
-        },
-      })
-    )
+    this.dispatchCustomEvent('clickRemove')
   }
 
   onToggleVisibility() {
@@ -126,14 +110,7 @@ export class LayerManagerElement extends i18nMixin(LitElement) {
   }
 
   dispatchChangeOpacity() {
-    this.dispatchEvent(
-      new CustomEvent('changeOpacity', {
-        detail: {
-          id: this.layer.id,
-          opacity: this.opacity,
-        },
-      })
-    )
+    this.dispatchCustomEvent('changeOpacity', { opacity: this.opacity })
   }
 
   override connectedCallback() {
