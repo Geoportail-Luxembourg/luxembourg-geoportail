@@ -8,20 +8,26 @@ export class MapState {
   map$ = new BehaviorSubject<MapContext>(this.mapContext)
   layers$ = new BehaviorSubject<Layer[]>([])
 
-  addLayer(layer: Layer) {
+  getLayers() {
+    return this.mapContext.layers || []
+  }
+
+  addLayer(...layers: Layer[]) {
     this.mapContext = {
       ...this.mapContext,
-      layers: [...(this.mapContext.layers || []), layer],
+      layers: [...new Set([...(this.mapContext.layers || []), ...layers])],
     }
     this.map$.next(this.mapContext)
     this.layers$.next(this.mapContext.layers || [])
   }
 
-  removeLayer(layerId: string) {
+  removeLayer(...layerIds: (string | number)[]) {
     this.mapContext = {
       ...this.mapContext,
       layers:
-        this.mapContext.layers?.filter(layer => layer.id !== layerId) || [],
+        this.mapContext.layers?.filter(
+          layer => layerIds.indexOf(layer.id) === -1
+        ) || [],
     }
     this.map$.next(this.mapContext)
   }
