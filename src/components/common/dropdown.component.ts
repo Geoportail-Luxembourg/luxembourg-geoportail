@@ -1,9 +1,10 @@
 import { LitElement, TemplateResult, html } from 'lit'
 import { property, customElement } from 'lit/decorators'
+import { StylesMixin } from '../../mixins/styles-lit-element'
 import { DropdownOptionModel } from './dropdown.model'
 
 @customElement('lux-dropdown')
-export class Dropdown extends LitElement {
+export class Dropdown extends StylesMixin(LitElement) {
   @property() private placeholder: string
   @property() private options: DropdownOptionModel[] = []
   @property() private isOpen: boolean
@@ -76,9 +77,5 @@ export class Dropdown extends LitElement {
         </ul>
       </div>
     `
-  }
-
-  override createRenderRoot() {
-    return this
   }
 }

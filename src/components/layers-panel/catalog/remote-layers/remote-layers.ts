@@ -1,7 +1,13 @@
-import { html, LitElement, TemplateResult } from 'lit'
+import {
+  css,
+  CSSResult,
+  html,
+  LitElement,
+  TemplateResult,
+  unsafeCSS,
+} from 'lit'
 import { Subscription } from 'rxjs'
 import { customElement, state } from 'lit/decorators'
-import '../../../common/dropdown.component'
 import { DropdownOptionModel } from '../../../common/dropdown.model'
 import { remoteLayersService } from './remote-layers.service'
 import { LayerTreeNodeModel } from '../layer-tree/layer-tree.model'
@@ -13,9 +19,13 @@ import { layerTreeState } from '../layer-tree/layer-tree.service'
 import { mapState } from '../../../../state/map/map.state'
 import i18next from 'i18next'
 import { OgcClientWmsEndpoint } from './remote-layers.model'
+import { StylesMixin } from '../../../../mixins/styles-lit-element'
+
+import '../../../common/modal.component'
+import '../../../common/dropdown.component'
 
 @customElement('lux-remote-layers')
-export class RemoteLayer extends LitElement {
+export class RemoteLayer extends StylesMixin(LitElement) {
   @state() private wmsLayers: DropdownOptionModel[]
   @state() private layerTree: LayerTreeNodeModel | undefined
   @state() private isLoading = false
@@ -124,15 +134,12 @@ export class RemoteLayer extends LitElement {
 
   render(): TemplateResult {
     return html`
-      <div
-        class="absolute right-0 top-52 z-50 bg-white lux-modal w-[600px]"
-        role="dialog"
-      >
-        <div class="lux-modal-header">
-          <h4>${i18next.t('Add external data', { ns: 'client' })}</h4>
-        </div>
+      <lux-modal>
+        <h4 slot="lux-modal-header">
+          ${i18next.t('Add external data', { ns: 'client' })}
+        </h4>
 
-        <div class="p-[15px]">
+        <div class="p-[15px]" slot="lux-modal-body">
           <div class="relative text-center">
             <lux-dropdown
               .options=${this.wmsLayers}
@@ -200,11 +207,7 @@ export class RemoteLayer extends LitElement {
               `
             : null}
         </div>
-      </div>
+      </lux-modal>
     `
-  }
-
-  override createRenderRoot() {
-    return this
   }
 }
