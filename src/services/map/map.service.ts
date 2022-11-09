@@ -1,7 +1,5 @@
 import { defaults as defaultControls } from 'ol/control'
-import TileLayer from 'ol/layer/Tile'
 import OlMap from 'ol/Map'
-import { OSM } from 'ol/source'
 import OlView from 'ol/View'
 
 export class MapService {
