@@ -4,11 +4,15 @@
   "version": "0.0.1-SNAPSHOT",
   "source": "src/module.ts",
   "module": "dist/module.esm.js",
+  "css": "dist/main.css",
   "targets": {
     "module": {
       "includeNodeModules": true,
       "isLibrary": true,
       "optimize": true
+    },
+    "css": {
+      "source": "./src/styles/tailwind.global.css"
     }
   },
   "scripts": {
