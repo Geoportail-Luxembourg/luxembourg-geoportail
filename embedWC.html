@@ -1,46 +1,51 @@
 <html>
-    <head>
-    <link rel="stylesheet" href="./dist/index.2c4d6144.css">
+  <head>
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.2.0/css/all.min.css"
+    />
+    <link rel="stylesheet" href="./dist/main.css" />
     <script type="module">
-      import './dist/index.0e6adabd.js';
-  
-      const el = document.querySelector('lux-dropdown');
-      el.options = [{ label: "toto", value: "toto" }, { label: "toto1", value: "toto1" }];
-      el.addEventListener('dropdown-change', (e) => console.info(e.detail))
+      import '/dist/module.esm.js'
 
+      const el = document.querySelector('lux-dropdown')
+      el.options = [
+        { label: 'toto', value: 'toto' },
+        { label: 'toto1', value: 'toto1' },
+      ]
+      el.addEventListener('dropdown-change', e => console.info(e.detail))
 
-      const el2 = document.querySelector('#mycatalog');
-      el2.addEventListener('parent-toggle', (e) => {alert(e); console.log(e)})
-      
+      const el2 = document.querySelector('#mycatalog')
+      el2.addEventListener('parent-toggle', e => {
+        console.log(e)
+      })
+      //   el2.node = {
+      //       name: 'main',
+      //       checked: false,
+      //       children: [
+      //         {
+      //             name: 'sub main',
+      //             checked: false,
+      //             children: [
 
-    //   el2.node = {
-    //       name: 'main',
-    //       checked: false,
-    //       children: [
-    //         {
-    //             name: 'sub main',
-    //             checked: false,
-    //             children: [
-                    
-    //             ],
-    //             depth: 1,
-    //             expanded: false,
-    //             id: 117
-    //         }
-    //       ],
-    //       depth: 0,
-    //       expanded: false,
-    //       id: 116
-    //   };
-            
+      //             ],
+      //             depth: 1,
+      //             expanded: false,
+      //             id: 117
+      //         }
+      //       ],
+      //       depth: 0,
+      //       expanded: false,
+      //       id: 116
+      //   };
     </script>
   </head>
   <body>
-      Salut
-      <lux-dropdown></lux-dropdown>
-
-      <div style="border: 1px solid red; height: 120px; width: 120px;">
-        <lux-catalog id="mycatalog"></lux-catalog>
-      </div>
+    <h1>Dropdown</h1>
+    <lux-dropdown></lux-dropdown>
+    <h1>Catalog</h1>
+    <div style="width: 450px">
+      <lux-catalog id="mycatalog"></lux-catalog>
+    </div>
   </body>
 </html>
