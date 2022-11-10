@@ -27,7 +27,7 @@ export const i18nMixin = <T extends Constructor<LitElement>>(superClass: T) => {
           ns: ['client', 'legends', 'server', 'tooltips'],
           fallbackLng: 'fr',
           backend: {
-            loadPath: '/assets/locales/{{ns}}.{{lng}}.json',
+            loadPath: './assets/locales/{{ns}}.{{lng}}.json',
           },
         })
       }
