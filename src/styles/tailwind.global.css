@@ -39,7 +39,10 @@
   }
   
   .lux-bg-sel-icon {
-    @apply bg-[length:40px_40px] md:bg-[length:90px_58px] border-black border-[0.5px] bg-white;
+    @apply bg-[length:40px_40px] md:bg-[length:90px_58px] border-gray-400 border-[0.5px] bg-white;
+  }
+  .lux-bg-sel-icon.lux-bg-sel-blank {
+    @apply border-black;
   }
 
   .lux-outlined {

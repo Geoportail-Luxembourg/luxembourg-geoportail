@@ -3,12 +3,11 @@ import { customElement, state } from 'lit/decorators.js'
 import { i18nMixin } from '../../mixins/i18n-lit-element'
 import { Subscription, BehaviorSubject, combineLatest } from 'rxjs'
 import { themesService } from '../../services/themes/themes.service'
+import { backgroundLayerService } from '../../services/background-layer/background-layer.service'
 import {
-  bgLayersFromThemes,
-  createDefaultBgLayer,
-  setBgLayer,
-} from '../../services/background-layer/background-layer.service'
-import { LuxBgLayer } from '../../services/background-layer/background-layer.service'
+  BLANK_BACKGROUNDLAYER,
+  IBackgroundLayer,
+} from '../../services/background-layer/background-layer.model'
 import { mapState } from '../../states/map/map.state'
 
 import './background-selector-item.element'
@@ -16,8 +15,8 @@ import './background-selector-item.element'
 @customElement('lux-background-selector')
 export class BackgroundSelectorElement extends i18nMixin(LitElement) {
   @state() isOpen = false
-  @state() activeLayer: LuxBgLayer = { name: 'white', id: 0 }
-  private bgLayers: LuxBgLayer[] = []
+  @state() activeLayerId: number
+  private bgLayers: IBackgroundLayer[] = []
   private subscription = new Subscription()
 
   constructor() {
@@ -25,16 +24,22 @@ export class BackgroundSelectorElement extends i18nMixin(LitElement) {
     this.subscription.add(
       themesService.bgLayers$.subscribe(bgLayers => {
         this.bgLayers =
-          bgLayers.length > 0 ? bgLayersFromThemes() : [createDefaultBgLayer()]
+          bgLayers.length > 0
+            ? backgroundLayerService.getBgLayersFromConfig()
+            : [BLANK_BACKGROUNDLAYER]
+
+        if (this.activeLayerId === void 0) {
+          backgroundLayerService.setBgLayer(
+            backgroundLayerService.getDefaultSelectedId()
+          )
+        }
       })
     )
     this.subscription.add(
-      combineLatest([themesService.bgLayers$, mapState.bgLayer$]).subscribe(
-        ([bgLayers, layer]) => {
-          if (!layer || bgLayers.find(l => l.id == layer?.id)) {
-            this.activeLayer = LuxBgLayer.fromLayer(layer)
-          }
-        }
+      combineLatest([mapState.bgLayer$, themesService.bgLayers$]).subscribe(
+        ([layer]) =>
+          (this.activeLayerId =
+            (layer?.id as number) ?? BLANK_BACKGROUNDLAYER.id)
       )
     )
   }
@@ -44,40 +49,45 @@ export class BackgroundSelectorElement extends i18nMixin(LitElement) {
     super.disconnectedCallback()
   }
 
+  getOpenMenuClasses = (layer: IBackgroundLayer) => {
+    let openMenuClasses = 'lux-bg-sel hover:bg-cyan-600 '
+    openMenuClasses +=
+      layer.id === this.activeLayerId
+        ? 'border-red-500 border-2'
+        : 'border-black border'
+    return openMenuClasses
+  }
+
+  getActiveLayerName() {
+    return this.bgLayers.find(layer => layer.id === this.activeLayerId)?.name
+  }
+
   render() {
     let closedMenuClasses = 'lux-bg-sel border border-black '
-    closedMenuClasses += this.isOpen == true ? 'hidden' : 'block'
-
-    function getOpenMenuClasses(layer: LuxBgLayer, that: any) {
-      let openMenuClasses = 'lux-bg-sel hover:bg-cyan-600 '
-      openMenuClasses +=
-        layer.id === that.activeLayer.id
-          ? 'border-red-500 border-2'
-          : 'border-black border'
-      return openMenuClasses
-    }
+    closedMenuClasses += this.isOpen === true ? 'hidden' : 'block'
     const bgLayerComponents = this.bgLayers.map(
-      (layer: LuxBgLayer) =>
+      layer =>
         html`<lux-background-selector-item
-          class="${getOpenMenuClasses(layer, this)}"
+          class="${this.getOpenMenuClasses(layer)}"
           bgname="${layer.name}"
           @click="${() => this.setBackgroundLayer(layer)}"
         >
         </lux-background-selector-item>`
     )
+
     return html`
       <div class="flex flex-row-reverse">
         <lux-background-selector-item
-          class=" ${closedMenuClasses}"
+          class="${closedMenuClasses}"
           aria-expanded="${this.isOpen}"
           bgtitle="Select BG layer"
-          bgname="${this.activeLayer.name}"
+          bgname="${this.getActiveLayerName()}"
           @click="${this.toggleSelector}"
         >
         </lux-background-selector-item>
 
         <div
-          class="${this.isOpen == true
+          class="${this.isOpen === true
             ? 'flex flex-col md:flex-row'
             : 'hidden'}"
         >
@@ -87,8 +97,8 @@ export class BackgroundSelectorElement extends i18nMixin(LitElement) {
     `
   }
 
-  setBackgroundLayer(layer: LuxBgLayer) {
-    setBgLayer(layer)
+  setBackgroundLayer(layer: IBackgroundLayer) {
+    backgroundLayerService.setBgLayer(layer.id)
     this.isOpen = false
   }
 
@@ -97,7 +107,6 @@ export class BackgroundSelectorElement extends i18nMixin(LitElement) {
   }
 
   createRenderRoot() {
-    // no shadow dom
     return this
   }
 }

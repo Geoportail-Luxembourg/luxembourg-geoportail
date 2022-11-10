@@ -5,12 +5,12 @@ export const bgConfig = {
       id: 556,
     },
     {
-      name: 'topo',
-      id: 529,
-    },
-    {
       name: 'topo_bw',
       id: 502,
+    },
+    {
+      name: 'topo',
+      id: 529,
     },
     {
       name: 'ortho',
@@ -21,10 +21,11 @@ export const bgConfig = {
       id: 501,
     },
     {
-      name: 'white',
+      name: 'blank',
       id: 0,
     },
   ],
+  bg_layers_defaultId: 556,
   http_bg_server: 'wmts{1-2}',
   https_bg_server: 'wmts{3-4}',
   bg_wmts_server_path: 'mapproxy_4_v3/wmts/{Layer}',
