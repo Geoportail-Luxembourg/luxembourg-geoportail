@@ -9,7 +9,8 @@
     "module": {
       "includeNodeModules": true,
       "isLibrary": true,
-      "optimize": true
+      "optimize": true,
+      "sourceMap": false
     },
     "css": {
       "source": "./src/styles/tailwind.global.css"
