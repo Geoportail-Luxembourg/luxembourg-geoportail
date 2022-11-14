@@ -45,7 +45,7 @@ export class LayerManager extends i18nMixin(LitElement) {
 
   sortMethod(event: SortableEvent) {
     const items = event.to.children
-    mapState.reorderLayers([...items].map(val => Number(val.id)))
+    mapState.reorderLayers([...items].map(val => Number(val.id)).reverse())
   }
 
   changeOpacityLayer = (event: CustomEvent) => {
@@ -71,7 +71,7 @@ export class LayerManager extends i18nMixin(LitElement) {
   render(): TemplateResult {
     return html`
       <ul id="sortable-layers">
-        ${this.layers.map(
+        ${[...this.layers].reverse().map(
           layer =>
             html` <li id=${layer.id}>
               <lux-layer-manager-element

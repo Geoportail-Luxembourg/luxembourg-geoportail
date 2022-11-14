@@ -31,7 +31,7 @@ export class OlSynchronizer {
       })
 
       if (newContext.layers) {
-        Openlayers.reorderLayers(map, newContext.layers)
+        Openlayers.reorderLayers(map, [...(newContext.layers ?? [])].reverse())
       }
       console.log('state change', newContext)
     })
