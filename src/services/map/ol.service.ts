@@ -59,12 +59,12 @@ export class Openlayers {
 
   static addLayer(olMap: OlMap, layer: Layer) {
     const { id } = layer
-    let baseLayer: BaseLayer
+    const baseLayer: BaseLayer =
+      !layersCache.hasOwnProperty(id) || !layersCache[id]
+        ? Openlayers.createLayer(layer)
+        : layersCache[id]
 
-    if (!layersCache.hasOwnProperty(id) || !layersCache[id]) {
-      layersCache[id] = Openlayers.createLayer(layer)
-    }
-    olMap.addLayer((baseLayer = layersCache[id]))
+    olMap.addLayer(baseLayer)
     baseLayer.setOpacity(layer.opacity)
   }
 
