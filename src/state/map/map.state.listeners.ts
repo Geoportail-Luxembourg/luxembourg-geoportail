@@ -76,7 +76,7 @@ export class MapSateListener {
   ): Layer[] {
     if (contextHasChanged(newContext, oldContext)) {
       return (
-        newContext?.layers?.reduce(
+        newContext.layers?.reduce(
           (prev, layer) =>
             !layerHasChanged(oldContext, layer) ? prev : [...prev, layer],
           [] as Layer[]

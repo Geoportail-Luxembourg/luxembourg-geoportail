@@ -45,7 +45,7 @@ export class LayerManager extends i18nMixin(LitElement) {
 
   sortMethod(event: SortableEvent) {
     const items = event.to.children
-    mapState.reorderLayers(Array.from(items).map(val => Number(val.id)))
+    mapState.reorderLayers([...items].map(val => Number(val.id)))
   }
 
   changeOpacityLayer = (event: CustomEvent) => {
