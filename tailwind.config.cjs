@@ -48,7 +48,7 @@ module.exports = {
       fontFamily: {
         sans: 'DINNextLTPro-Condensed, Arial, sans-serif',
         body: 'DINNextLTPro-Condensed, Arial, sans-serif',
-        icons: 'geoportail-icons',
+        icons: 'geoportail-icons-wc',
       },
       fontSize: {
         'title-xl': ['40px', '40px'],
