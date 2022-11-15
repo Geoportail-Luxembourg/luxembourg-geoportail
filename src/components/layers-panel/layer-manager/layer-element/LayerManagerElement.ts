@@ -24,7 +24,7 @@ export class LayerManagerElement extends LayerElement {
 
   render(): TemplateResult {
     return html`
-      <li class="lux-layer-manager-item flex item relative">
+      <div class="lux-layer-manager-item flex item relative">
         <button
           class="fa-solid fa-bars ${this.draggableClassName} cursor-move"
         ></button>
@@ -77,7 +77,7 @@ export class LayerManagerElement extends LayerElement {
             class="m-2.5 w-16 h-[5px] rounded-lg appearance-none cursor-pointer"
           />
         </div>
-      </li>
+      </div>
     `
   }
 

@@ -15,7 +15,7 @@ export class LayerManagerElement extends LayerElement {
 
   render(): TemplateResult {
     return html`
-      <li class="lux-layer-manager-item mt-2.5">
+      <div class="lux-layer-manager-item mt-2.5">
         <button
           class="fa fa-info w-3"
           title="${i18next.t('Display informations for "{{layerName}}"', {
@@ -30,7 +30,7 @@ export class LayerManagerElement extends LayerElement {
           title="${i18next.t('Open editor panel', { ns: 'client' })}"
           @click="${this.onclickEdit}"
         ></button>
-      </li>
+      </div>
     `
   }
 
