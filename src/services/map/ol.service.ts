@@ -84,7 +84,7 @@ export class Openlayers {
       const baseLayer = arrayLayers.find(
         mapLayer => mapLayer.get('id') === layer.id
       )
-      baseLayer?.setZIndex(layers.length - idx)
+      baseLayer?.setZIndex(idx + 1)
     })
   }
 
