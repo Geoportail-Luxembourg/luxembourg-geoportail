@@ -65,7 +65,6 @@ export class Openlayers {
         : layersCache[id]
 
     olMap.addLayer(baseLayer)
-    baseLayer.setOpacity(layer.opacity)
   }
 
   static removeLayer(olMap: OlMap, layerId: string) {
