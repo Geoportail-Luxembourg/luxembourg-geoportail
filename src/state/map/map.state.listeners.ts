@@ -58,12 +58,10 @@ export class MapSateListener {
     oldContext: MapContext | null
   ): Layer[] {
     if (contextHasChanged(newContext, oldContext)) {
-      return (
-        oldContext?.layers?.reduce(
-          (prev, layer) =>
-            hasLayer(newContext, layer) ? prev : [...prev, layer],
-          [] as Layer[]
-        ) || []
+      return ((oldContext as MapContext).layers as Layer[]).reduce(
+        (prev, layer) =>
+          hasLayer(newContext, layer) ? prev : [...prev, layer],
+        [] as Layer[]
       )
     }
 
@@ -75,12 +73,10 @@ export class MapSateListener {
     oldContext: MapContext | null
   ): Layer[] {
     if (contextHasChanged(newContext, oldContext)) {
-      return (
-        newContext.layers?.reduce(
-          (prev, layer) =>
-            !layerHasChanged(oldContext, layer) ? prev : [...prev, layer],
-          [] as Layer[]
-        ) || []
+      return (newContext.layers as Layer[]).reduce(
+        (prev, layer) =>
+          !layerHasChanged(oldContext, layer) ? prev : [...prev, layer],
+        [] as Layer[]
       )
     }
 
