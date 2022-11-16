@@ -55,9 +55,7 @@ export class LayerManagerElement extends LayerElement {
           @click="${this.onClickRemove}"
         ></button>
         <div
-          class="lux-layer-manager-item-content ${this.isOpen
-            ? 'max-h-96'
-            : 'max-h-0'}"
+          class="lux-layer-manager-item-content ${this.isOpen ? 'h-6' : 'h-0'}"
         >
           <button
             title="${i18next.t('Toggle layer opacity', { ns: 'client' })}"

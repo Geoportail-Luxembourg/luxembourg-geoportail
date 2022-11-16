@@ -96,7 +96,7 @@
   }
 
   .lux-layer-manager-item-content {
-    @apply overflow-hidden transition-all select-text w-full duration-300;
+    @apply select-text w-full transition-[height] duration-[0.25s] overflow-hidden h-0 ease-linear;
   }
 
   .lux-sortable-ghost {
