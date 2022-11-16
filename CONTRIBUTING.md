@@ -2,7 +2,7 @@
 ## Code
 ### Custom elements
 For an element `catalog`, 
-- the name of the file is `catalog.element.ts` in kebabCase.
+- the name of the file is `catalog.element.ts` in kebab-case.
 - the selector is prefixed by `lux-`
 - the class name is `CatalogElement`
 ```ts
@@ -12,7 +12,7 @@ export default class CatalogElement extends LitElement { }
 ```
 ### Services
 For a service `catalog`,
-- the name of the file is `catalog.service.ts` in kebabCase.
+- the name of the file is `catalog.service.ts` in kebab-case.
 - the class name is `CatalogService`
 Services are mostly exposed as singletons and should be directly instancied.
 ```ts
@@ -25,7 +25,7 @@ export const catalogService = new CatalogService()
 
 Rules
 * Custom elements are created under components folder
-* There organized by feature (only one level nesting) eg. `catalog`
+* They are organized by feature (only one level nesting) eg. `catalog`
 * All smart and dumb logic belongs to the same feature folder
 * For now, there is only one smart component per folder, and must have the same name.
 * A model file eg. `catalog.model.ts` gathers all models for the feature
@@ -52,7 +52,7 @@ Rules
     - theme-grid.model.ts
     - theme-grid.element.ts
     - theme-selector-button.element.ts
-  - remoteLayer
+  - remote-layer
   app.element.ts
 - services
   - map
