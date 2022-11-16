@@ -22,12 +22,12 @@ export class OlSynchronizer {
         oldContext
       )
 
-      removedLayers.forEach(layer => Openlayers.removeLayer(map, layer.id as string))
+      removedLayers.forEach(layer => Openlayers.removeLayer(map, layer.id))
 
       addedLayerComparisons.forEach(cmp => Openlayers.addLayer(map, cmp.layer))
 
       mutatedLayerComparisons.forEach(layer => {
-        Openlayers.setLayerOpacity(map, layer.id, layer.opacity)
+        Openlayers.setLayerOpacity(map, layer.id, layer.opacity as number)
       })
 
       if (newContext.layers) {

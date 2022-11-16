@@ -3,7 +3,7 @@ import { customElement, state } from 'lit/decorators'
 import { Subscription } from 'rxjs'
 import { mapState } from '../../../state/map/map.state'
 import { i18nMixin } from '../../../mixins/i18n-lit-element'
-import { Layer } from '../../../state/map/map.state.model'
+import { Layer, LayerId } from '../../../state/map/map.state.model'
 import Sortable, { SortableEvent } from 'sortablejs'
 
 import './layer-element/LayerManagerElement'
@@ -13,7 +13,7 @@ import './layer-element/LayerManagerBackgroundElement'
 export class LayerManager extends i18nMixin(LitElement) {
   @state() private layers: Layer[]
   @state() private backgroundLayer: Layer
-  @state() private isLayerOpenId: number
+  @state() private isLayerOpenId: LayerId
 
   private subscription = new Subscription()
   private sortable: Sortable

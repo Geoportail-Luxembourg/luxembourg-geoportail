@@ -1,5 +1,5 @@
 import { BehaviorSubject } from 'rxjs'
-import { Layer, MapContext } from './map.state.model'
+import { Layer, LayerId, MapContext } from './map.state.model'
 
 const initialState: MapContext = {}
 
@@ -18,7 +18,7 @@ export class MapState {
 
   addLayer(...layers: Layer[]) {
     layers.forEach(layer => this.initLayer(layer))
-    
+
     this.mapContext = {
       ...this.mapContext,
       layers: [...new Set([...(this.mapContext.layers || []), ...layers])],
@@ -41,8 +41,8 @@ export class MapState {
   hasLayer(layerId: string) {
     return !!this.mapContext.layers?.find(layer => layer.id === layerId)
   }
-  
-  reorderLayers(layersId: number[]) {
+
+  reorderLayers(layersId: LayerId[]) {
     this.mapContext = {
       ...this.mapContext,
       layers: this.mapContext.layers?.sort(

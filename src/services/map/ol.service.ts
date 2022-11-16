@@ -4,7 +4,7 @@ import TileLayer from 'ol/layer/Tile'
 import OlMap from 'ol/Map'
 import { ImageWMS, WMTS } from 'ol/source'
 import { layersCache } from '../../state/layers/layers.cache'
-import { Layer } from '../../state/map/map.state.model'
+import { Layer, LayerId } from '../../state/map/map.state.model'
 
 const proxyWmsUrl = 'https://map.geoportail.lu/ogcproxywms'
 export const remoteProxyWms = 'https://map.geoportail.lu/httpsproxy'
@@ -48,7 +48,7 @@ export class Openlayers {
     }
     layer.set('metadata', spec.metadata)
     layer.set('queryable_id', spec.id)
-    layer.setOpacity(spec.opacity)
+    layer.setOpacity(spec.opacity as number)
 
     if (spec.metadata?.hasOwnProperty('attribution')) {
       const source = layer.getSource()
@@ -67,7 +67,7 @@ export class Openlayers {
     olMap.addLayer(baseLayer)
   }
 
-  static removeLayer(olMap: OlMap, layerId: string) {
+  static removeLayer(olMap: OlMap, layerId: LayerId) {
     const layerToRemove = olMap
       .getLayers()
       .getArray()
@@ -87,7 +87,7 @@ export class Openlayers {
     })
   }
 
-  static setLayerOpacity(olMap: OlMap, layerId: number, opacity: number) {
+  static setLayerOpacity(olMap: OlMap, layerId: LayerId, opacity: number) {
     const layer = olMap
       .getLayers()
       .getArray()
