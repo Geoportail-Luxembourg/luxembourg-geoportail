@@ -22,7 +22,7 @@ export class LayerPanel extends i18nMixin(LitElement) {
         <div class="flex flex-row gap-2 h-10 text-2xl">
           <div
             @click="${() => (this.myLayersOpen = true)}"
-            class="basis-1/2 hover:bg-primary cursor-pointer text-center uppercase  ${this
+            class="text-white basis-1/2 hover:bg-primary cursor-pointer text-center uppercase  ${this
               .myLayersOpen
               ? 'bg-primary'
               : 'bg-tertiary'}"
@@ -31,7 +31,7 @@ export class LayerPanel extends i18nMixin(LitElement) {
           </div>
           <div
             @click="${() => (this.myLayersOpen = false)}"
-            class="basis-1/2 hover:bg-primary cursor-pointer text-center uppercase  ${!this
+            class="text-white basis-1/2 hover:bg-primary cursor-pointer text-center uppercase  ${!this
               .myLayersOpen
               ? 'bg-primary'
               : 'bg-tertiary'}"
