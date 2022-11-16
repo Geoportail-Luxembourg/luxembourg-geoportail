@@ -1,5 +1,5 @@
 import { BehaviorSubject } from 'rxjs'
-import { Layer, MapContext } from './map.state.model'
+import { Layer, LayerId, MapContext } from './map.state.model'
 
 const initialState: MapContext = {}
 
@@ -12,7 +12,13 @@ export class MapState {
     return this.mapContext.layers || []
   }
 
+  initLayer(layer: Layer) {
+    layer.opacity = layer.previousOpacity = layer.metadata?.start_opacity ?? 1
+  }
+
   addLayer(...layers: Layer[]) {
+    layers.forEach(layer => this.initLayer(layer))
+
     this.mapContext = {
       ...this.mapContext,
       layers: [...new Set([...(this.mapContext.layers || []), ...layers])],
@@ -34,6 +40,32 @@ export class MapState {
 
   hasLayer(layerId: string) {
     return !!this.mapContext.layers?.find(layer => layer.id === layerId)
+  }
+
+  reorderLayers(layersId: LayerId[]) {
+    this.mapContext = {
+      ...this.mapContext,
+      layers: this.mapContext.layers?.sort(
+        (a, b) => layersId.indexOf(a.id) - layersId.indexOf(b.id)
+      ),
+    }
+    this.map$.next(this.mapContext)
+    this.layers$.next(this.mapContext.layers || [])
+  }
+
+  setLayerOpacity(layerId: number, opacity: number) {
+    this.mapContext = {
+      ...this.mapContext,
+      layers: this.mapContext.layers?.map(elt => {
+        if (elt.id === layerId) {
+          return { ...elt, opacity: opacity, previousOpacity: elt.opacity }
+        }
+        return elt
+      }),
+    }
+
+    this.map$.next(this.mapContext)
+    this.layers$.next(this.mapContext.layers || [])
   }
 }
 

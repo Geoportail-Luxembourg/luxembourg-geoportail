@@ -4,7 +4,7 @@ import TileLayer from 'ol/layer/Tile'
 import OlMap from 'ol/Map'
 import { ImageWMS, WMTS } from 'ol/source'
 import { layersCache } from '../../state/layers/layers.cache'
-import { Layer } from '../../state/map/map.state.model'
+import { Layer, LayerId } from '../../state/map/map.state.model'
 
 const proxyWmsUrl = 'https://map.geoportail.lu/ogcproxywms'
 export const remoteProxyWms = 'https://map.geoportail.lu/httpsproxy'
@@ -48,6 +48,8 @@ export class Openlayers {
     }
     layer.set('metadata', spec.metadata)
     layer.set('queryable_id', spec.id)
+    layer.setOpacity(spec.opacity as number)
+
     if (spec.metadata?.hasOwnProperty('attribution')) {
       const source = layer.getSource()
       source?.setAttributions(spec.metadata.attribution)
@@ -55,19 +57,17 @@ export class Openlayers {
     return layer
   }
 
-  static addLayer(olMap: OlMap, layer: Layer, position: number) {
-    const layerProps = {
-      zIndex: position,
-      contextLayer: layer,
-    }
+  static addLayer(olMap: OlMap, layer: Layer) {
     const { id } = layer
-    if (!layersCache.hasOwnProperty(id) || !layersCache[id]) {
-      layersCache[id] = Openlayers.createLayer(layer)
-    }
-    olMap.addLayer(layersCache[id])
+    const baseLayer: BaseLayer =
+      !layersCache.hasOwnProperty(id) || !layersCache[id]
+        ? Openlayers.createLayer(layer)
+        : layersCache[id]
+
+    olMap.addLayer(baseLayer)
   }
 
-  static removeLayer(olMap: OlMap, layerId: string) {
+  static removeLayer(olMap: OlMap, layerId: LayerId) {
     const layerToRemove = olMap
       .getLayers()
       .getArray()
@@ -75,5 +75,23 @@ export class Openlayers {
     if (layerToRemove) {
       olMap.removeLayer(layerToRemove)
     }
+  }
+
+  static reorderLayers(olMap: OlMap, layers: Layer[]) {
+    const arrayLayers = olMap.getLayers().getArray()
+    layers.forEach((layer, idx) => {
+      const baseLayer = arrayLayers.find(
+        mapLayer => mapLayer.get('id') === layer.id
+      )
+      baseLayer?.setZIndex(idx + 1)
+    })
+  }
+
+  static setLayerOpacity(olMap: OlMap, layerId: LayerId, opacity: number) {
+    const layer = olMap
+      .getLayers()
+      .getArray()
+      .find(layer => layer.get('id') === layerId)
+    if (layer) layer.setOpacity(opacity)
   }
 }

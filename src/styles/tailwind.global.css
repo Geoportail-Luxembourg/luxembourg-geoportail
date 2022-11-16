@@ -90,8 +90,26 @@
   .lux-collapse.expanded {
     @apply max-h-[3000px];
   }
-}
+  
+  .lux-layer-manager-item {
+    @apply capitalize px-2.5 py-[.25rem] mb-px bg-secondary text-tertiary flex items-center gap-x-2 flex-wrap select-none;
+  }
 
+  .lux-layer-manager-item-content {
+    @apply select-text w-full transition-[height] duration-[0.25s] overflow-hidden h-0 ease-linear;
+  }
+
+  .lux-sortable-ghost {
+    @apply before:absolute before:w-full before:h-full before:z-10 before:bg-primary before:content-[''];
+  }
+
+  .lux-sortable-drag {
+    @apply  drop-shadow-md;
+  }
+}
+.fa-solid {
+  vertical-align: middle;
+}
 @layer base {
   :root {
     --color-default: #333;

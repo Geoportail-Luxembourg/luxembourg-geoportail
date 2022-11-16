@@ -5,8 +5,10 @@ export enum LayerImageType {
   JPG = 'image/jpeg',
 }
 
+export type LayerId = number | string
+
 export interface Layer {
-  id: number | string
+  id: LayerId
   name: string
   layers: string
   url?: string
@@ -15,6 +17,8 @@ export interface Layer {
   metadata?: Metadata
   dimensions?: {}
   style?: string
+  opacity?: number
+  previousOpacity?: number
 }
 
 export interface MapContext {
