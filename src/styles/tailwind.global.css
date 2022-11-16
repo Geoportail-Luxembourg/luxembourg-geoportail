@@ -89,6 +89,7 @@
 
   .lux-collapse.expanded {
     @apply max-h-[3000px];
+  }
   .lux-modal {
     @apply absolute right-0 top-52 z-50 bg-white w-[600px] text-black rounded-sm;
     box-shadow: 0 5px 15px rgb(0 0 0 / 50%);
