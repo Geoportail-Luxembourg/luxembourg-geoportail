@@ -38,6 +38,14 @@ export class ThemeSelectorElement extends LuxElement {
 
   toggleThemesGrid() {
     this.isOpen = !this.isOpen
+
+    this.dispatchEvent(
+      new CustomEvent('toggleThemesGrid', {
+        detail: {
+          isOpen: this.isOpen,
+        },
+      })
+    )
   }
 
   render(): TemplateResult {
