@@ -64,7 +64,7 @@ export class Openlayers {
 
   static getLayerFromCache(layer: Layer): BaseLayer {
     const { id } = layer
-    
+
     return !layersCache.hasOwnProperty(id) || !layersCache[id]
       ? Openlayers.createLayer(layer)
       : layersCache[id]
@@ -108,7 +108,7 @@ export class Openlayers {
     const currentBgLayerPos = mapLayers
       .getArray()
       .findIndex(layer => layer.getZIndex() === -1)
-      
+
     if (currentBgLayerPos >= 0) {
       if (bgLayer) {
         const bgBaseLayer = Openlayers.getLayerFromCache(bgLayer)

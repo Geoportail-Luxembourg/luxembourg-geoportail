@@ -10,6 +10,10 @@ export class MapState {
   bgLayer$ = new BehaviorSubject<Layer | null>(null)
 
   setBgLayer(layer: Layer | null) {
+    if (layer) {
+      this.initLayer(layer)
+    }
+
     this.bgLayer$.next(layer)
   }
 
