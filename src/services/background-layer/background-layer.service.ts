@@ -2,6 +2,7 @@ import { themesService } from '../themes/themes.service'
 import { mapState } from '../../state/map/map.state'
 import { Layer } from '../../state/map/map.state.model'
 import { bgConfig } from '../../../test/fixtures/background.config.fixture'
+import { layersServices } from '../layers/layers.service'
 
 class BackgroundLayerService {
   setBgLayer(layerId: number) {
@@ -17,6 +18,7 @@ class BackgroundLayerService {
         )
       }
       bgLayer.type = 'BG WMTS'
+      layersServices.excludeLayers(bgLayer)
       mapState.setBgLayer(bgLayer)
     } else {
       mapState.setBgLayer(null)
