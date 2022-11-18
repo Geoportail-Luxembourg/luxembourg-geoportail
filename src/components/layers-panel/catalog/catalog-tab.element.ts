@@ -1,11 +1,11 @@
 import { html, LitElement, TemplateResult } from 'lit'
 import { customElement } from 'lit/decorators'
 
-import './Catalog'
-import './ThemeSelector'
+import './catalog-element'
+import './theme/theme-selector.element'
 
 @customElement('lux-catalog-tab')
-export class CatalogTab extends LitElement {
+export class CatalogTabElement extends LitElement {
   render(): TemplateResult {
     return html`
       <div class="flex flex-col">

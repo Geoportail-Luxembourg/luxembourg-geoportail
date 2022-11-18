@@ -1,16 +1,16 @@
 import { html, LitElement, TemplateResult } from 'lit'
 import { customElement, state } from 'lit/decorators'
 import { Subscription } from 'rxjs'
-import { mapState } from '../../../state/map/map.state'
+import { mapState } from '../../../states/map/map.state'
 import { i18nMixin } from '../../../mixins/i18n-lit-element'
-import { Layer, LayerId } from '../../../state/map/map.state.model'
+import { Layer, LayerId } from '../../../states/map/map.state.model'
 import Sortable, { SortableEvent } from 'sortablejs'
 
-import './layer-element/LayerManagerElement'
-import './layer-element/LayerManagerBackgroundElement'
+import './layer-item/layer-item.element'
+import './layer-item/layer-item-background.element'
 
 @customElement('lux-layer-manager')
-export class LayerManager extends i18nMixin(LitElement) {
+export class LayerManagerElement extends i18nMixin(LitElement) {
   @state() private layers: Layer[]
   @state() private backgroundLayer: Layer
   @state() private isLayerOpenId: LayerId
@@ -74,7 +74,7 @@ export class LayerManager extends i18nMixin(LitElement) {
         ${[...this.layers].reverse().map(
           layer =>
             html` <li id=${layer.id}>
-              <lux-layer-manager-element
+              <lux-layer-manager-item
                 .draggableClassName="${this.draggableClassName}"
                 .layer="${layer}"
                 .isOpen=${this.isLayerOpenId === layer.id}
@@ -83,17 +83,17 @@ export class LayerManager extends i18nMixin(LitElement) {
                 @clickInfo="${this.toggleInfoLayer}"
                 @changeOpacity="${this.changeOpacityLayer}"
               >
-              </lux-layer-manager-element>
+              </lux-layer-manager-item>
             </li>`
         )}
         ${this.backgroundLayer &&
         html`
-          <lux-layer-manager-background-element
+          <lux-layer-manager-item-background
             .layer=${this.backgroundLayer}
             @clickInfo="${this.toggleInfoLayer}"
             @clickEdit="${this.toggleEditionLayer}"
           >
-          </lux-layer-manager-background-element>
+          </lux-layer-manager-item-background>
         `}
       </ul>
     `

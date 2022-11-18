@@ -1,6 +1,6 @@
 import { expect } from '@open-wc/testing'
-import { Layer, MapContext } from '../../src/state/map/map.state.model'
-import { MapSateListener } from '../../src/state/map/map.state.listeners'
+import { Layer, MapContext } from '../../src/states/map/map.state.model'
+import { MapSateListener } from '../../src/states/map/map.state.listeners'
 
 const SAMPLE_LAYERS: Layer[] = [
   {

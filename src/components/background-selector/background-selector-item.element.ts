@@ -2,8 +2,8 @@ import { html, LitElement } from 'lit'
 import { customElement, property } from 'lit/decorators.js'
 import { i18nMixin } from '../../mixins/i18n-lit-element'
 
-@customElement('background-selector-item')
-export class BackGroundSelectorItem extends i18nMixin(LitElement) {
+@customElement('lux-background-selector-item')
+export class BackGroundSelectorItemElement extends i18nMixin(LitElement) {
   @property() bgClass = ''
 
   constructor() {

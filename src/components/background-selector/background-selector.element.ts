@@ -1,11 +1,15 @@
-import { bgLayerService, LuxBgLayer } from '../background-layer.service'
 import { html, LitElement } from 'lit'
 import { customElement, state } from 'lit/decorators.js'
-import './background-selector-item.component'
 import { i18nMixin } from '../../mixins/i18n-lit-element'
+import {
+  bgLayerService,
+  LuxBgLayer,
+} from '../../services/background-layer/background-layer.service'
 
-@customElement('background-selector')
-export class BackgroundSelector extends i18nMixin(LitElement) {
+import './background-selector-item.element'
+
+@customElement('lux-background-selector')
+export class BackgroundSelectorElement extends i18nMixin(LitElement) {
   @state() isOpen = false
   @state() activeLayer = 'white'
   private bgLayers
@@ -33,23 +37,23 @@ export class BackgroundSelector extends i18nMixin(LitElement) {
         <div class="${this.isOpen == true ? 'flex flex-col md:flex-row' : 'hidden'}">
           ${this.bgLayers.map(
             (layer: string) =>
-              html`<background-selector-item
+              html`<lux-background-selector-item
                       class="${`lux-bg-sel ` +
                                `${layer == this.activeLayer ? 'border-red-500 border-2' : 'border-black border'} ` +
                                `hover:bg-cyan-600`}"
                       bgclass="bg-${layer}"
                       @click="${() => this.setBackgroundLayer(layer)}"
                    >
-              </background-selector-item>`
+              </lux-background-selector-item>`
           )}
         </div>
-        <background-selector-item
+        <lux-background-selector-item
              class=" ${
                'lux-bg-sel border border-black bg-white ' +
                (this.isOpen == true ? 'hidden' : 'block')}"
              bgclass="bg-${this.activeLayer}"
              @click="${this.toggleSelector}">
-        </background-selector-item>
+        </lux-background-selector-item>
       </div>
     `
   }

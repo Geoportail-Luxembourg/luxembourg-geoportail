@@ -59,7 +59,7 @@ Rules
     - ol.service.ts
     - ol.synchronizer.ts
     - map.service.ts
-- state
+- states
   - map
     - map.state.model.ts
     - map.state.ts

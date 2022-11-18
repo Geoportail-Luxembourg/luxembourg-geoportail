@@ -2,10 +2,10 @@ import { html, TemplateResult } from 'lit'
 import { customElement, state } from 'lit/decorators'
 import { property } from 'lit/decorators.js'
 import i18next from 'i18next'
-import { LayerElement } from '../layer-element'
+import { LayerItemElement } from '../layer-item.element'
 
-@customElement('lux-layer-manager-element')
-export class LayerManagerElement extends LayerElement {
+@customElement('lux-layer-manager-item')
+export class LayerManagerItem extends LayerItemElement {
   @property()
   private draggableClassName: string
 

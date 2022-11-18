@@ -3,10 +3,11 @@ import { html, LitElement, TemplateResult } from 'lit'
 import { customElement } from 'lit/decorators'
 import { property } from 'lit/decorators.js'
 import { i18nMixin } from '../../../../mixins/i18n-lit-element'
+import { LayerTreeNodeModel } from './layer-tree.model'
 
 @customElement('lux-layer-tree-node')
-export class LayerTreeNode extends i18nMixin(LitElement) {
-  @property() private node: any
+export class LayerTreeNodeElement extends i18nMixin(LitElement) {
+  @property() private node: LayerTreeNodeModel
 
   constructor() {
     super()
@@ -116,11 +117,11 @@ export class LayerTreeNode extends i18nMixin(LitElement) {
         ${!this.isRoot() && this.node.expanded ? 'expanded' : ''}
       "
     >
-      ${this.node.children?.map((node: LayerTreeNode) => {
-        return html`
+      ${this.node.children?.map(
+        node => html`
           <lux-layer-tree-node .node="${node}"></lux-layer-tree-node>
         `
-      })}
+      )}
     </div>`
   }
 

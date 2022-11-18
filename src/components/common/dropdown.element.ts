@@ -3,7 +3,7 @@ import { property, customElement } from 'lit/decorators'
 import { DropdownOptionModel } from './dropdown.model'
 
 @customElement('lux-dropdown')
-export class Dropdown extends LitElement {
+export class DropdownElement extends LitElement {
   @property() private placeholder: string
   @property() private options: DropdownOptionModel[] = []
   @property() private isOpen: boolean

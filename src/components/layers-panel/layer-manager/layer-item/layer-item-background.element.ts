@@ -1,10 +1,10 @@
 import { html, TemplateResult } from 'lit'
 import { customElement } from 'lit/decorators'
 import i18next from 'i18next'
-import { LayerElement } from '../layer-element'
+import { LayerItemElement } from '../layer-item.element'
 
-@customElement('lux-layer-manager-background-element')
-export class LayerManagerElement extends LayerElement {
+@customElement('lux-layer-manager-item-background')
+export class LayerManagerItemBackgroundElement extends LayerItemElement {
   constructor() {
     super()
   }

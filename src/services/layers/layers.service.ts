@@ -1,5 +1,5 @@
-import { Layer } from '../../state/map/map.state.model'
-import { mapState } from '../../state/map/map.state'
+import { Layer } from '../../states/map/map.state.model'
+import { mapState } from '../../states/map/map.state'
 import { themesService } from '../themes/themes.service'
 import i18next from 'i18next'
 

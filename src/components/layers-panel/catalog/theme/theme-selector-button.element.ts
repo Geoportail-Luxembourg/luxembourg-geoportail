@@ -5,7 +5,7 @@ import i18next from 'i18next'
 import { i18nMixin } from '../../../../mixins/i18n-lit-element'
 
 @customElement('lux-theme-selector-button')
-export class ThemeSelectorButton extends i18nMixin(LitElement) {
+export class ThemeSelectorButtonElement extends i18nMixin(LitElement) {
   @property({ type: Object }) themes?: ThemeNodeModel[]
   @property({ type: Object }) currentTheme?: ThemeNodeModel
   @property({ type: Boolean }) isOpen?: boolean

@@ -4,7 +4,7 @@ import { mapService } from '../../services/map/map.service'
 import { OlSynchronizer } from '../../services/map/ol.synchronizer'
 
 @customElement('lux-map-container')
-export class MapContainer extends LitElement {
+export class MapContainerElement extends LitElement {
   connectedCallback() {
     super.connectedCallback()
     // todo: find the correct lifecycle method

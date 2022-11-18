@@ -3,8 +3,8 @@ import ImageLayer from 'ol/layer/Image'
 import TileLayer from 'ol/layer/Tile'
 import OlMap from 'ol/Map'
 import { ImageWMS, WMTS } from 'ol/source'
-import { layersCache } from '../../state/layers/layers.cache'
-import { Layer, LayerId } from '../../state/map/map.state.model'
+import { layersCache } from '../../states/layers/layers.cache'
+import { Layer, LayerId } from '../../states/map/map.state.model'
 
 const proxyWmsUrl = 'https://map.geoportail.lu/ogcproxywms'
 export const remoteProxyWms = 'https://map.geoportail.lu/httpsproxy'
@@ -35,8 +35,8 @@ function createWmsLayer(layer: Layer): ImageLayer<ImageWMS> {
   return olLayer
 }
 
-export class Openlayers {
-  static createLayer(spec: Layer): ImageLayer<ImageWMS> | TileLayer<WMTS> {
+export class OpenLayersService {
+  createLayer(spec: Layer): ImageLayer<ImageWMS> | TileLayer<WMTS> {
     let layer
     switch (spec.type) {
       case 'WMS': {
@@ -57,17 +57,17 @@ export class Openlayers {
     return layer
   }
 
-  static addLayer(olMap: OlMap, layer: Layer) {
+  addLayer(olMap: OlMap, layer: Layer) {
     const { id } = layer
     const baseLayer: BaseLayer =
       !layersCache.hasOwnProperty(id) || !layersCache[id]
-        ? Openlayers.createLayer(layer)
+        ? this.createLayer(layer)
         : layersCache[id]
 
     olMap.addLayer(baseLayer)
   }
 
-  static removeLayer(olMap: OlMap, layerId: LayerId) {
+  removeLayer(olMap: OlMap, layerId: LayerId) {
     const layerToRemove = olMap
       .getLayers()
       .getArray()
@@ -77,7 +77,7 @@ export class Openlayers {
     }
   }
 
-  static reorderLayers(olMap: OlMap, layers: Layer[]) {
+  reorderLayers(olMap: OlMap, layers: Layer[]) {
     const arrayLayers = olMap.getLayers().getArray()
     layers.forEach((layer, idx) => {
       const baseLayer = arrayLayers.find(
@@ -87,7 +87,7 @@ export class Openlayers {
     })
   }
 
-  static setLayerOpacity(olMap: OlMap, layerId: LayerId, opacity: number) {
+  setLayerOpacity(olMap: OlMap, layerId: LayerId, opacity: number) {
     const layer = olMap
       .getLayers()
       .getArray()
@@ -95,3 +95,5 @@ export class Openlayers {
     if (layer) layer.setOpacity(opacity)
   }
 }
+
+export const openLayersService = new OpenLayersService()

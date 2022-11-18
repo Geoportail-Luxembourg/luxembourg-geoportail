@@ -4,15 +4,15 @@ import { Subscription } from 'rxjs'
 import { layersServices } from '../../../services/layers/layers.service'
 import { ThemeNodeModel } from '../../../services/themes/themes.model'
 import { themesService } from '../../../services/themes/themes.service'
-import { mapState } from '../../../state/map/map.state'
-
-import './layer-tree/layer-tree-node.component'
+import { mapState } from '../../../states/map/map.state'
 import { themesToLayerTree } from './layer-tree/layer-tree.mapper'
 import { LayerTreeNodeModel } from './layer-tree/layer-tree.model'
 import { layerTreeState } from './layer-tree/layer-tree.service'
 
+import './layer-tree/layer-tree-node.element'
+
 @customElement('lux-catalog')
-export class Catalog extends LitElement {
+export class CatalogElement extends LitElement {
   @state()
   private layerTree: LayerTreeNodeModel | undefined
   private subscription = new Subscription()

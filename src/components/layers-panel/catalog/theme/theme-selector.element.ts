@@ -1,15 +1,15 @@
 import { html, LitElement, TemplateResult } from 'lit'
 import { customElement, state } from 'lit/decorators'
 import { Subscription } from 'rxjs'
-import { ThemeNodeModel } from '../../../services/themes/themes.model'
-import { themesService } from '../../../services/themes/themes.service'
-import { themingService } from './theme/theming.service'
+import { ThemeNodeModel } from '../../../../services/themes/themes.model'
+import { themesService } from '../../../../services/themes/themes.service'
+import { themeSelectorService } from './theme-selector.service'
 
-import './theme/theme-grid.component'
-import './theme/theme-selector-button.component'
+import './theme-grid.element'
+import './theme-selector-button.element'
 
 @customElement('lux-theme-selector')
-export class ThemeSelector extends LitElement {
+export class ThemeSelectorElement extends LitElement {
   @state()
   private isOpen = false
   @state()
@@ -22,7 +22,7 @@ export class ThemeSelector extends LitElement {
     this.subscription = themesService.theme$.subscribe(theme => {
       if (theme) {
         this.currentTheme = theme
-        themingService.setCurrentThemeColors(theme)
+        themeSelectorService.setCurrentThemeColors(theme)
       }
     })
     this.subscription.add(

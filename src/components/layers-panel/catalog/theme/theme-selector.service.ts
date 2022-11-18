@@ -1,6 +1,6 @@
 import { ThemeNodeModel } from '../../../../services/themes/themes.model'
 
-export class ThemingService {
+export class ThemeSelectorService {
   setCurrentThemeColors(theme: ThemeNodeModel) {
     const root = document.querySelector(':root') as HTMLElement
     const colors = ['primary', 'secondary', 'tertiary']
@@ -13,4 +13,4 @@ export class ThemingService {
   }
 }
 
-export const themingService = new ThemingService()
+export const themeSelectorService = new ThemeSelectorService()

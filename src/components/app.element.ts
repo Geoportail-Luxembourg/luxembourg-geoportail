@@ -3,13 +3,13 @@ import type { TemplateResult } from 'lit'
 import { html, LitElement } from 'lit'
 import { customElement } from 'lit/decorators.js'
 
-import '../components/layers-panel/LayerPanel'
-import '../components/nav-bars/LanguageSelector'
-import '../components/background-selector/background-selector.component'
-import '../components/map/map.container'
+import './background-selector/background-selector.element'
+import './layers-panel/layer-panel.element'
+import './map/map-container.element'
+import './nav-bars/language-selector.element'
 
-@customElement('luxembourg-home-page')
-export class LuxembourgHomePage extends LitElement {
+@customElement('lux-app')
+export class App extends LitElement {
   render(): TemplateResult {
     return html`
       <div class="h-screen flex flex-col overflow-hidden">
@@ -27,9 +27,9 @@ export class LuxembourgHomePage extends LitElement {
           <div class="grow bg-blue-100">
             <lux-map-container></lux-map-container>
           </div>
-          <background-selector
+          <lux-background-selector
             class="absolute right-1 top-16"
-          ></background-selector>
+          ></lux-background-selector>
         </main>
       </div>
     `
