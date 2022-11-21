@@ -7,7 +7,7 @@ import { themesService } from '../../services/themes/themes.service'
 import { mapState } from '../../states/map/map.state'
 import { themesToLayerTree } from '../layer-tree/layer-tree.mapper'
 import { LayerTreeNodeModel } from '../layer-tree/layer-tree.model'
-import { layerTreeState } from '../layer-tree/layer-tree.service'
+import { layerTreeService } from '../layer-tree/layer-tree.service'
 
 import '../layer-tree/layer-tree-node.element'
 
@@ -24,7 +24,7 @@ export class CatalogElement extends LitElement {
 
       this.subscription.add(
         mapState.map$.subscribe(mapContext => {
-          this.layerTree = layerTreeState.updateLayers(
+          this.layerTree = layerTreeService.updateLayers(
             this.layerTree as LayerTreeNodeModel,
             mapContext.layers
           )
@@ -36,7 +36,7 @@ export class CatalogElement extends LitElement {
   private toggleParent(event: Event) {
     const node = (event as CustomEvent).detail
 
-    this.layerTree = layerTreeState.toggleNode(
+    this.layerTree = layerTreeService.toggleNode(
       node.id,
       this.layerTree as LayerTreeNodeModel,
       'expanded'

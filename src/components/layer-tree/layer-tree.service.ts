@@ -42,4 +42,4 @@ export class LayerTreeService {
   }
 }
 
-export const layerTreeState = new LayerTreeService()
+export const layerTreeService = new LayerTreeService()

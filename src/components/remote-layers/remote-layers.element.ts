@@ -8,7 +8,7 @@ import {
   remoteLayersToLayerTreeMapper,
   remoteLayerToLayer,
 } from './remote-layers.mapper'
-import { layerTreeState } from '../layer-tree/layer-tree.service'
+import { layerTreeService } from '../layer-tree/layer-tree.service'
 import { mapState } from '../../states/map/map.state'
 import i18next from 'i18next'
 import { OgcClientWmsEndpoint } from './remote-layers.model'
@@ -38,7 +38,7 @@ export class RemoteLayersElement extends LitElement {
     this.subscription.add(
       mapState.map$.subscribe(mapContext => {
         this.layerTree = this.layerTree
-          ? layerTreeState.updateLayers(
+          ? layerTreeService.updateLayers(
               this.layerTree as LayerTreeNodeModel,
               mapContext.layers
             )
@@ -94,7 +94,7 @@ export class RemoteLayersElement extends LitElement {
   private toggleParent(event: Event) {
     const node = (event as CustomEvent).detail
 
-    this.layerTree = layerTreeState.toggleNode(
+    this.layerTree = layerTreeService.toggleNode(
       node.id,
       this.layerTree as LayerTreeNodeModel,
       'expanded'
