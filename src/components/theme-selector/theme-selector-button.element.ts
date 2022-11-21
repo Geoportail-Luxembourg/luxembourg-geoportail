@@ -1,8 +1,8 @@
 import { html, LitElement } from 'lit'
 import { customElement, property } from 'lit/decorators.js'
-import { ThemeNodeModel } from '../../../../services/themes/themes.model'
+import { ThemeNodeModel } from '../../services/themes/themes.model'
 import i18next from 'i18next'
-import { i18nMixin } from '../../../../mixins/i18n-lit-element'
+import { i18nMixin } from '../../mixins/i18n-lit-element'
 
 @customElement('lux-theme-selector-button')
 export class ThemeSelectorButtonElement extends i18nMixin(LitElement) {

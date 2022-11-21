@@ -1,7 +1,7 @@
 import { html, LitElement, TemplateResult } from 'lit'
 import { Subscription } from 'rxjs'
 import { customElement, state } from 'lit/decorators'
-import { DropdownOptionModel } from '../../../common/dropdown.model'
+import { DropdownOptionModel } from '../common/dropdown.model'
 import { remoteLayersService } from './remote-layers.service'
 import { LayerTreeNodeModel } from '../layer-tree/layer-tree.model'
 import {
@@ -9,11 +9,11 @@ import {
   remoteLayerToLayer,
 } from './remote-layers.mapper'
 import { layerTreeState } from '../layer-tree/layer-tree.service'
-import { mapState } from '../../../../states/map/map.state'
+import { mapState } from '../../states/map/map.state'
 import i18next from 'i18next'
 import { OgcClientWmsEndpoint } from './remote-layers.model'
 
-import '../../../common/dropdown.element'
+import '../common/dropdown.element'
 
 @customElement('lux-remote-layers')
 export class RemoteLayersElement extends LitElement {

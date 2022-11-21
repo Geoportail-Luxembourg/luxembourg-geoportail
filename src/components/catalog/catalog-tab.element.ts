@@ -2,7 +2,7 @@ import { html, LitElement, TemplateResult } from 'lit'
 import { customElement } from 'lit/decorators'
 
 import './catalog-element'
-import './theme/theme-selector.element'
+import '../theme-selector/theme-selector.element'
 
 @customElement('lux-catalog-tab')
 export class CatalogTabElement extends LitElement {

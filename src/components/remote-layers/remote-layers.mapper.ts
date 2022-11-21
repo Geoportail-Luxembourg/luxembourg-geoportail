@@ -1,5 +1,5 @@
-import { mapState } from '../../../../states/map/map.state'
-import { Layer, LayerImageType } from '../../../../states/map/map.state.model'
+import { mapState } from '../../states/map/map.state'
+import { Layer, LayerImageType } from '../../states/map/map.state.model'
 import { LayerTreeNodeModel } from '../layer-tree/layer-tree.model'
 import {
   OgcClientWmsLayerSummary,

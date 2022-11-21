@@ -1,9 +1,9 @@
 import { html, LitElement, TemplateResult } from 'lit'
 import { customElement, state } from 'lit/decorators'
 import { Subscription } from 'rxjs'
-import { mapState } from '../../../states/map/map.state'
-import { i18nMixin } from '../../../mixins/i18n-lit-element'
-import { Layer, LayerId } from '../../../states/map/map.state.model'
+import { mapState } from '../../states/map/map.state'
+import { i18nMixin } from '../../mixins/i18n-lit-element'
+import { Layer, LayerId } from '../../states/map/map.state.model'
 import Sortable, { SortableEvent } from 'sortablejs'
 
 import './layer-item/layer-item.element'

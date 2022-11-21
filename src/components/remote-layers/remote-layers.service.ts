@@ -1,6 +1,6 @@
 import { WmsEndpoint } from '@camptocamp/ogc-client'
-import { predefinedWmsFixture } from '../../../../../test/fixtures/predefined-wms.fixture'
-import { remoteProxyWms } from '../../../../services/map/ol.service'
+import { predefinedWmsFixture } from '../../../test/fixtures/predefined-wms.fixture'
+import { remoteProxyWms } from '../../services/map/ol.service'
 import {
   OgcClientWmsEndpoint,
   RemoteWmsEndpointModel,

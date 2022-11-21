@@ -1,8 +1,8 @@
 import { html, LitElement } from 'lit'
 import { customElement, property } from 'lit/decorators.js'
 import i18next from 'i18next'
-import { ThemeNodeModel } from '../../../../services/themes/themes.model'
-import { i18nMixin } from '../../../../mixins/i18n-lit-element'
+import { ThemeNodeModel } from '../../services/themes/themes.model'
+import { i18nMixin } from '../../mixins/i18n-lit-element'
 
 @customElement('lux-theme-grid')
 export class ThemeGridElement extends i18nMixin(LitElement) {

@@ -1,15 +1,15 @@
 import { html, LitElement, TemplateResult } from 'lit'
 import { customElement, state } from 'lit/decorators'
 import { Subscription } from 'rxjs'
-import { layersServices } from '../../../services/layers/layers.service'
-import { ThemeNodeModel } from '../../../services/themes/themes.model'
-import { themesService } from '../../../services/themes/themes.service'
-import { mapState } from '../../../states/map/map.state'
-import { themesToLayerTree } from './layer-tree/layer-tree.mapper'
-import { LayerTreeNodeModel } from './layer-tree/layer-tree.model'
-import { layerTreeState } from './layer-tree/layer-tree.service'
+import { layersServices } from '../../services/layers/layers.service'
+import { ThemeNodeModel } from '../../services/themes/themes.model'
+import { themesService } from '../../services/themes/themes.service'
+import { mapState } from '../../states/map/map.state'
+import { themesToLayerTree } from '../layer-tree/layer-tree.mapper'
+import { LayerTreeNodeModel } from '../layer-tree/layer-tree.model'
+import { layerTreeState } from '../layer-tree/layer-tree.service'
 
-import './layer-tree/layer-tree-node.element'
+import '../layer-tree/layer-tree-node.element'
 
 @customElement('lux-catalog')
 export class CatalogElement extends LitElement {

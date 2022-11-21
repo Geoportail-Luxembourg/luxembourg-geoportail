@@ -1,5 +1,5 @@
-import { themesApiFixture } from '../../../../../test/fixtures/themes.api.fixture'
-import { ConfigModel } from '../../../../services/themes/themes.model'
+import { themesApiFixture } from '../../../test/fixtures/themes.api.fixture'
+import { ConfigModel } from '../../services/themes/themes.model'
 
 class ThemesApi {
   async fetchThemes(): Promise<ConfigModel> {

@@ -1,4 +1,4 @@
-import { Layer } from '../../../../states/map/map.state.model'
+import { Layer } from '../../states/map/map.state.model'
 import { LayerTreeNodeModel, LayerTreeToggleProperty } from './layer-tree.model'
 
 export class LayerTreeService {
