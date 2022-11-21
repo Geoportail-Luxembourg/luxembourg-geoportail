@@ -1,6 +1,5 @@
 import { html, LitElement, TemplateResult } from 'lit'
 import { customElement, state } from 'lit/decorators'
-import { Subscription } from 'rxjs'
 import { mapState } from '../../states/map/map.state'
 import { i18nMixin } from '../../mixins/i18n-lit-element'
 import { Layer, LayerId } from '../../states/map/map.state.model'
@@ -8,24 +7,26 @@ import Sortable, { SortableEvent } from 'sortablejs'
 
 import './layer-item/layer-item.element'
 import './layer-item/layer-item-background.element'
+import { SubscribableMixin } from '../../mixins/subscribable'
+import { map } from 'rxjs'
 
 @customElement('lux-layer-manager')
-export class LayerManagerElement extends i18nMixin(LitElement) {
+export class LayerManagerElement extends i18nMixin(
+  SubscribableMixin(LitElement)
+) {
   @state() private layers: Layer[]
   @state() private backgroundLayer: Layer
   @state() private isLayerOpenId: LayerId
 
-  private subscription = new Subscription()
   private sortable: Sortable
   private draggableClassName = 'drag-handle'
 
   constructor() {
     super()
 
-    this.subscription.add(
-      mapState.map$.subscribe(mapContext => {
-        this.layers = mapContext.layers ?? []
-      })
+    this.subscribe(
+      'layers' as keyof this,
+      mapState.map$.pipe(map(mapContext => mapContext.layers ?? []))
     )
   }
 
@@ -97,11 +98,6 @@ export class LayerManagerElement extends i18nMixin(LitElement) {
         `}
       </ul>
     `
-  }
-
-  disconnectedCallback() {
-    this.subscription.unsubscribe()
-    super.disconnectedCallback()
   }
 
   override createRenderRoot() {

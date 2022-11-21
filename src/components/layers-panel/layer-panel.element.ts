@@ -1,14 +1,14 @@
-import { html, LitElement, TemplateResult } from 'lit'
+import { html, TemplateResult } from 'lit'
 import { customElement, state } from 'lit/decorators'
 import i18next from 'i18next'
-import { i18nMixin } from '../../mixins/i18n-lit-element'
 
+import LuxElement from '../common/base.element'
 import '../remote-layers/remote-layers.element'
 import '../catalog/catalog-tab.element'
 import '../layer-manager/layer-manager.element'
 
 @customElement('lux-layer-panel')
-export class LayerPanelElement extends i18nMixin(LitElement) {
+export class LayerPanelElement extends LuxElement {
   @state() myLayersOpen = true
 
   render(): TemplateResult {

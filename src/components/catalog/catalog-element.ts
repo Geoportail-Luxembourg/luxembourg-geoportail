@@ -1,6 +1,5 @@
-import { html, LitElement, TemplateResult } from 'lit'
+import { html, TemplateResult } from 'lit'
 import { customElement, state } from 'lit/decorators'
-import { Subscription } from 'rxjs'
 import { layersServices } from '../../services/layers/layers.service'
 import { ThemeNodeModel } from '../../services/themes/themes.model'
 import { themesService } from '../../services/themes/themes.service'
@@ -8,17 +7,18 @@ import { mapState } from '../../states/map/map.state'
 import { themesToLayerTree } from '../layer-tree/layer-tree.mapper'
 import { LayerTreeNodeModel } from '../layer-tree/layer-tree.model'
 import { layerTreeService } from '../layer-tree/layer-tree.service'
+import LuxElement from '../common/base.element'
 
 import '../layer-tree/layer-tree-node.element'
 
 @customElement('lux-catalog')
-export class CatalogElement extends LitElement {
+export class CatalogElement extends LuxElement {
   @state()
   private layerTree: LayerTreeNodeModel | undefined
-  private subscription = new Subscription()
 
   constructor() {
     super()
+
     themesService.theme$.subscribe(theme => {
       this.layerTree = themesToLayerTree(theme as ThemeNodeModel)
 

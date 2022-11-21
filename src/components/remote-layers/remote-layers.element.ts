@@ -1,5 +1,5 @@
-import { html, LitElement, TemplateResult } from 'lit'
-import { Subscription } from 'rxjs'
+import { html, TemplateResult } from 'lit'
+import { map } from 'rxjs'
 import { customElement, state } from 'lit/decorators'
 import { DropdownOptionModel } from '../common/dropdown.model'
 import { remoteLayersService } from './remote-layers.service'
@@ -12,15 +12,14 @@ import { layerTreeService } from '../layer-tree/layer-tree.service'
 import { mapState } from '../../states/map/map.state'
 import i18next from 'i18next'
 import { OgcClientWmsEndpoint } from './remote-layers.model'
-
+import LuxElement from '../common/base.element'
 import '../common/dropdown.element'
 
 @customElement('lux-remote-layers')
-export class RemoteLayersElement extends LitElement {
+export class RemoteLayersElement extends LuxElement {
   @state() private wmsLayers: DropdownOptionModel[]
   @state() private layerTree: LayerTreeNodeModel | undefined
   @state() private isLoading = false
-  private subscription = new Subscription()
   private inputWmsUrl: string
   private currentWmsUrl: string
   private currentWmsEndpoint: OgcClientWmsEndpoint
@@ -35,15 +34,18 @@ export class RemoteLayersElement extends LitElement {
       }))
     })
 
-    this.subscription.add(
-      mapState.map$.subscribe(mapContext => {
-        this.layerTree = this.layerTree
-          ? layerTreeService.updateLayers(
-              this.layerTree as LayerTreeNodeModel,
-              mapContext.layers
-            )
-          : void 0
-      })
+    this.subscribe(
+      'layerTree' as keyof this,
+      mapState.map$.pipe(
+        map(mapContext =>
+          this.layerTree
+            ? layerTreeService.updateLayers(
+                this.layerTree as LayerTreeNodeModel,
+                mapContext.layers
+              )
+            : void 0
+        )
+      )
     )
   }
 

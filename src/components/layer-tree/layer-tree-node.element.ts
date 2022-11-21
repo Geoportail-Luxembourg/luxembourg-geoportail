@@ -1,12 +1,12 @@
 import i18next from 'i18next'
-import { html, LitElement, TemplateResult } from 'lit'
+import { html, TemplateResult } from 'lit'
 import { customElement } from 'lit/decorators'
 import { property } from 'lit/decorators.js'
-import { i18nMixin } from '../../mixins/i18n-lit-element'
+import LuxElement from '../common/base.element'
 import { LayerTreeNodeModel } from './layer-tree.model'
 
 @customElement('lux-layer-tree-node')
-export class LayerTreeNodeElement extends i18nMixin(LitElement) {
+export class LayerTreeNodeElement extends LuxElement {
   @property() private node: LayerTreeNodeModel
 
   constructor() {

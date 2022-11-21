@@ -1,36 +1,38 @@
-import { html, LitElement, TemplateResult } from 'lit'
+import { html, TemplateResult } from 'lit'
 import { customElement, state } from 'lit/decorators'
-import { Subscription } from 'rxjs'
 import { ThemeNodeModel } from '../../services/themes/themes.model'
 import { themesService } from '../../services/themes/themes.service'
 import { themeSelectorService } from './theme-selector.service'
 
 import './theme-grid.element'
 import './theme-selector-button.element'
+import { map } from 'rxjs'
+import LuxElement from '../common/base.element'
 
 @customElement('lux-theme-selector')
-export class ThemeSelectorElement extends LitElement {
+export class ThemeSelectorElement extends LuxElement {
   @state()
   private isOpen = false
   @state()
   private currentTheme?: ThemeNodeModel
   @state()
   private themes?: ThemeNodeModel[]
-  private subscription: Subscription
+
   constructor() {
     super()
-    this.subscription = themesService.theme$.subscribe(theme => {
-      if (theme) {
-        this.currentTheme = theme
-        themeSelectorService.setCurrentThemeColors(theme)
-      }
-    })
-    this.subscription.add(
-      themesService.themes$.subscribe(themes => {
-        this.themes = themes.filter(
-          theme => theme.metadata?.display_in_switcher === true
+
+    this.subscribe(
+      'currentTheme' as keyof this,
+      themesService.theme$
+    ).subscribe(theme => themeSelectorService.setCurrentThemeColors(theme))
+
+    this.subscribe(
+      'themes' as keyof this,
+      themesService.themes$.pipe(
+        map(themes =>
+          themes.filter(theme => theme.metadata?.display_in_switcher === true)
         )
-      })
+      )
     )
   }
 
@@ -63,11 +65,6 @@ export class ThemeSelectorElement extends LitElement {
   setTheme(event: CustomEvent) {
     themesService.setTheme(event.detail)
     this.toggleThemesGrid()
-  }
-
-  disconnectedCallback() {
-    this.subscription.unsubscribe()
-    super.disconnectedCallback()
   }
 
   override createRenderRoot() {

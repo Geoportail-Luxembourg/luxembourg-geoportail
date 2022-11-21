@@ -1,10 +1,9 @@
 import i18next from 'i18next'
-import { LitElement } from 'lit'
 import { property } from 'lit/decorators'
-import { i18nMixin } from '../../mixins/i18n-lit-element'
 import { Layer } from '../../states/map/map.state.model'
+import LuxElement from '../common/base.element'
 
-export abstract class LayerItemElement<T = any> extends i18nMixin(LitElement) {
+export abstract class LayerItemElement<T = any> extends LuxElement {
   @property()
   protected layer: Layer
 

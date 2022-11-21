@@ -1,11 +1,11 @@
-import { html, LitElement } from 'lit'
+import { html } from 'lit'
 import { customElement, property } from 'lit/decorators.js'
 import { ThemeNodeModel } from '../../services/themes/themes.model'
 import i18next from 'i18next'
-import { i18nMixin } from '../../mixins/i18n-lit-element'
+import LuxElement from '../common/base.element'
 
 @customElement('lux-theme-selector-button')
-export class ThemeSelectorButtonElement extends i18nMixin(LitElement) {
+export class ThemeSelectorButtonElement extends LuxElement {
   @property({ type: Object }) themes?: ThemeNodeModel[]
   @property({ type: Object }) currentTheme?: ThemeNodeModel
   @property({ type: Boolean }) isOpen?: boolean

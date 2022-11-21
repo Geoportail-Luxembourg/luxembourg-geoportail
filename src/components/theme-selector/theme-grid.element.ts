@@ -1,11 +1,11 @@
-import { html, LitElement } from 'lit'
+import { html } from 'lit'
 import { customElement, property } from 'lit/decorators.js'
 import i18next from 'i18next'
 import { ThemeNodeModel } from '../../services/themes/themes.model'
-import { i18nMixin } from '../../mixins/i18n-lit-element'
+import LuxElement from '../common/base.element'
 
 @customElement('lux-theme-grid')
-export class ThemeGridElement extends i18nMixin(LitElement) {
+export class ThemeGridElement extends LuxElement {
   @property({ type: Object }) themes?: ThemeNodeModel[]
 
   render() {
