@@ -54,7 +54,7 @@ export class LayerManagerElement extends i18nMixin(
   }
 
   removeLayer(event: CustomEvent) {
-    mapState.removeLayer(event.detail.layer.id)
+    mapState.removeLayers(event.detail.layer.id)
   }
 
   toggleAccordionItem(event: CustomEvent) {

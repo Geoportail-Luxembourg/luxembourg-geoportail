@@ -1,7 +1,7 @@
 import { combineLatest, map } from 'rxjs'
 import { html, TemplateResult } from 'lit'
 import { customElement, state } from 'lit/decorators'
-import { layersServices } from '../../services/layers/layers.service'
+import { layersService } from '../../services/layers/layers.service'
 import { ThemeNodeModel } from '../../services/themes/themes.model'
 import { themesService } from '../../services/themes/themes.service'
 import { mapState } from '../../states/map/map.state'
@@ -53,7 +53,7 @@ export class CatalogElement extends LuxElement {
 
   private toggleLayer(event: Event) {
     const node = (event as CustomEvent).detail
-    layersServices.toggleLayer(node.id, !node.checked)
+    layersService.toggleLayer(node.id, !node.checked)
   }
 
   render(): TemplateResult {

@@ -13,6 +13,7 @@ import { mapState } from '../../states/map/map.state'
 import i18next from 'i18next'
 import { OgcClientWmsEndpoint } from './remote-layers.model'
 import LuxElement from '../common/base.element'
+import { layersService } from '../../services/layers/layers.service'
 import '../common/dropdown.element'
 
 @customElement('lux-remote-layers')
@@ -109,18 +110,20 @@ export class RemoteLayersElement extends LuxElement {
     const wmsEndpoint = this.currentWmsEndpoint
 
     if (node.checked === true) {
-      mapState.removeLayer(id)
+      mapState.removeLayers(id)
     } else {
       const remoteLayer = wmsEndpoint?.getLayerByName(name)
 
       if (remoteLayer) {
-        mapState.addLayer(
+        const layer = layersService.initLayer(
           remoteLayerToLayer({
             id,
             url: remoteLayersService.getProxyfiedUrl(this.currentWmsUrl),
             remoteLayer,
           })
         )
+
+        mapState.addLayers(layer)
       }
     }
   }

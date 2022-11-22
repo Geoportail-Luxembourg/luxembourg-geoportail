@@ -12,13 +12,7 @@ export class MapState {
     return this.mapContext.layers || []
   }
 
-  initLayer(layer: Layer) {
-    layer.opacity = layer.previousOpacity = layer.metadata?.start_opacity ?? 1
-  }
-
-  addLayer(...layers: Layer[]) {
-    layers.forEach(layer => this.initLayer(layer))
-
+  addLayers(...layers: Layer[]) {
     this.mapContext = {
       ...this.mapContext,
       layers: [...new Set([...(this.mapContext.layers || []), ...layers])],
@@ -27,7 +21,7 @@ export class MapState {
     this.layers$.next(this.mapContext.layers || [])
   }
 
-  removeLayer(...layerIds: (string | number)[]) {
+  removeLayers(...layerIds: LayerId[]) {
     this.mapContext = {
       ...this.mapContext,
       layers:
