@@ -1,3 +1,4 @@
+import { combineLatest, map } from 'rxjs'
 import { html, TemplateResult } from 'lit'
 import { customElement, state } from 'lit/decorators'
 import { layersServices } from '../../services/layers/layers.service'
@@ -19,18 +20,25 @@ export class CatalogElement extends LuxElement {
   constructor() {
     super()
 
-    themesService.theme$.subscribe(theme => {
-      this.layerTree = themesToLayerTree(theme as ThemeNodeModel)
+    const layerTree$ = combineLatest([
+      themesService.theme$,
+      mapState.map$,
+    ]).pipe(
+      map(([theme, mapContext]) => {
+        const layerTree =
+          this.layerTree &&
+          (this.layerTree.id as unknown as number) === theme?.id
+            ? this.layerTree
+            : themesToLayerTree(theme as ThemeNodeModel)
 
-      this.subscription.add(
-        mapState.map$.subscribe(mapContext => {
-          this.layerTree = layerTreeService.updateLayers(
-            this.layerTree as LayerTreeNodeModel,
-            mapContext.layers
-          )
-        })
-      )
-    })
+        return layerTreeService.updateLayers(
+          layerTree as LayerTreeNodeModel,
+          mapContext.layers
+        )
+      })
+    )
+
+    this.subscribe('layerTree' as keyof this, layerTree$)
   }
 
   private toggleParent(event: Event) {
