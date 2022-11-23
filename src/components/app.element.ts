@@ -1,7 +1,10 @@
-// Components
-import type { TemplateResult } from 'lit'
-import { html, LitElement } from 'lit'
+import { html } from 'lit'
+import { combineLatest, first, map, tap } from 'rxjs'
 import { customElement } from 'lit/decorators.js'
+import LuxElement from './common/lux.element'
+import { themesService } from '../services/themes/themes.service'
+import { layersService } from '../services/layers/layers.service'
+import { mapState } from '../states/map/map.state'
 
 import './background-selector/background-selector.element'
 import './layers-panel/layer-panel.element'
@@ -9,8 +12,32 @@ import './map/map-container.element'
 import './nav-bars/language-selector.element'
 
 @customElement('lux-app')
-export class App extends LitElement {
-  render(): TemplateResult {
+export class App extends LuxElement {
+  constructor() {
+    super()
+
+    themesService.theme$
+      .pipe(first())
+      .subscribe(() => layersService.boostrapLayers())
+
+    const persistLayers$ = combineLatest([
+      mapState.layers$,
+      mapState.bgLayer$,
+      themesService.theme$,
+    ]).pipe(
+      map(([layers, bgLayer]) => {
+        layersService.persistLayers(layers)
+
+        if (bgLayer) {
+          layersService.persistBgLayer(bgLayer)
+        }
+      })
+    )
+
+    this.addSubscription(persistLayers$)
+  }
+
+  render() {
     return html`
       <div class="h-screen flex flex-col overflow-hidden">
         <header class="h-14 flex bg-white shadow-header z-10 shrink-0">

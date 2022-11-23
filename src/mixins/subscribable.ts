@@ -22,6 +22,10 @@ export const SubscribableMixin = <TBase extends Constructor<LitElement>>(
       return stream$
     }
 
+    addSubscription(stream$: Observable<any>) {
+      this.subscription.add(stream$.subscribe())
+    }
+
     disconnectedCallback() {
       this.subscription.unsubscribe()
       super.disconnectedCallback()

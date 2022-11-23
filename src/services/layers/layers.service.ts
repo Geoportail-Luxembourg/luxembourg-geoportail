@@ -2,6 +2,8 @@ import { Layer } from '../../states/map/map.state.model'
 import { mapState } from '../../states/map/map.state'
 import { themesService } from '../themes/themes.service'
 import i18next from 'i18next'
+import { statePersistorService } from '../state-persistor/state-persistor.service'
+import { layerIdsToLayersMapper } from '../state-persistor/state-persistor-layer.mapper'
 
 export class LayersService {
   private hasIntersect(exclusionA: string, exclusionB: string) {
@@ -16,6 +18,28 @@ export class LayersService {
     } catch (e) {
       return false
     }
+  }
+
+  boostrapLayers() {
+    const layers = statePersistorService.getValue(
+      'layers',
+      layerIdsToLayersMapper
+    ) as Layer[]
+
+    mapState.addLayers(...layers)
+  }
+
+  persistLayers(layers: Layer[]) {
+    console.log('TODO: persist layers')
+    // TODO:
+    // statePersistorService.persistValue(
+    //   'layers',
+    //   layerIdsToLayersMapper
+    // ) as Layer[]
+  }
+
+  persistBgLayer(bgLayer: Layer) {
+    console.log('TODO: persist bg layer')
   }
 
   initLayer(layer: Layer) {
