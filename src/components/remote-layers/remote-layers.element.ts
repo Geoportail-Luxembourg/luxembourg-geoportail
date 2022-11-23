@@ -12,7 +12,7 @@ import { layerTreeService } from '../layer-tree/layer-tree.service'
 import { mapState } from '../../states/map/map.state'
 import i18next from 'i18next'
 import { OgcClientWmsEndpoint } from './remote-layers.model'
-import LuxElement from '../common/base.element'
+import LuxElement from '../common/lux.element'
 import { layersService } from '../../services/layers/layers.service'
 import '../common/dropdown.element'
 

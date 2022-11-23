@@ -1,7 +1,7 @@
 import { html, TemplateResult } from 'lit'
 import { customElement } from 'lit/decorators'
 import i18next from 'i18next'
-import { LayerItemElement } from '../layer-item.element'
+import { LayerItemElement } from '../layer-manager-item.element'
 
 @customElement('lux-layer-manager-item-background')
 export class LayerManagerItemBackgroundElement extends LayerItemElement {

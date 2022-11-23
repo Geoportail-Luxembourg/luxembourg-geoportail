@@ -2,7 +2,7 @@ import { html, TemplateResult } from 'lit'
 import { customElement, state } from 'lit/decorators'
 import i18next from 'i18next'
 
-import LuxElement from '../common/base.element'
+import LuxElement from '../common/lux.element'
 import '../remote-layers/remote-layers.element'
 import '../catalog/catalog-tab.element'
 import '../layer-manager/layer-manager.element'

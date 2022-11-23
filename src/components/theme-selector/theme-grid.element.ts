@@ -2,7 +2,7 @@ import { html } from 'lit'
 import { customElement, property } from 'lit/decorators.js'
 import i18next from 'i18next'
 import { ThemeNodeModel } from '../../services/themes/themes.model'
-import LuxElement from '../common/base.element'
+import LuxElement from '../common/lux.element'
 
 @customElement('lux-theme-grid')
 export class ThemeGridElement extends LuxElement {

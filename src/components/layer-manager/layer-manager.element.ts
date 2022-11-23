@@ -1,19 +1,16 @@
-import { html, LitElement, TemplateResult } from 'lit'
+import { html, TemplateResult } from 'lit'
 import { customElement, state } from 'lit/decorators'
 import { mapState } from '../../states/map/map.state'
-import { i18nMixin } from '../../mixins/i18n-lit-element'
 import { Layer, LayerId } from '../../states/map/map.state.model'
 import Sortable, { SortableEvent } from 'sortablejs'
 
 import './layer-item/layer-item.element'
 import './layer-item/layer-item-background.element'
-import { SubscribableMixin } from '../../mixins/subscribable'
 import { map } from 'rxjs'
+import LuxElement from '../common/lux.element'
 
 @customElement('lux-layer-manager')
-export class LayerManagerElement extends i18nMixin(
-  SubscribableMixin(LitElement)
-) {
+export class LayerManagerElement extends LuxElement {
   @state() private layers: Layer[]
   @state() private backgroundLayer: Layer
   @state() private isLayerOpenId: LayerId

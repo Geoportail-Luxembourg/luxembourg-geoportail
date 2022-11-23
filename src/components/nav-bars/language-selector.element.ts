@@ -1,7 +1,7 @@
 import type { TemplateResult } from 'lit'
 import { html } from 'lit'
 import { customElement } from 'lit/decorators.js'
-import LuxElement from '../common/base.element'
+import LuxElement from '../common/lux.element'
 
 @customElement('lux-language-selector')
 export class LanguageSelectorElement extends LuxElement {

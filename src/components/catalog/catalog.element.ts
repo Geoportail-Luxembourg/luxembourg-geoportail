@@ -8,7 +8,7 @@ import { mapState } from '../../states/map/map.state'
 import { themesToLayerTree } from '../layer-tree/layer-tree.mapper'
 import { LayerTreeNodeModel } from '../layer-tree/layer-tree.model'
 import { layerTreeService } from '../layer-tree/layer-tree.service'
-import LuxElement from '../common/base.element'
+import LuxElement from '../common/lux.element'
 
 import '../layer-tree/layer-tree-node.element'
 

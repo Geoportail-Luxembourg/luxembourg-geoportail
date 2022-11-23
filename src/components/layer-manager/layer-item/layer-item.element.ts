@@ -2,7 +2,7 @@ import { html, TemplateResult } from 'lit'
 import { customElement, state } from 'lit/decorators'
 import { property } from 'lit/decorators.js'
 import i18next from 'i18next'
-import { LayerItemElement } from '../layer-item.element'
+import { LayerItemElement } from '../layer-manager-item.element'
 
 @customElement('lux-layer-manager-item')
 export class LayerManagerItem extends LayerItemElement {

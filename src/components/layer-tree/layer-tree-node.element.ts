@@ -2,7 +2,7 @@ import i18next from 'i18next'
 import { html, TemplateResult } from 'lit'
 import { customElement } from 'lit/decorators'
 import { property } from 'lit/decorators.js'
-import LuxElement from '../common/base.element'
+import LuxElement from '../common/lux.element'
 import { LayerTreeNodeModel } from './layer-tree.model'
 
 @customElement('lux-layer-tree-node')

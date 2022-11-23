@@ -1,7 +1,7 @@
 import i18next from 'i18next'
 import { property } from 'lit/decorators'
 import { Layer } from '../../states/map/map.state.model'
-import LuxElement from '../common/base.element'
+import LuxElement from '../common/lux.element'
 
 export abstract class LayerItemElement<T = any> extends LuxElement {
   @property()

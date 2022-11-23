@@ -7,7 +7,7 @@ import { themeSelectorService } from './theme-selector.service'
 import './theme-grid.element'
 import './theme-selector-button.element'
 import { map } from 'rxjs'
-import LuxElement from '../common/base.element'
+import LuxElement from '../common/lux.element'
 
 @customElement('lux-theme-selector')
 export class ThemeSelectorElement extends LuxElement {
