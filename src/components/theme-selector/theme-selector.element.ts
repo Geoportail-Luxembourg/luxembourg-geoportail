@@ -6,34 +6,33 @@ import { themeSelectorService } from './theme-selector.service'
 
 import './theme-grid.element'
 import './theme-selector-button.element'
-import { map } from 'rxjs'
+import { map, tap } from 'rxjs'
 import LuxElement from '../common/base.element'
+import { subscribe } from '../../mixins/subscribable'
 
 @customElement('lux-theme-selector')
 export class ThemeSelectorElement extends LuxElement {
   @state()
   private isOpen = false
-  @state()
+
+  @subscribe(
+    themesService.theme$.pipe(
+      tap(theme => themeSelectorService.setCurrentThemeColors(theme))
+    )
+  )
   private currentTheme?: ThemeNodeModel
-  @state()
+
+  @subscribe(
+    themesService.themes$.pipe(
+      map(themes =>
+        themes.filter(theme => theme.metadata?.display_in_switcher === true)
+      )
+    )
+  )
   private themes?: ThemeNodeModel[]
 
   constructor() {
     super()
-
-    this.subscribe(
-      'currentTheme' as keyof this,
-      themesService.theme$
-    ).subscribe(theme => themeSelectorService.setCurrentThemeColors(theme))
-
-    this.subscribe(
-      'themes' as keyof this,
-      themesService.themes$.pipe(
-        map(themes =>
-          themes.filter(theme => theme.metadata?.display_in_switcher === true)
-        )
-      )
-    )
   }
 
   toggleThemesGrid() {

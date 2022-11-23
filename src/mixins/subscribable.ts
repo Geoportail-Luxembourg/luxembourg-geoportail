@@ -28,3 +28,15 @@ export const SubscribableMixin = <TBase extends Constructor<LitElement>>(
     }
   }
 }
+
+export const subscribe =
+  (stream: Observable<any>) =>
+  <K extends SubscribableMixin>(targetPrototype: K, propertyKey: keyof K) => {
+    if (!stream) throw new Error('Invalid stream!')
+
+    const initial = targetPrototype.connectedCallback
+    targetPrototype.connectedCallback = function () {
+      initial?.call(this)
+      this.subscribe(propertyKey, stream)
+    }
+  }
