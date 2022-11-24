@@ -1,8 +1,8 @@
 import OlMap from 'ol/Map'
 import { pairwise } from 'rxjs'
-import { MapSateListener } from '../../state/map/map.state.listeners'
-import { mapState } from '../../state/map/map.state'
-import { Openlayers } from './ol.service'
+import { MapSateListener } from '../../states/map/map.state.listeners'
+import { mapState } from '../../states/map/map.state'
+import { openLayersService } from './ol.service'
 
 export class OlSynchronizer {
   constructor(map: OlMap) {
@@ -22,16 +22,24 @@ export class OlSynchronizer {
         oldContext
       )
 
-      removedLayers.forEach(layer => Openlayers.removeLayer(map, layer.id))
+      removedLayers.forEach(layer =>
+        openLayersService.removeLayer(map, layer.id)
+      )
 
-      addedLayerComparisons.forEach(cmp => Openlayers.addLayer(map, cmp.layer))
+      addedLayerComparisons.forEach(cmp =>
+        openLayersService.addLayer(map, cmp.layer)
+      )
 
       mutatedLayerComparisons.forEach(layer => {
-        Openlayers.setLayerOpacity(map, layer.id, layer.opacity as number)
+        openLayersService.setLayerOpacity(
+          map,
+          layer.id,
+          layer.opacity as number
+        )
       })
 
       if (newContext.layers) {
-        Openlayers.reorderLayers(map, newContext.layers)
+        openLayersService.reorderLayers(map, newContext.layers)
       }
       console.log('state change', newContext)
     })

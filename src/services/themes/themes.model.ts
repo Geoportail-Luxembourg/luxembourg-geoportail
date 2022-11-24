@@ -50,6 +50,7 @@ export type Metadata = Partial<{
   ogc_query_layers: string[]
   hasRetina: boolean
 }>
+
 export type LayerType = 'WMS' | 'WFS' | 'WMTS'
 
 export interface ThemeNodeModel {

@@ -1,5 +1,5 @@
 import { BehaviorSubject, combineLatest, filter, from, map, tap } from 'rxjs'
-import { themesApi } from '../../components/layers-panel/catalog/themes.api'
+import { themesApi } from './themes.api'
 import { ThemeNodeModel } from './themes.model'
 
 export class ThemesService {

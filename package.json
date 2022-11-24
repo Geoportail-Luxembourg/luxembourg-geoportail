@@ -98,6 +98,7 @@
   "customElements": "custom-elements.json",
   "staticFiles": {
     "staticPath": "assets",
-    "staticOutPath": "assets"
+    "staticOutPath": "assets",
+    "excludeGlob": "**/*.png"
   }
 }
