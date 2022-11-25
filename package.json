@@ -2,17 +2,20 @@
   "name": "luxembourg-geoportail",
   "description": "Luxembourg Geoportail WebApp - Using WC",
   "version": "0.0.1-SNAPSHOT",
-  "source": "src/module.ts",
-  "module": "dist/module.esm.js",
-  "css": "dist/main.css",
   "targets": {
-    "module": {
-      "includeNodeModules": true,
-      "isLibrary": true,
-      "optimize": true
+    "main": {
+      "source": "index.html",
+      "includeNodeModules": true
     },
     "css": {
       "source": "./src/styles/tailwind.global.css"
+    },
+    "esm": {
+      "source": "src/module.ts",
+      "includeNodeModules": true,
+      "outputFormat": "esmodule",
+      "isLibrary": true,
+      "optimize": true
     }
   },
   "scripts": {
@@ -20,7 +23,7 @@
     "format": "eslint --ext .ts,.html . --fix --ignore-path .gitignore && prettier \"**/*.ts\" --write --ignore-path .gitignore",
     "test": "tsc && wtr --coverage",
     "start": "parcel index.html",
-    "build": "parcel build",
+    "build": "parcel build --target main --public-url ./",
     "build:esm": "parcel build --target esm",
     "i18next-parse": "i18next --config conf/i18next-parser.config.js"
   },

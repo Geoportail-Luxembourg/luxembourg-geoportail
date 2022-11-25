@@ -1,9 +1,17 @@
-<script lang="ts">
-import TreeItem from './treeitem.vue'
+<script setup lang="ts">
+import TreeItem from './TreeItem.vue'
+import { themesService } from '../services/themes/themes.service'
+import { mapState } from '../states/map/map.state'
+import { combineLatest, map } from 'rxjs'
+import { themesToLayerTree } from '../components/layer-tree/layer-tree.mapper'
+import { layerTreeService } from '../components/layer-tree/layer-tree.service'
+import { ThemeNodeModel } from '../services/themes/themes.model'
+import { LayerTreeNodeModel } from '../components/layer-tree/layer-tree.model'
+import { onMounted, ref } from 'vue'
 
 console.log("TreeVue")
 
-const treeData = {
+const treeData1 = {
   name: 'My Tree',
   children: [
     { name: 'hello' },
@@ -26,16 +34,32 @@ const treeData = {
   ]
 }
 
-export default {
-  components: {
-    TreeItem
-  },
-  data() {
-    return {
-      treeData
-    }
-  }
-}
+const treeData = ref({})
+
+onMounted(() => {
+  console.log(`the component is now mounted.`)
+
+
+  const layerTree$ = combineLatest([
+        themesService.theme$,
+        mapState.map$,
+  ]).pipe(
+    map(([theme, mapContext]) => {
+      const layerTree =
+      treeData.value &&
+        (treeData.value as unknown as number) === theme?.id
+          ? treeData
+          : themesToLayerTree(theme as ThemeNodeModel)
+
+        console.log(layerTree)
+
+      return layerTreeService.updateLayers(
+        layerTree as LayerTreeNodeModel,
+        mapContext.layers
+      )
+    })
+  ).subscribe(layerTree => treeData.value = layerTree)
+})
 </script>
 
 <template>
@@ -43,13 +67,3 @@ export default {
     <TreeItem class="item" :model="treeData"></TreeItem>
   </ul>
 </template>
-
-<style>
-.item {
-  cursor: pointer;
-  line-height: 1.5;
-}
-.bold {
-  font-weight: bold;
-}
-</style>
