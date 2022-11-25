@@ -1,8 +1,6 @@
 <script setup lang="ts">
   import { ref, computed } from 'vue'
 
-  const emit = defineEmits(['inFocus', 'submit'])
-
   const props = defineProps({
     model: Object
   })
@@ -37,6 +35,7 @@
   <li>
     <div
       :class="{ bold: isFolder }"
+      class="inline-block"
       @click="toggle"
       @dblclick="changeType">
       {{ model.name }}
@@ -44,8 +43,8 @@
     </div>
     <button 
       class="btn inline-block bg-green-800"
-      @click="$emit('clickRemove', model.id)">
-      - Remove -
+      @click="$emit('addmap', model.id)">
+      - Add to map -
     </button>
     <ul v-show="isOpen" v-if="isFolder">
       <!--
@@ -55,7 +54,8 @@
       <TreeItem
         class="item"
         :model="model"
-        v-for="model in model.children">
+        v-for="model in model.children"
+        @addmap="(id) => $emit('addmap', id)">
       </TreeItem>
       <li class="add" @click="addChild">+</li>
     </ul>

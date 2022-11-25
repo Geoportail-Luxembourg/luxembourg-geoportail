@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import TreeItem from './TreeItem.vue'
 import { themesService } from '../services/themes/themes.service'
+import { layersService } from '../services/layers/layers.service'
 import { mapState } from '../states/map/map.state'
 import { combineLatest, map } from 'rxjs'
 import { themesToLayerTree } from '../components/layer-tree/layer-tree.mapper'
@@ -8,8 +9,6 @@ import { layerTreeService } from '../components/layer-tree/layer-tree.service'
 import { ThemeNodeModel } from '../services/themes/themes.model'
 import { LayerTreeNodeModel } from '../components/layer-tree/layer-tree.model'
 import { onMounted, ref } from 'vue'
-
-console.log("TreeVue")
 
 const treeData1 = {
   name: 'My Tree',
@@ -61,8 +60,10 @@ onMounted(() => {
   ).subscribe(layerTree => treeData.value = layerTree)
 })
 
-const toto = (id) => {
-  console.log("toto" + id)
+const addmap = (id) => {
+  console.log("addmap" + id)
+
+  layersService.toggleLayer(id, true)
 }
 </script>
 
@@ -70,7 +71,7 @@ const toto = (id) => {
   <ul class="bg-primary">
     <TreeItem 
       class="item"
-      @click-remove="toto"
+      @addmap="addmap"
       :model="treeData"></TreeItem>
   </ul>
 </template>

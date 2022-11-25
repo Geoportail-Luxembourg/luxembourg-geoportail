@@ -16,17 +16,17 @@
     <div id="app">
       <tree-view>My treeview</tree-view>
     </div>
+
+    <div id="layerManager">
+      <LayerManager>SupprButton</LayerManager>
+    </div>
+
     <script src="https://unpkg.com/vue"></script>
     <script type="module">
       import lux from '/dist/lux.esm.js'
-
-      console.log(lux.treeviewApp)
-
-      // const { createApp } = Vue
-      // import TreeView from './vuejs/treeview.vue'
-
-      // export const lux = createApp(TreeView)
+      
       lux.treeviewApp.mount('#app')
+      lux.layerManager.mount('#layerManager')
 
       console.log(lux)
     </script>
