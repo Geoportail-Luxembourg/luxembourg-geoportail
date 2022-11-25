@@ -60,10 +60,17 @@ onMounted(() => {
     })
   ).subscribe(layerTree => treeData.value = layerTree)
 })
+
+const toto = (id) => {
+  console.log("toto" + id)
+}
 </script>
 
 <template>
-  <ul>
-    <TreeItem class="item" :model="treeData"></TreeItem>
+  <ul class="bg-primary">
+    <TreeItem 
+      class="item"
+      @click-remove="toto"
+      :model="treeData"></TreeItem>
   </ul>
 </template>

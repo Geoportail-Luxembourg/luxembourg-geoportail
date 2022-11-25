@@ -1,13 +1,14 @@
 <script setup lang="ts">
   import { ref, computed } from 'vue'
 
+  const emit = defineEmits(['inFocus', 'submit'])
+
   const props = defineProps({
     model: Object
   })
 
   const isOpen = ref(false)
   const isFolder = computed(() => {
-    console.log(props.model)
     return props.model.children && props.model.children.length
   })
 
@@ -24,12 +25,12 @@
   }
 
   const changeType = () => {
-      if (!isFolder) {
-        props.model.children = []
-        addChild()
-        isOpen.value = true
-      }
+    if (!isFolder) {
+      props.model.children = []
+      addChild()
+      isOpen.value = true
     }
+  }
 </script>
 
 <template>
@@ -39,8 +40,13 @@
       @click="toggle"
       @dblclick="changeType">
       {{ model.name }}
-      <span v-if="isFolder">[{{ isOpen ? '-' : '+' }}]</span>
+      <span v-if="isFolder">[{{ isOpen ? '-' : '+' }}]</span>      
     </div>
+    <button 
+      class="btn inline-block bg-green-800"
+      @click="$emit('clickRemove', model.id)">
+      - Remove -
+    </button>
     <ul v-show="isOpen" v-if="isFolder">
       <!--
         A component can recursively render itself using its

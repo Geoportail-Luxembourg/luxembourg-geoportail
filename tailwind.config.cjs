@@ -32,7 +32,7 @@ const themes = [
 
 /** @type {import('tailwindcss').Config} */
 module.exports = {
-  content: ['index.html', './src/**/*.{html,js,ts}'],
+  content: ['index.html', './src/**/*.{html,js,ts,vue}'],
   theme: {
     container: {
       center: true,

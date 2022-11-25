@@ -3,6 +3,7 @@
   "description": "Luxembourg Geoportail WebApp - Using WC",
   "version": "0.0.1-SNAPSHOT",
   "esm": "dist/lux.esm.js",
+  "css": "dist/lux.css",
   "targets": {
     "default": {
       "distDir": "./dist",
@@ -14,6 +15,9 @@
       "outputFormat": "esmodule",
       "isLibrary": true,
       "optimize": true
+    },
+    "css": {
+      "source": "src/styles/tailwind.global.css"
     }
   },
   "scripts": {
@@ -23,6 +27,7 @@
     "start": "parcel index.html",
     "build": "parcel build index.html",
     "build:esm": "parcel build --target esm",
+    "build:css": "parcel build --target css",
     "i18next-parse": "i18next --config conf/i18next-parser.config.js"
   },
   "dependencies": {
