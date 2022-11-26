@@ -36,8 +36,8 @@ function createWmsLayer(layer: Layer): ImageLayer<ImageWMS> {
   return olLayer
 }
 
-export class Openlayers {
-  static createLayer(spec: Layer): ImageLayer<ImageWMS> | TileLayer<WMTS> {
+export class OpenLayersService {
+  createLayer(spec: Layer): ImageLayer<ImageWMS> | TileLayer<WMTS> {
     let layer
     switch (spec.type) {
       case 'WMS': {
@@ -62,16 +62,8 @@ export class Openlayers {
     return layer
   }
 
-  static getLayerFromCache(layer: Layer): BaseLayer {
-    const { id } = layer
-
-    return !layersCache.hasOwnProperty(id) || !layersCache[id]
-      ? Openlayers.createLayer(layer)
-      : layersCache[id]
-  }
-
-  static addLayer(olMap: OlMap, layer: Layer) {
-    const baseLayer = Openlayers.getLayerFromCache(layer)
+  addLayer(olMap: OlMap, layer: Layer) {
+    const baseLayer = this.getLayerFromCache(layer)
     olMap.addLayer(baseLayer)
   }
 
@@ -103,7 +95,15 @@ export class Openlayers {
     if (layer) layer.setOpacity(opacity)
   }
 
-  static setBgLayer(olMap: OlMap, bgLayer: Layer | null) {
+  getLayerFromCache(layer: Layer): BaseLayer {
+    const { id } = layer
+
+    return !layersCache.hasOwnProperty(id) || !layersCache[id]
+      ? this.createLayer(layer)
+      : layersCache[id]
+  }
+
+  setBgLayer(olMap: OlMap, bgLayer: Layer | null) {
     const mapLayers = olMap.getLayers()
     const currentBgLayerPos = mapLayers
       .getArray()
@@ -111,7 +111,7 @@ export class Openlayers {
 
     if (currentBgLayerPos >= 0) {
       if (bgLayer) {
-        const bgBaseLayer = Openlayers.getLayerFromCache(bgLayer)
+        const bgBaseLayer = this.getLayerFromCache(bgLayer)
         bgBaseLayer.setZIndex(-1)
         mapLayers.setAt(currentBgLayerPos, bgBaseLayer)
       } else {
@@ -119,7 +119,7 @@ export class Openlayers {
       }
     } else {
       if (bgLayer) {
-        const bgBaseLayer = Openlayers.getLayerFromCache(bgLayer)
+        const bgBaseLayer = this.getLayerFromCache(bgLayer)
         bgBaseLayer.setZIndex(-1)
         olMap.addLayer(bgBaseLayer)
       }

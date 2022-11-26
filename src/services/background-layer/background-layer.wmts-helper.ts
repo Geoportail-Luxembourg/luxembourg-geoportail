@@ -4,9 +4,7 @@ import { transformExtent } from 'ol/proj.js'
 import { getTopLeft } from 'ol/extent.js'
 import { WMTS } from 'ol/source'
 import WmtsTileGrid from 'ol/tilegrid/WMTS'
-
-import { Layer } from '../../state/map/map.state.model'
-
+import { Layer } from '../../states/map/map.state.model'
 import { bgConfig } from '../../../test/fixtures/background.config.fixture'
 
 // TODO: check that it is valid for all WMTS layers

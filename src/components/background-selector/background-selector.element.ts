@@ -1,7 +1,6 @@
-import { html, LitElement } from 'lit'
+import { html } from 'lit'
 import { customElement, state } from 'lit/decorators.js'
-import { i18nMixin } from '../../mixins/i18n-lit-element'
-import { Subscription, BehaviorSubject, combineLatest } from 'rxjs'
+import { combineLatest, map } from 'rxjs'
 import { themesService } from '../../services/themes/themes.service'
 import { backgroundLayerService } from '../../services/background-layer/background-layer.service'
 import {
@@ -9,39 +8,40 @@ import {
   IBackgroundLayer,
 } from '../../services/background-layer/background-layer.model'
 import { mapState } from '../../states/map/map.state'
+import LuxElement from '../common/lux.element'
 
 import './background-selector-item.element'
 
 @customElement('lux-background-selector')
-export class BackgroundSelectorElement extends i18nMixin(LitElement) {
+export class BackgroundSelectorElement extends LuxElement {
   @state() isOpen = false
   @state() activeLayerId: number
   private bgLayers: IBackgroundLayer[] = []
-  private subscription = new Subscription()
 
   constructor() {
     super()
-    this.subscription.add(
-      themesService.bgLayers$.subscribe(bgLayers => {
-        this.bgLayers =
-          bgLayers.length > 0
-            ? backgroundLayerService.getBgLayersFromConfig()
-            : [BLANK_BACKGROUNDLAYER]
 
+    const bgLayers$ = themesService.bgLayers$.pipe(
+      map(bgLayers => {
         if (this.activeLayerId === void 0) {
           backgroundLayerService.setBgLayer(
             backgroundLayerService.getDefaultSelectedId()
           )
         }
+
+        return bgLayers.length > 0
+          ? backgroundLayerService.getBgLayersFromConfig()
+          : [BLANK_BACKGROUNDLAYER]
       })
     )
-    this.subscription.add(
-      combineLatest([mapState.bgLayer$, themesService.bgLayers$]).subscribe(
-        ([layer]) =>
-          (this.activeLayerId =
-            (layer?.id as number) ?? BLANK_BACKGROUNDLAYER.id)
-      )
-    )
+
+    const activeLayer$ = combineLatest([
+      mapState.bgLayer$,
+      themesService.bgLayers$,
+    ]).pipe(map(([layer]) => (layer?.id as number) ?? BLANK_BACKGROUNDLAYER.id))
+
+    this.subscribe('bgLayers' as keyof this, bgLayers$)
+    this.subscribe('activeLayerId' as keyof this, activeLayer$)
   }
 
   disconnectedCallback() {
