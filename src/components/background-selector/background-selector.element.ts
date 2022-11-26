@@ -1,6 +1,7 @@
 import { html } from 'lit'
 import { customElement, state } from 'lit/decorators.js'
 import { combineLatest, map } from 'rxjs'
+import i18next from 'i18next'
 import { themesService } from '../../services/themes/themes.service'
 import { backgroundLayerService } from '../../services/background-layer/background-layer.service'
 import {
@@ -21,12 +22,25 @@ export class BackgroundSelectorElement extends LuxElement {
   constructor() {
     super()
 
-    const bgLayers$ = themesService.bgLayers$.pipe(
-      map(bgLayers => {
+    const bgLayers$ = combineLatest([
+      themesService.bgLayers$,
+      mapState.layers$,
+    ]).pipe(
+      map(([bgLayers, layers]) => {
         if (this.activeLayerId === void 0) {
           backgroundLayerService.setBgLayer(
             backgroundLayerService.getDefaultSelectedId()
           )
+
+          if (layers.length === 0) {
+            // TODO: implement alert message
+            console.log(
+              i18next.t(
+                "Aucune couche n'étant définie pour cette carte, une couche de fond a automatiquement été ajoutée.",
+                { ns: 'client' }
+              )
+            )
+          }
         }
 
         return bgLayers.length > 0
