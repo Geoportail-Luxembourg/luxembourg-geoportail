@@ -60,7 +60,7 @@ export class LayersService {
     const layer = <Layer>themesService.findById(id)
 
     if (layer) {
-      const linkedLayers = layer?.metadata?.linked_layers || []
+      const linkedLayers = layer.metadata?.linked_layers || []
 
       if (show === false) {
         mapState.removeLayers(layer.id as unknown as string, ...linkedLayers)

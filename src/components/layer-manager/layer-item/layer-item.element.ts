@@ -24,36 +24,40 @@ export class LayerManagerItem extends LayerItemElement {
 
   render(): TemplateResult {
     return html`
-      <div class="lux-layer-manager-item flex item relative">
-        <button
-          class="fa-solid fa-bars ${this.draggableClassName} cursor-move"
-        ></button>
-        <button
-          class="fa-solid fa-info"
-          title="${i18next.t('Display informations for "{{layerName}}"', {
-            ns: 'client',
-            layerName: this.getLabel(),
-          })}"
-          @click="${this.onClickInfo}"
-        ></button>
-        <button
-          class="cursor-pointer grow text-left"
-          @click="${this.onClickToggle}"
-        >
-          ${this.getLabel()}
-        </button>
-        <button
-          class="w-3.5 fa-solid ${this.isOpen ? 'fa-xmark' : 'fa-ellipsis'}"
-          @click="${this.onClickToggle}"
-        ></button>
-        <button
-          class="fa-solid fa-trash"
-          title="${i18next.t('Remove layer "{{layerName}}"', {
-            ns: 'client',
-            layerName: this.getLabel(),
-          })}"
-          @click="${this.onClickRemove}"
-        ></button>
+      <div class="lux-layer-manager-item relative">
+        <div class="w-full flex flex-nowrap items-start gap-x-2">
+          <button
+            class="fa-solid fa-bars ${this.draggableClassName} cursor-move mt-1"
+          ></button>
+          <button
+            class="fa-solid fa-info mt-1"
+            title="${i18next.t('Display informations for "{{layerName}}"', {
+              ns: 'client',
+              layerName: this.getLabel(),
+            })}"
+            @click="${this.onClickInfo}"
+          ></button>
+          <button
+            class="cursor-pointer grow text-left"
+            @click="${this.onClickToggle}"
+          >
+            ${this.getLabel()}
+          </button>
+          <button
+            class="mt-1 w-3.5 fa-solid ${this.isOpen
+              ? 'fa-xmark'
+              : 'fa-ellipsis'}"
+            @click="${this.onClickToggle}"
+          ></button>
+          <button
+            class="mt-1 fa-solid fa-trash"
+            title="${i18next.t('Remove layer "{{layerName}}"', {
+              ns: 'client',
+              layerName: this.getLabel(),
+            })}"
+            @click="${this.onClickRemove}"
+          ></button>
+        </div>
         <div
           class="lux-layer-manager-item-content ${this.isOpen ? 'h-6' : 'h-0'}"
         >

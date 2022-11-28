@@ -41,7 +41,12 @@ export class OlSynchronizer {
       if (newContext.layers) {
         openLayersService.reorderLayers(map, newContext.layers)
       }
+
       console.log('state change', newContext)
+    })
+
+    mapState.bgLayer$.subscribe(bgLayer => {
+      openLayersService.setBgLayer(map, bgLayer)
     })
   }
 }

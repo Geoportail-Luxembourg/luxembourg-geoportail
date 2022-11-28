@@ -2,6 +2,7 @@ import { html, TemplateResult } from 'lit'
 import { customElement, state } from 'lit/decorators'
 import { mapState } from '../../states/map/map.state'
 import { Layer, LayerId } from '../../states/map/map.state.model'
+import { BLANK_BACKGROUNDLAYER } from '../../services/background-layer/background-layer.model'
 import Sortable, { SortableEvent } from 'sortablejs'
 
 import './layer-item/layer-item.element'
@@ -12,7 +13,7 @@ import LuxElement from '../common/lux.element'
 @customElement('lux-layer-manager')
 export class LayerManagerElement extends LuxElement {
   @state() private layers: Layer[]
-  @state() private backgroundLayer: Layer
+  @state() private backgroundLayer: Layer | null
   @state() private isLayerOpenId: LayerId
 
   private sortable: Sortable
@@ -24,6 +25,12 @@ export class LayerManagerElement extends LuxElement {
     this.subscribe(
       'layers' as keyof this,
       mapState.map$.pipe(map(mapContext => mapContext.layers ?? []))
+    )
+
+    this.subscription.add(
+      mapState.bgLayer$.subscribe(layerContext => {
+        this.backgroundLayer = layerContext
+      })
     )
   }
 
@@ -84,15 +91,14 @@ export class LayerManagerElement extends LuxElement {
               </lux-layer-manager-item>
             </li>`
         )}
-        ${this.backgroundLayer &&
-        html`
-          <lux-layer-manager-item-background
-            .layer=${this.backgroundLayer}
-            @clickInfo="${this.toggleInfoLayer}"
-            @clickEdit="${this.toggleEditionLayer}"
-          >
-          </lux-layer-manager-item-background>
-        `}
+        <lux-layer-manager-background-element
+          .layer=${this.backgroundLayer || BLANK_BACKGROUNDLAYER}
+          .showEditButton=${!!this.backgroundLayer}
+          @clickInfo="${this.toggleInfoLayer}"
+          ${this.backgroundLayer &&
+          html` @clickEdit="${this.toggleEditionLayer}"`}
+        >
+        </lux-layer-manager-background-element>
       </ul>
     `
   }

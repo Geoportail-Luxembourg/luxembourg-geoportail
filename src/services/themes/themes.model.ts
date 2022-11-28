@@ -51,7 +51,7 @@ export type Metadata = Partial<{
   hasRetina: boolean
 }>
 
-export type LayerType = 'WMS' | 'WFS' | 'WMTS'
+export type LayerType = 'WMS' | 'WFS' | 'WMTS' | 'BG WMTS' | 'BG MVT' | '3D'
 
 export interface ThemeNodeModel {
   id: number

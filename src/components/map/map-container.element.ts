@@ -15,7 +15,7 @@ export class MapContainerElement extends LitElement {
   }
 
   render(): TemplateResult {
-    return html`<div id="map" class="h-full w-full"></div>`
+    return html`<div id="map" class="h-full w-full bg-white"></div>`
   }
 
   override createRenderRoot() {

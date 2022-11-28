@@ -43,6 +43,7 @@
     "At least one": "At least one",
     "Attention!": "Attention!",
     "Aucun symbole disponible": "No symbol available",
+    "Aucune couche n'étant définie pour cette carte, une couche de fond a automatiquement été ajoutée.": "",
     "Aucune information disponible pour cette couche": "No information available for this layer",
     "Aucune légende n'est disponible pour les couches sélectionnées.": "There is no legend defined for the selected layers",
     "Azimut": "Azimut",

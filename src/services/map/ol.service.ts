@@ -5,6 +5,7 @@ import OlMap from 'ol/Map'
 import { ImageWMS, WMTS } from 'ol/source'
 import { layersCache } from '../../states/layers/layers.cache'
 import { Layer, LayerId } from '../../states/map/map.state.model'
+import { createBgWmtsLayer } from '../../services/background-layer/background-layer.wmts-helper'
 
 const proxyWmsUrl = 'https://map.geoportail.lu/ogcproxywms'
 export const remoteProxyWms = 'https://map.geoportail.lu/httpsproxy'
@@ -43,6 +44,10 @@ export class OpenLayersService {
         layer = createWmsLayer(spec)
         break
       }
+      case 'BG WMTS': {
+        layer = createBgWmtsLayer(spec)
+        break
+      }
       default:
         throw new Error(`Unrecognized layer type: ${spec.type}`)
     }
@@ -58,12 +63,7 @@ export class OpenLayersService {
   }
 
   addLayer(olMap: OlMap, layer: Layer) {
-    const { id } = layer
-    const baseLayer: BaseLayer =
-      !layersCache.hasOwnProperty(id) || !layersCache[id]
-        ? this.createLayer(layer)
-        : layersCache[id]
-
+    const baseLayer = this.getLayerFromCache(layer)
     olMap.addLayer(baseLayer)
   }
 
@@ -93,6 +93,37 @@ export class OpenLayersService {
       .getArray()
       .find(layer => layer.get('id') === layerId)
     if (layer) layer.setOpacity(opacity)
+  }
+
+  getLayerFromCache(layer: Layer): BaseLayer {
+    const { id } = layer
+
+    return !layersCache.hasOwnProperty(id) || !layersCache[id]
+      ? this.createLayer(layer)
+      : layersCache[id]
+  }
+
+  setBgLayer(olMap: OlMap, bgLayer: Layer | null) {
+    const mapLayers = olMap.getLayers()
+    const currentBgLayerPos = mapLayers
+      .getArray()
+      .findIndex(layer => layer.getZIndex() === -1)
+
+    if (currentBgLayerPos >= 0) {
+      if (bgLayer) {
+        const bgBaseLayer = this.getLayerFromCache(bgLayer)
+        bgBaseLayer.setZIndex(-1)
+        mapLayers.setAt(currentBgLayerPos, bgBaseLayer)
+      } else {
+        mapLayers.removeAt(currentBgLayerPos)
+      }
+    } else {
+      if (bgLayer) {
+        const bgBaseLayer = this.getLayerFromCache(bgLayer)
+        bgBaseLayer.setZIndex(-1)
+        olMap.addLayer(bgBaseLayer)
+      }
+    }
   }
 }
 

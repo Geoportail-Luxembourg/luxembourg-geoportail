@@ -23,6 +23,19 @@
   body {
     @apply text-default;
   }
+
+  input[type=range]::-webkit-slider-thumb {
+    @apply bg-tertiary h-4 w-4 rounded-full border-tertiary;
+    -webkit-appearance: none;
+  }
+
+  input[type=range]::-moz-range-thumb {
+    @apply bg-tertiary h-3 w-3 rounded-full border-tertiary;
+  }
+
+  input[type=range]::-ms-thumb {
+    @apply bg-tertiary h-4 w-4 rounded-full border-tertiary;
+  }
 }
 
 @layer components {
@@ -35,11 +48,15 @@
   }
 
   .lux-bg-sel {
-    @apply h-10 w-10 md:h-14 md:w-20 p-0.5 rounded-sm cursor-pointer;
+    @apply h-[40px] w-[40px] md:h-[58px] md:w-[90px] p-0.5 rounded-sm cursor-pointer bg-white;
+  }
+  
+  .lux-bg-sel-icon {
+    @apply bg-[length:40px_40px] md:bg-[length:90px_58px] border-gray-400 border-[0.5px] bg-white;
   }
 
-  .lux-bg-sel-icon-bg-length {
-    @apply bg-[length:41px_41px] md:bg-[length:90px_50px];
+  .lux-bg-sel-icon.lux-bg-sel-blank {
+    @apply border-black;
   }
 
   .lux-outlined {
@@ -96,7 +113,7 @@
   }
 
   .lux-layer-manager-item-content {
-    @apply select-text w-full transition-[height] duration-[0.25s] overflow-hidden h-0 ease-linear;
+    @apply select-text w-full transition-[height] duration-[0.25s] overflow-hidden h-0 ease-linear grid grid-flow-col auto-cols-max;
   }
 
   .lux-sortable-ghost {
@@ -104,12 +121,14 @@
   }
 
   .lux-sortable-drag {
-    @apply  drop-shadow-md;
+    @apply drop-shadow-md;
   }
 }
+
 .fa-solid {
   vertical-align: middle;
 }
+
 @layer base {
   :root {
     --color-default: #333;

@@ -1,28 +1,61 @@
-import { html, LitElement } from 'lit'
+import { html } from 'lit'
 import { customElement, state } from 'lit/decorators.js'
-import { i18nMixin } from '../../mixins/i18n-lit-element'
+import { combineLatest, map } from 'rxjs'
+import i18next from 'i18next'
+import { themesService } from '../../services/themes/themes.service'
+import { backgroundLayerService } from '../../services/background-layer/background-layer.service'
 import {
-  bgLayerService,
-  LuxBgLayer,
-} from '../../services/background-layer/background-layer.service'
+  BLANK_BACKGROUNDLAYER,
+  IBackgroundLayer,
+} from '../../services/background-layer/background-layer.model'
+import { mapState } from '../../states/map/map.state'
+import LuxElement from '../common/lux.element'
 
 import './background-selector-item.element'
 
 @customElement('lux-background-selector')
-export class BackgroundSelectorElement extends i18nMixin(LitElement) {
+export class BackgroundSelectorElement extends LuxElement {
   @state() isOpen = false
-  @state() activeLayer = 'white'
-  private bgLayers
-  private subscription
+  @state() activeLayerId: number
+  private bgLayers: IBackgroundLayer[] = []
 
   constructor() {
     super()
-    this.bgLayers = bgLayerService.bgLayers$
-      .getValue()
-      .map((l: LuxBgLayer) => l.name)
-    this.subscription = bgLayerService.activeBgLayer$.subscribe(layer => {
-      this.activeLayer = layer.name
-    })
+
+    const bgLayers$ = combineLatest([
+      themesService.bgLayers$,
+      mapState.layers$,
+    ]).pipe(
+      map(([bgLayers, layers]) => {
+        if (this.activeLayerId === void 0) {
+          backgroundLayerService.setBgLayer(
+            backgroundLayerService.getDefaultSelectedId()
+          )
+
+          if (layers.length === 0) {
+            // TODO: implement alert message
+            console.log(
+              i18next.t(
+                "Aucune couche n'étant définie pour cette carte, une couche de fond a automatiquement été ajoutée.",
+                { ns: 'client' }
+              )
+            )
+          }
+        }
+
+        return bgLayers.length > 0
+          ? backgroundLayerService.getBgLayersFromConfig()
+          : [BLANK_BACKGROUNDLAYER]
+      })
+    )
+
+    const activeLayer$ = combineLatest([
+      mapState.bgLayer$,
+      themesService.bgLayers$,
+    ]).pipe(map(([layer]) => (layer?.id as number) ?? BLANK_BACKGROUNDLAYER.id))
+
+    this.subscribe('bgLayers' as keyof this, bgLayers$)
+    this.subscribe('activeLayerId' as keyof this, activeLayer$)
   }
 
   disconnectedCallback() {
@@ -30,36 +63,56 @@ export class BackgroundSelectorElement extends i18nMixin(LitElement) {
     super.disconnectedCallback()
   }
 
+  getOpenMenuClasses = (layer: IBackgroundLayer) => {
+    let openMenuClasses = 'lux-bg-sel hover:bg-cyan-600 '
+    openMenuClasses +=
+      layer.id === this.activeLayerId
+        ? 'border-red-500 border-2'
+        : 'border-black border'
+    return openMenuClasses
+  }
+
+  getActiveLayerName() {
+    return this.bgLayers.find(layer => layer.id === this.activeLayerId)?.name
+  }
+
   render() {
-    // prettier-ignore
+    let closedMenuClasses = 'lux-bg-sel border border-black '
+    closedMenuClasses += this.isOpen === true ? 'hidden' : 'block'
+    const bgLayerComponents = this.bgLayers.map(
+      layer =>
+        html`<lux-background-selector-item
+          class="${this.getOpenMenuClasses(layer)}"
+          bgname="${layer.name}"
+          @click="${() => this.setBackgroundLayer(layer)}"
+        >
+        </lux-background-selector-item>`
+    )
+
     return html`
       <div class="flex flex-row-reverse">
-        <div class="${this.isOpen == true ? 'flex flex-col md:flex-row' : 'hidden'}">
-          ${this.bgLayers.map(
-            (layer: string) =>
-              html`<lux-background-selector-item
-                      class="${`lux-bg-sel ` +
-                               `${layer == this.activeLayer ? 'border-red-500 border-2' : 'border-black border'} ` +
-                               `hover:bg-cyan-600`}"
-                      bgclass="bg-${layer}"
-                      @click="${() => this.setBackgroundLayer(layer)}"
-                   >
-              </lux-background-selector-item>`
-          )}
-        </div>
         <lux-background-selector-item
-             class=" ${
-               'lux-bg-sel border border-black bg-white ' +
-               (this.isOpen == true ? 'hidden' : 'block')}"
-             bgclass="bg-${this.activeLayer}"
-             @click="${this.toggleSelector}">
+          class="${closedMenuClasses}"
+          aria-expanded="${this.isOpen}"
+          bgtitle="Select BG layer"
+          bgname="${this.getActiveLayerName()}"
+          @click="${this.toggleSelector}"
+        >
         </lux-background-selector-item>
+
+        <div
+          class="${this.isOpen === true
+            ? 'flex flex-col md:flex-row'
+            : 'hidden'}"
+        >
+          ${bgLayerComponents}
+        </div>
       </div>
     `
   }
 
-  setBackgroundLayer(layer: string) {
-    bgLayerService.activeBgLayer$.next({ name: layer })
+  setBackgroundLayer(layer: IBackgroundLayer) {
+    backgroundLayerService.setBgLayer(layer.id)
     this.isOpen = false
   }
 
@@ -68,7 +121,6 @@ export class BackgroundSelectorElement extends i18nMixin(LitElement) {
   }
 
   createRenderRoot() {
-    // no shadow dom
     return this
   }
 }

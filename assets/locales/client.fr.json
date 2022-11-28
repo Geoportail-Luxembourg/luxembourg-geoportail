@@ -1,4 +1,5 @@
 {
+    "Select BG layer": "Sélection arrière-plan",
     "2012": "2012",
     "2013": "2013",
     "&Delta; +": "&Delta; +",
@@ -43,6 +44,7 @@
     "At least one": "",
     "Attention!": "Attention!",
     "Aucun symbole disponible": "Aucun symbole disponible",
+    "Aucune couche n'étant définie pour cette carte, une couche de fond a automatiquement été ajoutée.": "",
     "Aucune information disponible pour cette couche": "Aucune information disponible pour cette couche",
     "Aucune légende n'est disponible pour les couches sélectionnées.": "Aucune légende n'est disponible pour les couches sélectionnées.",
     "Azimut": "Azimut",

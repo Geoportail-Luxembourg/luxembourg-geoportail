@@ -1,10 +1,13 @@
 import { html, TemplateResult } from 'lit'
-import { customElement } from 'lit/decorators'
+import { customElement, property } from 'lit/decorators'
 import i18next from 'i18next'
 import { LayerItemElement } from '../layer-manager-item.element'
 
-@customElement('lux-layer-manager-item-background')
-export class LayerManagerItemBackgroundElement extends LayerItemElement {
+@customElement('lux-layer-manager-background-element')
+export class LayerManagerElement extends LayerItemElement {
+  @property()
+  protected showEditButton: boolean
+
   constructor() {
     super()
   }
@@ -25,11 +28,13 @@ export class LayerManagerItemBackgroundElement extends LayerItemElement {
           @click="${this.onClickInfo}"
         ></button>
         <span class="flex-1 text-left cursor-default">${this.getLabel()}</span>
-        <button
-          class="fa fa-pencil"
-          title="${i18next.t('Open editor panel', { ns: 'client' })}"
-          @click="${this.onclickEdit}"
-        ></button>
+        ${this.showEditButton
+          ? html` <button
+              class="fa fa-pencil"
+              title="${i18next.t('Open editor panel', { ns: 'client' })}"
+              @click="${this.onclickEdit}"
+            ></button>`
+          : html``}
       </div>
     `
   }

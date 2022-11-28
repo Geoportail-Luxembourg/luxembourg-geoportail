@@ -1,38 +1,37 @@
-import { BehaviorSubject } from 'rxjs'
+import { themesService } from '../themes/themes.service'
+import { mapState } from '../../states/map/map.state'
+import { Layer } from '../../states/map/map.state.model'
+import { bgConfig } from '../../../test/fixtures/background.config.fixture'
+import { layersService } from '../layers/layers.service'
 
-export interface LuxBgLayer {
-  name: string
-}
+class BackgroundLayerService {
+  setBgLayer(layerId: number) {
+    const newBgLayer = themesService.findBgLayerById(layerId)
+    this.setMapBackground(newBgLayer as unknown as Layer)
+  }
 
-export class BgLayerService {
-  bgLayers: LuxBgLayer[] = [
-    {
-      name: 'route',
-    },
-    {
-      name: 'topo',
-    },
-    {
-      name: 'topo_bw',
-    },
-    {
-      name: 'ortho',
-    },
-    {
-      name: 'hybrid',
-    },
-    {
-      name: 'white',
-    },
-  ]
-  bgLayers$ = new BehaviorSubject<LuxBgLayer[]>(this.bgLayers)
-  activeBgLayer$ = new BehaviorSubject<LuxBgLayer>(this.bgLayers[0])
+  setMapBackground(bgLayer: Layer | null) {
+    if (bgLayer) {
+      if (!(bgLayer.type === 'WMTS' || bgLayer.type === 'BG WMTS')) {
+        throw new Error(
+          `Only WMTS BG layers are currently implemented (not ${bgLayer.type} for ${bgLayer.name})`
+        )
+      }
+      bgLayer.type = 'BG WMTS'
+      layersService.handleExclusionLayers(bgLayer)
+      mapState.setBgLayer(layersService.initLayer(bgLayer))
+    } else {
+      mapState.setBgLayer(null)
+    }
+  }
 
-  constructor() {}
+  getDefaultSelectedId() {
+    return bgConfig.bg_layers_defaultId
+  }
 
-  setBgLayer(bgLayer: LuxBgLayer) {
-    this.activeBgLayer$.next(bgLayer)
+  getBgLayersFromConfig() {
+    return bgConfig.bg_layers
   }
 }
 
-export const bgLayerService = new BgLayerService()
+export const backgroundLayerService = new BackgroundLayerService()
