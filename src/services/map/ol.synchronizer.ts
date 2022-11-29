@@ -54,6 +54,8 @@ export class OlSynchronizer {
         if (newContext.layers) {
           openLayersService.reorderLayers(map, newContext.layers)
         }
+
+        this.previousLayers = layers
       }
     )
 
