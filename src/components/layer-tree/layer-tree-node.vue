@@ -1,28 +1,26 @@
 <script setup lang="ts">
 import { useTranslation } from 'i18next-vue'
-import { computed } from 'vue'
 import type { LayerTreeNodeModel } from './layer-tree.model'
 
 const { t, i18next } = useTranslation()
+
 const props = defineProps<{
   node: LayerTreeNodeModel
 }>()
-
-const isParent = computed(() => !!props.node.children)
-const isRoot = computed(() => props.node.depth === 0)
-const isMaxDepth = computed(() => props.node.depth >= 10)
-const label = computed(() => t(props.node.name, { ns: 'client' }))
-
 const emit = defineEmits<{
   (e: 'toggleLayer', node: LayerTreeNodeModel): void
   (e: 'toggleParent', node: LayerTreeNodeModel): void
 }>()
 
+const isParent = !!props.node.children
+const isRoot = props.node.depth === 0
+const isMaxDepth = props.node.depth >= 10
+const label = t(props.node.name, { ns: 'client' })
+
 function toggleLayer(node: LayerTreeNodeModel) {
   emit('toggleLayer', node)
 }
 function toggleParent(node: LayerTreeNodeModel) {
-  console.log('event')
   emit('toggleParent', node)
 }
 </script>
