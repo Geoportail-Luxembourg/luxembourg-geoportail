@@ -16,7 +16,7 @@
 */
 @font-face {
   font-family: 'geoportail-icons-wc';
-  src: url('/assets/fonts/geoportail-icons-wc.woff') format('woff');
+  src: url('/src/assets/fonts/geoportail-icons-wc.woff') format('woff');
 }
 
 @layer base {

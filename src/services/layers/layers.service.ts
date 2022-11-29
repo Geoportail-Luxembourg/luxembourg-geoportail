@@ -1,5 +1,7 @@
 import type { Layer } from '../../states/map/map.state.model'
 import { mapState } from '../../states/map/map.state'
+import { useThemeStore } from '../../stores/config.store'
+import { useMapStore } from '../../stores/map.store'
 import { themesService } from '../themes/themes.service'
 import i18next from 'i18next'
 
@@ -57,17 +59,20 @@ export class LayersService {
   }
 
   toggleLayer(id: number, show = true) {
-    const layer = <Layer>themesService.findById(id)
+    const themeStore = useThemeStore()
+    const mapStore = useMapStore()
+
+    const layer = <Layer>themesService.findById(id, themeStore.theme)
 
     if (layer) {
       const linkedLayers = layer.metadata?.linked_layers || []
 
       if (show === false) {
-        mapState.removeLayers(layer.id as unknown as string, ...linkedLayers)
+        mapStore.removeLayers(layer.id as unknown as string, ...linkedLayers)
       } else {
         this.handleExclusionLayers(layer)
 
-        mapState.addLayers(
+        mapStore.addLayers(
           this.initLayer(layer),
           ...linkedLayers.map((layerId) =>
             this.initLayer(
