@@ -1,6 +1,5 @@
 <script setup lang="ts">
 import { useTranslation } from 'i18next-vue'
-const { i18next } = useTranslation()
 import { combineLatest, map } from 'rxjs'
 import { computed, Ref, ref } from 'vue'
 import {
@@ -11,6 +10,8 @@ import { backgroundLayerService } from '../../services/background-layer/backgrou
 import { themesService } from '../../services/themes/themes.service'
 import { mapState } from '../../states/map/map.state'
 import BackgroundSelectorItem from './background-selector-item.vue'
+
+const { i18next } = useTranslation()
 
 const props = defineProps({
   isOpen: {

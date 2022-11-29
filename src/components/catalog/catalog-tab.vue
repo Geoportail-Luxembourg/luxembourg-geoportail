@@ -11,7 +11,7 @@ defineProps({
 
 <template>
   <div class="flex flex-col">
-    <theme-selector @toggleThemesGrid="toggleThemesGrid"> </theme-selector>
+    <!--    <theme-selector @toggleThemesGrid="toggleThemesGrid"> </theme-selector>-->
     <catalog v-if="themeGridIsOpen === false" class="pt-5"></catalog>
   </div>
 </template>

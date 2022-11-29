@@ -47,7 +47,7 @@ function toggleParent(node: LayerTreeNodeModel) {
 
       <!--    Other parents-->
       <button
-        v-else-if="this.node.depth > 1 && !isMaxDepth"
+        v-else-if="node.depth > 1 && !isMaxDepth"
         class="w-full text-left flex px-2 py-1.5 pl-2"
         :class="
           node.expanded ? 'bg-secondary text-tertiary' : 'bg-white text-primary'
@@ -58,7 +58,8 @@ function toggleParent(node: LayerTreeNodeModel) {
         <div class="grow">{{ label }}</div>
         <div class="leading-6">
           <div
-            class="fa-sharp fa-solid fa-${this.node.expanded ? 'minus' : 'plus'}"
+            class="fa-sharp fa-solid"
+            :class="node.expanded ? 'fa-minus' : 'fa-plus'"
           ></div>
         </div>
       </button>
@@ -93,7 +94,7 @@ function toggleParent(node: LayerTreeNodeModel) {
       >
         <i
           class="fa-solid"
-          :class="this.node.checked ? 'fa-check-square' : 'fa-square'"
+          :class="node.checked ? 'fa-check-square' : 'fa-square'"
         ></i>
         <span class="hover:underline">{{ label }}</span>
       </button>

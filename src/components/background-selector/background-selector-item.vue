@@ -1,7 +1,8 @@
 <script setup lang="ts">
 import { useTranslation } from 'i18next-vue'
-const { t } = useTranslation()
 import { computed } from 'vue'
+
+const { t } = useTranslation()
 
 const props = defineProps({
   bgTitle: {
