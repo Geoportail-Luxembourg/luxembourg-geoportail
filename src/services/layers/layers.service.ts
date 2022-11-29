@@ -1,4 +1,4 @@
-import { Layer } from '../../states/map/map.state.model'
+import type { Layer } from '../../states/map/map.state.model'
 import { mapState } from '../../states/map/map.state'
 import { themesService } from '../themes/themes.service'
 import i18next from 'i18next'
@@ -30,7 +30,7 @@ export class LayersService {
 
     const excludedLayers = mapState
       .getLayers()
-      .filter(_layer =>
+      .filter((_layer) =>
         this.hasIntersect(
           layer?.metadata?.exclusion as string,
           _layer?.metadata?.exclusion as string
@@ -38,7 +38,7 @@ export class LayersService {
       )
 
     if (excludedLayers.length > 0) {
-      mapState.removeLayers(...excludedLayers.map(_layer => _layer.id))
+      mapState.removeLayers(...excludedLayers.map((_layer) => _layer.id))
 
       alert(
         i18next.t(
@@ -46,7 +46,7 @@ export class LayersService {
           {
             count: excludedLayers.length,
             layersToRemove: excludedLayers
-              .map(_layer => i18next.t(_layer.name, { ns: 'client' }))
+              .map((_layer) => i18next.t(_layer.name, { ns: 'client' }))
               .join(', '),
             layer: i18next.t(layer.name, { ns: 'client' }),
             ns: 'client',
@@ -69,7 +69,7 @@ export class LayersService {
 
         mapState.addLayers(
           this.initLayer(layer),
-          ...linkedLayers.map(layerId =>
+          ...linkedLayers.map((layerId) =>
             this.initLayer(
               themesService.findById(parseInt(layerId, 10)) as unknown as Layer
             )

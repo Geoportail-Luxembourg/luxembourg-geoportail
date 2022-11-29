@@ -1,5 +1,5 @@
 import { BehaviorSubject } from 'rxjs'
-import { Layer, LayerId, MapContext } from './map.state.model'
+import type { Layer, LayerId, MapContext } from './map.state.model'
 
 const initialState: MapContext = {}
 
@@ -31,14 +31,14 @@ export class MapState {
       ...this.mapContext,
       layers:
         this.mapContext.layers?.filter(
-          layer => layerIds.indexOf(layer.id) === -1
+          (layer) => layerIds.indexOf(layer.id) === -1
         ) || [],
     }
     this.map$.next(this.mapContext)
   }
 
   hasLayer(layerId: string) {
-    return !!this.mapContext.layers?.find(layer => layer.id === layerId)
+    return !!this.mapContext.layers?.find((layer) => layer.id === layerId)
   }
 
   reorderLayers(layersId: LayerId[]) {
@@ -55,7 +55,7 @@ export class MapState {
   setLayerOpacity(layerId: number, opacity: number) {
     this.mapContext = {
       ...this.mapContext,
-      layers: this.mapContext.layers?.map(elt => {
+      layers: this.mapContext.layers?.map((elt) => {
         if (elt.id === layerId) {
           return { ...elt, opacity: opacity, previousOpacity: elt.opacity }
         }

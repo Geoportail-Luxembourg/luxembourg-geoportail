@@ -1,7 +1,7 @@
+import { bgConfig } from '../../__fixtures__/background.config.fixture'
 import { themesService } from '../themes/themes.service'
 import { mapState } from '../../states/map/map.state'
-import { Layer } from '../../states/map/map.state.model'
-import { bgConfig } from '../../../test/fixtures/background.config.fixture'
+import type { Layer } from '../../states/map/map.state.model'
 import { layersService } from '../layers/layers.service'
 
 class BackgroundLayerService {

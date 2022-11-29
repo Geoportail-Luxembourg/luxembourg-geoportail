@@ -1,4 +1,4 @@
-import { LayerType, Metadata } from '../../services/themes/themes.model'
+import type { LayerType, Metadata } from '../../services/themes/themes.model'
 
 export enum LayerImageType {
   PNG = 'image/png',

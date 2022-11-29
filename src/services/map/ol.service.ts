@@ -1,11 +1,11 @@
-import BaseLayer from 'ol/layer/Base'
+import type BaseLayer from 'ol/layer/Base'
 import ImageLayer from 'ol/layer/Image'
-import TileLayer from 'ol/layer/Tile'
-import OlMap from 'ol/Map'
+import type TileLayer from 'ol/layer/Tile'
+import type OlMap from 'ol/Map'
 import { ImageWMS, WMTS } from 'ol/source'
-import { layersCache } from '../../states/layers/layers.cache'
-import { Layer, LayerId } from '../../states/map/map.state.model'
 import { createBgWmtsLayer } from '../../services/background-layer/background-layer.wmts-helper'
+import { layersCache } from '../../states/layers/layers.cache'
+import type { Layer, LayerId } from '../../states/map/map.state.model'
 
 const proxyWmsUrl = 'https://map.geoportail.lu/ogcproxywms'
 export const remoteProxyWms = 'https://map.geoportail.lu/httpsproxy'
@@ -71,7 +71,7 @@ export class OpenLayersService {
     const layerToRemove = olMap
       .getLayers()
       .getArray()
-      .find(layer => layer.get('id') === layerId)
+      .find((layer) => layer.get('id') === layerId)
     if (layerToRemove) {
       olMap.removeLayer(layerToRemove)
     }
@@ -81,7 +81,7 @@ export class OpenLayersService {
     const arrayLayers = olMap.getLayers().getArray()
     layers.forEach((layer, idx) => {
       const baseLayer = arrayLayers.find(
-        mapLayer => mapLayer.get('id') === layer.id
+        (mapLayer) => mapLayer.get('id') === layer.id
       )
       baseLayer?.setZIndex(idx + 1)
     })
@@ -91,7 +91,7 @@ export class OpenLayersService {
     const layer = olMap
       .getLayers()
       .getArray()
-      .find(layer => layer.get('id') === layerId)
+      .find((layer) => layer.get('id') === layerId)
     if (layer) layer.setOpacity(opacity)
   }
 
@@ -107,7 +107,7 @@ export class OpenLayersService {
     const mapLayers = olMap.getLayers()
     const currentBgLayerPos = mapLayers
       .getArray()
-      .findIndex(layer => layer.getZIndex() === -1)
+      .findIndex((layer) => layer.getZIndex() === -1)
 
     if (currentBgLayerPos >= 0) {
       if (bgLayer) {

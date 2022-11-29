@@ -1,4 +1,4 @@
-import OlMap from 'ol/Map'
+import type OlMap from 'ol/Map'
 import { pairwise } from 'rxjs'
 import { MapSateListener } from '../../states/map/map.state.listeners'
 import { mapState } from '../../states/map/map.state'
@@ -22,15 +22,15 @@ export class OlSynchronizer {
         oldContext
       )
 
-      removedLayers.forEach(layer =>
+      removedLayers.forEach((layer) =>
         openLayersService.removeLayer(map, layer.id)
       )
 
-      addedLayerComparisons.forEach(cmp =>
+      addedLayerComparisons.forEach((cmp) =>
         openLayersService.addLayer(map, cmp.layer)
       )
 
-      mutatedLayerComparisons.forEach(layer => {
+      mutatedLayerComparisons.forEach((layer) => {
         openLayersService.setLayerOpacity(
           map,
           layer.id,
@@ -45,7 +45,7 @@ export class OlSynchronizer {
       console.log('state change', newContext)
     })
 
-    mapState.bgLayer$.subscribe(bgLayer => {
+    mapState.bgLayer$.subscribe((bgLayer) => {
       openLayersService.setBgLayer(map, bgLayer)
     })
   }

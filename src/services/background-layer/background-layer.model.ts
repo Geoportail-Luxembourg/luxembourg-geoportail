@@ -3,7 +3,7 @@ export interface IBackgroundLayer {
   id: number
 }
 
-export const BLANK_BACKGROUNDLAYER = {
+export const BLANK_BACKGROUNDLAYER: IBackgroundLayer = {
   name: 'blank',
   id: 0,
 }
