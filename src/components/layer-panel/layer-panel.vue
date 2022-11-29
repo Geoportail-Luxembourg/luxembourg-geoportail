@@ -2,7 +2,7 @@
 import { ref } from 'vue'
 import { useTranslation } from 'i18next-vue'
 import CatalogTab from '../catalog/catalog-tab.vue'
-const { t, i18next } = useTranslation()
+const { t } = useTranslation()
 
 const myLayersOpen = ref(true)
 </script>

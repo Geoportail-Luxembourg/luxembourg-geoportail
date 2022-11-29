@@ -1,11 +1,8 @@
 <script setup lang="ts">
-import { combineLatest, map } from 'rxjs'
 import type { ShallowRef } from 'vue'
-import { computed, shallowRef, watch } from 'vue'
+import { shallowRef, watch } from 'vue'
 import { layersService } from '../../services/layers/layers.service'
 import { ThemeNodeModel } from '../../services/themes/themes.model'
-import { themesService } from '../../services/themes/themes.service'
-import { mapState } from '../../states/map/map.state'
 import { useThemeStore } from '../../stores/config.store'
 import { useMapStore } from '../../stores/map.store'
 import LayerTreeNode from '../layer-tree/layer-tree-node.vue'

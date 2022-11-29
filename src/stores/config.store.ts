@@ -10,11 +10,11 @@ export const useThemeStore = defineStore(
     const config: ShallowRef<ConfigModel | undefined> = shallowRef()
     const themeName = ref('main')
 
-    themesApi.fetchThemes().then((response) => (config.value = response))
+    themesApi.fetchThemes().then(response => (config.value = response))
 
     const themes = computed(() => config.value?.themes)
     const theme = computed(() =>
-      themes.value?.find((theme) => theme.name === themeName.value)
+      themes.value?.find(theme => theme.name === themeName.value)
     )
     return { config, themes, themeName, theme }
   },

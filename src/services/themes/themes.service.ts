@@ -8,18 +8,18 @@ export class ThemesService {
 
   config$ = from(themesApi.fetchThemes())
   bgLayers$ = this.config$.pipe(
-    filter((config) => !!config),
-    map((config) => config?.background_layers ?? []),
-    tap((bgLayers) => (this.bgLayers = bgLayers))
+    filter(config => !!config),
+    map(config => config?.background_layers ?? []),
+    tap(bgLayers => (this.bgLayers = bgLayers))
   )
-  themes$ = this.config$.pipe(map((config) => config?.themes))
+  themes$ = this.config$.pipe(map(config => config?.themes))
   themeName$ = new BehaviorSubject('main')
   theme$ = combineLatest([this.themes$, this.themeName$]).pipe(
     map(([themes, themeName]) =>
-      themes.find((theme) => theme.name === themeName)
+      themes.find(theme => theme.name === themeName)
     ),
-    filter((theme) => !!theme),
-    tap((theme) => (this.theme = theme as ThemeNodeModel))
+    filter(theme => !!theme),
+    tap(theme => (this.theme = theme as ThemeNodeModel))
   )
 
   findById(id: number, node?: ThemeNodeModel): ThemeNodeModel | undefined {
@@ -37,7 +37,7 @@ export class ThemesService {
   }
 
   findBgLayerById(id: number) {
-    return this.bgLayers.find((l) => l.id === id)
+    return this.bgLayers.find(l => l.id === id)
   }
 
   setTheme(name: string) {

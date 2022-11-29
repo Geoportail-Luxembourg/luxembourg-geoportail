@@ -17,9 +17,7 @@ export function createBgWmtsLayer(layer: Layer): TileLayer<WMTS> {
     return imageExt
   }
   const imageExt = getImageExtension_(layer.imageType)
-  const { name, layers, imageType, id } = layer
-  let { url } = layer
-  const catalogUrl = url
+  const { name, imageType, id } = layer
   const isIpv6 = location.search.includes('ipv6=true')
   const domain = isIpv6 ? 'app.geoportail.lu' : 'geoportail.lu'
 
@@ -42,21 +40,21 @@ export function createBgWmtsLayer(layer: Layer): TileLayer<WMTS> {
       : bgConfig.http_bg_server
   const layer_path = `${bgConfig.bg_wmts_server_path}${hasRetina ? '_hd' : ''}`
   const full_tile_template = `${bgConfig.bg_wmts_tile_template}.${imageExt}`
-  url = `//${srv}.${domain}/${layer_path}/${full_tile_template}`
+  const url = `//${srv}.${domain}/${layer_path}/${full_tile_template}`
   const projection = getProjection(bgConfig.bg_layer_projection)!
   const extent = projection!.getExtent()
   const tileLayer = new TileLayer({
     source: new WMTS({
-      url: url,
+      url,
       tilePixelRatio: hasRetina ? 2 : 1,
       layer: name,
       matrixSet: `GLOBAL_WEBMERCATOR_4_V3${hasRetina ? '_HD' : ''}`,
       format: imageType,
       requestEncoding: 'REST', // WMTS.RequestEncoding.REST,
-      projection: projection,
+      projection,
       tileGrid: new WmtsTileGrid({
         origin: getTopLeft(extent),
-        extent: extent,
+        extent,
         resolutions: bgConfig.bg_layer_resolutions,
         matrixIds: bgConfig.bg_matrix_ids,
       }),

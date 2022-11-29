@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import Catalog from './catalog.vue'
+import Catalog from './catalog-tree.vue'
 
 defineProps({
   themeGridIsOpen: {

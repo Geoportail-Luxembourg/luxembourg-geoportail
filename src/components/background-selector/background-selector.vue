@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { useTranslation } from 'i18next-vue'
-const { t, i18next } = useTranslation()
+const { i18next } = useTranslation()
 import { combineLatest, map } from 'rxjs'
 import { computed, Ref, ref } from 'vue'
 import {
@@ -51,7 +51,7 @@ combineLatest([themesService.bgLayers$, mapState.layers$])
         : [BLANK_BACKGROUNDLAYER]
     })
   )
-  .subscribe((layers) => (bgLayers.value = layers))
+  .subscribe(layers => (bgLayers.value = layers))
 
 function setBackgroundLayer(layer: IBackgroundLayer) {
   backgroundLayerService.setBgLayer(layer.id)
@@ -66,10 +66,10 @@ let activeLayerId = ref(props.activeLayerId)
 
 combineLatest([mapState.bgLayer$, themesService.bgLayers$])
   .pipe(map(([layer]) => (layer?.id as number) ?? BLANK_BACKGROUNDLAYER.id))
-  .subscribe((id) => (activeLayerId.value = id))
+  .subscribe(id => (activeLayerId.value = id))
 
 const activeLayerName = computed(
-  () => bgLayers.value.find((layer) => layer.id === activeLayerId.value)?.name
+  () => bgLayers.value.find(layer => layer.id === activeLayerId.value)?.name
 )
 </script>
 

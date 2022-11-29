@@ -71,7 +71,7 @@ export class OpenLayersService {
     const layerToRemove = olMap
       .getLayers()
       .getArray()
-      .find((layer) => layer.get('id') === layerId)
+      .find(layer => layer.get('id') === layerId)
     if (layerToRemove) {
       olMap.removeLayer(layerToRemove)
     }
@@ -81,7 +81,7 @@ export class OpenLayersService {
     const arrayLayers = olMap.getLayers().getArray()
     layers.forEach((layer, idx) => {
       const baseLayer = arrayLayers.find(
-        (mapLayer) => mapLayer.get('id') === layer.id
+        mapLayer => mapLayer.get('id') === layer.id
       )
       baseLayer?.setZIndex(idx + 1)
     })
@@ -91,7 +91,7 @@ export class OpenLayersService {
     const layer = olMap
       .getLayers()
       .getArray()
-      .find((layer) => layer.get('id') === layerId)
+      .find(layer => layer.get('id') === layerId)
     if (layer) layer.setOpacity(opacity)
   }
 
@@ -107,7 +107,7 @@ export class OpenLayersService {
     const mapLayers = olMap.getLayers()
     const currentBgLayerPos = mapLayers
       .getArray()
-      .findIndex((layer) => layer.getZIndex() === -1)
+      .findIndex(layer => layer.getZIndex() === -1)
 
     if (currentBgLayerPos >= 0) {
       if (bgLayer) {

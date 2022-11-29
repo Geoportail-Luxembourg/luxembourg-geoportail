@@ -5,11 +5,11 @@ function equalsLayer(layerA: Layer, layerB: Layer) {
 }
 
 function hasLayer(context: MapContext, layer: Layer) {
-  return context.layers?.some((l) => equalsLayer(layer, l))
+  return context.layers?.some(l => equalsLayer(layer, l))
 }
 
 function layerHasChanged(oldContext: MapContext | null, layer: Layer) {
-  const oldLayer = oldContext?.layers?.find((l) => l.id === layer.id)
+  const oldLayer = oldContext?.layers?.find(l => l.id === layer.id)
   return oldLayer === layer
 }
 

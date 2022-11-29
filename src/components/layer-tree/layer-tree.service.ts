@@ -18,7 +18,7 @@ export class LayerTreeService {
     } else {
       return {
         ...node,
-        children: node.children?.map((child) =>
+        children: node.children?.map(child =>
           this.toggleNode(id, child, propertyName)
         ),
       }
@@ -33,12 +33,10 @@ export class LayerTreeService {
     if (node.children) {
       return {
         ...node,
-        children: node.children.map((child) =>
-          this.updateLayers(child, layers)
-        ),
+        children: node.children.map(child => this.updateLayers(child, layers)),
       }
     } else {
-      const checked = !!layers?.find((l) => l.id === id)
+      const checked = !!layers?.find(l => l.id === id)
       return {
         ...node,
         checked,

@@ -1,8 +1,7 @@
 import type OlMap from 'ol/Map'
-import { pairwise } from 'rxjs'
 import { watch } from 'vue'
-import { MapSateListener } from '../../states/map/map.state.listeners'
 import { mapState } from '../../states/map/map.state'
+import { MapSateListener } from '../../states/map/map.state.listeners'
 import { Layer } from '../../states/map/map.state.model'
 import { useMapStore } from '../../stores/map.store'
 import { openLayersService } from './ol.service'
@@ -13,7 +12,7 @@ export class OlSynchronizer {
     const mapStore = useMapStore()
     watch(
       () => mapStore.layers,
-      (layers) => {
+      layers => {
         console.log('watch layers')
         const oldContext = {
           layers: this.previousLayers,
@@ -36,15 +35,15 @@ export class OlSynchronizer {
           oldContext
         )
 
-        removedLayers.forEach((layer) =>
+        removedLayers.forEach(layer =>
           openLayersService.removeLayer(map, layer.id)
         )
 
-        addedLayerComparisons.forEach((cmp) =>
+        addedLayerComparisons.forEach(cmp =>
           openLayersService.addLayer(map, cmp.layer)
         )
 
-        mutatedLayerComparisons.forEach((layer) => {
+        mutatedLayerComparisons.forEach(layer => {
           openLayersService.setLayerOpacity(
             map,
             layer.id,
@@ -58,7 +57,7 @@ export class OlSynchronizer {
       }
     )
 
-    mapState.bgLayer$.subscribe((bgLayer) => {
+    mapState.bgLayer$.subscribe(bgLayer => {
       openLayersService.setBgLayer(map, bgLayer)
     })
   }

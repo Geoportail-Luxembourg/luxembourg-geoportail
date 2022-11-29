@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { useTranslation } from 'i18next-vue'
-const { t, i18next } = useTranslation()
+const { t } = useTranslation()
 import { computed } from 'vue'
 
 const props = defineProps({
@@ -15,11 +15,9 @@ const props = defineProps({
 })
 
 const buttonTitle = computed(() => {
-  const localizedTitle = i18next.t(props.bgTitle)
+  const localizedTitle = t(props.bgTitle)
   const hasTitle = props.bgTitle.length > 0
-  const localizedLayerName = `${i18next.t('Background layer')}: ${i18next.t(
-    props.bgName
-  )}`
+  const localizedLayerName = `${t('Background layer')}: ${t(props.bgName)}`
   return `${localizedTitle}${hasTitle ? '\n' : ''}${localizedLayerName}`
 })
 

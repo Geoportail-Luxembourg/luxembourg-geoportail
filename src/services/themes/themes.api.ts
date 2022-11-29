@@ -3,7 +3,7 @@ import type { ConfigModel } from './themes.model'
 
 class ThemesApi {
   async fetchThemes(): Promise<ConfigModel> {
-    return new Promise((resolve) => resolve(themesApiFixture()))
+    return new Promise(resolve => resolve(themesApiFixture()))
   }
 }
 

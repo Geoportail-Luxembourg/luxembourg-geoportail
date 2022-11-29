@@ -30,7 +30,6 @@ const themes = [
   'sig_secours' /*PRIVATE THEME*/,
 ]
 
-/** @type {import('tailwindcss').Config} */
 module.exports = {
   content: ['index.html', './src/**/*.{html,js,ts,vue}'],
   theme: {
@@ -160,7 +159,7 @@ module.exports = {
 }
 
 function generateThemeSafelist() {
-  return themes.flatMap((theme) => [
+  return themes.flatMap(theme => [
     `${theme}-primary`,
     `bg-${theme}-primary`,
     `hover:text-${theme}-primary`,
@@ -169,7 +168,7 @@ function generateThemeSafelist() {
 }
 function generateThemeColors() {
   return Object.fromEntries(
-    themes.flatMap((theme) => [
+    themes.flatMap(theme => [
       [`${theme}-primary`, `var(--${theme}-primary)`],
       [`${theme}-secondary`, `var(--${theme}-secondary)`],
       [`${theme}-tertiary`, `var(--${theme}-tertiary)`],

@@ -13,7 +13,7 @@ export const useMapStore = defineStore('map', () => {
   }
   function removeLayers(...layerIds: LayerId[]) {
     layers.value = layers.value.filter(
-      (layer) => layerIds.indexOf(layer.id) === -1
+      layer => layerIds.indexOf(layer.id) === -1
     )
   }
   function reorderLayers(layersId: LayerId[]) {
@@ -22,7 +22,7 @@ export const useMapStore = defineStore('map', () => {
     )
   }
   function setLayerOpacity(layerId: number, opacity: number) {
-    layers.value = layers.value.map((elt) => {
+    layers.value = layers.value.map(elt => {
       if (elt.id === layerId) {
         return { ...elt, opacity: opacity, previousOpacity: elt.opacity }
       }

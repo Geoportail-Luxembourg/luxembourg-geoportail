@@ -2,7 +2,7 @@
 import { useTranslation } from 'i18next-vue'
 import type { LayerTreeNodeModel } from './layer-tree.model'
 
-const { t, i18next } = useTranslation()
+const { t } = useTranslation()
 
 const props = defineProps<{
   node: LayerTreeNodeModel
