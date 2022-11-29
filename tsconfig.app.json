@@ -9,6 +9,8 @@
       "@/*": ["./src/*"]
     },
     "strict": true,
-    "strictPropertyInitialization": false
+    "strictPropertyInitialization": false,
+    "preserveValueImports": false,
+    "importsNotUsedAsValues": "remove"
   }
 }
