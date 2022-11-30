@@ -61,8 +61,8 @@ async function getWmsLayers() {
   }
 }
 
-async function onChangeWmsEndpoint(event: CustomEvent) {
-  currentWmsUrl = inputWmsUrl = event.detail.value
+async function onChangeWmsEndpoint(wmsUrl: string) {
+  currentWmsUrl = inputWmsUrl = wmsUrl
   await getWmsEndpoint(currentWmsUrl)
   getWmsLayers()
 }

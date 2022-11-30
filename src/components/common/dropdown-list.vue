@@ -7,6 +7,7 @@ export interface Props {
   options: DropdownOptionModel[]
 }
 const props = defineProps<Props>()
+const emit = defineEmits(['change'])
 const isOpen: ShallowRef<boolean> = shallowRef(false)
 const selectedValue: ShallowRef<string | undefined> = shallowRef()
 
@@ -21,13 +22,8 @@ function onClickOpenBtn(event: MouseEvent) {
 
 function onClickItem(event: MouseEvent) {
   selectedValue.value = (event.target as HTMLElement).dataset.value
-  const customEvent = new CustomEvent('change', {
-    detail: {
-      value: selectedValue.value,
-    },
-  })
 
-  dispatchEvent(customEvent)
+  emit('change', selectedValue.value)
 }
 
 function onClickOutsideOpenBtn() {
