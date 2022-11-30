@@ -3,6 +3,7 @@ import { ref } from 'vue'
 import { useTranslation } from 'i18next-vue'
 import CatalogTab from '../catalog/catalog-tab.vue'
 import LayerManager from '../layer-manager/layer-manager.vue'
+import RemoteLayers from '../remote-layers/remote-layers.vue'
 const { t, i18next } = useTranslation()
 
 const myLayersOpen = ref(true)
@@ -37,6 +38,6 @@ const myLayersOpen = ref(true)
       <catalog-tab v-if="true || !myLayersOpen"></catalog-tab>
       <layer-manager v-if="true || myLayersOpen"></layer-manager>
     </div>
-    <lux-remote-layers></lux-remote-layers>
+    <remote-layers></remote-layers>
   </div>
 </template>

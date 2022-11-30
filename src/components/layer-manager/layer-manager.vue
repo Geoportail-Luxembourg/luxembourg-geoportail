@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { computed, onMounted, ShallowRef, shallowRef, watch } from 'vue'
+import { onMounted, ShallowRef, shallowRef, watch } from 'vue'
 import type { Layer, LayerId } from '../../states/map/map.state.model'
 import { BLANK_BACKGROUNDLAYER } from '../../services/background-layer/background-layer.model'
 import LayerManagerItemBackground from './layer-item/layer-item-background.vue'

@@ -21,6 +21,7 @@
     "prepare": "husky install"
   },
   "dependencies": {
+    "@camptocamp/ogc-client": "^0.3.4",
     "ol": "^7.1.0",
     "pinia": "^2.0.26",
     "rxjs": "^7.5.7",
