@@ -1,4 +1,5 @@
 <script setup lang="ts">
+import { shallowRef, ShallowRef, watch } from 'vue'
 import { DropdownOptionModel } from '../common/dropdown-list.modelmodel'
 import { remoteLayersService } from './remote-layers.service'
 import { LayerTreeNodeModel } from '../layer-tree/layer-tree.model'
@@ -15,15 +16,29 @@ import { layersService } from '../../services/layers/layers.service'
 import { useTranslation } from 'i18next-vue'
 import DropdownList from '../common/dropdown-list.vue'
 import LayerTreeNode from '../layer-tree/layer-tree-node.vue'
-import { shallowRef, ShallowRef } from 'vue'
+import { useMapStore } from '../../stores/map.store'
 
 const { t } = useTranslation()
+const mapStore = useMapStore()
+
 const wmsLayers: ShallowRef<DropdownOptionModel[]> = shallowRef([])
 const layerTree: ShallowRef<LayerTreeNodeModel | undefined> = shallowRef()
 let isLoading = false
 let inputWmsUrl: string
 let currentWmsUrl: string
 let currentWmsEndpoint: OgcClientWmsEndpoint
+
+watch(
+  () => mapStore.layers,
+  (contextLayers) => {
+    layerTree.value
+      ? layerTreeService.updateLayers(
+          layerTree.value as LayerTreeNodeModel,
+          contextLayers
+        )
+      : void 0
+  }
+)
 
 remoteLayersService.fetchRemoteWmsEndpoint().then((wmsLayersFetch) => {
   wmsLayers.value = wmsLayersFetch.map(({ url, label }) => ({
@@ -76,9 +91,7 @@ async function onClickGetLayers() {
   getWmsLayers()
 }
 
-function toggleParent(event: Event) {
-  const node = (event as CustomEvent).detail
-
+function toggleParent(node: LayerTreeNodeModel) {
   layerTree.value = layerTreeService.toggleNode(
     node.id,
     layerTree.value as LayerTreeNodeModel,
@@ -86,13 +99,12 @@ function toggleParent(event: Event) {
   )
 }
 
-function toggleLayer(event: Event) {
-  const node = (event as CustomEvent).detail
+function toggleLayer(node: LayerTreeNodeModel) {
   const { id, name } = node
   const wmsEndpoint = currentWmsEndpoint
 
   if (node.checked === true) {
-    mapState.removeLayers(id)
+    mapStore.removeLayers(id)
   } else {
     const remoteLayer = wmsEndpoint?.getLayerByName(name)
 
@@ -105,24 +117,10 @@ function toggleLayer(event: Event) {
         })
       )
 
-      mapState.addLayers(layer)
+      mapStore.addLayers(layer)
     }
   }
 }
-
-// this.subscribe(
-//   'layerTree' as keyof this,
-//   mapState.map$.pipe(
-//     map(mapContext =>
-//       this.layerTree
-//         ? layerTreeService.updateLayers(
-//             this.layerTree as LayerTreeNodeModel,
-//             mapContext.layers
-//           )
-//         : void 0
-//     )
-//   )
-// )
 </script>
 
 <template>
@@ -186,8 +184,8 @@ function toggleLayer(event: Event) {
           class="block p-[10px] mb-[11px]"
           v-if="layerTree"
           :node="layerTree"
-          @parent-toggle="toggleParent"
-          @layer-toggle="toggleLayer"
+          @toggle-parent="toggleParent"
+          @toggle-layer="toggleLayer"
         ></layer-tree-node>
       </div>
     </div>
