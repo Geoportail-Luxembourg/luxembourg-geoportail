@@ -1,6 +1,7 @@
 import { BehaviorSubject, combineLatest, filter, from, map, tap } from 'rxjs'
 import { themesApi } from './themes.api'
 import type { ThemeNodeModel } from './themes.model'
+import { useThemeStore } from '../../stores/config.store'
 
 export class ThemesService {
   private theme: ThemeNodeModel
@@ -37,7 +38,9 @@ export class ThemesService {
   }
 
   findBgLayerById(id: number) {
-    return this.bgLayers.find(l => l.id === id)
+    const { bgLayers } = useThemeStore()
+
+    return bgLayers.find(l => l.id === id)
   }
 
   setTheme(name: string) {

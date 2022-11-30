@@ -1,17 +1,18 @@
 <script setup lang="ts">
 import { useTranslation } from 'i18next-vue'
-import { combineLatest, map } from 'rxjs'
-import { computed, Ref, ref } from 'vue'
+import { computed, Ref, ref, watch } from 'vue'
 import {
   BLANK_BACKGROUNDLAYER,
   IBackgroundLayer,
 } from '../../services/background-layer/background-layer.model'
 import { backgroundLayerService } from '../../services/background-layer/background-layer.service'
-import { themesService } from '../../services/themes/themes.service'
-import { mapState } from '../../states/map/map.state'
 import BackgroundSelectorItem from './background-selector-item.vue'
+import { useThemeStore } from '../../stores/config.store'
+import { useMapStore } from '../../stores/map.store'
 
 const { i18next } = useTranslation()
+const mapStore = useMapStore()
+const themeStore = useThemeStore()
 
 const props = defineProps({
   isOpen: {
@@ -25,34 +26,44 @@ const props = defineProps({
 })
 
 const isOpen = ref(props.isOpen)
+const bgLayers: Ref<IBackgroundLayer[]> = ref([])
+const activeLayerId = ref(props.activeLayerId)
+const activeLayerName = computed(
+  () => bgLayers.value.find((layer) => layer.id === activeLayerId.value)?.name
+)
 
-let bgLayers: Ref<IBackgroundLayer[]> = ref([])
+watch(
+  [() => themeStore.bgLayers, () => mapStore.layers],
+  ([bgLayersContext, layersContext]) => {
+    if (props.activeLayerId === void 0) {
+      backgroundLayerService.setBgLayer(
+        backgroundLayerService.getDefaultSelectedId()
+      )
 
-combineLatest([themesService.bgLayers$, mapState.layers$])
-  .pipe(
-    map(([bgLayers, layers]) => {
-      if (props.activeLayerId === void 0) {
-        backgroundLayerService.setBgLayer(
-          backgroundLayerService.getDefaultSelectedId()
-        )
-
-        if (layers.length === 0) {
-          // TODO: implement alert message
-          console.log(
-            i18next.t(
-              "Aucune couche n'étant définie pour cette carte, une couche de fond a automatiquement été ajoutée.",
-              { ns: 'client' }
-            )
+      if (layersContext.length === 0) {
+        // TODO: implement alert message
+        console.log(
+          i18next.t(
+            "Aucune couche n'étant définie pour cette carte, une couche de fond a automatiquement été ajoutée.",
+            { ns: 'client' }
           )
-        }
+        )
       }
+    }
 
-      return bgLayers.length > 0
+    bgLayers.value =
+      bgLayersContext.length > 0
         ? backgroundLayerService.getBgLayersFromConfig()
         : [BLANK_BACKGROUNDLAYER]
-    })
-  )
-  .subscribe(layers => (bgLayers.value = layers))
+  }
+)
+
+watch(
+  [() => mapStore.bgLayer, () => themeStore.bgLayers],
+  ([bgLayerContext]) =>
+    (activeLayerId.value =
+      (bgLayerContext?.id as number) ?? BLANK_BACKGROUNDLAYER.id)
+)
 
 function setBackgroundLayer(layer: IBackgroundLayer) {
   backgroundLayerService.setBgLayer(layer.id)
@@ -62,16 +73,6 @@ function setBackgroundLayer(layer: IBackgroundLayer) {
 function toggleSelector() {
   isOpen.value = !isOpen.value
 }
-
-let activeLayerId = ref(props.activeLayerId)
-
-combineLatest([mapState.bgLayer$, themesService.bgLayers$])
-  .pipe(map(([layer]) => (layer?.id as number) ?? BLANK_BACKGROUNDLAYER.id))
-  .subscribe(id => (activeLayerId.value = id))
-
-const activeLayerName = computed(
-  () => bgLayers.value.find(layer => layer.id === activeLayerId.value)?.name
-)
 </script>
 
 <template>

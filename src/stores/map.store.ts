@@ -7,6 +7,11 @@ import { LayerId } from '../states/map/map.state.model'
 export const useMapStore = defineStore('map', () => {
   const map: Ref<MapContext> = ref({})
   const layers: Ref<Layer[]> = ref([])
+  const bgLayer: Ref<Layer | null> = ref(null)
+
+  function setBgLayer(layer: Layer | null) {
+    bgLayer.value = layer
+  }
 
   function addLayers(...newLayers: Layer[]) {
     layers.value = [...new Set([...layers.value, ...newLayers])]
@@ -33,9 +38,11 @@ export const useMapStore = defineStore('map', () => {
   return {
     map,
     layers,
+    bgLayer,
     addLayers,
     removeLayers,
     reorderLayers,
     setLayerOpacity,
+    setBgLayer,
   }
 })

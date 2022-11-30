@@ -59,8 +59,9 @@ export class OlSynchronizer {
       }
     )
 
-    mapState.bgLayer$.subscribe(bgLayer => {
-      openLayersService.setBgLayer(map, bgLayer)
-    })
+    watch(
+      () => mapStore.bgLayer,
+      bgLayer => openLayersService.setBgLayer(map, bgLayer)
+    )
   }
 }

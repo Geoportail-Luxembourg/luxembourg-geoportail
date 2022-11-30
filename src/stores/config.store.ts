@@ -16,7 +16,10 @@ export const useThemeStore = defineStore(
     const theme = computed(() =>
       themes.value?.find(theme => theme.name === themeName.value)
     )
-    return { config, themes, themeName, theme }
+
+    const bgLayers = computed(() => config.value?.background_layers || [])
+
+    return { config, themes, themeName, theme, bgLayers }
   },
   {}
 )

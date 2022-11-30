@@ -2,7 +2,8 @@
 import { ref } from 'vue'
 import { useTranslation } from 'i18next-vue'
 import CatalogTab from '../catalog/catalog-tab.vue'
-const { t } = useTranslation()
+import LayerManager from '../layer-manager/layer-manager.vue'
+const { t, i18next } = useTranslation()
 
 const myLayersOpen = ref(true)
 </script>
@@ -33,7 +34,8 @@ const myLayersOpen = ref(true)
     </div>
     <!--catalog tab-->
     <div class="relative grow p-2.5 bg-primary overflow-auto">
-      <catalog-tab v-if="myLayersOpen"></catalog-tab>
+      <catalog-tab v-if="true || !myLayersOpen"></catalog-tab>
+      <layer-manager v-if="true || myLayersOpen"></layer-manager>
     </div>
     <lux-remote-layers></lux-remote-layers>
   </div>
