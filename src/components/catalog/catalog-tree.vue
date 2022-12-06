@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { storeToRefs } from 'pinia'
-import { onMounted, Ref, ShallowRef, shallowRef, watch } from 'vue'
+import { onMounted, ShallowRef, shallowRef, watch } from 'vue'
 import { layersService } from '../../services/layers/layers.service'
 import { ThemeNodeModel } from '../../services/themes/themes.model'
 import { useThemeStore } from '../../stores/config.store'

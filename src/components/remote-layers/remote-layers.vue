@@ -1,6 +1,7 @@
 <script setup lang="ts">
-import { shallowRef, ShallowRef, watch } from 'vue'
-import { DropdownOptionModel } from '../common/dropdown-list.modelmodel'
+import { storeToRefs } from 'pinia'
+import { onMounted, shallowRef, ShallowRef, watch } from 'vue'
+import { DropdownOptionModel } from '../common/dropdown-list.model'
 import { remoteLayersService } from './remote-layers.service'
 import { LayerTreeNodeModel } from '../layer-tree/layer-tree.model'
 import {
@@ -8,10 +9,7 @@ import {
   remoteLayerToLayer,
 } from './remote-layers.mapper'
 import { layerTreeService } from '../layer-tree/layer-tree.service'
-import {
-  OgcClientWmsEndpoint,
-  RemoteWmsEndpointModel,
-} from './remote-layers.model'
+import { OgcClientWmsEndpoint } from './remote-layers.model'
 import { layersService } from '../../services/layers/layers.service'
 import { useTranslation } from 'i18next-vue'
 import DropdownList from '../common/dropdown-list.vue'
@@ -20,6 +18,7 @@ import { useMapStore } from '../../stores/map.store'
 
 const { t } = useTranslation()
 const mapStore = useMapStore()
+const { layers } = storeToRefs(mapStore)
 
 const wmsLayers: ShallowRef<DropdownOptionModel[]> = shallowRef([])
 const layerTree: ShallowRef<LayerTreeNodeModel | undefined> = shallowRef()
@@ -28,19 +27,19 @@ let inputWmsUrl: string
 let currentWmsUrl: string
 let currentWmsEndpoint: OgcClientWmsEndpoint
 
-watch(
-  () => mapStore.layers,
-  (contextLayers) => {
-    layerTree.value
-      ? layerTreeService.updateLayers(
-          layerTree.value as LayerTreeNodeModel,
-          contextLayers
-        )
-      : void 0
-  }
-)
+watch(layers, updateLayerTree)
+onMounted(updateLayerTree)
 
-remoteLayersService.fetchRemoteWmsEndpoint().then((wmsLayersFetch) => {
+function updateLayerTree() {
+  layerTree.value = layerTree.value
+    ? layerTreeService.updateLayers(
+        layerTree.value as LayerTreeNodeModel,
+        layers.value
+      )
+    : void 0
+}
+
+remoteLayersService.fetchRemoteWmsEndpoint().then(wmsLayersFetch => {
   wmsLayers.value = wmsLayersFetch.map(({ url, label }) => ({
     label,
     value: url,
@@ -69,9 +68,9 @@ async function getWmsLayers() {
   const remoteLayers = wmsEndpoint?.getLayers()
 
   if (remoteLayers && remoteLayers[0]) {
-    layerTree.value = remoteLayersToLayerTreeMapper(
-      remoteLayers[0],
-      currentWmsUrl
+    layerTree.value = layerTreeService.updateLayers(
+      remoteLayersToLayerTreeMapper(remoteLayers[0], currentWmsUrl),
+      layers.value
     )
   }
 }
