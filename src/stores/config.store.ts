@@ -1,4 +1,4 @@
-import { defineStore } from 'pinia'
+import { acceptHMRUpdate, defineStore } from 'pinia'
 import type { ShallowRef } from 'vue'
 import { computed, ref, shallowRef } from 'vue'
 import { themesApi } from '../services/themes/themes.api'
@@ -23,3 +23,7 @@ export const useThemeStore = defineStore(
   },
   {}
 )
+
+if (import.meta.hot) {
+  import.meta.hot.accept(acceptHMRUpdate(useThemeStore, import.meta.hot))
+}

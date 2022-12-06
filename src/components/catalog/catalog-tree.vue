@@ -1,32 +1,37 @@
 <script setup lang="ts">
-import type { ShallowRef } from 'vue'
-import { shallowRef, watch } from 'vue'
+import { storeToRefs } from 'pinia'
+import { onMounted, Ref, ShallowRef, shallowRef, watch } from 'vue'
 import { layersService } from '../../services/layers/layers.service'
 import { ThemeNodeModel } from '../../services/themes/themes.model'
 import { useThemeStore } from '../../stores/config.store'
 import { useMapStore } from '../../stores/map.store'
 import LayerTreeNode from '../layer-tree/layer-tree-node.vue'
-
 import { themesToLayerTree } from '../layer-tree/layer-tree.mapper'
 import type { LayerTreeNodeModel } from '../layer-tree/layer-tree.model'
 import { layerTreeService } from '../layer-tree/layer-tree.service'
 
 const mapStore = useMapStore()
 const themeStore = useThemeStore()
-
+const { theme } = storeToRefs(themeStore)
+const { layers } = storeToRefs(mapStore)
 const layerTree: ShallowRef<LayerTreeNodeModel | undefined> = shallowRef()
 
-watch([() => themeStore.theme, () => mapStore.layers], ([theme, layers]) => {
-  if (!theme || !layers) return
-  const treeModel =
-    layerTree.value && (layerTree.value.id as unknown as number) === theme?.id
-      ? layerTree.value
-      : themesToLayerTree(theme as ThemeNodeModel)
-  layerTree.value = layerTreeService.updateLayers(
-    treeModel as LayerTreeNodeModel,
-    layers
-  )
-})
+watch(layers, updateLayerTree)
+onMounted(updateLayerTree)
+
+function updateLayerTree() {
+  if (theme && layers) {
+    const treeModel =
+      layerTree.value &&
+      (layerTree.value.id as unknown as number) === theme.value?.id
+        ? layerTree.value
+        : themesToLayerTree(theme.value as ThemeNodeModel)
+    layerTree.value = layerTreeService.updateLayers(
+      treeModel as LayerTreeNodeModel,
+      layers.value
+    )
+  }
+}
 
 function toggleParent(node: LayerTreeNodeModel) {
   layerTree.value = layerTreeService.toggleNode(

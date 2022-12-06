@@ -1,5 +1,6 @@
 <script setup lang="ts">
-import { onMounted, ShallowRef, shallowRef, watch } from 'vue'
+import { onMounted, ShallowRef, shallowRef } from 'vue'
+import { storeToRefs } from 'pinia'
 import type { Layer, LayerId } from '../../states/map/map.state.model'
 import { BLANK_BACKGROUNDLAYER } from '../../services/background-layer/background-layer.model'
 import LayerManagerItemBackground from './layer-item/layer-item-background.vue'
@@ -8,23 +9,10 @@ import Sortable, { SortableEvent } from 'sortablejs'
 import { useMapStore } from '../../stores/map.store'
 
 const mapStore = useMapStore()
-
-const layers: ShallowRef<Layer[] | undefined> = shallowRef()
-const backgroundLayer: ShallowRef<Layer | null> = shallowRef(null)
 const isLayerOpenId: ShallowRef<LayerId | undefined> = shallowRef()
 const draggableClassName = 'drag-handle'
 
-watch(
-  () => mapStore.layers,
-  (contextLayers) => {
-    layers.value = contextLayers ?? []
-  }
-)
-
-watch(
-  () => mapStore.bgLayer,
-  (bgLayerContext) => (backgroundLayer.value = bgLayerContext)
-)
+const { layers, bgLayer } = storeToRefs(mapStore)
 
 onMounted(() => {
   const sortableLayers = document.getElementById('sortable-layers')
@@ -42,7 +30,7 @@ onMounted(() => {
 
 function sortMethod(event: SortableEvent) {
   const items = event.to.children
-  mapStore.reorderLayers([...items].map((val) => Number(val.id)).reverse())
+  mapStore.reorderLayers([...items].map(val => Number(val.id)).reverse())
 }
 
 function changeOpacityLayer(layer: Layer, opacity: number) {
@@ -81,8 +69,8 @@ function toggleEditionLayer() {
       </layer-manager-item>
     </li>
     <layer-manager-item-background
-      :layer="backgroundLayer || BLANK_BACKGROUNDLAYER"
-      :showEditButton="!!backgroundLayer"
+      :layer="bgLayer || BLANK_BACKGROUNDLAYER"
+      :showEditButton="!!bgLayer"
       @clickInfo="toggleInfoLayer"
       @clickEdit="toggleEditionLayer"
     >
