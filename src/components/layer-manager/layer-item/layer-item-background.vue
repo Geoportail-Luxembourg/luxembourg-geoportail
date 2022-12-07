@@ -3,12 +3,10 @@ import { useLayer } from '../../../composables/layer'
 import { Layer } from '@/states/map/map.state.model'
 import { IBackgroundLayer } from '@/services/background-layer/background-layer.model'
 
-export interface Props {
+const props = defineProps<{
   showEditButton: boolean
   layer: Layer | IBackgroundLayer
-}
-
-const props = defineProps<Props>()
+}>()
 const emit = defineEmits(['clickInfo', 'clickEdit'])
 const { t, onClickInfo } = useLayer(props.layer, { emit })
 

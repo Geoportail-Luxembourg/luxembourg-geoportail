@@ -9,21 +9,19 @@ export const useThemeStore = defineStore(
   () => {
     const config: ShallowRef<ConfigModel | undefined> = shallowRef()
     const themeName = ref('main')
-
-    themesApi.fetchThemes().then(response => (config.value = response))
-
     const themes = computed(() => config.value?.themes)
     const theme = computed(() =>
       themes.value?.find(theme => theme.name === themeName.value)
     )
-
     const bgLayers = computed(() => config.value?.background_layers || [])
 
-    return { config, themes, themeName, theme, bgLayers }
+    themesApi.fetchThemes().then(response => (config.value = response))
+
+    function setTheme(name: string) {
+      themeName.value = name
+    }
+
+    return { config, themes, themeName, theme, bgLayers, setTheme }
   },
   {}
 )
-
-if (import.meta.hot) {
-  import.meta.hot.accept(acceptHMRUpdate(useThemeStore, import.meta.hot))
-}

@@ -16,16 +16,19 @@ export const useMapStore = defineStore('map', () => {
   function addLayers(...newLayers: Layer[]) {
     layers.value = [...new Set([...layers.value, ...newLayers])]
   }
+
   function removeLayers(...layerIds: LayerId[]) {
     layers.value = layers.value.filter(
       layer => layerIds.indexOf(layer.id) === -1
     )
   }
+
   function reorderLayers(layersId: LayerId[]) {
     layers.value = layers.value?.sort(
       (a, b) => layersId.indexOf(a.id) - layersId.indexOf(b.id)
     )
   }
+
   function setLayerOpacity(layerId: number, opacity: number) {
     layers.value = layers.value.map(elt => {
       if (elt.id === layerId) {

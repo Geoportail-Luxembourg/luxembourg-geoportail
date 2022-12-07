@@ -1,33 +1,14 @@
-import { BehaviorSubject, combineLatest, filter, from, map, tap } from 'rxjs'
-import { themesApi } from './themes.api'
 import type { ThemeNodeModel } from './themes.model'
 import { useThemeStore } from '../../stores/config.store'
 
 export class ThemesService {
-  private theme: ThemeNodeModel
-  private bgLayers: ThemeNodeModel[]
-
-  config$ = from(themesApi.fetchThemes())
-  bgLayers$ = this.config$.pipe(
-    filter(config => !!config),
-    map(config => config?.background_layers ?? []),
-    tap(bgLayers => (this.bgLayers = bgLayers))
-  )
-  themes$ = this.config$.pipe(map(config => config?.themes))
-  themeName$ = new BehaviorSubject('main')
-  theme$ = combineLatest([this.themes$, this.themeName$]).pipe(
-    map(([themes, themeName]) =>
-      themes.find(theme => theme.name === themeName)
-    ),
-    filter(theme => !!theme),
-    tap(theme => (this.theme = theme as ThemeNodeModel))
-  )
-
   findById(id: number, node?: ThemeNodeModel): ThemeNodeModel | undefined {
-    node = node || this.theme
-    if (node.id === id) {
+    const { theme } = useThemeStore()
+
+    node = node || theme
+    if (node?.id === id) {
       return node
-    } else if (node.children) {
+    } else if (node?.children) {
       for (const child of node.children) {
         const match = this.findById(id, child)
         if (match) {
@@ -44,7 +25,9 @@ export class ThemesService {
   }
 
   setTheme(name: string) {
-    this.themeName$.next(name)
+    const { setTheme } = useThemeStore()
+
+    setTheme(name)
   }
 }
 

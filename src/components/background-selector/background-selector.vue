@@ -10,10 +10,9 @@ import BackgroundSelectorItem from './background-selector-item.vue'
 import { useThemeStore } from '../../stores/config.store'
 import { useMapStore } from '../../stores/map.store'
 
-const { i18next } = useTranslation()
+const { t } = useTranslation()
 const mapStore = useMapStore()
 const themeStore = useThemeStore()
-
 const props = defineProps({
   isOpen: {
     type: Boolean,
@@ -24,45 +23,52 @@ const props = defineProps({
     type: Number,
   },
 })
-
 const isOpen = ref(props.isOpen)
 const bgLayers: Ref<IBackgroundLayer[]> = ref([])
 const activeLayerId = ref(props.activeLayerId)
 const activeLayerName = computed(
-  () => bgLayers.value.find((layer) => layer.id === activeLayerId.value)?.name
+  () => bgLayers.value.find(layer => layer.id === activeLayerId.value)?.name
 )
 
 watch(
-  [() => themeStore.bgLayers, () => mapStore.layers],
-  ([bgLayersContext, layersContext]) => {
+  () => themeStore.bgLayers, 
+  bgLayersContext => {
     if (props.activeLayerId === void 0) {
       backgroundLayerService.setBgLayer(
         backgroundLayerService.getDefaultSelectedId()
       )
-
-      if (layersContext.length === 0) {
-        // TODO: implement alert message
-        console.log(
-          i18next.t(
-            "Aucune couche n'étant définie pour cette carte, une couche de fond a automatiquement été ajoutée.",
-            { ns: 'client' }
-          )
-        )
-      }
     }
 
     bgLayers.value =
       bgLayersContext.length > 0
         ? backgroundLayerService.getBgLayersFromConfig()
         : [BLANK_BACKGROUNDLAYER]
-  }
+  },
+  { immediate: true }
 )
 
 watch(
-  [() => mapStore.bgLayer, () => themeStore.bgLayers],
-  ([bgLayerContext]) =>
-    (activeLayerId.value =
-      (bgLayerContext?.id as number) ?? BLANK_BACKGROUNDLAYER.id)
+  () => mapStore.layer,
+  layersContext => {
+    if (activeLayerId.value === void 0 && layersContext?.length === 0) {
+      // TODO: implement alert message
+      console.log(
+          t(
+            "Aucune couche n'étant définie pour cette carte, une couche de fond a automatiquement été ajoutée.",
+            { ns: 'client' }
+          )
+        )
+    }
+  },
+  { immediate: true }
+)
+
+watch(
+  () => mapStore.bgLayer,
+  bgLayerContext => {
+    activeLayerId.value =
+      (bgLayerContext?.id as number) ?? BLANK_BACKGROUNDLAYER.id
+    }
 )
 
 function setBackgroundLayer(layer: IBackgroundLayer) {

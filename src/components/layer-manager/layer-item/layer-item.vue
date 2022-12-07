@@ -3,13 +3,11 @@ import { useLayer } from '../../../composables/layer'
 import { Layer } from '@/states/map/map.state.model'
 import { ShallowRef, shallowRef } from 'vue'
 
-export interface Props {
+const props = defineProps<{
   layer: Layer
   draggableClassName: string
   isOpen: boolean
-}
-
-const props = defineProps<Props>()
+}>()
 const emit = defineEmits([
   'clickInfo',
   'clickEdit',

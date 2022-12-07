@@ -2,11 +2,10 @@
 import { onMounted, onUnmounted, shallowRef, ShallowRef } from 'vue'
 import { DropdownOptionModel } from './dropdown-list.model'
 
-export interface Props {
+const props = defineProps<{
   placeholder: string
   options: DropdownOptionModel[]
-}
-const props = defineProps<Props>()
+}>()
 const emit = defineEmits(['change'])
 const isOpen: ShallowRef<boolean> = shallowRef(false)
 const selectedValue: ShallowRef<string | undefined> = shallowRef()

@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { storeToRefs } from 'pinia'
-import { onMounted, shallowRef, ShallowRef, watch } from 'vue'
+import { shallowRef, ShallowRef, watch } from 'vue'
 import { DropdownOptionModel } from '../common/dropdown-list.model'
 import { remoteLayersService } from './remote-layers.service'
 import { LayerTreeNodeModel } from '../layer-tree/layer-tree.model'
@@ -27,8 +27,7 @@ let inputWmsUrl: string
 let currentWmsUrl: string
 let currentWmsEndpoint: OgcClientWmsEndpoint
 
-watch(layers, updateLayerTree)
-onMounted(updateLayerTree)
+watch(layers, updateLayerTree, { immediate: true })
 
 function updateLayerTree() {
   layerTree.value = layerTree.value
