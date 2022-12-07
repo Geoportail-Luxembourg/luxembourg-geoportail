@@ -31,7 +31,7 @@ const activeLayerName = computed(
 )
 
 watch(
-  () => themeStore.bgLayers, 
+  () => themeStore.bgLayers,
   bgLayersContext => {
     if (props.activeLayerId === void 0) {
       backgroundLayerService.setBgLayer(
@@ -48,16 +48,16 @@ watch(
 )
 
 watch(
-  () => mapStore.layer,
+  () => mapStore.layers,
   layersContext => {
     if (activeLayerId.value === void 0 && layersContext?.length === 0) {
       // TODO: implement alert message
       console.log(
-          t(
-            "Aucune couche n'étant définie pour cette carte, une couche de fond a automatiquement été ajoutée.",
-            { ns: 'client' }
-          )
+        t(
+          "Aucune couche n'étant définie pour cette carte, une couche de fond a automatiquement été ajoutée.",
+          { ns: 'client' }
         )
+      )
     }
   },
   { immediate: true }
@@ -68,7 +68,7 @@ watch(
   bgLayerContext => {
     activeLayerId.value =
       (bgLayerContext?.id as number) ?? BLANK_BACKGROUNDLAYER.id
-    }
+  }
 )
 
 function setBackgroundLayer(layer: IBackgroundLayer) {

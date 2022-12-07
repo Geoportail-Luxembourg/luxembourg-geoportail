@@ -18,7 +18,6 @@ watch(
   theme,
   theme => {
     if (theme) {
-      console.log('setCurrentThemeColors')
       themeSelectorService.setCurrentThemeColors(theme)
     }
   },
