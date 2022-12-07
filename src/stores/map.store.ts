@@ -1,12 +1,12 @@
-import { defineStore } from 'pinia'
-import type { Ref } from 'vue'
+import { defineStore, acceptHMRUpdate } from 'pinia'
+import { Ref, ShallowRef, shallowRef } from 'vue'
 import { ref } from 'vue'
 import type { Layer, MapContext } from '../states/map/map.state.model'
 import { LayerId } from '../states/map/map.state.model'
 
 export const useMapStore = defineStore('map', () => {
   const map: Ref<MapContext> = ref({})
-  const layers: Ref<Layer[]> = ref([])
+  const layers: ShallowRef<Layer[]> = shallowRef([])
   const bgLayer: Ref<Layer | null> = ref(null)
 
   function setBgLayer(layer: Layer | null) {
@@ -49,3 +49,7 @@ export const useMapStore = defineStore('map', () => {
     setBgLayer,
   }
 })
+
+if (import.meta.hot) {
+  import.meta.hot.accept(acceptHMRUpdate(useMapStore, import.meta.hot))
+}

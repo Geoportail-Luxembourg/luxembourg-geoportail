@@ -25,3 +25,7 @@ export const useThemeStore = defineStore(
   },
   {}
 )
+
+if (import.meta.hot) {
+  import.meta.hot.accept(acceptHMRUpdate(useThemeStore, import.meta.hot))
+}
