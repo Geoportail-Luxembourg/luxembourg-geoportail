@@ -56,7 +56,11 @@ function toggleEditionLayer() {
 
 <template>
   <ul id="sortable-layers">
-    <li v-for="layer in layers" :key="layer.id">
+    <li
+      v-for="layer in layers.reverse()"
+      :key="layer.id"
+      :id="(layer.id as string)"
+    >
       <layer-manager-item
         :draggableClassName="draggableClassName"
         :layer="layer"

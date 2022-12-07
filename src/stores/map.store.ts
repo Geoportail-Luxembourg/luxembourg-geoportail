@@ -24,9 +24,9 @@ export const useMapStore = defineStore('map', () => {
   }
 
   function reorderLayers(layersId: LayerId[]) {
-    layers.value = layers.value?.sort(
+    layers.value = [...layers.value?.sort(
       (a, b) => layersId.indexOf(a.id) - layersId.indexOf(b.id)
-    )
+    )]
   }
 
   function setLayerOpacity(layerId: number, opacity: number) {
