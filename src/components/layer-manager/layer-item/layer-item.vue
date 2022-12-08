@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { useLayer } from '../../../composables/layer'
-import { Layer } from '@/states/map/map.state.model'
+import { Layer } from '../../../stores/map.store.model'
 import { ShallowRef, shallowRef } from 'vue'
 
 const props = defineProps<{

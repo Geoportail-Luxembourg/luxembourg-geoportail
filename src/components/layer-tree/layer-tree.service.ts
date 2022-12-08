@@ -1,4 +1,4 @@
-import type { Layer } from '../../states/map/map.state.model'
+import type { Layer } from '../../stores/map.store.model'
 import type {
   LayerTreeNodeModel,
   LayerTreeToggleProperty,

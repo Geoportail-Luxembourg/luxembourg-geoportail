@@ -1,6 +1,6 @@
 import { bgConfig } from '../../__fixtures__/background.config.fixture'
 import { themesService } from '../themes/themes.service'
-import type { Layer } from '../../states/map/map.state.model'
+import type { Layer } from '../../stores/map.store.model'
 import { layersService } from '../layers/layers.service'
 import { useMapStore } from '../../stores/map.store'
 
