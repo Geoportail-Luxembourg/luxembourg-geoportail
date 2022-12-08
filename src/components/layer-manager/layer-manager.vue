@@ -1,18 +1,18 @@
 <script setup lang="ts">
-import { onMounted, ShallowRef, shallowRef } from 'vue'
+import { computed, onMounted, ShallowRef, shallowRef } from 'vue'
 import { storeToRefs } from 'pinia'
+import Sortable, { SortableEvent } from 'sortablejs'
 import type { Layer, LayerId } from '../../states/map/map.state.model'
 import { BLANK_BACKGROUNDLAYER } from '../../services/background-layer/background-layer.model'
 import LayerManagerItemBackground from './layer-item/layer-item-background.vue'
 import LayerManagerItem from './layer-item/layer-item.vue'
-import Sortable, { SortableEvent } from 'sortablejs'
 import { useMapStore } from '../../stores/map.store'
 
 const mapStore = useMapStore()
+const { layers: layersContext, bgLayer } = storeToRefs(mapStore)
+const layers = computed(() => [...layersContext.value].reverse())
 const isLayerOpenId: ShallowRef<LayerId | undefined> = shallowRef()
 const draggableClassName = 'drag-handle'
-
-const { layers, bgLayer } = storeToRefs(mapStore)
 
 onMounted(() => {
   const sortableLayers = document.getElementById('sortable-layers')
@@ -56,11 +56,7 @@ function toggleEditionLayer() {
 
 <template>
   <ul id="sortable-layers">
-    <li
-      v-for="layer in layers.reverse()"
-      :key="layer.id"
-      :id="(layer.id as string)"
-    >
+    <li v-for="layer in layers" :key="layer.id" :id="(layer.id as string)">
       <layer-manager-item
         :draggableClassName="draggableClassName"
         :layer="layer"
