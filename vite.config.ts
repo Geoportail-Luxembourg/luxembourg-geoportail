@@ -6,7 +6,6 @@ import vue from '@vitejs/plugin-vue'
 // https://vitejs.dev/config/
 export default defineConfig(({ command }) => {
   const base: UserConfig = {
-    base: '/dist',
     plugins: [
       vue()
     ],
@@ -21,6 +20,7 @@ export default defineConfig(({ command }) => {
   }
 
   if (command === 'build') {
+    base.base = '/dist'
     base.build = {
       // assetsInlineLimit: 0, // Imported or referenced assets that are smaller than this threshold will be inlined as base64 URLs to avoid extra http requests. Set to 0 to disable inlining altogether.
       rollupOptions: {
@@ -32,12 +32,7 @@ export default defineConfig(({ command }) => {
 
             return 'assets/[name]-[hash][extname]'
           },
-        },
-        plugins: [
-          {
-            name: 'Copy assets',
-          }
-        ]
+        }
       }
     }
   }
