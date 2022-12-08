@@ -1,7 +1,6 @@
-import type { Layer } from '../../states/map/map.state.model'
-import { mapState } from '../../states/map/map.state'
-import { useThemeStore } from '../../stores/config.store'
+import type { Layer } from '../../stores/map.store.model'
 import { useMapStore } from '../../stores/map.store'
+import { useThemeStore } from '../../stores/config.store'
 import { themesService } from '../themes/themes.service'
 import i18next from 'i18next'
 
@@ -30,8 +29,8 @@ export class LayersService {
       return
     }
 
-    const excludedLayers = mapState
-      .getLayers()
+    const mapStore = useMapStore()
+    const excludedLayers = mapStore.layers
       .filter(_layer =>
         this.hasIntersect(
           layer?.metadata?.exclusion as string,
@@ -40,7 +39,7 @@ export class LayersService {
       )
 
     if (excludedLayers.length > 0) {
-      mapState.removeLayers(...excludedLayers.map(_layer => _layer.id))
+      mapStore.removeLayers(...excludedLayers.map(_layer => _layer.id))
 
       alert(
         i18next.t(

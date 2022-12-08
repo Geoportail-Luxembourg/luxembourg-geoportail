@@ -4,8 +4,8 @@ import { useTranslation } from 'i18next-vue'
 import CatalogTab from '../catalog/catalog-tab.vue'
 import LayerManager from '../layer-manager/layer-manager.vue'
 import RemoteLayers from '../remote-layers/remote-layers.vue'
-const { t, i18next } = useTranslation()
 
+const { t } = useTranslation()
 const myLayersOpen = ref(true)
 </script>
 

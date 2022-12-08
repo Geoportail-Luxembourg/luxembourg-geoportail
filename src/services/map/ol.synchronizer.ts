@@ -1,10 +1,9 @@
 import type OlMap from 'ol/Map'
 import { watch } from 'vue'
-import { mapState } from '../../states/map/map.state'
-import { MapSateListener } from '../../states/map/map.state.listeners'
-import { Layer } from '../../states/map/map.state.model'
+import { Layer } from '../../stores/map.store.model'
 import { useMapStore } from '../../stores/map.store'
 import { openLayersService } from './ol.service'
+import { mapService } from './map.service'
 
 export class OlSynchronizer {
   previousLayers: Layer[]
@@ -20,17 +19,17 @@ export class OlSynchronizer {
         const newContext = {
           layers,
         }
-        const removedLayers = MapSateListener.getRemovedLayers(
+        const removedLayers = mapService.getRemovedLayers(
           newContext,
           oldContext
         )
 
-        const addedLayerComparisons = MapSateListener.getAddedLayers(
+        const addedLayerComparisons = mapService.getAddedLayers(
           newContext,
           oldContext
         )
 
-        const mutatedLayerComparisons = MapSateListener.getMutatedLayers(
+        const mutatedLayerComparisons = mapService.getMutatedLayers(
           newContext,
           oldContext
         )

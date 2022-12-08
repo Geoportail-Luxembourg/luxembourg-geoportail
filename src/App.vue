@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import '../node_modules/ol/ol.css'
 import BackgroundSelector from './components/background-selector/background-selector.vue'
+import LanguageSelector from './components/nav-bars/language-selector.vue'
 import LayerPanel from './components/layer-panel/layer-panel.vue'
 import MapContainer from './components/map/map-container.vue'
 </script>
@@ -11,7 +12,7 @@ import MapContainer from './components/map/map-container.vue'
       <div class="p-[5px]">
         <img src="./assets/header/gov-light.8b5db4.png" />
       </div>
-      <lux-language-selector></lux-language-selector>
+      <language-selector></language-selector>
     </header>
     <main class="flex grow">
       <!--side bar-->

@@ -1,8 +1,6 @@
 import { defineStore, acceptHMRUpdate } from 'pinia'
-import { Ref, ShallowRef, shallowRef } from 'vue'
-import { ref } from 'vue'
-import type { Layer, MapContext } from '../states/map/map.state.model'
-import { LayerId } from '../states/map/map.state.model'
+import { ref, Ref, ShallowRef, shallowRef } from 'vue'
+import type { LayerId, Layer, MapContext } from './map.store.model'
 
 export const useMapStore = defineStore('map', () => {
   const map: Ref<MapContext> = ref({})
@@ -21,6 +19,10 @@ export const useMapStore = defineStore('map', () => {
     layers.value = layers.value.filter(
       layer => layerIds.indexOf(layer.id) === -1
     )
+  }
+
+  function hasLayer(layerId: string) {
+    return !!layers.value?.find(layer => layer.id === layerId)
   }
 
   function reorderLayers(layersId: LayerId[]) {
@@ -47,6 +49,7 @@ export const useMapStore = defineStore('map', () => {
     reorderLayers,
     setLayerOpacity,
     setBgLayer,
+    hasLayer
   }
 })
 

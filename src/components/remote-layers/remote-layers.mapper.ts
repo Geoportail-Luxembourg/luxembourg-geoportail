@@ -1,5 +1,5 @@
-import { mapState } from '../../states/map/map.state'
-import { Layer, LayerImageType } from '../../states/map/map.state.model'
+import { useMapStore } from '../../stores/map.store'
+import { Layer, LayerImageType } from '../../stores/map.store.model'
 import { LayerTreeNodeModel } from '../layer-tree/layer-tree.model'
 import {
   OgcClientWmsLayerSummary,
@@ -28,6 +28,7 @@ export function remoteLayersToLayerTreeMapper(
 ): LayerTreeNodeModel {
   const { name, children } = node
   const id = `WMS||${urlWms}${name}`.split('-').join('%2D')
+  const mapStore = useMapStore()
 
   return {
     id,
@@ -36,7 +37,7 @@ export function remoteLayersToLayerTreeMapper(
     children: children
       ?.sort(sortLayerTreeNoChildrenFirst)
       .map(child => remoteLayersToLayerTreeMapper(child, urlWms, depth + 1)),
-    checked: mapState.hasLayer(id),
+    checked: mapStore.hasLayer(id),
     expanded: false,
   }
 }
