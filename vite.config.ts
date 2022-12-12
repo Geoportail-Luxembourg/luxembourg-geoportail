@@ -16,6 +16,7 @@ export default defineConfig(({ command }) => {
     },
     test: {
       globals: true,
+      setupFiles: '../vitest.setup.ts',
     },
   }
 

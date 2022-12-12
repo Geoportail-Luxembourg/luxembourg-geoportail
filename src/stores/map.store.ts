@@ -21,7 +21,7 @@ export const useMapStore = defineStore('map', () => {
     )
   }
 
-  function hasLayer(layerId: string) {
+  function hasLayer(layerId: LayerId) {
     return !!layers.value?.find(layer => layer.id === layerId)
   }
 
@@ -31,7 +31,7 @@ export const useMapStore = defineStore('map', () => {
     )]
   }
 
-  function setLayerOpacity(layerId: number, opacity: number) {
+  function setLayerOpacity(layerId: LayerId, opacity: number) {
     layers.value = layers.value.map(elt => {
       if (elt.id === layerId) {
         return { ...elt, opacity: opacity, previousOpacity: elt.opacity }

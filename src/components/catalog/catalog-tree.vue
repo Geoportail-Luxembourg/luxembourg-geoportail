@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { storeToRefs } from 'pinia'
-import { ShallowRef, shallowRef, watch } from 'vue'
+import { ShallowRef, shallowRef, watchEffect } from 'vue'
 import { layersService } from '../../services/layers/layers.service'
 import { ThemeNodeModel } from '../../services/themes/themes.model'
 import { useThemeStore } from '../../stores/config.store'
@@ -16,15 +16,16 @@ const { theme } = storeToRefs(themeStore)
 const { layers } = storeToRefs(mapStore)
 const layerTree: ShallowRef<LayerTreeNodeModel | undefined> = shallowRef()
 
-watch(layers, updateLayerTree, { immediate: true })
+watchEffect(updateLayerTree)
 
 function updateLayerTree() {
-  if (theme && layers) {
+  if (theme.value && layers.value) {
     const treeModel =
       layerTree.value &&
       (layerTree.value.id as unknown as number) === theme.value?.id
         ? layerTree.value
         : themesToLayerTree(theme.value as ThemeNodeModel)
+
     layerTree.value = layerTreeService.updateLayers(
       treeModel as LayerTreeNodeModel,
       layers.value
