@@ -15,7 +15,7 @@
     "build-only": "vite build",
     "type-check": "vue-tsc --noEmit -p tsconfig.vitest.json --composite false",
     "lint:js": "eslint . --ext .vue,.js,.cjs,.mjs,.ts,.cts,.mts --ignore-path .gitignore",
-    "lint:prettier": "prettier --check .",
+    "lint:prettier": "prettier --check . --ignore-path .gitignore",
     "lint": "npm run lint:js && npm run lint:prettier",
     "format": "prettier --write --list-different . && npm run lint:js -- --fix",
     "prepare": "husky install"
