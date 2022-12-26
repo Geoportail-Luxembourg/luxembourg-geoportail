@@ -3,9 +3,9 @@ import { shallowMount } from '@vue/test-utils'
 import DropdownList from './dropdown-list.vue'
 
 const optionsMocks = [
-  {label: 'option1_label', value: 'option1_value'},
-  {label: 'option2_label', value: 'option2_value'},
-  {label: 'option3_label', value: 'option3_value'}
+  { label: 'option1_label', value: 'option1_value' },
+  { label: 'option2_label', value: 'option2_value' },
+  { label: 'option3_label', value: 'option3_value' },
 ]
 
 describe('DropdownList', () => {
@@ -13,26 +13,30 @@ describe('DropdownList', () => {
     const wrapper = shallowMount(DropdownList, {
       props: {
         placeholder: 'Dropdown placeholder',
-        options: []
-      }
+        options: [],
+      },
     })
 
     expect(wrapper.findAll('button').length).toBe(1)
-    expect(wrapper.findAll('button')[0].attributes("aria-expanded")).toBe("false")
-    expect(wrapper.findAll('button')[0].attributes("aria-haspopup")).toBe("true")
+    expect(wrapper.findAll('button')[0].attributes('aria-expanded')).toBe(
+      'false'
+    )
+    expect(wrapper.findAll('button')[0].attributes('aria-haspopup')).toBe(
+      'true'
+    )
     expect(wrapper.findAll('ul').length).toBe(1)
-    expect(wrapper.findAll('ul')[0].attributes("tabindex")).toBe("-1")
+    expect(wrapper.findAll('ul')[0].attributes('tabindex')).toBe('-1')
   })
 
   it('renders properly items', () => {
     const wrapper = shallowMount(DropdownList, {
       props: {
         placeholder: 'Dropdown placeholder',
-        options: optionsMocks
-      }
+        options: optionsMocks,
+      },
     })
     expect(wrapper.findAll('ul').length).toBe(1)
-    expect(wrapper.findAll('ul')[0].attributes("class")).toContain("hidden")
+    expect(wrapper.findAll('ul')[0].attributes('class')).toContain('hidden')
     expect(wrapper.findAll('li').length).toBe(3)
   })
 
@@ -40,8 +44,8 @@ describe('DropdownList', () => {
     const wrapper = shallowMount(DropdownList, {
       props: {
         placeholder: 'Dropdown placeholder',
-        options: optionsMocks
-      }
+        options: optionsMocks,
+      },
     })
 
     beforeEach(async () => {
@@ -49,8 +53,12 @@ describe('DropdownList', () => {
     })
 
     it('should toggle dropdown', () => {
-      expect(wrapper.findAll('button')[0].attributes("aria-expanded")).toBe("true")
-      expect(wrapper.findAll('ul')[0].attributes("class")).not.toContain("hidden")
+      expect(wrapper.findAll('button')[0].attributes('aria-expanded')).toBe(
+        'true'
+      )
+      expect(wrapper.findAll('ul')[0].attributes('class')).not.toContain(
+        'hidden'
+      )
     })
 
     describe('when click on item', () => {
@@ -59,8 +67,10 @@ describe('DropdownList', () => {
       })
 
       it('should hide dropdown', () => {
-        expect(wrapper.findAll('button')[0].attributes("aria-expanded")).toBe("false")
-        expect(wrapper.findAll('ul')[0].attributes("class")).toContain("hidden")
+        expect(wrapper.findAll('button')[0].attributes('aria-expanded')).toBe(
+          'false'
+        )
+        expect(wrapper.findAll('ul')[0].attributes('class')).toContain('hidden')
       })
     })
 
@@ -70,7 +80,7 @@ describe('DropdownList', () => {
       })
 
       it('should hide dropdown', () => {
-        expect(wrapper.findAll('ul')[0].attributes("class")).toContain("hidden")
+        expect(wrapper.findAll('ul')[0].attributes('class')).toContain('hidden')
       })
     })
   })

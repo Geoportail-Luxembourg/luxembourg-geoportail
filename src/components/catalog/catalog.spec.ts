@@ -11,23 +11,23 @@ describe('Catalog', () => {
     createSpy: vi.fn,
     initialState: {
       theme: {
-        theme : {
+        theme: {
           id: 116,
           name: 'main',
           icon: 'main',
-          children: []
-        }
+          children: [],
+        },
       },
       map: {
-        layers: []
-      }
-    }
+        layers: [],
+      },
+    },
   })
 
   beforeEach(() => {
     wrapper = shallowMount(Catalog, {
       global: {
-        plugins: [ pinia ],
+        plugins: [pinia],
       },
     })
   })

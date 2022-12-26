@@ -5,8 +5,8 @@ import BackgroundSelectorItem from './background-selector-item.vue'
 const wrapper = shallowMount(BackgroundSelectorItem, {
   props: {
     bgTitle: 'My background title',
-    bgName: 'My background name'
-  }
+    bgName: 'My background name',
+  },
 })
 
 describe('BackgroundSelectorItem', () => {

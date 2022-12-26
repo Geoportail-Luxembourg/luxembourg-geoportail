@@ -22,7 +22,6 @@ class BackgroundLayerService {
       bgLayer.type = 'BG WMTS'
       layersService.handleExclusionLayers(bgLayer)
       mapStore.setBgLayer(layersService.initLayer(bgLayer))
-
     } else {
       mapStore.setBgLayer(null)
     }

@@ -8,8 +8,8 @@ const layerMock = {
   name: 'Mocked layer',
   layers: '',
   type: 'WMS',
-  imageType: 'img'
-}  as Layer
+  imageType: 'img',
+} as Layer
 
 const onClickInfo = vi.fn()
 const onClickToggle = vi.fn()
@@ -20,14 +20,16 @@ describe('LayerItem', () => {
       props: {
         layer: layerMock,
         draggableClassName: 'classnamedragg',
-        isOpen: false
-      }
+        isOpen: false,
+      },
     })
 
     expect(wrapper.findAll('button').length).toBeGreaterThan(1)
     expect(wrapper.findAll('button[class*=classnamedragg]').length).toBe(1)
-    expect(wrapper.html()).contains("Mocked layer")
-    expect(wrapper.find('.lux-layer-manager-item-content').attributes('class')).contains('h-0')
+    expect(wrapper.html()).contains('Mocked layer')
+    expect(
+      wrapper.find('.lux-layer-manager-item-content').attributes('class')
+    ).contains('h-0')
   })
 
   it('renders properly when is open', () => {
@@ -35,27 +37,25 @@ describe('LayerItem', () => {
       props: {
         layer: layerMock,
         draggableClassName: 'classnamedragg',
-        isOpen: true
-      }
+        isOpen: true,
+      },
     })
 
-    expect(wrapper.find('.lux-layer-manager-item-content').attributes('class')).contains('h-6')
+    expect(
+      wrapper.find('.lux-layer-manager-item-content').attributes('class')
+    ).contains('h-6')
   })
 
   describe('actions', () => {
-    let wrapper: any;
-
-    beforeEach(() => {
-      wrapper = shallowMount(LayerItem, {
-        global: {
-          mocks: { onClickInfo, onClickToggle }
-        },
-        props: {
-          layer: layerMock,
-          draggableClassName: 'classnamedragg',
-          isOpen: true
-        }
-      })
+    const wrapper = shallowMount(LayerItem, {
+      global: {
+        mocks: { onClickInfo, onClickToggle },
+      },
+      props: {
+        layer: layerMock,
+        draggableClassName: 'classnamedragg',
+        isOpen: true,
+      },
     })
 
     it('triggers #onClickInfo', async () => {

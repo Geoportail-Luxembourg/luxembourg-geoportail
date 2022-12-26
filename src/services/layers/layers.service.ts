@@ -30,13 +30,12 @@ export class LayersService {
     }
 
     const mapStore = useMapStore()
-    const excludedLayers = mapStore.layers
-      .filter(_layer =>
-        this.hasIntersect(
-          layer?.metadata?.exclusion as string,
-          _layer?.metadata?.exclusion as string
-        )
+    const excludedLayers = mapStore.layers.filter(_layer =>
+      this.hasIntersect(
+        layer?.metadata?.exclusion as string,
+        _layer?.metadata?.exclusion as string
       )
+    )
 
     if (excludedLayers.length > 0) {
       mapStore.removeLayers(...excludedLayers.map(_layer => _layer.id))

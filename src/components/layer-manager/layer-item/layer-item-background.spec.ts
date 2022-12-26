@@ -8,8 +8,8 @@ const bgLayerMock = {
   name: 'Mocked bg layer',
   layers: '',
   type: 'WMS',
-  imageType: 'img'
-}  as Layer
+  imageType: 'img',
+} as Layer
 
 const onClickInfo = vi.fn()
 
@@ -18,38 +18,34 @@ describe('LayerItemBackground', () => {
     const wrapper = shallowMount(LayerItemBackground, {
       props: {
         showEditButton: false,
-        layer: bgLayerMock
-      }
+        layer: bgLayerMock,
+      },
     })
 
     expect(wrapper.findAll('button').length).toBe(1)
-    expect(wrapper.html()).contains("Mocked bg layer")
+    expect(wrapper.html()).contains('Mocked bg layer')
   })
 
   it('renders properly when is editable', () => {
     const wrapper = shallowMount(LayerItemBackground, {
       props: {
         showEditButton: true,
-        layer: bgLayerMock
-      }
+        layer: bgLayerMock,
+      },
     })
 
     expect(wrapper.findAll('button').length).toBe(2)
   })
 
   describe('actions', () => {
-    let wrapper: any;
-
-    beforeEach(() => {
-      wrapper = shallowMount(LayerItemBackground, {
-        global: {
-          mocks: { onClickInfo }
-        },
-        props: {
-          showEditButton: true,
-          layer: bgLayerMock
-        }
-      })
+    const wrapper = shallowMount(LayerItemBackground, {
+      global: {
+        mocks: { onClickInfo },
+      },
+      props: {
+        showEditButton: true,
+        layer: bgLayerMock,
+      },
     })
 
     it('triggers #onClickInfo', async () => {

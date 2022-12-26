@@ -1,7 +1,11 @@
 import { defaults as defaultControls } from 'ol/control'
 import OlMap from 'ol/Map'
 import OlView from 'ol/View'
-import type { Layer, LayerComparison, MapContext } from '../../stores/map.store.model'
+import type {
+  Layer,
+  LayerComparison,
+  MapContext,
+} from '../../stores/map.store.model'
 
 export class MapService {
   map: OlMap
