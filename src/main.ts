@@ -17,7 +17,7 @@ i18next.init({
   ns: ['client', 'legends', 'server', 'tooltips'],
   fallbackLng: 'fr',
   backend: {
-    loadPath: './src/assets/locales/{{ns}}.{{lng}}.json',
+    loadPath: './assets/locales/{{ns}}.{{lng}}.json',
   },
 })
 
