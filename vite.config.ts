@@ -19,7 +19,7 @@ export default defineConfig(({ command }) => {
   }
 
   if (command === 'build') {
-    base.base = '/dist'
+    base.base = '/dist/'
     base.build = {
       // assetsInlineLimit: 0, // Imported or referenced assets that are smaller than this threshold will be inlined as base64 URLs to avoid extra http requests. Set to 0 to disable inlining altogether.
       rollupOptions: {
