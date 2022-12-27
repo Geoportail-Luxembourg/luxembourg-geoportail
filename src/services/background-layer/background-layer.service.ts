@@ -1,8 +1,8 @@
-import { bgConfig } from '../../__fixtures__/background.config.fixture'
-import { themesService } from '../themes/themes.service'
-import type { Layer } from '../../stores/map.store.model'
-import { layersService } from '../layers/layers.service'
-import { useMapStore } from '../../stores/map.store'
+import { bgConfig } from '@/__fixtures__/background.config.fixture'
+import { themesService } from '@/services/themes/themes.service'
+import { layersService } from '@/services/layers/layers.service'
+import type { Layer } from '@/stores/map.store.model'
+import { useMapStore } from '@/stores/map.store'
 
 class BackgroundLayerService {
   setBgLayer(layerId: number) {

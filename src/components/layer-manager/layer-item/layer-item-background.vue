@@ -1,13 +1,15 @@
 <script setup lang="ts">
-import { useLayer } from '../../../composables/layer'
-import { Layer } from '../../../stores/map.store.model'
+import { useLayer } from '@/composables/layer'
+import { Layer } from '@/stores/map.store.model'
 import { IBackgroundLayer } from '@/services/background-layer/background-layer.model'
 
 const props = defineProps<{
   showEditButton: boolean
   layer: Layer | IBackgroundLayer
 }>()
-const emit = defineEmits(['clickInfo', 'clickEdit'])
+const emit = defineEmits<{
+  (e: 'clickEdit'): void
+}>()
 const { t, onClickInfo } = useLayer(props.layer, { emit })
 
 const txtTitleLabel = t('Display informations for "{{layerName}}"', {

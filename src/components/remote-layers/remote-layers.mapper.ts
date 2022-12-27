@@ -1,6 +1,6 @@
-import { useMapStore } from '../../stores/map.store'
-import { Layer, LayerImageType } from '../../stores/map.store.model'
-import { LayerTreeNodeModel } from '../layer-tree/layer-tree.model'
+import { useMapStore } from '@/stores/map.store'
+import { Layer, LayerImageType } from '@/stores/map.store.model'
+import { LayerTreeNodeModel } from '@/components/layer-tree/layer-tree.model'
 import {
   OgcClientWmsLayerSummary,
   OgcClientWmsLayerFull,

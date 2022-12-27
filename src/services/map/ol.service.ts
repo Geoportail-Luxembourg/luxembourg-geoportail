@@ -3,9 +3,10 @@ import ImageLayer from 'ol/layer/Image'
 import type TileLayer from 'ol/layer/Tile'
 import type OlMap from 'ol/Map'
 import { ImageWMS, WMTS } from 'ol/source'
-import { createBgWmtsLayer } from '../../services/background-layer/background-layer.wmts-helper'
-import { layersCache } from '../../stores/layers.cache'
-import type { Layer, LayerId } from '../../stores/map.store.model'
+
+import { createBgWmtsLayer } from '@/services/background-layer/background-layer.wmts-helper'
+import { layersCache } from '@/stores/layers.cache'
+import type { Layer, LayerId } from '@/stores/map.store.model'
 
 const proxyWmsUrl = 'https://map.geoportail.lu/ogcproxywms'
 export const remoteProxyWms = 'https://map.geoportail.lu/httpsproxy'

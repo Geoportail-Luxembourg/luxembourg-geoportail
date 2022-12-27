@@ -1,6 +1,6 @@
 import { shallowMount } from '@vue/test-utils'
 
-import { Layer } from '../../../stores/map.store.model'
+import { Layer } from '@/stores/map.store.model'
 import LayerItem from './layer-item.vue'
 
 const layerMock = {

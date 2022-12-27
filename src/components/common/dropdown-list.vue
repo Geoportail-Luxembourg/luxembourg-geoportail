@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import { onMounted, onUnmounted, shallowRef, ShallowRef } from 'vue'
+
 import { DropdownOptionModel } from './dropdown-list.model'
 
 const props = defineProps<{

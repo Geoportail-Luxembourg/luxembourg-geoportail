@@ -1,12 +1,14 @@
 <script setup lang="ts">
 import { ShallowRef, shallowRef, watch } from 'vue'
 import { storeToRefs } from 'pinia'
-import { ThemeNodeModel } from '../../services/themes/themes.model'
-import { themesService } from '../../services/themes/themes.service'
-import { themeSelectorService } from './theme-selector.service'
-import { useThemeStore } from '../../stores/config.store'
+
+import { ThemeNodeModel } from '@/services/themes/themes.model'
+import { themesService } from '@/services/themes/themes.service'
+import { useThemeStore } from '@/stores/config.store'
+
 import ThemeGrid from './theme-grid.vue'
 import ThemeSelectorButton from './theme-selector-button.vue'
+import { themeSelectorService } from './theme-selector.service'
 
 const themeStore = useThemeStore()
 const { theme, themes } = storeToRefs(themeStore)

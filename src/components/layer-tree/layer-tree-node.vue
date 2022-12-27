@@ -1,9 +1,8 @@
 <script setup lang="ts">
 import { useTranslation } from 'i18next-vue'
 import { computed } from 'vue'
-import type { LayerTreeNodeModel } from './layer-tree.model'
 
-const { t } = useTranslation()
+import type { LayerTreeNodeModel } from './layer-tree.model'
 
 const props = defineProps<{
   node: LayerTreeNodeModel
@@ -13,6 +12,7 @@ const emit = defineEmits<{
   (e: 'toggleParent', node: LayerTreeNodeModel): void
 }>()
 
+const { t } = useTranslation()
 const isParent = !!props.node.children
 const isRoot = props.node.depth === 0
 const isMaxDepth = props.node.depth >= 10
@@ -21,6 +21,7 @@ const label = computed(() => t(props.node.name, { ns: 'client' }))
 function toggleLayer(node: LayerTreeNodeModel) {
   emit('toggleLayer', node)
 }
+
 function toggleParent(node: LayerTreeNodeModel) {
   emit('toggleParent', node)
 }

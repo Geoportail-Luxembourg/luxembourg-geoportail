@@ -1,8 +1,9 @@
-import type { Layer } from '../../stores/map.store.model'
-import { useMapStore } from '../../stores/map.store'
-import { useThemeStore } from '../../stores/config.store'
-import { themesService } from '../themes/themes.service'
 import i18next from 'i18next'
+
+import type { Layer } from '@/stores/map.store.model'
+import { useMapStore } from '@/stores/map.store'
+import { useThemeStore } from '@/stores/config.store'
+import { themesService } from '@/services/themes/themes.service'
 
 export class LayersService {
   private hasIntersect(exclusionA: string, exclusionB: string) {

@@ -1,9 +1,10 @@
 <script setup lang="ts">
 import { ref } from 'vue'
 import { useTranslation } from 'i18next-vue'
-import CatalogTab from '../catalog/catalog-tab.vue'
-import LayerManager from '../layer-manager/layer-manager.vue'
-import RemoteLayers from '../remote-layers/remote-layers.vue'
+
+import CatalogTab from '@/components/catalog/catalog-tab.vue'
+import LayerManager from '@/components/layer-manager/layer-manager.vue'
+import RemoteLayers from '@/components/remote-layers/remote-layers.vue'
 
 const { t } = useTranslation()
 const myLayersOpen = ref(true)

@@ -1,5 +1,5 @@
 import type { ThemeNodeModel } from './themes.model'
-import { useThemeStore } from '../../stores/config.store'
+import { useThemeStore } from '@/stores/config.store'
 
 export class ThemesService {
   findById(id: number, node?: ThemeNodeModel): ThemeNodeModel | undefined {

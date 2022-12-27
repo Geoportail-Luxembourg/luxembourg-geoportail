@@ -1,4 +1,4 @@
-import { ThemeNodeModel } from '../../services/themes/themes.model'
+import { ThemeNodeModel } from '@/services/themes/themes.model'
 
 export class ThemeSelectorService {
   setCurrentThemeColors(theme: ThemeNodeModel) {

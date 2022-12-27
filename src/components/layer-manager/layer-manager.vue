@@ -3,9 +3,9 @@ import { computed, onMounted, ShallowRef, shallowRef } from 'vue'
 import { storeToRefs } from 'pinia'
 import Sortable, { SortableEvent } from 'sortablejs'
 
-import { useMapStore } from '../../stores/map.store'
-import type { Layer, LayerId } from '../../stores/map.store.model'
-import { BLANK_BACKGROUNDLAYER } from '../../services/background-layer/background-layer.model'
+import { useMapStore } from '@/stores/map.store'
+import type { Layer, LayerId } from '@/stores/map.store.model'
+import { BLANK_BACKGROUNDLAYER } from '@/services/background-layer/background-layer.model'
 
 import LayerManagerItemBackground from './layer-item/layer-item-background.vue'
 import LayerManagerItem from './layer-item/layer-item.vue'
@@ -70,12 +70,14 @@ function toggleEditionLayer() {
       >
       </layer-manager-item>
     </li>
-    <layer-manager-item-background
-      :layer="bgLayer || BLANK_BACKGROUNDLAYER"
-      :showEditButton="!!bgLayer"
-      @clickInfo="toggleInfoLayer"
-      @clickEdit="toggleEditionLayer"
-    >
-    </layer-manager-item-background>
+    <li>
+      <layer-manager-item-background
+        :layer="bgLayer || BLANK_BACKGROUNDLAYER"
+        :showEditButton="!!bgLayer"
+        @clickInfo="toggleInfoLayer"
+        @clickEdit="toggleEditionLayer"
+      >
+      </layer-manager-item-background>
+    </li>
   </ul>
 </template>

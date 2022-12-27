@@ -1,9 +1,9 @@
 <script setup lang="ts">
 import '../node_modules/ol/ol.css'
-import BackgroundSelector from './components/background-selector/background-selector.vue'
-import LanguageSelector from './components/nav-bars/language-selector.vue'
-import LayerPanel from './components/layer-panel/layer-panel.vue'
-import MapContainer from './components/map/map-container.vue'
+import BackgroundSelector from '@/components/background-selector/background-selector.vue'
+import LanguageSelector from '@/components/nav-bars/language-selector.vue'
+import LayerPanel from '@/components/layer-panel/layer-panel.vue'
+import MapContainer from '@/components/map/map-container.vue'
 </script>
 
 <template>

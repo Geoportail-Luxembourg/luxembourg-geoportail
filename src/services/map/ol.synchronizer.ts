@@ -1,8 +1,9 @@
-import type OlMap from 'ol/Map'
 import { watch } from 'vue'
-import { Layer } from '../../stores/map.store.model'
-import { useMapStore } from '../../stores/map.store'
+import type OlMap from 'ol/Map'
 import { openLayersService } from './ol.service'
+
+import { Layer } from '@/stores/map.store.model'
+import { useMapStore } from '@/stores/map.store'
 import { mapService } from './map.service'
 
 export class OlSynchronizer {

@@ -1,5 +1,6 @@
 import { defineStore, acceptHMRUpdate } from 'pinia'
 import { ref, Ref, ShallowRef, shallowRef } from 'vue'
+
 import type { LayerId, Layer, MapContext } from './map.store.model'
 
 export const useMapStore = defineStore('map', () => {

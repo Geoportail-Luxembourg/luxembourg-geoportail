@@ -1,7 +1,8 @@
 <script setup lang="ts">
 import { ShallowRef, shallowRef } from 'vue'
+
 import Catalog from './catalog-tree.vue'
-import ThemeSelector from '../theme-selector/theme-selector.vue'
+import ThemeSelector from '@/components/theme-selector/theme-selector.vue'
 
 const themeGridIsOpen: ShallowRef<boolean> = shallowRef(false)
 

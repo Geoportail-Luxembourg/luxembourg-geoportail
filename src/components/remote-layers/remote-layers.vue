@@ -1,20 +1,22 @@
 <script setup lang="ts">
 import { storeToRefs } from 'pinia'
 import { shallowRef, ShallowRef, watch } from 'vue'
-import { DropdownOptionModel } from '../common/dropdown-list.model'
-import { remoteLayersService } from './remote-layers.service'
-import { LayerTreeNodeModel } from '../layer-tree/layer-tree.model'
+import { useTranslation } from 'i18next-vue'
+
+import { useMapStore } from '@/stores/map.store'
+import DropdownList from '@/components/common/dropdown-list.vue'
+import { DropdownOptionModel } from '@/components/common/dropdown-list.model'
+import LayerTreeNode from '@/components/layer-tree/layer-tree-node.vue'
+import { LayerTreeNodeModel } from '@/components/layer-tree/layer-tree.model'
+import { layerTreeService } from '@/components/layer-tree/layer-tree.service'
+import { layersService } from '@/services/layers/layers.service'
+
 import {
   remoteLayersToLayerTreeMapper,
   remoteLayerToLayer,
 } from './remote-layers.mapper'
-import { layerTreeService } from '../layer-tree/layer-tree.service'
+import { remoteLayersService } from './remote-layers.service'
 import { OgcClientWmsEndpoint } from './remote-layers.model'
-import { layersService } from '../../services/layers/layers.service'
-import { useTranslation } from 'i18next-vue'
-import DropdownList from '../common/dropdown-list.vue'
-import LayerTreeNode from '../layer-tree/layer-tree-node.vue'
-import { useMapStore } from '../../stores/map.store'
 
 const { t } = useTranslation()
 const mapStore = useMapStore()
@@ -22,6 +24,7 @@ const { layers } = storeToRefs(mapStore)
 
 const wmsLayers: ShallowRef<DropdownOptionModel[]> = shallowRef([])
 const layerTree: ShallowRef<LayerTreeNodeModel | undefined> = shallowRef()
+
 let isLoading = false
 let inputWmsUrl: string
 let currentWmsUrl: string

@@ -1,14 +1,15 @@
 <script setup lang="ts">
 import { useTranslation } from 'i18next-vue'
 import { computed, Ref, ref, watch } from 'vue'
+
 import {
   BLANK_BACKGROUNDLAYER,
   IBackgroundLayer,
-} from '../../services/background-layer/background-layer.model'
-import { backgroundLayerService } from '../../services/background-layer/background-layer.service'
+} from '@/services/background-layer/background-layer.model'
+import { backgroundLayerService } from '@/services/background-layer/background-layer.service'
+import { useThemeStore } from '@/stores/config.store'
+import { useMapStore } from '@/stores/map.store'
 import BackgroundSelectorItem from './background-selector-item.vue'
-import { useThemeStore } from '../../stores/config.store'
-import { useMapStore } from '../../stores/map.store'
 
 const { t } = useTranslation()
 const mapStore = useMapStore()

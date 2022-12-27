@@ -1,8 +1,8 @@
 import { acceptHMRUpdate, defineStore } from 'pinia'
-import type { ShallowRef } from 'vue'
-import { computed, ref, shallowRef } from 'vue'
-import { themesApi } from '../services/themes/themes.api'
-import { ConfigModel } from '../services/themes/themes.model'
+import { computed, ref, shallowRef, ShallowRef } from 'vue'
+
+import { themesApi } from '@/services/themes/themes.api'
+import { ConfigModel } from '@/services/themes/themes.model'
 
 export const useThemeStore = defineStore(
   'config',

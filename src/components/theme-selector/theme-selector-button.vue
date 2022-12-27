@@ -1,7 +1,8 @@
 <script setup lang="ts">
 import { computed } from 'vue'
 import { useTranslation } from 'i18next-vue'
-import { ThemeNodeModel } from '../../services/themes/themes.model'
+
+import { ThemeNodeModel } from '@/services/themes/themes.model'
 
 const { t } = useTranslation()
 const props = defineProps<{

@@ -1,14 +1,15 @@
 <script setup lang="ts">
 import { storeToRefs } from 'pinia'
 import { ShallowRef, shallowRef, watchEffect } from 'vue'
-import { layersService } from '../../services/layers/layers.service'
-import { ThemeNodeModel } from '../../services/themes/themes.model'
-import { useThemeStore } from '../../stores/config.store'
-import { useMapStore } from '../../stores/map.store'
-import LayerTreeNode from '../layer-tree/layer-tree-node.vue'
-import { themesToLayerTree } from '../layer-tree/layer-tree.mapper'
-import type { LayerTreeNodeModel } from '../layer-tree/layer-tree.model'
-import { layerTreeService } from '../layer-tree/layer-tree.service'
+
+import { layersService } from '@/services/layers/layers.service'
+import { ThemeNodeModel } from '@/services/themes/themes.model'
+import { useThemeStore } from '@/stores/config.store'
+import { useMapStore } from '@/stores/map.store'
+import LayerTreeNode from '@/components/layer-tree/layer-tree-node.vue'
+import { themesToLayerTree } from '@/components/layer-tree/layer-tree.mapper'
+import type { LayerTreeNodeModel } from '@/components/layer-tree/layer-tree.model'
+import { layerTreeService } from '@/components/layer-tree/layer-tree.service'
 
 const mapStore = useMapStore()
 const themeStore = useThemeStore()

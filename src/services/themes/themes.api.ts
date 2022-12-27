@@ -1,4 +1,4 @@
-import { themesApiFixture } from '../../__fixtures__/themes.api.fixture'
+import { themesApiFixture } from '@/__fixtures__/themes.api.fixture'
 import type { ConfigModel } from './themes.model'
 
 class ThemesApi {
