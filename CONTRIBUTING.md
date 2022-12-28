@@ -6,15 +6,8 @@
 
 For an element `catalog`,
 
-- the name of the file is `catalog.element.ts` in kebab-case.
-- the selector is prefixed by `lux-`
-- the class name is `CatalogElement`
-
-```ts
-// catalog.element.ts
-@customElement('lux-catalog')
-export default class CatalogElement extends LitElement {}
-```
+- the name of the file is `catalog.vue` in kebab-case.
+- the class name is `Catalog`
 
 ### Services
 
@@ -40,43 +33,55 @@ Rules
 - For now, there is only one smart component per folder, and must have the same name.
 - A model file eg. `catalog.model.ts` gathers all models for the feature
 - Reused components (hopefully dumb ones) are gathered under `common` folder
-- Most of the layout of the application goes in the root `app.element.ts`
-- Statefull services are shared under the `states` folder as singletons. They are suffixed with `.state` eg `map.state.ts`.
+- Most of the layout of the application goes in the root `App.vue`
+- Statefull services are shared under the `stores` folder as singletons. They are suffixed with `.store` eg `map.store.ts`.
 - Shared Stateless services are under the `services` folder. They are suffixed with `.service` eg `map.service.ts`.
 
 ```
 - components
   - common
     - dropdown
-      - dropdown.element.ts
+      - dropdown.vue
+      - dropdown.spec.ts
       - dropdown.model.ts
    - layer-tree
-      - layer-tree.element.ts
+      - layer-tree.vue
+      - layer-tree.spec.ts
       - layer-tree.model.ts
       - layer-tree.service.ts
+      - layer-tree.service.spec.ts
   - catalog
-    - catalog.element.ts
+    - catalog.vue
+    - catalog.spec
   - background-selector
   - themes-selector
     - themes-selector.model.ts
-    - themes-selector.element.ts
+    - themes-selector.vue
+    - themes-selector.spec.ts
     - theme-grid.model.ts
-    - theme-grid.element.ts
-    - theme-selector-button.element.ts
+    - theme-grid.vue
+    - theme-grid.spec.ts
+    - theme-selector-button.vue
+    - theme-selector-button.spec.ts
   - remote-layer
-  app.element.ts
+  App.vue
 - services
   - map
     - ol.service.ts
+    - ol.service.spec.ts
     - ol.synchronizer.ts
+    - ol.synchronizer.spec.ts
     - map.service.ts
-- state
+    - map.service.spec.ts
+- stores
   - map
     - map.state.model.ts
-    - map.state.ts
+    - map.store.ts
+    - map.store.spec.ts
   - themes
-    - themes.state.model.ts
-    - themes.state.ts
+    - themes.store.model.ts
+    - themes.store.ts
+    - themes.store.spec.ts
 ```
 
 ### Tests
@@ -92,6 +97,5 @@ Put the test file beside the code file with `.spec` suffix eg.
 
 ### Syntax
 
-- all `Observables` and `Subjects` must end with `$`
 - private variables are not suffixed nor prefixed with `_` eg. `private item: Item`
 - models are not suffixed with `Model` eg. `interface Layer { }`
