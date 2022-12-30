@@ -1,4 +1,4 @@
-import type { ConfigModel } from '../../src/services/themes/themes.model'
+import type { ConfigModel } from '../composables/themes/themes.model'
 
 export const themesApiFixture = (): ConfigModel => ({
   ogcServers: {

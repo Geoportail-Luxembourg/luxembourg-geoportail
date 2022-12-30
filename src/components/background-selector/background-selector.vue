@@ -5,13 +5,14 @@ import { computed, Ref, ref, watch } from 'vue'
 import {
   BLANK_BACKGROUNDLAYER,
   IBackgroundLayer,
-} from '@/services/background-layer/background-layer.model'
-import { backgroundLayerService } from '@/services/background-layer/background-layer.service'
+} from '@/composables/background-layer/background-layer.model'
+import useBackgroundLayer from '@/composables/background-layer/background-layer.composable'
 import { useThemeStore } from '@/stores/config.store'
 import { useMapStore } from '@/stores/map.store'
 import BackgroundSelectorItem from './background-selector-item.vue'
 
 const { t } = useTranslation()
+const backgroundLayer = useBackgroundLayer()
 const mapStore = useMapStore()
 const themeStore = useThemeStore()
 const props = defineProps({
@@ -35,14 +36,12 @@ watch(
   () => themeStore.bgLayers,
   bgLayersContext => {
     if (props.activeLayerId === void 0) {
-      backgroundLayerService.setBgLayer(
-        backgroundLayerService.getDefaultSelectedId()
-      )
+      backgroundLayer.setBgLayer(backgroundLayer.getDefaultSelectedId())
     }
 
     bgLayers.value =
       bgLayersContext.length > 0
-        ? backgroundLayerService.getBgLayersFromConfig()
+        ? backgroundLayer.getBgLayersFromConfig()
         : [BLANK_BACKGROUNDLAYER]
   },
   { immediate: true }
@@ -73,7 +72,7 @@ watch(
 )
 
 function setBackgroundLayer(layer: IBackgroundLayer) {
-  backgroundLayerService.setBgLayer(layer.id)
+  backgroundLayer.setBgLayer(layer.id)
   isOpen.value = false
 }
 

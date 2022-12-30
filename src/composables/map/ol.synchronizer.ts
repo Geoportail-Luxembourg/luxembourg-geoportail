@@ -1,15 +1,18 @@
 import { watch } from 'vue'
 import type OlMap from 'ol/Map'
-import { openLayersService } from './ol.service'
+import useOpenLayers from './ol.composable'
 
 import { Layer } from '@/stores/map.store.model'
 import { useMapStore } from '@/stores/map.store'
-import { mapService } from './map.service'
+import useMap from './map.composable'
 
 export class OlSynchronizer {
   previousLayers: Layer[]
   constructor(map: OlMap) {
     const mapStore = useMapStore()
+    const mapService = useMap()
+    const openLayers = useOpenLayers()
+
     watch(
       () => mapStore.layers,
       layers => {
@@ -35,24 +38,18 @@ export class OlSynchronizer {
           oldContext
         )
 
-        removedLayers.forEach(layer =>
-          openLayersService.removeLayer(map, layer.id)
-        )
+        removedLayers.forEach(layer => openLayers.removeLayer(map, layer.id))
 
         addedLayerComparisons.forEach(cmp =>
-          openLayersService.addLayer(map, cmp.layer)
+          openLayers.addLayer(map, cmp.layer)
         )
 
         mutatedLayerComparisons.forEach(layer => {
-          openLayersService.setLayerOpacity(
-            map,
-            layer.id,
-            layer.opacity as number
-          )
+          openLayers.setLayerOpacity(map, layer.id, layer.opacity as number)
         })
 
         if (newContext.layers) {
-          openLayersService.reorderLayers(map, newContext.layers)
+          openLayers.reorderLayers(map, newContext.layers)
         }
 
         this.previousLayers = layers
@@ -61,7 +58,7 @@ export class OlSynchronizer {
 
     watch(
       () => mapStore.bgLayer,
-      bgLayer => openLayersService.setBgLayer(map, bgLayer)
+      bgLayer => openLayers.setBgLayer(map, bgLayer)
     )
   }
 }

@@ -1,6 +1,5 @@
 <script setup lang="ts">
-import { storeToRefs } from 'pinia'
-import { shallowRef, ShallowRef, watch } from 'vue'
+import { shallowRef, ShallowRef, watchEffect } from 'vue'
 import { useTranslation } from 'i18next-vue'
 
 import { useMapStore } from '@/stores/map.store'
@@ -9,7 +8,7 @@ import { DropdownOptionModel } from '@/components/common/dropdown-list.model'
 import LayerTreeNode from '@/components/layer-tree/layer-tree-node.vue'
 import { LayerTreeNodeModel } from '@/components/layer-tree/layer-tree.model'
 import { layerTreeService } from '@/components/layer-tree/layer-tree.service'
-import { layersService } from '@/services/layers/layers.service'
+import useLayers from '@/composables/layers/layers.composable'
 
 import {
   remoteLayersToLayerTreeMapper,
@@ -20,8 +19,7 @@ import { OgcClientWmsEndpoint } from './remote-layers.model'
 
 const { t } = useTranslation()
 const mapStore = useMapStore()
-const { layers } = storeToRefs(mapStore)
-
+const layers = useLayers()
 const wmsLayers: ShallowRef<DropdownOptionModel[]> = shallowRef([])
 const layerTree: ShallowRef<LayerTreeNodeModel | undefined> = shallowRef()
 
@@ -30,13 +28,13 @@ let inputWmsUrl: string
 let currentWmsUrl: string
 let currentWmsEndpoint: OgcClientWmsEndpoint
 
-watch(layers, updateLayerTree, { immediate: true })
+watchEffect(updateLayerTree)
 
 function updateLayerTree() {
   layerTree.value = layerTree.value
     ? layerTreeService.updateLayers(
         layerTree.value as LayerTreeNodeModel,
-        layers.value
+        mapStore.layers
       )
     : void 0
 }
@@ -72,7 +70,7 @@ async function getWmsLayers() {
   if (remoteLayers && remoteLayers[0]) {
     layerTree.value = layerTreeService.updateLayers(
       remoteLayersToLayerTreeMapper(remoteLayers[0], currentWmsUrl),
-      layers.value
+      mapStore.layers
     )
   }
 }
@@ -110,7 +108,7 @@ function toggleLayer(node: LayerTreeNodeModel) {
     const remoteLayer = wmsEndpoint?.getLayerByName(name)
 
     if (remoteLayer) {
-      const layer = layersService.initLayer(
+      const layer = layers.initLayer(
         remoteLayerToLayer({
           id,
           url: remoteLayersService.getProxyfiedUrl(currentWmsUrl),

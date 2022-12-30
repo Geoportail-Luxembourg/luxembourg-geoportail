@@ -1,9 +1,8 @@
 <script setup lang="ts">
-import { storeToRefs } from 'pinia'
 import { ShallowRef, shallowRef, watchEffect } from 'vue'
 
-import { layersService } from '@/services/layers/layers.service'
-import { ThemeNodeModel } from '@/services/themes/themes.model'
+import useLayers from '@/composables/layers/layers.composable'
+import { ThemeNodeModel } from '@/composables/themes/themes.model'
 import { useThemeStore } from '@/stores/config.store'
 import { useMapStore } from '@/stores/map.store'
 import LayerTreeNode from '@/components/layer-tree/layer-tree-node.vue'
@@ -13,23 +12,22 @@ import { layerTreeService } from '@/components/layer-tree/layer-tree.service'
 
 const mapStore = useMapStore()
 const themeStore = useThemeStore()
-const { theme } = storeToRefs(themeStore)
-const { layers } = storeToRefs(mapStore)
+const layers = useLayers()
 const layerTree: ShallowRef<LayerTreeNodeModel | undefined> = shallowRef()
 
 watchEffect(updateLayerTree)
 
 function updateLayerTree() {
-  if (theme.value && layers.value) {
+  if (themeStore.theme && mapStore.layers) {
     const treeModel =
       layerTree.value &&
-      (layerTree.value.id as unknown as number) === theme.value?.id
+      (layerTree.value.id as unknown as number) === themeStore.theme?.id
         ? layerTree.value
-        : themesToLayerTree(theme.value as ThemeNodeModel)
+        : themesToLayerTree(themeStore.theme as ThemeNodeModel)
 
     layerTree.value = layerTreeService.updateLayers(
       treeModel as LayerTreeNodeModel,
-      layers.value
+      mapStore.layers
     )
   }
 }
@@ -43,7 +41,7 @@ function toggleParent(node: LayerTreeNodeModel) {
 }
 
 function toggleLayer(node: LayerTreeNodeModel) {
-  layersService.toggleLayer(parseInt(node.id, 10), !node.checked)
+  layers.toggleLayer(parseInt(node.id, 10), !node.checked)
 }
 </script>
 

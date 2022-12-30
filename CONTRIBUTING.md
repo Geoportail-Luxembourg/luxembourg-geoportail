@@ -9,18 +9,21 @@ For an element `catalog`,
 - the name of the file is `catalog.vue` in kebab-case.
 - the class name is `Catalog`
 
-### Services
+### Composables
 
-For a service `catalog`,
+For a composable `catalog`,
 
-- the name of the file is `catalog.service.ts` in kebab-case.
-- the class name is `CatalogService`
+- the name of the file is `catalog.composable.ts` in kebab-case.
   Services are mostly exposed as singletons and should be directly instancied.
 
 ```ts
-// catalog.service.ts
-export default class CatalogService {}
-export const catalogService = new CatalogService()
+// catalog.composable.ts
+export default function useCatalog() {
+  ...
+  return {
+    ...
+  }
+}
 ```
 
 ### Organisation
@@ -65,14 +68,14 @@ Rules
     - theme-selector-button.spec.ts
   - remote-layer
   App.vue
-- services
+- composables
   - map
-    - ol.service.ts
-    - ol.service.spec.ts
+    - ol.composable.ts
+    - ol.composable.spec.ts
     - ol.synchronizer.ts
     - ol.synchronizer.spec.ts
-    - map.service.ts
-    - map.service.spec.ts
+    - map.composable.ts
+    - map.composable.spec.ts
 - stores
   - map
     - map.state.model.ts
@@ -86,13 +89,13 @@ Rules
 
 ### Tests
 
-All files (elements, services) must be tested.
+All files (elements, composables) must be tested.
 
 Put the test file beside the code file with `.spec` suffix eg.
 
 ```
-- catalog.service.ts
-- catalog.service.spec.ts
+- catalog.composable.ts
+- catalog.composable.spec.ts
 ```
 
 ### Syntax

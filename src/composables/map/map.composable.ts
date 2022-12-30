@@ -8,11 +8,15 @@ import type {
   MapContext,
 } from '@/stores/map.store.model'
 
-export class MapService {
-  map: OlMap
+let map: OlMap
 
-  createMap(target: string | HTMLElement) {
-    this.map = new OlMap({
+export default function useMap() {
+  function getOlMap() {
+    return map
+  }
+
+  function createMap(target: string | HTMLElement) {
+    map = new OlMap({
       view: new OlView({
         zoom: 10,
         center: [682439, 6379152],
@@ -26,23 +30,23 @@ export class MapService {
     })
   }
 
-  equalsLayer(layerA: Layer, layerB: Layer) {
+  function equalsLayer(layerA: Layer, layerB: Layer) {
     return layerA === layerB
   }
 
-  hasLayer(context: MapContext, layer: Layer) {
-    return context.layers?.some(l => this.equalsLayer(layer, l))
+  function hasLayer(context: MapContext, layer: Layer) {
+    return context.layers?.some(l => equalsLayer(layer, l))
   }
 
-  layerHasChanged(oldContext: MapContext | null, layer: Layer) {
+  function layerHasChanged(oldContext: MapContext | null, layer: Layer) {
     const oldLayer = oldContext?.layers?.find(l => l.id === layer.id)
     return oldLayer === layer
   }
 
-  contextHasChanged = (
+  function contextHasChanged(
     newContext: MapContext,
     oldContext: MapContext | null
-  ) => {
+  ) {
     return !(
       oldContext === null ||
       !('layers' in newContext) ||
@@ -53,7 +57,7 @@ export class MapService {
     )
   }
 
-  getAddedLayers(
+  function getAddedLayers(
     newContext: MapContext,
     oldContext: MapContext | null
   ): LayerComparison[] {
@@ -65,7 +69,7 @@ export class MapService {
     if (newContext.layers === oldContext.layers) return []
     return newContext.layers.reduce(
       (addedLayers: LayerComparison[], layer, i) =>
-        this.hasLayer(oldContext, layer)
+        hasLayer(oldContext, layer)
           ? addedLayers
           : [
               ...addedLayers,
@@ -78,14 +82,14 @@ export class MapService {
     )
   }
 
-  getRemovedLayers(
+  function getRemovedLayers(
     newContext: MapContext,
     oldContext: MapContext | null
   ): Layer[] {
-    if (this.contextHasChanged(newContext, oldContext)) {
+    if (contextHasChanged(newContext, oldContext)) {
       return ((oldContext as MapContext).layers as Layer[]).reduce(
         (prev, layer) =>
-          this.hasLayer(newContext, layer) ? prev : [...prev, layer],
+          hasLayer(newContext, layer) ? prev : [...prev, layer],
         [] as Layer[]
       )
     }
@@ -93,20 +97,30 @@ export class MapService {
     return []
   }
 
-  getMutatedLayers(
+  function getMutatedLayers(
     newContext: MapContext,
     oldContext: MapContext | null
   ): Layer[] {
-    if (this.contextHasChanged(newContext, oldContext)) {
+    if (contextHasChanged(newContext, oldContext)) {
       return (newContext.layers as Layer[]).reduce(
         (prev, layer) =>
-          !this.layerHasChanged(oldContext, layer) ? prev : [...prev, layer],
+          !layerHasChanged(oldContext, layer) ? prev : [...prev, layer],
         [] as Layer[]
       )
     }
 
     return []
   }
-}
 
-export const mapService = new MapService()
+  return {
+    getOlMap,
+    createMap,
+    equalsLayer,
+    hasLayer,
+    layerHasChanged,
+    contextHasChanged,
+    getAddedLayers,
+    getRemovedLayers,
+    getMutatedLayers,
+  }
+}

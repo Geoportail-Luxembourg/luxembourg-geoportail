@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { useLayer } from '@/composables/layer'
 import { Layer } from '@/stores/map.store.model'
-import { IBackgroundLayer } from '@/services/background-layer/background-layer.model'
+import { IBackgroundLayer } from '@/composables/background-layer/background-layer.model'
 
 const props = defineProps<{
   showEditButton: boolean

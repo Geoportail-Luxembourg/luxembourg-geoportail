@@ -5,14 +5,14 @@ import Sortable, { SortableEvent } from 'sortablejs'
 
 import { useMapStore } from '@/stores/map.store'
 import type { Layer, LayerId } from '@/stores/map.store.model'
-import { BLANK_BACKGROUNDLAYER } from '@/services/background-layer/background-layer.model'
+import { BLANK_BACKGROUNDLAYER } from '@/composables/background-layer/background-layer.model'
 
 import LayerManagerItemBackground from './layer-item/layer-item-background.vue'
 import LayerManagerItem from './layer-item/layer-item.vue'
 
 const mapStore = useMapStore()
-const { layers: layersContext, bgLayer } = storeToRefs(mapStore)
-const layers = computed(() => [...layersContext.value].reverse())
+const { bgLayer } = storeToRefs(mapStore)
+const layers = computed(() => [...mapStore.layers].reverse())
 const isLayerOpenId: ShallowRef<LayerId | undefined> = shallowRef()
 const draggableClassName = 'drag-handle'
 

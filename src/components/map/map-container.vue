@@ -1,15 +1,16 @@
 <script setup lang="ts">
 import { onMounted, ref } from 'vue'
 
-import { mapService } from '@/services/map/map.service'
-import { OlSynchronizer } from '@/services/map/ol.synchronizer'
+import useMap from '@/composables/map/map.composable'
+import { OlSynchronizer } from '@/composables/map/ol.synchronizer'
 
+const map = useMap()
 const mapContainer = ref(null)
 
 onMounted(async () => {
   if (mapContainer.value) {
-    mapService.createMap(mapContainer.value)
-    new OlSynchronizer(mapService.map)
+    map.createMap(mapContainer.value)
+    new OlSynchronizer(map.getOlMap())
   }
 })
 </script>

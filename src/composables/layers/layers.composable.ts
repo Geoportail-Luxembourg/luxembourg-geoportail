@@ -3,10 +3,12 @@ import i18next from 'i18next'
 import type { Layer } from '@/stores/map.store.model'
 import { useMapStore } from '@/stores/map.store'
 import { useThemeStore } from '@/stores/config.store'
-import { themesService } from '@/services/themes/themes.service'
+import useThemes from '@/composables/themes/themes.composable'
 
-export class LayersService {
-  private hasIntersect(exclusionA: string, exclusionB: string) {
+const themes = useThemes()
+
+export default function useLayers() {
+  function hasIntersect(exclusionA: string, exclusionB: string) {
     try {
       const concat: number[] = JSON.parse(exclusionA)
         .concat(JSON.parse(exclusionB))
@@ -20,19 +22,19 @@ export class LayersService {
     }
   }
 
-  initLayer(layer: Layer) {
+  function initLayer(layer: Layer) {
     layer.opacity = layer.previousOpacity = layer.metadata?.start_opacity ?? 1
     return layer
   }
 
-  handleExclusionLayers(layer: Layer) {
+  function handleExclusionLayers(layer: Layer) {
     if (!layer.metadata?.exclusion) {
       return
     }
 
     const mapStore = useMapStore()
     const excludedLayers = mapStore.layers.filter(_layer =>
-      this.hasIntersect(
+      hasIntersect(
         layer?.metadata?.exclusion as string,
         _layer?.metadata?.exclusion as string
       )
@@ -57,11 +59,11 @@ export class LayersService {
     }
   }
 
-  toggleLayer(id: number, show = true) {
+  function toggleLayer(id: number, show = true) {
     const themeStore = useThemeStore()
     const mapStore = useMapStore()
 
-    const layer = <Layer>themesService.findById(id, themeStore.theme)
+    const layer = <Layer>themes.findById(id, themeStore.theme)
 
     if (layer) {
       const linkedLayers = layer.metadata?.linked_layers || []
@@ -69,19 +71,23 @@ export class LayersService {
       if (show === false) {
         mapStore.removeLayers(layer.id as unknown as string, ...linkedLayers)
       } else {
-        this.handleExclusionLayers(layer)
+        handleExclusionLayers(layer)
 
         mapStore.addLayers(
-          this.initLayer(layer),
+          initLayer(layer),
           ...linkedLayers.map(layerId =>
-            this.initLayer(
-              themesService.findById(parseInt(layerId, 10)) as unknown as Layer
+            initLayer(
+              themes.findById(parseInt(layerId, 10)) as unknown as Layer
             )
           )
         )
       }
     }
   }
-}
 
-export const layersService = new LayersService()
+  return {
+    initLayer,
+    handleExclusionLayers,
+    toggleLayer,
+  }
+}

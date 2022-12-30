@@ -4,7 +4,7 @@ import type TileLayer from 'ol/layer/Tile'
 import type OlMap from 'ol/Map'
 import { ImageWMS, WMTS } from 'ol/source'
 
-import { createBgWmtsLayer } from '@/services/background-layer/background-layer.wmts-helper'
+import { createBgWmtsLayer } from '@/composables/background-layer/background-layer.wmts-helper'
 import { layersCache } from '@/stores/layers.cache'
 import type { Layer, LayerId } from '@/stores/map.store.model'
 
@@ -37,8 +37,8 @@ function createWmsLayer(layer: Layer): ImageLayer<ImageWMS> {
   return olLayer
 }
 
-export class OpenLayersService {
-  createLayer(spec: Layer): ImageLayer<ImageWMS> | TileLayer<WMTS> {
+export default function useOpenLayers() {
+  function createLayer(spec: Layer): ImageLayer<ImageWMS> | TileLayer<WMTS> {
     let layer
     switch (spec.type) {
       case 'WMS': {
@@ -63,12 +63,12 @@ export class OpenLayersService {
     return layer
   }
 
-  addLayer(olMap: OlMap, layer: Layer) {
-    const baseLayer = this.getLayerFromCache(layer)
+  function addLayer(olMap: OlMap, layer: Layer) {
+    const baseLayer = getLayerFromCache(layer)
     olMap.addLayer(baseLayer)
   }
 
-  removeLayer(olMap: OlMap, layerId: LayerId) {
+  function removeLayer(olMap: OlMap, layerId: LayerId) {
     const layerToRemove = olMap
       .getLayers()
       .getArray()
@@ -78,7 +78,7 @@ export class OpenLayersService {
     }
   }
 
-  reorderLayers(olMap: OlMap, layers: Layer[]) {
+  function reorderLayers(olMap: OlMap, layers: Layer[]) {
     const arrayLayers = olMap.getLayers().getArray()
     layers.forEach((layer, idx) => {
       const baseLayer = arrayLayers.find(
@@ -88,7 +88,7 @@ export class OpenLayersService {
     })
   }
 
-  setLayerOpacity(olMap: OlMap, layerId: LayerId, opacity: number) {
+  function setLayerOpacity(olMap: OlMap, layerId: LayerId, opacity: number) {
     const layer = olMap
       .getLayers()
       .getArray()
@@ -96,15 +96,15 @@ export class OpenLayersService {
     if (layer) layer.setOpacity(opacity)
   }
 
-  getLayerFromCache(layer: Layer): BaseLayer {
+  function getLayerFromCache(layer: Layer): BaseLayer {
     const { id } = layer
 
     return !layersCache.hasOwnProperty(id) || !layersCache[id]
-      ? this.createLayer(layer)
+      ? createLayer(layer)
       : layersCache[id]
   }
 
-  setBgLayer(olMap: OlMap, bgLayer: Layer | null) {
+  function setBgLayer(olMap: OlMap, bgLayer: Layer | null) {
     const mapLayers = olMap.getLayers()
     const currentBgLayerPos = mapLayers
       .getArray()
@@ -112,7 +112,7 @@ export class OpenLayersService {
 
     if (currentBgLayerPos >= 0) {
       if (bgLayer) {
-        const bgBaseLayer = this.getLayerFromCache(bgLayer)
+        const bgBaseLayer = getLayerFromCache(bgLayer)
         bgBaseLayer.setZIndex(-1)
         mapLayers.setAt(currentBgLayerPos, bgBaseLayer)
       } else {
@@ -120,12 +120,20 @@ export class OpenLayersService {
       }
     } else {
       if (bgLayer) {
-        const bgBaseLayer = this.getLayerFromCache(bgLayer)
+        const bgBaseLayer = getLayerFromCache(bgLayer)
         bgBaseLayer.setZIndex(-1)
         olMap.addLayer(bgBaseLayer)
       }
     }
   }
-}
 
-export const openLayersService = new OpenLayersService()
+  return {
+    createLayer,
+    addLayer,
+    removeLayer,
+    reorderLayers,
+    setLayerOpacity,
+    getLayerFromCache,
+    setBgLayer,
+  }
+}

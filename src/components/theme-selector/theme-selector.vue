@@ -2,17 +2,23 @@
 import { ShallowRef, shallowRef, watch } from 'vue'
 import { storeToRefs } from 'pinia'
 
-import { ThemeNodeModel } from '@/services/themes/themes.model'
-import { themesService } from '@/services/themes/themes.service'
+import useThemes from '@/composables/themes/themes.composable'
 import { useThemeStore } from '@/stores/config.store'
 
 import ThemeGrid from './theme-grid.vue'
 import ThemeSelectorButton from './theme-selector-button.vue'
 import { themeSelectorService } from './theme-selector.service'
+import { computed } from 'vue'
 
 const themeStore = useThemeStore()
-const { theme, themes } = storeToRefs(themeStore)
-const themesRef: ShallowRef<ThemeNodeModel[]> = shallowRef([])
+const themesService = useThemes()
+const { theme, themes: themesFromStore } = storeToRefs(themeStore)
+const themes = computed(
+  () =>
+    themesFromStore.value?.filter(
+      theme => theme.metadata?.display_in_switcher === true
+    ) || []
+)
 const isOpenRef: ShallowRef<boolean> = shallowRef(false)
 const emit = defineEmits(['toggleThemesGrid'])
 
@@ -21,18 +27,6 @@ watch(
   theme => {
     if (theme) {
       themeSelectorService.setCurrentThemeColors(theme)
-    }
-  },
-  { immediate: true }
-)
-
-watch(
-  themes,
-  themes => {
-    if (themes) {
-      themesRef.value = themes.filter(
-        theme => theme.metadata?.display_in_switcher === true
-      )
     }
   },
   { immediate: true }
@@ -51,7 +45,7 @@ function setTheme(themeName: string) {
 <template>
   <theme-selector-button
     @click="toggleThemesGrid"
-    :themes="themesRef"
+    :themes="themes"
     :currentTheme="theme"
     :isOpen="isOpenRef"
   ></theme-selector-button>
@@ -59,6 +53,6 @@ function setTheme(themeName: string) {
     class="absolute inset-x-0 top-14 bottom-0 mt-1 bg-primary overflow-y-auto overflow-x-hidden"
     v-if="isOpenRef"
   >
-    <theme-grid @set-theme="setTheme" :themes="themesRef"></theme-grid>
+    <theme-grid @set-theme="setTheme" :themes="themes"></theme-grid>
   </div>
 </template>

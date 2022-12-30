@@ -22,7 +22,6 @@ function onClickOpenBtn(event: MouseEvent) {
 
 function onClickItem(event: MouseEvent) {
   selectedValue.value = (event.target as HTMLElement).dataset.value
-
   emit('change', selectedValue.value)
 }
 
@@ -30,10 +29,7 @@ function onClickOutsideOpenBtn() {
   toggleDropdown(false)
 }
 
-onMounted(() => {
-  document.addEventListener('click', onClickOutsideOpenBtn)
-})
-
+onMounted(() => document.addEventListener('click', onClickOutsideOpenBtn))
 onUnmounted(() => document.removeEventListener('click', onClickOutsideOpenBtn))
 </script>
 
