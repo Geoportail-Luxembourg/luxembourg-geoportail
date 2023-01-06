@@ -28,6 +28,12 @@ export default function useThemes() {
     return bgLayers.find(l => l.id === id)
   }
 
+  function findBgLayerByName(name: string) {
+    const { bgLayers } = useThemeStore()
+
+    return bgLayers.find(l => l.name === name)
+  }
+
   function setTheme(name: string) {
     const { setTheme } = useThemeStore()
 
@@ -41,6 +47,7 @@ export default function useThemes() {
   return {
     findById,
     findBgLayerById,
+    findBgLayerByName,
     setTheme,
     fetchThemes,
   }

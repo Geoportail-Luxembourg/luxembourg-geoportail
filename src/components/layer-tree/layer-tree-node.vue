@@ -97,7 +97,7 @@ function toggleParent(node: LayerTreeNodeModel) {
         class="fa-solid"
         :class="node.checked ? 'fa-check-square' : 'fa-square'"
       ></i>
-      <span class="ml-1 hover:underline">{{ label }}</span>
+      <span class="ml-1 hover:underline">{{ node.id }}{{ label }}</span>
     </button>
   </div>
 </template>

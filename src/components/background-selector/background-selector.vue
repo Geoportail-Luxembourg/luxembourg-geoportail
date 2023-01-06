@@ -9,12 +9,17 @@ import {
 import useBackgroundLayer from '@/composables/background-layer/background-layer.composable'
 import { useThemeStore } from '@/stores/config.store'
 import { useMapStore } from '@/stores/map.store'
+import useStatePersistor from '@/composables/state-persistor/state-persistor.composable'
 import BackgroundSelectorItem from './background-selector-item.vue'
 
 const { t } = useTranslation()
 const backgroundLayer = useBackgroundLayer()
 const mapStore = useMapStore()
 const themeStore = useThemeStore()
+
+const { bootstrapBgLayer } = useStatePersistor()
+bootstrapBgLayer()
+
 const props = defineProps({
   isOpen: {
     type: Boolean,
@@ -68,7 +73,8 @@ watch(
   bgLayerContext => {
     activeLayerId.value =
       (bgLayerContext?.id as number) ?? BLANK_BACKGROUNDLAYER.id
-  }
+  },
+  { immediate: true }
 )
 
 function setBackgroundLayer(layer: IBackgroundLayer) {
