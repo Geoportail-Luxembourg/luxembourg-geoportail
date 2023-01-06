@@ -12,6 +12,7 @@ import LayerManagerItem from './layer-item/layer-item.vue'
 
 const mapStore = useMapStore()
 const { bgLayer } = storeToRefs(mapStore)
+
 const layers = computed(() => [...mapStore.layers].reverse())
 const isLayerOpenId: ShallowRef<LayerId | undefined> = shallowRef()
 const draggableClassName = 'drag-handle'

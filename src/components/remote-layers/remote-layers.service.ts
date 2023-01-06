@@ -6,6 +6,7 @@ import {
   OgcClientWmsEndpoint,
   RemoteWmsEndpointModel,
 } from './remote-layers.model'
+import { LayerId } from '@/stores/map.store.model'
 
 const forceUseProxy = true
 
@@ -32,6 +33,10 @@ export class RemoteLayersService {
 
   async fetchRemoteWmsEndpoint(): Promise<RemoteWmsEndpointModel[]> {
     return new Promise(resolve => resolve(predefinedWmsFixture()))
+  }
+
+  isRemoteLayer(layerId: LayerId) {
+    return typeof layerId === 'string' && layerId.indexOf('WMS') === 0
   }
 }
 
