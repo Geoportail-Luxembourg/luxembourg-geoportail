@@ -1,0 +1,9 @@
+{
+  "extends": "./tsconfig.app.json",
+  "exclude": ["src/**/*.spec.ts"],
+  "compilerOptions": {
+    "composite": true,
+    "lib": [],
+    "types": ["node", "jsdom", "vitest/globals"]
+  }
+}

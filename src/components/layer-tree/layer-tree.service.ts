@@ -1,5 +1,8 @@
-import { Layer } from '../../states/map/map.state.model'
-import { LayerTreeNodeModel, LayerTreeToggleProperty } from './layer-tree.model'
+import type { Layer } from '@/stores/map.store.model'
+import type {
+  LayerTreeNodeModel,
+  LayerTreeToggleProperty,
+} from './layer-tree.model'
 
 export class LayerTreeService {
   toggleNode(

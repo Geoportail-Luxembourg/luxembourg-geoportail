@@ -1,5 +1,5 @@
-import { ThemeNodeModel } from '../../services/themes/themes.model'
-import { LayerTreeNodeModel } from './layer-tree.model'
+import type { ThemeNodeModel } from '@/composables/themes/themes.model'
+import type { LayerTreeNodeModel } from './layer-tree.model'
 
 export function themesToLayerTree(
   node: ThemeNodeModel,

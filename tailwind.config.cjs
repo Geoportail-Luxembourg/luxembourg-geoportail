@@ -30,9 +30,8 @@ const themes = [
   'sig_secours' /*PRIVATE THEME*/,
 ]
 
-/** @type {import('tailwindcss').Config} */
 module.exports = {
-  content: ['index.html', './src/**/*.{html,js,ts}'],
+  content: ['index.html', './src/**/*.{html,js,ts,vue}'],
   theme: {
     container: {
       center: true,
@@ -65,30 +64,38 @@ module.exports = {
         },
       },
       backgroundImage: {
-        route: "url('../../assets/images/backgroundselector/routiere.png')",
-        topo_bw: "url('../../assets/images/backgroundselector/topo_nb.png')",
-        topo: "url('../../assets/images/backgroundselector/topo.png')",
-        ortho: "url('../../assets/images/backgroundselector/orthophoto.png')",
-        hybrid: "url('../../assets/images/backgroundselector/hybrid.png')",
-        route_sm: "url('../../assets/images/backgroundselector/routiere_sm.png')",
-        topo_bw_sm: "url('../../assets/images/backgroundselector/topo_nb_sm.png')",
-        topo_sm: "url('../../assets/images/backgroundselector/topo_sm.png')",
-        ortho_sm: "url('../../assets/images/backgroundselector/orthophoto_sm.png')",
-        hybrid_sm: "url('../../assets/images/backgroundselector/hybrid_sm.png')",
-        route_hi: "url('../../assets/images/backgroundselector/routiere_retina.png')",
-        topo_bw_hi: "url('../../assets/images/backgroundselector/topo_nb_retina.png')",
-        topo_hi: "url('../../assets/images/backgroundselector/topo_retina.png')",
-        ortho_hi: "url('../../assets/images/backgroundselector/orthophoto_retina.png')",
-        hybrid_hi: "url('../../assets/images/backgroundselector/hybrid_retina.png')",
+        route: "url('/src/assets/images/backgroundselector/routiere.png')",
+        topo_bw: "url('/src/assets/images/backgroundselector/topo_nb.png')",
+        topo: "url('/src/assets/images/backgroundselector/topo.png')",
+        ortho: "url('/src/assets/images/backgroundselector/orthophoto.png')",
+        hybrid: "url('/src/assets/images/backgroundselector/hybrid.png')",
+        route_sm:
+          "url('/src/assets/images/backgroundselector/routiere_sm.png')",
+        topo_bw_sm:
+          "url('/src/assets/images/backgroundselector/topo_nb_sm.png')",
+        topo_sm: "url('/src/assets/images/backgroundselector/topo_sm.png')",
+        ortho_sm:
+          "url('/src/assets/images/backgroundselector/orthophoto_sm.png')",
+        hybrid_sm: "url('/src/assets/images/backgroundselector/hybrid_sm.png')",
+        route_hi:
+          "url('/src/assets/images/backgroundselector/routiere_retina.png')",
+        topo_bw_hi:
+          "url('/src/assets/images/backgroundselector/topo_nb_retina.png')",
+        topo_hi: "url('/src/assets/images/backgroundselector/topo_retina.png')",
+        ortho_hi:
+          "url('/src/assets/images/backgroundselector/orthophoto_retina.png')",
+        hybrid_hi:
+          "url('/src/assets/images/backgroundselector/hybrid_retina.png')",
         route_sm_hi:
-          "url('../../assets/images/backgroundselector/routiere_sm_retina.png')",
+          "url('/src/assets/images/backgroundselector/routiere_sm_retina.png')",
         topo_bw_sm_hi:
-          "url('../../assets/images/backgroundselector/topo_nb_sm_retina.png')",
-        topo_sm_hi: "url('../../assets/images/backgroundselector/topo_sm_retina.png')",
+          "url('/src/assets/images/backgroundselector/topo_nb_sm_retina.png')",
+        topo_sm_hi:
+          "url('/src/assets/images/backgroundselector/topo_sm_retina.png')",
         ortho_sm_hi:
-          "url('../../assets/images/backgroundselector/orthophoto_sm_retina.png')",
+          "url('/src/assets/images/backgroundselector/orthophoto_sm_retina.png')",
         hybrid_sm_hi:
-          "url('../../assets/images/backgroundselector/hybrid_sm_retina.png')",
+          "url('/src/assets/images/backgroundselector/hybrid_sm_retina.png')",
       },
       content: {
         main: '"\\e02d"',
