@@ -3,7 +3,11 @@
 describe('Lux logo test', () => {
   it('visits the app root url', () => {
     cy.visit('/')
-    cy.get('header').find('div').find('img').should('have.attr', 'src').should('contain', 'gov-light')
+    cy.get('header')
+      .find('div')
+      .find('img')
+      .should('have.attr', 'src')
+      .should('contain', 'gov-light')
     // cy.contains('body').contains('div').contains('div').contains('header').contains('div').contains('img')
   })
 })

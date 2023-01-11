@@ -13,6 +13,6 @@ export default defineConfig({
       // It's IMPORTANT to return the config object
       // with any changed environment variables
       return config
-    }
+    },
   },
 })
