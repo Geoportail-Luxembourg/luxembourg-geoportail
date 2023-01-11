@@ -24,3 +24,6 @@ jobs:
       - run: npm run lint
       - run: npm run build
       - run: npm run test:unit:ci
+      - run: npm run test:e2e:ci
+      - run: npx nyc report
+
