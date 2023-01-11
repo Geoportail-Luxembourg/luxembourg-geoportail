@@ -83,7 +83,8 @@ function toggleSelector() {
 
 <template>
   <div class="flex flex-row-reverse">
-    <div data-cy="selected-bg"
+    <div
+      data-cy="selected-bg"
       class="lux-bg-sel border border-black"
       :class="isOpen === true ? 'hidden' : 'block'"
     >
@@ -95,7 +96,10 @@ function toggleSelector() {
       >
       </background-selector-item>
     </div>
-    <div data-cy="available-bgs" :class="isOpen === true ? 'flex flex-col md:flex-row' : 'hidden'">
+    <div
+      data-cy="available-bgs"
+      :class="isOpen === true ? 'flex flex-col md:flex-row' : 'hidden'"
+    >
       <div
         v-for="layer in bgLayers"
         :key="layer.id"
