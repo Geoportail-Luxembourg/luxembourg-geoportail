@@ -8,6 +8,7 @@ import {
   isoLang2To3,
   stringToHtml,
 } from './layer-metadata.utils'
+import useWmsHelper from '../common/wms-helper.composable'
 import useThemes from '../themes/themes.composable'
 
 export default function useLayerMetadata() {
@@ -17,6 +18,7 @@ export default function useLayerMetadata() {
   // TODO: get from config or relative
   const localMetadataBaseUrl = 'https://map.geoportail.lu/getMetadata'
   const themes = useThemes()
+  const wmsHelper = useWmsHelper()
   const { i18next } = useTranslation()
 
   async function getLayerMetadata(
@@ -32,6 +34,12 @@ export default function useLayerMetadata() {
         serviceType: values[0],
         wmsUrl: values[1],
         layerName: values[2],
+      }
+      if (idValues.serviceType === 'WMS') {
+        metadata = await wmsHelper.getMetadata(idValues)
+      } else if (idValues.serviceType == 'WMTS') {
+        // TODO: handle WMTS
+        // metadata = appWmtsHelper.getMetadata(metadataUid)
       }
     } else {
       localMetadata = layer.metadata
