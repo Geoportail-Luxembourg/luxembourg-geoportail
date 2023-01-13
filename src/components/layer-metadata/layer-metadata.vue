@@ -1,9 +1,11 @@
 <script setup lang="ts">
+import useFormatting from '@/composables/common/formatting.composable'
 import { LayerMetadataModel } from '@/composables/layer-metadata/layer-metadata.model'
 import { useTranslation } from 'i18next-vue'
 import LayerMetadataItem from './layer-metadata-item.vue'
 
 const { t } = useTranslation()
+const format = useFormatting()
 
 defineProps<{
   layerMetadata: LayerMetadataModel
@@ -47,6 +49,11 @@ function closeLayerMetadata() {
         <layer-metadata-item
           :label="t('Url vers la resource')"
           :value="t(`${layerMetadata.link?.join(',')}`)"
+        ></layer-metadata-item>
+        <layer-metadata-item
+          v-if="layerMetadata.revisionDate"
+          :label="t('Revision date')"
+          :value="format.formatDate(layerMetadata.revisionDate)"
         ></layer-metadata-item>
         <layer-metadata-item
           :label="t('Keywords')"
