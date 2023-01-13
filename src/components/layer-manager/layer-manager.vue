@@ -9,6 +9,11 @@ import { BLANK_BACKGROUNDLAYER } from '@/composables/background-layer/background
 
 import LayerManagerItemBackground from './layer-item/layer-item-background.vue'
 import LayerManagerItem from './layer-item/layer-item.vue'
+import { LayerTreeNodeModel } from '../layer-tree/layer-tree.model'
+import { useTranslation } from 'i18next-vue'
+import LayerMetadata from '../layer-metadata/layer-metadata.vue'
+import useLayerMetadata from '@/composables/layer-metadata/layer-metadata.composable'
+import { LayerMetadataModel } from '@/composables/layer-metadata/layer-metadata.model'
 
 const mapStore = useMapStore()
 const { bgLayer } = storeToRefs(mapStore)
@@ -51,12 +56,39 @@ function toggleInfoLayer() {
   console.info('clickInfo to implement')
 }
 
+const { i18next } = useTranslation()
+const layerMetadataComposable = useLayerMetadata()
+const metadata: ShallowRef<LayerMetadataModel | undefined> = shallowRef()
+const displayedMetadataNode: ShallowRef<LayerTreeNodeModel | undefined> =
+  shallowRef()
+
+async function displayLayerMetadata(node: LayerTreeNodeModel) {
+  metadata.value = await layerMetadataComposable.getLayerMetadata(node)
+  displayedMetadataNode.value = node
+}
+
+onMounted(() => {
+  i18next.on('languageChanged', () => {
+    if (displayedMetadataNode.value)
+      displayLayerMetadata(displayedMetadataNode.value)
+  })
+})
+
+function closeLayerMetadata() {
+  metadata.value = undefined
+}
+
 function toggleEditionLayer() {
   console.info('clickEdit to implement')
 }
 </script>
 
 <template>
+  <layer-metadata
+    v-if="metadata"
+    :layer-metadata="metadata"
+    @close-layer-metadata="closeLayerMetadata"
+  ></layer-metadata>
   <ul id="sortable-layers">
     <li v-for="layer in layers" :key="layer.id" :id="(layer.id as string)">
       <layer-manager-item
@@ -65,7 +97,7 @@ function toggleEditionLayer() {
         :isOpen="isLayerOpenId === layer.id"
         @clickRemove="removeLayer"
         @clickToggle="toggleAccordionItem"
-        @clickInfo="toggleInfoLayer"
+        @clickInfo="displayLayerMetadata"
         @changeOpacity="changeOpacityLayer"
       >
       </layer-manager-item>
