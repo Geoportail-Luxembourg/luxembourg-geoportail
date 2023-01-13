@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { ShallowRef, shallowRef, watchEffect } from 'vue'
+import { ShallowRef, shallowRef, watchEffect, onMounted } from 'vue'
 
 import useLayers from '@/composables/layers/layers.composable'
 import { ThemeNodeModel } from '@/composables/themes/themes.model'
@@ -9,6 +9,10 @@ import LayerTreeNode from '@/components/layer-tree/layer-tree-node.vue'
 import { themesToLayerTree } from '@/components/layer-tree/layer-tree.mapper'
 import type { LayerTreeNodeModel } from '@/components/layer-tree/layer-tree.model'
 import { layerTreeService } from '@/components/layer-tree/layer-tree.service'
+import useLayerMetadata from '@/composables/layer-metadata/layer-metadata.composable'
+import LayerMetadata from '../layer-metadata/layer-metadata.vue'
+import { LayerMetadataModel } from '@/composables/layer-metadata/layer-metadata.model'
+import { useTranslation } from 'i18next-vue'
 
 const mapStore = useMapStore()
 const themeStore = useThemeStore()
@@ -43,13 +47,41 @@ function toggleParent(node: LayerTreeNodeModel) {
 function toggleLayer(node: LayerTreeNodeModel) {
   layers.toggleLayer(parseInt(node.id, 10), !node.checked)
 }
+
+const { i18next } = useTranslation()
+const layerMetadataComposable = useLayerMetadata()
+const metadata: ShallowRef<LayerMetadataModel | undefined> = shallowRef()
+const displayedMetadataNode: ShallowRef<LayerTreeNodeModel | undefined> =
+  shallowRef()
+
+async function displayLayerMetadata(node: LayerTreeNodeModel) {
+  metadata.value = await layerMetadataComposable.getLayerMetadata(node)
+  displayedMetadataNode.value = node
+}
+
+onMounted(() => {
+  i18next.on('languageChanged', () => {
+    if (displayedMetadataNode.value)
+      displayLayerMetadata(displayedMetadataNode.value)
+  })
+})
+
+function closeLayerMetadata() {
+  metadata.value = undefined
+}
 </script>
 
 <template>
+  <layer-metadata
+    v-if="metadata"
+    :layer-metadata="metadata"
+    @close-layer-metadata="closeLayerMetadata"
+  ></layer-metadata>
   <layer-tree-node
     v-if="layerTree"
     :node="layerTree"
     :key="layerTree.id"
+    @display-layer-metadata="displayLayerMetadata"
     @toggle-parent="toggleParent"
     @toggle-layer="toggleLayer"
   ></layer-tree-node>

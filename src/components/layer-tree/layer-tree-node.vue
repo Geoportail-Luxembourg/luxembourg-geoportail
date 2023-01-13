@@ -10,6 +10,7 @@ const props = defineProps<{
 const emit = defineEmits<{
   (e: 'toggleLayer', node: LayerTreeNodeModel): void
   (e: 'toggleParent', node: LayerTreeNodeModel): void
+  (e: 'displayLayerMetadata', node: LayerTreeNodeModel): void
 }>()
 
 const { t } = useTranslation()
@@ -24,6 +25,10 @@ function toggleLayer(node: LayerTreeNodeModel) {
 
 function toggleParent(node: LayerTreeNodeModel) {
   emit('toggleParent', node)
+}
+
+function displayLayerMetadata(node: LayerTreeNodeModel) {
+  emit('displayLayerMetadata', node)
 }
 </script>
 
@@ -81,12 +86,14 @@ function toggleParent(node: LayerTreeNodeModel) {
         :node="child"
         @toggle-parent="toggleParent($event)"
         @toggle-layer="toggleLayer($event)"
+        @display-layer-metadata="displayLayerMetadata($event)"
       ></layer-tree-node>
     </div>
   </div>
   <div v-else class="flex text-tertiary pr-2">
     <button
       class="self-start before:text-[.85rem] before:transform before:translate-y-[.1rem] before:inline-block before:content-['\f129'] fa-solid fa-fw fa-fh fa-info"
+      @click="displayLayerMetadata(node)"
     ></button>
     <button
       class="w-full text-left"
