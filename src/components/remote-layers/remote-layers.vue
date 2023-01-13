@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { shallowRef, ShallowRef, watchEffect } from 'vue'
+import { shallowRef, ShallowRef, watchEffect, onMounted } from 'vue'
 import { useTranslation } from 'i18next-vue'
 
 import { useMapStore } from '@/stores/map.store'
@@ -16,6 +16,9 @@ import {
 } from './remote-layers.mapper'
 import { remoteLayersService } from './remote-layers.service'
 import { OgcClientWmsEndpoint } from './remote-layers.model'
+import LayerMetadata from '../layer-metadata/layer-metadata.vue'
+import useLayerMetadata from '@/composables/layer-metadata/layer-metadata.composable'
+import { LayerMetadataModel } from '@/composables/layer-metadata/layer-metadata.model'
 
 const { t } = useTranslation()
 const mapStore = useMapStore()
@@ -120,9 +123,36 @@ function toggleLayer(node: LayerTreeNodeModel) {
     }
   }
 }
+
+const { i18next } = useTranslation()
+const layerMetadataComposable = useLayerMetadata()
+const metadata: ShallowRef<LayerMetadataModel | undefined> = shallowRef()
+const displayedMetadataNode: ShallowRef<LayerTreeNodeModel | undefined> =
+  shallowRef()
+
+async function displayLayerMetadata(node: LayerTreeNodeModel) {
+  metadata.value = await layerMetadataComposable.getLayerMetadata(node)
+  displayedMetadataNode.value = node
+}
+
+onMounted(() => {
+  i18next.on('languageChanged', () => {
+    if (displayedMetadataNode.value)
+      displayLayerMetadata(displayedMetadataNode.value)
+  })
+})
+
+function closeLayerMetadata() {
+  metadata.value = undefined
+}
 </script>
 
 <template>
+  <layer-metadata
+    v-if="metadata"
+    :layer-metadata="metadata"
+    @close-layer-metadata="closeLayerMetadata"
+  ></layer-metadata>
   <div
     class="absolute right-0 top-52 z-50 bg-white lux-modal w-[600px]"
     role="dialog"
@@ -185,6 +215,7 @@ function toggleLayer(node: LayerTreeNodeModel) {
           :node="layerTree"
           @toggle-parent="toggleParent"
           @toggle-layer="toggleLayer"
+          @display-layer-metadata="displayLayerMetadata"
         ></layer-tree-node>
       </div>
     </div>
