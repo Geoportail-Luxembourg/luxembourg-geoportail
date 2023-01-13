@@ -24,14 +24,56 @@ export default function useLayerMetadata() {
   async function getLayerMetadata(
     node: LayerTreeNodeModel
   ): Promise<LayerMetadataModel> {
-    const layer: ThemeNodeModel = themes.findById(parseInt(node.id, 10))
+    const layer: ThemeNodeModel | undefined = themes.findById(
+      parseInt(node.id, 10)
+    )
     let localMetadata
     let metadata
-    if (!layer) {
+    if (layer) {
+      localMetadata = layer.metadata
+
+      const currentLanguage = i18next.language
+
+      metadata =
+        layer.metadata &&
+        layer.metadata.metadata_id &&
+        (await getLocalMetadata(
+          localMetadataBaseUrl,
+          layer.metadata.metadata_id,
+          currentLanguage
+        ))
+      metadata = { ...metadata, title: layer.name }
+
+      //TODO: legend for external layers?
+      const layerId = layer?.id
+      const legendName =
+        localMetadata && 'legend_name' in localMetadata
+          ? localMetadata.legend_name
+          : ''
+
+      const legendHtml =
+        legendName &&
+        (await getLegendHtml(
+          legendBaseUrl,
+          legendName,
+          layerId,
+          currentLanguage
+        ))
+      metadata = legendHtml
+        ? {
+            ...metadata,
+            legendHtml: legendHtml,
+            hasLegend: true,
+          }
+        : (metadata = {
+            ...metadata,
+            hasLegend: false,
+          })
+    } else {
       // is this case needed for another case than external layers (which have no theme node in theme service)?
       const values = node.id.split('%2D').join('-').split('||')
       const idValues: IdValues = {
-        serviceType: values[0],
+        serviceType: values[0] as 'WMS' | 'WMTS',
         wmsUrl: values[1],
         layerName: values[2],
       }
@@ -41,42 +83,8 @@ export default function useLayerMetadata() {
         // TODO: handle WMTS
         // metadata = appWmtsHelper.getMetadata(metadataUid)
       }
-    } else {
-      localMetadata = layer.metadata
-
-      const currentLanguage = i18next.language
-      metadata = await this.getLocalMetadata(
-        localMetadataBaseUrl,
-        layer.metadata?.metadata_id,
-        currentLanguage
-      )
-      metadata = { ...metadata, title: layer.name }
-
-      //TODO: legend for external layers?
-      const layerId = layer?.id
-      const legendName =
-        'legend_name' in localMetadata ? localMetadata.legend_name : ''
-
-      const legendHtml = await this.getLegendHtml(
-        legendBaseUrl,
-        legendName,
-        layerId,
-        currentLanguage
-      )
-      if (legendHtml) {
-        metadata = {
-          ...metadata,
-          legendHtml: legendHtml,
-          hasLegend: true,
-        }
-      } else {
-        metadata = {
-          ...metadata,
-          hasLegend: false,
-        }
-      }
     }
-    return metadata
+    return metadata as LayerMetadataModel
   }
 
   async function getLocalMetadata(
@@ -114,7 +122,12 @@ export default function useLayerMetadata() {
     language: string
   ) {
     let legendHtml = undefined
-    const queryParams = {
+    const queryParams: {
+      lang?: string
+      name?: string
+      id?: string
+      dpi?: string
+    } = {
       lang: language,
       ...(legendName && { name: legendName }),
       ...(layerId && { id: layerId.toString() }),
@@ -122,7 +135,7 @@ export default function useLayerMetadata() {
     if (queryParams.name && queryParams.lang) {
       // handle high resolution screens
       if (window.devicePixelRatio > 1) {
-        queryParams.dpi = window.devicePixelRatio * 96
+        queryParams.dpi = (window.devicePixelRatio * 96).toString()
       }
       const legendUrl = `${legendBaseUrl}?${new URLSearchParams(
         queryParams

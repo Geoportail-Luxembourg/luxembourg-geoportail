@@ -22,7 +22,7 @@ export function stringToHtml(str: string): HTMLElement {
 }
 
 export function getMetadataLinks(link: string | string[]): string[] {
-  const links = []
+  const links: string[] = []
   function splitLink(link: string) {
     const currentLink = link.split('|')
     if (
@@ -33,7 +33,7 @@ export function getMetadataLinks(link: string | string[]): string[] {
     }
   }
   if (Array.isArray(link)) {
-    link.forEach(splitLink, this)
+    link.forEach(splitLink, link)
   } else {
     splitLink(link)
   }
