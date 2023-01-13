@@ -124,6 +124,7 @@ function toggleLayer(node: LayerTreeNodeModel) {
 
 <template>
   <div
+    data-cy="remoteLayerBox"
     class="absolute right-0 top-52 z-50 bg-white lux-modal w-[600px]"
     role="dialog"
   >

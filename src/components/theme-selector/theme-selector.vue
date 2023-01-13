@@ -44,6 +44,7 @@ function setTheme(themeName: string) {
 
 <template>
   <theme-selector-button
+    data-cy="themeSelectorButton"
     @click="toggleThemesGrid"
     :themes="themes"
     :currentTheme="theme"
