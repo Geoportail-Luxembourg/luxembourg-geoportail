@@ -42,7 +42,7 @@ app.use(VueDOMPurifyHTML)
 
 app.mount('#app')
 
-if (window.Cypress && process.env.NODE_ENV === 'development') {
+if (process.env.NODE_ENV === 'development') {
   window.vueApp = app
   window.mapStore = useMapStore()
 }
