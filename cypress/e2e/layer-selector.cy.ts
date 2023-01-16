@@ -1,11 +1,9 @@
-
-
 describe('Test theme selector', () => {
   it('Check selector menu and select themes', () => {
     cy.visit('/')
     // cy.root().should('have.css', 'background-color', '#2980b9')
     cy.window().its('mapStore.layers').should('have.lengthOf', 0)
-    
+
     cy.get('[data-cy="catalogButton"]').click()
     cy.get('[data-cy="catalog"]').find('button').first().click()
     cy.get('[data-cy="catalog"]').find('button').eq(1).click()

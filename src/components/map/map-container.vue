@@ -20,5 +20,9 @@ onMounted(async () => {
 </script>
 
 <template>
-  <div data-cy="mapContainer" ref="mapContainer" class="h-full w-full bg-white"></div>
+  <div
+    data-cy="mapContainer"
+    ref="mapContainer"
+    class="h-full w-full bg-white"
+  ></div>
 </template>

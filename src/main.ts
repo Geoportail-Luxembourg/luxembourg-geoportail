@@ -15,7 +15,10 @@ import VueDOMPurifyHTML from 'vue-dompurify-html'
 initProjections()
 
 declare global {
-  interface Window { vueApp: any, mapStore: any }
+  interface Window {
+    vueApp: any
+    mapStore: any
+  }
 }
 
 i18next.use(backend)
