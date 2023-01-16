@@ -60,13 +60,8 @@
     "vitest": "^0.25.3",
     "vue-tsc": "^1.0.9"
   },
-  "husky": {
-    "hooks": {
-      "pre-commit": "lint-staged"
-    }
-  },
   "lint-staged": {
-    "*.ts": [
+    "*.ts|*.vue": [
       "eslint --fix",
       "prettier --write"
     ]
