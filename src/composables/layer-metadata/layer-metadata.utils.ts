@@ -12,7 +12,7 @@ export function isoLang2To3(code: string): string {
     de: 'ger',
     lb: 'ltz',
   }
-  return lang[code as keyof Lang]
+  return lang[code.toLowerCase() as keyof Lang]
 }
 
 export function stringToHtml(str: string): HTMLElement {
