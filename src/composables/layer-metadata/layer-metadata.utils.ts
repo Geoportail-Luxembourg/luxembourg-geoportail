@@ -1,3 +1,5 @@
+import { ResponsibleParty } from './layer-metadata.model'
+
 interface Lang {
   fr: string
   en: string
@@ -42,15 +44,16 @@ export function getMetadataLinks(link: string | string[]): string[] {
 
 export function getResponsibleParty(
   responsibleParty: string | string[]
-): string[] {
+): ResponsibleParty {
   const pocs = Array.isArray(responsibleParty)
     ? responsibleParty
     : [responsibleParty]
   const poc = pocs.filter(poc => poc.split('|')[1] === 'metadata')
-  return [
-    poc[0].split('|')[2],
-    poc[0].split('|')[5],
-    poc[0].split('|')[6],
-    poc[0].split('|')[7],
-  ]
+  return {
+    organisaton: poc[0].split('|')[2],
+    name: poc[0].split('|')[5],
+    unknown: poc[0].split('|')[6],
+    address: poc[0].split('|')[7],
+    email: poc[0].split('|')[4],
+  }
 }

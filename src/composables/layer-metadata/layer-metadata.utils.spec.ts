@@ -65,12 +65,13 @@ describe('Layer metadata utils', () => {
       ])
     })
     it('gets responsible party', () => {
-      expect(contact).toEqual([
-        'Administration du Cadastre et de la Topographie',
-        "Service du géoportail et de l'ILDG (ACT)",
-        '',
-        '54, avenue Gaston Diderich, Luxembourg, L-1420, Luxembourg',
-      ])
+      expect(contact).toEqual({
+        address: '54, avenue Gaston Diderich, Luxembourg, L-1420, Luxembourg',
+        email: 'support@geoportail.lu',
+        name: "Service du géoportail et de l'ILDG (ACT)",
+        organisaton: 'Administration du Cadastre et de la Topographie',
+        unknown: '',
+      })
     })
   })
 })

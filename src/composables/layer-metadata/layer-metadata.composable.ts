@@ -107,7 +107,7 @@ export default function useLayerMetadata() {
       keyword: metadata.keyword,
       responsibleParty: metadata.responsibleParty
         ? getResponsibleParty(metadata.responsibleParty)
-        : [],
+        : undefined,
       metadataLink: `${geonetworkBaseUrl}/${isoLang2To3(
         language
       )}/catalog.search#/metadata/${metadataUid}`,
