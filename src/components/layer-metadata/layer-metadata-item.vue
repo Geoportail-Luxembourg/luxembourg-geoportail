@@ -5,6 +5,6 @@ const props = defineProps<{
 }>()
 </script>
 <template>
-  <dt>{{ props.label }}</dt>
-  <dd>{{ props.value }}</dd>
+  <span class="font-bold">{{ props.label }}</span>
+  <span class="col-span-2">{{ props.value }}</span>
 </template>
