@@ -87,41 +87,42 @@ export default function useLayerMetadata() {
     return metadata as LayerMetadataModel
   }
 
-  async function getLocalMetadata(
+  function getLocalMetadata(
     baseUrl: string,
     metadataUid: string,
     language: string
   ): Promise<LayerMetadataModel> {
-    const response = await fetch(
-      `${baseUrl}?lang=${language}&uid=${metadataUid}`
-    )
-    const metadata = (await response.json()).metadata
-
-    return {
-      name: metadata.title,
-      serviceDescription: metadata.serviceDescription,
-      description: metadata.abstract,
-      legalConstraints: metadata.legalConstraints,
-      link: getMetadataLinks(metadata.link),
-      revisionDate: metadata.revisionDate,
-      keyword: metadata.keyword,
-      responsibleParty: metadata.responsibleParty
-        ? getResponsibleParty(metadata.responsibleParty)
-        : undefined,
-      metadataLink: `${geonetworkBaseUrl}/${isoLang2To3(
-        language
-      )}/catalog.search#/metadata/${metadataUid}`,
-      isError: false,
-    }
+    return fetch(`${baseUrl}?lang=${language}&uid=${metadataUid}`)
+      .then(async response => {
+        const metadata = (await response.json()).metadata
+        return {
+          name: metadata.title,
+          serviceDescription: metadata.serviceDescription,
+          description: metadata.abstract,
+          legalConstraints: metadata.legalConstraints,
+          link: getMetadataLinks(metadata.link),
+          revisionDate: metadata.revisionDate,
+          keyword: metadata.keyword,
+          responsibleParty: metadata.responsibleParty
+            ? getResponsibleParty(metadata.responsibleParty)
+            : undefined,
+          metadataLink: `${geonetworkBaseUrl}/${isoLang2To3(
+            language
+          )}/catalog.search#/metadata/${metadataUid}`,
+          isError: false,
+        }
+      })
+      .catch(() => {
+        return { isError: true }
+      })
   }
 
-  async function getLegendHtml(
+  function getLegendHtml(
     legendBaseUrl: string,
     legendName: string,
     layerId: number,
     language: string
   ) {
-    let legendHtml = undefined
     const queryParams: {
       lang?: string
       name?: string
@@ -140,11 +141,18 @@ export default function useLayerMetadata() {
       const legendUrl = `${legendBaseUrl}?${new URLSearchParams(
         queryParams
       ).toString()}`
-      const response = await fetch(legendUrl)
-      const legendString = await response.text()
-      if (legendString) legendHtml = stringToHtml(legendString)
+      return fetch(legendUrl)
+        .then(async response => {
+          if (response.status >= 400 && response.status < 600) {
+            throw new Error('Server responded with error code')
+          }
+          const legendString = await response.text()
+          return legendString ? stringToHtml(legendString) : undefined
+        })
+        .catch(() => {
+          return undefined
+        })
     }
-    return legendHtml
   }
   return {
     getLayerMetadata,

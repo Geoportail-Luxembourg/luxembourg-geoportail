@@ -121,16 +121,16 @@ function closeLayerMetadata() {
           >
         </span>
       </div>
-      <layer-metadata-item
-        v-if="layerMetadata.isError"
-        :label="t('The metadata is right now not available')"
-        :value="t(`${layerMetadata.isError}`)"
-      ></layer-metadata-item>
+      <div v-if="layerMetadata.isError" class="col-span-3">
+        {{ t('The metadata is right now not available') }}
+      </div>
       <div v-if="layerMetadata.legendHtml">
         <h4>{{ t('Legend') }}</h4>
         <span v-dompurify-html="layerMetadata.legendHtml?.innerHTML"></span>
       </div>
-      <!--hasLegend-->
+      <div v-if="!layerMetadata.hasLegend" class="col-span-3">
+        {{ t('The legend is not available for this layer') }}
+      </div>
     </div>
   </div>
 </template>

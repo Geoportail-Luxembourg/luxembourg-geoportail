@@ -1,6 +1,6 @@
 export interface LayerMetadataModel {
   title?: string
-  name: string
+  name?: string
   serviceDescription?: string
   description?: string
   legalConstraints?: string
