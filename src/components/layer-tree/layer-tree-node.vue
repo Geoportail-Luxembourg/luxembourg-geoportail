@@ -1,8 +1,10 @@
 <script setup lang="ts">
 import { useTranslation } from 'i18next-vue'
-import { computed } from 'vue'
+import { computed, onMounted } from 'vue'
+import { useMetadataStore } from '@/stores/metadata.store'
 
 import type { LayerTreeNodeModel } from './layer-tree.model'
+import { storeToRefs } from 'pinia'
 
 const props = defineProps<{
   node: LayerTreeNodeModel
@@ -10,10 +12,12 @@ const props = defineProps<{
 const emit = defineEmits<{
   (e: 'toggleLayer', node: LayerTreeNodeModel): void
   (e: 'toggleParent', node: LayerTreeNodeModel): void
-  (e: 'displayLayerMetadata', node: LayerTreeNodeModel): void
 }>()
 
-const { t } = useTranslation()
+const { t, i18next } = useTranslation()
+const metadataStore = useMetadataStore()
+const { setMetadata } = metadataStore
+const { currentMetadataNode } = storeToRefs(metadataStore)
 const isParent = !!props.node.children
 const isRoot = props.node.depth === 0
 const isMaxDepth = props.node.depth >= 10
@@ -28,8 +32,15 @@ function toggleParent(node: LayerTreeNodeModel) {
 }
 
 function displayLayerMetadata(node: LayerTreeNodeModel) {
-  emit('displayLayerMetadata', node)
+  setMetadata(node, i18next.language)
 }
+
+onMounted(() => {
+  i18next.on('languageChanged', () => {
+    if (currentMetadataNode.value)
+      setMetadata(currentMetadataNode.value, i18next.language)
+  })
+})
 </script>
 
 <template>

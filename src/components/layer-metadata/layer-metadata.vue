@@ -1,25 +1,23 @@
 <script setup lang="ts">
 import useFormatting from '@/composables/common/formatting.composable'
-import { LayerMetadataModel } from '@/composables/layer-metadata/layer-metadata.model'
 import { useTranslation } from 'i18next-vue'
 import LayerMetadataItem from './layer-metadata-item.vue'
+import { useMetadataStore } from '@/stores/metadata.store'
+import { storeToRefs } from 'pinia'
 
+const metadataStore = useMetadataStore()
+const { layerMetadata } = storeToRefs(metadataStore)
 const { t } = useTranslation()
 const format = useFormatting()
 
-defineProps<{
-  layerMetadata: LayerMetadataModel
-}>()
-const emit = defineEmits<{
-  (e: 'closeLayerMetadata'): void
-}>()
 function closeLayerMetadata() {
-  emit('closeLayerMetadata')
+  metadataStore.clearMetadata()
 }
 </script>
 
 <template>
   <div
+    v-if="layerMetadata"
     class="fixed right-32 top-32 z-[100] bg-white lux-modal w-[600px] p-3"
     role="dialog"
   >

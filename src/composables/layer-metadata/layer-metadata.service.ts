@@ -20,7 +20,7 @@ export class LayerMetadataService {
 
   async getLayerMetadata(
     node: LayerTreeNodeModel,
-    i18next: any
+    currentLanguage: string
   ): Promise<LayerMetadataModel> {
     const layer: ThemeNodeModel | undefined = useThemes().findById(
       parseInt(node.id, 10)
@@ -29,8 +29,6 @@ export class LayerMetadataService {
     let metadata
     if (layer) {
       localMetadata = layer.metadata
-
-      const currentLanguage = i18next.language
 
       metadata =
         layer.metadata &&

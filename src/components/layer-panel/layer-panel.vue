@@ -6,12 +6,9 @@ import CatalogTab from '@/components/catalog/catalog-tab.vue'
 import LayerManager from '@/components/layer-manager/layer-manager.vue'
 import RemoteLayers from '@/components/remote-layers/remote-layers.vue'
 import LayerMetadata from '../layer-metadata/layer-metadata.vue'
-import useLayerMetadata from '@/composables/layer-metadata/layer-metadata.composable'
-import { LayerMetadataModel } from '@/composables/layer-metadata/layer-metadata.model'
 
 const { t } = useTranslation()
 const myLayersOpen = ref(true)
-const { metadata, closeLayerMetadata } = useLayerMetadata()
 </script>
 
 <template>
@@ -44,10 +41,6 @@ const { metadata, closeLayerMetadata } = useLayerMetadata()
       <layer-manager v-if="myLayersOpen"></layer-manager>
     </div>
     <remote-layers></remote-layers>
-    <layer-metadata
-      v-if="metadata"
-      :layer-metadata="(metadata as LayerMetadataModel)"
-      @close-layer-metadata="closeLayerMetadata"
-    ></layer-metadata>
+    <layer-metadata></layer-metadata>
   </div>
 </template>
