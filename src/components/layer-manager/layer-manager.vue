@@ -9,17 +9,14 @@ import { BLANK_BACKGROUNDLAYER } from '@/composables/background-layer/background
 
 import LayerManagerItemBackground from './layer-item/layer-item-background.vue'
 import LayerManagerItem from './layer-item/layer-item.vue'
-import LayerMetadata from '../layer-metadata/layer-metadata.vue'
 import useLayerMetadata from '@/composables/layer-metadata/layer-metadata.composable'
-import { LayerMetadataModel } from '@/composables/layer-metadata/layer-metadata.model'
 
 const mapStore = useMapStore()
 const { bgLayer } = storeToRefs(mapStore)
 const layers = computed(() => [...mapStore.layers].reverse())
 const isLayerOpenId: ShallowRef<LayerId | undefined> = shallowRef()
 const draggableClassName = 'drag-handle'
-const { metadata, displayLayerMetadata, closeLayerMetadata } =
-  useLayerMetadata()
+const { displayLayerMetadata } = useLayerMetadata()
 
 onMounted(() => {
   const sortableLayers = document.getElementById('sortable-layers')
@@ -62,11 +59,6 @@ function toggleEditionLayer() {
 </script>
 
 <template>
-  <layer-metadata
-    v-if="metadata"
-    :layer-metadata="(metadata as LayerMetadataModel)"
-    @close-layer-metadata="closeLayerMetadata"
-  ></layer-metadata>
   <ul id="sortable-layers">
     <li v-for="layer in layers" :key="layer.id" :id="(layer.id as string)">
       <layer-manager-item

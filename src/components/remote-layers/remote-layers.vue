@@ -16,17 +16,14 @@ import {
 } from './remote-layers.mapper'
 import { remoteLayersService } from './remote-layers.service'
 import { OgcClientWmsEndpoint } from './remote-layers.model'
-import LayerMetadata from '../layer-metadata/layer-metadata.vue'
 import useLayerMetadata from '@/composables/layer-metadata/layer-metadata.composable'
-import { LayerMetadataModel } from '@/composables/layer-metadata/layer-metadata.model'
 
 const { t } = useTranslation()
 const mapStore = useMapStore()
 const layers = useLayers()
 const wmsLayers: ShallowRef<DropdownOptionModel[]> = shallowRef([])
 const layerTree: ShallowRef<LayerTreeNodeModel | undefined> = shallowRef()
-const { metadata, displayLayerMetadata, closeLayerMetadata } =
-  useLayerMetadata()
+const { displayLayerMetadata } = useLayerMetadata()
 
 let isLoading = false
 let inputWmsUrl: string
@@ -128,11 +125,6 @@ function toggleLayer(node: LayerTreeNodeModel) {
 </script>
 
 <template>
-  <layer-metadata
-    v-if="metadata"
-    :layer-metadata="(metadata as LayerMetadataModel)"
-    @close-layer-metadata="closeLayerMetadata"
-  ></layer-metadata>
   <div
     class="absolute right-0 top-52 z-50 bg-white lux-modal w-[600px]"
     role="dialog"

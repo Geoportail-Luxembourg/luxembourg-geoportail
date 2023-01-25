@@ -10,15 +10,12 @@ import { themesToLayerTree } from '@/components/layer-tree/layer-tree.mapper'
 import type { LayerTreeNodeModel } from '@/components/layer-tree/layer-tree.model'
 import { layerTreeService } from '@/components/layer-tree/layer-tree.service'
 import useLayerMetadata from '@/composables/layer-metadata/layer-metadata.composable'
-import LayerMetadata from '../layer-metadata/layer-metadata.vue'
-import { LayerMetadataModel } from '@/composables/layer-metadata/layer-metadata.model'
 
 const mapStore = useMapStore()
 const themeStore = useThemeStore()
 const layers = useLayers()
 const layerTree: ShallowRef<LayerTreeNodeModel | undefined> = shallowRef()
-const { metadata, displayLayerMetadata, closeLayerMetadata } =
-  useLayerMetadata()
+const { displayLayerMetadata } = useLayerMetadata()
 
 watchEffect(updateLayerTree)
 
@@ -51,11 +48,6 @@ function toggleLayer(node: LayerTreeNodeModel) {
 </script>
 
 <template>
-  <layer-metadata
-    v-if="metadata"
-    :layer-metadata="(metadata as LayerMetadataModel)"
-    @close-layer-metadata="closeLayerMetadata"
-  ></layer-metadata>
   <layer-tree-node
     v-if="layerTree"
     :node="layerTree"
