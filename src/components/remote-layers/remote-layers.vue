@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { shallowRef, ShallowRef, watchEffect, onMounted } from 'vue'
+import { shallowRef, ShallowRef, watchEffect } from 'vue'
 import { useTranslation } from 'i18next-vue'
 
 import { useMapStore } from '@/stores/map.store'
@@ -17,7 +17,7 @@ import {
 import { remoteLayersService } from './remote-layers.service'
 import { OgcClientWmsEndpoint } from './remote-layers.model'
 import LayerMetadata from '../layer-metadata/layer-metadata.vue'
-import { layerMetadataService } from '@/composables/layer-metadata/layer-metadata.service'
+import useLayerMetadata from '@/composables/layer-metadata/layer-metadata.composable'
 import { LayerMetadataModel } from '@/composables/layer-metadata/layer-metadata.model'
 
 const { t } = useTranslation()
@@ -25,6 +25,8 @@ const mapStore = useMapStore()
 const layers = useLayers()
 const wmsLayers: ShallowRef<DropdownOptionModel[]> = shallowRef([])
 const layerTree: ShallowRef<LayerTreeNodeModel | undefined> = shallowRef()
+const { metadata, displayLayerMetadata, closeLayerMetadata } =
+  useLayerMetadata()
 
 let isLoading = false
 let inputWmsUrl: string
@@ -123,33 +125,12 @@ function toggleLayer(node: LayerTreeNodeModel) {
     }
   }
 }
-
-const { i18next } = useTranslation()
-const metadata: ShallowRef<LayerMetadataModel | undefined> = shallowRef()
-const displayedMetadataNode: ShallowRef<LayerTreeNodeModel | undefined> =
-  shallowRef()
-
-async function displayLayerMetadata(node: LayerTreeNodeModel) {
-  metadata.value = await layerMetadataService.getLayerMetadata(node, i18next)
-  displayedMetadataNode.value = node
-}
-
-onMounted(() => {
-  i18next.on('languageChanged', () => {
-    if (displayedMetadataNode.value)
-      displayLayerMetadata(displayedMetadataNode.value)
-  })
-})
-
-function closeLayerMetadata() {
-  metadata.value = undefined
-}
 </script>
 
 <template>
   <layer-metadata
     v-if="metadata"
-    :layer-metadata="metadata"
+    :layer-metadata="(metadata as LayerMetadataModel)"
     @close-layer-metadata="closeLayerMetadata"
   ></layer-metadata>
   <div

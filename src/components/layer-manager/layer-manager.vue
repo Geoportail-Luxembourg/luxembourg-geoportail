@@ -9,10 +9,8 @@ import { BLANK_BACKGROUNDLAYER } from '@/composables/background-layer/background
 
 import LayerManagerItemBackground from './layer-item/layer-item-background.vue'
 import LayerManagerItem from './layer-item/layer-item.vue'
-import { LayerTreeNodeModel } from '../layer-tree/layer-tree.model'
-import { useTranslation } from 'i18next-vue'
 import LayerMetadata from '../layer-metadata/layer-metadata.vue'
-import { layerMetadataService } from '@/composables/layer-metadata/layer-metadata.service'
+import useLayerMetadata from '@/composables/layer-metadata/layer-metadata.composable'
 import { LayerMetadataModel } from '@/composables/layer-metadata/layer-metadata.model'
 
 const mapStore = useMapStore()
@@ -20,6 +18,8 @@ const { bgLayer } = storeToRefs(mapStore)
 const layers = computed(() => [...mapStore.layers].reverse())
 const isLayerOpenId: ShallowRef<LayerId | undefined> = shallowRef()
 const draggableClassName = 'drag-handle'
+const { metadata, displayLayerMetadata, closeLayerMetadata } =
+  useLayerMetadata()
 
 onMounted(() => {
   const sortableLayers = document.getElementById('sortable-layers')
@@ -56,27 +56,6 @@ function toggleInfoLayer() {
   console.info('clickInfo to implement')
 }
 
-const { i18next } = useTranslation()
-const metadata: ShallowRef<LayerMetadataModel | undefined> = shallowRef()
-const displayedMetadataNode: ShallowRef<LayerTreeNodeModel | undefined> =
-  shallowRef()
-
-async function displayLayerMetadata(node: LayerTreeNodeModel) {
-  metadata.value = await layerMetadataService.getLayerMetadata(node, i18next)
-  displayedMetadataNode.value = node
-}
-
-onMounted(() => {
-  i18next.on('languageChanged', () => {
-    if (displayedMetadataNode.value)
-      displayLayerMetadata(displayedMetadataNode.value)
-  })
-})
-
-function closeLayerMetadata() {
-  metadata.value = undefined
-}
-
 function toggleEditionLayer() {
   console.info('clickEdit to implement')
 }
@@ -85,7 +64,7 @@ function toggleEditionLayer() {
 <template>
   <layer-metadata
     v-if="metadata"
-    :layer-metadata="metadata"
+    :layer-metadata="(metadata as LayerMetadataModel)"
     @close-layer-metadata="closeLayerMetadata"
   ></layer-metadata>
   <ul id="sortable-layers">
