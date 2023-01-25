@@ -12,7 +12,7 @@ import LayerManagerItem from './layer-item/layer-item.vue'
 import { LayerTreeNodeModel } from '../layer-tree/layer-tree.model'
 import { useTranslation } from 'i18next-vue'
 import LayerMetadata from '../layer-metadata/layer-metadata.vue'
-import useLayerMetadata from '@/composables/layer-metadata/layer-metadata.composable'
+import { layerMetadataService } from '@/composables/layer-metadata/layer-metadata.service'
 import { LayerMetadataModel } from '@/composables/layer-metadata/layer-metadata.model'
 
 const mapStore = useMapStore()
@@ -57,13 +57,12 @@ function toggleInfoLayer() {
 }
 
 const { i18next } = useTranslation()
-const layerMetadataComposable = useLayerMetadata()
 const metadata: ShallowRef<LayerMetadataModel | undefined> = shallowRef()
 const displayedMetadataNode: ShallowRef<LayerTreeNodeModel | undefined> =
   shallowRef()
 
 async function displayLayerMetadata(node: LayerTreeNodeModel) {
-  metadata.value = await layerMetadataComposable.getLayerMetadata(node)
+  metadata.value = await layerMetadataService.getLayerMetadata(node, i18next)
   displayedMetadataNode.value = node
 }
 

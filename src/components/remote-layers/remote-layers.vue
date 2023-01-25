@@ -17,7 +17,7 @@ import {
 import { remoteLayersService } from './remote-layers.service'
 import { OgcClientWmsEndpoint } from './remote-layers.model'
 import LayerMetadata from '../layer-metadata/layer-metadata.vue'
-import useLayerMetadata from '@/composables/layer-metadata/layer-metadata.composable'
+import { layerMetadataService } from '@/composables/layer-metadata/layer-metadata.service'
 import { LayerMetadataModel } from '@/composables/layer-metadata/layer-metadata.model'
 
 const { t } = useTranslation()
@@ -125,13 +125,12 @@ function toggleLayer(node: LayerTreeNodeModel) {
 }
 
 const { i18next } = useTranslation()
-const layerMetadataComposable = useLayerMetadata()
 const metadata: ShallowRef<LayerMetadataModel | undefined> = shallowRef()
 const displayedMetadataNode: ShallowRef<LayerTreeNodeModel | undefined> =
   shallowRef()
 
 async function displayLayerMetadata(node: LayerTreeNodeModel) {
-  metadata.value = await layerMetadataComposable.getLayerMetadata(node)
+  metadata.value = await layerMetadataService.getLayerMetadata(node, i18next)
   displayedMetadataNode.value = node
 }
 

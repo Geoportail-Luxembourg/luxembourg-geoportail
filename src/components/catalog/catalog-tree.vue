@@ -9,7 +9,7 @@ import LayerTreeNode from '@/components/layer-tree/layer-tree-node.vue'
 import { themesToLayerTree } from '@/components/layer-tree/layer-tree.mapper'
 import type { LayerTreeNodeModel } from '@/components/layer-tree/layer-tree.model'
 import { layerTreeService } from '@/components/layer-tree/layer-tree.service'
-import useLayerMetadata from '@/composables/layer-metadata/layer-metadata.composable'
+import { layerMetadataService } from '@/composables/layer-metadata/layer-metadata.service'
 import LayerMetadata from '../layer-metadata/layer-metadata.vue'
 import { LayerMetadataModel } from '@/composables/layer-metadata/layer-metadata.model'
 import { useTranslation } from 'i18next-vue'
@@ -49,13 +49,12 @@ function toggleLayer(node: LayerTreeNodeModel) {
 }
 
 const { i18next } = useTranslation()
-const layerMetadataComposable = useLayerMetadata()
 const metadata: ShallowRef<LayerMetadataModel | undefined> = shallowRef()
 const displayedMetadataNode: ShallowRef<LayerTreeNodeModel | undefined> =
   shallowRef()
 
 async function displayLayerMetadata(node: LayerTreeNodeModel) {
-  metadata.value = await layerMetadataComposable.getLayerMetadata(node)
+  metadata.value = await layerMetadataService.getLayerMetadata(node, i18next)
   displayedMetadataNode.value = node
 }
 

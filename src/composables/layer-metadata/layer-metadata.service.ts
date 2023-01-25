@@ -1,4 +1,3 @@
-import { useTranslation } from 'i18next-vue'
 import { ThemeNodeModel } from '../themes/themes.model'
 import { LayerTreeNodeModel } from '@/components/layer-tree/layer-tree.model'
 import { IdValues, LayerMetadataModel } from './layer-metadata.model'
@@ -11,20 +10,19 @@ import {
 import useWmsHelper from '../common/wms-helper.composable'
 import useThemes from '../themes/themes.composable'
 
-export default function useLayerMetadata() {
+export class LayerMetadataService {
   // TODO: get urls from a config
-  const geonetworkBaseUrl = 'https://geocatalogue.geoportail.lu/geonetwork/srv'
-  const legendBaseUrl = 'https://map.geoportail.lu/legends/get_html'
+  private geonetworkBaseUrl =
+    'https://geocatalogue.geoportail.lu/geonetwork/srv'
+  private legendBaseUrl = 'https://map.geoportail.lu/legends/get_html'
   // TODO: get from config or relative
-  const localMetadataBaseUrl = 'https://map.geoportail.lu/getMetadata'
-  const themes = useThemes()
-  const wmsHelper = useWmsHelper()
-  const { i18next } = useTranslation()
+  private localMetadataBaseUrl = 'https://map.geoportail.lu/getMetadata'
 
-  async function getLayerMetadata(
-    node: LayerTreeNodeModel
+  async getLayerMetadata(
+    node: LayerTreeNodeModel,
+    i18next: any
   ): Promise<LayerMetadataModel> {
-    const layer: ThemeNodeModel | undefined = themes.findById(
+    const layer: ThemeNodeModel | undefined = useThemes().findById(
       parseInt(node.id, 10)
     )
     let localMetadata
@@ -37,8 +35,8 @@ export default function useLayerMetadata() {
       metadata =
         layer.metadata &&
         layer.metadata.metadata_id &&
-        (await getLocalMetadata(
-          localMetadataBaseUrl,
+        (await this.getLocalMetadata(
+          this.localMetadataBaseUrl,
           layer.metadata.metadata_id,
           currentLanguage
         ))
@@ -53,8 +51,8 @@ export default function useLayerMetadata() {
 
       const legendHtml =
         legendName &&
-        (await getLegendHtml(
-          legendBaseUrl,
+        (await this.getLegendHtml(
+          this.legendBaseUrl,
           legendName,
           layerId,
           currentLanguage
@@ -78,7 +76,7 @@ export default function useLayerMetadata() {
         layerName: values[2],
       }
       if (idValues.serviceType === 'WMS') {
-        metadata = await wmsHelper.getMetadata(idValues)
+        metadata = await useWmsHelper().getMetadata(idValues)
       } else if (idValues.serviceType == 'WMTS') {
         // TODO: handle WMTS
         // metadata = appWmtsHelper.getMetadata(metadataUid)
@@ -87,7 +85,7 @@ export default function useLayerMetadata() {
     return metadata as LayerMetadataModel
   }
 
-  function getLocalMetadata(
+  getLocalMetadata(
     baseUrl: string,
     metadataUid: string,
     language: string
@@ -106,7 +104,7 @@ export default function useLayerMetadata() {
           responsibleParty: metadata.responsibleParty
             ? getResponsibleParty(metadata.responsibleParty)
             : undefined,
-          metadataLink: `${geonetworkBaseUrl}/${isoLang2To3(
+          metadataLink: `${this.geonetworkBaseUrl}/${isoLang2To3(
             language
           )}/catalog.search#/metadata/${metadataUid}`,
           isError: false,
@@ -117,7 +115,7 @@ export default function useLayerMetadata() {
       })
   }
 
-  function getLegendHtml(
+  getLegendHtml(
     legendBaseUrl: string,
     legendName: string,
     layerId: number,
@@ -154,9 +152,6 @@ export default function useLayerMetadata() {
         })
     }
   }
-  return {
-    getLayerMetadata,
-    getLocalMetadata,
-    getLegendHtml,
-  }
 }
+
+export const layerMetadataService = new LayerMetadataService()
