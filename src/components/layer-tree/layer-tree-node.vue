@@ -1,10 +1,9 @@
 <script setup lang="ts">
 import { useTranslation } from 'i18next-vue'
-import { computed, onMounted } from 'vue'
+import { computed } from 'vue'
 import { useMetadataStore } from '@/stores/metadata.store'
 
 import type { LayerTreeNodeModel } from './layer-tree.model'
-import { storeToRefs } from 'pinia'
 
 const props = defineProps<{
   node: LayerTreeNodeModel
@@ -14,10 +13,8 @@ const emit = defineEmits<{
   (e: 'toggleParent', node: LayerTreeNodeModel): void
 }>()
 
-const { t, i18next } = useTranslation()
-const metadataStore = useMetadataStore()
-const { setMetadata } = metadataStore
-const { currentMetadataNode } = storeToRefs(metadataStore)
+const { t } = useTranslation()
+const { setMetadataTreeNode } = useMetadataStore()
 const isParent = !!props.node.children
 const isRoot = props.node.depth === 0
 const isMaxDepth = props.node.depth >= 10
@@ -30,17 +27,6 @@ function toggleLayer(node: LayerTreeNodeModel) {
 function toggleParent(node: LayerTreeNodeModel) {
   emit('toggleParent', node)
 }
-
-function displayLayerMetadata(node: LayerTreeNodeModel) {
-  setMetadata(node, i18next.language)
-}
-
-onMounted(() => {
-  i18next.on('languageChanged', () => {
-    if (currentMetadataNode.value)
-      setMetadata(currentMetadataNode.value, i18next.language)
-  })
-})
 </script>
 
 <template>
@@ -97,14 +83,13 @@ onMounted(() => {
         :node="child"
         @toggle-parent="toggleParent($event)"
         @toggle-layer="toggleLayer($event)"
-        @display-layer-metadata="displayLayerMetadata($event)"
       ></layer-tree-node>
     </div>
   </div>
   <div v-else class="flex text-tertiary pr-2">
     <button
       class="self-start before:text-[.85rem] before:transform before:translate-y-[.1rem] before:inline-block before:content-['\f129'] fa-solid fa-fw fa-fh fa-info"
-      @click="displayLayerMetadata(node)"
+      @click="setMetadataTreeNode(node)"
     ></button>
     <button
       class="w-full text-left"

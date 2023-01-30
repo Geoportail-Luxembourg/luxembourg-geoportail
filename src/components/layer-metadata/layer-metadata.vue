@@ -4,14 +4,36 @@ import { useTranslation } from 'i18next-vue'
 import LayerMetadataItem from './layer-metadata-item.vue'
 import { useMetadataStore } from '@/stores/metadata.store'
 import { storeToRefs } from 'pinia'
+import { watch, Ref, ref, onMounted } from 'vue'
+import { layerMetadataService } from '@/composables/layer-metadata/layer-metadata.service'
+import { LayerMetadataModel } from '@/composables/layer-metadata/layer-metadata.model'
 
 const metadataStore = useMetadataStore()
-const { layerMetadata } = storeToRefs(metadataStore)
-const { t } = useTranslation()
+const { metadataTreeNode } = storeToRefs(metadataStore)
+const { t, i18next } = useTranslation()
 const format = useFormatting()
+const layerMetadata: Ref<LayerMetadataModel | undefined> = ref()
+
+watch(metadataTreeNode, async node => {
+  node
+    ? (layerMetadata.value = await layerMetadataService.getLayerMetadata(
+        node,
+        i18next.language
+      ))
+    : (layerMetadata.value = undefined)
+})
+
+onMounted(() => {
+  i18next.on('languageChanged', () => {
+    if (metadataTreeNode.value) {
+      //also trigger request if metadataTreeNode does not change
+      metadataStore.setMetadataTreeNode({ ...metadataTreeNode.value })
+    }
+  })
+})
 
 function closeLayerMetadata() {
-  metadataStore.clearMetadata()
+  metadataStore.clearMetadataTreeNode()
 }
 </script>
 
