@@ -12,6 +12,7 @@ export const SP_KEY_MAPID = 'map_id'
 export const SP_KEY_LAYERS = 'layers'
 export const SP_KEY_BGLAYER = 'bgLayer'
 export const SP_KEY_OPACITIES = 'opacities'
+export const SP_KEY_ZOOM = 'zoom'
 
 export enum SP_AVAILABLE_STORAGES {
   localStorage = 0,
