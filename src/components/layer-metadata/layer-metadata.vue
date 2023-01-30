@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import useFormatting from '@/composables/common/formatting.composable'
+import { formatDate } from '@/composables/common/formatting.utils'
 import { useTranslation } from 'i18next-vue'
 import LayerMetadataItem from './layer-metadata-item.vue'
 import { useMetadataStore } from '@/stores/metadata.store'
@@ -11,7 +11,6 @@ import { LayerMetadataModel } from '@/composables/layer-metadata/layer-metadata.
 const metadataStore = useMetadataStore()
 const { metadataTreeNode } = storeToRefs(metadataStore)
 const { t, i18next } = useTranslation()
-const format = useFormatting()
 const layerMetadata: Ref<LayerMetadataModel | undefined> = ref()
 
 watch(metadataTreeNode, async node => {
@@ -93,7 +92,7 @@ function closeLayerMetadata() {
       <layer-metadata-item
         v-if="layerMetadata.revisionDate"
         :label="t('Revision date')"
-        :value="format.formatDate(layerMetadata.revisionDate)"
+        :value="formatDate(layerMetadata.revisionDate)"
       ></layer-metadata-item>
       <layer-metadata-item
         v-if="layerMetadata.keyword"
