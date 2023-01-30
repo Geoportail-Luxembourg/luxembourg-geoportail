@@ -7,7 +7,7 @@ import {
   isoLang2To3,
   stringToHtml,
 } from './layer-metadata.utils'
-import useWmsHelper from '../common/wms-helper.composable'
+import { wmsHelper } from '../common/wms.helper'
 import useThemes from '../themes/themes.composable'
 
 export class LayerMetadataService {
@@ -74,7 +74,7 @@ export class LayerMetadataService {
         layerName: values[2],
       }
       if (idValues.serviceType === 'WMS') {
-        metadata = await useWmsHelper().getMetadata(idValues)
+        metadata = await wmsHelper.getMetadata(idValues)
       } else if (idValues.serviceType == 'WMTS') {
         // TODO: handle WMTS
         // metadata = appWmtsHelper.getMetadata(metadataUid)

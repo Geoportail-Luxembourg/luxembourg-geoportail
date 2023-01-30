@@ -1,8 +1,8 @@
 import { remoteLayersService } from '@/components/remote-layers/remote-layers.service'
 import { IdValues } from '../layer-metadata/layer-metadata.model'
 
-export default function useWmsHelper() {
-  async function getMetadata(idValues: IdValues) {
+export class WmsHelper {
+  async getMetadata(idValues: IdValues) {
     console.assert(idValues.serviceType === 'WMS')
     const wmsEndpoint = remoteLayersService.getWmsEndpoint(idValues.wmsUrl)
     await wmsEndpoint.isReady()
@@ -24,5 +24,5 @@ export default function useWmsHelper() {
       // onlineResource: undefined,
     }
   }
-  return { getMetadata }
 }
+export const wmsHelper = new WmsHelper()
