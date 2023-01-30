@@ -1,12 +1,12 @@
 <script setup lang="ts">
-import { formatDate } from '@/composables/common/formatting.utils'
+import { formatDate } from '@/services/common/formatting.utils'
 import { useTranslation } from 'i18next-vue'
 import LayerMetadataItem from './layer-metadata-item.vue'
 import { useMetadataStore } from '@/stores/metadata.store'
 import { storeToRefs } from 'pinia'
 import { watch, Ref, ref, onMounted } from 'vue'
-import { layerMetadataService } from '@/composables/layer-metadata/layer-metadata.service'
-import { LayerMetadataModel } from '@/composables/layer-metadata/layer-metadata.model'
+import { layerMetadataService } from '@/services/layer-metadata/layer-metadata.service'
+import { LayerMetadataModel } from '@/services/layer-metadata/layer-metadata.model'
 
 const metadataStore = useMetadataStore()
 const { metadataTreeNode } = storeToRefs(metadataStore)

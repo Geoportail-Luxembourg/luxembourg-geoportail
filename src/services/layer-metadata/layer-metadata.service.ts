@@ -1,4 +1,4 @@
-import { ThemeNodeModel } from '../themes/themes.model'
+import { ThemeNodeModel } from '@/composables/themes/themes.model'
 import { LayerTreeNodeModel } from '@/components/layer-tree/layer-tree.model'
 import { IdValues, LayerMetadataModel } from './layer-metadata.model'
 import {
@@ -8,7 +8,7 @@ import {
   stringToHtml,
 } from './layer-metadata.utils'
 import { wmsHelper } from '../common/wms.helper'
-import useThemes from '../themes/themes.composable'
+import useThemes from '../../composables/themes/themes.composable'
 
 export class LayerMetadataService {
   // TODO: get urls from a config
