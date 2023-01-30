@@ -24,8 +24,26 @@ class StorageLayerMapper {
     })
   }
 
+  layerOpacitiesToNumbers(opacitiesText: string | null) {
+    return (
+      opacitiesText
+        ?.split(STORAGE_SEPARATOR)
+        .map(opacity =>
+          opacity !== null && !isNaN(opacity as any)
+            ? parseFloat(opacity)
+            : undefined
+        ) || []
+    )
+  }
+
   layersToLayerIds(layers: Layer[] | null): string {
     return layers?.map(layer => layer.id).join(STORAGE_SEPARATOR) || ''
+  }
+
+  layersToLayerOpacities(layers: Layer[] | null): string {
+    return (
+      layers?.map(layer => layer.opacity ?? 1).join(STORAGE_SEPARATOR) || ''
+    )
   }
 
   bgLayerIdToBgLayer(bgLayerIdText: string | null): Layer | null {
