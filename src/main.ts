@@ -4,10 +4,14 @@ import I18NextVue from 'i18next-vue'
 
 import { createApp } from 'vue'
 import { createPinia } from 'pinia'
+
+import { projectionService } from '@/services/projection.service'
 import App from './App.vue'
 
 import './assets/main.css'
 import VueDOMPurifyHTML from 'vue-dompurify-html'
+
+projectionService.initProjections()
 
 i18next.use(backend)
 i18next.init({

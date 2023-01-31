@@ -13,8 +13,8 @@ onMounted(async () => {
     map.createMap(mapContainer.value)
     new OlSynchronizer(map.getOlMap())
 
-    statePersistorMapService.restoreZoom()
-    statePersistorMapService.persistZoom()
+    statePersistorMapService.restoreViewport()
+    statePersistorMapService.persistViewport()
   }
 })
 </script>
