@@ -15,6 +15,7 @@ import {
   V2_ZOOM_TO_V3_ZOOM_,
 } from './state-persistor-map.mapper'
 import { debounce } from '@/services/utils'
+import ObjectEventType from 'ol/ObjectEventType'
 
 class StatePersistorMapService {
   persistZoom() {
@@ -36,7 +37,7 @@ class StatePersistorMapService {
 
     olEvents.listen(
       view,
-      'propertychange',
+      ObjectEventType.PROPERTYCHANGE,
       debounce(() => {
         const center = view.getCenter()
         storageHelper.setValue(SP_KEY_X, center ? Math.round(center[0]) : null)
@@ -70,32 +71,34 @@ class StatePersistorMapService {
     // this.appStateManager_.deleteParam('SRS');
 
     let viewCenter
+    let viewZoom
+
+    if (zoom != null && !isNaN(Number(zoom))) {
+      // keep "!=" for not null AND not undefined
+      viewZoom =
+        version === '3'
+          ? Number(zoom)
+          : V2_ZOOM_TO_V3_ZOOM_[zoom as KeyZoomV2ToV3]
+    } else {
+      viewZoom = 8
+    }
 
     if (x != null && y != null) {
       // keep "!=" for not null AND not undefined
       if (version === '3' && srs != null) {
-        viewCenter = transform([+x, +y], srs, 'EPSG:3857')
+        viewCenter = transform([Number(x), Number(y)], srs, 'EPSG:3857')
       } else {
         viewCenter =
           version === '3'
-            ? [+x, +y]
-            : lurefToWebMercatorFn([+y, +x], undefined, 2)
+            ? [Number(x), Number(y)]
+            : lurefToWebMercatorFn([Number(y), Number(x)], undefined, 2)
       }
     } else {
       viewCenter = transform([6, 49.7], 'EPSG:4326', 'EPSG:3857')
     }
 
     view.setCenter(viewCenter)
-
-    if (zoom != null && !isNaN(Number(zoom))) {
-      // keep "!=" for not null AND not undefined
-      const viewZoom =
-        version === '3'
-          ? +Number(zoom)
-          : V2_ZOOM_TO_V3_ZOOM_[zoom as KeyZoomV2ToV3]
-
-      view.setZoom(viewZoom)
-    }
+    view.setZoom(viewZoom)
   }
 }
 
