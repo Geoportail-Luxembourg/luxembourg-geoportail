@@ -46,7 +46,7 @@ function closeLayerMetadata() {
       <h1>{{ t(`${layerMetadata.title}`) }}</h1>
       <button @click="closeLayerMetadata">X</button>
     </div>
-    <div class="grid gap-2 grid-cols-3 pt-3 text-[13px] font-arial">
+    <div class="grid gap-2 grid-cols-3 pt-3 text-[13px] font-arial break-words">
       <layer-metadata-item
         v-if="layerMetadata.name"
         :label="t('Name')"
