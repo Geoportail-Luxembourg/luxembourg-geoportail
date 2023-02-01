@@ -92,7 +92,7 @@ function closeLayerMetadata() {
       <layer-metadata-item
         v-if="layerMetadata.revisionDate"
         :label="t('Revision date')"
-        :value="formatDate(layerMetadata.revisionDate)"
+        :value="formatDate(layerMetadata.revisionDate, i18next.language)"
       ></layer-metadata-item>
       <layer-metadata-item
         v-if="layerMetadata.keyword"
