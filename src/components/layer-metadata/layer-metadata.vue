@@ -14,12 +14,9 @@ const { t, i18next } = useTranslation()
 const layerMetadata: Ref<LayerMetadataModel | undefined> = ref()
 
 watch(metadataTreeNode, async node => {
-  node
-    ? (layerMetadata.value = await layerMetadataService.getLayerMetadata(
-        node,
-        i18next.language
-      ))
-    : (layerMetadata.value = undefined)
+  layerMetadata.value = node
+    ? await layerMetadataService.getLayerMetadata(node, i18next.language)
+    : undefined
 })
 
 onMounted(() => {

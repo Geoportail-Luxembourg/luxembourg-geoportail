@@ -31,8 +31,7 @@ export class LayerMetadataService {
       localMetadata = layer.metadata
 
       metadata =
-        layer.metadata &&
-        layer.metadata.metadata_id &&
+        layer.metadata?.metadata_id &&
         (await this.getLocalMetadata(
           this.localMetadataBaseUrl,
           layer.metadata.metadata_id,
