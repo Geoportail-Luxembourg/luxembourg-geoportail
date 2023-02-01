@@ -7,6 +7,7 @@ import { createPinia } from 'pinia'
 import App from './App.vue'
 
 import './assets/main.css'
+import VueDOMPurifyHTML from 'vue-dompurify-html'
 
 i18next.use(backend)
 i18next.init({
@@ -25,5 +26,6 @@ const app = createApp(App)
 
 app.use(createPinia())
 app.use(I18NextVue, { i18next })
+app.use(VueDOMPurifyHTML)
 
 app.mount('#app')

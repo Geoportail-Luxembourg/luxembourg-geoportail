@@ -11,7 +11,7 @@ export function useLayer(layer: Layer | IBackgroundLayer, context?: any) {
   }
 
   function onClickInfo() {
-    context?.emit('clickInfo')
+    context?.emit('clickInfo', layer)
   }
 
   return {

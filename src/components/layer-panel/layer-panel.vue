@@ -5,6 +5,7 @@ import { useTranslation } from 'i18next-vue'
 import CatalogTab from '@/components/catalog/catalog-tab.vue'
 import LayerManager from '@/components/layer-manager/layer-manager.vue'
 import RemoteLayers from '@/components/remote-layers/remote-layers.vue'
+import LayerMetadata from '../layer-metadata/layer-metadata.vue'
 
 const { t } = useTranslation()
 const myLayersOpen = ref(true)
@@ -40,5 +41,6 @@ const myLayersOpen = ref(true)
       <layer-manager v-if="myLayersOpen"></layer-manager>
     </div>
     <remote-layers></remote-layers>
+    <layer-metadata></layer-metadata>
   </div>
 </template>

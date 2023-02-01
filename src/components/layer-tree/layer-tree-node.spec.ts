@@ -1,5 +1,5 @@
 import { shallowMount } from '@vue/test-utils'
-
+import { createTestingPinia } from '@pinia/testing'
 import { LayerTreeNodeModel } from './layer-tree.model'
 import LayerTreeNode from './layer-tree-node.vue'
 
@@ -26,6 +26,9 @@ describe('LayerTreeNode', () => {
     const wrapper = shallowMount(LayerTreeNode, {
       props: {
         node: layerTreeNodeMock,
+      },
+      global: {
+        plugins: [createTestingPinia()],
       },
     })
 

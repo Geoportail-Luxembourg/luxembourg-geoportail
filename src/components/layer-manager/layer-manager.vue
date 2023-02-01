@@ -65,7 +65,6 @@ function toggleEditionLayer() {
         :isOpen="isLayerOpenId === layer.id"
         @clickRemove="removeLayer"
         @clickToggle="toggleAccordionItem"
-        @clickInfo="toggleInfoLayer"
         @changeOpacity="changeOpacityLayer"
       >
       </layer-manager-item>
