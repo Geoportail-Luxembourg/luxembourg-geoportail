@@ -13,7 +13,7 @@ import {
   SP_KEY_Y,
   SP_KEY_ZOOM,
 } from './state-persistor.model'
-import { projectionService } from '../projection.service'
+import { initProjections } from '../projection.utils'
 import { register } from 'ol/proj/proj4'
 
 let fakeStorage: { [key: string]: string } = {}
@@ -24,7 +24,7 @@ describe('StatePersistorMapService', () => {
   const olMap = map.getOlMap()
   const view = useMap().getOlMap().getView()
 
-  projectionService.initProjections()
+  initProjections()
   proj4.defs(
     'EPSG:21781',
     '+proj=somerc +lat_0=46.95240555555556 +lon_0=7.439583333333333 +k_0=1 ' +
@@ -146,25 +146,25 @@ describe('StatePersistorMapService', () => {
 
     describe('when there are values in storage', () => {
       it('restores the zoom center as is for version 3', () => {
-        storageHelper.setValue('version', '3')
-        storageHelper.setValue('zoom', '10')
+        storageHelper.setValue('version', 3)
+        storageHelper.setValue('zoom', 10)
         statePersistorMapService.restoreViewport()
         expect(view.setZoom).toHaveBeenCalledWith(10)
       })
 
       it('restores the zoom center after conversion from v2 to v3', () => {
         storageHelper.setValue('version', 'any not 3')
-        storageHelper.setValue('zoom', '10')
+        storageHelper.setValue('zoom', 10)
         statePersistorMapService.restoreViewport()
         expect(view.setZoom).toHaveBeenCalledWith(18)
       })
 
       it('restores the zoom center after transformation from given source proj EPSG:21781 to default dest proj for version 3', () => {
         expect(storageHelper.getValue('X')).toBe(undefined)
-        storageHelper.setValue('version', '3')
+        storageHelper.setValue('version', 3)
         storageHelper.setValue('SRS', 'EPSG:21781')
-        storageHelper.setValue('X', '565128.7200596306')
-        storageHelper.setValue('Y', '6263074.645037436')
+        storageHelper.setValue('X', 565128.7200596306)
+        storageHelper.setValue('Y', 6263074.645037436)
         statePersistorMapService.restoreViewport()
         expect(view.setCenter).toHaveBeenCalledWith([
           1115435.3583171312, 20441954.15514722,
@@ -173,8 +173,9 @@ describe('StatePersistorMapService', () => {
 
       it('restores the zoom center after transformation from default source proj EPSG:2169 to default dest proj for version 2', () => {
         expect(storageHelper.getValue('X')).toBe(undefined)
-        storageHelper.setValue('X', '565128.7200596306')
-        storageHelper.setValue('Y', '6263074.645037436')
+        storageHelper.setValue('version', 2)
+        storageHelper.setValue('X', 565128.7200596306)
+        storageHelper.setValue('Y', 6263074.645037436)
         statePersistorMapService.restoreViewport()
         expect(view.setCenter).toHaveBeenCalledWith([
           7633619.184187683, 3818804.664253617,
@@ -183,9 +184,9 @@ describe('StatePersistorMapService', () => {
 
       it('restores the zoom center with no transformation with version 3', () => {
         expect(storageHelper.getValue('X')).toBe(undefined)
-        storageHelper.setValue('version', '3')
-        storageHelper.setValue('X', '565128.7200596306')
-        storageHelper.setValue('Y', '6263074.645037436')
+        storageHelper.setValue('version', 3)
+        storageHelper.setValue('X', 565128.7200596306)
+        storageHelper.setValue('Y', 6263074.645037436)
         statePersistorMapService.restoreViewport()
         expect(view.setCenter).toHaveBeenCalledWith([
           565128.7200596306, 6263074.645037436,

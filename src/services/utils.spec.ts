@@ -1,4 +1,4 @@
-import { debounce } from './utils'
+import { debounce, stringToNumber } from './utils'
 
 const mock = vi.fn(() => 'function to be debounced')
 
@@ -30,5 +30,27 @@ describe('#debounce', () => {
     }
 
     expect(mock).toHaveBeenCalledTimes(5)
+  })
+})
+
+describe('#stringToNumber', () => {
+  describe('when string is empty', () => {
+    it('returns undefined', () => {
+      expect(stringToNumber('')).toBe(undefined)
+      expect(stringToNumber('  ')).toBe(undefined)
+    })
+  })
+  describe('when string is an invalid number', () => {
+    it('returns undefined', () => {
+      expect(stringToNumber('a123')).toBe(undefined)
+      expect(stringToNumber('0.invalidnum*')).toBe(undefined)
+    })
+  })
+  describe('when string is a valid number', () => {
+    it('returns the value as a number', () => {
+      expect(stringToNumber('128')).toBe(128)
+      expect(stringToNumber('-42')).toBe(-42)
+      expect(stringToNumber('0.5')).toBe(0.5)
+    })
   })
 })

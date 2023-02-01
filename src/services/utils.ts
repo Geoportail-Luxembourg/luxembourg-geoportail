@@ -8,3 +8,7 @@ export function debounce(fn: Function, delay: number) {
     }, delay)
   }
 }
+
+export function stringToNumber(text: string | null) {
+  return text?.trim() && !isNaN(Number(text)) ? Number(text) : undefined
+}

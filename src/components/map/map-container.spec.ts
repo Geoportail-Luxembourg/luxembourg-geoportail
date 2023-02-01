@@ -1,11 +1,11 @@
 import { createTestingPinia } from '@pinia/testing'
 import { shallowMount } from '@vue/test-utils'
 
-import { projectionService } from '@/services/projection.service'
+import { initProjections } from '@/services/projection.utils'
 import MapContainer from './map-container.vue'
 
 beforeAll(() => {
-  projectionService.initProjections()
+  initProjections()
 })
 
 describe('MapContainer', () => {

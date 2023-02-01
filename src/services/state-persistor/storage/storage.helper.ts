@@ -18,6 +18,7 @@ class StorageHelper {
   }
 
   getValue<T>(key: string, mapper?: (value: string | null) => T): T
+  getValue<T>(key: string, mapper?: (value: string | null) => T): T | undefined
   getValue<T>(key: string, mapper?: (value: string | null) => T[]): T[]
   getValue<T>(key: string, mapper?: (value: string | null) => T[]): unknown {
     return this.mapToEntity(storageProxy.getValue(key), mapper)
