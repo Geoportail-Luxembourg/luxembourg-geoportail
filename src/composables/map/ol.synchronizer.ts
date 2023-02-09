@@ -58,7 +58,7 @@ export class OlSynchronizer {
 
     watch(
       () => mapStore.bgLayer,
-      bgLayer => openLayers.setBgLayer(map, bgLayer)
+      bgLayer => bgLayer !== undefined && openLayers.setBgLayer(map, bgLayer)
     )
   }
 }

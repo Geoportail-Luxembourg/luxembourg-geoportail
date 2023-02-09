@@ -162,7 +162,7 @@ describe('Map Store', () => {
   describe('Map Store -- Background layer', () => {
     it('set background layer', () => {
       const mapStore = useMapStore()
-      expect(mapStore.bgLayer).toBe(null)
+      expect(mapStore.bgLayer).toBe(undefined)
       mapStore.setBgLayer(backgroundLayer)
       expect(mapStore.bgLayer).toStrictEqual(backgroundLayer)
     })

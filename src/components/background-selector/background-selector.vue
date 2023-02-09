@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import { useTranslation } from 'i18next-vue'
 import { computed, Ref, ref, watch } from 'vue'
+import { storeToRefs } from 'pinia'
 
 import {
   BLANK_BACKGROUNDLAYER,
@@ -9,25 +10,28 @@ import {
 import useBackgroundLayer from '@/composables/background-layer/background-layer.composable'
 import { useThemeStore } from '@/stores/config.store'
 import { useMapStore } from '@/stores/map.store'
+import { statePersistorService } from '@/services/state-persistor/state-persistor.service'
 import BackgroundSelectorItem from './background-selector-item.vue'
 
 const { t } = useTranslation()
 const backgroundLayer = useBackgroundLayer()
 const mapStore = useMapStore()
 const themeStore = useThemeStore()
+const { bgLayer: bgLayerContext } = storeToRefs(mapStore)
+
+statePersistorService.bootstrapBgLayer()
+
 const props = defineProps({
   isOpen: {
     type: Boolean,
     default: false,
   },
-
-  activeLayerId: {
-    type: Number,
-  },
 })
 const isOpen = ref(props.isOpen)
 const bgLayers: Ref<IBackgroundLayer[]> = ref([])
-const activeLayerId = ref(props.activeLayerId)
+const activeLayerId = computed(
+  () => (bgLayerContext.value?.id as number) ?? BLANK_BACKGROUNDLAYER.id
+)
 const activeLayerName = computed(
   () => bgLayers.value.find(layer => layer.id === activeLayerId.value)?.name
 )
@@ -35,39 +39,35 @@ const activeLayerName = computed(
 watch(
   () => themeStore.bgLayers,
   bgLayersContext => {
-    if (props.activeLayerId === void 0) {
-      backgroundLayer.setBgLayer(backgroundLayer.getDefaultSelectedId())
-    }
-
     bgLayers.value =
       bgLayersContext.length > 0
         ? backgroundLayer.getBgLayersFromConfig()
         : [BLANK_BACKGROUNDLAYER]
-  },
-  { immediate: true }
-)
-
-watch(
-  () => mapStore.layers,
-  layersContext => {
-    if (activeLayerId.value === void 0 && layersContext?.length === 0) {
-      // TODO: implement alert message
-      console.log(
-        t(
-          "Aucune couche n'étant définie pour cette carte, une couche de fond a automatiquement été ajoutée.",
-          { ns: 'client' }
-        )
-      )
-    }
-  },
-  { immediate: true }
+  }
 )
 
 watch(
   () => mapStore.bgLayer,
-  bgLayerContext => {
-    activeLayerId.value =
-      (bgLayerContext?.id as number) ?? BLANK_BACKGROUNDLAYER.id
+  (bgLayerContext, bgLayerContextOld) => {
+    const layersContext = mapStore.layers
+
+    if (
+      bgLayerContextOld === undefined &&
+      bgLayerContext === null &&
+      layersContext?.length === 0
+    ) {
+      backgroundLayer.setBgLayer(backgroundLayer.getDefaultSelectedId())
+
+      if (bgLayerContext === null) {
+        // TODO: implement alert message
+        console.log(
+          t(
+            "Aucune couche n'étant définie pour cette carte, une couche de fond a automatiquement été ajoutée.",
+            { ns: 'client' }
+          )
+        )
+      }
+    }
   }
 )
 

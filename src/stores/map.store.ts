@@ -6,7 +6,7 @@ import type { LayerId, Layer, MapContext } from './map.store.model'
 export const useMapStore = defineStore('map', () => {
   const map: Ref<MapContext> = ref({})
   const layers: ShallowRef<Layer[]> = shallowRef([])
-  const bgLayer: Ref<Layer | null> = ref(null)
+  const bgLayer: Ref<Layer | undefined | null> = ref(undefined) // undefined => at start app | null => blank bgLayer
 
   function setBgLayer(layer: Layer | null) {
     bgLayer.value = layer

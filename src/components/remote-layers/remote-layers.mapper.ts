@@ -5,6 +5,7 @@ import {
   OgcClientWmsLayerSummary,
   OgcClientWmsLayerFull,
 } from './remote-layers.model'
+import { remoteLayersService } from './remote-layers.service'
 
 function sortLayerTreeNoChildrenFirst(
   a: OgcClientWmsLayerSummary,
@@ -40,6 +41,17 @@ export function remoteLayersToLayerTreeMapper(
     checked: mapStore.hasLayer(id),
     expanded: false,
   }
+}
+
+export function remoteLayerIdtoLayer(layerId: string) {
+  const id = decodeURIComponent(layerId)
+  const [url, name] = id.replace('WMS||', '').split('||')
+
+  return remoteLayerToLayer({
+    id,
+    url: remoteLayersService.getProxyfiedUrl(url),
+    remoteLayer: { name } as OgcClientWmsLayerFull,
+  })
 }
 
 export function remoteLayerToLayer({

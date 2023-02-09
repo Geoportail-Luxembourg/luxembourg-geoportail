@@ -4,6 +4,9 @@ import BackgroundSelector from '@/components/background-selector/background-sele
 import LanguageSelector from '@/components/nav-bars/language-selector.vue'
 import LayerPanel from '@/components/layer-panel/layer-panel.vue'
 import MapContainer from '@/components/map/map-container.vue'
+import { statePersistorService } from '@/services/state-persistor/state-persistor.service'
+
+statePersistorService.bootstrapLayers()
 </script>
 
 <template>
