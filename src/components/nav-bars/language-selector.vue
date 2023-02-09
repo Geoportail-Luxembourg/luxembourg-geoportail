@@ -1,21 +1,38 @@
 <script setup lang="ts">
 import { useTranslation } from 'i18next-vue'
+import { storeToRefs } from 'pinia'
 
-const { i18next } = useTranslation()
+import DropdownList from '@/components/common/dropdown-list.vue'
 
-function changeLanguages(event: Event) {
-  if (event.target) {
-    const lang = (event.target as HTMLInputElement).value
-    i18next.changeLanguage(lang)
-  }
+import { useAppStore } from '@/stores/app.store'
+import { statePersistorLangService } from '@/services/state-persistor/state-persistor-lang.service'
+
+const { i18next, t } = useTranslation()
+const { setLang } = useAppStore()
+const { lang } = storeToRefs(useAppStore())
+const availableLanguages = ['en', 'de', 'fr', 'lb'].map(lang => ({
+  label: t(lang),
+  value: lang,
+  ariaLabel: t(`Changer de langue : {{lang}}`, { lang: lang }),
+}))
+const placeholder = t('Changer de langue')
+
+statePersistorLangService.bootstrapLang()
+
+function changeLanguages(lang: string) {
+  i18next.changeLanguage(lang)
+  setLang(lang)
 }
 </script>
 
 <template>
-  <select @change="changeLanguages">
-    <option value="fr">FR</option>
-    <option value="en">EN</option>
-    <option value="de">DE</option>
-    <option value="lb">LB</option>
-  </select>
+  <div>
+    <dropdown-list
+      class="lux-navbar-dropdown lux-dropdown-inline text-white h-full"
+      :options="availableLanguages"
+      :placeholder="placeholder"
+      v-model="lang"
+      @change="changeLanguages"
+    ></dropdown-list>
+  </div>
 </template>

@@ -49,7 +49,7 @@ describe('DropdownList', () => {
     })
 
     beforeEach(async () => {
-      await wrapper.find('#menu-button').trigger('click')
+      await wrapper.find('.lux-dropdown-btn').trigger('click')
     })
 
     it('should toggle dropdown', () => {

@@ -64,6 +64,10 @@
     outline-offset: -2px;
   }
 
+  .lux-outlined-none {
+    outline: none;
+  }
+
   .lux-btn {
     @apply bg-white border text-primary py-[6px] px-[12px] hover:bg-primary hover:text-white leading-snug focus:bg-[#e6e6e6] focus:border-[#8c8c8c] focus:[color:var(--color-primary)] focus:lux-outlined;
     border: 1px solid var(--button-bg-color);
@@ -82,6 +86,10 @@
     @apply inline-block;
   }
 
+  .lux-dropdown-inline .lux-dropdown-list:not(.hidden) {
+    @apply flex;
+  }
+
   .lux-dropdown-list {
     @apply absolute left-0 z-10 bg-white py-[5px] mt-[2px] w-auto;
     border: 1px solid rgba(0, 0, 0, 0.15);
@@ -89,7 +97,7 @@
   }
 
   .lux-dropdown-list-item {
-    @apply hover:bg-[#f5f5f5] py-[3px] px-5 cursor-pointer focus:lux-outlined text-left w-full;
+    @apply h-full w-full hover:bg-[#f5f5f5] py-[3px] px-5 cursor-pointer text-left;
   }
 
   .lux-caret {
@@ -123,6 +131,33 @@
   .lux-sortable-drag {
     @apply drop-shadow-md;
   }
+
+  .lux-navbar-dropdown .lux-dropdown-btn {
+    @apply w-16 h-full border-none lux-outlined-none [color:var(--color-navbar-default)]
+      after:font-icons after:content-['\e012'] after:text-3xl
+      hover:text-white hover:bg-[color:var(--main-primary)]
+      [&>span]:hidden
+      [&.expanded]:bg-[color:var(--main-primary)] [&.expanded]:text-white
+      [&.expanded]:after:content-['\e02c'];
+  }
+
+  .lux-navbar-dropdown .lux-dropdown-wrapper {
+    @apply absolute w-full right-0;
+  }
+
+  .lux-navbar-dropdown .lux-dropdown-list {
+    @apply bg-transparent border-none gap-[1px] shadow-none m-0 py-0 float-right relative left-auto;
+  }
+
+  .lux-navbar-dropdown .lux-dropdown-list li {
+    @apply h-16 w-16 bg-[color:var(--color-primary)]
+    hover:bg-white hover:[color:var(--color-primary)] 
+    [&.selected]:bg-white [&.selected]:[color:var(--color-primary)];
+  }
+
+  .lux-navbar-dropdown .lux-dropdown-list-item {
+    @apply uppercase text-center;
+  }
 }
 
 .fa-solid {
@@ -135,6 +170,7 @@
     --color-primary: #2980b9;
     --color-secondary: #97bbd3;
     --color-tertiary: #1f5d87;
+    --color-navbar-default: #777;
     --main-primary: #2980b9;
     --main-secondary: #97bbd3;
     --main-tertiary: #1f5d87;

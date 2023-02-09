@@ -14,7 +14,7 @@ import {
 import { storageLayerMapper } from './state-persistor-layer.mapper'
 import { storageHelper } from './storage/storage.helper'
 
-class StatePersistorLayerService {
+class StatePersistorLayersService {
   bootstrapLayers() {
     const themeStore = useThemeStore()
     let stop: WatchStopHandle
@@ -118,4 +118,4 @@ class StatePersistorLayerService {
   }
 }
 
-export const statePersistorLayerService = new StatePersistorLayerService()
+export const statePersistorLayersService = new StatePersistorLayersService()

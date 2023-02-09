@@ -4,18 +4,27 @@ import BackgroundSelector from '@/components/background-selector/background-sele
 import LanguageSelector from '@/components/nav-bars/language-selector.vue'
 import LayerPanel from '@/components/layer-panel/layer-panel.vue'
 import MapContainer from '@/components/map/map-container.vue'
-import { statePersistorLayerService } from '@/services/state-persistor/state-persistor-layer.service'
+import { statePersistorLayersService } from '@/services/state-persistor/state-persistor-layers.service'
 
-statePersistorLayerService.bootstrapLayers()
+statePersistorLayersService.bootstrapLayers()
 </script>
 
 <template>
   <div class="h-screen flex flex-col overflow-hidden">
-    <header class="h-14 flex bg-white shadow-header z-10 shrink-0">
-      <div class="p-[5px]">
+    <header
+      class="lux-navbar w-full h-14 flex bg-white shadow-header z-10 shrink-0"
+    >
+      <div class="flex-2 p-[5px]">
         <img src="./assets/header/gov-light.8b5db4.png" />
       </div>
-      <language-selector></language-selector>
+      <div class="grow text-center">search</div>
+      <div>
+        <ul class="h-full">
+          <li class="border-l-[1px] border-stone-300 h-full">
+            <language-selector class="flex-none h-full"></language-selector>
+          </li>
+        </ul>
+      </div>
     </header>
     <main class="flex grow">
       <!--side bar-->

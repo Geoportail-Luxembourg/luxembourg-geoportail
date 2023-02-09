@@ -7,8 +7,10 @@ describe('RulesReadHelper', () => {
     })
   })
   describe('#processRulesForKey', () => {
-    it('returns the permalink as storage to read the lang #ruleLangInUrl', () => {
-      expect(RulesReadHelper.processRulesForKey('lang', { lang: 'fr' })).toBe(1)
+    it('returns undefined as storage to read the lang #ruleLangInUrl', () => {
+      expect(RulesReadHelper.processRulesForKey('lang', { lang: 'fr' })).toBe(
+        undefined
+      )
     })
     it('returns no storage to read any other key', () => {
       expect(

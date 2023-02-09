@@ -6,6 +6,7 @@ import { DropdownOptionModel } from './dropdown-list.model'
 const props = defineProps<{
   placeholder: string
   options: DropdownOptionModel[]
+  modelValue?: string
 }>()
 const emit = defineEmits(['change'])
 const isOpen: ShallowRef<boolean> = shallowRef(false)
@@ -35,11 +36,11 @@ onUnmounted(() => document.removeEventListener('click', onClickOutsideOpenBtn))
 
 <template>
   <div class="lux-dropdown">
-    <div>
+    <div class="h-full">
       <button
         type="button"
-        class="lux-btn"
-        id="menu-button"
+        class="lux-btn lux-dropdown-btn"
+        :class="isOpen ? 'expanded' : ''"
         :aria-expanded="isOpen"
         aria-haspopup="true"
         @click="onClickOpenBtn"
@@ -48,16 +49,27 @@ onUnmounted(() => document.removeEventListener('click', onClickOutsideOpenBtn))
         ><span class="lux-caret"></span>
       </button>
     </div>
-    <ul class="lux-dropdown-list" :class="isOpen ? '' : 'hidden'" tabindex="-1">
-      <li v-for="option in props.options" :key="option.value">
-        <button
-          class="lux-dropdown-list-item"
-          :data-value="option.value"
-          @click="onClickItem"
+    <div class="lux-dropdown-wrapper">
+      <ul
+        class="lux-dropdown-list"
+        :class="isOpen ? '' : 'hidden'"
+        tabindex="-1"
+      >
+        <li
+          v-for="option in props.options"
+          :key="option.value"
+          :class="modelValue === option.value ? 'selected' : ''"
         >
-          {{ option.label }}
-        </button>
-      </li>
-    </ul>
+          <button
+            class="lux-dropdown-list-item"
+            :aria-label="option.ariaLabel"
+            :data-value="option.value"
+            @click="onClickItem"
+          >
+            {{ option.label }}
+          </button>
+        </li>
+      </ul>
+    </div>
   </div>
 </template>
