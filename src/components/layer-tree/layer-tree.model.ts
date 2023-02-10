@@ -1,7 +1,9 @@
+import { LayerId } from '@/stores/map.store.model'
+
 export type LayerTreeToggleProperty = 'checked' | 'expanded'
 
 export interface LayerTreeNodeModel {
-  id: string
+  id: LayerId
   name: string
   checked: boolean
   expanded: boolean

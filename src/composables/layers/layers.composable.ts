@@ -1,6 +1,6 @@
 import i18next from 'i18next'
 
-import type { Layer } from '@/stores/map.store.model'
+import type { Layer, LayerId } from '@/stores/map.store.model'
 import { useMapStore } from '@/stores/map.store'
 import { useThemeStore } from '@/stores/config.store'
 import useThemes from '@/composables/themes/themes.composable'
@@ -59,7 +59,7 @@ export default function useLayers() {
     }
   }
 
-  function toggleLayer(id: number, show = true) {
+  function toggleLayer(id: LayerId, show = true) {
     const themeStore = useThemeStore()
     const mapStore = useMapStore()
 

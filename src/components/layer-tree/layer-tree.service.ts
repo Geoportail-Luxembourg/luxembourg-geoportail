@@ -1,4 +1,4 @@
-import type { Layer } from '@/stores/map.store.model'
+import type { Layer, LayerId } from '@/stores/map.store.model'
 import type {
   LayerTreeNodeModel,
   LayerTreeToggleProperty,
@@ -6,7 +6,7 @@ import type {
 
 export class LayerTreeService {
   toggleNode(
-    id: string,
+    id: LayerId,
     node: LayerTreeNodeModel,
     propertyName: LayerTreeToggleProperty
   ): LayerTreeNodeModel {

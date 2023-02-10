@@ -1,5 +1,5 @@
 import { useMapStore } from '@/stores/map.store'
-import { Layer, LayerImageType } from '@/stores/map.store.model'
+import { Layer, LayerId, LayerImageType } from '@/stores/map.store.model'
 import { LayerTreeNodeModel } from '@/components/layer-tree/layer-tree.model'
 import {
   OgcClientWmsLayerSummary,
@@ -59,7 +59,7 @@ export function remoteLayerToLayer({
   url,
   remoteLayer,
 }: {
-  id: string
+  id: LayerId
   url: string
   remoteLayer: OgcClientWmsLayerFull
 }): Layer {

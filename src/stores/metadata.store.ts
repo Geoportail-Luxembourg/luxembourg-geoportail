@@ -1,12 +1,13 @@
 import { acceptHMRUpdate, defineStore } from 'pinia'
 import { ref, Ref } from 'vue'
+import { LayerId } from './map.store.model'
 
 export const useMetadataStore = defineStore(
   'metadata',
   () => {
-    const metadataId: Ref<string | number | undefined> = ref()
+    const metadataId: Ref<LayerId | undefined> = ref()
 
-    function setMetadataId(id: string | number) {
+    function setMetadataId(id: LayerId) {
       metadataId.value = id
     }
 

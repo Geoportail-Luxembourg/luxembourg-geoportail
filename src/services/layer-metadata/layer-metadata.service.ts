@@ -8,6 +8,7 @@ import {
 } from './layer-metadata.utils'
 import { wmsHelper } from '../common/wms.helper'
 import useThemes from '../../composables/themes/themes.composable'
+import { LayerId } from '@/stores/map.store.model'
 
 export class LayerMetadataService {
   // TODO: get urls from a config
@@ -18,7 +19,7 @@ export class LayerMetadataService {
   private localMetadataBaseUrl = 'https://map.geoportail.lu/getMetadata'
 
   async getLayerMetadata(
-    id: string | number,
+    id: LayerId,
     currentLanguage: string
   ): Promise<LayerMetadataModel> {
     const layer: ThemeNodeModel | undefined =
