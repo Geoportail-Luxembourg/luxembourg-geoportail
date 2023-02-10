@@ -9,6 +9,7 @@ const props = defineProps<{
 }>()
 const emit = defineEmits<{
   (e: 'clickEdit'): void
+  (e: 'clickInfo'): void
 }>()
 const { t, onClickInfo } = useLayer(props.layer, { emit })
 

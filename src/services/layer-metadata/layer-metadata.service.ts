@@ -1,5 +1,4 @@
 import { ThemeNodeModel } from '@/composables/themes/themes.model'
-import { LayerTreeNodeModel } from '@/components/layer-tree/layer-tree.model'
 import { IdValues, LayerMetadataModel } from './layer-metadata.model'
 import {
   getMetadataLinks,
@@ -19,12 +18,11 @@ export class LayerMetadataService {
   private localMetadataBaseUrl = 'https://map.geoportail.lu/getMetadata'
 
   async getLayerMetadata(
-    node: LayerTreeNodeModel,
+    id: string | number,
     currentLanguage: string
   ): Promise<LayerMetadataModel> {
-    const layer: ThemeNodeModel | undefined = useThemes().findById(
-      parseInt(node.id, 10)
-    )
+    const layer: ThemeNodeModel | undefined =
+      useThemes().findById(+id) || useThemes().findBgLayerById(+id)
     let localMetadata
     let metadata
     if (layer) {
@@ -66,7 +64,7 @@ export class LayerMetadataService {
           })
     } else {
       // is this case needed for another case than external layers (which have no theme node in theme service)?
-      const values = node.id.split('%2D').join('-').split('||')
+      const values = String(id).split('%2D').join('-').split('||')
       const idValues: IdValues = {
         serviceType: values[0] as 'WMS' | 'WMTS',
         wmsUrl: values[1],

@@ -9,7 +9,9 @@ import { BLANK_BACKGROUNDLAYER } from '@/composables/background-layer/background
 
 import LayerManagerItemBackground from './layer-item/layer-item-background.vue'
 import LayerManagerItem from './layer-item/layer-item.vue'
+import { useMetadataStore } from '@/stores/metadata.store'
 
+const { setMetadataId } = useMetadataStore()
 const mapStore = useMapStore()
 const { bgLayer } = storeToRefs(mapStore)
 
@@ -48,10 +50,6 @@ function toggleAccordionItem(layer: Layer) {
   isLayerOpenId.value = isLayerOpenId.value !== layer.id ? layer.id : undefined
 }
 
-function toggleInfoLayer() {
-  console.info('clickInfo to implement')
-}
-
 function toggleEditionLayer() {
   console.info('clickEdit to implement')
 }
@@ -66,6 +64,7 @@ function toggleEditionLayer() {
         :isOpen="isLayerOpenId === layer.id"
         @clickRemove="removeLayer"
         @clickToggle="toggleAccordionItem"
+        @clickInfo="setMetadataId(layer.id)"
         @changeOpacity="changeOpacityLayer"
       >
       </layer-manager-item>
@@ -74,7 +73,7 @@ function toggleEditionLayer() {
       <layer-manager-item-background
         :layer="bgLayer || BLANK_BACKGROUNDLAYER"
         :showEditButton="!!bgLayer"
-        @clickInfo="toggleInfoLayer"
+        @clickInfo="() => bgLayer && setMetadataId(bgLayer.id)"
         @clickEdit="toggleEditionLayer"
       >
       </layer-manager-item-background>

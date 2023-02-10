@@ -14,7 +14,7 @@ const emit = defineEmits<{
 }>()
 
 const { t } = useTranslation()
-const { setMetadataTreeNode } = useMetadataStore()
+const { setMetadataId } = useMetadataStore()
 const isParent = !!props.node.children
 const isRoot = props.node.depth === 0
 const isMaxDepth = props.node.depth >= 10
@@ -89,7 +89,7 @@ function toggleParent(node: LayerTreeNodeModel) {
   <div v-else class="flex text-tertiary pr-2">
     <button
       class="self-start before:text-[.85rem] before:transform before:translate-y-[.1rem] before:inline-block before:content-['\f129'] fa-solid fa-fw fa-fh fa-info"
-      @click="setMetadataTreeNode(node)"
+      @click="setMetadataId(node.id)"
     ></button>
     <button
       class="w-full text-left"

@@ -9,27 +9,29 @@ import { layerMetadataService } from '@/services/layer-metadata/layer-metadata.s
 import { LayerMetadataModel } from '@/services/layer-metadata/layer-metadata.model'
 
 const metadataStore = useMetadataStore()
-const { metadataTreeNode } = storeToRefs(metadataStore)
+const { metadataId } = storeToRefs(metadataStore)
 const { t, i18next } = useTranslation()
 const layerMetadata: Ref<LayerMetadataModel | undefined> = ref()
 
-watch(metadataTreeNode, async node => {
-  layerMetadata.value = node
-    ? await layerMetadataService.getLayerMetadata(node, i18next.language)
+watch(metadataId, async id => {
+  layerMetadata.value = id
+    ? await layerMetadataService.getLayerMetadata(id, i18next.language)
     : undefined
 })
 
 onMounted(() => {
-  i18next.on('languageChanged', () => {
-    if (metadataTreeNode.value) {
-      //also trigger request if metadataTreeNode does not change
-      metadataStore.setMetadataTreeNode({ ...metadataTreeNode.value })
+  i18next.on('languageChanged', async () => {
+    if (metadataId.value) {
+      layerMetadata.value = await layerMetadataService.getLayerMetadata(
+        metadataId.value,
+        i18next.language
+      )
     }
   })
 })
 
 function closeLayerMetadata() {
-  metadataStore.clearMetadataTreeNode()
+  metadataStore.clearMetadataId()
 }
 </script>
 

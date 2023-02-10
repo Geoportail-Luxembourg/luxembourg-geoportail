@@ -1,24 +1,23 @@
 import { acceptHMRUpdate, defineStore } from 'pinia'
 import { ref, Ref } from 'vue'
-import { LayerTreeNodeModel } from '@/components/layer-tree/layer-tree.model'
 
 export const useMetadataStore = defineStore(
   'metadata',
   () => {
-    const metadataTreeNode: Ref<LayerTreeNodeModel | undefined> = ref()
+    const metadataId: Ref<string | number | undefined> = ref()
 
-    function setMetadataTreeNode(node: LayerTreeNodeModel) {
-      metadataTreeNode.value = node
+    function setMetadataId(id: string | number) {
+      metadataId.value = id
     }
 
-    function clearMetadataTreeNode() {
-      metadataTreeNode.value = undefined
+    function clearMetadataId() {
+      metadataId.value = undefined
     }
 
     return {
-      metadataTreeNode,
-      setMetadataTreeNode,
-      clearMetadataTreeNode,
+      metadataId,
+      setMetadataId,
+      clearMetadataId,
     }
   },
   {}

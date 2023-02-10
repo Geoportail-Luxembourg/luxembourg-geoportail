@@ -1,23 +1,6 @@
-import { LayerTreeNodeModel } from '@/components/layer-tree/layer-tree.model'
 import { ThemeNodeModel } from '@/composables/themes/themes.model'
 import { wmsHelper } from '../common/wms.helper'
 import { layerMetadataService } from './layer-metadata.service'
-
-const internalLayerTreeNodeMock: LayerTreeNodeModel = {
-  name: 'districts_labels',
-  id: '268',
-  depth: 3,
-  checked: false,
-  expanded: false,
-}
-
-const WMSLayerTreeNodeMock: LayerTreeNodeModel = {
-  id: 'WMS||http://wmts1.geoportail.lu/opendata/service||ortho_2001',
-  name: 'ortho_2001',
-  depth: 2,
-  checked: false,
-  expanded: false,
-}
 
 const themeNodeMock: ThemeNodeModel = {
   id: 268,
@@ -38,15 +21,38 @@ const themeNodeMock: ThemeNodeModel = {
     },
   ],
 }
+
+const bgNodeMock: ThemeNodeModel = {
+  id: 556,
+  name: 'basemap_2015_global',
+  metadata: {
+    attribution:
+      '&copy; <a href="https://www.mapzen.com/rights">CARTO</a>  &copy; <a href="https://openstreetmap.org/copyright">OpenStreetMap</a> contributors for data outside of Luxembourg',
+    exclusion: '[31, 32]',
+    legend_name: 'act:roadmap_vt',
+    metadata_id: 'a1fea2a0-e0a0-4e5f-a61d-9b3c3a9426bd',
+  },
+  dimensions: {},
+  type: 'BG WMTS',
+  url: 'http://wmts.geoportail.lu/mapproxy_4_v3/wmts/1.0.0/WMTSCapabilities.xml',
+  style: 'default',
+  matrixSet: 'GLOBAL_WEBMERCATOR',
+  layer: 'basemap_2015_global',
+  imageType: 'image/png',
+  previousOpacity: 1,
+  opacity: 1,
+}
+
 const useThemesMock = {
   findById: vi.fn(id => (id === 268 ? themeNodeMock : undefined)),
+  findBgLayerById: vi.fn(id => (id === 556 ? bgNodeMock : undefined)),
 }
 vi.mock('@/composables/themes/themes.composable', () => ({
   default: () => useThemesMock,
 }))
 
 const metadataMock = {
-  title: 'Some internal or external layer',
+  title: 'Title that will be ignored on internal layer',
   description: '',
   keywords: [],
   accessConstraints: 'none',
@@ -68,11 +74,9 @@ describe('LayerMetadataService', () => {
       .mockReturnValue(legendMock)
   })
   describe('#getLayerMetadata with internal layer', () => {
+    let metadata
     beforeEach(async () => {
-      await layerMetadataService.getLayerMetadata(
-        internalLayerTreeNodeMock,
-        'fr'
-      )
+      metadata = await layerMetadataService.getLayerMetadata(268, 'fr')
     })
     it('should call getLocalMetadata', () => {
       expect(spyLocalMetadata).toHaveBeenCalledTimes(1)
@@ -80,17 +84,52 @@ describe('LayerMetadataService', () => {
     it('should call getLegendHtml', () => {
       expect(spyLegendHtml).toHaveBeenCalledTimes(1)
     })
+    it('should get correct metadata', () => {
+      expect(metadata).toEqual({
+        ...metadataMock,
+        hasLegend: true,
+        legendHtml: legendMock,
+        title: 'districts_labels', // uses name from theme node
+      })
+    })
+  })
+  describe('#getLayerMetadata with background layer', () => {
+    let metadata
+    beforeEach(async () => {
+      metadata = await layerMetadataService.getLayerMetadata(556, 'fr')
+    })
+    it('should call getLocalMetadata', () => {
+      expect(spyLocalMetadata).toHaveBeenCalledTimes(1)
+    })
+    it('should call getLegendHtml', () => {
+      expect(spyLegendHtml).toHaveBeenCalledTimes(1)
+    })
+    it('should get correct metadata', () => {
+      expect(metadata).toEqual({
+        ...metadataMock,
+        hasLegend: true,
+        legendHtml: legendMock,
+        title: 'basemap_2015_global', // uses name from theme node
+      })
+    })
   })
   describe('#getLayerMetadata with WMS layer', () => {
     let spyWMSMetadata
+    let metadata
     beforeEach(async () => {
       spyWMSMetadata = vi
         .spyOn(wmsHelper, 'getMetadata')
         .mockReturnValue(metadataMock)
-      await layerMetadataService.getLayerMetadata(WMSLayerTreeNodeMock, 'fr')
+      metadata = await layerMetadataService.getLayerMetadata(
+        'WMS||http://wmts1.geoportail.lu/opendata/service||ortho_2001',
+        'fr'
+      )
     })
     it('should call get WMS metadata', () => {
       expect(spyWMSMetadata).toHaveBeenCalledTimes(1)
+    })
+    it('should get correct metadata', () => {
+      expect(metadata).toEqual(metadataMock)
     })
   })
 })
