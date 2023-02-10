@@ -7,6 +7,7 @@ const layer1: Layer = {
   layers: 'layer1_layers',
   type: 'WMTS',
   imageType: '',
+  opacity: 0.1,
 }
 
 const layerAnyId: Layer = {
@@ -15,6 +16,7 @@ const layerAnyId: Layer = {
   layers: 'layerAnyId_layers',
   type: 'WMTS',
   imageType: '',
+  opacity: 0.5,
 }
 
 const layer58: Layer = {
@@ -23,6 +25,7 @@ const layer58: Layer = {
   layers: 'layer58_layers',
   type: 'WMTS',
   imageType: '',
+  opacity: 0.75,
 }
 
 const layer360: Layer = {
@@ -31,6 +34,7 @@ const layer360: Layer = {
   layers: 'layer360_layers',
   type: 'WMTS',
   imageType: '',
+  opacity: 1,
 }
 
 const bgLayer32: Layer = {
@@ -151,11 +155,36 @@ describe('StorageLayerMapper', () => {
     })
   })
 
+  describe('#layerOpacitiesToNumbers', () => {
+    it('returns the opacities as floats', () => {
+      expect(
+        storageLayerMapper.layerOpacitiesToNumbers('0-1-0.25-0.6-1')
+      ).toStrictEqual([0, 1, 0.25, 0.6, 1])
+    })
+    it('returns undefined for an invalid opactiy value', () => {
+      expect(
+        storageLayerMapper.layerOpacitiesToNumbers('0-opa-1')
+      ).toStrictEqual([0, undefined, 1])
+    })
+  })
+
   describe('#layersToLayerIds', () => {
     it('converts the given layers into ids', () => {
       expect(storageLayerMapper.layersToLayerIds([layer360, layerAnyId])).toBe(
         '360-AnyId'
       )
+    })
+  })
+
+  describe('#layersToLayerOpacities', () => {
+    it('extracts the opacities of each layer and convert into a string for storage', () => {
+      expect(
+        storageLayerMapper.layersToLayerOpacities([
+          layer58,
+          layer360,
+          layerAnyId,
+        ])
+      ).toBe('0.75-1-0.5')
     })
   })
 

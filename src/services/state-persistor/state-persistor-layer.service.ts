@@ -6,11 +6,15 @@ import { Layer } from '@/stores/map.store.model'
 import { useThemeStore } from '@/stores/config.store'
 import useBackgroundLayer from '@/composables/background-layer/background-layer.composable'
 
-import { SP_KEY_BGLAYER, SP_KEY_LAYERS } from './state-persistor.model'
+import {
+  SP_KEY_BGLAYER,
+  SP_KEY_LAYERS,
+  SP_KEY_OPACITIES,
+} from './state-persistor.model'
 import { storageLayerMapper } from './state-persistor-layer.mapper'
 import { storageHelper } from './storage/storage.helper'
 
-class StatePersistorService {
+class StatePersistorLayerService {
   bootstrapLayers() {
     const themeStore = useThemeStore()
     let stop: WatchStopHandle
@@ -37,6 +41,12 @@ class StatePersistorService {
             value,
             storageLayerMapper.layersToLayerIds
           )
+
+          storageHelper.setValue(
+            SP_KEY_OPACITIES,
+            value,
+            storageLayerMapper.layersToLayerOpacities
+          )
         }
       },
       { immediate: true }
@@ -45,11 +55,24 @@ class StatePersistorService {
 
   restoreLayers() {
     const mapStore = useMapStore()
-    const layers = storageHelper
-      .getValue(SP_KEY_LAYERS, storageLayerMapper.layerIdsToLayers)
-      ?.filter(layer => layer) as Layer[]
+    const layers = storageHelper.getValue(
+      SP_KEY_LAYERS,
+      storageLayerMapper.layerIdsToLayers
+    )
+    const opacities = storageHelper.getValue(
+      SP_KEY_OPACITIES,
+      storageLayerMapper.layerOpacitiesToNumbers
+    )
 
-    mapStore.addLayers(...layers)
+    if (opacities) {
+      layers?.forEach((layer, index) => {
+        if (layer) {
+          layer.opacity = opacities[index]
+        }
+      })
+    }
+
+    mapStore.addLayers(...((layers?.filter(layer => layer) as Layer[]) || []))
   }
 
   bootstrapBgLayer() {
@@ -95,4 +118,4 @@ class StatePersistorService {
   }
 }
 
-export const statePersistorService = new StatePersistorService()
+export const statePersistorLayerService = new StatePersistorLayerService()
