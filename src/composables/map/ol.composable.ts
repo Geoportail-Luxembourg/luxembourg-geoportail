@@ -3,10 +3,12 @@ import ImageLayer from 'ol/layer/Image'
 import type TileLayer from 'ol/layer/Tile'
 import type OlMap from 'ol/Map'
 import { ImageWMS, WMTS } from 'ol/source'
+import MapBoxLayer from '@geoblocks/mapboxlayer/src/MapBoxLayer.js'
 
 import { createBgWmtsLayer } from '@/composables/background-layer/background-layer.wmts-helper'
 import { layersCache } from '@/stores/layers.cache'
 import type { Layer, LayerId } from '@/stores/map.store.model'
+import useMap from './map.composable'
 
 const proxyWmsUrl = 'https://map.geoportail.lu/ogcproxywms'
 export const remoteProxyWms = 'https://map.geoportail.lu/httpsproxy'
@@ -47,6 +49,18 @@ export default function useOpenLayers() {
       }
       case 'BG WMTS': {
         layer = createBgWmtsLayer(spec)
+        break
+      }
+      case 'BG MVT': {
+        const mapService = useMap()
+
+        const options = Object.assign(
+          {
+            container: mapService.getOlMap().getTarget(),
+          },
+          spec.mvtData
+        )
+        layer = new MapBoxLayer(options)
         break
       }
       default:
@@ -96,12 +110,19 @@ export default function useOpenLayers() {
     if (layer) layer.setOpacity(opacity)
   }
 
+  /*
+  function removeFromCache(layer: Layer) {
+    layersCache.remove(layer.id)
+  }
+  */
+
   function getLayerFromCache(layer: Layer): BaseLayer {
     const { id } = layer
 
-    return !layersCache.hasOwnProperty(id) || !layersCache[id]
-      ? createLayer(layer)
-      : layersCache[id]
+    if (!layersCache.hasOwnProperty(id) || !layersCache[id]) {
+      layersCache[id] = createLayer(layer)
+    }
+    return layersCache[id]
   }
 
   function setBgLayer(olMap: OlMap, bgLayer: Layer | null) {

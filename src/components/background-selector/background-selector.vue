@@ -9,14 +9,18 @@ import {
 } from '@/composables/background-layer/background-layer.model'
 import useBackgroundLayer from '@/composables/background-layer/background-layer.composable'
 import { useThemeStore } from '@/stores/config.store'
+import { useStyleStore } from '@/stores/style.store'
 import { useMapStore } from '@/stores/map.store'
 import { statePersistorLayerService } from '@/services/state-persistor/state-persistor-layer.service'
 import BackgroundSelectorItem from './background-selector-item.vue'
+import { bgConfig } from '@/__fixtures__/background.config.fixture'
+import { ThemeNodeModel } from '@/composables/themes/themes.model'
 
 const { t } = useTranslation()
 const backgroundLayer = useBackgroundLayer()
 const mapStore = useMapStore()
 const themeStore = useThemeStore()
+const styleStore = useStyleStore()
 const { bgLayer: bgLayerContext } = storeToRefs(mapStore)
 
 statePersistorLayerService.bootstrapBgLayer()
@@ -33,17 +37,23 @@ const activeLayerId = computed(
   () => (bgLayerContext.value?.id as number) ?? BLANK_BACKGROUNDLAYER.id
 )
 const activeLayerName = computed(
-  () => bgLayers.value.find(layer => layer.id === activeLayerId.value)?.name
+  () => bgLayers.value?.find(layer => layer.id === activeLayerId.value)?.name
 )
 
 watch(
   () => themeStore.bgLayers,
   bgLayersContext => {
-    bgLayers.value =
+    bgLayers.value = (
       bgLayersContext.length > 0
-        ? backgroundLayer.getBgLayersFromConfig()
-        : [BLANK_BACKGROUNDLAYER]
-  }
+        ? bgLayersContext.map((l: ThemeNodeModel) =>
+            Object.assign(Object.assign({}, l), {
+              name: bgConfig.bg_layers.find(bgl => bgl.id == l.id)?.name,
+            })
+          )
+        : []
+    ).concat([BLANK_BACKGROUNDLAYER])
+  },
+  { immediate: true }
 )
 
 watch(
@@ -68,6 +78,15 @@ watch(
         )
       }
     }
+  }
+)
+
+watch(
+  () => styleStore.styledBgLayers,
+  styles => {
+    styles?.forEach(config => {
+      backgroundLayer.updateMvtData(config.mvtData)
+    })
   }
 )
 
