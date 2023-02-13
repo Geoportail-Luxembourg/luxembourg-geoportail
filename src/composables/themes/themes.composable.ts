@@ -1,10 +1,11 @@
 import type { ConfigModel, ThemeNodeModel } from './themes.model'
 import { themesApiFixture } from '@/__fixtures__/themes.api.fixture'
 import { useThemeStore } from '@/stores/config.store'
+import { LayerId } from '@/stores/map.store.model'
 
 export default function useThemes() {
   function findById(
-    id: number,
+    id: LayerId,
     node?: ThemeNodeModel
   ): ThemeNodeModel | undefined {
     const { theme } = useThemeStore()
@@ -22,7 +23,7 @@ export default function useThemes() {
     }
   }
 
-  function findBgLayerById(id: number) {
+  function findBgLayerById(id: LayerId) {
     const { bgLayers } = useThemeStore()
 
     return bgLayers.find(l => l.id === id)

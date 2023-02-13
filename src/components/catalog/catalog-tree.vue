@@ -41,7 +41,7 @@ function toggleParent(node: LayerTreeNodeModel) {
 }
 
 function toggleLayer(node: LayerTreeNodeModel) {
-  layers.toggleLayer(parseInt(node.id, 10), !node.checked)
+  layers.toggleLayer(+node.id, !node.checked)
 }
 </script>
 
