@@ -25,6 +25,7 @@ export const bgConfig = {
       id: 0,
     },
   ],
+  vector_layers: ['basemap_2015_global', 'topogr_global', 'topo_bw_jpeg'],
   bg_layers_defaultId: 556,
   http_bg_server: 'wmts{1-2}',
   https_bg_server: 'wmts{3-4}',
