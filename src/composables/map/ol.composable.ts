@@ -3,7 +3,7 @@ import ImageLayer from 'ol/layer/Image'
 import type TileLayer from 'ol/layer/Tile'
 import type OlMap from 'ol/Map'
 import { ImageWMS, WMTS } from 'ol/source'
-import MapBoxLayer from '@geoblocks/mapboxlayer/src/MapBoxLayer.js'
+import MapLibreLayer from '@geoblocks/ol-maplibre-layer'
 
 import { createBgWmtsLayer } from '@/composables/background-layer/background-layer.wmts-helper'
 import { layersCache } from '@/stores/layers.cache'
@@ -60,7 +60,7 @@ export default function useOpenLayers() {
           },
           spec.mvtData
         )
-        layer = new MapBoxLayer(options)
+        layer = new MapLibreLayer({ maplibreOptions: options })
         break
       }
       default:
@@ -111,8 +111,8 @@ export default function useOpenLayers() {
   }
 
   /*
-  function removeFromCache(layer: Layer) {
-    layersCache.remove(layer.id)
+  function removeFromCache(id: number) {
+    layersCache.remove(id)
   }
   */
 
