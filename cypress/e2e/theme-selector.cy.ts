@@ -1,10 +1,15 @@
-describe('Test theme selector', () => {
-  it('Check selector menu and select themes', () => {
+describe('Theme selector', () => {
+  beforeEach(() => {
     cy.visit('/')
-    // cy.root().should('have.css', 'background-color', '#2980b9')
+  })
+
+  it('checks the panel having the default bg color', () => {
     cy.get('[data-cy="layerPanel"]')
       .parent()
       .should('have.css', 'background-color', 'rgb(151, 187, 211)')
+  })
+
+  it('updates the colors of the whole app while switching theme', () => {
     cy.get('[data-cy="catalogButton"]').click()
     cy.get('[data-cy="themeSelectorButton"]').click()
     cy.get('[data-cy="themeSelectorButton"]')

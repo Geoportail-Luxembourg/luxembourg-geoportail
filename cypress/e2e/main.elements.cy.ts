@@ -8,7 +8,6 @@ describe('Lux logo test', () => {
       .find('img')
       .should('have.attr', 'src')
       .should('contain', 'gov-light')
-    // cy.contains('body').contains('div').contains('div').contains('header').contains('div').contains('img')
   })
 })
 
