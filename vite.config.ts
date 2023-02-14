@@ -1,13 +1,32 @@
 import { fileURLToPath, URL } from 'node:url'
 import { defineConfig } from 'vitest/config'
 import type { UserConfig } from 'vite'
-import vue from '@vitejs/plugin-vue'
 import IstanbulPlugin from 'vite-plugin-istanbul'
+import vue from '@vitejs/plugin-vue'
+
+function removeDataTestAttrs(node/*: RootNode | TemplateChildNode*/) {
+  if (node.type === 1 /* NodeTypes.ELEMENT */) {
+    node.props = node.props.filter(prop =>
+      prop.type === 6 /* NodeTypes.ATTRIBUTE */
+        ? prop.name !== 'data-cy'
+        : true
+    )
+  }
+}
 
 // https://vitejs.dev/config/
-export default defineConfig(({ command }) => {
+export default defineConfig(({ command, mode }) => {
   const base: UserConfig = {
-    plugins: [vue(), IstanbulPlugin()],
+    plugins: [
+      vue({
+        template: {
+          compilerOptions: {
+            nodeTransforms: mode !== 'e2e' && mode !== 'development' ? [removeDataTestAttrs] : [],
+          },
+        },
+      }),
+      IstanbulPlugin()
+    ],
     resolve: {
       alias: {
         '@': fileURLToPath(new URL('./src', import.meta.url)),

@@ -7,19 +7,11 @@ import { createPinia } from 'pinia'
 
 import { initProjections } from '@/services/projection.utils'
 import App from './App.vue'
-import { useMapStore } from '@/stores/map.store'
 
 import './assets/main.css'
 import VueDOMPurifyHTML from 'vue-dompurify-html'
 
 initProjections()
-
-declare global {
-  interface Window {
-    vueApp: any
-    mapStore: any
-  }
-}
 
 i18next.use(backend)
 i18next.init({
@@ -41,8 +33,3 @@ app.use(I18NextVue, { i18next })
 app.use(VueDOMPurifyHTML)
 
 app.mount('#app')
-
-if (process.env.NODE_ENV === 'development') {
-  window.vueApp = app
-  window.mapStore = useMapStore()
-}
