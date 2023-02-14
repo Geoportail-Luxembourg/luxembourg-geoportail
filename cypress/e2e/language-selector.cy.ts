@@ -1,6 +1,9 @@
-describe('Test background selector', () => {
-  it('Check selector menu and select BW background', () => {
+describe('Language selector', () => {
+  beforeEach(() => {
     cy.visit('/')
+  })
+
+  it('Check selector menu and select language', () => {
     cy.get('[data-cy="langSelect"]').select('fr')
     cy.get('[data-cy="layerPanel"]').contains('Mes couches')
     cy.get('[data-cy="langSelect"]').select('en')

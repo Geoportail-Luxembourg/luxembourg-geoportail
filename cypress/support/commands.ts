@@ -36,4 +36,19 @@
 //   }
 // }
 
+import type { Options } from 'cypress-image-snapshot';
+import { addMatchImageSnapshotCommand } from 'cypress-image-snapshot/command'
+
+addMatchImageSnapshotCommand();
+
+Cypress.Commands.add('imgImageSnap', addMatchImageSnapshotCommand)
+
+declare global {
+  namespace Cypress {
+    interface Chainable {
+        imgImageSnap(nameOrOptions?: string | Options): Chainable<void>
+    }
+  }
+}
+
 export {}
