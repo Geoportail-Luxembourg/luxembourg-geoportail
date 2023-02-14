@@ -3,7 +3,6 @@ import {
   SP_AVAILABLE_STORAGES,
   SP_KEY_APPLOGIN,
   SP_KEY_IPV6,
-  SP_KEY_LANG,
   SP_KEY_LOCALFORAGE,
   StatePersistorRulesHelper,
 } from './state-persistor.model'
@@ -18,15 +17,16 @@ import {
  */
 export abstract class RulesReadHelper extends StatePersistorRulesHelper {
   static processRules(paramKeys: ParamKeys) {
-    if (this.ruleUseLocalStorage(paramKeys)) {
+    if (RulesReadHelper.ruleUseLocalStorage(paramKeys)) {
       return SP_AVAILABLE_STORAGES.localStorage
     }
 
     return SP_AVAILABLE_STORAGES.permalink
   }
 
+  // eslint-disable-next-line
   static processRulesForKey(key: string, paramKeys: ParamKeys) {
-    if (ruleLangInUrl(key, paramKeys)) return SP_AVAILABLE_STORAGES.permalink
+    // if (ruleLangInUrl(key, paramKeys)) return SP_AVAILABLE_STORAGES.permalink
 
     return undefined
   }
@@ -39,9 +39,9 @@ export abstract class RulesReadHelper extends StatePersistorRulesHelper {
   }
 }
 
-const ruleLangInUrl = (key: string, paramKeys: ParamKeys) => {
-  return key === SP_KEY_LANG && paramKeys.hasOwnProperty(SP_KEY_LANG)
-}
+// const ruleLangInUrl = (key: string, paramKeys: ParamKeys) => {
+//   return key === SP_KEY_LANG && paramKeys.hasOwnProperty(SP_KEY_LANG)
+// }
 
 /*
 const ruleMustSetDefaultBgLayer = (paramKeys: ParamKeys) => {

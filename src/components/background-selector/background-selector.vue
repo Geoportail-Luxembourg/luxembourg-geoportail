@@ -10,7 +10,7 @@ import {
 import useBackgroundLayer from '@/composables/background-layer/background-layer.composable'
 import { useThemeStore } from '@/stores/config.store'
 import { useMapStore } from '@/stores/map.store'
-import { statePersistorLayerService } from '@/services/state-persistor/state-persistor-layer.service'
+import { statePersistorLayersService } from '@/services/state-persistor/state-persistor-layers.service'
 import BackgroundSelectorItem from './background-selector-item.vue'
 
 const { t } = useTranslation()
@@ -19,7 +19,7 @@ const mapStore = useMapStore()
 const themeStore = useThemeStore()
 const { bgLayer: bgLayerContext } = storeToRefs(mapStore)
 
-statePersistorLayerService.bootstrapBgLayer()
+statePersistorLayersService.bootstrapBgLayer()
 
 const props = defineProps({
   isOpen: {
