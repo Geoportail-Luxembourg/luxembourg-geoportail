@@ -4,12 +4,10 @@ import type { UserConfig } from 'vite'
 import IstanbulPlugin from 'vite-plugin-istanbul'
 import vue from '@vitejs/plugin-vue'
 
-function removeDataTestAttrs(node/*: RootNode | TemplateChildNode*/) {
+function removeDataTestAttrs(node /*: RootNode | TemplateChildNode*/) {
   if (node.type === 1 /* NodeTypes.ELEMENT */) {
     node.props = node.props.filter(prop =>
-      prop.type === 6 /* NodeTypes.ATTRIBUTE */
-        ? prop.name !== 'data-cy'
-        : true
+      prop.type === 6 /* NodeTypes.ATTRIBUTE */ ? prop.name !== 'data-cy' : true
     )
   }
 }
@@ -21,11 +19,14 @@ export default defineConfig(({ command, mode }) => {
       vue({
         template: {
           compilerOptions: {
-            nodeTransforms: mode !== 'e2e' && mode !== 'development' ? [removeDataTestAttrs] : [],
+            nodeTransforms:
+              mode !== 'e2e' && mode !== 'development'
+                ? [removeDataTestAttrs]
+                : [],
           },
         },
       }),
-      IstanbulPlugin()
+      IstanbulPlugin(),
     ],
     resolve: {
       alias: {

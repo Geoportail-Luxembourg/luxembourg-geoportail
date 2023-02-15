@@ -21,7 +21,10 @@ statePersistorLayersService.bootstrapLayers()
       <div>
         <ul class="h-full">
           <li class="border-l-[1px] border-stone-300 h-full">
-            <language-selector data-cy="langSelect" class="flex-none h-full"></language-selector>
+            <language-selector
+              data-cy="langSelect"
+              class="flex-none h-full"
+            ></language-selector>
           </li>
         </ul>
       </div>
