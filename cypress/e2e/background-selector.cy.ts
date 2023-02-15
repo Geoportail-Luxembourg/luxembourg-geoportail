@@ -33,9 +33,6 @@ describe('Background selector', () => {
       .should('be.visible')
 
     cy.window().then(window => {
-      // cy.wait(1000) // wait tiles to be fully loaded
-      // cy.get('[data-cy="mapContainer"]').matchImageSnapshot('select-topo_bw')
-
       const layers = (<AUTWindowOlMap>window).olMap.getLayers().getArray()
       expect(layers[0].get('id')).to.eq(502)
     })
