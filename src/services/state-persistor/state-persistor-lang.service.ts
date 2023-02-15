@@ -27,6 +27,9 @@ class StatePersistorLangService {
       (value, oldValue) => {
         if (oldValue !== value) {
           storageHelper.setValue(SP_KEY_LANG, value)
+
+          const getHTMLTag = document.documentElement
+          getHTMLTag.setAttribute('lang', value)
         }
       },
       { immediate: true }
@@ -39,6 +42,7 @@ class StatePersistorLangService {
     if (lang) {
       const { setLang } = useAppStore()
       const { i18next } = useTranslation()
+
       i18next.changeLanguage(lang)
       setLang(lang)
     }
