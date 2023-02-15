@@ -135,9 +135,9 @@
   .lux-navbar-dropdown .lux-dropdown-btn {
     @apply w-16 h-full border-none lux-outlined-none [color:var(--color-navbar-default)]
       after:font-icons after:content-['\e012'] after:text-3xl
-      hover:text-white hover:bg-[color:var(--main-primary)]
+      hover:text-white hover:bg-[color:var(--color-primary)]
       [&>span]:hidden
-      [&.expanded]:bg-[color:var(--main-primary)] [&.expanded]:text-white
+      [&.expanded]:bg-[color:var(--color-primary)] [&.expanded]:text-white
       [&.expanded]:after:content-['\e02c'];
   }
 
