@@ -20,7 +20,7 @@ jobs:
         with:
           node-version: 16
           cache: 'npm'
-      - run: npm ci
+      - run: npm ci --force
 
       - name: Get branch name (merge)
         if: github.event_name != 'pull_request'

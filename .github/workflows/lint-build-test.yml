@@ -20,7 +20,7 @@ jobs:
         with:
           node-version: 16
           cache: 'npm'
-      - run: npm ci
+      - run: npm ci --force
       - run: npm run lint
       - run: npm run build-only -- --mode=e2e
       - run: npm run test:unit:ci
