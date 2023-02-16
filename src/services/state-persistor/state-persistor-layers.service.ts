@@ -67,7 +67,7 @@ class StatePersistorLayersService {
     if (opacities) {
       layers?.forEach((layer, index) => {
         if (layer) {
-          layer.opacity = opacities[index]
+          layer.opacity = opacities[index] ?? 1
         }
       })
     }
