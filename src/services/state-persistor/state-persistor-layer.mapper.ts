@@ -2,8 +2,8 @@ import { Layer } from '@/stores/map.store.model'
 import useLayers from '@/composables/layers/layers.composable'
 import useThemes from '@/composables/themes/themes.composable'
 import { BLANK_BACKGROUNDLAYER } from '@/composables/background-layer/background-layer.model'
-import { remoteLayerIdtoLayer } from '@/components/remote-layers/remote-layers.mapper'
-import { remoteLayersService } from '@/components/remote-layers/remote-layers.service'
+import { remoteLayerIdtoLayer } from '@/services/remote-layers/remote-layers.mapper'
+import { remoteLayersService } from '@/services/remote-layers/remote-layers.service'
 
 const STORAGE_SEPARATOR = '-'
 

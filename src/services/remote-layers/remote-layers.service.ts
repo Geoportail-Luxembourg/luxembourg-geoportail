@@ -7,7 +7,7 @@ import {
   RemoteWmsEndpointModel,
 } from './remote-layers.model'
 import { LayerId } from '@/stores/map.store.model'
-import { WmtsEndpoint } from '@/services/common/wmts.endpoint'
+import { WmtsEndpoint } from '@/services/remote-layers/wmts.endpoint'
 
 const forceUseProxy = true
 

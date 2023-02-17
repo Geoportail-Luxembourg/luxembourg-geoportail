@@ -1,5 +1,5 @@
 import { ThemeNodeModel } from '@/composables/themes/themes.model'
-import { wmsHelper } from '../common/wms.helper'
+import { wmsHelper } from './wms.helper'
 import { layerMetadataService } from './layer-metadata.service'
 
 const themeNodeMock: ThemeNodeModel = {

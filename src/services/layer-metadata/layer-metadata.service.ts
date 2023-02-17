@@ -6,10 +6,10 @@ import {
   isoLang2To3,
   stringToHtml,
 } from './layer-metadata.utils'
-import { wmsHelper } from '../common/wms.helper'
+import { wmsHelper } from './wms.helper'
 import useThemes from '../../composables/themes/themes.composable'
 import { LayerId } from '@/stores/map.store.model'
-import { wmtsHelper } from '../common/wmts.helper'
+import { wmtsHelper } from './wmts.helper'
 
 export class LayerMetadataService {
   // TODO: get urls from a config

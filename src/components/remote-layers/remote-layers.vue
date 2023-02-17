@@ -14,10 +14,10 @@ import {
   remoteWmsLayersToLayerTreeMapper,
   remoteWmtsLayersToLayerTreeMapper,
   remoteLayerToLayer,
-} from './remote-layers.mapper'
-import { remoteLayersService } from './remote-layers.service'
-import { OgcClientWmsEndpoint } from './remote-layers.model'
-import { WmtsEndpoint } from '@/services/common/wmts.endpoint'
+} from '../../services/remote-layers/remote-layers.mapper'
+import { remoteLayersService } from '../../services/remote-layers/remote-layers.service'
+import { OgcClientWmsEndpoint } from '../../services/remote-layers/remote-layers.model'
+import { WmtsEndpoint } from '@/services/remote-layers/wmts.endpoint'
 
 const { t } = useTranslation()
 const mapStore = useMapStore()

@@ -1,4 +1,4 @@
-import { remoteLayersService } from '@/components/remote-layers/remote-layers.service'
+import { remoteLayersService } from '@/services/remote-layers/remote-layers.service'
 import { wmsHelper } from './wms.helper'
 
 const idValuesMock = {

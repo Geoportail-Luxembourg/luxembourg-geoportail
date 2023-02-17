@@ -7,7 +7,7 @@ import {
   WmtsCapabilitiesLayer,
 } from './remote-layers.model'
 import { remoteLayersService } from './remote-layers.service'
-import { LayerType } from './../../composables/themes/themes.model'
+import { LayerType } from '../../composables/themes/themes.model'
 
 function sortLayerTreeNoChildrenFirst(
   a: OgcClientWmsLayerSummary,

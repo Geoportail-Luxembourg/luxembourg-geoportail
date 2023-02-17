@@ -1,8 +1,5 @@
 import WMTSCapabilities from 'ol/format/WMTSCapabilities.js'
-import {
-  WmtsServiceInfo,
-  WmtsCapabilitiesLayer,
-} from './../../components/remote-layers/remote-layers.model'
+import { WmtsServiceInfo, WmtsCapabilitiesLayer } from './remote-layers.model'
 
 export class WmtsEndpoint {
   private _capabilitiesPromise: Promise<void>

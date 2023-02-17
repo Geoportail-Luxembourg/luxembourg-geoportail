@@ -1,5 +1,5 @@
-import { remoteLayersService } from '@/components/remote-layers/remote-layers.service'
-import { IdValues } from '../layer-metadata/layer-metadata.model'
+import { remoteLayersService } from '@/services/remote-layers/remote-layers.service'
+import { IdValues } from './layer-metadata.model'
 
 export class WmsHelper {
   async getMetadata(idValues: IdValues) {
