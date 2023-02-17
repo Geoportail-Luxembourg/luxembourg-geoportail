@@ -11,8 +11,7 @@ import { layerTreeService } from '@/components/layer-tree/layer-tree.service'
 import useLayers from '@/composables/layers/layers.composable'
 
 import {
-  remoteWmsLayersToLayerTreeMapper,
-  remoteWmtsLayersToLayerTreeMapper,
+  remoteLayersToLayerTreeMapper,
   remoteLayerToLayer,
 } from '../../services/remote-layers/remote-layers.mapper'
 import { remoteLayersService } from '../../services/remote-layers/remote-layers.service'
@@ -28,10 +27,7 @@ const layerTree: ShallowRef<LayerTreeNodeModel | undefined> = shallowRef()
 let isLoading = false
 let inputRemoteUrl: string
 let currentRemoteUrl: string
-let currentRemoteEndpoint: {
-  type: 'WMS' | 'WMTS'
-  endpoint: OgcClientWmsEndpoint | WmtsEndpoint
-}
+let currentRemoteEndpoint: OgcClientWmsEndpoint | WmtsEndpoint
 
 watchEffect(updateLayerTree)
 
@@ -57,40 +53,31 @@ async function getRemoteEndpoint(url: string) {
   // TODO: refactor try catch to promises
   try {
     const wmsEndpoint = remoteLayersService.getWmsEndpoint(url)
-
     await wmsEndpoint.isReady()
-
-    currentRemoteEndpoint = {
-      type: 'WMS',
-      endpoint: wmsEndpoint,
-    }
+    currentRemoteEndpoint = wmsEndpoint
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
   } catch (e) {
     try {
       const wmtsEndpoint = remoteLayersService.getWmtsEndpoint(url)
       await wmtsEndpoint.isReady()
-      currentRemoteEndpoint = {
-        type: 'WMTS',
-        endpoint: wmtsEndpoint,
-      }
+      currentRemoteEndpoint = wmtsEndpoint
     } catch (e) {
       alert(t('Impossible de contacter ce WMTS', { ns: 'client' }))
     }
   }
   currentRemoteUrl = url
-
   isLoading = false
 }
 
 async function getRemoteLayers() {
-  const remoteEndpoint = currentRemoteEndpoint.endpoint
+  const remoteEndpoint = currentRemoteEndpoint
   const remoteLayers = remoteEndpoint?.getLayers()
 
   if (remoteLayers && remoteLayers[0]) {
-    const treeLayers =
-      currentRemoteEndpoint.type === 'WMS'
-        ? remoteWmsLayersToLayerTreeMapper(remoteLayers[0], currentRemoteUrl)
-        : remoteWmtsLayersToLayerTreeMapper(remoteLayers, currentRemoteUrl)
+    const treeLayers = remoteLayersToLayerTreeMapper(
+      remoteLayers[0],
+      currentRemoteUrl
+    )
     layerTree.value = layerTreeService.updateLayers(treeLayers, mapStore.layers)
   }
 }
@@ -120,7 +107,7 @@ function toggleParent(node: LayerTreeNodeModel) {
 
 function toggleLayer(node: LayerTreeNodeModel) {
   const { id, name } = node
-  const remoteEndpoint = currentRemoteEndpoint.endpoint
+  const remoteEndpoint = currentRemoteEndpoint
 
   if (node.checked === true) {
     mapStore.removeLayers(id)
@@ -181,10 +168,7 @@ function toggleLayer(node: LayerTreeNodeModel) {
             ns: 'client',
           })
         }}</span>
-        {{
-          currentRemoteEndpoint.endpoint.getServiceInfo()?.abstract ||
-          currentRemoteEndpoint.endpoint.getServiceInfo()?.Abstract
-        }}
+        {{ currentRemoteEndpoint.getServiceInfo()?.abstract }}
       </div>
       <div class="text-center" v-if="!isLoading && currentRemoteEndpoint">
         <span class="lux-label">{{
@@ -192,10 +176,7 @@ function toggleLayer(node: LayerTreeNodeModel) {
             ns: 'client',
           })
         }}</span>
-        {{
-          currentRemoteEndpoint.endpoint.getServiceInfo()?.constraints ||
-          currentRemoteEndpoint.endpoint.getServiceInfo()?.AccessConstraints
-        }}
+        {{ currentRemoteEndpoint.getServiceInfo()?.constraints }}
       </div>
       <div v-if="isLoading" class="text-center">
         <div class="fa fa-refresh fa-spin"></div>

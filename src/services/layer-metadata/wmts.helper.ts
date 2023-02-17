@@ -9,10 +9,10 @@ export class WmtsHelper {
     const service = wmtsEndpoint?.getServiceInfo()
     const layer = wmtsEndpoint?.getLayerByName(idValues.layerName)
     return {
-      title: layer.Title,
-      description: layer.Abstract,
-      accessConstraints: service.AccessConstraints,
-      serviceDescription: service.Abstract,
+      title: layer.title,
+      description: layer.abstract,
+      accessConstraints: service.constraints,
+      serviceDescription: service.abstract,
     }
   }
 }

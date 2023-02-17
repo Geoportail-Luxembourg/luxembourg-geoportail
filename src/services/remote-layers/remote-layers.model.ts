@@ -63,3 +63,42 @@ export interface WmtsServiceInfo {
   Fees: string
   AccessConstraints: string
 }
+
+export interface RemoteLayer {
+  type?: 'WMS' | 'WMTS'
+  abstract?: string
+  attribution?: string
+  availableCrs?: string[]
+  boundingBoxes?: { [key: string]: string[] }
+  name?: string //corresponds to WMTS Identifier
+  styles?: string[]
+  title?: string
+  children: RemoteLayer[]
+  // wmts properties
+  format?: string[]
+  tileMatrixSetLink?: [
+    {
+      TileMatrixSet: string
+      TileMatrixSetLimits: {
+        TileMatrix: string
+        MinTileRow: number
+        MaxTileRow: number
+        MinTileCol: number
+        MaxTileCol: number
+      }[]
+    }
+  ]
+  wgs84BoundingBox?: number[]
+}
+
+export interface RemoteServiceInfo {
+  type?: 'WMS' | 'WMTS'
+  name?: string
+  title: string
+  abstract: string
+  fees?: string
+  constraints?: string
+  keywords?: string[]
+  outputFormats?: string[]
+  serviceTypeVersion?: string
+}
