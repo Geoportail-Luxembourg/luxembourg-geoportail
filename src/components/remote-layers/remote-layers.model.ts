@@ -34,3 +34,32 @@ export interface OgcClientGenericEndpointInfo {
 }
 
 export type OgcClientWmsEndpoint = typeof WmsEndpoint
+
+export interface WmtsCapabilitiesLayer {
+  Abstract: string
+  Format: string[]
+  Identifier: string
+  TileMatrixSetLink: [
+    {
+      TileMatrixSet: string
+      TileMatrixSetLimits: {
+        TileMatrix: string
+        MinTileRow: number
+        MaxTileRow: number
+        MinTileCol: number
+        MaxTileCol: number
+      }[]
+    }
+  ]
+  Title: string
+  WGS84BoundingBox: number[]
+}
+
+export interface WmtsServiceInfo {
+  Title: string
+  Abstract: string
+  ServiceType: string
+  ServiceTypeVersion: string
+  Fees: string
+  AccessConstraints: string
+}

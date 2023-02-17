@@ -7,12 +7,17 @@ import {
   RemoteWmsEndpointModel,
 } from './remote-layers.model'
 import { LayerId } from '@/stores/map.store.model'
+import { WmtsEndpoint } from '@/services/common/wmts.endpoint'
 
 const forceUseProxy = true
 
 export class RemoteLayersService {
   public getWmsEndpoint(url: string): OgcClientWmsEndpoint {
     return new WmsEndpoint(this.getProxyfiedUrl(url))
+  }
+
+  public getWmtsEndpoint(url: string): WmtsEndpoint {
+    return new WmtsEndpoint(this.getProxyfiedUrl(url))
   }
 
   public getProxyfiedUrl(url: string) {

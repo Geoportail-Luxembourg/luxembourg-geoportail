@@ -4,8 +4,10 @@ import { LayerTreeNodeModel } from '@/components/layer-tree/layer-tree.model'
 import {
   OgcClientWmsLayerSummary,
   OgcClientWmsLayerFull,
+  WmtsCapabilitiesLayer,
 } from './remote-layers.model'
 import { remoteLayersService } from './remote-layers.service'
+import { LayerType } from './../../composables/themes/themes.model'
 
 function sortLayerTreeNoChildrenFirst(
   a: OgcClientWmsLayerSummary,
@@ -22,7 +24,7 @@ function sortLayerTreeNoChildrenFirst(
   return 0
 }
 
-export function remoteLayersToLayerTreeMapper(
+export function remoteWmsLayersToLayerTreeMapper(
   node: OgcClientWmsLayerSummary,
   urlWms: string,
   depth = 0
@@ -37,9 +39,36 @@ export function remoteLayersToLayerTreeMapper(
     depth,
     children: children
       ?.sort(sortLayerTreeNoChildrenFirst)
-      .map(child => remoteLayersToLayerTreeMapper(child, urlWms, depth + 1)),
+      .map(child => remoteWmsLayersToLayerTreeMapper(child, urlWms, depth + 1)),
     checked: mapStore.hasLayer(id),
     expanded: false,
+  }
+}
+
+export function remoteWmtsLayersToLayerTreeMapper(
+  layers: WmtsCapabilitiesLayer[],
+  urlWmts: string
+): LayerTreeNodeModel {
+  const mapStore = useMapStore()
+  // root node for flat wmts layers
+  return {
+    id: '',
+    name: '',
+    depth: 0,
+    checked: false,
+    expanded: true,
+    children: layers.map(layer => {
+      const id = `WMTS||${urlWmts}||${layer.Identifier}`.split('-').join('%2D')
+      return {
+        id,
+        abstract: layer.Abstract,
+        name: layer.Identifier,
+        title: layer.Title,
+        checked: mapStore.hasLayer(id),
+        expanded: false,
+        depth: 0,
+      }
+    }),
   }
 }
 
@@ -61,16 +90,30 @@ export function remoteLayerToLayer({
 }: {
   id: LayerId
   url: string
-  remoteLayer: OgcClientWmsLayerFull
+  remoteLayer: OgcClientWmsLayerFull | WmtsCapabilitiesLayer
 }): Layer {
-  const { name = '' } = remoteLayer
+  let name
+  let type: LayerType
+  if ((id as string).indexOf('WMS') === 0) {
+    name = (remoteLayer as OgcClientWmsLayerFull).name || ''
+    type = 'WMS'
+  } else {
+    name = (remoteLayer as WmtsCapabilitiesLayer).Identifier || ''
+    type = 'WMTS'
+  }
 
   return {
     id,
     name,
     layers: name,
     url,
-    type: 'WMS',
+    type,
     imageType: LayerImageType.PNG,
+    // might need to add more params for wmts
+    // wmts_params: {
+    //   Format: remoteLayer.Format,
+    //   TileMatrixSetLink: remoteLayer.TileMatrixSetLink,
+    //   WGS84BoundingBox: remoteLayer.WGS84BoundingBox,
+    // },
   }
 }
