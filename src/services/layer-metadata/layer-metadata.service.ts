@@ -9,6 +9,7 @@ import {
 import { wmsHelper } from '../common/wms.helper'
 import useThemes from '../../composables/themes/themes.composable'
 import { LayerId } from '@/stores/map.store.model'
+import { wmtsHelper } from '../common/wmts.helper'
 
 export class LayerMetadataService {
   // TODO: get urls from a config
@@ -74,8 +75,7 @@ export class LayerMetadataService {
       if (idValues.serviceType === 'WMS') {
         metadata = await wmsHelper.getMetadata(idValues)
       } else if (idValues.serviceType == 'WMTS') {
-        // TODO: handle WMTS
-        // metadata = appWmtsHelper.getMetadata(metadataUid)
+        metadata = await wmtsHelper.getMetadata(idValues)
       }
     }
     return metadata as LayerMetadataModel
