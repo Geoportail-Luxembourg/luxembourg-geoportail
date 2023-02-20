@@ -1,6 +1,7 @@
+import type BaseLayer from 'ol/layer/Base'
 declare module '@camptocamp/ogc-client'
-declare module '@geoblocks/mapboxlayer/src/MapBoxLayer.js' {
-  export default class MapBox extends Layer {
+declare module '@geoblocks/ol-maplibre-layer' {
+  export default class MapLibreLayer extends BaseLayer {
     constructor() {}
   }
 }
