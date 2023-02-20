@@ -10,7 +10,7 @@ import { IMvtStyle } from '@/composables/mvt-styles/mvt-styles.model'
 
 export class OlSynchronizer {
   previousLayers: Layer[]
-  previousStyles: { [id: number]: IMvtStyle }
+  previousStyles: { [id: string]: IMvtStyle }
   constructor(map: OlMap) {
     const mapStore = useMapStore()
     const styleStore = useStyleStore()
