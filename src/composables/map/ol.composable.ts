@@ -9,6 +9,7 @@ import { createBgWmtsLayer } from '@/composables/background-layer/background-lay
 import { layersCache } from '@/stores/layers.cache'
 import type { Layer, LayerId } from '@/stores/map.store.model'
 import useMap from './map.composable'
+import { IMvtStyle } from '@/composables/mvt-styles/mvt-styles.model'
 
 const proxyWmsUrl = 'https://map.geoportail.lu/ogcproxywms'
 export const remoteProxyWms = 'https://map.geoportail.lu/httpsproxy'
@@ -49,18 +50,6 @@ export default function useOpenLayers() {
       }
       case 'BG WMTS': {
         layer = createBgWmtsLayer(spec)
-        break
-      }
-      case 'BG MVT': {
-        const mapService = useMap()
-
-        const options = Object.assign(
-          {
-            container: mapService.getOlMap().getTarget(),
-          },
-          spec.mvtData
-        )
-        layer = new MapLibreLayer({ maplibreOptions: options })
         break
       }
       default:
@@ -110,38 +99,78 @@ export default function useOpenLayers() {
     if (layer) layer.setOpacity(opacity)
   }
 
-  /*
-  function removeFromCache(id: number) {
-    layersCache.remove(id)
+  function removeFromCache(id: string) {
+    layersCache.delete(id)
   }
-  */
+
+  function isLayerCached(layer: Layer): boolean {
+    return layersCache.has(layer.id.toString())
+  }
+
+  function addLayerToCache(id: string, layer: BaseLayer) {
+    layersCache.set(id, layer)
+  }
 
   function getLayerFromCache(layer: Layer): BaseLayer {
-    const { id } = layer
+    const id = layer.id.toString()
 
-    if (!layersCache.hasOwnProperty(id) || !layersCache[id]) {
-      layersCache[id] = createLayer(layer)
+    const cachedLayer = layersCache.get(id)
+    if (cachedLayer) {
+      return cachedLayer
+    } else {
+      const newLayer = createLayer(layer)
+      addLayerToCache(id, newLayer)
+      return newLayer
     }
-    return layersCache[id]
   }
 
-  function setBgLayer(olMap: OlMap, bgLayer: Layer | null) {
+  function setBgLayer(
+    olMap: OlMap,
+    bgLayer: Layer | null,
+    styles: { [id: string]: IMvtStyle }
+  ) {
     const mapLayers = olMap.getLayers()
     const currentBgLayerPos = mapLayers
       .getArray()
       .findIndex(layer => layer.getZIndex() === -1)
 
+    let bgBaseLayer: BaseLayer | undefined = undefined
+    if (bgLayer) {
+      if (isLayerCached(bgLayer)) {
+        bgBaseLayer = getLayerFromCache(bgLayer)
+      } else {
+        const style = styles && styles[bgLayer.id]
+        const mapService = useMap()
+
+        if (style) {
+          const options = Object.assign(
+            {
+              container: mapService.getOlMap().getTarget(),
+            },
+            style
+          )
+          addLayerToCache(
+            bgLayer.id.toString(),
+            (bgBaseLayer = new MapLibreLayer({ maplibreOptions: options }))
+          )
+        } else {
+          addLayerToCache(
+            bgLayer.id.toString(),
+            (bgBaseLayer = createLayer(bgLayer))
+          )
+        }
+      }
+    }
+
     if (currentBgLayerPos >= 0) {
-      if (bgLayer) {
-        const bgBaseLayer = getLayerFromCache(bgLayer)
+      if (bgBaseLayer) {
         bgBaseLayer.setZIndex(-1)
         mapLayers.setAt(currentBgLayerPos, bgBaseLayer)
       } else {
         mapLayers.removeAt(currentBgLayerPos)
       }
     } else {
-      if (bgLayer) {
-        const bgBaseLayer = getLayerFromCache(bgLayer)
+      if (bgBaseLayer) {
         bgBaseLayer.setZIndex(-1)
         olMap.addLayer(bgBaseLayer)
       }
@@ -152,6 +181,7 @@ export default function useOpenLayers() {
     createLayer,
     addLayer,
     removeLayer,
+    removeFromCache,
     reorderLayers,
     setLayerOpacity,
     getLayerFromCache,
