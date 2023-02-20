@@ -1,4 +1,3 @@
-import { IMvtStyle } from '@/composables/mvt-styles/mvt-styles.model'
 import type { LayerType, Metadata } from '@/composables/themes/themes.model'
 
 export enum LayerImageType {
@@ -20,7 +19,6 @@ export interface Layer {
   style?: string
   opacity?: number
   previousOpacity?: number
-  mvtData?: IMvtStyle
 }
 
 export interface MapContext {

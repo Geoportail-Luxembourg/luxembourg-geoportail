@@ -1,32 +1,34 @@
 export const bgConfig = {
   bg_layers: [
     {
-      name: 'route',
+      icon_id: 'route',
+      style_id: 'roadmap',
       id: 556,
+      is_default: true,
     },
     {
-      name: 'topo_bw',
-      id: 502,
-    },
-    {
-      name: 'topo',
+      icon_id: 'topo',
+      style_id: 'topomap',
       id: 529,
     },
     {
-      name: 'ortho',
+      icon_id: 'topo_bw',
+      style_id: 'topomap_gray',
+      id: 502,
+    },
+    {
+      icon_id: 'ortho', // id for icon
       id: 530,
     },
     {
-      name: 'hybrid',
+      icon_id: 'hybrid', // id for icon
       id: 501,
     },
     {
-      name: 'blank',
+      icon_id: 'blank',
       id: 0,
     },
   ],
-  vector_layers: ['basemap_2015_global', 'topogr_global', 'topo_bw_jpeg'],
-  bg_layers_defaultId: 556,
   http_bg_server: 'wmts{1-2}',
   https_bg_server: 'wmts{3-4}',
   bg_wmts_server_path: 'mapproxy_4_v3/wmts/{Layer}',

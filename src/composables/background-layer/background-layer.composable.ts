@@ -2,15 +2,14 @@ import { bgConfig } from '@/__fixtures__/background.config.fixture'
 import useLayers from '@/composables/layers/layers.composable'
 import type { Layer } from '@/stores/map.store.model'
 import { useMapStore } from '@/stores/map.store'
-import { IMvtStyle } from '@/composables/mvt-styles/mvt-styles.model'
-import { useStyleStore } from '@/stores/style.store'
+import { useThemeStore } from '@/stores/config.store'
 
 export default function useBackgroundLayer() {
-  const style = useStyleStore()
+  const theme = useThemeStore()
   const layers = useLayers()
 
   function setBgLayer(layerId: number) {
-    const newBgLayer = style.styledBgLayers.find(l => l.id == layerId)
+    const newBgLayer = theme.bgLayers.find(l => l.id == layerId) as Layer
     setMapBackground(newBgLayer || null)
   }
 
@@ -34,13 +33,8 @@ export default function useBackgroundLayer() {
     }
   }
 
-  function updateMvtData(mvt_spec?: IMvtStyle) {
-    console.log(mvt_spec ? `${mvt_spec.label} has spec` : 'has no spec')
-    // update layer cache so that new style is taken into account for the layer id
-  }
-
   function getDefaultSelectedId() {
-    return bgConfig.bg_layers_defaultId
+    return bgConfig.bg_layers.find(l => l.is_default)?.id
   }
 
   function getBgLayersFromConfig() {
@@ -52,6 +46,5 @@ export default function useBackgroundLayer() {
     setMapBackground,
     getDefaultSelectedId,
     getBgLayersFromConfig,
-    updateMvtData,
   }
 }

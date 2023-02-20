@@ -13,28 +13,23 @@ export default function useMvtStyles() {
     return `https://vectortiles.geoportail.lu/styles/${label}/{z}/{x}/{y}.png`
   }
 
-  function getKeywordForLayer(label: string) {
-    return {
-      basemap_2015_global: 'roadmap',
-      topogr_global: 'topomap',
-      topo_bw_jpeg: 'topomap_gray',
-    }[label]
-  }
-
   function isValidSerial(serial: string) {
     const isValidUUIDv4Regex =
       /^[0-9A-F]{8}-[0-9A-F]{4}-4[0-9A-F]{3}-[89AB][0-9A-F]{3}-[0-9A-F]{12}$/gi
     return isValidUUIDv4Regex.test(serial)
   }
 
-  function setConfigForLayer(label: string, isAuthenticated: boolean = false) {
+  function setConfigForLayer(
+    label: string,
+    keyword: string,
+    isAuthenticated: boolean = false
+  ) {
     // let lsData = JSON.parse(window.localStorage.getItem(label));
     const xyz_custom = '' // undefined;
     // if (!!lsData && lsData.serial) {
     //     xyz_custom = this.createXYZCustom_(lsData.serial);
     // }
 
-    const keyword = getKeywordForLayer(label)
     const defaultMapBoxStyle = getDefaultMapBoxStyleUrl(keyword)
     const defaultMapBoxStyleXYZ = getDefaultMapBoxStyleXYZ(keyword)
 
@@ -125,6 +120,9 @@ export default function useMvtStyles() {
       // Default style if no existing in LS or DB
       console.log(`Default mvt style for ${label}`)
       // this.isCustomStyle = this.isCustomStyleSetter(label, false);
+
+      // temporary timeout for testing async style queries
+      return new Promise(r => setTimeout(r, 10000, config))
       return Promise.resolve(config)
     }
   }

@@ -1,46 +1,42 @@
-import { acceptHMRUpdate, defineStore, storeToRefs } from 'pinia'
-import { computed, shallowRef, ShallowRef } from 'vue'
+import { acceptHMRUpdate, defineStore } from 'pinia'
+import { shallowRef, ShallowRef } from 'vue'
 
 import useMvtStyles from '@/composables/mvt-styles/mvt-styles.composable'
 import { IMvtStyle } from '@/composables/mvt-styles/mvt-styles.model'
-import { useThemeStore } from '@/stores/config.store'
-import { Layer } from './map.store.model'
 import { bgConfig } from '@/__fixtures__/background.config.fixture'
 
 export const useStyleStore = defineStore(
   'style',
   () => {
     const styleService = useMvtStyles()
-    const { bgLayers } = storeToRefs(useThemeStore())
-    const style: ShallowRef<IMvtStyle[]> = shallowRef([])
+    const bgStyles: ShallowRef<{ [id: string]: IMvtStyle }> = shallowRef({})
 
-    const styledBgLayers = computed(() => {
-      const filteredLayers = bgLayers.value.map(bgl => {
-        const layer: Layer = bgl as Layer
-        const curStyle = style.value.find(st => st.label == layer.name)
-        if (curStyle) {
-          layer.type = 'BG MVT'
-          layer.mvtData = curStyle
+    const promises: Promise<{ id: string; style: IMvtStyle }>[] = []
+    bgConfig.bg_layers.forEach(bgLayer => {
+      if (bgLayer.style_id) {
+        const conf = styleService.setConfigForLayer(
+          bgLayer.icon_id,
+          bgLayer.style_id
+        )
+        if (conf) {
+          promises.push(
+            conf.then(c => {
+              return { id: bgLayer.id.toString(), style: c as IMvtStyle }
+            })
+          )
         }
-        return layer
-      })
-      return filteredLayers || []
-    })
-
-    const layerLabelList = bgConfig.vector_layers
-
-    const promises: Promise<IMvtStyle>[] = []
-    layerLabelList.forEach(label => {
-      const conf = styleService.setConfigForLayer(label)
-      if (conf) {
-        promises.push(conf)
       }
     })
-    Promise.all(promises).then((styleConfigs: IMvtStyle[]) => {
-      style.value = styleConfigs
-    })
+    Promise.all(promises).then(
+      (styleConfigs: { id: string; style: IMvtStyle }[]) => {
+        console.log('set styles')
+        const styleDict: { [id: string]: IMvtStyle } = {}
+        styleConfigs.forEach(c => (styleDict[c.id] = c.style))
+        bgStyles.value = styleDict
+      }
+    )
 
-    return { style, styledBgLayers }
+    return { bgStyles }
   },
   {}
 )

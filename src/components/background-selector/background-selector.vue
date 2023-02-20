@@ -9,7 +9,6 @@ import {
 } from '@/composables/background-layer/background-layer.model'
 import useBackgroundLayer from '@/composables/background-layer/background-layer.composable'
 import { useThemeStore } from '@/stores/config.store'
-import { useStyleStore } from '@/stores/style.store'
 import { useMapStore } from '@/stores/map.store'
 import { statePersistorLayerService } from '@/services/state-persistor/state-persistor-layer.service'
 import BackgroundSelectorItem from './background-selector-item.vue'
@@ -20,7 +19,6 @@ const { t } = useTranslation()
 const backgroundLayer = useBackgroundLayer()
 const mapStore = useMapStore()
 const themeStore = useThemeStore()
-const styleStore = useStyleStore()
 const { bgLayer: bgLayerContext } = storeToRefs(mapStore)
 
 statePersistorLayerService.bootstrapBgLayer()
@@ -43,15 +41,17 @@ const activeLayerName = computed(
 watch(
   () => themeStore.bgLayers,
   bgLayersContext => {
-    bgLayers.value = (
-      bgLayersContext.length > 0
-        ? bgLayersContext.map((l: ThemeNodeModel) =>
-            Object.assign(Object.assign({}, l), {
-              name: bgConfig.bg_layers.find(bgl => bgl.id == l.id)?.name,
-            })
-          )
-        : []
-    ).concat([BLANK_BACKGROUNDLAYER])
+    bgLayers.value = bgConfig.bg_layers.map(bgl =>
+      Object.assign(
+        Object.assign(
+          {},
+          bgLayersContext.find((l: ThemeNodeModel) => bgl.id == l.id),
+          {
+            name: bgl.icon_id,
+          }
+        )
+      )
+    )
   },
   { immediate: true }
 )
@@ -66,7 +66,9 @@ watch(
       bgLayerContext === null &&
       layersContext?.length === 0
     ) {
-      backgroundLayer.setBgLayer(backgroundLayer.getDefaultSelectedId())
+      backgroundLayer.setBgLayer(
+        backgroundLayer.getDefaultSelectedId() || BLANK_BACKGROUNDLAYER.id
+      )
 
       if (bgLayerContext === null) {
         // TODO: implement alert message
@@ -78,15 +80,6 @@ watch(
         )
       }
     }
-  }
-)
-
-watch(
-  () => styleStore.styledBgLayers,
-  styles => {
-    styles?.forEach(config => {
-      backgroundLayer.updateMvtData(config.mvtData)
-    })
   }
 )
 
