@@ -49,22 +49,19 @@ remoteLayersService.fetchRemoteWmsEndpoint().then(wmsLayersFetch => {
 
 async function getRemoteEndpoint(url: string) {
   isLoading = true
-
-  // TODO: refactor try catch to promises
-  try {
-    const wmsEndpoint = remoteLayersService.getWmsEndpoint(url)
-    await wmsEndpoint.isReady()
-    currentRemoteEndpoint = wmsEndpoint
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  } catch (e) {
-    try {
-      const wmtsEndpoint = remoteLayersService.getWmtsEndpoint(url)
-      await wmtsEndpoint.isReady()
-      currentRemoteEndpoint = wmtsEndpoint
-    } catch (e) {
-      alert(t('Impossible de contacter ce WMTS', { ns: 'client' }))
-    }
-  }
+  let wmtsEndpoint
+  const wmsEndpoint = await remoteLayersService
+    .getWmsEndpoint(url)
+    .isReady()
+    .catch(async () => {
+      wmtsEndpoint = await remoteLayersService
+        .getWmtsEndpoint(url)
+        .isReady()
+        .catch(() =>
+          alert(t('Impossible de contacter ce WMTS', { ns: 'client' }))
+        )
+    })
+  currentRemoteEndpoint = wmsEndpoint || wmtsEndpoint
   currentRemoteUrl = url
   isLoading = false
 }
