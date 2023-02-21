@@ -84,7 +84,7 @@ function toggleSelector() {
 <template>
   <div class="flex flex-row-reverse">
     <div
-      data-cy="selected-bg"
+      data-cy="selectedBg"
       class="lux-bg-sel border border-black"
       :class="isOpen === true ? 'hidden' : 'block'"
     >
