@@ -19,10 +19,7 @@ export default defineConfig(({ command, mode }) => {
       vue({
         template: {
           compilerOptions: {
-            nodeTransforms:
-              mode !== 'e2e' && mode !== 'development'
-                ? [removeDataTestAttrs]
-                : [],
+            nodeTransforms: mode === 'production' ? [removeDataTestAttrs] : [],
           },
         },
       }),
