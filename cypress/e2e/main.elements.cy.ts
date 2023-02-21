@@ -6,15 +6,17 @@ describe('Lux logo test', () => {
     cy.get('header')
       .find('div')
       .find('img')
-      .should('have.attr', 'src')
-      .should('contain', 'gov-light')
+      .should('be.visible')
+      .should(img => {
+        expect(img.get(0).naturalWidth).greaterThan(10)
+      })
   })
 })
 
 describe('Test existence of main components', () => {
   it('Get main components', () => {
     cy.visit('/')
-    cy.get('[data-cy="selected-bg"]')
+    cy.get('[data-cy="selectedBg"]')
     cy.get('[data-cy="available-bgs"]')
     cy.get('[data-cy="mapContainer"]')
     cy.get('[data-cy="layerPanel"]')
