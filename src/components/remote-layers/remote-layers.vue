@@ -79,8 +79,8 @@ async function getRemoteLayers() {
   }
 }
 
-async function onChangeRemoteEndpoint(wmsUrl: string) {
-  currentRemoteUrl = inputRemoteUrl = wmsUrl
+async function onChangeRemoteEndpoint(url: string) {
+  currentRemoteUrl = inputRemoteUrl = url
   await getRemoteEndpoint(currentRemoteUrl)
   getRemoteLayers()
 }

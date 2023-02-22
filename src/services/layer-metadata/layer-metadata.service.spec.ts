@@ -1,5 +1,6 @@
 import { ThemeNodeModel } from '@/composables/themes/themes.model'
 import { wmsHelper } from './wms.helper'
+import { wmtsHelper } from './wmts.helper'
 import { layerMetadataService } from './layer-metadata.service'
 
 const themeNodeMock: ThemeNodeModel = {
@@ -127,6 +128,25 @@ describe('LayerMetadataService', () => {
     })
     it('should call get WMS metadata', () => {
       expect(spyWMSMetadata).toHaveBeenCalledTimes(1)
+    })
+    it('should get correct metadata', () => {
+      expect(metadata).toEqual(metadataMock)
+    })
+  })
+  describe('#getLayerMetadata with WMTS layer', () => {
+    let spyWMTSMetadata
+    let metadata
+    beforeEach(async () => {
+      spyWMTSMetadata = vi
+        .spyOn(wmtsHelper, 'getMetadata')
+        .mockReturnValue(metadataMock)
+      metadata = await layerMetadataService.getLayerMetadata(
+        'WMTS||http://wmts1.geoportail.lu/opendata/service||ortho_2001',
+        'fr'
+      )
+    })
+    it('should call get WMTS metadata', () => {
+      expect(spyWMTSMetadata).toHaveBeenCalledTimes(1)
     })
     it('should get correct metadata', () => {
       expect(metadata).toEqual(metadataMock)

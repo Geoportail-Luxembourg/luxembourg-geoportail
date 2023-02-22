@@ -24,6 +24,6 @@ export interface ResponsibleParty {
 
 export interface IdValues {
   serviceType: 'WMS' | 'WMTS'
-  wmsUrl: string
+  url: string
   layerName: string
 }

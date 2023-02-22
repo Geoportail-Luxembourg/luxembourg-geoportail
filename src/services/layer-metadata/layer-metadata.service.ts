@@ -69,7 +69,7 @@ export class LayerMetadataService {
       const values = String(id).split('%2D').join('-').split('||')
       const idValues: IdValues = {
         serviceType: values[0] as 'WMS' | 'WMTS',
-        wmsUrl: values[1],
+        url: values[1],
         layerName: values[2],
       }
       if (idValues.serviceType === 'WMS') {

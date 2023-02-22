@@ -4,7 +4,7 @@ import { IdValues } from './layer-metadata.model'
 export class WmtsHelper {
   async getMetadata(idValues: IdValues) {
     console.assert(idValues.serviceType === 'WMTS')
-    const wmtsEndpoint = remoteLayersService.getWmtsEndpoint(idValues.wmsUrl)
+    const wmtsEndpoint = remoteLayersService.getWmtsEndpoint(idValues.url)
     await wmtsEndpoint.isReady()
     const service = wmtsEndpoint?.getServiceInfo()
     const layer = wmtsEndpoint?.getLayerByName(idValues.layerName)
