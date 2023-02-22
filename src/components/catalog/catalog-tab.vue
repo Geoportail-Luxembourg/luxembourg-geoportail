@@ -12,8 +12,15 @@ function toggleThemesGrid(isOpen: boolean) {
 </script>
 
 <template>
-  <theme-selector @toggleThemesGrid="toggleThemesGrid"></theme-selector>
+  <theme-selector
+    data-cy="themeSelector"
+    @toggleThemesGrid="toggleThemesGrid"
+  ></theme-selector>
   <div class="pt-5">
-    <catalog v-if="themeGridIsOpen === false"></catalog>
+    <catalog
+      data-cy="catalog"
+      class="pt-5"
+      v-if="themeGridIsOpen === false"
+    ></catalog>
   </div>
 </template>

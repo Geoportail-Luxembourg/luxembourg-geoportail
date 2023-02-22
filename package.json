@@ -6,18 +6,19 @@
     "start": "npm run dev",
     "dev": "vite",
     "build": "run-p type-check build-only",
+    "build-only": "vite build",
     "preview": "vite preview",
     "test": "npm run test:unit",
     "test:unit": "vitest --environment jsdom --root .",
     "test:unit:ci": "vitest run --environment jsdom --coverage",
-    "test:e2e": "start-server-and-test preview :4173 'cypress run --e2e'",
+    "test:e2e": "start-server-and-test preview :4173 'cypress open --e2e'",
+    "test:e2e:ci": "start-server-and-test 'vite dev --port 4173' :4173 'cypress run --e2e'",
     "test:e2e:dev": "start-server-and-test 'vite dev --port 4173' :4173 'cypress open --e2e'",
-    "build-only": "vite build",
     "type-check": "vue-tsc --noEmit -p tsconfig.vitest.json --composite false",
     "lint:js": "eslint . --ext .vue,.js,.cjs,.mjs,.ts,.cts,.mts --ignore-path .gitignore",
     "lint:prettier": "prettier --check . --ignore-path .gitignore",
     "lint": "npm run lint:js && npm run lint:prettier",
-    "format": "prettier --write --list-different . && npm run lint:js -- --fix",
+    "format": "prettier --write --list-different . --ignore-path .gitignore && npm run lint:js -- --fix",
     "prepare": "husky install"
   },
   "dependencies": {
@@ -30,6 +31,8 @@
     "vue-dompurify-html": "^3.1.2"
   },
   "devDependencies": {
+    "@cypress/code-coverage": "^3.10.0",
+    "@istanbuljs/nyc-config-typescript": "^1.0.2",
     "@pinia/testing": "^0.0.14",
     "@rushstack/eslint-patch": "^1.1.4",
     "@types/jsdom": "^20.0.1",
@@ -60,6 +63,7 @@
     "start-server-and-test": "^1.14.0",
     "typescript": "~4.7.4",
     "vite": "^3.2.4",
+    "vite-plugin-istanbul": "^4.0.0",
     "vitest": "^0.25.3",
     "vue-tsc": "^1.0.9"
   },

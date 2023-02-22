@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import { onMounted, ref } from 'vue'
+import OlMap from 'ol/Map'
 
 import useMap from '@/composables/map/map.composable'
 import { OlSynchronizer } from '@/composables/map/ol.synchronizer'
@@ -15,10 +16,17 @@ onMounted(async () => {
 
     statePersistorMapService.restoreViewport()
     statePersistorMapService.persistViewport()
+
+    // Direct access to olMap for cypress
+    window.olMap = map.getOlMap() as OlMap
   }
 })
 </script>
 
 <template>
-  <div ref="mapContainer" class="h-full w-full bg-white"></div>
+  <div
+    data-cy="mapContainer"
+    ref="mapContainer"
+    class="h-full w-full bg-white"
+  ></div>
 </template>

@@ -12,6 +12,7 @@
 
 ## testing
 /coverage/
+/.nyc_output/
 
 ## temp folders
 /.tmp/
