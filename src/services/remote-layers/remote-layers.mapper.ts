@@ -4,12 +4,12 @@ import { LayerTreeNodeModel } from '@/components/layer-tree/layer-tree.model'
 import { RemoteLayer } from './remote-layers.model'
 import { remoteLayersService } from './remote-layers.service'
 
-function sortLayerTreeNoChildrenFirst(a: RemoteLayer, b: RemoteLayer) {
-  if (a.children && !b.children) {
+export function sortLayerTreeNoChildrenFirst(a: RemoteLayer, b: RemoteLayer) {
+  if ((a.children && !b.children) || b.children?.length === 0) {
     return 1
   }
 
-  if (b.children && !a.children) {
+  if ((b.children && !a.children) || a.children?.length === 0) {
     return -1
   }
 
