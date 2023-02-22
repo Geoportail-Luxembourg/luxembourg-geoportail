@@ -29,6 +29,7 @@ To start local dev environment with HMR support:
 - `npm run test:unit:ci` to be used by CI only | Coverage reports are located in: `/coverage/index.html`
 
 ### End to end testing with Cypress
+
 - `test:e2e` will launch e2e tests and opens Cypress UI. You need to build the app before using this command with `npm run build-only -- --mode=e2e`. This will test the app built for production (with css minification, images src optimization using base64, ...)
 - `test:e2e:ci` This will run tests in command line only on a dev build (no need to build the app). Used by ci workflow.
 - `test:e2e:dev` will launch e2e tests and opens Cypress UI. This command will launch a vite server in dev mode, there is no need to build the app.
