@@ -12,7 +12,7 @@ import { useThemeStore } from '@/stores/config.store'
 import { useMapStore } from '@/stores/map.store'
 import { statePersistorLayersService } from '@/services/state-persistor/state-persistor-layers.service'
 import BackgroundSelectorItem from './background-selector-item.vue'
-import { bgConfig } from '@/__fixtures__/background.config.fixture'
+import { bgConfigFixture } from '@/__fixtures__/background.config.fixture'
 import { ThemeNodeModel } from '@/composables/themes/themes.model'
 
 const { t } = useTranslation()
@@ -41,7 +41,7 @@ const activeLayerName = computed(
 watch(
   () => themeStore.bgLayers,
   bgLayersContext => {
-    bgLayers.value = bgConfig.bg_layers.map(bgl =>
+    bgLayers.value = bgConfigFixture().bg_layers.map(bgl =>
       Object.assign(
         Object.assign(
           {},

@@ -9,7 +9,7 @@ import { createBgWmtsLayer } from '@/composables/background-layer/background-lay
 import { layersCache } from '@/stores/layers.cache'
 import type { Layer, LayerId } from '@/stores/map.store.model'
 import useMap from './map.composable'
-import { IMvtStyle } from '@/composables/mvt-styles/mvt-styles.model'
+import { IMvtStyle, StyleItem } from '@/composables/mvt-styles/mvt-styles.model'
 
 const proxyWmsUrl = 'https://map.geoportail.lu/ogcproxywms'
 export const remoteProxyWms = 'https://map.geoportail.lu/httpsproxy'
@@ -124,6 +124,39 @@ export default function useOpenLayers() {
     }
   }
 
+  function setBgLayerStyle(olMap: OlMap, style: StyleItem[] | undefined) {
+    const mapLayers = olMap.getLayers()
+    const bgLayer = mapLayers.getArray().find(layer => layer.getZIndex() === -1)
+    if (style) {
+      style.forEach(styleItem => applyStyleFromItem(bgLayer, styleItem))
+    }
+  }
+
+  function applyStyleFromItem(bgLayer: any, item: StyleItem) {
+    const mbMap = bgLayer.maplibreMap
+    item.styleProperties.forEach(props => {
+      props.properties.forEach(prop => {
+        if (
+          [
+            'lu_bridge_path case',
+            'lu_landcover_wood',
+            'lu_landcover_grass',
+            'lu_waterway_tunnel',
+          ].findIndex(l => l == prop) != -1
+        )
+          return
+        if (item.color) {
+          mbMap.setPaintProperty(prop, `${props.type}-color`, item.color)
+          mbMap.setPaintProperty(prop, `${props.type}-opacity`, 1)
+        }
+        mbMap.setLayoutProperty(
+          prop,
+          'visibility',
+          item.visible ? 'visible' : 'none'
+        )
+      })
+    })
+  }
   function setBgLayer(
     olMap: OlMap,
     bgLayer: Layer | null,
@@ -186,5 +219,6 @@ export default function useOpenLayers() {
     setLayerOpacity,
     getLayerFromCache,
     setBgLayer,
+    setBgLayerStyle,
   }
 }

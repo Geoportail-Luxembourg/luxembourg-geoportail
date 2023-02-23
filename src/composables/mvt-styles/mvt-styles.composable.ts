@@ -1,3 +1,10 @@
+import {
+  SimpleRoadStyle,
+  StyleItem,
+} from '@/composables/mvt-styles/mvt-styles.model'
+import { Layer } from '@/stores/map.store.model'
+import { bgConfigFixture } from '@/__fixtures__/background.config.fixture'
+
 export default function useMvtStyles() {
   function getDefaultMapBoxStyleUrl(label: string | undefined) {
     const searchParams = new URLSearchParams(document.location.search)
@@ -106,7 +113,7 @@ export default function useMvtStyles() {
       //         });
       //     }
       //     if (lsData.medium) {
-      //         // If there is a mvt medium config in the local storage, force parameter in the url
+      //         // If there is a mvt  medium config in the local storage, force parameter in the url
       //         this.ngeoLocation_.updateParams({
       //             'serial': JSON.stringify(lsData.medium),
       //             'serialLayer': JSON.stringify(label)
@@ -122,12 +129,49 @@ export default function useMvtStyles() {
       // this.isCustomStyle = this.isCustomStyleSetter(label, false);
 
       // temporary timeout for testing async style queries
-      return new Promise(r => setTimeout(r, 10000, config))
+      return new Promise(r => setTimeout(r, 2000, config))
       return Promise.resolve(config)
+    }
+  }
+
+  function getStyle(layer: Layer): StyleItem[] | undefined {
+    return getStyleFromId(layer.id.toString())
+  }
+  function getRoadStyleFromSimpleStyle(
+    simpleStyle: SimpleRoadStyle | null
+  ): StyleItem[] {
+    const med_road_style = bgConfigFixture().medium_default_styles
+      .road as StyleItem[]
+    const simpleColors = simpleStyle?.colors || []
+    simpleColors.forEach((element: string, i: number) => {
+      med_road_style[i].color = element
+    })
+    return med_road_style
+  }
+  function getStyleFromId(id: string): StyleItem[] | undefined {
+    const styleIndex = 2
+    const bgConfig = bgConfigFixture()
+    const bgLayerConf = bgConfig.bg_layers.find(l => l.id.toString() == id)
+    console.log(`get style ${bgLayerConf?.icon_id}`)
+    const styleClass = bgLayerConf?.medium_style_class
+    if (styleClass) {
+      const medium_style = (
+        bgConfig.medium_default_styles as { [key: string]: any }
+      )[styleClass] as StyleItem[]
+      if (styleClass == 'road') {
+        bgConfig.simple_styles[styleIndex].colors.forEach((element, i) => {
+          medium_style[i].color = element
+        })
+      }
+      return medium_style
     }
   }
 
   return {
     setConfigForLayer,
+    getStyle,
+    getStyleFromId,
+    getRoadStyleFromSimpleStyle,
+    //applyStyleFromItem,
   }
 }

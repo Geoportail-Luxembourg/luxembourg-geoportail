@@ -68,6 +68,13 @@ export class OlSynchronizer {
     )
 
     watch(
+      () => styleStore.bgStyle,
+      newStyle => {
+        openLayers.setBgLayerStyle(map, newStyle)
+      }
+    )
+
+    watch(
       () => styleStore.bgStyles,
       newStyles => {
         for (const id in newStyles) {
