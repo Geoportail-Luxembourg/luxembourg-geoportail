@@ -3,7 +3,7 @@ import { useTranslation } from 'i18next-vue'
 import { ref } from 'vue'
 
 import { useStyleStore } from '@/stores/style.store'
-import { statePersistorLayerService } from '@/services/state-persistor/state-persistor-layer.service'
+// import { statePersistorStyleService } from '@/services/state-persistor/state-persistor-style.service'
 import SimpleStyleItem from './simple-style-item.vue'
 import { bgConfigFixture } from '@/__fixtures__/background.config.fixture'
 import { SimpleRoadStyle } from '@/composables/mvt-styles/mvt-styles.model'
@@ -11,7 +11,7 @@ import { SimpleRoadStyle } from '@/composables/mvt-styles/mvt-styles.model'
 const { t } = useTranslation()
 const styleStore = useStyleStore()
 
-statePersistorLayerService.bootstrapBgLayer()
+// statePersistorStyleService.bootstrapStyle()
 
 const props = defineProps({
   isOpen: {
