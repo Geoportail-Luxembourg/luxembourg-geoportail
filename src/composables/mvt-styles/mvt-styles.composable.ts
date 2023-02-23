@@ -4,6 +4,7 @@ import {
 } from '@/composables/mvt-styles/mvt-styles.model'
 import { Layer } from '@/stores/map.store.model'
 import { bgConfigFixture } from '@/__fixtures__/background.config.fixture'
+import BaseLayer from 'ol/layer/Base'
 
 export default function useMvtStyles() {
   function getDefaultMapBoxStyleUrl(label: string | undefined) {
@@ -166,12 +167,41 @@ export default function useMvtStyles() {
       return medium_style
     }
   }
+  function applyStyle(bgLayer: BaseLayer, item: StyleItem[]) {
+    item.forEach(item => applyStyleFromItem(bgLayer, item))
+  }
+  function applyStyleFromItem(bgLayer: BaseLayer, item: StyleItem) {
+    // consider layer to be a Maplibre Layer
+    const mbMap = (bgLayer as any).maplibreMap
+    item.styleProperties.forEach(props => {
+      props.properties.forEach(prop => {
+        if (
+          [
+            'lu_bridge_path case',
+            'lu_landcover_wood',
+            'lu_landcover_grass',
+            'lu_waterway_tunnel',
+          ].findIndex(l => l == prop) != -1
+        )
+          return
+        if (item.color) {
+          mbMap.setPaintProperty(prop, `${props.type}-color`, item.color)
+          mbMap.setPaintProperty(prop, `${props.type}-opacity`, 1)
+        }
+        mbMap.setLayoutProperty(
+          prop,
+          'visibility',
+          item.visible ? 'visible' : 'none'
+        )
+      })
+    })
+  }
 
   return {
     setConfigForLayer,
     getStyle,
     getStyleFromId,
     getRoadStyleFromSimpleStyle,
-    //applyStyleFromItem,
+    applyStyle,
   }
 }

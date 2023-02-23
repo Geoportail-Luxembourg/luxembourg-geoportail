@@ -7,6 +7,7 @@ import { useMapStore } from '@/stores/map.store'
 import { useStyleStore } from '@/stores/style.store'
 import useMap from './map.composable'
 import { IMvtStyle } from '@/composables/mvt-styles/mvt-styles.model'
+import useMvtStyles from '../mvt-styles/mvt-styles.composable'
 
 export class OlSynchronizer {
   previousLayers: Layer[]
@@ -15,6 +16,7 @@ export class OlSynchronizer {
     const mapStore = useMapStore()
     const styleStore = useStyleStore()
     const mapService = useMap()
+    const styleService = useMvtStyles()
     const openLayers = useOpenLayers()
 
     watch(
@@ -69,9 +71,10 @@ export class OlSynchronizer {
 
     watch(
       () => styleStore.bgStyle,
-      newStyle => {
-        openLayers.setBgLayerStyle(map, newStyle)
-      }
+      newStyle =>
+        openLayers.applyOnBgLayer(map, bgLayer =>
+          styleService.applyStyle(bgLayer, newStyle || [])
+        )
     )
 
     watch(
