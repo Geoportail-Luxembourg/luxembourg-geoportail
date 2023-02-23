@@ -1,12 +1,32 @@
 <script setup lang="ts">
 import '../node_modules/ol/ol.css'
+import { watch } from 'vue'
+import { storeToRefs } from 'pinia'
 import BackgroundSelector from '@/components/background-selector/background-selector.vue'
 import LanguageSelector from '@/components/nav-bars/language-selector.vue'
 import LayerPanel from '@/components/layer-panel/layer-panel.vue'
 import MapContainer from '@/components/map/map-container.vue'
+import { themeSelectorService } from '@/components/theme-selector/theme-selector.service'
+
 import { statePersistorLayersService } from '@/services/state-persistor/state-persistor-layers.service'
+import { statePersistorThemeService } from '@/services/state-persistor/state-persistor-theme.service'
+import { useThemeStore } from '@/stores/config.store'
 
 statePersistorLayersService.bootstrapLayers()
+statePersistorThemeService.bootstrap()
+
+const themeStore = useThemeStore()
+const { theme } = storeToRefs(themeStore)
+
+watch(
+  theme,
+  theme => {
+    if (theme) {
+      themeSelectorService.setCurrentThemeColors(theme)
+    }
+  },
+  { immediate: true }
+)
 </script>
 
 <template>

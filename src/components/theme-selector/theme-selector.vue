@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { ShallowRef, shallowRef, watch } from 'vue'
+import { ShallowRef, shallowRef } from 'vue'
 import { storeToRefs } from 'pinia'
 
 import useThemes from '@/composables/themes/themes.composable'
@@ -7,7 +7,6 @@ import { useThemeStore } from '@/stores/config.store'
 
 import ThemeGrid from './theme-grid.vue'
 import ThemeSelectorButton from './theme-selector-button.vue'
-import { themeSelectorService } from './theme-selector.service'
 import { computed } from 'vue'
 
 const themeStore = useThemeStore()
@@ -21,16 +20,6 @@ const themes = computed(
 )
 const isOpenRef: ShallowRef<boolean> = shallowRef(false)
 const emit = defineEmits(['toggleThemesGrid'])
-
-watch(
-  theme,
-  theme => {
-    if (theme) {
-      themeSelectorService.setCurrentThemeColors(theme)
-    }
-  },
-  { immediate: true }
-)
 
 function toggleThemesGrid() {
   emit('toggleThemesGrid', (isOpenRef.value = !isOpenRef.value))
