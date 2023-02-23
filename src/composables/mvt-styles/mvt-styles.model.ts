@@ -6,3 +6,26 @@ export interface IMvtStyle {
   xyz_custom: string
   style: string
 }
+export interface SimpleRoadStyle {
+  unlocalized_label: string
+  hillshade: boolean
+  colors: string[]
+  selected: boolean
+}
+export type StylePropertyType =
+  | 'line'
+  | 'fill'
+  | 'symbol'
+  | 'fill-extrusion'
+  | 'background'
+  | 'hillshade'
+export interface StyleProperties {
+  type: StylePropertyType
+  properties: string[]
+}
+export interface StyleItem {
+  unlocalized_label: string
+  color: string
+  styleProperties: StyleProperties[]
+  visible: boolean
+}

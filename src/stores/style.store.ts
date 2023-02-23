@@ -2,17 +2,22 @@ import { acceptHMRUpdate, defineStore } from 'pinia'
 import { shallowRef, ShallowRef } from 'vue'
 
 import useMvtStyles from '@/composables/mvt-styles/mvt-styles.composable'
-import { IMvtStyle } from '@/composables/mvt-styles/mvt-styles.model'
-import { bgConfig } from '@/__fixtures__/background.config.fixture'
+import {
+  IMvtStyle,
+  SimpleRoadStyle,
+  StyleItem,
+} from '@/composables/mvt-styles/mvt-styles.model'
+import { bgConfigFixture } from '@/__fixtures__/background.config.fixture'
 
 export const useStyleStore = defineStore(
   'style',
   () => {
     const styleService = useMvtStyles()
+    const bgStyle: ShallowRef<StyleItem[] | undefined> = shallowRef()
     const bgStyles: ShallowRef<{ [id: string]: IMvtStyle }> = shallowRef({})
 
     const promises: Promise<{ id: string; style: IMvtStyle }>[] = []
-    bgConfig.bg_layers.forEach(bgLayer => {
+    bgConfigFixture().bg_layers.forEach(bgLayer => {
       if (bgLayer.style_id) {
         const conf = styleService.setConfigForLayer(
           bgLayer.icon_id,
@@ -35,8 +40,17 @@ export const useStyleStore = defineStore(
         bgStyles.value = styleDict
       }
     )
+    // automatic style change for test purpose
+    const changeStylePromise = new Promise(r => setTimeout(r, 5000))
+    changeStylePromise.then(() => {
+      bgStyle.value = styleService.getStyleFromId('556')
+    })
 
-    return { bgStyles }
+    function setSimpleStyle(simpleStyle: SimpleRoadStyle | null) {
+      bgStyle.value = styleService.getRoadStyleFromSimpleStyle(simpleStyle)
+    }
+
+    return { bgStyle, bgStyles, setSimpleStyle }
   },
   {}
 )
