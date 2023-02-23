@@ -1,7 +1,10 @@
 <script setup lang="ts">
 import '../node_modules/ol/ol.css'
+
 import { watch } from 'vue'
 import { storeToRefs } from 'pinia'
+import { useTranslation } from 'i18next-vue'
+
 import BackgroundSelector from '@/components/background-selector/background-selector.vue'
 import LanguageSelector from '@/components/nav-bars/language-selector.vue'
 import LayerPanel from '@/components/layer-panel/layer-panel.vue'
@@ -15,6 +18,7 @@ import { useThemeStore } from '@/stores/config.store'
 statePersistorLayersService.bootstrapLayers()
 statePersistorThemeService.bootstrap()
 
+const { t } = useTranslation()
 const themeStore = useThemeStore()
 const { theme } = storeToRefs(themeStore)
 
@@ -39,7 +43,17 @@ watch(
       </div>
       <div class="grow text-center">search</div>
       <div>
-        <ul class="h-full">
+        <ul class="h-full flex">
+          <li>
+            <button
+              class="flex items-center before:font-icons before:text-3xl before:w-16 text-primary uppercase h-full mr-3"
+              :class="`before:content-${theme?.name}`"
+            >
+              <span class="hidden lg:inline-block">{{
+                t(`${theme?.name}`)
+              }}</span>
+            </button>
+          </li>
           <li class="border-l-[1px] border-stone-300 h-full">
             <language-selector
               data-cy="langSelect"
