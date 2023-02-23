@@ -9,6 +9,7 @@ import { BLANK_BACKGROUNDLAYER } from '@/composables/background-layer/background
 
 import LayerManagerItemBackground from './layer-item/layer-item-background.vue'
 import LayerManagerItem from './layer-item/layer-item.vue'
+import SimpleStyleSelector from '../style-selector/simple-style-selector.vue'
 import { useMetadataStore } from '@/stores/metadata.store'
 
 const { setMetadataId } = useMetadataStore()
@@ -17,6 +18,7 @@ const { bgLayer } = storeToRefs(mapStore)
 
 const layers = computed(() => [...mapStore.layers].reverse())
 const isLayerOpenId: ShallowRef<LayerId | undefined> = shallowRef()
+const isStyleEditorOpen: ShallowRef<boolean> = shallowRef(false)
 const draggableClassName = 'drag-handle'
 
 onMounted(() => {
@@ -50,8 +52,10 @@ function toggleAccordionItem(layer: Layer) {
   isLayerOpenId.value = isLayerOpenId.value !== layer.id ? layer.id : undefined
 }
 
-function toggleEditionLayer() {
-  console.info('clickEdit to implement')
+function toggleEditionLayer(layer: Layer) {
+  if (layer.id == 556)
+    // simple editor only available for road map
+    isStyleEditorOpen.value = !isStyleEditorOpen.value
 }
 </script>
 
@@ -77,6 +81,11 @@ function toggleEditionLayer() {
         @clickEdit="toggleEditionLayer"
       >
       </layer-manager-item-background>
+    </li>
+    <li>
+      <!-- TODO: add medium and advanced style editors -->
+      <simple-style-selector :is-open="isStyleEditorOpen">
+      </simple-style-selector>
     </li>
   </ul>
 </template>
