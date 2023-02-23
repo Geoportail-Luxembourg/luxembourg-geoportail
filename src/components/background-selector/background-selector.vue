@@ -12,6 +12,8 @@ import { useThemeStore } from '@/stores/config.store'
 import { useMapStore } from '@/stores/map.store'
 import { statePersistorLayersService } from '@/services/state-persistor/state-persistor-layers.service'
 import BackgroundSelectorItem from './background-selector-item.vue'
+import { bgConfig } from '@/__fixtures__/background.config.fixture'
+import { ThemeNodeModel } from '@/composables/themes/themes.model'
 
 const { t } = useTranslation()
 const backgroundLayer = useBackgroundLayer()
@@ -33,17 +35,25 @@ const activeLayerId = computed(
   () => (bgLayerContext.value?.id as number) ?? BLANK_BACKGROUNDLAYER.id
 )
 const activeLayerName = computed(
-  () => bgLayers.value.find(layer => layer.id === activeLayerId.value)?.name
+  () => bgLayers.value?.find(layer => layer.id === activeLayerId.value)?.name
 )
 
 watch(
   () => themeStore.bgLayers,
   bgLayersContext => {
-    bgLayers.value =
-      bgLayersContext.length > 0
-        ? backgroundLayer.getBgLayersFromConfig()
-        : [BLANK_BACKGROUNDLAYER]
-  }
+    bgLayers.value = bgConfig.bg_layers.map(bgl =>
+      Object.assign(
+        Object.assign(
+          {},
+          bgLayersContext.find((l: ThemeNodeModel) => bgl.id == l.id),
+          {
+            name: bgl.icon_id,
+          }
+        )
+      )
+    )
+  },
+  { immediate: true }
 )
 
 watch(
@@ -56,7 +66,9 @@ watch(
       bgLayerContext === null &&
       layersContext?.length === 0
     ) {
-      backgroundLayer.setBgLayer(backgroundLayer.getDefaultSelectedId())
+      backgroundLayer.setBgLayer(
+        backgroundLayer.getDefaultSelectedId() || BLANK_BACKGROUNDLAYER.id
+      )
 
       if (bgLayerContext === null) {
         // TODO: implement alert message

@@ -32,6 +32,7 @@
   },
   "devDependencies": {
     "@cypress/code-coverage": "^3.10.0",
+    "@geoblocks/ol-maplibre-layer": "^0.0.5",
     "@istanbuljs/nyc-config-typescript": "^1.0.2",
     "@pinia/testing": "^0.0.14",
     "@rushstack/eslint-patch": "^1.1.4",

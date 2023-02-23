@@ -1,28 +1,31 @@
 import { bgConfig } from '@/__fixtures__/background.config.fixture'
-import useThemes from '@/composables/themes/themes.composable'
 import useLayers from '@/composables/layers/layers.composable'
 import type { Layer } from '@/stores/map.store.model'
 import { useMapStore } from '@/stores/map.store'
+import { useThemeStore } from '@/stores/config.store'
 
 export default function useBackgroundLayer() {
-  const themes = useThemes()
+  const theme = useThemeStore()
   const layers = useLayers()
 
   function setBgLayer(layerId: number) {
-    const newBgLayer = themes.findBgLayerById(layerId)
-    setMapBackground(newBgLayer as unknown as Layer)
+    const newBgLayer = theme.bgLayers.find(l => l.id == layerId) as Layer
+    setMapBackground(newBgLayer || null)
   }
 
   function setMapBackground(bgLayer: Layer | null) {
     const mapStore = useMapStore()
 
     if (bgLayer) {
-      if (!(bgLayer.type === 'WMTS' || bgLayer.type === 'BG WMTS')) {
+      if (bgLayer.type === 'WMTS' || bgLayer.type === 'BG WMTS') {
+        bgLayer.type = 'BG WMTS'
+      } else if (bgLayer.type === 'BG MVT') {
+        console.log(`passed through MVT layer ${bgLayer.name}`)
+      } else {
         throw new Error(
-          `Only WMTS BG layers are currently implemented (not ${bgLayer.type} for ${bgLayer.name})`
+          `Only WMTS and MVT BG layers are currently implemented (not ${bgLayer.type} for ${bgLayer.name})`
         )
       }
-      bgLayer.type = 'BG WMTS'
       layers.handleExclusionLayers(bgLayer)
       mapStore.setBgLayer(layers.initLayer(bgLayer))
     } else {
@@ -31,7 +34,7 @@ export default function useBackgroundLayer() {
   }
 
   function getDefaultSelectedId() {
-    return bgConfig.bg_layers_defaultId
+    return bgConfig.bg_layers.find(l => l.is_default)?.id
   }
 
   function getBgLayersFromConfig() {

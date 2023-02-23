@@ -4,12 +4,16 @@ import useOpenLayers from './ol.composable'
 
 import { Layer } from '@/stores/map.store.model'
 import { useMapStore } from '@/stores/map.store'
+import { useStyleStore } from '@/stores/style.store'
 import useMap from './map.composable'
+import { IMvtStyle } from '@/composables/mvt-styles/mvt-styles.model'
 
 export class OlSynchronizer {
   previousLayers: Layer[]
+  previousStyles: { [id: string]: IMvtStyle }
   constructor(map: OlMap) {
     const mapStore = useMapStore()
+    const styleStore = useStyleStore()
     const mapService = useMap()
     const openLayers = useOpenLayers()
 
@@ -58,7 +62,28 @@ export class OlSynchronizer {
 
     watch(
       () => mapStore.bgLayer,
-      bgLayer => bgLayer !== undefined && openLayers.setBgLayer(map, bgLayer)
+      bgLayer =>
+        bgLayer !== undefined &&
+        openLayers.setBgLayer(map, bgLayer, styleStore.bgStyles)
+    )
+
+    watch(
+      () => styleStore.bgStyles,
+      newStyles => {
+        for (const id in newStyles) {
+          if (
+            !this.previousStyles ||
+            this.previousStyles[id] != newStyles[id]
+          ) {
+            openLayers.removeFromCache(id)
+            if (id == mapStore?.bgLayer?.id) {
+              // refresh bg layer
+              openLayers.setBgLayer(map, mapStore?.bgLayer, newStyles)
+            }
+          }
+        }
+        this.previousStyles = newStyles
+      }
     )
   }
 }
