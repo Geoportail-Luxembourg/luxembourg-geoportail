@@ -1,5 +1,5 @@
 import { ThemeNodeModel } from '@/composables/themes/themes.model'
-import { IdValues, LayerMetadataModel } from './layer-metadata.model'
+import { LayerMetadataModel } from './layer-metadata.model'
 import {
   getMetadataLinks,
   getResponsibleParty,
@@ -19,33 +19,26 @@ export class LayerMetadataService {
   // TODO: get from config or relative
   private localMetadataBaseUrl = 'https://map.geoportail.lu/getMetadata'
 
-  async getLayerMetadata(
-    id: LayerId,
-    currentLanguage: string
-  ): Promise<LayerMetadataModel> {
+  async getLayerMetadata(id: LayerId, currentLanguage: string) {
     const layer: ThemeNodeModel | undefined =
       useThemes().findById(+id) || useThemes().findBgLayerById(+id)
-    let localMetadata
-    let metadata
-    if (layer) {
-      localMetadata = layer.metadata
 
-      metadata =
-        layer.metadata?.metadata_id &&
+    if (layer) {
+      // Internal layer
+      const localMetadata = layer.metadata
+      const metadataId = localMetadata?.metadata_id
+
+      const metadata =
+        metadataId &&
         (await this.getLocalMetadata(
           this.localMetadataBaseUrl,
-          layer.metadata.metadata_id,
+          metadataId,
           currentLanguage
         ))
-      metadata = { ...metadata, title: layer.name }
+      const title = layer.name
 
-      //TODO: legend for external layers?
+      const legendName = localMetadata?.legend_name || ''
       const layerId = layer?.id
-      const legendName =
-        localMetadata && 'legend_name' in localMetadata
-          ? localMetadata.legend_name
-          : ''
-
       const legendHtml =
         legendName &&
         (await this.getLegendHtml(
@@ -54,31 +47,25 @@ export class LayerMetadataService {
           layerId,
           currentLanguage
         ))
-      metadata = legendHtml
-        ? {
-            ...metadata,
-            legendHtml: legendHtml,
-            hasLegend: true,
-          }
-        : (metadata = {
-            ...metadata,
-            hasLegend: false,
-          })
+
+      return {
+        ...metadata,
+        title,
+        hasLegend: !!legendHtml,
+        ...(legendHtml && { legendHtml }),
+      } as LayerMetadataModel
     } else {
-      // is this case needed for another case than external layers (which have no theme node in theme service)?
-      const values = String(id).split('%2D').join('-').split('||')
-      const idValues: IdValues = {
-        serviceType: values[0] as 'WMS' | 'WMTS',
-        url: values[1],
-        layerName: values[2],
-      }
-      if (idValues.serviceType === 'WMS') {
-        metadata = await wmsHelper.getMetadata(idValues)
-      } else if (idValues.serviceType == 'WMTS') {
-        metadata = await wmtsHelper.getMetadata(idValues)
+      // External layers (which have no theme node in theme service)
+      const [serviceType, url, layerName] = String(id)
+        .split('%2D')
+        .join('-')
+        .split('||')
+      if (serviceType === 'WMS') {
+        return await wmsHelper.getMetadata(serviceType, url, layerName)
+      } else if (serviceType === 'WMTS') {
+        return await wmtsHelper.getMetadata(serviceType, url, layerName)
       }
     }
-    return metadata as LayerMetadataModel
   }
 
   getLocalMetadata(

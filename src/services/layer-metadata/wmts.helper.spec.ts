@@ -1,12 +1,6 @@
 import { remoteLayersService } from '@/services/remote-layers/remote-layers.service'
 import { wmtsHelper } from './wmts.helper'
 
-const idValuesMock = {
-  serviceType: 'WMTS',
-  url: 'http://myows.fr/wmts',
-  layerName: 'streets',
-}
-
 const serviceInfoMock = {
   keywords: ['traffic', 'jam'],
   constraints: 'none',
@@ -30,7 +24,7 @@ describe('wmtsHelper', () => {
     spyWmtsMetadata = vi
       .spyOn(remoteLayersService, 'getWmtsEndpoint')
       .mockReturnValue(wmtsEndpointMock)
-    wmtsHelper.getMetadata(idValuesMock)
+    wmtsHelper.getMetadata('WMTS', 'http://myows.fr/wmts', 'streets')
   })
   it('calls remoteLayersService.getWmtsEndpoint()', () => {
     expect(spyWmtsMetadata).toHaveBeenCalledOnce()
