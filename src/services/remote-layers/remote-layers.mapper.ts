@@ -37,15 +37,14 @@ export function remoteLayersToLayerTreeMapper(
   }
 }
 
-// TODO: also handle WMTS here
 export function remoteLayerIdtoLayer(layerId: string) {
   const id = decodeURIComponent(layerId)
-  const [url, name] = id.replace('WMS||', '').split('||')
+  const [type, url, name] = id.split('||')
 
   return remoteLayerToLayer({
     id,
     url: remoteLayersService.getProxyfiedUrl(url),
-    remoteLayer: { name } as RemoteLayer,
+    remoteLayer: { name, type } as RemoteLayer,
   })
 }
 
@@ -59,7 +58,6 @@ export function remoteLayerToLayer({
   remoteLayer: RemoteLayer
 }): Layer {
   const { name = '', type = 'WMS' } = remoteLayer
-
   return {
     id,
     name,
@@ -67,7 +65,7 @@ export function remoteLayerToLayer({
     url,
     type,
     imageType: LayerImageType.PNG,
-    // might need to add more params for wmts
+    // TODO for displaying WMTS: might need to add more params here
     // wmts_params: {
     //   Format: remoteLayer.Format,
     //   TileMatrixSetLink: remoteLayer.TileMatrixSetLink,

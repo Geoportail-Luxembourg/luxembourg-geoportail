@@ -135,25 +135,34 @@ describe('remoteLayersToLayerTreeMapper', () => {
   })
 })
 
-describe('remoteLayerIdtoLayer', () => {
-  let layer
-  const remoteLayerId = 'WMS||http://example.com||Layer1'
-  const expectedLayer = {
-    id: 'WMS||http://example.com||Layer1',
-    name: 'Layer1',
-    layers: 'Layer1',
-    url: 'myproxifiedurl=http://example.com',
-    type: 'WMS',
-    imageType: LayerImageType.PNG,
-  }
-  beforeEach(() => {
-    vi.spyOn(remoteLayersService, 'getProxyfiedUrl').mockImplementation(
-      url => `myproxifiedurl=${url}`
-    )
-    layer = remoteLayerIdtoLayer(remoteLayerId)
+describe('#remoteLayerIdtoLayer using #remoteLayerToLayer', () => {
+  vi.spyOn(remoteLayersService, 'getProxyfiedUrl').mockImplementation(
+    url => `myproxifiedurl=${url}`
+  )
+  describe('WMS', () => {
+    const wmsLayer = remoteLayerIdtoLayer('WMS||http://example.com||Layer1')
+    it('should convert a remote WMS layer id to a layer object', () => {
+      expect(wmsLayer).toEqual({
+        id: 'WMS||http://example.com||Layer1',
+        name: 'Layer1',
+        layers: 'Layer1',
+        url: 'myproxifiedurl=http://example.com',
+        type: 'WMS',
+        imageType: LayerImageType.PNG,
+      })
+    })
   })
-
-  it('should convert a remote layer id to a layer object', () => {
-    expect(layer).toEqual(expectedLayer)
+  describe('WMTS', () => {
+    const wmtsLayer = remoteLayerIdtoLayer('WMTS||http://example.com||Layer1')
+    it('should convert a remote WMTS layer id to a layer object', () => {
+      expect(wmtsLayer).toEqual({
+        id: 'WMTS||http://example.com||Layer1',
+        name: 'Layer1',
+        layers: 'Layer1',
+        url: 'myproxifiedurl=http://example.com',
+        type: 'WMTS',
+        imageType: LayerImageType.PNG,
+      })
+    })
   })
 })
