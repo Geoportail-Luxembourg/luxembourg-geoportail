@@ -21,14 +21,26 @@ export const SP_KEY_Y = 'Y'
 export enum SP_AVAILABLE_STORAGES {
   localStorage = 0,
   permalink = 1,
-  both = 2,
+  permalinkAsPath = 2,
+  both = 3,
 }
 
 export type ParamKeys = { [key: string]: string }
 export type StatePersistorStorage = Storage | UrlStorage
 
 export abstract class StatePersistorRulesHelper {
+  /**
+   * Process rules for the entire context (keys/values) first.
+   * eg. the entire url string
+   * @param paramKeys
+   */
   abstract processRules(paramKeys: ParamKeys): SP_AVAILABLE_STORAGES | undefined
+
+  /**
+   * Process rules on the key/value only, called after processRules on the entire context
+   * @param key
+   * @param paramKeys
+   */
   abstract processRulesForKey(
     key: string,
     paramKeys: ParamKeys

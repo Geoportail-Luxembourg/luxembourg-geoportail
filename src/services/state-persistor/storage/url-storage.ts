@@ -1,8 +1,10 @@
 export class UrlStorage implements Storage {
   private snappedUrl: URL
+  private asPath: boolean
 
-  constructor() {
+  constructor(asPath = false) {
     this.snappedUrl = new URL(window.location.toString())
+    this.asPath = asPath
   }
 
   get length() {
@@ -58,27 +60,35 @@ export class UrlStorage implements Storage {
   }
 
   setPathParam(key: string, value: string) {
-    console.log(`To implement setPathParam key='${key}', value='${value}'`) // TODO: GSLUX-570
+    const queryParams = new URL(window.location.toString()).search
+    const url = `${import.meta.env.BASE_URL}${key}/${value}${queryParams}`
+
+    try {
+      window.history.replaceState(null, '', url)
+    } catch (error) {
+      // replaceState fails on some browser if the domain in the state
+    }
   }
 
   getPathParam(key: string) {
-    console.log(`To implement getPathParam key='${key}'`)
-    return this.getSnappedUrl().pathname.indexOf(key) // TODO: GSLUX-570
+    const paths = this.getSnappedUrl().pathname.split('/')
+    const keyPathIndex = paths.findIndex(path => path === key)
+
+    return paths[keyPathIndex + 1]
   }
 
-  setItem(key: string, value: string, fromPath?: boolean) {
-    if (fromPath) {
+  setItem(key: string, value: string) {
+    if (this.asPath) {
       this.setPathParam(key, value)
     } else {
       this.setQueryParam(key, value)
     }
   }
 
-  getItem(key: string): string | null
-  getItem(key: string, fromPath?: boolean) {
+  getItem(key: string): string | null {
     let value
 
-    if (fromPath) {
+    if (this.asPath) {
       value = this.getPathParam(key)
     } else {
       value = this.getQueryParam(key)
@@ -95,3 +105,4 @@ export class UrlStorage implements Storage {
 }
 
 export const urlStorage = new UrlStorage()
+export const urlPathStorage = new UrlStorage(true)

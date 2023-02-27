@@ -5,7 +5,7 @@ import {
   StatePersistorRulesHelper,
   StatePersistorStorage,
 } from '../state-persistor.model'
-import { UrlStorage, urlStorage } from './url-storage'
+import { UrlStorage, urlStorage, urlPathStorage } from './url-storage'
 
 class StorageProxy implements Storage {
   get length() {
@@ -82,6 +82,8 @@ class StorageProxy implements Storage {
       return [localStorage]
     } else if (depositsKey === SP_AVAILABLE_STORAGES.permalink) {
       return [urlStorage]
+    } else if (depositsKey === SP_AVAILABLE_STORAGES.permalinkAsPath) {
+      return [urlPathStorage]
     }
 
     return void 0

@@ -3,7 +3,7 @@ import { RulesWriteHelper } from './state-persistor-rules-write.helper'
 describe('RulesWriteHelper', () => {
   describe('#processRules', () => {
     it('returns both storage', () => {
-      expect(RulesWriteHelper.processRules()).toBe(2)
+      expect(RulesWriteHelper.processRules()).toBe(3)
     })
   })
 
