@@ -197,11 +197,25 @@ export default function useMvtStyles() {
     })
   }
 
+  function checkSelection(
+    bgStyle: StyleItem[],
+    simpleStyleConf: SimpleRoadStyle[]
+  ) {
+    return simpleStyleConf.map((style: SimpleRoadStyle) =>
+      Object.assign(style, {
+        selected: style.colors.every(
+          (element, i) => bgStyle[i]?.color == element
+        ),
+      })
+    )
+  }
+
   return {
     setConfigForLayer,
     getStyle,
     getStyleFromId,
     getRoadStyleFromSimpleStyle,
     applyStyle,
+    checkSelection,
   }
 }
