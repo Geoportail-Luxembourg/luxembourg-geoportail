@@ -1,4 +1,4 @@
-export interface IMvtStyle {
+export interface IMvtConfig {
   label: string
   defaultMapBoxStyle: string
   defaultMapBoxStyleXYZ: string
