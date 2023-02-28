@@ -84,7 +84,7 @@ function toggleEditionLayer(layer: Layer) {
     </li>
     <li>
       <!-- TODO: add medium and advanced style editors -->
-      <simple-style-selector :is-open="isStyleEditorOpen">
+      <simple-style-selector :is-open="isStyleEditorOpen && bgLayer?.id == 556">
       </simple-style-selector>
     </li>
   </ul>
