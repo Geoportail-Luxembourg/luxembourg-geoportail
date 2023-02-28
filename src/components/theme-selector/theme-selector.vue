@@ -18,11 +18,13 @@ const themes = computed(
       theme => theme.metadata?.display_in_switcher === true
     ) || []
 )
-const isOpenRef: ShallowRef<boolean> = shallowRef(false)
-const emit = defineEmits(['toggleThemesGrid'])
+const isOpen: ShallowRef<boolean> = shallowRef(false)
+const emit = defineEmits<{
+  (e: 'toggleThemesGrid', isOpen: boolean): void
+}>()
 
 function toggleThemesGrid() {
-  emit('toggleThemesGrid', (isOpenRef.value = !isOpenRef.value))
+  emit('toggleThemesGrid', (isOpen.value = !isOpen.value))
 }
 
 function setTheme(themeName: string) {
@@ -37,11 +39,11 @@ function setTheme(themeName: string) {
     @click="toggleThemesGrid"
     :themes="themes"
     :currentTheme="theme"
-    :isOpen="isOpenRef"
+    :isOpen="isOpen"
   ></theme-selector-button>
   <div
     class="absolute inset-x-0 top-14 bottom-0 mt-1 bg-primary overflow-y-auto overflow-x-hidden"
-    v-if="isOpenRef"
+    v-if="isOpen"
   >
     <theme-grid @set-theme="setTheme" :themes="themes"></theme-grid>
   </div>

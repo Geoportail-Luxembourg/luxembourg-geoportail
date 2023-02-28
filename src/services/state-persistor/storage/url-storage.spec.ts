@@ -14,7 +14,6 @@ describe('UrlStorage', () => {
   })
 
   it('takes a snapshat of the current url at creation', () => {
-    console.log(urlStorage.getSnappedUrl().searchParams.get('param1'))
     expect(urlStorage.getSnappedUrl().toString()).toBe(
       'http://localhost:3000/?param1=value1&empty=&param2=value2'
     )
