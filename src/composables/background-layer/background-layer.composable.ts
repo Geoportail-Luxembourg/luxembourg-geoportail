@@ -3,6 +3,10 @@ import useThemes from '@/composables/themes/themes.composable'
 import useLayers from '@/composables/layers/layers.composable'
 import type { Layer } from '@/stores/map.store.model'
 import { useMapStore } from '@/stores/map.store'
+import { useThemeStore } from '@/stores/config.store'
+
+const DEFAULT_BG_LAYER_ID = 556
+const DEFAULT_BG_LAYER_ID_TOURISME = 502
 
 export default function useBackgroundLayer() {
   const themes = useThemes()
@@ -31,7 +35,11 @@ export default function useBackgroundLayer() {
   }
 
   function getDefaultSelectedId() {
-    return bgConfig.bg_layers_defaultId
+    const themeStore = useThemeStore()
+
+    return themeStore.theme?.name === 'tourisme'
+      ? DEFAULT_BG_LAYER_ID_TOURISME
+      : DEFAULT_BG_LAYER_ID
   }
 
   function getBgLayersFromConfig() {
