@@ -143,10 +143,17 @@ export default function useMvtStyles() {
   ): StyleItem[] {
     const med_road_style = bgConfigFixture().medium_default_styles
       .road as StyleItem[]
-    const simpleColors = simpleStyle?.colors || []
-    simpleColors.forEach((element: string, i: number) => {
-      med_road_style[i].color = element
-    })
+    // override default road style if simple style definition is available
+    if (simpleStyle) {
+      simpleStyle.colors.forEach((element: string, i: number) => {
+        med_road_style[i].color = element
+      })
+      med_road_style
+        .filter(el => el.unlocalized_label == 'Hillshade')
+        .forEach(el => {
+          el.visible = simpleStyle.hillshade
+        })
+    }
     return med_road_style
   }
   function getStyleFromId(id: string): StyleItem[] | undefined {
