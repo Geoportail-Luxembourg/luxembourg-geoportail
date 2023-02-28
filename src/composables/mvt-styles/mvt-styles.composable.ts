@@ -2,7 +2,6 @@ import {
   SimpleRoadStyle,
   StyleItem,
 } from '@/composables/mvt-styles/mvt-styles.model'
-import { Layer } from '@/stores/map.store.model'
 import { bgConfigFixture } from '@/__fixtures__/background.config.fixture'
 import BaseLayer from 'ol/layer/Base'
 
@@ -135,9 +134,6 @@ export default function useMvtStyles() {
     }
   }
 
-  function getStyle(layer: Layer): StyleItem[] | undefined {
-    return getStyleFromId(layer.id.toString())
-  }
   function getRoadStyleFromSimpleStyle(
     simpleStyle: SimpleRoadStyle | null
   ): StyleItem[] {
@@ -156,24 +152,7 @@ export default function useMvtStyles() {
     }
     return med_road_style
   }
-  function getStyleFromId(id: string): StyleItem[] | undefined {
-    const styleIndex = 2
-    const bgConfig = bgConfigFixture()
-    const bgLayerConf = bgConfig.bg_layers.find(l => l.id.toString() == id)
-    console.log(`get style ${bgLayerConf?.icon_id}`)
-    const styleClass = bgLayerConf?.medium_style_class
-    if (styleClass) {
-      const medium_style = (
-        bgConfig.medium_default_styles as { [key: string]: any }
-      )[styleClass] as StyleItem[]
-      if (styleClass == 'road') {
-        bgConfig.simple_styles[styleIndex].colors.forEach((element, i) => {
-          medium_style[i].color = element
-        })
-      }
-      return medium_style
-    }
-  }
+
   function applyStyle(bgLayer: BaseLayer, item: StyleItem[]) {
     item.forEach(item => applyStyleFromItem(bgLayer, item))
   }
@@ -219,8 +198,6 @@ export default function useMvtStyles() {
 
   return {
     setConfigForLayer,
-    getStyle,
-    getStyleFromId,
     getRoadStyleFromSimpleStyle,
     applyStyle,
     checkSelection,

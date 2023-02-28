@@ -41,11 +41,6 @@ export const useStyleStore = defineStore(
         bgVectorSources.value = vectorDict
       }
     )
-    // automatic style change for test purpose
-    const changeStylePromise = new Promise(r => setTimeout(r, 5000))
-    changeStylePromise.then(() => {
-      bgStyle.value = styleService.getStyleFromId('556')
-    })
 
     function setSimpleStyle(simpleStyle: SimpleRoadStyle | null) {
       bgStyle.value = styleService.getRoadStyleFromSimpleStyle(simpleStyle)
