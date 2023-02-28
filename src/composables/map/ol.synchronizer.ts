@@ -6,12 +6,12 @@ import { Layer } from '@/stores/map.store.model'
 import { useMapStore } from '@/stores/map.store'
 import { useStyleStore } from '@/stores/style.store'
 import useMap from './map.composable'
-import { IMvtStyle } from '@/composables/mvt-styles/mvt-styles.model'
+import { IMvtConfig } from '@/composables/mvt-styles/mvt-styles.model'
 import useMvtStyles from '../mvt-styles/mvt-styles.composable'
 
 export class OlSynchronizer {
   previousLayers: Layer[]
-  previousStyles: { [id: string]: IMvtStyle }
+  previousVectorSources: { [id: string]: IMvtConfig }
   constructor(map: OlMap) {
     const mapStore = useMapStore()
     const styleStore = useStyleStore()
@@ -49,7 +49,6 @@ export class OlSynchronizer {
         addedLayerComparisons.forEach(cmp =>
           openLayers.addLayer(map, cmp.layer)
         )
-
         mutatedLayerComparisons.forEach(layer => {
           openLayers.setLayerOpacity(map, layer.id, layer.opacity as number)
         })
@@ -66,7 +65,7 @@ export class OlSynchronizer {
       () => mapStore.bgLayer,
       bgLayer =>
         bgLayer !== undefined &&
-        openLayers.setBgLayer(map, bgLayer, styleStore.bgStyles)
+        openLayers.setBgLayer(map, bgLayer, styleStore.bgVectorSources)
     )
 
     watch(
@@ -78,21 +77,21 @@ export class OlSynchronizer {
     )
 
     watch(
-      () => styleStore.bgStyles,
-      newStyles => {
-        for (const id in newStyles) {
+      () => styleStore.bgVectorSources,
+      newVectorSources => {
+        for (const id in newVectorSources) {
           if (
-            !this.previousStyles ||
-            this.previousStyles[id] != newStyles[id]
+            !this.previousVectorSources ||
+            this.previousVectorSources[id] != newVectorSources[id]
           ) {
             openLayers.removeFromCache(id)
             if (id == mapStore?.bgLayer?.id) {
               // refresh bg layer
-              openLayers.setBgLayer(map, mapStore?.bgLayer, newStyles)
+              openLayers.setBgLayer(map, mapStore?.bgLayer, newVectorSources)
             }
           }
         }
-        this.previousStyles = newStyles
+        this.previousVectorSources = newVectorSources
       }
     )
   }

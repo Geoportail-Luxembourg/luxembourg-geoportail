@@ -3,7 +3,7 @@ export const bgConfigFixture = () => ({
     {
       // basemap_2015_global
       icon_id: 'route',
-      style_id: 'roadmap',
+      vector_id: 'roadmap',
       medium_style_class: 'road',
       id: 556,
       is_default: true,
@@ -11,14 +11,14 @@ export const bgConfigFixture = () => ({
     {
       // topo_bw_jpeg
       icon_id: 'topo',
-      style_id: 'topomap',
+      vector_id: 'topomap',
       medium_style_class: 'topo',
       id: 529,
     },
     {
       // topogr_global
       icon_id: 'topo_bw',
-      style_id: 'topomap_gray',
+      vector_id: 'topomap_gray',
       medium_style_class: 'topo',
       id: 502,
     },

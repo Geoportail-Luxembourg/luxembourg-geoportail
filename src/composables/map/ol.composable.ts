@@ -9,7 +9,7 @@ import { createBgWmtsLayer } from '@/composables/background-layer/background-lay
 import { layersCache } from '@/stores/layers.cache'
 import type { Layer, LayerId } from '@/stores/map.store.model'
 import useMap from './map.composable'
-import { IMvtStyle } from '@/composables/mvt-styles/mvt-styles.model'
+import { IMvtConfig } from '@/composables/mvt-styles/mvt-styles.model'
 
 const proxyWmsUrl = 'https://map.geoportail.lu/ogcproxywms'
 export const remoteProxyWms = 'https://map.geoportail.lu/httpsproxy'
@@ -135,7 +135,7 @@ export default function useOpenLayers() {
   function setBgLayer(
     olMap: OlMap,
     bgLayer: Layer | null,
-    styles: { [id: string]: IMvtStyle }
+    vectorSources: { [id: string]: IMvtConfig }
   ) {
     const mapLayers = olMap.getLayers()
     const currentBgLayerPos = mapLayers
@@ -147,15 +147,15 @@ export default function useOpenLayers() {
       if (isLayerCached(bgLayer)) {
         bgBaseLayer = getLayerFromCache(bgLayer)
       } else {
-        const style = styles && styles[bgLayer.id]
+        const styleSource = vectorSources && vectorSources[bgLayer.id]
         const mapService = useMap()
 
-        if (style) {
+        if (styleSource) {
           const options = Object.assign(
             {
               container: mapService.getOlMap().getTarget(),
             },
-            style
+            styleSource
           )
           addLayerToCache(
             bgLayer.id.toString(),
