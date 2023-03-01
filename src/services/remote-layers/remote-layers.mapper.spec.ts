@@ -1,6 +1,5 @@
 import { RemoteLayer } from './remote-layers.model'
 import {
-  sortLayerTreeNoChildrenFirst,
   remoteLayersToLayerTreeMapper,
   remoteLayerIdtoLayer,
 } from './remote-layers.mapper'
@@ -8,61 +7,76 @@ import { createPinia, setActivePinia } from 'pinia'
 import { LayerImageType } from '@/stores/map.store.model'
 import { remoteLayersService } from './remote-layers.service'
 
-describe('sortLayerTreeNoChildrenFirst', () => {
-  const layers: RemoteLayer[] = [
-    { name: 'Layer1', children: [{ name: 'Layer1-1' }] },
-    { name: 'Layer2' },
-    { name: 'Layer3', children: [] },
-  ]
-  const sortedLayers = layers.sort(sortLayerTreeNoChildrenFirst)
-  it('should sort layer tree by putting nodes with no children first', () => {
-    expect(sortedLayers[0].name).toBe('Layer2')
-    expect(sortedLayers[1].name).toBe('Layer3')
-    expect(sortedLayers[2].name).toBe('Layer1')
-  })
-})
-
 describe('remoteLayersToLayerTreeMapper', () => {
-  describe('map WMS layers to tree', () => {
+  describe('map WMS layers to tree (including sort)', () => {
     let layerTree
     const remoteWmsLayers: RemoteLayer[] = [
       {
-        name: 'Layer1',
+        name: 'RootLayer',
         type: 'WMS',
         children: [
           {
-            name: 'Layer1-1',
+            name: 'Layer1',
             type: 'WMS',
+            children: [
+              { name: 'Layer1-1', type: 'WMS' },
+              {
+                name: 'Layer1-2',
+                type: 'WMS',
+              },
+            ],
           },
-          {
-            name: 'Layer1-2',
-            type: 'WMS',
-          },
+          { name: 'Layer2', type: 'WMS' },
+          { name: 'Layer3', type: 'WMS', children: [] },
         ],
       },
     ]
-
     const url = 'http://example.com'
     const depth = 0
 
     const expectedLayerWmsTree = {
-      id: 'WMS||http://example.com||Layer1',
-      name: 'Layer1',
+      id: 'WMS||http://example.com||RootLayer',
+      name: 'RootLayer',
       depth: 0,
       children: [
         {
-          id: 'WMS||http://example.com||Layer1%2D1',
-          name: 'Layer1-1',
+          id: 'WMS||http://example.com||Layer2',
+          name: 'Layer2',
           depth: 1,
           children: undefined,
           checked: false,
           expanded: false,
         },
         {
-          id: 'WMS||http://example.com||Layer1%2D2',
-          name: 'Layer1-2',
+          id: 'WMS||http://example.com||Layer3',
+          name: 'Layer3',
           depth: 1,
-          children: undefined,
+          children: [],
+          checked: false,
+          expanded: false,
+        },
+        {
+          id: 'WMS||http://example.com||Layer1',
+          name: 'Layer1',
+          depth: 1,
+          children: [
+            {
+              id: 'WMS||http://example.com||Layer1%2D1',
+              name: 'Layer1-1',
+              depth: 2,
+              children: undefined,
+              checked: false,
+              expanded: false,
+            },
+            {
+              id: 'WMS||http://example.com||Layer1%2D2',
+              name: 'Layer1-2',
+              depth: 2,
+              children: undefined,
+              checked: false,
+              expanded: false,
+            },
+          ],
           checked: false,
           expanded: false,
         },

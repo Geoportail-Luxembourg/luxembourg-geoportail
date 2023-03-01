@@ -5,34 +5,6 @@ export interface RemoteWmsEndpointModel {
   label: string
 }
 
-export interface OgcClientWmsLayerFull {
-  abstract?: string
-  attribution?: string
-  availableCrs: string[]
-  boundingBoxes: { [key: string]: string[] }
-  name?: string
-  styles: string[]
-  title: string
-  children?: OgcClientWmsLayerFull[]
-}
-
-export interface OgcClientWmsLayerSummary {
-  name: string
-  title: string
-  abstract: string
-  children: OgcClientWmsLayerSummary[]
-}
-
-export interface OgcClientGenericEndpointInfo {
-  name: string
-  title: string
-  abstract: string
-  fees: string
-  constraints: string
-  keywords: string[]
-  outputFormats?: string[]
-}
-
 export type OgcClientWmsEndpoint = typeof WmsEndpoint
 
 export interface WmtsCapabilitiesLayer {
@@ -65,7 +37,7 @@ export interface WmtsServiceInfo {
 }
 
 export interface RemoteLayer {
-  type?: 'WMS' | 'WMTS'
+  type?: REMOTE_SERVICE_TYPE
   abstract?: string
   attribution?: string
   availableCrs?: string[]
@@ -92,7 +64,7 @@ export interface RemoteLayer {
 }
 
 export interface RemoteServiceInfo {
-  type?: 'WMS' | 'WMTS'
+  type?: REMOTE_SERVICE_TYPE
   name?: string
   title: string
   abstract: string
@@ -101,4 +73,9 @@ export interface RemoteServiceInfo {
   keywords?: string[]
   outputFormats?: string[]
   serviceTypeVersion?: string
+}
+
+export enum REMOTE_SERVICE_TYPE {
+  WMS = 'WMS',
+  WMTS = 'WMTS',
 }

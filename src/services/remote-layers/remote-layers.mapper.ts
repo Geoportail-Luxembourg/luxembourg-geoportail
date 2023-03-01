@@ -1,10 +1,10 @@
 import { useMapStore } from '@/stores/map.store'
 import { Layer, LayerId, LayerImageType } from '@/stores/map.store.model'
 import { LayerTreeNodeModel } from '@/components/layer-tree/layer-tree.model'
-import { RemoteLayer } from './remote-layers.model'
+import { RemoteLayer, REMOTE_SERVICE_TYPE } from './remote-layers.model'
 import { remoteLayersService } from './remote-layers.service'
 
-export function sortLayerTreeNoChildrenFirst(a: RemoteLayer, b: RemoteLayer) {
+function sortLayerTreeNoChildrenFirst(a: RemoteLayer, b: RemoteLayer) {
   if ((a.children && !b.children) || b.children?.length === 0) {
     return 1
   }
@@ -21,7 +21,7 @@ export function remoteLayersToLayerTreeMapper(
   urlWms: string,
   depth = 0
 ): LayerTreeNodeModel {
-  const { name = '', type = 'WMS', children } = node
+  const { name = '', type = REMOTE_SERVICE_TYPE.WMS, children } = node
   const id = `${type}||${urlWms}||${name}`.split('-').join('%2D')
   const mapStore = useMapStore()
 
@@ -57,7 +57,7 @@ export function remoteLayerToLayer({
   url: string
   remoteLayer: RemoteLayer
 }): Layer {
-  const { name = '', type = 'WMS' } = remoteLayer
+  const { name = '', type = REMOTE_SERVICE_TYPE.WMS } = remoteLayer
   return {
     id,
     name,

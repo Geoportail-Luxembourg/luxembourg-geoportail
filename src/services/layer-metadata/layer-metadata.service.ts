@@ -6,10 +6,10 @@ import {
   isoLang2To3,
   stringToHtml,
 } from './layer-metadata.utils'
-import { wmsHelper } from './wms.helper'
 import useThemes from '../../composables/themes/themes.composable'
 import { LayerId } from '@/stores/map.store.model'
-import { wmtsHelper } from './wmts.helper'
+import { remoteMetadataHelper } from './remote-metadata.helper'
+import { REMOTE_SERVICE_TYPE } from '../remote-layers/remote-layers.model'
 
 export class LayerMetadataService {
   // TODO: get urls from a config
@@ -21,7 +21,7 @@ export class LayerMetadataService {
 
   async getLayerMetadata(id: LayerId, currentLanguage: string) {
     const layer: ThemeNodeModel | undefined =
-      useThemes().findById(+id) || useThemes().findBgLayerById(+id)
+      useThemes().findBgLayerById(+id) || useThemes().findById(+id)
 
     if (layer) {
       // Internal layer
@@ -60,11 +60,11 @@ export class LayerMetadataService {
         .split('%2D')
         .join('-')
         .split('||')
-      if (serviceType === 'WMS') {
-        return await wmsHelper.getMetadata(serviceType, url, layerName)
-      } else if (serviceType === 'WMTS') {
-        return await wmtsHelper.getMetadata(serviceType, url, layerName)
-      }
+      return remoteMetadataHelper.getMetadata(
+        serviceType as REMOTE_SERVICE_TYPE,
+        url,
+        layerName
+      )
     }
   }
 

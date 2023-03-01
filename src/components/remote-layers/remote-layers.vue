@@ -49,19 +49,9 @@ remoteLayersService.fetchRemoteWmsEndpoint().then(wmsLayersFetch => {
 
 async function getRemoteEndpoint(url: string) {
   isLoading = true
-  let wmtsEndpoint
-  const wmsEndpoint = await remoteLayersService
-    .getWmsEndpoint(url)
-    .isReady()
-    .catch(async () => {
-      wmtsEndpoint = await remoteLayersService
-        .getWmtsEndpoint(url)
-        .isReady()
-        .catch(() =>
-          alert(t('Impossible de contacter ce WMTS', { ns: 'client' }))
-        )
-    })
-  currentRemoteEndpoint = wmsEndpoint || wmtsEndpoint
+  currentRemoteEndpoint = await remoteLayersService
+    .getRemoteEndpoint(url)
+    .catch(() => alert(t('Impossible de contacter ce WMS', { ns: 'client' })))
   currentRemoteUrl = url
   isLoading = false
 }

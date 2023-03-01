@@ -4,12 +4,14 @@ import {
   WmtsCapabilitiesLayer,
   RemoteLayer,
   RemoteServiceInfo,
+  REMOTE_SERVICE_TYPE,
 } from './remote-layers.model'
 
+// exposes the same methods for a WMTS as the ogc-client WmsEndpoint for a WMS
 export class WmtsEndpoint {
-  private _capabilitiesPromise: Promise<void>
-  private _serviceInfo: RemoteServiceInfo
-  private _layers: RemoteLayer[]
+  private capabilitiesPromise: Promise<void>
+  private serviceInfo: RemoteServiceInfo
+  private layers: RemoteLayer[]
 
   constructor(url: string) {
     const parser = new WMTSCapabilities()
@@ -22,14 +24,14 @@ export class WmtsEndpoint {
       url = url + separator + 'SERVICE=WMTS&REQUEST=GetCapabilities'
     }
 
-    this._capabilitiesPromise = fetch(url)
+    this.capabilitiesPromise = fetch(url)
       .then(response => {
         return response.text()
       })
       .then(text => {
         const result = parser.read(text)
-        this._serviceInfo = this.mapServiceInfo(result.ServiceIdentification)
-        this._layers = this.mapToRemoteLayers(result.Contents?.Layer)
+        this.serviceInfo = this.mapServiceInfo(result.ServiceIdentification)
+        this.layers = this.mapToRemoteLayers(result.Contents?.Layer)
       })
   }
 
@@ -37,11 +39,11 @@ export class WmtsEndpoint {
     return [
       {
         // root layer for flat wmts layers
-        type: 'WMTS',
+        type: REMOTE_SERVICE_TYPE.WMTS,
         children: layers.map(
           layer =>
             ({
-              type: 'WMTS',
+              type: REMOTE_SERVICE_TYPE.WMTS,
               abstract: layer.Abstract,
               format: layer.Format,
               name: layer.Identifier,
@@ -56,7 +58,7 @@ export class WmtsEndpoint {
 
   private mapServiceInfo(serviceInfo: WmtsServiceInfo): RemoteServiceInfo {
     return {
-      type: 'WMTS',
+      type: REMOTE_SERVICE_TYPE.WMTS,
       title: serviceInfo.Title,
       abstract: serviceInfo.Abstract,
       fees: serviceInfo.Fees,
@@ -66,18 +68,18 @@ export class WmtsEndpoint {
   }
 
   isReady() {
-    return this._capabilitiesPromise.then(() => this)
+    return this.capabilitiesPromise.then(() => this)
   }
 
   getLayerByName(name: string): RemoteLayer {
-    return this._layers[0].children.filter(layer => layer.name === name)[0]
+    return this.layers[0].children.filter(layer => layer.name === name)[0]
   }
 
   getLayers(): RemoteLayer[] {
-    return this._layers
+    return this.layers
   }
 
   getServiceInfo(): RemoteServiceInfo {
-    return this._serviceInfo
+    return this.serviceInfo
   }
 }

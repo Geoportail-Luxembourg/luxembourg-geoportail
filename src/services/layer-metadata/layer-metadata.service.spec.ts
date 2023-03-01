@@ -1,7 +1,6 @@
 import { ThemeNodeModel } from '@/composables/themes/themes.model'
-import { wmsHelper } from './wms.helper'
-import { wmtsHelper } from './wmts.helper'
 import { layerMetadataService } from './layer-metadata.service'
+import { remoteMetadataHelper } from './remote-metadata.helper'
 
 const themeNodeMock: ThemeNodeModel = {
   id: 268,
@@ -115,11 +114,11 @@ describe('LayerMetadataService', () => {
     })
   })
   describe('#getLayerMetadata with WMS layer', () => {
-    let spyWMSMetadata
+    let spyRemoteMetadata
     let metadata
     beforeEach(async () => {
-      spyWMSMetadata = vi
-        .spyOn(wmsHelper, 'getMetadata')
+      spyRemoteMetadata = vi
+        .spyOn(remoteMetadataHelper, 'getMetadata')
         .mockReturnValue(metadataMock)
       metadata = await layerMetadataService.getLayerMetadata(
         'WMS||http://wmts1.geoportail.lu/opendata/service||ortho_2001',
@@ -127,18 +126,18 @@ describe('LayerMetadataService', () => {
       )
     })
     it('should call get WMS metadata', () => {
-      expect(spyWMSMetadata).toHaveBeenCalledTimes(1)
+      expect(spyRemoteMetadata).toHaveBeenCalledTimes(1)
     })
     it('should get correct metadata', () => {
       expect(metadata).toEqual(metadataMock)
     })
   })
   describe('#getLayerMetadata with WMTS layer', () => {
-    let spyWMTSMetadata
+    let spyRemoteMetadata
     let metadata
     beforeEach(async () => {
-      spyWMTSMetadata = vi
-        .spyOn(wmtsHelper, 'getMetadata')
+      spyRemoteMetadata = vi
+        .spyOn(remoteMetadataHelper, 'getMetadata')
         .mockReturnValue(metadataMock)
       metadata = await layerMetadataService.getLayerMetadata(
         'WMTS||http://wmts1.geoportail.lu/opendata/service||ortho_2001',
@@ -146,7 +145,7 @@ describe('LayerMetadataService', () => {
       )
     })
     it('should call get WMTS metadata', () => {
-      expect(spyWMTSMetadata).toHaveBeenCalledTimes(1)
+      expect(spyRemoteMetadata).toHaveBeenCalledTimes(1)
     })
     it('should get correct metadata', () => {
       expect(metadata).toEqual(metadataMock)

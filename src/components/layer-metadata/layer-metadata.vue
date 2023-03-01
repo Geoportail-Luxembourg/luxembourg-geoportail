@@ -12,7 +12,7 @@ const metadataStore = useMetadataStore()
 const { metadataId } = storeToRefs(metadataStore)
 const { t, i18next } = useTranslation()
 const layerMetadata: Ref<LayerMetadataModel | undefined> = ref()
-const displayFullDescription = ref()
+const displayFullDescription: Ref<boolean> = ref(true)
 const MAX_DESCRIPTION_LENGTH = 220
 
 watch(metadataId, async id => {
@@ -187,7 +187,7 @@ function closeLayerMetadata() {
         {{ t('The metadata is right now not available') }}
       </div>
       <div v-if="layerMetadata.legendHtml">
-        <h4>{{ t('Legend') }}</h4>
+        <h4 class="text-xl">{{ t('Legend') }}</h4>
         <span v-dompurify-html="layerMetadata.legendHtml?.innerHTML"></span>
       </div>
       <div v-if="!layerMetadata.hasLegend" class="col-span-3">
