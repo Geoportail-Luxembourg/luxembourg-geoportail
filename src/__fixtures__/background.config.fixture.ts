@@ -28,6 +28,8 @@ export const bgConfig = {
       id: 0,
     },
   ],
+  bg_layers_defaultId: 556,
+  bg_layers_defaultIdTourisme: 502,
   http_bg_server: 'wmts{1-2}',
   https_bg_server: 'wmts{3-4}',
   bg_wmts_server_path: 'mapproxy_4_v3/wmts/{Layer}',

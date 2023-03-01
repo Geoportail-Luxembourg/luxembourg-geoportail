@@ -7,16 +7,13 @@ import type { Layer } from '@/stores/map.store.model'
 import { useMapStore } from '@/stores/map.store'
 import { useThemeStore } from '@/stores/config.store'
 
-const DEFAULT_BG_LAYER_ID = 556
-const DEFAULT_BG_LAYER_ID_TOURISME = 502
-
 export default function useBackgroundLayer() {
   const themes = useThemes()
   const layers = useLayers()
   const defaultSelectedBgId = computed(() => {
     return useThemeStore().theme?.name === 'tourisme'
-      ? DEFAULT_BG_LAYER_ID_TOURISME
-      : DEFAULT_BG_LAYER_ID
+      ? bgConfig.bg_layers_defaultIdTourisme
+      : bgConfig.bg_layers_defaultId
   })
 
   function setBgLayer(layerId: number) {
