@@ -48,6 +48,7 @@ watch(
             <button
               class="flex items-center before:font-icons before:text-3xl before:w-16 text-primary uppercase h-full mr-3"
               :class="`before:content-${theme?.name}`"
+              data-cy="selectedThemeIcon"
             >
               <span class="hidden lg:inline-block">{{
                 t(`${theme?.name}`)
