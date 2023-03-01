@@ -1,10 +1,8 @@
 export class UrlStorage implements Storage {
   private snappedUrl: URL
-  private asPath: boolean
 
-  constructor(asPath = false) {
+  constructor() {
     this.snappedUrl = new URL(window.location.toString())
-    this.asPath = asPath
   }
 
   get length() {
@@ -42,7 +40,7 @@ export class UrlStorage implements Storage {
       .filter(val => val.split('=')[1])
   }
 
-  setQueryParam(key: string, value: string) {
+  setItem(key: string, value: string) {
     const params = new URLSearchParams(
       new URL(window.location.toString()).search
     )
@@ -55,46 +53,8 @@ export class UrlStorage implements Storage {
     }
   }
 
-  getQueryParam(key: string) {
-    return this.getSnappedUrl().searchParams.get(key)
-  }
-
-  setPathParam(key: string, value: string) {
-    const queryParams = new URL(window.location.toString()).search
-    const url = `${import.meta.env.BASE_URL}${key}/${value}${queryParams}`
-
-    try {
-      window.history.replaceState(null, '', url)
-    } catch (error) {
-      // replaceState fails on some browser if the domain in the state
-    }
-  }
-
-  getPathParam(key: string) {
-    const paths = this.getSnappedUrl().pathname.split('/')
-    const keyPathIndex = paths.findIndex(path => path === key)
-
-    return paths[keyPathIndex + 1]
-  }
-
-  setItem(key: string, value: string) {
-    if (this.asPath) {
-      this.setPathParam(key, value)
-    } else {
-      this.setQueryParam(key, value)
-    }
-  }
-
   getItem(key: string): string | null {
-    let value
-
-    if (this.asPath) {
-      value = this.getPathParam(key)
-    } else {
-      value = this.getQueryParam(key)
-    }
-
-    return value
+    return this.getSnappedUrl().searchParams.get(key)
   }
 
   removeItem() {}
@@ -104,5 +64,25 @@ export class UrlStorage implements Storage {
   }
 }
 
+export class UrlStorageAsPath extends UrlStorage {
+  override getItem(key: string): string | null {
+    const paths = this.getSnappedUrl().pathname.split('/')
+    const keyPathIndex = paths.findIndex(path => path === key)
+
+    return paths[keyPathIndex + 1]
+  }
+
+  override setItem(key: string, value: string) {
+    const queryParams = new URL(window.location.toString()).search
+    const url = `${import.meta.env.BASE_URL}${key}/${value}${queryParams}`
+
+    try {
+      window.history.replaceState(null, '', url)
+    } catch (error) {
+      // replaceState fails on some browser if the domain in the state
+    }
+  }
+}
+
 export const urlStorage = new UrlStorage()
-export const urlPathStorage = new UrlStorage(true)
+export const urlPathStorage = new UrlStorageAsPath()

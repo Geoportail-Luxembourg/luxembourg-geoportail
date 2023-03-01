@@ -1,4 +1,4 @@
-import { UrlStorage } from './url-storage'
+import { UrlStorage, UrlStorageAsPath } from './url-storage'
 
 describe('UrlStorage', () => {
   let urlStorage: UrlStorage
@@ -37,26 +37,6 @@ describe('UrlStorage', () => {
     })
   })
 
-  describe('#setQueryParam', () => {
-    vi.spyOn(window.history, 'replaceState')
-    it('appends a param to the current url (not the snapped)', () => {
-      urlStorage.setQueryParam('paramNew', 'valueNew')
-      expect(window.history.replaceState).toHaveBeenCalledWith(
-        null,
-        '',
-        '?param1=value1&empty=&param2=value2&paramNew=valueNew'
-      )
-    })
-  })
-
-  describe('#getQueryParam', () => {
-    // vi.spyOn(window.history, 'replaceState')
-    it('returns the param in the snapped url', () => {
-      expect(urlStorage.getQueryParam('paramNew')).toBe(null)
-      expect(urlStorage.getQueryParam('param1')).toBe('value1')
-    })
-  })
-
   describe('#setItem', () => {
     vi.spyOn(window.history, 'replaceState')
 
@@ -81,6 +61,39 @@ describe('UrlStorage', () => {
       expect(
         urlStorage.encodeQueryParam(' ! this is the value ', 'the, !%value=34')
       ).toBe('%20!%20this%20is%20the%20value%20=the%2C%20!%25value%3D34')
+    })
+  })
+})
+
+describe('UrlStorageAsPath', () => {
+  let urlStorage: UrlStorageAsPath
+
+  beforeEach(() => {
+    window.location =
+      'http://localhost:3000/pathParam1/pathParam1Value/?param1=value1&empty=&param2=value2' as unknown as Location
+    urlStorage = new UrlStorageAsPath()
+  })
+
+  afterEach(() => {
+    vi.resetAllMocks()
+  })
+
+  describe('#setItem', () => {
+    vi.spyOn(window.history, 'replaceState')
+    it('appends a param to the current url (not the snapped)', () => {
+      urlStorage.setItem('paramNew', 'valueNew')
+      expect(window.history.replaceState).toHaveBeenCalledWith(
+        null,
+        '',
+        '/paramNew/valueNew?param1=value1&empty=&param2=value2'
+      )
+    })
+  })
+
+  describe('#getItem', () => {
+    it('returns the param in the snapped url', () => {
+      expect(urlStorage.getItem('param1')).toBe('')
+      expect(urlStorage.getItem('pathParam1')).toBe('pathParam1Value')
     })
   })
 })
