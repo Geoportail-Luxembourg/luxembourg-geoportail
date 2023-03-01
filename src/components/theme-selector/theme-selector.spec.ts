@@ -33,7 +33,6 @@ describe('ThemeSelector', () => {
     const TestComponent = defineComponent({
       template: `
         <theme-selector
-          data-cy="themeSelector"
           @toggleThemesGrid="toggleThemesGrid"
         ></theme-selector>
       `,

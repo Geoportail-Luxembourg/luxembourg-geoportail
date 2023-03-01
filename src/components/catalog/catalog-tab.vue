@@ -12,10 +12,7 @@ function toggleThemesGrid(isOpen: boolean) {
 </script>
 
 <template>
-  <theme-selector
-    data-cy="themeSelector"
-    @toggleThemesGrid="toggleThemesGrid"
-  ></theme-selector>
+  <theme-selector @toggleThemesGrid="toggleThemesGrid"></theme-selector>
   <div class="pt-5">
     <catalog
       data-cy="catalog"
