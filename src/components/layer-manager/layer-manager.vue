@@ -81,8 +81,6 @@ function toggleEditionLayer(layer: Layer) {
         @clickEdit="toggleEditionLayer"
       >
       </layer-manager-item-background>
-    </li>
-    <li>
       <!-- TODO: add medium and advanced style editors -->
       <simple-style-selector :is-open="isStyleEditorOpen && bgLayer?.id == 556">
       </simple-style-selector>
