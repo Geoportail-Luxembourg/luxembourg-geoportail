@@ -17,7 +17,7 @@ const availableLanguages = ['en', 'de', 'fr', 'lb'].map(lang => ({
 }))
 const placeholder = t('Changer de langue')
 
-statePersistorLangService.bootstrapLang()
+statePersistorLangService.bootstrap()
 
 function changeLanguages(lang: string) {
   i18next.changeLanguage(lang)

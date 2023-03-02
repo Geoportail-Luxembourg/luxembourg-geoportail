@@ -3,22 +3,22 @@ import { storeToRefs } from 'pinia'
 import { useTranslation } from 'i18next-vue'
 
 import { useAppStore } from '@/stores/app.store'
-import { SP_KEY_LANG } from './state-persistor.model'
+import { SP_KEY_LANG, StatePersistorService } from './state-persistor.model'
 import { storageHelper } from './storage/storage.helper'
 
-class StatePersistorLangService {
-  bootstrapLang() {
-    this.restoreLang() // restore lang here (instead of inside watcher), otherwise i18next is not instanciated
+class StatePersistorLangService implements StatePersistorService {
+  bootstrap() {
+    this.restore() // restore lang here (instead of inside watcher), otherwise i18next is not instanciated
 
     let stop: WatchStopHandle
     // eslint-disable-next-line prefer-const
     stop = watchEffect(() => {
-      this.persistLang()
+      this.persist()
       stop && stop() // test if exists, for HMR support
     })
   }
 
-  persistLang() {
+  persist() {
     const appStore = useAppStore()
     const { lang } = storeToRefs(appStore)
 
@@ -36,7 +36,7 @@ class StatePersistorLangService {
     )
   }
 
-  restoreLang() {
+  restore() {
     const lang = <string | null | undefined>storageHelper.getValue(SP_KEY_LANG)
 
     if (lang) {

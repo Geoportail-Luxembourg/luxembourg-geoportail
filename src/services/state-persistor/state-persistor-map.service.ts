@@ -1,5 +1,6 @@
 import * as olEvents from 'ol/events.js'
 import { getTransform, ProjectionLike, transform } from 'ol/proj'
+import { Coordinate } from 'ol/coordinate'
 
 import useMap from '@/composables/map/map.composable'
 import {
@@ -8,6 +9,7 @@ import {
   SP_KEY_X,
   SP_KEY_Y,
   SP_KEY_SRS,
+  StatePersistorService,
 } from './state-persistor.model'
 import { storageHelper } from './storage/storage.helper'
 import {
@@ -17,7 +19,12 @@ import {
 import { debounce, stringToNumber } from '@/services/utils'
 import ObjectEventType from 'ol/ObjectEventType'
 
-class StatePersistorMapService {
+class StatePersistorMapService implements StatePersistorService {
+  bootstrap(): void {
+    this.restore()
+    this.persist()
+  }
+
   persistZoom() {
     const view = useMap().getOlMap().getView()
     const fnStorageSetValueZoom = () => {
@@ -53,18 +60,18 @@ class StatePersistorMapService {
     )
   }
 
-  persistViewport() {
+  persist() {
     this.persistXY()
     this.persistZoom()
   }
 
   /**
-   * Restore zoom, x, y.
+   * Restore viewport: zoom, x, y.
    * Legacy in MapController
    * if zoom exists in storage and version 3, set zoom, else get exports.V2_ZOOM_TO_V3_ZOOM_[zoom]
    * if zoom doesn't exist set zoom to 8
    */
-  restoreViewport() {
+  restore() {
     const view = useMap().getOlMap().getView()
     const zoom = storageHelper.getValue(SP_KEY_ZOOM, stringToNumber)
     const version = storageHelper.getValue(SP_KEY_VERSION, stringToNumber) || 3 // TODO: remove when versions is handled
@@ -76,8 +83,8 @@ class StatePersistorMapService {
     // TODO: delete params as in legacy?
     // this.appStateManager_.deleteParam('SRS');
 
-    let viewCenter
-    let viewZoom
+    let viewCenter: Coordinate
+    let viewZoom: number
 
     if (zoom !== undefined) {
       viewZoom =

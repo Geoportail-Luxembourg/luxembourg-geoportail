@@ -4,31 +4,30 @@ import { storeToRefs } from 'pinia'
 import { useMapStore } from '@/stores/map.store'
 import { Layer } from '@/stores/map.store.model'
 import { useThemeStore } from '@/stores/config.store'
-import useBackgroundLayer from '@/composables/background-layer/background-layer.composable'
 
 import {
-  SP_KEY_BGLAYER,
   SP_KEY_LAYERS,
   SP_KEY_OPACITIES,
+  StatePersistorService,
 } from './state-persistor.model'
 import { storageLayerMapper } from './state-persistor-layer.mapper'
 import { storageHelper } from './storage/storage.helper'
 
-class StatePersistorLayersService {
-  bootstrapLayers() {
+class StatePersistorLayersService implements StatePersistorService {
+  bootstrap() {
     const themeStore = useThemeStore()
     let stop: WatchStopHandle
     // eslint-disable-next-line prefer-const
     stop = watchEffect(() => {
       if (themeStore.themes) {
-        this.restoreLayers()
-        this.persistLayers()
+        this.restore()
+        this.persist()
         stop && stop() // test if exists, for HMR support
       }
     })
   }
 
-  persistLayers() {
+  persist() {
     const mapStore = useMapStore()
     const { layers } = storeToRefs(mapStore)
 
@@ -53,7 +52,7 @@ class StatePersistorLayersService {
     )
   }
 
-  restoreLayers() {
+  restore() {
     const mapStore = useMapStore()
     const layers = storageHelper.getValue(
       SP_KEY_LAYERS,
@@ -73,48 +72,6 @@ class StatePersistorLayersService {
     }
 
     mapStore.addLayers(...((layers?.filter(layer => layer) as Layer[]) || []))
-  }
-
-  bootstrapBgLayer() {
-    const themeStore = useThemeStore()
-    let stop: WatchStopHandle
-    // eslint-disable-next-line prefer-const
-    stop = watchEffect(() => {
-      if (themeStore.bgLayers.length > 0) {
-        this.restoreBgLayer()
-        this.persistBgLayer()
-        stop && stop() // test if exists, for HMR support
-      }
-    })
-  }
-
-  persistBgLayer() {
-    const mapStore = useMapStore()
-    const { bgLayer } = storeToRefs(mapStore)
-
-    watch(
-      bgLayer,
-      (value, oldValue) => {
-        if (oldValue !== value) {
-          storageHelper.setValue(
-            SP_KEY_BGLAYER,
-            value as Layer,
-            storageLayerMapper.bgLayerTobgLayerId
-          )
-        }
-      },
-      { immediate: true }
-    )
-  }
-
-  restoreBgLayer() {
-    const { setMapBackground } = useBackgroundLayer()
-    const bgLayer = storageHelper.getValue(
-      SP_KEY_BGLAYER,
-      storageLayerMapper.bgLayerIdToBgLayer
-    )
-
-    setMapBackground(bgLayer)
   }
 }
 

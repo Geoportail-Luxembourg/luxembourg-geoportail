@@ -47,3 +47,9 @@ export abstract class StatePersistorRulesHelper {
     paramKeys: ParamKeys
   ): SP_AVAILABLE_STORAGES | undefined
 }
+
+export interface StatePersistorService {
+  bootstrap(): void
+  persist(): void
+  restore(): void
+}
