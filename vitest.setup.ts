@@ -1,5 +1,6 @@
 import { vi } from 'vitest'
 
+window.URL.createObjectURL = vi.fn()
 vi.mock('i18next-vue', () => {
   return {
     useTranslation: () => ({
