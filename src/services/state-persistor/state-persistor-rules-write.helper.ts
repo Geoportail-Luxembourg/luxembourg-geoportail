@@ -8,7 +8,7 @@ import {
 
 export abstract class RulesWriteHelper extends StatePersistorRulesHelper {
   static processRules() {
-    return SP_AVAILABLE_STORAGES.both
+    return SP_AVAILABLE_STORAGES.permalinkAndLocalStorage
   }
 
   // eslint-disable-next-line

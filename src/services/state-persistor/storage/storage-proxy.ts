@@ -77,7 +77,7 @@ class StorageProxy implements Storage {
   correspondingStorages(
     depositsKey?: SP_AVAILABLE_STORAGES
   ): StatePersistorStorage[] | undefined {
-    if (depositsKey === SP_AVAILABLE_STORAGES.both) {
+    if (depositsKey === SP_AVAILABLE_STORAGES.permalinkAndLocalStorage) {
       return [urlStorage, localStorage]
     } else if (depositsKey === SP_AVAILABLE_STORAGES.localStorage) {
       return [localStorage]

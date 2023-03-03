@@ -22,7 +22,7 @@ export enum SP_AVAILABLE_STORAGES {
   localStorage = 0,
   permalink = 1,
   permalinkAsPath = 2,
-  both = 3,
+  permalinkAndLocalStorage = 3, // (both permalink and localStorage, permalinkAsPath excluded)
 }
 
 export type ParamKeys = { [key: string]: string }

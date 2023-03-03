@@ -2,7 +2,7 @@ import { RulesWriteHelper } from './state-persistor-rules-write.helper'
 
 describe('RulesWriteHelper', () => {
   describe('#processRules', () => {
-    it('returns both storage', () => {
+    it('returns permalink and localStorage storage', () => {
       expect(RulesWriteHelper.processRules()).toBe(3)
     })
   })
