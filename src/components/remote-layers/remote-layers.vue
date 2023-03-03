@@ -13,9 +13,10 @@ import useLayers from '@/composables/layers/layers.composable'
 import {
   remoteLayersToLayerTreeMapper,
   remoteLayerToLayer,
-} from './remote-layers.mapper'
-import { remoteLayersService } from './remote-layers.service'
-import { OgcClientWmsEndpoint } from './remote-layers.model'
+} from '../../services/remote-layers/remote-layers.mapper'
+import { remoteLayersService } from '../../services/remote-layers/remote-layers.service'
+import { OgcClientWmsEndpoint } from '../../services/remote-layers/remote-layers.model'
+import { WmtsEndpoint } from '@/services/remote-layers/wmts.endpoint'
 
 const { t } = useTranslation()
 const mapStore = useMapStore()
@@ -24,9 +25,9 @@ const wmsLayers: ShallowRef<DropdownOptionModel[]> = shallowRef([])
 const layerTree: ShallowRef<LayerTreeNodeModel | undefined> = shallowRef()
 
 let isLoading = false
-let inputWmsUrl: string
-let currentWmsUrl: string
-let currentWmsEndpoint: OgcClientWmsEndpoint
+let inputRemoteUrl: string
+let currentRemoteUrl: string
+let currentRemoteEndpoint: OgcClientWmsEndpoint | WmtsEndpoint
 
 watchEffect(updateLayerTree)
 
@@ -46,48 +47,41 @@ remoteLayersService.fetchRemoteWmsEndpoint().then(wmsLayersFetch => {
   }))
 })
 
-async function getWmsEndpoint(url: string) {
+async function getRemoteEndpoint(url: string) {
   isLoading = true
-
-  try {
-    const wmsEndpoint = remoteLayersService.getWmsEndpoint(url)
-
-    await wmsEndpoint.isReady()
-
-    currentWmsEndpoint = wmsEndpoint
-    currentWmsUrl = url
-  } catch (e) {
-    alert(t('Impossible de contacter ce WMS', { ns: 'client' }))
-  }
-
+  currentRemoteEndpoint = await remoteLayersService
+    .getRemoteEndpoint(url)
+    .catch(() => alert(t('Impossible de contacter ce WMS', { ns: 'client' })))
+  currentRemoteUrl = url
   isLoading = false
 }
 
-async function getWmsLayers() {
-  const wmsEndpoint = currentWmsEndpoint
-  const remoteLayers = wmsEndpoint?.getLayers()
+async function getRemoteLayers() {
+  const remoteEndpoint = currentRemoteEndpoint
+  const remoteLayers = remoteEndpoint?.getLayers()
 
   if (remoteLayers && remoteLayers[0]) {
-    layerTree.value = layerTreeService.updateLayers(
-      remoteLayersToLayerTreeMapper(remoteLayers[0], currentWmsUrl),
-      mapStore.layers
+    const treeLayers = remoteLayersToLayerTreeMapper(
+      remoteLayers[0],
+      currentRemoteUrl
     )
+    layerTree.value = layerTreeService.updateLayers(treeLayers, mapStore.layers)
   }
 }
 
-async function onChangeWmsEndpoint(wmsUrl: string) {
-  currentWmsUrl = inputWmsUrl = wmsUrl
-  await getWmsEndpoint(currentWmsUrl)
-  getWmsLayers()
+async function onChangeRemoteEndpoint(url: string) {
+  currentRemoteUrl = inputRemoteUrl = url
+  await getRemoteEndpoint(currentRemoteUrl)
+  getRemoteLayers()
 }
 
-function onChangeWmsUrl(event: Event) {
-  inputWmsUrl = (event.target as HTMLSelectElement).value
+function onChangeRemoteUrl(event: Event) {
+  inputRemoteUrl = (event.target as HTMLSelectElement).value
 }
 
 async function onClickGetLayers() {
-  await getWmsEndpoint(inputWmsUrl)
-  getWmsLayers()
+  await getRemoteEndpoint(inputRemoteUrl)
+  getRemoteLayers()
 }
 
 function toggleParent(node: LayerTreeNodeModel) {
@@ -100,18 +94,18 @@ function toggleParent(node: LayerTreeNodeModel) {
 
 function toggleLayer(node: LayerTreeNodeModel) {
   const { id, name } = node
-  const wmsEndpoint = currentWmsEndpoint
+  const remoteEndpoint = currentRemoteEndpoint
 
   if (node.checked === true) {
     mapStore.removeLayers(id)
   } else {
-    const remoteLayer = wmsEndpoint?.getLayerByName(name)
+    const remoteLayer = remoteEndpoint?.getLayerByName(name)
 
     if (remoteLayer) {
       const layer = layers.initLayer(
         remoteLayerToLayer({
           id,
-          url: remoteLayersService.getProxyfiedUrl(currentWmsUrl),
+          url: remoteLayersService.getProxyfiedUrl(currentRemoteUrl),
           remoteLayer,
         })
       )
@@ -137,7 +131,7 @@ function toggleLayer(node: LayerTreeNodeModel) {
         <dropdown-list
           :options="wmsLayers"
           :placeholder="t('Predefined wms', { ns: 'client' })"
-          @change="onChangeWmsEndpoint"
+          @change="onChangeRemoteEndpoint"
         ></dropdown-list>
         <input
           class="lux-input w-[300px]"
@@ -147,29 +141,29 @@ function toggleLayer(node: LayerTreeNodeModel) {
               ns: 'client',
             })
           "
-          :value="currentWmsUrl || ''"
-          @change="onChangeWmsUrl"
+          :value="currentRemoteUrl || ''"
+          @change="onChangeRemoteUrl"
         />
         <button type="button" class="lux-btn" @click="onClickGetLayers">
           {{ t('Get the layers', { ns: 'client' }) }}
         </button>
       </div>
 
-      <div class="text-center" v-if="!isLoading && currentWmsEndpoint">
+      <div class="text-center" v-if="!isLoading && currentRemoteEndpoint">
         <span class="lux-label">{{
           t('Description du service :', {
             ns: 'client',
           })
         }}</span>
-        {{ currentWmsEndpoint.getServiceInfo()?.abstract }}
+        {{ currentRemoteEndpoint.getServiceInfo()?.abstract }}
       </div>
-      <div class="text-center" v-if="!isLoading && currentWmsEndpoint">
+      <div class="text-center" v-if="!isLoading && currentRemoteEndpoint">
         <span class="lux-label">{{
           t('Access constraints :', {
             ns: 'client',
           })
         }}</span>
-        {{ currentWmsEndpoint.getServiceInfo()?.constraints }}
+        {{ currentRemoteEndpoint.getServiceInfo()?.constraints }}
       </div>
       <div v-if="isLoading" class="text-center">
         <div class="fa fa-refresh fa-spin"></div>

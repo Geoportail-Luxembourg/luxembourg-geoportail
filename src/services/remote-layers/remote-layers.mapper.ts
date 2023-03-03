@@ -1,21 +1,15 @@
 import { useMapStore } from '@/stores/map.store'
 import { Layer, LayerId, LayerImageType } from '@/stores/map.store.model'
 import { LayerTreeNodeModel } from '@/components/layer-tree/layer-tree.model'
-import {
-  OgcClientWmsLayerSummary,
-  OgcClientWmsLayerFull,
-} from './remote-layers.model'
+import { RemoteLayer, REMOTE_SERVICE_TYPE } from './remote-layers.model'
 import { remoteLayersService } from './remote-layers.service'
 
-function sortLayerTreeNoChildrenFirst(
-  a: OgcClientWmsLayerSummary,
-  b: OgcClientWmsLayerSummary
-) {
-  if (a.children && !b.children) {
+function sortLayerTreeNoChildrenFirst(a: RemoteLayer, b: RemoteLayer) {
+  if ((a.children && !b.children) || b.children?.length === 0) {
     return 1
   }
 
-  if (b.children && !a.children) {
+  if ((b.children && !a.children) || a.children?.length === 0) {
     return -1
   }
 
@@ -23,12 +17,12 @@ function sortLayerTreeNoChildrenFirst(
 }
 
 export function remoteLayersToLayerTreeMapper(
-  node: OgcClientWmsLayerSummary,
+  node: RemoteLayer,
   urlWms: string,
   depth = 0
 ): LayerTreeNodeModel {
-  const { name, children } = node
-  const id = `WMS||${urlWms}||${name}`.split('-').join('%2D')
+  const { name = '', type = REMOTE_SERVICE_TYPE.WMS, children } = node
+  const id = `${type}||${urlWms}||${name}`.split('-').join('%2D')
   const mapStore = useMapStore()
 
   return {
@@ -45,12 +39,12 @@ export function remoteLayersToLayerTreeMapper(
 
 export function remoteLayerIdtoLayer(layerId: string) {
   const id = decodeURIComponent(layerId)
-  const [url, name] = id.replace('WMS||', '').split('||')
+  const [type, url, name] = id.split('||')
 
   return remoteLayerToLayer({
     id,
     url: remoteLayersService.getProxyfiedUrl(url),
-    remoteLayer: { name } as OgcClientWmsLayerFull,
+    remoteLayer: { name, type } as RemoteLayer,
   })
 }
 
@@ -61,16 +55,21 @@ export function remoteLayerToLayer({
 }: {
   id: LayerId
   url: string
-  remoteLayer: OgcClientWmsLayerFull
+  remoteLayer: RemoteLayer
 }): Layer {
-  const { name = '' } = remoteLayer
-
+  const { name = '', type = REMOTE_SERVICE_TYPE.WMS } = remoteLayer
   return {
     id,
     name,
     layers: name,
     url,
-    type: 'WMS',
+    type,
     imageType: LayerImageType.PNG,
+    // TODO for displaying WMTS: might need to add more params here
+    // wmts_params: {
+    //   Format: remoteLayer.Format,
+    //   TileMatrixSetLink: remoteLayer.TileMatrixSetLink,
+    //   WGS84BoundingBox: remoteLayer.WGS84BoundingBox,
+    // },
   }
 }

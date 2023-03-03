@@ -1,13 +1,18 @@
-import { remoteLayersService } from '@/components/remote-layers/remote-layers.service'
-import { IdValues } from '../layer-metadata/layer-metadata.model'
+import { remoteLayersService } from '@/services/remote-layers/remote-layers.service'
+import { REMOTE_SERVICE_TYPE } from '../remote-layers/remote-layers.model'
+import { OwsHelper } from './ows.helper'
 
-export class WmsHelper {
-  async getMetadata(idValues: IdValues) {
-    console.assert(idValues.serviceType === 'WMS')
-    const wmsEndpoint = remoteLayersService.getWmsEndpoint(idValues.wmsUrl)
+export class WmsHelper extends OwsHelper {
+  async getMetadata(
+    serviceType: REMOTE_SERVICE_TYPE,
+    url: string,
+    layerName: string
+  ) {
+    console.assert(serviceType === REMOTE_SERVICE_TYPE.WMS)
+    const wmsEndpoint = remoteLayersService.getWmsEndpoint(url)
     await wmsEndpoint.isReady()
     const service = wmsEndpoint?.getServiceInfo()
-    const layer = wmsEndpoint?.getLayerByName(idValues.layerName)
+    const layer = wmsEndpoint?.getLayerByName(layerName)
     return {
       title: layer.title,
       description: layer.abstract,

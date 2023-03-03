@@ -1,11 +1,6 @@
-import { remoteLayersService } from '@/components/remote-layers/remote-layers.service'
+import { remoteLayersService } from '@/services/remote-layers/remote-layers.service'
+import { REMOTE_SERVICE_TYPE } from '../remote-layers/remote-layers.model'
 import { wmsHelper } from './wms.helper'
-
-const idValuesMock = {
-  serviceType: 'WMS',
-  wmsUrl: 'http://myows.fr/wms',
-  layerName: 'streets',
-}
 
 const serviceInfoMock = {
   keywords: ['traffic', 'jam'],
@@ -25,14 +20,18 @@ const wmsEndpointMock = {
 }
 
 describe('WmsHelper', () => {
-  let spyLocalMetadata
+  let spyWmsMetadata
   beforeEach(() => {
-    spyLocalMetadata = vi
+    spyWmsMetadata = vi
       .spyOn(remoteLayersService, 'getWmsEndpoint')
       .mockReturnValue(wmsEndpointMock)
-    wmsHelper.getMetadata(idValuesMock)
+    wmsHelper.getMetadata(
+      REMOTE_SERVICE_TYPE.WMS,
+      'http://myows.fr/wms',
+      'streets'
+    )
   })
   it('calls remoteLayersService.getWmsEndpoint()', () => {
-    expect(spyLocalMetadata).toHaveBeenCalledOnce()
+    expect(spyWmsMetadata).toHaveBeenCalledOnce()
   })
 })

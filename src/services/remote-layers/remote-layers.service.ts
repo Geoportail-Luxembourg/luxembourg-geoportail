@@ -5,14 +5,32 @@ import { remoteProxyWms } from '@/composables/map/ol.composable'
 import {
   OgcClientWmsEndpoint,
   RemoteWmsEndpointModel,
+  REMOTE_SERVICE_TYPE,
 } from './remote-layers.model'
 import { LayerId } from '@/stores/map.store.model'
+import { WmtsEndpoint } from '@/services/remote-layers/wmts.endpoint'
 
 const forceUseProxy = true
 
 export class RemoteLayersService {
+  public async getRemoteEndpoint(
+    url: string
+  ): Promise<OgcClientWmsEndpoint | WmtsEndpoint> {
+    let wmtsEndpoint
+    const wmsEndpoint = await this.getWmsEndpoint(url)
+      .isReady()
+      .catch(async () => {
+        wmtsEndpoint = await this.getWmtsEndpoint(url).isReady()
+      })
+    return wmsEndpoint || wmtsEndpoint
+  }
+
   public getWmsEndpoint(url: string): OgcClientWmsEndpoint {
     return new WmsEndpoint(this.getProxyfiedUrl(url))
+  }
+
+  public getWmtsEndpoint(url: string): WmtsEndpoint {
+    return new WmtsEndpoint(this.getProxyfiedUrl(url))
   }
 
   public getProxyfiedUrl(url: string) {
@@ -36,7 +54,11 @@ export class RemoteLayersService {
   }
 
   isRemoteLayer(layerId: LayerId) {
-    return typeof layerId === 'string' && layerId.indexOf('WMS') === 0
+    return (
+      typeof layerId === 'string' &&
+      (layerId.indexOf(REMOTE_SERVICE_TYPE.WMS) === 0 ||
+        layerId.indexOf(REMOTE_SERVICE_TYPE.WMTS) === 0)
+    )
   }
 }
 

@@ -4,7 +4,7 @@ import { useTranslation } from 'i18next-vue'
 import LayerMetadataItem from './layer-metadata-item.vue'
 import { useMetadataStore } from '@/stores/metadata.store'
 import { storeToRefs } from 'pinia'
-import { watch, Ref, ref, onMounted } from 'vue'
+import { watch, Ref, ref, onMounted, computed } from 'vue'
 import { layerMetadataService } from '@/services/layer-metadata/layer-metadata.service'
 import { LayerMetadataModel } from '@/services/layer-metadata/layer-metadata.model'
 
@@ -12,11 +12,15 @@ const metadataStore = useMetadataStore()
 const { metadataId } = storeToRefs(metadataStore)
 const { t, i18next } = useTranslation()
 const layerMetadata: Ref<LayerMetadataModel | undefined> = ref()
+const displayFullDescription: Ref<boolean> = ref(true)
+const MAX_DESCRIPTION_LENGTH = 220
 
 watch(metadataId, async id => {
   layerMetadata.value = id
     ? await layerMetadataService.getLayerMetadata(id, i18next.language)
     : undefined
+  displayFullDescription.value =
+    (layerMetadata.value?.description?.length || '') < MAX_DESCRIPTION_LENGTH
 })
 
 onMounted(() => {
@@ -29,6 +33,20 @@ onMounted(() => {
     }
   })
 })
+
+const description = computed(() =>
+  displayFullDescription.value
+    ? layerMetadata.value?.description
+    : layerMetadata.value?.description?.slice(0, MAX_DESCRIPTION_LENGTH)
+)
+
+function showFullDescription() {
+  displayFullDescription.value = true
+}
+
+function hideFullDescription() {
+  displayFullDescription.value = false
+}
 
 function closeLayerMetadata() {
   metadataStore.clearMetadataId()
@@ -61,10 +79,36 @@ function closeLayerMetadata() {
         class="col-span-3 grid gap-2 grid-cols-3"
       >
         <span class="font-bold">{{ t('Description') }}</span>
-        <span
-          v-dompurify-html="layerMetadata.description"
-          class="col-span-2"
-        ></span>
+        <span class="col-span-2">
+          <span v-dompurify-html="description"></span>
+          <button
+            :title="
+              t('Display full description', {
+                ns: 'client',
+              })
+            "
+            v-if="!displayFullDescription"
+            @click="showFullDescription"
+            class="text-secondary hover:underline"
+          >
+            ...
+          </button>
+          <button
+            :title="
+              t('Hide full description', {
+                ns: 'client',
+              })
+            "
+            v-if="
+              displayFullDescription &&
+              (description?.length || '') > MAX_DESCRIPTION_LENGTH
+            "
+            @click="hideFullDescription"
+            class="text-secondary hover:underline"
+          >
+            -
+          </button>
+        </span>
       </div>
       <layer-metadata-item
         v-if="layerMetadata.legalConstraints"
@@ -143,7 +187,7 @@ function closeLayerMetadata() {
         {{ t('The metadata is right now not available') }}
       </div>
       <div v-if="layerMetadata.legendHtml">
-        <h4>{{ t('Legend') }}</h4>
+        <h4 class="text-xl">{{ t('Legend') }}</h4>
         <span v-dompurify-html="layerMetadata.legendHtml?.innerHTML"></span>
       </div>
       <div v-if="!layerMetadata.hasLegend" class="col-span-3">
