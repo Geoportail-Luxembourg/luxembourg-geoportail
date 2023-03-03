@@ -5,7 +5,8 @@ import {
   StatePersistorRulesHelper,
   StatePersistorStorage,
 } from '../state-persistor.model'
-import { UrlStorage, urlStorage, urlPathStorage } from './url-storage'
+import { UrlStorage, urlStorage } from './url-storage'
+import { urlPathStorage } from './url-storage-as-path'
 
 class StorageProxy implements Storage {
   get length() {

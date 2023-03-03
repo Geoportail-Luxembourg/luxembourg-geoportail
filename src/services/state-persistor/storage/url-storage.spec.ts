@@ -1,4 +1,5 @@
-import { UrlStorage, UrlStorageAsPath } from './url-storage'
+import { UrlStorage } from './url-storage'
+import { UrlStorageAsPath } from './url-storage-as-path'
 
 describe('UrlStorage', () => {
   let urlStorage: UrlStorage
