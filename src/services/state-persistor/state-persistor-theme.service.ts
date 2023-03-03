@@ -36,9 +36,7 @@ class StatePersistorThemeService {
   }
 
   restore() {
-    const theme = <string | null | undefined>(
-      storageHelper.getValue(SP_KEY_THEME)
-    )
+    const theme = <string | undefined>storageHelper.getValue(SP_KEY_THEME)
 
     if (theme) {
       const { setTheme } = useThemeStore()

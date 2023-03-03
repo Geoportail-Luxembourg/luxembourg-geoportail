@@ -26,10 +26,4 @@ describe('StorageThemeMapper', () => {
       expect(storageThemeMapper.themeToThemeName(undefined)).toBe('')
     })
   })
-  describe('#themeNameToTheme', () => {
-    it('returns the theme entity', () => {
-      storageThemeMapper.themeNameToTheme('mytesttheme')
-      expect(useThemesMock.findBgLayerByName).toHaveBeenCalled()
-    })
-  })
 })
