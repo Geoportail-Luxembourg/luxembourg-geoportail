@@ -22,7 +22,7 @@ i18next.init({
   ns: ['client', 'legends', 'server', 'tooltips'],
   fallbackLng: 'fr',
   backend: {
-    loadPath: './assets/locales/{{ns}}.{{lng}}.json',
+    loadPath: `${import.meta.env.BASE_URL}assets/locales/{{ns}}.{{lng}}.json`, // ! use assets instead of ./assets because of theme path in url
   },
 })
 

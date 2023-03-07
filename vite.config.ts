@@ -1,10 +1,11 @@
-import { fileURLToPath, URL } from 'node:url'
+import { fileURLToPath, URL } from 'url'
 import { defineConfig } from 'vitest/config'
 import type { UserConfig } from 'vite'
 import IstanbulPlugin from 'vite-plugin-istanbul'
 import vue from '@vitejs/plugin-vue'
+import type { RootNode, TemplateChildNode } from '@vue/compiler-core'
 
-function removeDataTestAttrs(node /*: RootNode | TemplateChildNode*/) {
+function removeDataTestAttrs(node: RootNode | TemplateChildNode) {
   if (node.type === 1 /* NodeTypes.ELEMENT */) {
     node.props = node.props.filter(prop =>
       prop.type === 6 /* NodeTypes.ATTRIBUTE */ ? prop.name !== 'data-cy' : true

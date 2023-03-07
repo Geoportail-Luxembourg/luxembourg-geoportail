@@ -1,14 +1,17 @@
 export const bgConfig = {
   bg_layers: [
     {
+      // basemap_2015_global
       name: 'route',
       id: 556,
     },
     {
+      // topo_bw_jpeg
       name: 'topo_bw',
       id: 502,
     },
     {
+      // topogr_global
       name: 'topo',
       id: 529,
     },
@@ -26,6 +29,7 @@ export const bgConfig = {
     },
   ],
   bg_layers_defaultId: 556,
+  bg_layers_defaultIdTourisme: 502,
   http_bg_server: 'wmts{1-2}',
   https_bg_server: 'wmts{3-4}',
   bg_wmts_server_path: 'mapproxy_4_v3/wmts/{Layer}',

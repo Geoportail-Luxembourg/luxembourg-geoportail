@@ -40,7 +40,7 @@ export class UrlStorage implements Storage {
       .filter(val => val.split('=')[1])
   }
 
-  setQueryParam(key: string, value: string) {
+  setItem(key: string, value: string) {
     const params = new URLSearchParams(
       new URL(window.location.toString()).search
     )
@@ -53,38 +53,8 @@ export class UrlStorage implements Storage {
     }
   }
 
-  getQueryParam(key: string) {
+  getItem(key: string): string | null {
     return this.getSnappedUrl().searchParams.get(key)
-  }
-
-  setPathParam(key: string, value: string) {
-    console.log(`To implement setPathParam key='${key}', value='${value}'`) // TODO: GSLUX-570
-  }
-
-  getPathParam(key: string) {
-    console.log(`To implement getPathParam key='${key}'`)
-    return this.getSnappedUrl().pathname.indexOf(key) // TODO: GSLUX-570
-  }
-
-  setItem(key: string, value: string, fromPath?: boolean) {
-    if (fromPath) {
-      this.setPathParam(key, value)
-    } else {
-      this.setQueryParam(key, value)
-    }
-  }
-
-  getItem(key: string): string | null
-  getItem(key: string, fromPath?: boolean) {
-    let value
-
-    if (fromPath) {
-      value = this.getPathParam(key)
-    } else {
-      value = this.getQueryParam(key)
-    }
-
-    return value
   }
 
   removeItem() {}

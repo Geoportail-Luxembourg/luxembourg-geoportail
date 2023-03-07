@@ -36,6 +36,10 @@ jobs:
         shell: bash
         run: echo "LUX_BASE=$(echo /luxembourg-geoportail/${BRANCH_NAME}/)" >> $GITHUB_ENV
 
+      - name: Set VITE_DEPLOY_GHPAGES ENV
+        shell: bash
+        run: echo "VITE_DEPLOY_GHPAGES=true" >> $GITHUB_ENV
+
       - run: npm run build-only -- --base=${{env.LUX_BASE}}
 
       - name: deploy to gh pages

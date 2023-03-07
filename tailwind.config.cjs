@@ -163,6 +163,7 @@ function generateThemeSafelist() {
     `bg-${theme}-primary`,
     `hover:text-${theme}-primary`,
     `after:content-${theme}`,
+    `before:content-${theme}`,
   ])
 }
 function generateThemeColors() {

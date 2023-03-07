@@ -4,6 +4,7 @@ import {
   SP_KEY_APPLOGIN,
   SP_KEY_IPV6,
   SP_KEY_LOCALFORAGE,
+  SP_KEY_THEME,
   StatePersistorRulesHelper,
 } from './state-persistor.model'
 
@@ -26,7 +27,8 @@ export abstract class RulesReadHelper extends StatePersistorRulesHelper {
 
   // eslint-disable-next-line
   static processRulesForKey(key: string, paramKeys: ParamKeys) {
-    // if (ruleLangInUrl(key, paramKeys)) return SP_AVAILABLE_STORAGES.permalink
+    if (key === SP_KEY_THEME && import.meta.env.VITE_DEPLOY_GHPAGES !== 'true')
+      return SP_AVAILABLE_STORAGES.permalinkAsPath
 
     return undefined
   }

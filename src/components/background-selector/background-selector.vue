@@ -56,7 +56,7 @@ watch(
       bgLayerContext === null &&
       layersContext?.length === 0
     ) {
-      backgroundLayer.setBgLayer(backgroundLayer.getDefaultSelectedId())
+      backgroundLayer.setBgLayer(backgroundLayer.defaultSelectedBgId.value)
 
       if (bgLayerContext === null) {
         // TODO: implement alert message

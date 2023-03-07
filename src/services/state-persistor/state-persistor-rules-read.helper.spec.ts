@@ -20,9 +20,20 @@ describe('RulesReadHelper', () => {
         })
       ).toBe(undefined)
     })
+    it('returns the permalink (path) as storage to read the theme', () => {
+      expect(RulesReadHelper.processRulesForKey('theme', { theme: 'at' })).toBe(
+        2
+      )
+    })
   })
 
   describe('#ruleUseLocalStorage', () => {
+    it('returns false by default for every key', () => {
+      expect(RulesReadHelper.ruleUseLocalStorage({ theme: 'eau' })).toBe(false)
+      expect(RulesReadHelper.ruleUseLocalStorage({ layers: '1-2' })).toBe(false)
+      expect(RulesReadHelper.ruleUseLocalStorage({ test: 'xxx' })).toBe(false)
+    })
+
     describe('#ruleEmptyParams', () => {
       it('returns true to use local storage if params is empty (coming from url)', () => {
         expect(RulesReadHelper.ruleUseLocalStorage({})).toBe(true)

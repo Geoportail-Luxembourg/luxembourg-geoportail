@@ -1,12 +1,20 @@
+import { computed } from 'vue'
+
 import { bgConfig } from '@/__fixtures__/background.config.fixture'
 import useThemes from '@/composables/themes/themes.composable'
 import useLayers from '@/composables/layers/layers.composable'
 import type { Layer } from '@/stores/map.store.model'
 import { useMapStore } from '@/stores/map.store'
+import { useThemeStore } from '@/stores/config.store'
 
 export default function useBackgroundLayer() {
   const themes = useThemes()
   const layers = useLayers()
+  const defaultSelectedBgId = computed(() => {
+    return useThemeStore().theme?.name === 'tourisme'
+      ? bgConfig.bg_layers_defaultIdTourisme
+      : bgConfig.bg_layers_defaultId
+  })
 
   function setBgLayer(layerId: number) {
     const newBgLayer = themes.findBgLayerById(layerId)
@@ -30,10 +38,6 @@ export default function useBackgroundLayer() {
     }
   }
 
-  function getDefaultSelectedId() {
-    return bgConfig.bg_layers_defaultId
-  }
-
   function getBgLayersFromConfig() {
     return bgConfig.bg_layers
   }
@@ -41,7 +45,7 @@ export default function useBackgroundLayer() {
   return {
     setBgLayer,
     setMapBackground,
-    getDefaultSelectedId,
     getBgLayersFromConfig,
+    defaultSelectedBgId,
   }
 }

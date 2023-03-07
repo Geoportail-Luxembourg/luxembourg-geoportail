@@ -2,8 +2,8 @@ import { RulesWriteHelper } from './state-persistor-rules-write.helper'
 
 describe('RulesWriteHelper', () => {
   describe('#processRules', () => {
-    it('returns both storage', () => {
-      expect(RulesWriteHelper.processRules()).toBe(2)
+    it('returns permalink and localStorage storage', () => {
+      expect(RulesWriteHelper.processRules()).toBe(3)
     })
   })
 
@@ -12,6 +12,11 @@ describe('RulesWriteHelper', () => {
       expect(
         RulesWriteHelper.processRulesForKey('version', { version: '3' })
       ).toBe(1)
+    })
+    it('returns permalink storage as path for key theme', () => {
+      expect(
+        RulesWriteHelper.processRulesForKey('theme', { theme: 'eau' })
+      ).toBe(2)
     })
     it('returns local storage for other keys than version', () => {
       expect(

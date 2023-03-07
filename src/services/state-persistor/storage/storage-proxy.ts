@@ -6,6 +6,7 @@ import {
   StatePersistorStorage,
 } from '../state-persistor.model'
 import { UrlStorage, urlStorage } from './url-storage'
+import { urlPathStorage } from './url-storage-as-path'
 
 class StorageProxy implements Storage {
   get length() {
@@ -76,12 +77,14 @@ class StorageProxy implements Storage {
   correspondingStorages(
     depositsKey?: SP_AVAILABLE_STORAGES
   ): StatePersistorStorage[] | undefined {
-    if (depositsKey === SP_AVAILABLE_STORAGES.both) {
+    if (depositsKey === SP_AVAILABLE_STORAGES.permalinkAndLocalStorage) {
       return [urlStorage, localStorage]
     } else if (depositsKey === SP_AVAILABLE_STORAGES.localStorage) {
       return [localStorage]
     } else if (depositsKey === SP_AVAILABLE_STORAGES.permalink) {
       return [urlStorage]
+    } else if (depositsKey === SP_AVAILABLE_STORAGES.permalinkAsPath) {
+      return [urlPathStorage]
     }
 
     return void 0

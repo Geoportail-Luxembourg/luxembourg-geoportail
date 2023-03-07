@@ -1,4 +1,4 @@
-describe('Permalink/State persistor', () => {
+describe('Permalink/State persistor - Layers', () => {
   describe('Restore layers from url', () => {
     describe('When layer opacities have values', () => {
       it('updates the url with the right opacity', () => {
