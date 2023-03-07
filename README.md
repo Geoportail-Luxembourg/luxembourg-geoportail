@@ -32,6 +32,7 @@ To start local dev environment with HMR support:
 ### End to end testing with Cypress
 
 For e2e tests, the code is instrumented with the Istanbul library to obtain resulting code coverage. The dev test server is launched with the env var INSRUMENT_COVERAGE=true
+
 - `test:e2e` will launch e2e tests and opens Cypress UI. You need to build the app before using this command with `npm run build-only -- --mode=e2e`. This will test the app built for production (with css minification, images src optimization using base64, ...)
 - `test:e2e:ci` This will run tests in command line only on a dev build (no need to build the app). Used by ci workflow.
 - `test:e2e:dev` will launch e2e tests and opens Cypress UI. This command will launch a vite server in dev mode, there is no need to build the app.
