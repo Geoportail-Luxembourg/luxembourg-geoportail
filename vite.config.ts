@@ -1,6 +1,6 @@
 import { fileURLToPath, URL } from 'url'
 import { defineConfig } from 'vitest/config'
-import type { UserConfig } from 'vite'
+import { loadEnv, type UserConfig } from 'vite'
 import IstanbulPlugin from 'vite-plugin-istanbul'
 import vue from '@vitejs/plugin-vue'
 import type { RootNode, TemplateChildNode } from '@vue/compiler-core'
@@ -24,7 +24,6 @@ export default defineConfig(({ command, mode }) => {
           },
         },
       }),
-      IstanbulPlugin(),
     ],
     resolve: {
       alias: {
@@ -35,6 +34,13 @@ export default defineConfig(({ command, mode }) => {
       globals: true,
       setupFiles: 'vitest.setup.ts',
     },
+  }
+
+  const env = loadEnv(mode, process.cwd(), '')
+  if (env.INSRUMENT_COVERAGE) {
+    base.server = { hmr: false } // disable hot reload of files modified by coverage tests
+    base.build = { sourcemap: 'hidden' } // disable warning which says coverage enabled by Istanbul
+    base.plugins = [...(base.plugins || []), IstanbulPlugin()] // add Istanbul plugin for code instrumentation
   }
 
   if (command === 'build') {
