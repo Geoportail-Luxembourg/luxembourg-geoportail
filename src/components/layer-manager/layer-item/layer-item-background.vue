@@ -8,7 +8,7 @@ const props = defineProps<{
   layer: Layer | IBackgroundLayer
 }>()
 const emit = defineEmits<{
-  (e: 'clickEdit', layer: Layer): void
+  (e: 'clickEdit'): void
   (e: 'clickInfo'): void
 }>()
 const { t, onClickInfo } = useLayer(props.layer, { emit })
@@ -36,7 +36,7 @@ function getLabel() {
       v-if="showEditButton"
       class="fa fa-pencil"
       :title="t('Open editor panel', { ns: 'client' })"
-      @click="$emit('clickEdit', $props.layer)"
+      @click="$emit('clickEdit')"
     ></button>
   </div>
 </template>

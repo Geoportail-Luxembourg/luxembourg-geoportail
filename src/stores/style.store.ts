@@ -6,6 +6,7 @@ import {
   IMvtConfig,
   SimpleRoadStyle,
   StyleItem,
+  VectorSourceDict,
 } from '@/composables/mvt-styles/mvt-styles.model'
 import { bgConfigFixture } from '@/__fixtures__/background.config.fixture'
 
@@ -14,8 +15,7 @@ export const useStyleStore = defineStore(
   () => {
     const styleService = useMvtStyles()
     const bgStyle: ShallowRef<StyleItem[] | undefined> = shallowRef()
-    const bgVectorSources: ShallowRef<{ [id: string]: IMvtConfig }> =
-      shallowRef({})
+    const bgVectorSources: ShallowRef<VectorSourceDict> = shallowRef({})
 
     const promises: Promise<{ id: string; config: IMvtConfig }>[] = []
     bgConfigFixture().bg_layers.forEach(bgLayer => {
@@ -24,23 +24,18 @@ export const useStyleStore = defineStore(
           bgLayer.icon_id,
           bgLayer.vector_id
         )
-        if (conf) {
-          promises.push(
-            conf.then(c => {
-              return { id: bgLayer.id.toString(), config: c as IMvtConfig }
-            })
-          )
-        }
+        promises.push(
+          conf.then(c => {
+            return { id: bgLayer.id.toString(), config: c as IMvtConfig }
+          })
+        )
       }
     })
-    Promise.all(promises).then(
-      (styleConfigs: { id: string; config: IMvtConfig }[]) => {
-        console.log('set vector conf')
-        const vectorDict: { [id: string]: IMvtConfig } = {}
-        styleConfigs.forEach(c => (vectorDict[c.id] = c.config))
-        bgVectorSources.value = vectorDict
-      }
-    )
+    Promise.all(promises).then(styleConfigs => {
+      const vectorDict: VectorSourceDict = {}
+      styleConfigs.forEach(c => (vectorDict[c.id] = c.config))
+      bgVectorSources.value = vectorDict
+    })
 
     function setSimpleStyle(simpleStyle: SimpleRoadStyle | null) {
       bgStyle.value = styleService.getRoadStyleFromSimpleStyle(simpleStyle)

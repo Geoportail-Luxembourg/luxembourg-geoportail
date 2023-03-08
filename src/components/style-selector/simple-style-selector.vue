@@ -24,11 +24,15 @@ const props = defineProps({
     default: true,
   },
 })
-const simpleStyleConf = ref(bgConfigFixture().simple_styles)
+const simpleStyleConf = bgConfigFixture().simple_styles
 // does not seem to work with "computed" => therefore using "watch"
 watch(
-  [bgStyle, simpleStyleConf],
-  ([st, ss]) => (simpleStyles.value = styleService.checkSelection(st || [], ss))
+  bgStyle,
+  newBgStyle =>
+    (simpleStyles.value = styleService.checkSelection(
+      newBgStyle || [],
+      simpleStyleConf
+    ))
 )
 
 function onStylingSelected(item: SimpleRoadStyle) {
@@ -41,33 +45,39 @@ function resetStyle() {
 
 <template>
   <div
-    :title="t('Open editor panel', { ns: 'client' })"
-    :class="props.isOpen ? '' : 'hidden'"
+    :title="t('Simple style editor', { ns: 'client' })"
+    :class="`border-2 p-[10px] ${props.isOpen ? '' : 'hidden'}`"
   >
+    <!-- TODO: create clean container for simple and advanced style editors -->
+    <div class="w-full text-white text-lg text-center">
+      {{ t('Simple style editor', { ns: 'client' }) }}
+    </div>
     <div
       v-for="item in simpleStyles"
       :key="item.unlocalized_label"
-      :title="t(item['unlocalized_label'], { ns: 'client' })"
+      :title="t(item.unlocalized_label, { ns: 'client' })"
       :class="`${
         item.selected ? 'border-dotted' : 'border-hidden'
       } border-2 p-px`"
     >
       <span class="text-white"
-        >{{ t(item['unlocalized_label'], { ns: 'client' }) }} :
+        >{{ t(item.unlocalized_label, { ns: 'client' }) }} :
       </span>
       <button @click="onStylingSelected(item)" class="w-full">
-        <div class="flex">
-          <simple-style-item :colors="item['colors']"></simple-style-item>
-        </div>
+        <span class="flex">
+          <simple-style-item
+            :colors="item.colors"
+            :style-name="item.unlocalized_label"
+          ></simple-style-item>
+        </span>
       </button>
     </div>
     <button
       @click="resetStyle"
-      type="button"
-      title="Reset Style"
+      :title="t('Reset Style', { ns: 'client' })"
       class="lux-btn"
     >
-      Reset style
+      {{ t('Reset Style', { ns: 'client' }) }}
     </button>
   </div>
 </template>

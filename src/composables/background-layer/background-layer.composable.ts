@@ -4,10 +4,11 @@ import { bgConfigFixture } from '@/__fixtures__/background.config.fixture'
 import useLayers from '@/composables/layers/layers.composable'
 import type { Layer } from '@/stores/map.store.model'
 import { useMapStore } from '@/stores/map.store'
-import { useThemeStore } from '@/stores/config.store'
+import { BLANK_BACKGROUNDLAYER } from '@/composables/background-layer/background-layer.model'
+import useThemes from '@/composables/themes/themes.composable'
 
 export default function useBackgroundLayer() {
-  const theme = useThemeStore()
+  const theme = useThemes()
   const mapStore = useMapStore()
   const layers = useLayers()
   const defaultSelectedBgId = computed(() => {
@@ -17,7 +18,7 @@ export default function useBackgroundLayer() {
   })
 
   function setBgLayer(layerId: number) {
-    const newBgLayer = theme.bgLayers.find(l => l.id == layerId) as Layer
+    const newBgLayer = theme.findBgLayerById(layerId) as Layer
     setMapBackground(newBgLayer || null)
   }
 
@@ -40,7 +41,10 @@ export default function useBackgroundLayer() {
   }
 
   function getDefaultSelectedId() {
-    return getBgLayersFromConfig().find(l => l.is_default)?.id
+    return (
+      getBgLayersFromConfig().find(l => l.is_default)?.id ||
+      BLANK_BACKGROUNDLAYER.id
+    )
   }
 
   function getBgLayersFromConfig() {

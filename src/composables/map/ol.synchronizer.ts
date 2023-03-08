@@ -6,12 +6,12 @@ import { Layer } from '@/stores/map.store.model'
 import { useMapStore } from '@/stores/map.store'
 import { useStyleStore } from '@/stores/style.store'
 import useMap from './map.composable'
-import { IMvtConfig } from '@/composables/mvt-styles/mvt-styles.model'
-import useMvtStyles from '../mvt-styles/mvt-styles.composable'
+import { VectorSourceDict } from '@/composables/mvt-styles/mvt-styles.model'
+import useMvtStyles from '@/composables/mvt-styles/mvt-styles.composable'
 
 export class OlSynchronizer {
   previousLayers: Layer[]
-  previousVectorSources: { [id: string]: IMvtConfig }
+  previousVectorSources: VectorSourceDict
   constructor(map: OlMap) {
     const mapStore = useMapStore()
     const styleStore = useStyleStore()
@@ -82,10 +82,10 @@ export class OlSynchronizer {
         for (const id in newVectorSources) {
           if (
             !this.previousVectorSources ||
-            this.previousVectorSources[id] != newVectorSources[id]
+            this.previousVectorSources[id] !== newVectorSources[id]
           ) {
             openLayers.removeFromCache(id)
-            if (id == mapStore?.bgLayer?.id) {
+            if (id === mapStore?.bgLayer?.id.toString()) {
               // refresh bg layer
               openLayers.setBgLayer(map, mapStore?.bgLayer, newVectorSources)
             }

@@ -12,6 +12,8 @@ import LayerManagerItem from './layer-item/layer-item.vue'
 import SimpleStyleSelector from '../style-selector/simple-style-selector.vue'
 import { useMetadataStore } from '@/stores/metadata.store'
 
+const ROAD_MAP_ID = 556
+
 const { setMetadataId } = useMetadataStore()
 const mapStore = useMapStore()
 const { bgLayer } = storeToRefs(mapStore)
@@ -52,10 +54,8 @@ function toggleAccordionItem(layer: Layer) {
   isLayerOpenId.value = isLayerOpenId.value !== layer.id ? layer.id : undefined
 }
 
-function toggleEditionLayer(layer: Layer) {
-  if (layer.id == 556)
-    // simple editor only available for road map
-    isStyleEditorOpen.value = !isStyleEditorOpen.value
+function toggleEditionLayer() {
+  isStyleEditorOpen.value = !isStyleEditorOpen.value
 }
 </script>
 
@@ -76,13 +76,15 @@ function toggleEditionLayer(layer: Layer) {
     <li>
       <layer-manager-item-background
         :layer="bgLayer || BLANK_BACKGROUNDLAYER"
-        :showEditButton="!!bgLayer"
+        :showEditButton="bgLayer?.id === ROAD_MAP_ID"
         @clickInfo="() => bgLayer && setMetadataId(bgLayer.id)"
         @clickEdit="toggleEditionLayer"
       >
       </layer-manager-item-background>
       <!-- TODO: add medium and advanced style editors -->
-      <simple-style-selector :is-open="isStyleEditorOpen && bgLayer?.id == 556">
+      <simple-style-selector
+        :is-open="isStyleEditorOpen && bgLayer?.id === ROAD_MAP_ID"
+      >
       </simple-style-selector>
     </li>
   </ul>

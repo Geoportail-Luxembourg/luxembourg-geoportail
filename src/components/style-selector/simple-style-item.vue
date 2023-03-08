@@ -1,16 +1,17 @@
 <script setup lang="ts">
 const props = defineProps<{
+  styleName: string
   colors: string[]
 }>()
 </script>
 
 <template>
-  <div
-    v-for="color in props.colors"
-    :key="color"
+  <span
+    v-for="(color, i) in props.colors"
+    :key="`${styleName}-${i}`"
     class="grow m-px"
     :style="`background-color: ${color}`"
   >
-    &nbsp;&nbsp;&nbsp;&nbsp;
-  </div>
+    &nbsp;
+  </span>
 </template>

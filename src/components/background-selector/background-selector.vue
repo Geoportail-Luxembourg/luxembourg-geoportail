@@ -3,10 +3,7 @@ import { useTranslation } from 'i18next-vue'
 import { computed, Ref, ref, watch } from 'vue'
 import { storeToRefs } from 'pinia'
 
-import {
-  BLANK_BACKGROUNDLAYER,
-  IBackgroundLayer,
-} from '@/composables/background-layer/background-layer.model'
+import { IBackgroundLayer } from '@/composables/background-layer/background-layer.model'
 import useBackgroundLayer from '@/composables/background-layer/background-layer.composable'
 import { useThemeStore } from '@/stores/config.store'
 import { useMapStore } from '@/stores/map.store'
@@ -32,7 +29,9 @@ const props = defineProps({
 const isOpen = ref(props.isOpen)
 const bgLayers: Ref<IBackgroundLayer[]> = ref([])
 const activeLayerId = computed(
-  () => (bgLayerContext.value?.id as number) ?? BLANK_BACKGROUNDLAYER.id
+  () =>
+    (bgLayerContext.value?.id as number) ??
+    backgroundLayer.getDefaultSelectedId()
 )
 const activeLayerName = computed(
   () => bgLayers.value?.find(layer => layer.id === activeLayerId.value)?.name
@@ -43,13 +42,11 @@ watch(
   bgLayersContext => {
     bgLayers.value = bgConfigFixture().bg_layers.map(bgl =>
       Object.assign(
-        Object.assign(
-          {},
-          bgLayersContext.find((l: ThemeNodeModel) => bgl.id == l.id),
-          {
-            name: bgl.icon_id,
-          }
-        )
+        {},
+        bgLayersContext.find((l: ThemeNodeModel) => bgl.id == l.id),
+        {
+          name: bgl.icon_id,
+        }
       )
     )
   },
@@ -66,9 +63,7 @@ watch(
       bgLayerContext === null &&
       layersContext?.length === 0
     ) {
-      backgroundLayer.setBgLayer(
-        backgroundLayer.getDefaultSelectedId() || BLANK_BACKGROUNDLAYER.id
-      )
+      backgroundLayer.setBgLayer(backgroundLayer.getDefaultSelectedId())
 
       if (bgLayerContext === null) {
         // TODO: implement alert message

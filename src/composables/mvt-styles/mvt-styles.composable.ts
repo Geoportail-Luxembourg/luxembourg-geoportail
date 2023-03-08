@@ -125,13 +125,13 @@ export default function useMvtStyles() {
       //     return Promise.resolve(config);
     } else {
       // Default style if no existing in LS or DB
-      console.log(`Default mvt style for ${label}`)
       // this.isCustomStyle = this.isCustomStyleSetter(label, false);
 
       // temporary timeout for testing async style queries
       return new Promise(r => setTimeout(r, 2000, config))
-      return Promise.resolve(config)
+      // return Promise.resolve(config)
     }
+    return Promise.resolve(config)
   }
 
   function getRoadStyleFromSimpleStyle(
@@ -144,11 +144,15 @@ export default function useMvtStyles() {
       simpleStyle.colors.forEach((element: string, i: number) => {
         med_road_style[i].color = element
       })
-      med_road_style
-        .filter(el => el.unlocalized_label == 'Hillshade')
+      const hillshadeIndex = med_road_style.findIndex(
+        el => el.unlocalized_label === 'Hillshade'
+      )
+      med_road_style[hillshadeIndex].visible = simpleStyle.hillshade
+      /*
+        .filter(el => el.unlocalized_label === 'Hillshade')
         .forEach(el => {
           el.visible = simpleStyle.hillshade
-        })
+        })*/
     }
     return med_road_style
   }
@@ -167,7 +171,7 @@ export default function useMvtStyles() {
             'lu_landcover_wood',
             'lu_landcover_grass',
             'lu_waterway_tunnel',
-          ].findIndex(l => l == prop) != -1
+          ].indexOf(prop) !== -1
         )
           return
         if (item.color) {
@@ -190,7 +194,7 @@ export default function useMvtStyles() {
     return simpleStyleConf.map((style: SimpleRoadStyle) =>
       Object.assign(style, {
         selected: style.colors.every(
-          (element, i) => bgStyle[i]?.color == element
+          (element, i) => bgStyle[i]?.color === element
         ),
       })
     )

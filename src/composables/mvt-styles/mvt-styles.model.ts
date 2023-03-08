@@ -6,6 +6,9 @@ export interface IMvtConfig {
   xyz_custom: string
   style: string
 }
+export interface VectorSourceDict {
+  [id: string]: IMvtConfig
+}
 export interface SimpleRoadStyle {
   unlocalized_label: string
   hillshade: boolean
