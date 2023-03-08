@@ -188,29 +188,29 @@ describe('StorageLayerMapper', () => {
     })
   })
 
-  describe('#bgLayerIdToBgLayer', () => {
+  describe('#bgLayerNameToBgLayer', () => {
     it('returns the corresponding bg layer', () => {
-      expect(storageLayerMapper.bgLayerIdToBgLayer('road_map32')).toStrictEqual(
-        {
-          id: 'road_map32',
-          name: 'road_map32',
-          layers: '',
-          type: 'WMTS',
-          imageType: '',
-        }
-      )
+      expect(
+        storageLayerMapper.bgLayerNameToBgLayer('road_map32')
+      ).toStrictEqual({
+        id: 'road_map32',
+        name: 'road_map32',
+        layers: '',
+        type: 'WMTS',
+        imageType: '',
+      })
     })
   })
 
-  describe('#bgLayerTobgLayerId', () => {
+  describe('#bgLayerTobgLayerName', () => {
     it('returns the formatted bg layer id', () => {
-      expect(storageLayerMapper.bgLayerTobgLayerId(bgLayer0)).toStrictEqual(
+      expect(storageLayerMapper.bgLayerTobgLayerName(bgLayer0)).toStrictEqual(
         'earth_red'
       )
     })
 
     it('returns blank as bg layer id', () => {
-      expect(storageLayerMapper.bgLayerTobgLayerId(undefined)).toStrictEqual(
+      expect(storageLayerMapper.bgLayerTobgLayerName(undefined)).toStrictEqual(
         'blank'
       )
     })

@@ -6,9 +6,24 @@ import { Layer } from '@/stores/map.store.model'
 import { useThemeStore } from '@/stores/config.store'
 import useBackgroundLayer from '@/composables/background-layer/background-layer.composable'
 
-import { SP_KEY_BGLAYER, StatePersistorService } from './state-persistor.model'
+import {
+  SP_KEY_BGLAYER,
+  SP_KEY_V2_BGLAYEROPACITY,
+  StatePersistorService,
+} from './state-persistor.model'
 import { storageLayerMapper } from './state-persistor-layer.mapper'
 import { storageHelper } from './storage/storage.helper'
+import { stringToNumber } from '../utils'
+
+const DEFAULT_BGLAYER_NAME = 'basemap_2015_global'
+const DEFAULT_BGLAYER_NAME_V2 = 'orthogr_2013_global'
+const V2_BGLAYER_TO_V3_: { [key: string]: string } = {
+  webbasemap: 'basemap_2015_global',
+  'pixelmaps-color': 'topogr_global',
+  'pixelmaps-gray': 'topo_bw_jpeg',
+  streets: 'streets_jpeg',
+  voidlayer: 'blank',
+}
 
 class StatePersistorBgLayerService implements StatePersistorService {
   bootstrap() {
@@ -35,7 +50,7 @@ class StatePersistorBgLayerService implements StatePersistorService {
           storageHelper.setValue(
             SP_KEY_BGLAYER,
             value as Layer,
-            storageLayerMapper.bgLayerTobgLayerId
+            storageLayerMapper.bgLayerTobgLayerName
           )
         }
       },
@@ -45,12 +60,37 @@ class StatePersistorBgLayerService implements StatePersistorService {
 
   restore() {
     const { setMapBackground } = useBackgroundLayer()
-    const bgLayer = storageHelper.getValue(
-      SP_KEY_BGLAYER,
-      storageLayerMapper.bgLayerIdToBgLayer
-    )
+    const bgLayer = this.getBgLayerFromStorage()
 
     setMapBackground(bgLayer)
+  }
+
+  getBgLayerFromStorage() {
+    const version = storageHelper.getInitialVersion()
+    const bgLayerName = storageHelper.getValue<string | null>(SP_KEY_BGLAYER)
+    const bgLayer = !bgLayerName
+      ? storageLayerMapper.bgLayerNameToBgLayer(DEFAULT_BGLAYER_NAME)
+      : version === 2
+      ? this.getBgLayerFromStorageV2(bgLayerName)
+      : storageLayerMapper.bgLayerNameToBgLayer(bgLayerName)
+
+    return bgLayer
+  }
+
+  getBgLayerFromStorageV2(bgLayerNameFromStorage: string | null) {
+    const bgLayerOpacity = storageHelper.getValue(
+      SP_KEY_V2_BGLAYEROPACITY,
+      stringToNumber
+    )
+    let bgLayerName = ''
+
+    if (bgLayerNameFromStorage) {
+      bgLayerName = V2_BGLAYER_TO_V3_[bgLayerNameFromStorage]
+    } else if (bgLayerOpacity === 0) {
+      bgLayerName = DEFAULT_BGLAYER_NAME_V2
+    }
+
+    return storageLayerMapper.bgLayerNameToBgLayer(bgLayerName)
   }
 }
 

@@ -1,6 +1,18 @@
+import { stringToNumber } from '@/services/utils'
+import { SP_KEY_VERSION } from '../state-persistor.model'
 import { storageProxy } from './storage-proxy'
 
 class StorageHelper {
+  private intialVersion: number
+
+  constructor() {
+    this.intialVersion = this.getValue(SP_KEY_VERSION, stringToNumber) || 3
+  }
+
+  getInitialVersion() {
+    return this.intialVersion
+  }
+
   mapToEntity<T>(
     value: string | null,
     mapper?: (value: string | null) => T | T[]

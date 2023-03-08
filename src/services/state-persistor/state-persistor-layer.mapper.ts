@@ -46,14 +46,12 @@ class StorageLayerMapper {
     )
   }
 
-  bgLayerIdToBgLayer(bgLayerIdText: string | null): Layer | null {
+  bgLayerNameToBgLayer(bgLayerName: string | null): Layer | null {
     const themes = useThemes()
-    return bgLayerIdText
-      ? (themes.findBgLayerByName(bgLayerIdText) as Layer)
-      : null
+    return bgLayerName ? (themes.findBgLayerByName(bgLayerName) as Layer) : null
   }
 
-  bgLayerTobgLayerId(layer: Layer | undefined) {
+  bgLayerTobgLayerName(layer: Layer | undefined) {
     return layer?.name || BLANK_BACKGROUNDLAYER.name
   }
 

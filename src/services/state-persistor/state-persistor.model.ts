@@ -19,6 +19,12 @@ export const SP_KEY_SRS = 'SRS'
 export const SP_KEY_X = 'X'
 export const SP_KEY_Y = 'Y'
 
+// Keys for version 2, legacy
+export const SP_KEY_V2_BGLAYEROPACITY = 'bgOpacity' // Unused, just for legacy permalink
+export const SP_KEY_V2_LAYERSINDICIES = 'layers_indices' // Unused
+export const SP_KEY_V2_LAYERSOPACITIES = 'layers_opacity'
+export const SP_KEY_V2_LAYERSVISIBILITY = 'layers_visibility'
+
 export enum SP_AVAILABLE_STORAGES {
   localStorage = 0,
   permalink = 1,

@@ -74,7 +74,7 @@ class StatePersistorMapService implements StatePersistorService {
   restore() {
     const view = useMap().getOlMap().getView()
     const zoom = storageHelper.getValue(SP_KEY_ZOOM, stringToNumber)
-    const version = storageHelper.getValue(SP_KEY_VERSION, stringToNumber) || 3 // TODO: remove when versions is handled
+    const version = storageHelper.getInitialVersion()
     const x = storageHelper.getValue(SP_KEY_X, stringToNumber)
     const y = storageHelper.getValue(SP_KEY_Y, stringToNumber)
     const srs = storageHelper.getValue(SP_KEY_SRS) as ProjectionLike
