@@ -5,7 +5,6 @@ import { Coordinate } from 'ol/coordinate'
 import useMap from '@/composables/map/map.composable'
 import {
   SP_KEY_ZOOM,
-  SP_KEY_VERSION,
   SP_KEY_X,
   SP_KEY_Y,
   SP_KEY_SRS,
@@ -30,7 +29,6 @@ class StatePersistorMapService implements StatePersistorService {
     const fnStorageSetValueZoom = () => {
       const zoom = view.getZoom()
       storageHelper.setValue(SP_KEY_ZOOM, zoom ? Math.ceil(zoom) : null)
-      storageHelper.setValue(SP_KEY_VERSION, 3) // TODO: remove when version done, for now, force version 3
     }
 
     fnStorageSetValueZoom()
@@ -48,7 +46,6 @@ class StatePersistorMapService implements StatePersistorService {
       const center = view.getCenter()
       storageHelper.setValue(SP_KEY_X, center ? Math.round(center[0]) : null)
       storageHelper.setValue(SP_KEY_Y, center ? Math.round(center[1]) : null)
-      storageHelper.setValue(SP_KEY_VERSION, 3) // TODO: remove when version done, for now, force version 3
     }
 
     fnStorageSetValueXY()

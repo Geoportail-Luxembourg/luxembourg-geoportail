@@ -7,12 +7,7 @@ import proj4 from 'proj4'
 import { statePersistorMapService } from './state-persistor-map.service'
 import useMap from '@/composables/map/map.composable'
 import { storageHelper } from './storage/storage.helper'
-import {
-  SP_KEY_VERSION,
-  SP_KEY_X,
-  SP_KEY_Y,
-  SP_KEY_ZOOM,
-} from './state-persistor.model'
+import { SP_KEY_X, SP_KEY_Y, SP_KEY_ZOOM } from './state-persistor.model'
 import { initProjections } from '../projection.utils'
 import { register } from 'ol/proj/proj4'
 
@@ -75,16 +70,11 @@ describe('StatePersistorMapService', () => {
         )
       vi.runAllTimers()
       expect(storageHelper.setValue).toHaveBeenNthCalledWith(1, SP_KEY_ZOOM, 10)
-      expect(storageHelper.setValue).toHaveBeenNthCalledWith(
-        2,
-        SP_KEY_VERSION,
-        3
-      )
     })
   })
 
   describe('#persistXY', () => {
-    it('22persists the center coordinates of the view', () => {
+    it('persists the center coordinates of the view', () => {
       statePersistorMapService.persistXY()
       olMap
         .getView()
@@ -106,11 +96,6 @@ describe('StatePersistorMapService', () => {
         SP_KEY_Y,
         6379152
       )
-      expect(storageHelper.setValue).toHaveBeenNthCalledWith(
-        3,
-        SP_KEY_VERSION,
-        3
-      ) // TODO: remove when version done, for now, force version 3
     })
   })
 
