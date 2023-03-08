@@ -48,6 +48,7 @@ describe('StatePersistorMapService', () => {
             (key: string, value: any) => (fakeStorage[key] = value)
           ),
           getValue: vi.fn((key: string) => fakeStorage[key]),
+          getInitialVersion: vi.fn(() => fakeStorage['version']),
         },
       }
     })

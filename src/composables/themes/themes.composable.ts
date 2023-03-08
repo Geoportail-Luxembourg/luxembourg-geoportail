@@ -8,14 +8,29 @@ export default function useThemes() {
     id: LayerId,
     node?: ThemeNodeModel
   ): ThemeNodeModel | undefined {
+    return findByIdOrName(id, undefined, node)
+  }
+
+  function findByName(
+    name: string,
+    node?: ThemeNodeModel
+  ): ThemeNodeModel | undefined {
+    return findByIdOrName(undefined, name, node)
+  }
+
+  function findByIdOrName(
+    id?: LayerId,
+    name?: string,
+    node?: ThemeNodeModel
+  ): ThemeNodeModel | undefined {
     const { theme } = useThemeStore()
 
     node = node || theme
-    if (node?.id === id) {
+    if ((id && node?.id === id) || (name && node?.name === name)) {
       return node
     } else if (node?.children) {
       for (const child of node.children) {
-        const match = findById(id, child)
+        const match = findByIdOrName(id, name, child)
         if (match) {
           return match
         }
@@ -47,6 +62,7 @@ export default function useThemes() {
 
   return {
     findById,
+    findByName,
     findBgLayerById,
     findBgLayerByName,
     setTheme,

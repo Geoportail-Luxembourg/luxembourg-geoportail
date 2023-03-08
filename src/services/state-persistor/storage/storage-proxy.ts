@@ -22,8 +22,12 @@ class StorageProxy implements Storage {
     throw new Error('Method key() not implemented. ' + index)
   }
 
-  removeItem() {
-    throw new Error('Method not implemented.')
+  removeItem(key: string) {
+    const writeStorages = this.getWriteStorages(key)
+
+    writeStorages?.map((storage: StatePersistorStorage) =>
+      storage.removeItem(key)
+    )
   }
 
   setItem(key: string, value: string) {
@@ -48,18 +52,23 @@ class StorageProxy implements Storage {
   }
 
   setValue(key: string, value: string) {
+    const writeStorages = this.getWriteStorages(key)
+
+    writeStorages?.map((storage: StatePersistorStorage) =>
+      storage.setItem(key, value)
+    )
+  }
+
+  getWriteStorages(key: string) {
+    // Testing write with global rules (for now, returning both storages)
     const writeStorages = this.correspondingStorages(
       RulesWriteHelper.processRules()
     )
+
+    // Testing write rules for this specific key, this has priority on writeStorages
     const storage = this.storageForKey(key, RulesWriteHelper)
 
-    if (storage) {
-      storage.setItem(key, value)
-    } else {
-      writeStorages?.map((storage: StatePersistorStorage) =>
-        storage.setItem(key, value)
-      )
-    }
+    return storage ? [storage] : writeStorages
   }
 
   storageForKey(

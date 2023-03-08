@@ -54,6 +54,10 @@ class StorageHelper {
   ) {
     storageProxy.setValue(key, this.mapToStorage(value, mapper))
   }
+
+  removeItem(key: string) {
+    storageProxy.removeItem(key)
+  }
 }
 
 export const storageHelper = new StorageHelper()

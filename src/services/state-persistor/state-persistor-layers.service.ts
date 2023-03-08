@@ -8,6 +8,10 @@ import { useThemeStore } from '@/stores/config.store'
 import {
   SP_KEY_LAYERS,
   SP_KEY_OPACITIES,
+  SP_KEY_V2_BGLAYEROPACITY,
+  SP_KEY_V2_LAYERSINDICIES,
+  SP_KEY_V2_LAYERSOPACITIES,
+  SP_KEY_V2_LAYERSVISIBILITY,
   StatePersistorService,
 } from './state-persistor.model'
 import { storageLayerMapper } from './state-persistor-layer.mapper'
@@ -53,15 +57,18 @@ class StatePersistorLayersService implements StatePersistorService {
   }
 
   restore() {
+    const version = storageHelper.getInitialVersion()
     const mapStore = useMapStore()
     const layers = storageHelper.getValue(
       SP_KEY_LAYERS,
-      storageLayerMapper.layerIdsToLayers
+      version === 2
+        ? storageLayerMapper.layerNamesToLayersV2
+        : storageLayerMapper.layerIdsToLayers
     )
-    const opacities = storageHelper.getValue(
-      SP_KEY_OPACITIES,
-      storageLayerMapper.layerOpacitiesToNumbers
-    )
+    const opacities =
+      version === 2
+        ? this.getOpacitiesFromStorageV2()
+        : this.getOpacitiesFromStorage()
 
     if (opacities) {
       layers?.forEach((layer, index) => {
@@ -71,7 +78,35 @@ class StatePersistorLayersService implements StatePersistorService {
       })
     }
 
+    if (version === 2) {
+      storageHelper.removeItem(SP_KEY_V2_BGLAYEROPACITY)
+      storageHelper.removeItem(SP_KEY_V2_LAYERSINDICIES)
+      storageHelper.removeItem(SP_KEY_V2_LAYERSOPACITIES)
+      storageHelper.removeItem(SP_KEY_V2_LAYERSVISIBILITY)
+    }
+
     mapStore.addLayers(...((layers?.filter(layer => layer) as Layer[]) || []))
+  }
+
+  getOpacitiesFromStorage() {
+    return storageHelper.getValue(
+      SP_KEY_OPACITIES,
+      storageLayerMapper.layersOpacitiesToNumbers
+    )
+  }
+
+  getOpacitiesFromStorageV2() {
+    const opacities = storageHelper.getValue(
+      SP_KEY_V2_LAYERSOPACITIES,
+      storageLayerMapper.layersOpacitiesToNumbersV2
+    )
+
+    const visibility = storageHelper.getValue(
+      SP_KEY_V2_LAYERSVISIBILITY,
+      storageLayerMapper.layersVisibilitiesToBooleansV2
+    )
+
+    return opacities.map((opacity, index) => (visibility[index] ? opacity : 0))
   }
 }
 

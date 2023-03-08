@@ -155,15 +155,15 @@ describe('StorageLayerMapper', () => {
     })
   })
 
-  describe('#layerOpacitiesToNumbers', () => {
+  describe('#layersOpacitiesToNumbers', () => {
     it('returns the opacities as floats', () => {
       expect(
-        storageLayerMapper.layerOpacitiesToNumbers('0-1-0.25-0.6-1')
+        storageLayerMapper.layersOpacitiesToNumbers('0-1-0.25-0.6-1')
       ).toStrictEqual([0, 1, 0.25, 0.6, 1])
     })
     it('returns undefined for an invalid opactiy value', () => {
       expect(
-        storageLayerMapper.layerOpacitiesToNumbers('0-opa-1')
+        storageLayerMapper.layersOpacitiesToNumbers('0-opa-1')
       ).toStrictEqual([0, undefined, 1])
     })
   })

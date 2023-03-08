@@ -4,16 +4,16 @@ import useThemes from '@/composables/themes/themes.composable'
 import { BLANK_BACKGROUNDLAYER } from '@/composables/background-layer/background-layer.model'
 import { remoteLayerIdtoLayer } from '@/services/remote-layers/remote-layers.mapper'
 import { remoteLayersService } from '@/services/remote-layers/remote-layers.service'
+import { stringToBooleans, stringToNumbers } from '../utils'
 
 const STORAGE_SEPARATOR = '-'
+const STORAGE_SEPARATOR_V2 = ','
 
 class StorageLayerMapper {
   layerIdsToLayers(layerIdsText: string | null) {
     const themes = useThemes()
     const layers = useLayers()
-    const layerIds = layerIdsText
-      ? StorageLayerMapper.storageToLayerIds(layerIdsText)
-      : []
+    const layerIds = layerIdsText ? layerIdsText.split(STORAGE_SEPARATOR) : []
 
     return layerIds.map(layerId => {
       const layer = remoteLayersService.isRemoteLayer(layerId)
@@ -24,16 +24,40 @@ class StorageLayerMapper {
     })
   }
 
-  layerOpacitiesToNumbers(opacitiesText: string | null) {
-    return (
-      opacitiesText
-        ?.split(STORAGE_SEPARATOR)
-        .map(opacity =>
-          opacity !== null && !isNaN(opacity as any)
-            ? parseFloat(opacity)
-            : undefined
-        ) || []
-    )
+  layerNamesToLayersV2(layersNamesText: string | null) {
+    const themes = useThemes()
+    const layers = useLayers()
+    const layersNames = layersNamesText
+      ? layersNamesText.split(STORAGE_SEPARATOR_V2)
+      : []
+
+    return layersNames.map(layerName => {
+      const layer = themes.findByName(layerName)
+      return layer ? layers.initLayer(layer as unknown as Layer) : void 0
+    })
+  }
+
+  layersOpacitiesToNumbers(
+    opacitiesText: string | null,
+    separator = STORAGE_SEPARATOR
+  ) {
+    return stringToNumbers(opacitiesText, separator)
+  }
+
+  /**
+   * Transform opacities in param as array of opacity values, for version 2 only.
+   * Eg. with param '/?&layers_opacity=1,1,1' => from "1,1,1" to [1,1,1]
+   */
+  layersOpacitiesToNumbersV2 = (opacitiesText: string | null) => {
+    return this.layersOpacitiesToNumbers(opacitiesText, STORAGE_SEPARATOR_V2)
+  }
+
+  /**
+   * Transform visibilities in param as array of visibility values, for version 2 only.
+   * Eg. with param '/?&layers_visibility=true,true,false' => from "true,true,false" to [true,true,false]
+   */
+  layersVisibilitiesToBooleansV2(visibilitiesText: string | null) {
+    return stringToBooleans(visibilitiesText, STORAGE_SEPARATOR_V2)
   }
 
   layersToLayerIds(layers: Layer[] | null): string {
@@ -53,10 +77,6 @@ class StorageLayerMapper {
 
   bgLayerTobgLayerName(layer: Layer | undefined) {
     return layer?.name || BLANK_BACKGROUNDLAYER.name
-  }
-
-  static storageToLayerIds(layers: string): string[] {
-    return layers.split(STORAGE_SEPARATOR)
   }
 }
 
