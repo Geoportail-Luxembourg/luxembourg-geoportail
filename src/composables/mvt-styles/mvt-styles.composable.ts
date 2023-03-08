@@ -4,6 +4,7 @@ import {
 } from '@/composables/mvt-styles/mvt-styles.model'
 import { bgConfigFixture } from '@/__fixtures__/background.config.fixture'
 import BaseLayer from 'ol/layer/Base'
+import { Map as MaplibreMap } from 'maplibre-gl'
 
 export default function useMvtStyles() {
   function getDefaultMapBoxStyleUrl(label: string | undefined) {
@@ -153,14 +154,29 @@ export default function useMvtStyles() {
     return med_road_style
   }
 
-  function applyStyle(bgLayer: BaseLayer, item: StyleItem[]) {
-    item.forEach(item => applyStyleFromItem(bgLayer, item))
-  }
-  function applyStyleFromItem(bgLayer: BaseLayer, item: StyleItem) {
+  function applyStyle(bgLayer: BaseLayer, style: StyleItem[]) {
     // consider layer to be a Maplibre Layer
     const mbMap = (bgLayer as any).maplibreMap
+    // check if maplibre map element exists
+    if (!mbMap) return
+    // apply style as soon as vector sources have finished loading
+    if (mbMap.loaded()) {
+      applyStyleOnMap(style, mbMap)
+    } else {
+      new Promise(resolve => mbMap.once('load', resolve)).then(() =>
+        applyStyleOnMap(style, mbMap)
+      )
+    }
+  }
+
+  function applyStyleOnMap(style: StyleItem[], mbMap: any) {
+    style.forEach(item => applyItemToMap(item, mbMap))
+  }
+
+  function applyItemToMap(item: StyleItem, mbMap: MaplibreMap) {
     item.styleProperties.forEach(props => {
       props.properties.forEach(prop => {
+        // workaround for broken predefined styles
         if (
           [
             'lu_bridge_path case',
@@ -168,8 +184,9 @@ export default function useMvtStyles() {
             'lu_landcover_grass',
             'lu_waterway_tunnel',
           ].findIndex(l => l == prop) != -1
-        )
+        ) {
           return
+        }
         if (item.color) {
           mbMap.setPaintProperty(prop, `${props.type}-color`, item.color)
           mbMap.setPaintProperty(prop, `${props.type}-opacity`, 1)
