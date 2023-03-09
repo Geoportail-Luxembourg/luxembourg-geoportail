@@ -104,7 +104,7 @@ function dispatchChangeOpacity() {
         @click="onToggleVisibility"
       ></button>
       <input
-        id="steps-range"
+        :id="`${props.layer.id}-steps-range`"
         type="range"
         min="0"
         max="100"
