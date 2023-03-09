@@ -74,18 +74,22 @@ describe('useBackgroundLayer', () => {
 
   describe('#getBgLayersFromConfig', () => {
     it('returns the bg layers from the config', () => {
-      expect(wrapperVM.getBgLayersFromConfig()).toEqual([
+      expect(
+        wrapperVM.getBgLayersFromConfig().map((bgLayer: any) => {
+          return { name: bgLayer.icon_id, id: bgLayer.id }
+        })
+      ).toEqual([
         {
           name: 'route',
           id: 556,
         },
         {
-          name: 'topo_bw',
-          id: 502,
-        },
-        {
           name: 'topo',
           id: 529,
+        },
+        {
+          name: 'topo_bw',
+          id: 502,
         },
         {
           name: 'ortho',

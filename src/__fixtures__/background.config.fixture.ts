@@ -35,7 +35,9 @@ export const bgConfigFixture = () => ({
       id: 0,
     },
   ],
-  bg_layers_defaultIdTourisme: 502,
+  bg_layer_theme_defaults: {
+    tourisme: 502,
+  },
   simple_styles: [
     // ['Roads primary','Roads secondary','Vegetation','Buildings','Water', 'Background']
     // ['#bc1515', '#bcffdd','#bcffdd','#bc1133','#bc1133', '#f2f2f2'],

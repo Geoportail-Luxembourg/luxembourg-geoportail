@@ -10,6 +10,6 @@ const wrapper = shallowMount(SimpleStyleItem, {
 
 describe('SimpleStyleItem', () => {
   it('renders properly', () => {
-    expect(wrapper.findAll('div').length).toBe(2)
+    expect(wrapper.findAll('span').length).toBe(2)
   })
 })
