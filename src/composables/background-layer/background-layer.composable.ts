@@ -4,7 +4,11 @@ import { bgConfigFixture } from '@/__fixtures__/background.config.fixture'
 import useLayers from '@/composables/layers/layers.composable'
 import type { Layer } from '@/stores/map.store.model'
 import { useMapStore } from '@/stores/map.store'
-import { BLANK_BACKGROUNDLAYER } from '@/composables/background-layer/background-layer.model'
+import { useThemeStore } from '@/stores/config.store'
+import {
+  BLANK_BACKGROUNDLAYER,
+  BgLayerDefaultsType,
+} from '@/composables/background-layer/background-layer.model'
 import useThemes from '@/composables/themes/themes.composable'
 
 export default function useBackgroundLayer() {
@@ -12,9 +16,13 @@ export default function useBackgroundLayer() {
   const mapStore = useMapStore()
   const layers = useLayers()
   const defaultSelectedBgId = computed(() => {
-    return useThemeStore().theme?.name === 'tourisme'
-      ? bgConfig.bg_layers_defaultIdTourisme
-      : bgConfig.bg_layers_defaultId
+    const theme_name = useThemeStore().theme?.name
+    if (theme_name) {
+      const defaultBgLayers = bgConfigFixture()
+        .bg_layer_theme_defaults as BgLayerDefaultsType
+      return defaultBgLayers[theme_name] || getDefaultSelectedId()
+    }
+    return getDefaultSelectedId()
   })
 
   function setBgLayer(layerId: number) {
@@ -47,6 +55,10 @@ export default function useBackgroundLayer() {
     )
   }
 
+  function getNullId() {
+    return BLANK_BACKGROUNDLAYER.id
+  }
+
   function getBgLayersFromConfig() {
     return bgConfigFixture().bg_layers
   }
@@ -55,6 +67,8 @@ export default function useBackgroundLayer() {
     setBgLayer,
     setMapBackground,
     getBgLayersFromConfig,
+    getNullId,
+    getDefaultSelectedId,
     defaultSelectedBgId,
   }
 }

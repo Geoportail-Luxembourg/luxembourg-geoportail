@@ -29,9 +29,7 @@ const props = defineProps({
 const isOpen = ref(props.isOpen)
 const bgLayers: Ref<IBackgroundLayer[]> = ref([])
 const activeLayerId = computed(
-  () =>
-    (bgLayerContext.value?.id as number) ??
-    backgroundLayer.getDefaultSelectedId()
+  () => (bgLayerContext.value?.id as number) ?? backgroundLayer.getNullId()
 )
 const activeLayerName = computed(
   () => bgLayers.value?.find(layer => layer.id === activeLayerId.value)?.name
@@ -42,7 +40,9 @@ watch(
   bgLayersContext => {
     bgLayers.value = bgConfigFixture().bg_layers.map(bgl =>
       Object.assign(
-        {},
+        {
+          id: bgl.id,
+        },
         bgLayersContext.find((l: ThemeNodeModel) => bgl.id == l.id),
         {
           name: bgl.icon_id,
@@ -63,7 +63,7 @@ watch(
       bgLayerContext === null &&
       layersContext?.length === 0
     ) {
-      backgroundLayer.setBgLayer(backgroundLayer.getDefaultSelectedId())
+      backgroundLayer.setBgLayer(backgroundLayer.defaultSelectedBgId.value)
 
       if (bgLayerContext === null) {
         // TODO: implement alert message
