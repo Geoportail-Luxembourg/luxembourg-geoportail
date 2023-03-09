@@ -61,7 +61,12 @@ function toggleEditionLayer() {
 
 <template>
   <ul id="sortable-layers">
-    <li v-for="layer in layers" :key="layer.id" :id="(layer.id as string)">
+    <li
+      v-for="layer in layers"
+      :key="layer.id"
+      :id="(layer.id as string)"
+      data-cy="myLayer"
+    >
       <layer-manager-item
         :draggableClassName="draggableClassName"
         :layer="layer"
