@@ -74,6 +74,8 @@ describe('StyleEditor', () => {
   })
 
   it('source test', () => {
-    expect(styleStore.bgVectorSources.length).toBe(1)
+    expect(styleStore.bgVectorSources.size).toBe(3)
+    expect(styleStore.bgVectorSources.get(556)['style']).toContain('roadmap')
+    expect(styleStore.bgVectorSources.get(529)['style']).toContain('topomap')
   })
 })
