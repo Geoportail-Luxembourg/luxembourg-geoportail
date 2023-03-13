@@ -5,10 +5,16 @@ import LayerManager from '@/components/layer-manager/layer-manager.vue'
 import RemoteLayers from '@/components/remote-layers/remote-layers.vue'
 
 import LayerPanel from './layer-panel.vue'
+import { createTestingPinia } from '@pinia/testing'
 
 describe('LayerPanel', () => {
   it('renders properly', async () => {
-    const wrapper = shallowMount(LayerPanel)
+    const wrapper = shallowMount(LayerPanel, {
+      global: {
+        plugins: [createTestingPinia()],
+      },
+    })
+
     expect(wrapper.findComponent(CatalogTab).exists()).toBe(false)
     expect(wrapper.findComponent(LayerManager).exists()).toBe(true)
     expect(wrapper.findComponent(RemoteLayers).exists()).toBe(true)

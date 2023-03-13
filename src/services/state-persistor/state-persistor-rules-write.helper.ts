@@ -2,6 +2,7 @@ import {
   ParamKeys,
   SP_AVAILABLE_STORAGES,
   SP_KEY_THEME,
+  SP_KEY_LAYERS_OPEN,
   SP_KEY_VERSION,
   StatePersistorRulesHelper,
 } from './state-persistor.model'
@@ -16,7 +17,9 @@ export abstract class RulesWriteHelper extends StatePersistorRulesHelper {
     if (RulesWriteHelper.ruleUsePermalink(key)) {
       return SP_AVAILABLE_STORAGES.permalink
     }
-
+    if (key === SP_KEY_LAYERS_OPEN) {
+      return SP_AVAILABLE_STORAGES.localStorage
+    }
     if (key === SP_KEY_THEME) {
       return SP_AVAILABLE_STORAGES.permalinkAsPath
     }

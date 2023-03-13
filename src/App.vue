@@ -14,9 +14,13 @@ import { themeSelectorService } from '@/components/theme-selector/theme-selector
 import { statePersistorLayersService } from '@/services/state-persistor/state-persistor-layers.service'
 import { statePersistorThemeService } from '@/services/state-persistor/state-persistor-theme.service'
 import { useThemeStore } from '@/stores/config.store'
+import { statePersistorLayersOpenService } from '@/services/state-persistor/state-persistor-layersopen.service'
+import { useAppStore } from '@/stores/app.store'
+import useMap from './composables/map/map.composable'
 
 statePersistorLayersService.bootstrapLayers()
 statePersistorThemeService.bootstrap()
+statePersistorLayersOpenService.bootstrapLayersOpen()
 
 const { t } = useTranslation()
 const themeStore = useThemeStore()
@@ -30,6 +34,16 @@ watch(
     }
   },
   { immediate: true }
+)
+
+const appStore = useAppStore()
+const { layersOpen } = storeToRefs(appStore)
+const { setLayersOpen } = appStore
+
+watch(layersOpen, () =>
+  setTimeout(() => {
+    useMap().getOlMap().updateSize()
+  }, 50)
 )
 </script>
 
@@ -49,6 +63,7 @@ watch(
               class="flex items-center before:font-icons before:text-3xl before:w-16 text-primary uppercase h-full mr-3"
               :class="`before:content-${theme?.name}`"
               data-cy="selectedThemeIcon"
+              @click="() => setLayersOpen(true)"
             >
               <span class="hidden lg:inline-block">{{
                 t(`${theme?.name}`)
@@ -66,7 +81,7 @@ watch(
     </header>
     <main class="flex grow">
       <!--side bar-->
-      <div class="w-80 bg-secondary">
+      <div v-if="layersOpen" class="w-80 bg-secondary">
         <layer-panel></layer-panel>
       </div>
       <div class="grow bg-blue-100">
