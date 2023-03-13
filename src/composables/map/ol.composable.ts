@@ -159,7 +159,13 @@ export default function useOpenLayers() {
           )
           addLayerToCache(
             bgLayer.id,
-            (bgBaseLayer = new MapLibreLayer({ maplibreOptions: options }))
+            (bgBaseLayer = new MapLibreLayer({
+              maplibreOptions: options,
+              label: bgLayer.name,
+              id: bgLayer.id,
+              queryable_id: bgLayer.id,
+              metadata: bgLayer.metadata,
+            }))
           )
         } else {
           addLayerToCache(bgLayer.id, (bgBaseLayer = createLayer(bgLayer)))
