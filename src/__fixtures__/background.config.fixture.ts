@@ -1,35 +1,433 @@
-export const bgConfig = {
+export const bgConfigFixture = () => ({
   bg_layers: [
     {
       // basemap_2015_global
-      name: 'route',
+      icon_id: 'route',
+      vector_id: 'roadmap',
+      medium_style_class: 'road',
       id: 556,
+      is_default: true,
     },
     {
       // topo_bw_jpeg
-      name: 'topo_bw',
-      id: 502,
-    },
-    {
-      // topogr_global
-      name: 'topo',
+      icon_id: 'topo',
+      vector_id: 'topomap',
+      medium_style_class: 'topo',
       id: 529,
     },
     {
-      name: 'ortho',
+      // topogr_global
+      icon_id: 'topo_bw',
+      vector_id: 'topomap_gray',
+      medium_style_class: 'topo',
+      id: 502,
+    },
+    {
+      icon_id: 'ortho', // id for icon
       id: 530,
     },
     {
-      name: 'hybrid',
+      icon_id: 'hybrid', // id for icon
       id: 501,
     },
     {
-      name: 'blank',
+      icon_id: 'blank',
       id: 0,
     },
   ],
-  bg_layers_defaultId: 556,
-  bg_layers_defaultIdTourisme: 502,
+  bg_layer_theme_defaults: {
+    tourisme: 502,
+  },
+  simple_styles: [
+    // ['Roads primary','Roads secondary','Vegetation','Buildings','Water', 'Background']
+    // ['#bc1515', '#bcffdd','#bcffdd','#bc1133','#bc1133', '#f2f2f2'],
+    {
+      unlocalized_label: 'Light grey',
+      hillshade: false,
+      colors: [
+        '#ffffff',
+        '#ffffff',
+        '#d6e0d7',
+        '#e1e1e1',
+        '#cccccc',
+        '#f2f2f2',
+      ],
+      selected: false,
+    },
+    {
+      unlocalized_label: 'Dark grey',
+      hillshade: false,
+      colors: [
+        '#808080',
+        '#808080',
+        '#494b4a',
+        '#505052',
+        '#232426',
+        '#454545',
+      ],
+      selected: false,
+    },
+    {
+      unlocalized_label: 'Dark sand',
+      hillshade: false,
+      colors: [
+        '#9e9375',
+        '#9e9375',
+        '#6b6249',
+        '#403928',
+        '#b8aa84',
+        '#1a1814',
+      ],
+      selected: false,
+    },
+    {
+      unlocalized_label: 'Kids',
+      hillshade: false,
+      colors: [
+        '#f9c50d',
+        '#ffffff',
+        '#839836',
+        '#d6d3ce',
+        '#2a5ba8',
+        '#eeeeee',
+      ],
+      selected: false,
+    },
+    {
+      unlocalized_label: 'Light mauve',
+      hillshade: false,
+      colors: [
+        '#f3edf5',
+        '#f3edf5',
+        '#9d7da8',
+        '#caa9d1',
+        '#613b5c',
+        '#e5d3e6',
+      ],
+      selected: false,
+    },
+    {
+      unlocalized_label: 'Light Blue',
+      hillshade: false,
+      colors: [
+        '#dceaf5',
+        '#dceaf5',
+        '#5598cf',
+        '#81b7e3',
+        '#3b576e',
+        '#b6cde0',
+      ],
+      selected: false,
+    },
+  ],
+  medium_default_styles: {
+    road: [
+      {
+        unlocalized_label: 'Roads primary',
+        color: '#f7f7f7',
+        styleProperties: [
+          {
+            type: 'line',
+            properties: [
+              'lu_road_trunk_primary',
+              'lu_bridge_major',
+              'lu_tunnel_major',
+              'lu_road_major_motorway',
+            ],
+          },
+        ],
+        visible: true,
+      },
+      {
+        unlocalized_label: 'Roads secondary',
+        color: '#f7f7f7',
+        styleProperties: [
+          {
+            type: 'line',
+            properties: [
+              'lu_road_minor',
+              'lu_road_secondary_tertiary',
+              'lu_bridge_minor',
+              'lu_road_path',
+              'lu_bridge_path',
+              'lu_bridge_railway case',
+              'lu_bridge_path case',
+            ],
+          },
+        ],
+        visible: true,
+      },
+      {
+        unlocalized_label: 'Vegetation',
+        color: '#B8D293',
+        opacity: '1',
+        styleProperties: [
+          {
+            type: 'fill',
+            properties: [
+              'lu_landcover_wood',
+              'lu_landcover_grass',
+              'lu_landuse_stadium',
+              'lu_landuse_cemetery',
+            ],
+          },
+        ],
+        visible: true,
+      },
+      {
+        unlocalized_label: 'Buildings',
+        color: '#D6AA85',
+        opacity: '1',
+        styleProperties: [
+          {
+            type: 'fill-extrusion',
+            properties: ['lu_building-3d_public', 'lu_building-3d'],
+          },
+          { type: 'fill', properties: ['lu_building', 'lu_building_public'] },
+          {
+            type: 'line',
+            properties: [
+              'lu_bridge_railway',
+              'lu_railway',
+              'lu_tunnel_railway',
+            ],
+          },
+        ],
+        visible: true,
+      },
+      {
+        unlocalized_label: 'Water',
+        color: '#94c1e1',
+        styleProperties: [
+          {
+            type: 'line',
+            properties: [
+              'lu_waterway',
+              'lu_waterway_tunnel',
+              'lu_waterway_intermittent',
+            ],
+          },
+          { type: 'fill', properties: ['lu_water'] },
+        ],
+        visible: true,
+      },
+      {
+        unlocalized_label: 'Background',
+        color: '#e7e7e7',
+        styleProperties: [{ type: 'background', properties: ['background'] }],
+        visible: true,
+      },
+      {
+        unlocalized_label: 'Hillshade',
+        styleProperties: [{ type: 'hillshade', properties: ['hillshade'] }],
+        visible: true,
+      },
+    ],
+    topo: [
+      {
+        unlocalized_label: 'Primary Names',
+        styleProperties: [
+          {
+            type: 'symbol',
+            properties: [
+              'lu_place-label_other',
+              'lu_place-label_city',
+              'lu_place-label_canton',
+              'lu_country-label-other',
+              'lu_country-label',
+              'place_label_other',
+              'place_label_city',
+              'country_label-other',
+              'country_label',
+            ],
+          },
+        ],
+        visible: true,
+      },
+      {
+        unlocalized_label: 'Secondary Names',
+        styleProperties: [
+          {
+            type: 'symbol',
+            properties: [
+              'lu_place-label_isolated',
+              'lu_place-label_locality_forest',
+              'lu_place-label_locality_lieudit',
+            ],
+          },
+        ],
+        visible: true,
+      },
+      {
+        unlocalized_label: 'Transport',
+        styleProperties: [
+          {
+            type: 'line',
+            properties: [
+              'lu_tunnel_track-casing',
+              'lu_tunnel_major_motorway-casing',
+              'lu_tunnel_railway_transit',
+              'lu_tunnel_railway',
+              'lu_tunnel_railway-hatching',
+              'lu_tunnel_path',
+              'lu_tunnel_track',
+              'lu_tunnel_minor',
+              'lu_tunnel_major_motorway',
+              'lu_tunnel_secondary_tertiary',
+              'lu_tunnel_trunk_primary',
+              'lu_road_track-casing',
+              'lu_road_minor-casing',
+              'lu_road_major_motorway-casing',
+              'lu_road_secondary_tertiary-casing',
+              'lu_road_trunk_primary-casing',
+              'lu_road_pier',
+              'lu_road_path',
+              'lu_road_track',
+              'lu_road_minor',
+              'lu_road_major_motorway',
+              'lu_road_secondary_tertiary',
+              'lu_road_trunk_primary',
+              'lu_tram',
+              'lu_tram-hatching',
+              'lu_railway_transit',
+              'lu_railway',
+              'lu_railway-hatching',
+              'lu_bridge_railway-casing',
+              'lu_bridge_track-casing',
+              'lu_bridge_path-casing',
+              'lu_bridge_minor-casing',
+              'lu_bridge_major_motorway-casing',
+              'lu_bridge_secondary_tertiary-casing',
+              'lu_bridge_trunk_primary-casing',
+              'lu_bridge_railway',
+              'lu_bridge_path',
+              'lu_bridge_track',
+              'lu_bridge_minor',
+              'lu_bridge_major_motorway',
+              'lu_bridge_secondary_tertiary',
+              'lu_bridge_trunk_primary',
+              'tunnel_track-casing',
+              'tunnel_major_motorway-casing',
+              'tunnel_railway_transit',
+              'tunnel_railway_transit-hatching',
+              'tunnel_railway',
+              'tunnel_railway-hatching',
+              'tunnel_path',
+              'tunnel_track',
+              'tunnel_minor',
+              'tunnel_major_motorway',
+              'tunnel_secondary_tertiary',
+              'tunnel_trunk_primary',
+              'road_track-casing',
+              'road_minor-casing',
+              'road_major_motorway-casing',
+              'road_secondary_tertiary-casing',
+              'road_trunk_primary-casing',
+              'road_pier',
+              'road_path',
+              'road_track',
+              'road_minor',
+              'road_major_motorway',
+              'road_secondary_tertiary',
+              'road_trunk_primary',
+              'railway-transit',
+              'railway-transit-hatching',
+              'railway',
+              'railway-hatching',
+              'bridge_railway-casing',
+              'bridge_path-casing',
+              'bridge_track_casing',
+              'bridge_minor-casing',
+              'bridge_major_motorway-casing',
+              'bridge_secondary_tertiary-casing',
+              'bridge_trunk_primary-casing',
+              'bridge_railway',
+              'bridge_path',
+              'bridge_track',
+              'bridge_minor',
+              'bridge_major_motorway',
+              'bridge_secondary_tertiary',
+              'bridge_trunk_primary',
+            ],
+          },
+          {
+            type: 'symbols',
+            properties: [
+              'lu_road_major-label',
+              'lu_motorway-shield',
+              'lu_road-shield',
+            ],
+          },
+        ],
+        visible: true,
+      },
+      {
+        unlocalized_label: 'Vegetation',
+        styleProperties: [
+          {
+            type: 'fill',
+            properties: [
+              'lu_landuse_stadium',
+              'lu_landuse_cemetery',
+              'lu_landuse_gras',
+              'lu_landuse_park',
+              'lu_landuse_park-outline',
+              'lu_landuse_vineyard',
+              'lu_landuse_orchard',
+              'lu_landuse_wood',
+              'landcover_grass',
+              'landcover_wood',
+            ],
+          },
+        ],
+        visible: true,
+      },
+      {
+        unlocalized_label: 'Electricity',
+        styleProperties: [
+          { type: 'fill', properties: ['lu_power_station', 'lu_power_pylone'] },
+          {
+            type: 'line',
+            properties: ['lu_power_line', 'lu_power_station-outline'],
+          },
+          {
+            type: 'symbol',
+            properties: ['lu_power_station-label', 'lu_eolienne'],
+          },
+        ],
+        visible: true,
+      },
+      {
+        unlocalized_label: 'Contours and Height Points',
+        styleProperties: [
+          {
+            type: 'line',
+            properties: [
+              'lu_contour-100',
+              'lu_contour-50',
+              'lu_contour-20',
+              'lu_contour-10',
+              'lu_contour',
+            ],
+          },
+          {
+            type: 'symbol',
+            properties: [
+              'lu_contour-label-100',
+              'lu_contour-label-20',
+              'lu_apex-label',
+            ],
+          },
+        ],
+        visible: true,
+      },
+      {
+        unlocalized_label: 'Hillshade',
+        styleProperties: [{ type: 'hillshade', properties: ['lu_hillshade'] }],
+        visible: true,
+      },
+    ],
+  },
   http_bg_server: 'wmts{1-2}',
   https_bg_server: 'wmts{3-4}',
   bg_wmts_server_path: 'mapproxy_4_v3/wmts/{Layer}',
@@ -68,4 +466,4 @@ export const bgConfig = {
     '20',
     '21',
   ],
-}
+})

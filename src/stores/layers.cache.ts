@@ -1,3 +1,4 @@
+import { LayerId } from '@/stores/map.store.model'
 import BaseLayer from 'ol/layer/Base'
 
-export const layersCache: Record<string, BaseLayer> = {}
+export const layersCache: Map<LayerId, BaseLayer> = new Map()

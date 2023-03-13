@@ -5,7 +5,7 @@ import { getTopLeft } from 'ol/extent.js'
 import { WMTS } from 'ol/source'
 import WmtsTileGrid from 'ol/tilegrid/WMTS'
 
-import { bgConfig } from '@/__fixtures__/background.config.fixture'
+import { bgConfigFixture } from '@/__fixtures__/background.config.fixture'
 import type { Layer } from '@/stores/map.store.model'
 
 // TODO: check that it is valid for all WMTS layers
@@ -35,6 +35,7 @@ export function createBgWmtsLayer(layer: Layer): TileLayer<WMTS> {
   // TODO: refactor requestScheme
   const requestScheme = 'https'
 
+  const bgConfig = bgConfigFixture()
   const srv =
     requestScheme === 'https'
       ? bgConfig.https_bg_server

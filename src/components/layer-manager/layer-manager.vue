@@ -9,7 +9,10 @@ import { BLANK_BACKGROUNDLAYER } from '@/composables/background-layer/background
 
 import LayerManagerItemBackground from './layer-item/layer-item-background.vue'
 import LayerManagerItem from './layer-item/layer-item.vue'
+import SimpleStyleSelector from '../style-selector/simple-style-selector.vue'
 import { useMetadataStore } from '@/stores/metadata.store'
+
+const ROAD_MAP_ID = 556
 
 const { setMetadataId } = useMetadataStore()
 const mapStore = useMapStore()
@@ -17,6 +20,7 @@ const { bgLayer } = storeToRefs(mapStore)
 
 const layers = computed(() => [...mapStore.layers].reverse())
 const isLayerOpenId: ShallowRef<LayerId | undefined> = shallowRef()
+const isStyleEditorOpen: ShallowRef<boolean> = shallowRef(false)
 const draggableClassName = 'drag-handle'
 
 onMounted(() => {
@@ -51,7 +55,7 @@ function toggleAccordionItem(layer: Layer) {
 }
 
 function toggleEditionLayer() {
-  console.info('clickEdit to implement')
+  isStyleEditorOpen.value = !isStyleEditorOpen.value
 }
 </script>
 
@@ -72,11 +76,16 @@ function toggleEditionLayer() {
     <li>
       <layer-manager-item-background
         :layer="bgLayer || BLANK_BACKGROUNDLAYER"
-        :showEditButton="!!bgLayer"
+        :showEditButton="bgLayer?.id === ROAD_MAP_ID"
         @clickInfo="() => bgLayer && setMetadataId(bgLayer.id)"
         @clickEdit="toggleEditionLayer"
       >
       </layer-manager-item-background>
+      <!-- TODO: add medium and advanced style editors -->
+      <simple-style-selector
+        :is-open="isStyleEditorOpen && bgLayer?.id === ROAD_MAP_ID"
+      >
+      </simple-style-selector>
     </li>
   </ul>
 </template>

@@ -3,15 +3,14 @@ import { useTranslation } from 'i18next-vue'
 import { computed, Ref, ref, watch } from 'vue'
 import { storeToRefs } from 'pinia'
 
-import {
-  BLANK_BACKGROUNDLAYER,
-  IBackgroundLayer,
-} from '@/composables/background-layer/background-layer.model'
+import { IBackgroundLayer } from '@/composables/background-layer/background-layer.model'
 import useBackgroundLayer from '@/composables/background-layer/background-layer.composable'
 import { useThemeStore } from '@/stores/config.store'
 import { useMapStore } from '@/stores/map.store'
 import { statePersistorLayersService } from '@/services/state-persistor/state-persistor-layers.service'
 import BackgroundSelectorItem from './background-selector-item.vue'
+import { bgConfigFixture } from '@/__fixtures__/background.config.fixture'
+import { ThemeNodeModel } from '@/composables/themes/themes.model'
 
 const { t } = useTranslation()
 const backgroundLayer = useBackgroundLayer()
@@ -30,20 +29,28 @@ const props = defineProps({
 const isOpen = ref(props.isOpen)
 const bgLayers: Ref<IBackgroundLayer[]> = ref([])
 const activeLayerId = computed(
-  () => (bgLayerContext.value?.id as number) ?? BLANK_BACKGROUNDLAYER.id
+  () => (bgLayerContext.value?.id as number) ?? backgroundLayer.getNullId()
 )
 const activeLayerName = computed(
-  () => bgLayers.value.find(layer => layer.id === activeLayerId.value)?.name
+  () => bgLayers.value?.find(layer => layer.id === activeLayerId.value)?.name
 )
 
 watch(
   () => themeStore.bgLayers,
   bgLayersContext => {
-    bgLayers.value =
-      bgLayersContext.length > 0
-        ? backgroundLayer.getBgLayersFromConfig()
-        : [BLANK_BACKGROUNDLAYER]
-  }
+    bgLayers.value = bgConfigFixture().bg_layers.map(bgl =>
+      Object.assign(
+        {
+          id: bgl.id,
+        },
+        bgLayersContext.find((l: ThemeNodeModel) => bgl.id == l.id),
+        {
+          name: bgl.icon_id,
+        }
+      )
+    )
+  },
+  { immediate: true }
 )
 
 watch(
