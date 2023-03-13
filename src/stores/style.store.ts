@@ -15,7 +15,7 @@ export const useStyleStore = defineStore(
   () => {
     const styleService = useMvtStyles()
     const bgStyle: ShallowRef<StyleItem[] | undefined> = shallowRef()
-    const bgVectorSources: ShallowRef<VectorSourceDict> = shallowRef({})
+    const bgVectorSources: ShallowRef<VectorSourceDict> = shallowRef(new Map())
 
     const promises: Promise<{ id: string; config: IMvtConfig }>[] = []
     bgConfigFixture().bg_layers.forEach(bgLayer => {
@@ -26,14 +26,14 @@ export const useStyleStore = defineStore(
         )
         promises.push(
           conf.then(c => {
-            return { id: bgLayer.id.toString(), config: c as IMvtConfig }
+            return { id: bgLayer.id, config: c as IMvtConfig }
           })
         )
       }
     })
     Promise.all(promises).then(styleConfigs => {
-      const vectorDict: VectorSourceDict = {}
-      styleConfigs.forEach(c => (vectorDict[c.id] = c.config))
+      const vectorDict: VectorSourceDict = new Map()
+      styleConfigs.forEach(c => vectorDict.set(c.id, c.config))
       bgVectorSources.value = vectorDict
     })
 

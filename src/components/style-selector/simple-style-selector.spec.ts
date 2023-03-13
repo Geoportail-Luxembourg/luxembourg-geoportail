@@ -38,8 +38,6 @@ describe('StyleEditor', () => {
   })
   const styleStore = useStyleStore()
 
-  //vi.mock('@/stores/style.store', () => { return {bgStyle: {unlocalized_label: 'entity1', hillshade:false, colors: ['#ffffff', "#000000"], selected:false}, bgVectorSources: [], setSimpleStyle: (s: any) => {} } })
-
   it('default simple bgStyle test', () => {
     expect(styleStore.bgStyle).toBe(undefined)
     styleStore.setSimpleStyle(dummySimpleStyles[0])
@@ -62,7 +60,6 @@ describe('StyleEditor', () => {
     expect(wrapper.findAll('button').length).toBe(7)
     expect(wrapper.findAll('button')[6].element.title).toBe('Reset Style')
     await wrapper.vm.onStylingSelected(dummySimpleStyles[0])
-    //await wrapper.vm.$nextTick()
     if (styleStore.bgStyle) {
       expect(styleStore.bgStyle[0].unlocalized_label).toBe('Roads primary')
       expect(styleStore.bgStyle[0].color).toBe('#ffffff')

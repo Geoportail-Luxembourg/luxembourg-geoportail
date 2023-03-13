@@ -99,20 +99,20 @@ export default function useOpenLayers() {
     if (layer) layer.setOpacity(opacity)
   }
 
-  function removeFromCache(id: string) {
+  function removeFromCache(id: LayerId) {
     layersCache.delete(id)
   }
 
   function isLayerCached(layer: Layer): boolean {
-    return layersCache.has(layer.id.toString())
+    return layersCache.has(layer.id)
   }
 
-  function addLayerToCache(id: string, layer: BaseLayer) {
+  function addLayerToCache(id: LayerId, layer: BaseLayer) {
     layersCache.set(id, layer)
   }
 
   function getLayerFromCache(layer: Layer): BaseLayer {
-    const id = layer.id.toString()
+    const id = layer.id
 
     const cachedLayer = layersCache.get(id)
     if (cachedLayer) {
@@ -147,7 +147,7 @@ export default function useOpenLayers() {
       if (isLayerCached(bgLayer)) {
         bgBaseLayer = getLayerFromCache(bgLayer)
       } else {
-        const styleSource = vectorSources && vectorSources[bgLayer.id]
+        const styleSource = vectorSources && vectorSources.get(bgLayer.id)
         const mapService = useMap()
 
         if (styleSource) {
@@ -158,14 +158,11 @@ export default function useOpenLayers() {
             styleSource
           )
           addLayerToCache(
-            bgLayer.id.toString(),
+            bgLayer.id,
             (bgBaseLayer = new MapLibreLayer({ maplibreOptions: options }))
           )
         } else {
-          addLayerToCache(
-            bgLayer.id.toString(),
-            (bgBaseLayer = createLayer(bgLayer))
-          )
+          addLayerToCache(bgLayer.id, (bgBaseLayer = createLayer(bgLayer)))
         }
       }
     }

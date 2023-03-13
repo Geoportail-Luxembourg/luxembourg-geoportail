@@ -128,8 +128,8 @@ export default function useMvtStyles() {
       // this.isCustomStyle = this.isCustomStyleSetter(label, false);
 
       // temporary timeout for testing async style queries
-      return new Promise(r => setTimeout(r, 2000, config))
-      // return Promise.resolve(config)
+      // return new Promise(r => setTimeout(r, 2000, config))
+      return Promise.resolve(config)
     }
     return Promise.resolve(config)
   }

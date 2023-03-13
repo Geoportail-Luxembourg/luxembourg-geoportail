@@ -1,3 +1,5 @@
+import { LayerId } from '@/stores/map.store.model'
+
 export interface IMvtConfig {
   label: string
   defaultMapBoxStyle: string
@@ -6,9 +8,8 @@ export interface IMvtConfig {
   xyz_custom: string
   style: string
 }
-export interface VectorSourceDict {
-  [id: string]: IMvtConfig
-}
+export type VectorSourceDict = Map<LayerId, IMvtConfig>
+
 export interface SimpleRoadStyle {
   unlocalized_label: string
   hillshade: boolean

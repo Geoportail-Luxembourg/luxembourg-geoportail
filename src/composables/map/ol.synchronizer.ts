@@ -79,13 +79,13 @@ export class OlSynchronizer {
     watch(
       () => styleStore.bgVectorSources,
       newVectorSources => {
-        for (const id in newVectorSources) {
+        for (const id of newVectorSources.keys()) {
           if (
             !this.previousVectorSources ||
-            this.previousVectorSources[id] !== newVectorSources[id]
+            this.previousVectorSources.get(id) !== newVectorSources.get(id)
           ) {
             openLayers.removeFromCache(id)
-            if (id === mapStore?.bgLayer?.id.toString()) {
+            if (id === mapStore?.bgLayer?.id) {
               // refresh bg layer
               openLayers.setBgLayer(map, mapStore?.bgLayer, newVectorSources)
             }
