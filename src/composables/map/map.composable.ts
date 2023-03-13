@@ -8,6 +8,9 @@ import type {
   MapContext,
 } from '@/stores/map.store.model'
 
+export const PROJECTION_DESTINATION = 'EPSG:3857'
+export const PROJECTION_SOURCE = 'EPSG:4326'
+
 let map: OlMap
 
 export default function useMap() {

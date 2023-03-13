@@ -1,30 +1,76 @@
 import type BaseLayer from 'ol/layer/Base'
 import ImageLayer from 'ol/layer/Image'
-import type TileLayer from 'ol/layer/Tile'
+import TileLayer from 'ol/layer/Tile'
 import type OlMap from 'ol/Map'
 import { ImageWMS, WMTS } from 'ol/source'
 import MapLibreLayer from '@geoblocks/ol-maplibre-layer'
+import WmtsTileGrid from 'ol/tilegrid/WMTS'
+import { getTopLeft } from 'ol/extent.js'
+import { get as getProjection, transformExtent } from 'ol/proj'
 
-import { createBgWmtsLayer } from '@/composables/background-layer/background-layer.wmts-helper'
 import { layersCache } from '@/stores/layers.cache'
 import type { Layer, LayerId } from '@/stores/map.store.model'
 import useMap from './map.composable'
 import { VectorSourceDict } from '@/composables/mvt-styles/mvt-styles.model'
+import { PROJECTION_DESTINATION, PROJECTION_SOURCE } from './map.composable'
+import { isHiDpi, stringToBoolean } from '@/services/utils'
+import { storageHelper } from '@/services/state-persistor/storage/storage.helper'
+import { SP_KEY_IPV6 } from '@/services/state-persistor/state-persistor.model'
 
 const proxyWmsUrl = 'https://map.geoportail.lu/ogcproxywms'
 export const remoteProxyWms = 'https://map.geoportail.lu/httpsproxy'
+
+const TILE_GRID_RESOLUTION = [
+  156543.033928, 78271.516964, 39135.758482, 19567.879241, 9783.9396205,
+  4891.96981025, 2445.98490513, 1222.99245256, 611.496226281, 305.748113141,
+  152.87405657, 76.4370282852, 38.2185141426, 19.1092570713, 9.55462853565,
+  4.77731426782, 2.38865713391, 1.19432856696, 0.597164283478, 0.298582141739,
+  0.1492910708695, 0.07464553543475,
+]
+const TILE_MATRIX_IDS = [
+  '00',
+  '01',
+  '02',
+  '03',
+  '04',
+  '05',
+  '06',
+  '07',
+  '08',
+  '09',
+  '10',
+  '11',
+  '12',
+  '13',
+  '14',
+  '15',
+  '16',
+  '17',
+  '18',
+  '19',
+  '20',
+  '21',
+]
+
+function getOlcsExtent() {
+  return transformExtent(
+    [5.31, 49.38, 6.64, 50.21],
+    PROJECTION_SOURCE,
+    PROJECTION_DESTINATION
+  )
+}
 
 function createWmsLayer(layer: Layer): ImageLayer<ImageWMS> {
   const { name, layers, imageType, url, id } = layer
   const olLayer = new ImageLayer({
     properties: {
-      //'olcs.extent': appOlcsExtent,
+      'olcs.extent': getOlcsExtent(),
       label: name,
       id,
     },
     source: new ImageWMS({
       url: url || proxyWmsUrl,
-      //hidpi: appGetDevice.isHiDpi(),
+      hidpi: isHiDpi(),
       serverType: 'mapserver',
       params: {
         FORMAT: imageType,
@@ -35,9 +81,59 @@ function createWmsLayer(layer: Layer): ImageLayer<ImageWMS> {
         : {}),
     }),
   })
-  //ngeoMiscDecorate.layer(layer);
 
   return olLayer
+}
+
+function createWmtsLayer(layer: Layer): TileLayer<WMTS> {
+  const { name, imageType, id } = layer
+  const hasRetina = getLayerHasRetina(layer)
+  const projection = getProjection(PROJECTION_DESTINATION)!
+  const extent = projection!.getExtent()
+  const olLayer = new TileLayer({
+    source: new WMTS({
+      url: getLayerWmtsUrl(layer),
+      tilePixelRatio: hasRetina ? 2 : 1,
+      layer: name,
+      matrixSet: `GLOBAL_WEBMERCATOR_4_V3${hasRetina ? '_HD' : ''}`,
+      format: imageType,
+      requestEncoding: 'REST',
+      projection,
+      tileGrid: new WmtsTileGrid({
+        origin: getTopLeft(extent),
+        extent,
+        resolutions: TILE_GRID_RESOLUTION,
+        matrixIds: TILE_MATRIX_IDS,
+      }),
+      style: 'default',
+      crossOrigin: 'anonymous',
+    }),
+    properties: {
+      // check that olcs.extent is still available for legacy app
+      'olcs.extent': getOlcsExtent(),
+      label: name,
+      id,
+    },
+  })
+
+  return olLayer
+}
+
+function getLayerWmtsUrl(layer: Layer, requestScheme = 'https') {
+  const imageExt = layer.imageType.split('/')[1]
+  const domain = storageHelper.getValue(SP_KEY_IPV6, stringToBoolean)
+    ? 'app.geoportail.lu'
+    : 'geoportail.lu'
+
+  return (
+    `${requestScheme === 'https' ? '//wmts{3-4}.' : '//wmts{1-2}.'}${domain}` +
+    `/mapproxy_4_v3/wmts/{Layer}${getLayerHasRetina(layer) ? '_hd' : ''}` +
+    `/{TileMatrixSet}/{TileMatrix}/{TileCol}/{TileRow}.${imageExt}`
+  )
+}
+
+function getLayerHasRetina(layer: Layer) {
+  return !!layer?.metadata?.hasRetina && isHiDpi()
 }
 
 export default function useOpenLayers() {
@@ -48,8 +144,9 @@ export default function useOpenLayers() {
         layer = createWmsLayer(spec)
         break
       }
+      case 'WMTS':
       case 'BG WMTS': {
-        layer = createBgWmtsLayer(spec)
+        layer = createWmtsLayer(spec)
         break
       }
       default:
