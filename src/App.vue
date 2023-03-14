@@ -63,7 +63,7 @@ watch(layersOpen, () =>
               class="flex items-center before:font-icons before:text-3xl before:w-16 text-primary uppercase h-full mr-3"
               :class="`before:content-${theme?.name}`"
               data-cy="selectedThemeIcon"
-              @click="() => setLayersOpen(true)"
+              @click="() => setLayersOpen(!layersOpen)"
             >
               <span class="hidden lg:inline-block">{{
                 t(`${theme?.name}`)
