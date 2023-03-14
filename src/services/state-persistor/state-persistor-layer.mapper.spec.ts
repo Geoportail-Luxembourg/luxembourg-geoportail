@@ -202,15 +202,15 @@ describe('StorageLayerMapper', () => {
     })
   })
 
-  describe('#bgLayerTobgLayerName', () => {
+  describe('#bgLayerToBgLayerName', () => {
     it('returns the formatted bg layer id', () => {
-      expect(storageLayerMapper.bgLayerTobgLayerName(bgLayer0)).toStrictEqual(
+      expect(storageLayerMapper.bgLayerToBgLayerName(bgLayer0)).toStrictEqual(
         'earth_red'
       )
     })
 
     it('returns blank as bg layer id', () => {
-      expect(storageLayerMapper.bgLayerTobgLayerName(undefined)).toStrictEqual(
+      expect(storageLayerMapper.bgLayerToBgLayerName(undefined)).toStrictEqual(
         'blank'
       )
     })

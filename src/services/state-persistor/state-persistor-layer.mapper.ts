@@ -75,7 +75,7 @@ class StorageLayerMapper {
     return bgLayerName ? (themes.findBgLayerByName(bgLayerName) as Layer) : null
   }
 
-  bgLayerTobgLayerName(layer: Layer | undefined) {
+  bgLayerToBgLayerName(layer: Layer | undefined) {
     return layer?.name || BLANK_BACKGROUNDLAYER.name
   }
 }

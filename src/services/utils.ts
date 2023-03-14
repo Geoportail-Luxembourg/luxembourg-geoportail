@@ -9,11 +9,14 @@ export function debounce(fn: Function, delay: number) {
   }
 }
 
-export function stringToNumber(text: string | null) {
+export function stringToNumber(text: string | null): number | undefined {
   return text?.trim() && !isNaN(Number(text)) ? Number(text) : undefined
 }
 
-export function stringToNumbers(text: string | null, separator: string) {
+export function stringToNumbers(
+  text: string | null,
+  separator: string
+): (number | undefined)[] {
   return (
     text
       ?.split(separator)
@@ -23,7 +26,10 @@ export function stringToNumbers(text: string | null, separator: string) {
   )
 }
 
-export function stringToBooleans(text: string | null, separator: string) {
+export function stringToBooleans(
+  text: string | null,
+  separator: string
+): (boolean | undefined)[] {
   return (
     text
       ?.split(separator)

@@ -50,7 +50,7 @@ class StatePersistorBgLayerService implements StatePersistorService {
           storageHelper.setValue(
             SP_KEY_BGLAYER,
             value as Layer,
-            storageLayerMapper.bgLayerTobgLayerName
+            storageLayerMapper.bgLayerToBgLayerName
           )
         }
       },
