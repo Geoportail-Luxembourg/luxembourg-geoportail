@@ -311,6 +311,7 @@
   "Remove layer \"{{layerName}}\"": "",
   "Report a map content problem:": "E Problem op der Kaart melden:",
   "Reset": "Reset",
+  "Reset style": "Stil zrécksetzen",
   "Retirer vignette": "Vignette wechhuelen",
   "Revision date": "Revisiounsdatum",
   "Rotate": "",
@@ -320,6 +321,8 @@
   "Save map": "Kaart speicheren",
   "Save new map": "nei Kaart späicheren",
   "Search Maps": "Kaarten sichen",
+  "Select a style": "Wielt ee Stil",
+  "Select style: {{styleName}}": "",
   "Section": "Sectioun",
   "Section cadastrale": "Kadastersektioun",
   "Send feedback to support team": "Feedback un d'Support Team schécken",
@@ -1701,5 +1704,11 @@
   "tourisme_ortal_touristinfo": "Kriterium Tourist-Informationen",
   "tourisme_ortal_wanderziele": "Wanderziele & Sehnsuchtsorte",
   "tourisme_ortal_mobilitaet": "Kriterium Mobilität",
-  "tourisme_ortal_servicestellen": "Kriterium Servicestellen"
+  "tourisme_ortal_servicestellen": "Kriterium Servicestellen",
+  "Light grey": "Hellgro",
+  "Dark grey": "Donkelgro",
+  "Dark sand": "Brong",
+  "Kids": "Faarweg",
+  "Light mauve": "Magenta",
+  "Light Blue": "Blo"
 }

@@ -58,7 +58,7 @@ describe('StyleEditor', () => {
       expect(styleStore.bgStyle[0].color).toBe('#f7f7f7')
     }
     expect(wrapper.findAll('button').length).toBe(7)
-    expect(wrapper.findAll('button')[6].element.title).toBe('Reset Style')
+    expect(wrapper.findAll('button')[6].element.textContent).toBe('Reset style')
     await wrapper.vm.onStylingSelected(dummySimpleStyles[0])
     if (styleStore.bgStyle) {
       expect(styleStore.bgStyle[0].unlocalized_label).toBe('Roads primary')

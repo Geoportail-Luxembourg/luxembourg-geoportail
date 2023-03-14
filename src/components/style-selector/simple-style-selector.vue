@@ -50,7 +50,7 @@ function resetStyle() {
   >
     <!-- TODO: create clean container for simple and advanced style editors -->
     <div class="w-full text-white text-lg text-center">
-      {{ t('Simple style editor', { ns: 'client' }) }}
+      {{ t('Select a style', { ns: 'client' }) }}
     </div>
     <div
       v-for="item in simpleStyles"
@@ -63,7 +63,15 @@ function resetStyle() {
       <span class="text-white"
         >{{ t(item.unlocalized_label, { ns: 'client' }) }} :
       </span>
-      <button @click="onStylingSelected(item)" class="w-full">
+      <button
+        :title="
+          t('Select style: {{styleName}}', {
+            styleName: t(item.unlocalized_label),
+          })
+        "
+        @click="onStylingSelected(item)"
+        class="w-full"
+      >
         <span class="flex">
           <simple-style-item
             :colors="item.colors"
@@ -72,12 +80,8 @@ function resetStyle() {
         </span>
       </button>
     </div>
-    <button
-      @click="resetStyle"
-      :title="t('Reset Style', { ns: 'client' })"
-      class="lux-btn"
-    >
-      {{ t('Reset Style', { ns: 'client' }) }}
+    <button @click="resetStyle" class="lux-btn">
+      {{ t('Reset style', { ns: 'client' }) }}
     </button>
   </div>
 </template>

@@ -312,6 +312,7 @@
   "Remove layer \"{{layerName}}\"": "",
   "Report a map content problem:": "Ein Karteninhaltsproblem melden:",
   "Reset": "Reset",
+  "Reset style": "Stil zurücksetzen",
   "Retirer vignette": "Miniaturbild entfernen",
   "Revision date": "Revisionsdatum",
   "Rotate": "",
@@ -321,6 +322,8 @@
   "Save map": "Karte speichern",
   "Save new map": "Neue Karte speichern",
   "Search Maps": "Karten suchen",
+  "Select a style": "Wählen Sie eine Darstellung",
+  "Select style: {{styleName}}": "",
   "Section": "Sektion",
   "Section cadastrale": "Kadastersektion",
   "Send feedback to support team": "Feedback an das Support Team senden",
@@ -1702,5 +1705,11 @@
   "tourisme_ortal_touristinfo": "Kriterium Tourist-Informationen",
   "tourisme_ortal_wanderziele": "Wanderziele & Sehnsuchtsorte",
   "tourisme_ortal_mobilitaet": "Kriterium Mobilität",
-  "tourisme_ortal_servicestellen": "Kriterium Servicestellen"
+  "tourisme_ortal_servicestellen": "Kriterium Servicestellen",
+  "Light grey": "Hellgrau",
+  "Dark grey": "Dunkelgrau",
+  "Dark sand": "Braun",
+  "Kids": "Bunt",
+  "Light mauve": "Magenta",
+  "Light Blue": "Blau"
 }
