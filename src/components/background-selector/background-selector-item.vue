@@ -18,8 +18,8 @@ const props = defineProps({
 const buttonTitle = computed(() => {
   const localizedTitle = t(props.bgTitle)
   const hasTitle = props.bgTitle.length > 0
-  const localizedLayerName = `${t('Background layer')}: ${t(props.bgName)}`
-  return `${localizedTitle}${hasTitle ? '\n' : ''}${localizedLayerName}`
+  const localizedLayerName = `${t('Background layer:')} ${t(props.bgName)}`
+  return `${localizedTitle}${hasTitle ? ' - ' : ''}${localizedLayerName}`
 })
 
 const buttonClasses = computed(

@@ -7,12 +7,7 @@ import proj4 from 'proj4'
 import { statePersistorMapService } from './state-persistor-map.service'
 import useMap from '@/composables/map/map.composable'
 import { storageHelper } from './storage/storage.helper'
-import {
-  SP_KEY_VERSION,
-  SP_KEY_X,
-  SP_KEY_Y,
-  SP_KEY_ZOOM,
-} from './state-persistor.model'
+import { SP_KEY_X, SP_KEY_Y, SP_KEY_ZOOM } from './state-persistor.model'
 import { initProjections } from '../projection.utils'
 import { register } from 'ol/proj/proj4'
 
@@ -48,6 +43,7 @@ describe('StatePersistorMapService', () => {
             (key: string, value: any) => (fakeStorage[key] = value)
           ),
           getValue: vi.fn((key: string) => fakeStorage[key]),
+          getInitialVersion: vi.fn(() => fakeStorage['version']),
         },
       }
     })
@@ -74,16 +70,11 @@ describe('StatePersistorMapService', () => {
         )
       vi.runAllTimers()
       expect(storageHelper.setValue).toHaveBeenNthCalledWith(1, SP_KEY_ZOOM, 10)
-      expect(storageHelper.setValue).toHaveBeenNthCalledWith(
-        2,
-        SP_KEY_VERSION,
-        3
-      )
     })
   })
 
   describe('#persistXY', () => {
-    it('22persists the center coordinates of the view', () => {
+    it('persists the center coordinates of the view', () => {
       statePersistorMapService.persistXY()
       olMap
         .getView()
@@ -105,11 +96,6 @@ describe('StatePersistorMapService', () => {
         SP_KEY_Y,
         6379152
       )
-      expect(storageHelper.setValue).toHaveBeenNthCalledWith(
-        3,
-        SP_KEY_VERSION,
-        3
-      ) // TODO: remove when version done, for now, force version 3
     })
   })
 
@@ -118,7 +104,7 @@ describe('StatePersistorMapService', () => {
       vi.spyOn(statePersistorMapService, 'persistXY')
       vi.spyOn(statePersistorMapService, 'persistZoom')
 
-      statePersistorMapService.persistViewport()
+      statePersistorMapService.persist()
       expect(statePersistorMapService.persistXY).toHaveBeenCalled()
       expect(statePersistorMapService.persistZoom).toHaveBeenCalled()
     })
@@ -132,14 +118,14 @@ describe('StatePersistorMapService', () => {
 
     describe('when there is not value in storage', () => {
       it('restores the view center with default value when no X,Y found in storage', () => {
-        statePersistorMapService.restoreViewport()
+        statePersistorMapService.restore()
         expect(view.setCenter).toHaveBeenCalledWith([
           667916.9447596414, 6394482.317900552,
         ])
       })
 
       it('restores the zoom center with default value 8', () => {
-        statePersistorMapService.restoreViewport()
+        statePersistorMapService.restore()
         expect(view.setZoom).toHaveBeenCalledWith(8)
       })
     })
@@ -148,14 +134,14 @@ describe('StatePersistorMapService', () => {
       it('restores the zoom center as is for version 3', () => {
         storageHelper.setValue('version', 3)
         storageHelper.setValue('zoom', 10)
-        statePersistorMapService.restoreViewport()
+        statePersistorMapService.restore()
         expect(view.setZoom).toHaveBeenCalledWith(10)
       })
 
       it('restores the zoom center after conversion from v2 to v3', () => {
         storageHelper.setValue('version', 'any not 3')
         storageHelper.setValue('zoom', 10)
-        statePersistorMapService.restoreViewport()
+        statePersistorMapService.restore()
         expect(view.setZoom).toHaveBeenCalledWith(18)
       })
 
@@ -165,7 +151,7 @@ describe('StatePersistorMapService', () => {
         storageHelper.setValue('SRS', 'EPSG:21781')
         storageHelper.setValue('X', 565128.7200596306)
         storageHelper.setValue('Y', 6263074.645037436)
-        statePersistorMapService.restoreViewport()
+        statePersistorMapService.restore()
         expect(view.setCenter).toHaveBeenCalledWith([
           1115435.3583171312, 20441954.15514722,
         ])
@@ -176,7 +162,7 @@ describe('StatePersistorMapService', () => {
         storageHelper.setValue('version', 2)
         storageHelper.setValue('X', 565128.7200596306)
         storageHelper.setValue('Y', 6263074.645037436)
-        statePersistorMapService.restoreViewport()
+        statePersistorMapService.restore()
         expect(view.setCenter).toHaveBeenCalledWith([
           7633619.184187683, 3818804.664253617,
         ])
@@ -187,7 +173,7 @@ describe('StatePersistorMapService', () => {
         storageHelper.setValue('version', 3)
         storageHelper.setValue('X', 565128.7200596306)
         storageHelper.setValue('Y', 6263074.645037436)
-        statePersistorMapService.restoreViewport()
+        statePersistorMapService.restore()
         expect(view.setCenter).toHaveBeenCalledWith([
           565128.7200596306, 6263074.645037436,
         ])

@@ -57,7 +57,19 @@ export class UrlStorage implements Storage {
     return this.getSnappedUrl().searchParams.get(key)
   }
 
-  removeItem() {}
+  removeItem(key: string) {
+    const params = new URLSearchParams(
+      new URL(window.location.toString()).search
+    )
+
+    params.delete(key)
+
+    try {
+      window.history.replaceState(null, '', '?' + params.toString())
+    } catch (error) {
+      // replaceState fails on some browser if the domain in the state
+    }
+  }
 
   encodeQueryParam(key: string, value: string) {
     return `${encodeURIComponent(key)}=${encodeURIComponent(value)}`

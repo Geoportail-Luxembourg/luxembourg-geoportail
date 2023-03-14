@@ -18,7 +18,7 @@ import { statePersistorLayersOpenService } from '@/services/state-persistor/stat
 import { useAppStore } from '@/stores/app.store'
 import useMap from './composables/map/map.composable'
 
-statePersistorLayersService.bootstrapLayers()
+statePersistorLayersService.bootstrap()
 statePersistorThemeService.bootstrap()
 statePersistorLayersOpenService.bootstrapLayersOpen()
 

@@ -14,8 +14,7 @@ onMounted(async () => {
     map.createMap(mapContainer.value)
     new OlSynchronizer(map.getOlMap())
 
-    statePersistorMapService.restoreViewport()
-    statePersistorMapService.persistViewport()
+    statePersistorMapService.bootstrap()
 
     // Direct access to olMap for cypress
     window.olMap = map.getOlMap() as OlMap

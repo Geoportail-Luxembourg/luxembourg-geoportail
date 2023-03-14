@@ -1,4 +1,5 @@
 <script setup lang="ts">
+import { computed } from 'vue'
 import { useTranslation } from 'i18next-vue'
 import { storeToRefs } from 'pinia'
 
@@ -10,14 +11,16 @@ import { statePersistorLangService } from '@/services/state-persistor/state-pers
 const { i18next, t } = useTranslation()
 const { setLang } = useAppStore()
 const { lang } = storeToRefs(useAppStore())
-const availableLanguages = ['en', 'de', 'fr', 'lb'].map(lang => ({
-  label: t(lang),
-  value: lang,
-  ariaLabel: t(`Changer de langue : {{lang}}`, { lang: lang }),
-}))
+const availableLanguages = computed(() =>
+  ['en', 'de', 'fr', 'lb'].map(lang => ({
+    label: t(lang),
+    value: lang,
+    ariaLabel: t(`Changer de langue : {{lang}}`, { lang: lang }),
+  }))
+)
 const placeholder = t('Changer de langue')
 
-statePersistorLangService.bootstrapLang()
+statePersistorLangService.bootstrap()
 
 function changeLanguages(lang: string) {
   i18next.changeLanguage(lang)

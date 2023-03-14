@@ -4,31 +4,34 @@ import { storeToRefs } from 'pinia'
 import { useMapStore } from '@/stores/map.store'
 import { Layer } from '@/stores/map.store.model'
 import { useThemeStore } from '@/stores/config.store'
-import useBackgroundLayer from '@/composables/background-layer/background-layer.composable'
 
 import {
-  SP_KEY_BGLAYER,
   SP_KEY_LAYERS,
   SP_KEY_OPACITIES,
+  SP_KEY_V2_BGLAYEROPACITY,
+  SP_KEY_V2_LAYERSINDICIES,
+  SP_KEY_V2_LAYERSOPACITIES,
+  SP_KEY_V2_LAYERSVISIBILITY,
+  StatePersistorService,
 } from './state-persistor.model'
 import { storageLayerMapper } from './state-persistor-layer.mapper'
 import { storageHelper } from './storage/storage.helper'
 
-class StatePersistorLayersService {
-  bootstrapLayers() {
+class StatePersistorLayersService implements StatePersistorService {
+  bootstrap() {
     const themeStore = useThemeStore()
     let stop: WatchStopHandle
     // eslint-disable-next-line prefer-const
     stop = watchEffect(() => {
       if (themeStore.themes) {
-        this.restoreLayers()
-        this.persistLayers()
+        this.restore()
+        this.persist()
         stop && stop() // test if exists, for HMR support
       }
     })
   }
 
-  persistLayers() {
+  persist() {
     const mapStore = useMapStore()
     const { layers } = storeToRefs(mapStore)
 
@@ -53,16 +56,19 @@ class StatePersistorLayersService {
     )
   }
 
-  restoreLayers() {
+  restore() {
+    const version = storageHelper.getInitialVersion()
     const mapStore = useMapStore()
     const layers = storageHelper.getValue(
       SP_KEY_LAYERS,
-      storageLayerMapper.layerIdsToLayers
+      version === 2
+        ? storageLayerMapper.layerNamesToLayersV2
+        : storageLayerMapper.layerIdsToLayers
     )
-    const opacities = storageHelper.getValue(
-      SP_KEY_OPACITIES,
-      storageLayerMapper.layerOpacitiesToNumbers
-    )
+    const opacities =
+      version === 2
+        ? this.getOpacitiesFromStorageV2()
+        : this.getOpacitiesFromStorage()
 
     if (opacities) {
       layers?.forEach((layer, index) => {
@@ -72,49 +78,35 @@ class StatePersistorLayersService {
       })
     }
 
+    if (version === 2) {
+      storageHelper.removeItem(SP_KEY_V2_BGLAYEROPACITY)
+      storageHelper.removeItem(SP_KEY_V2_LAYERSINDICIES)
+      storageHelper.removeItem(SP_KEY_V2_LAYERSOPACITIES)
+      storageHelper.removeItem(SP_KEY_V2_LAYERSVISIBILITY)
+    }
+
     mapStore.addLayers(...((layers?.filter(layer => layer) as Layer[]) || []))
   }
 
-  bootstrapBgLayer() {
-    const themeStore = useThemeStore()
-    let stop: WatchStopHandle
-    // eslint-disable-next-line prefer-const
-    stop = watchEffect(() => {
-      if (themeStore.bgLayers.length > 0) {
-        this.restoreBgLayer()
-        this.persistBgLayer()
-        stop && stop() // test if exists, for HMR support
-      }
-    })
-  }
-
-  persistBgLayer() {
-    const mapStore = useMapStore()
-    const { bgLayer } = storeToRefs(mapStore)
-
-    watch(
-      bgLayer,
-      (value, oldValue) => {
-        if (oldValue !== value) {
-          storageHelper.setValue(
-            SP_KEY_BGLAYER,
-            value as Layer,
-            storageLayerMapper.bgLayerTobgLayerId
-          )
-        }
-      },
-      { immediate: true }
+  getOpacitiesFromStorage() {
+    return storageHelper.getValue(
+      SP_KEY_OPACITIES,
+      storageLayerMapper.layersOpacitiesToNumbers
     )
   }
 
-  restoreBgLayer() {
-    const { setMapBackground } = useBackgroundLayer()
-    const bgLayer = storageHelper.getValue(
-      SP_KEY_BGLAYER,
-      storageLayerMapper.bgLayerIdToBgLayer
+  getOpacitiesFromStorageV2() {
+    const opacities = storageHelper.getValue(
+      SP_KEY_V2_LAYERSOPACITIES,
+      storageLayerMapper.layersOpacitiesToNumbersV2
     )
 
-    setMapBackground(bgLayer)
+    const visibility = storageHelper.getValue(
+      SP_KEY_V2_LAYERSVISIBILITY,
+      storageLayerMapper.layersVisibilitiesToBooleansV2
+    )
+
+    return opacities.map((opacity, index) => (visibility[index] ? opacity : 0))
   }
 }
 

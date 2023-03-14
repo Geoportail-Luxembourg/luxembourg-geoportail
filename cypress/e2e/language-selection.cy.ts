@@ -17,6 +17,20 @@ describe('Language selector', () => {
     cy.get('[data-cy="langSelect"] .lux-dropdown-list').should('not.be.hidden')
   })
 
+  it('has the right aria label', () => {
+    cy.get('[data-cy="langSelect"] .lux-dropdown-btn').click()
+    cy.get('[data-cy="langSelect"] .lux-dropdown-list')
+      .find('button')
+      .eq(0)
+      .invoke('attr', 'aria-label')
+      .should('eq', 'Changer de langue : en')
+    cy.get('[data-cy="langSelect"] .lux-dropdown-list')
+      .find('button')
+      .eq(1)
+      .invoke('attr', 'aria-label')
+      .should('eq', 'Changer de langue : de')
+  })
+
   it('changes the language from FR to DE when selecting a lang', () => {
     cy.get('.lux-panel-title').contains('Couches')
     cy.get('[data-cy="myLayersButton"]').contains('Mes couches')

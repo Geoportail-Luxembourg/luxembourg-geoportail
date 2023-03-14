@@ -155,15 +155,15 @@ describe('StorageLayerMapper', () => {
     })
   })
 
-  describe('#layerOpacitiesToNumbers', () => {
+  describe('#layersOpacitiesToNumbers', () => {
     it('returns the opacities as floats', () => {
       expect(
-        storageLayerMapper.layerOpacitiesToNumbers('0-1-0.25-0.6-1')
+        storageLayerMapper.layersOpacitiesToNumbers('0-1-0.25-0.6-1')
       ).toStrictEqual([0, 1, 0.25, 0.6, 1])
     })
     it('returns undefined for an invalid opactiy value', () => {
       expect(
-        storageLayerMapper.layerOpacitiesToNumbers('0-opa-1')
+        storageLayerMapper.layersOpacitiesToNumbers('0-opa-1')
       ).toStrictEqual([0, undefined, 1])
     })
   })
@@ -188,29 +188,29 @@ describe('StorageLayerMapper', () => {
     })
   })
 
-  describe('#bgLayerIdToBgLayer', () => {
+  describe('#bgLayerNameToBgLayer', () => {
     it('returns the corresponding bg layer', () => {
-      expect(storageLayerMapper.bgLayerIdToBgLayer('road_map32')).toStrictEqual(
-        {
-          id: 'road_map32',
-          name: 'road_map32',
-          layers: '',
-          type: 'WMTS',
-          imageType: '',
-        }
-      )
+      expect(
+        storageLayerMapper.bgLayerNameToBgLayer('road_map32')
+      ).toStrictEqual({
+        id: 'road_map32',
+        name: 'road_map32',
+        layers: '',
+        type: 'WMTS',
+        imageType: '',
+      })
     })
   })
 
-  describe('#bgLayerTobgLayerId', () => {
+  describe('#bgLayerToBgLayerName', () => {
     it('returns the formatted bg layer id', () => {
-      expect(storageLayerMapper.bgLayerTobgLayerId(bgLayer0)).toStrictEqual(
+      expect(storageLayerMapper.bgLayerToBgLayerName(bgLayer0)).toStrictEqual(
         'earth_red'
       )
     })
 
     it('returns blank as bg layer id', () => {
-      expect(storageLayerMapper.bgLayerTobgLayerId(undefined)).toStrictEqual(
+      expect(storageLayerMapper.bgLayerToBgLayerName(undefined)).toStrictEqual(
         'blank'
       )
     })
