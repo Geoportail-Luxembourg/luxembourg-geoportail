@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { ShallowRef, shallowRef } from 'vue'
+import { computed, ShallowRef, shallowRef } from 'vue'
 
 import { useLayer } from '@/composables/layer'
 import { Layer } from '@/stores/map.store.model'
@@ -25,15 +25,24 @@ const prevOpacity: ShallowRef<number | undefined> = shallowRef(
   ((props.layer?.previousOpacity ?? opacity.value) as number) * 100
 )
 
-const txtTitleLabel = t('Display informations for "{{layerName}}"', {
-  ns: 'client',
-  layerName: getLabel(),
-})
-
-const txtRemoveLayer = t('Remove layer "{{layerName}}"', {
-  ns: 'client',
-  layerName: getLabel(),
-})
+const txtDraggableLabel = computed(() =>
+  t('Sort "{{layerName}}" in the list', {
+    ns: 'client',
+    layerName: getLabel(),
+  })
+)
+const txtTitleLabel = computed(() =>
+  t('Display informations for "{{layerName}}"', {
+    ns: 'client',
+    layerName: getLabel(),
+  })
+)
+const txtRemoveLayer = computed(() =>
+  t('Remove layer "{{layerName}}"', {
+    ns: 'client',
+    layerName: getLabel(),
+  })
+)
 
 function onClickToggle() {
   emit('clickToggle', props.layer)
@@ -73,19 +82,27 @@ function dispatchChangeOpacity() {
       <button
         class="fa-solid fa-bars cursor-move mt-1"
         :class="draggableClassName"
+        :title="txtDraggableLabel"
       ></button>
       <button
         class="fa-solid fa-info mt-1"
         :title="txtTitleLabel"
         @click="onClickInfo"
       ></button>
-      <button class="cursor-pointer grow text-left" @click="onClickToggle">
+      <button
+        class="cursor-pointer grow text-left"
+        @click="onClickToggle"
+        :aria-expanded="props.isOpen"
+        :aria-controls="`layer-manager-item-content-${props.layer.id}`"
+      >
         {{ getLabel() }}
       </button>
       <button
         class="mt-1 w-3.5 fa-solid"
         :class="props.isOpen ? 'fa-xmark' : 'fa-ellipsis'"
         @click="onClickToggle"
+        :aria-expanded="props.isOpen"
+        :aria-controls="`layer-manager-item-content-${props.layer.id}`"
       ></button>
       <button
         class="mt-1 fa-solid fa-trash"
@@ -96,9 +113,14 @@ function dispatchChangeOpacity() {
     <div
       class="lux-layer-manager-item-content"
       :class="props.isOpen ? 'h-6' : 'h-0'"
+      :id="`layer-manager-item-content-${props.layer.id}`"
     >
       <button
-        :title="t('Toggle layer opacity', { ns: 'client' })"
+        :title="
+          t('Toggle layer opacity for {{layerName}}', {
+            layerName: t(props.layer.name),
+          })
+        "
         class="w-5 fa-solid"
         :class="opacity === 0 ? 'fa-eye-slash' : 'fa-eye'"
         @click="onToggleVisibility"
@@ -112,6 +134,9 @@ function dispatchChangeOpacity() {
         step="25"
         @change="onChangeOpacity"
         class="m-2.5 w-16 h-[5px] rounded-lg appearance-none cursor-pointer"
+        :aria-label="
+          t('Change opacity for {{ layerName }}', { layerName: getLabel() })
+        "
       />
     </div>
   </div>

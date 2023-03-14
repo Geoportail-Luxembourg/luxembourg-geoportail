@@ -1,4 +1,6 @@
 <script setup lang="ts">
+import { computed } from 'vue'
+
 import { useLayer } from '@/composables/layer'
 import { Layer } from '@/stores/map.store.model'
 import { IBackgroundLayer } from '@/composables/background-layer/background-layer.model'
@@ -13,10 +15,12 @@ const emit = defineEmits<{
 }>()
 const { t, onClickInfo } = useLayer(props.layer, { emit })
 
-const txtTitleLabel = t('Display informations for "{{layerName}}"', {
-  ns: 'client',
-  layerName: getLabel(),
-})
+const txtTitleLabel = computed(() =>
+  t('Display informations for "{{layerName}}"', {
+    ns: 'client',
+    layerName: getLabel(),
+  })
+)
 
 function getLabel() {
   // TODO: use getLabel from useLayer? not working as composable is not updated
