@@ -24,6 +24,7 @@
   "A4 portrait": "A4 Portrait",
   "Abort": "Ënnerbriechen",
   "Access constraints :": "Zougangslimitatiounen :",
+  "Activate categories": "Eng Kategorie uweisen",
   "Activate offline mode": "Offline-Modus aktivéiren",
   "Activer Google Streetview": "Aktivéiert Google Street View",
   "Add external data": "Extern Date bäilueden",
@@ -323,6 +324,7 @@
   "Search Maps": "Kaarten sichen",
   "Select a style": "Wielt ee Stil",
   "Select style: {{styleName}}": "",
+  "Select a colour for every theme": "Wielt eng Faarf fir all Thematik",
   "Section": "Sectioun",
   "Section cadastrale": "Kadastersektioun",
   "Send feedback to support team": "Feedback un d'Support Team schécken",
@@ -331,6 +333,7 @@
   "Show extent": "Ausdehnung uweisen",
   "Show long url": "Laang URL uweisen",
   "Show orientation": "Orientatioun uweisen",
+  "Show or hide {{ thematicName }}": "Show or hide {{ thematicName }}",
   "Size": "Gréisst",
   "Sort \"{{layerName}}\" in the list": "Sort \"{{layerName}}\" in the list",
   "Statut": "Status",
@@ -1710,5 +1713,12 @@
   "Dark sand": "Brong",
   "Kids": "Faarweg",
   "Light mauve": "Magenta",
-  "Light Blue": "Blo"
+  "Light Blue": "Blo",
+  "Roads primary": "Haaptstroossen",
+  "Roads secondary": "Niewestroossen",
+  "Vegetation": "Vegetatioun",
+  "Buildings": "Gebaier",
+  "Water": "Hydrologie",
+  "Arrière-fond": "Hannergrond",
+  "Hillshade": "Relief"
 }

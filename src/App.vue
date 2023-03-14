@@ -10,6 +10,7 @@ import BackgroundSelector from '@/components/background-selector/background-sele
 
 import LayerPanel from '@/components/layer-panel/layer-panel.vue'
 import MapContainer from '@/components/map/map-container.vue'
+import StyleSelector from '@/components/style-selector/style-selector.vue'
 
 import { statePersistorLayersService } from '@/services/state-persistor/state-persistor-layers.service'
 import { statePersistorThemeService } from '@/services/state-persistor/state-persistor-theme.service'
@@ -37,6 +38,9 @@ watch(layersOpen, () =>
       <!--side bar-->
       <div v-if="layersOpen" class="w-full sm:w-80 bg-secondary z-10">
         <layer-panel></layer-panel>
+      </div>
+      <div v-if="styleEditorOpen" class="w-80 bg-primary">
+        <style-selector />
       </div>
       <div class="grow bg-blue-100">
         <map-container></map-container>
