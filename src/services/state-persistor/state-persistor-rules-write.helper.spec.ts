@@ -18,6 +18,13 @@ describe('RulesWriteHelper', () => {
         RulesWriteHelper.processRulesForKey('theme', { theme: 'eau' })
       ).toBe(2)
     })
+    it('returns permalink storage as localStorage for key layersOpen', () => {
+      expect(
+        RulesWriteHelper.processRulesForKey('layersOpen', {
+          layersOpen: false,
+        })
+      ).toBe(0)
+    })
     it('returns local storage for other keys than version', () => {
       expect(
         RulesWriteHelper.processRulesForKey('any_key', { any_key: 'any_value' })

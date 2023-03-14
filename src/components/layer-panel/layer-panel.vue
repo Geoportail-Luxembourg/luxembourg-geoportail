@@ -6,17 +6,26 @@ import CatalogTab from '@/components/catalog/catalog-tab.vue'
 import LayerManager from '@/components/layer-manager/layer-manager.vue'
 import RemoteLayers from '@/components/remote-layers/remote-layers.vue'
 import LayerMetadata from '../layer-metadata/layer-metadata.vue'
+import { useAppStore } from '@/stores/app.store'
 
 const { t } = useTranslation()
 const myLayersOpen = ref(true)
+const { setLayersOpen } = useAppStore()
 </script>
 
 <template>
   <div data-cy="layerPanel" class="flex flex-col h-full">
-    <div class="h-20 shrink-0">
-      <div class="lux-panel-title">
+    <div class="h-20 shrink-0 flex justify-between lux-panel-title">
+      <span>
         {{ t('Layers', { ns: 'client' }) }}
-      </div>
+      </span>
+      <span
+        ><button
+          @click="() => setLayersOpen(false)"
+          :aria-label="t('Close', { ns: 'client' })"
+          class="fa-sharp fa-solid fa-close"
+        ></button
+      ></span>
     </div>
     <!--selector tab-->
     <div class="flex flex-row gap-2 h-10 text-2xl">

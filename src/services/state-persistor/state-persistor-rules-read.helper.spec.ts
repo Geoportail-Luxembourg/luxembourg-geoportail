@@ -25,6 +25,11 @@ describe('RulesReadHelper', () => {
         2
       )
     })
+    it('returns the localStorage as storage to read the layersOpen value', () => {
+      expect(
+        RulesReadHelper.processRulesForKey('layersOpen', { layersOpen: false })
+      ).toBe(0)
+    })
   })
 
   describe('#ruleUseLocalStorage', () => {
