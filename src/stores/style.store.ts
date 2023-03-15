@@ -41,7 +41,11 @@ export const useStyleStore = defineStore(
       bgStyle.value = styleService.getRoadStyleFromSimpleStyle(simpleStyle)
     }
 
-    return { bgStyle, bgVectorSources, setSimpleStyle }
+    function setStyle(style: StyleItem[]) {
+      bgStyle.value = style
+    }
+
+    return { bgStyle, bgVectorSources, setSimpleStyle, setStyle }
   },
   {}
 )

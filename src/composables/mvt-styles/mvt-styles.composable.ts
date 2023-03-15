@@ -1,9 +1,11 @@
 import {
   SimpleRoadStyle,
   StyleItem,
+  stylePropertyTypeList,
 } from '@/composables/mvt-styles/mvt-styles.model'
 import { bgConfigFixture } from '@/__fixtures__/background.config.fixture'
 import BaseLayer from 'ol/layer/Base'
+import { Map as MaplibreMap } from 'maplibre-gl'
 
 export default function useMvtStyles() {
   function getDefaultMapBoxStyleUrl(label: string | undefined) {
@@ -145,11 +147,11 @@ export default function useMvtStyles() {
         med_road_style[i].color = element
       })
       const hillshadeIndex = med_road_style.findIndex(
-        el => el.unlocalized_label === 'Hillshade'
+        el => el.label === 'Hillshade'
       )
       med_road_style[hillshadeIndex].visible = simpleStyle.hillshade
       /*
-        .filter(el => el.unlocalized_label === 'Hillshade')
+        .filter(el => el.label === 'Hillshade')
         .forEach(el => {
           el.visible = simpleStyle.hillshade
         })*/
@@ -157,14 +159,30 @@ export default function useMvtStyles() {
     return med_road_style
   }
 
-  function applyStyle(bgLayer: BaseLayer, item: StyleItem[]) {
-    item.forEach(item => applyStyleFromItem(bgLayer, item))
-  }
-  function applyStyleFromItem(bgLayer: BaseLayer, item: StyleItem) {
+  function applyStyle(bgLayer: BaseLayer, style: StyleItem[]) {
     // consider layer to be a Maplibre Layer
     const mbMap = (bgLayer as any).maplibreMap
-    item.styleProperties.forEach(props => {
-      props.properties.forEach(prop => {
+    // check if maplibre map element exists
+    if (!mbMap) return
+    // apply style as soon as vector sources have finished loading
+    if (mbMap.loaded()) {
+      applyStyleOnMap(style, mbMap)
+    } else {
+      new Promise(resolve => mbMap.once('load', resolve)).then(() =>
+        applyStyleOnMap(style, mbMap)
+      )
+    }
+  }
+
+  function applyStyleOnMap(style: StyleItem[], mbMap: any) {
+    style.forEach(item => applyItemToMap(item, mbMap))
+  }
+
+  function applyItemToMap(item: StyleItem, mbMap: MaplibreMap) {
+    for (const styleProperty of stylePropertyTypeList) {
+      const props = item[`${styleProperty}s`] || []
+      props.forEach(prop => {
+        // workaround for broken predefined styles
         if (
           [
             'lu_bridge_path case',
@@ -172,11 +190,12 @@ export default function useMvtStyles() {
             'lu_landcover_grass',
             'lu_waterway_tunnel',
           ].indexOf(prop) !== -1
-        )
+        ) {
           return
+        }
         if (item.color) {
-          mbMap.setPaintProperty(prop, `${props.type}-color`, item.color)
-          mbMap.setPaintProperty(prop, `${props.type}-opacity`, 1)
+          mbMap.setPaintProperty(prop, `${styleProperty}-color`, item.color)
+          mbMap.setPaintProperty(prop, `${styleProperty}-opacity`, 1)
         }
         mbMap.setLayoutProperty(
           prop,
@@ -184,7 +203,7 @@ export default function useMvtStyles() {
           item.visible ? 'visible' : 'none'
         )
       })
-    })
+    }
   }
 
   function checkSelection(

@@ -23,13 +23,22 @@ export type StylePropertyType =
   | 'fill-extrusion'
   | 'background'
   | 'hillshade'
-export interface StyleProperties {
-  type: StylePropertyType
-  properties: string[]
-}
+export const stylePropertyTypeList: StylePropertyType[] = [
+  'line',
+  'fill',
+  'symbol',
+  'fill-extrusion',
+  'background',
+  'hillshade',
+]
 export interface StyleItem {
-  unlocalized_label: string
+  label: string
   color: string
-  styleProperties: StyleProperties[]
+  lines?: string[]
+  fills?: string[]
+  symbols?: string[]
+  'fill-extrusions'?: string[]
+  backgrounds?: string[]
+  hillshades?: string[]
   visible: boolean
 }

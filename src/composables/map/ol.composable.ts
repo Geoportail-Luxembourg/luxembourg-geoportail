@@ -12,6 +12,7 @@ import { layersCache } from '@/stores/layers.cache'
 import type { Layer, LayerId } from '@/stores/map.store.model'
 import useMap from './map.composable'
 import { VectorSourceDict } from '@/composables/mvt-styles/mvt-styles.model'
+import { statePersistorStyleService } from '@/services/state-persistor/state-persistor-bgstyle.service'
 import { PROJECTION_WEBMERCATOR, PROJECTION_WGS84 } from './map.composable'
 import { isHiDpi, stringToBoolean } from '@/services/utils'
 import { storageHelper } from '@/services/state-persistor/storage/storage.helper'
@@ -255,6 +256,7 @@ export default function useOpenLayers() {
         olMap.addLayer(bgBaseLayer)
       }
     }
+    statePersistorStyleService.restoreStyle()
   }
 
   return {
