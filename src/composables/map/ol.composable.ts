@@ -10,6 +10,7 @@ import { layersCache } from '@/stores/layers.cache'
 import type { Layer, LayerId } from '@/stores/map.store.model'
 import useMap from './map.composable'
 import { VectorSourceDict } from '@/composables/mvt-styles/mvt-styles.model'
+import { statePersistorStyleService } from '@/services/state-persistor/state-persistor-bgstyle.service'
 
 const proxyWmsUrl = 'https://map.geoportail.lu/ogcproxywms'
 export const remoteProxyWms = 'https://map.geoportail.lu/httpsproxy'
@@ -186,6 +187,7 @@ export default function useOpenLayers() {
         olMap.addLayer(bgBaseLayer)
       }
     }
+    statePersistorStyleService.restoreStyle()
   }
 
   return {
