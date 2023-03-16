@@ -1,8 +1,13 @@
-import * as olEvents from 'ol/events.js'
+import * as olEvents from 'ol/events'
 import { getTransform, ProjectionLike, transform } from 'ol/proj'
 import { Coordinate } from 'ol/coordinate'
+import ObjectEventType from 'ol/ObjectEventType'
 
-import useMap from '@/composables/map/map.composable'
+import useMap, {
+  PROJECTION_WEBMERCATOR,
+  PROJECTION_LUX,
+  PROJECTION_WGS84,
+} from '@/composables/map/map.composable'
 import {
   SP_KEY_ZOOM,
   SP_KEY_X,
@@ -16,7 +21,6 @@ import {
   V2_ZOOM_TO_V3_ZOOM_,
 } from './state-persistor-map.mapper'
 import { debounce, stringToNumber } from '@/services/utils'
-import ObjectEventType from 'ol/ObjectEventType'
 
 class StatePersistorMapService implements StatePersistorService {
   bootstrap(): void {
@@ -75,7 +79,10 @@ class StatePersistorMapService implements StatePersistorService {
     const x = storageHelper.getValue(SP_KEY_X, stringToNumber)
     const y = storageHelper.getValue(SP_KEY_Y, stringToNumber)
     const srs = storageHelper.getValue(SP_KEY_SRS) as ProjectionLike
-    const lurefToWebMercatorFn = getTransform('EPSG:2169', 'EPSG:3857')
+    const lurefToWebMercatorFn = getTransform(
+      PROJECTION_LUX,
+      PROJECTION_WEBMERCATOR
+    )
 
     // TODO: delete params as in legacy?
     // this.appStateManager_.deleteParam('SRS');
@@ -95,13 +102,17 @@ class StatePersistorMapService implements StatePersistorService {
     if (x != null && y != null) {
       // keep "!=" for not null AND not undefined
       if (version === 3 && srs != null) {
-        viewCenter = transform([x, y], srs, 'EPSG:3857')
+        viewCenter = transform([x, y], srs, PROJECTION_WEBMERCATOR)
       } else {
         viewCenter =
           version === 3 ? [x, y] : lurefToWebMercatorFn([y, x], undefined, 2)
       }
     } else {
-      viewCenter = transform([6, 49.7], 'EPSG:4326', 'EPSG:3857')
+      viewCenter = transform(
+        [6, 49.7],
+        PROJECTION_WGS84,
+        PROJECTION_WEBMERCATOR
+      )
     }
 
     view.setCenter(viewCenter)

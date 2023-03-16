@@ -38,6 +38,7 @@ function toggleParent(node: LayerTreeNodeModel) {
       :class="node.expanded ? 'text-white' : 'text-secondary'"
       :aria-expanded="node.expanded"
       @click="toggleParent(node)"
+      :data-cy="`parentLayerLabel-${node.id}`"
     >
       <div class="grow">{{ label }}</div>
       <div class="leading-6">
@@ -57,6 +58,7 @@ function toggleParent(node: LayerTreeNodeModel) {
       "
       :aria-expanded="node.expanded"
       @click="toggleParent(node)"
+      :data-cy="`parentLayerLabel-${node.id}`"
     >
       <div class="grow">{{ label }}</div>
       <div class="leading-6">
@@ -95,6 +97,7 @@ function toggleParent(node: LayerTreeNodeModel) {
       class="w-full text-left"
       :class="{ 'font-bold': node.checked }"
       @click="toggleLayer(node)"
+      :data-cy="`layerLabel-${node.id}`"
     >
       <i
         class="fa-solid"
