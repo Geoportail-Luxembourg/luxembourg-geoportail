@@ -21,7 +21,7 @@ export function stringToNumbers(
     text
       ?.split(separator)
       .map(item =>
-        item !== null && !isNaN(item as any) ? parseFloat(item) : undefined
+        item !== null && !isNaN(Number(item)) ? parseFloat(item) : undefined
       ) || []
   )
 }
@@ -30,11 +30,7 @@ export function stringToBooleans(
   text: string | null,
   separator: string
 ): (boolean | undefined)[] {
-  return (
-    text
-      ?.split(separator)
-      .map(stringToBoolean) || []
-  )
+  return text?.split(separator).map(stringToBoolean) || []
 }
 
 export function stringToBoolean(text: string | null) {

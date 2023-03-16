@@ -11,7 +11,7 @@ import { SP_KEY_X, SP_KEY_Y, SP_KEY_ZOOM } from './state-persistor.model'
 import { initProjections } from '../projection.utils'
 import { register } from 'ol/proj/proj4'
 
-let fakeStorage: { [key: string]: string } = {}
+let fakeStorage: { [key: string]: string | number } = {}
 
 describe('StatePersistorMapService', () => {
   const map = useMap()
@@ -40,7 +40,7 @@ describe('StatePersistorMapService', () => {
       return {
         storageHelper: {
           setValue: vi.fn(
-            (key: string, value: any) => (fakeStorage[key] = value)
+            (key: string, value: string | number) => (fakeStorage[key] = value)
           ),
           getValue: vi.fn((key: string) => fakeStorage[key]),
           getInitialVersion: vi.fn(() => fakeStorage['version']),
