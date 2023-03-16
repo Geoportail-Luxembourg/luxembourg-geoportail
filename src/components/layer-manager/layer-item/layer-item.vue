@@ -90,10 +90,10 @@ function dispatchChangeOpacity() {
         @click="onClickInfo"
       ></button>
       <button
-        class="cursor-pointer grow text-left"
-        @click="onClickToggle"
         :aria-expanded="props.isOpen"
         :aria-controls="`layer-manager-item-content-${props.layer.id}`"
+        class="cursor-pointer grow text-left break-words w-[70%]"
+        @click="onClickToggle"
       >
         {{ getLabel() }}
       </button>
