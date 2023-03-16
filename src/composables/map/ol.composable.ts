@@ -12,7 +12,7 @@ import { layersCache } from '@/stores/layers.cache'
 import type { Layer, LayerId } from '@/stores/map.store.model'
 import useMap from './map.composable'
 import { VectorSourceDict } from '@/composables/mvt-styles/mvt-styles.model'
-import { PROJECTION_DESTINATION, PROJECTION_SOURCE } from './map.composable'
+import { PROJECTION_WEBMERCATOR, PROJECTION_WGS84 } from './map.composable'
 import { isHiDpi, stringToBoolean } from '@/services/utils'
 import { storageHelper } from '@/services/state-persistor/storage/storage.helper'
 import { SP_KEY_IPV6 } from '@/services/state-persistor/state-persistor.model'
@@ -55,8 +55,8 @@ const TILE_MATRIX_IDS = [
 function getOlcsExtent() {
   return transformExtent(
     [5.31, 49.38, 6.64, 50.21],
-    PROJECTION_SOURCE,
-    PROJECTION_DESTINATION
+    PROJECTION_WGS84,
+    PROJECTION_WEBMERCATOR
   )
 }
 
@@ -88,7 +88,7 @@ function createWmsLayer(layer: Layer): ImageLayer<ImageWMS> {
 function createWmtsLayer(layer: Layer): TileLayer<WMTS> {
   const { name, imageType, id } = layer
   const hasRetina = getLayerHasRetina(layer)
-  const projection = getProjection(PROJECTION_DESTINATION)!
+  const projection = getProjection(PROJECTION_WEBMERCATOR)!
   const extent = projection!.getExtent()
   const olLayer = new TileLayer({
     source: new WMTS({
