@@ -16,41 +16,13 @@ import { PROJECTION_WEBMERCATOR, PROJECTION_WGS84 } from './map.composable'
 import { isHiDpi, stringToBoolean } from '@/services/utils'
 import { storageHelper } from '@/services/state-persistor/storage/storage.helper'
 import { SP_KEY_IPV6 } from '@/services/state-persistor/state-persistor.model'
+import {
+  TILE_GRID_RESOLUTION,
+  TILE_MATRIX_IDS,
+} from '@/__fixtures__/wmts.fixture'
 
 const proxyWmsUrl = 'https://map.geoportail.lu/ogcproxywms'
 export const remoteProxyWms = 'https://map.geoportail.lu/httpsproxy'
-
-const TILE_GRID_RESOLUTION = [
-  156543.033928, 78271.516964, 39135.758482, 19567.879241, 9783.9396205,
-  4891.96981025, 2445.98490513, 1222.99245256, 611.496226281, 305.748113141,
-  152.87405657, 76.4370282852, 38.2185141426, 19.1092570713, 9.55462853565,
-  4.77731426782, 2.38865713391, 1.19432856696, 0.597164283478, 0.298582141739,
-  0.1492910708695, 0.07464553543475,
-]
-const TILE_MATRIX_IDS = [
-  '00',
-  '01',
-  '02',
-  '03',
-  '04',
-  '05',
-  '06',
-  '07',
-  '08',
-  '09',
-  '10',
-  '11',
-  '12',
-  '13',
-  '14',
-  '15',
-  '16',
-  '17',
-  '18',
-  '19',
-  '20',
-  '21',
-]
 
 function getOlcsExtent() {
   return transformExtent(
