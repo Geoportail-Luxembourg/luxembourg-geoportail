@@ -16,7 +16,7 @@ function toggleThemesGrid(isOpen: boolean) {
   <div class="pt-5">
     <catalog
       data-cy="catalog"
-      class="pt-5"
+      class="pt-5 absolute inset-x-2.5 bg-primary overflow-y-auto overflow-x-hidden"
       v-if="themeGridIsOpen === false"
     ></catalog>
   </div>
