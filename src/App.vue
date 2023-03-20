@@ -45,9 +45,6 @@ watch(layersOpen, () =>
         <background-selector></background-selector>
       </div>
     </main>
-    <footer-bar
-      class="w-full h-14 hidden sm:flex justify-between bg-white shadow-footer z-10 shrink-0"
-    >
-    </footer-bar>
+    <footer-bar class="fixed bottom-5 sm:relative sm:bottom-0"> </footer-bar>
   </div>
 </template>

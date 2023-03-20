@@ -7,10 +7,12 @@ const { t, i18next } = useTranslation()
 const { setLayersOpen } = useAppStore()
 </script>
 <template>
-  <footer>
+  <footer
+    class="flex flex-col w-12 justify-between bg-white z-5 shrink-0 sm:flex-row sm:w-full sm:h-14 sm:shadow-footer"
+  >
     <!-- left buttons -->
     <div
-      class="w-80 flex flex-row justify-start text-primary divide-x divide-gray-400 divide-solid border-x border-gray-400"
+      class="flex flex-col w-full sm:w-80 sm:flex-row justify-start text-primary divide-y sm:divide-y-0 sm:divide-x divide-gray-400 divide-solid box-content border-y sm:border-y-0 border-x border-gray-400"
     >
       <ButtonIcon
         :label="t('Layers', { ns: 'client' })"
@@ -50,7 +52,7 @@ const { setLayersOpen } = useAppStore()
 
     <!-- center buttons -->
     <div
-      class="w-64 flex flex-row justify-start text-primary divide-x divide-gray-400 divide-solid border-x border-gray-400"
+      class="flex flex-col w-12 sm:w-64 sm:flex-row justify-start text-primary divide-y sm:divide-y-0 sm:divide-x divide-gray-400 divide-solid box-content border-y sm:border-y-0 border-x border-gray-400"
     >
       <ButtonIcon
         class="text-gray-300"
@@ -59,13 +61,13 @@ const { setLayersOpen } = useAppStore()
       >
       </ButtonIcon>
       <ButtonIcon
-        class="text-gray-300"
+        class="text-gray-300 hidden sm:block"
         :label="t('Mesurer', { ns: 'client' })"
         icon="measure"
       >
       </ButtonIcon>
       <ButtonIcon
-        class="text-gray-300"
+        class="text-gray-300 hidden sm:block"
         :label="t('Imprimer', { ns: 'client' })"
         icon="print"
       >
@@ -80,7 +82,7 @@ const { setLayersOpen } = useAppStore()
 
     <!-- right buttons -->
     <div
-      class="w-[466px] flex flex-row justify-end text-gray-500 whitespace-nowrap"
+      class="w-[466px] hidden sm:flex flex-row justify-end text-gray-500 whitespace-nowrap"
     >
       <ButtonLink
         class="hidden lg:flex"
