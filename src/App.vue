@@ -5,6 +5,7 @@ import { watch } from 'vue'
 import { storeToRefs } from 'pinia'
 
 import HeaderBar from './components/header/header-bar.vue'
+import FooterBar from './components/footer/footer-bar.vue'
 import BackgroundSelector from '@/components/background-selector/background-selector.vue'
 
 import LayerPanel from '@/components/layer-panel/layer-panel.vue'
@@ -44,5 +45,9 @@ watch(layersOpen, () =>
         <background-selector></background-selector>
       </div>
     </main>
+    <footer-bar
+      class="w-full h-14 hidden sm:flex justify-between bg-white shadow-footer z-10 shrink-0"
+    >
+    </footer-bar>
   </div>
 </template>

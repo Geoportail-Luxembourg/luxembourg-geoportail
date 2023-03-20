@@ -30,6 +30,18 @@ const themes = [
   'sig_secours' /*PRIVATE THEME*/,
 ]
 
+const icons = [
+  'layers',
+  'mymaps',
+  'infos',
+  'legends',
+  'routing',
+  'draw',
+  'measure',
+  'print',
+  'share',
+]
+
 module.exports = {
   content: ['index.html', './src/**/*.{html,js,ts,vue}'],
   theme: {
@@ -55,6 +67,7 @@ module.exports = {
       },
       boxShadow: {
         header: '0px 2px 6px -1px rgb(0 0 0 / 50%)',
+        footer: '0px 2px 6px 1px rgb(0 0 0 / 50%)',
       },
       screens: {
         hd: {
@@ -128,6 +141,15 @@ module.exports = {
         prof: '"\\e00a"',
         go: '"\\e00b"',
         sig_secours: '"\\e00a"',
+        layers: '"\\e00e"',
+        mymaps: '"\\e01d"',
+        infos: '"\\e01f"',
+        legends: '"\\e041"',
+        routing: '"\\e062"',
+        draw: '"\\e01e"',
+        measure: '"\\e021"',
+        print: '"\\e02f"',
+        share: '"\\e02a"',
       },
     },
   },
@@ -153,6 +175,7 @@ module.exports = {
     'hd:bg-ortho_sm_hi',
     'hd:bg-hybrid_sm_hi',
     ...generateThemeSafelist(),
+    ...generateIconSafelist(),
   ],
   plugins: [],
 }
@@ -164,6 +187,12 @@ function generateThemeSafelist() {
     `hover:text-${theme}-primary`,
     `after:content-${theme}`,
     `before:content-${theme}`,
+  ])
+}
+function generateIconSafelist() {
+  return icons.flatMap(icon => [
+    `after:content-${icon}`,
+    `before:content-${icon}`,
   ])
 }
 function generateThemeColors() {

@@ -1,0 +1,135 @@
+<script setup lang="ts">
+import ButtonIcon from './button-icon.vue'
+import ButtonLink from './button-link.vue'
+import { useTranslation } from 'i18next-vue'
+import { useAppStore } from '@/stores/app.store'
+const { t, i18next } = useTranslation()
+const { setLayersOpen } = useAppStore()
+</script>
+<template>
+  <footer>
+    <!-- left buttons -->
+    <div
+      class="w-80 flex flex-row justify-start text-primary divide-x divide-gray-400 divide-solid border-x border-gray-400"
+    >
+      <ButtonIcon
+        :label="t('Layers', { ns: 'client' })"
+        icon="layers"
+        @click="() => setLayersOpen(true)"
+      >
+      </ButtonIcon>
+      <!--TODOs in each button when implemented
+        - remove class="text-gray-300"
+        - add click handler that calls setLayersOpen(true) and opens tool 
+      -->
+      <ButtonIcon
+        class="text-gray-300"
+        :label="t('My Maps', { ns: 'client' })"
+        icon="mymaps"
+      >
+      </ButtonIcon>
+      <ButtonIcon
+        class="text-gray-300"
+        :label="t('Infos', { ns: 'client' })"
+        icon="infos"
+      >
+      </ButtonIcon>
+      <ButtonIcon
+        class="text-gray-300"
+        :label="t('Legends', { ns: 'client' })"
+        icon="legends"
+      >
+      </ButtonIcon>
+      <ButtonIcon
+        class="text-gray-300"
+        :label="t('Routing', { ns: 'client' })"
+        icon="routing"
+      >
+      </ButtonIcon>
+    </div>
+
+    <!-- center buttons -->
+    <div
+      class="w-64 flex flex-row justify-start text-primary divide-x divide-gray-400 divide-solid border-x border-gray-400"
+    >
+      <ButtonIcon
+        class="text-gray-300"
+        :label="t('Dessin', { ns: 'client' })"
+        icon="draw"
+      >
+      </ButtonIcon>
+      <ButtonIcon
+        class="text-gray-300"
+        :label="t('Mesurer', { ns: 'client' })"
+        icon="measure"
+      >
+      </ButtonIcon>
+      <ButtonIcon
+        class="text-gray-300"
+        :label="t('Imprimer', { ns: 'client' })"
+        icon="print"
+      >
+      </ButtonIcon>
+      <ButtonIcon
+        class="text-gray-300"
+        :label="t('Partager', { ns: 'client' })"
+        icon="share"
+      >
+      </ButtonIcon>
+    </div>
+
+    <!-- right buttons -->
+    <div
+      class="w-[466px] flex flex-row justify-end text-gray-500 whitespace-nowrap"
+    >
+      <ButtonLink
+        class="hidden lg:flex"
+        :label="t('What\'s new', { ns: 'client' })"
+        :link="`https://geoportail.lu/${i18next.language}/questions/whats-new/`"
+      >
+      </ButtonLink>
+      <!--TODO get geonetworkBaseUrl from config-->
+      <ButtonLink
+        class="hidden lg:flex"
+        :label="t('Geocatalogue', { ns: 'client' })"
+        link=""
+      >
+      </ButtonLink>
+      <!--TODO handle feedback links (for different portals?)-->
+      <ButtonLink
+        class="hidden lg:flex"
+        :label="t('Feedback', { ns: 'client' })"
+        link=""
+      >
+      </ButtonLink>
+      <ButtonLink
+        class="hidden lg:flex"
+        :label="t('A Propos', { ns: 'client' })"
+        :link="`https://www.geoportail.lu/${i18next.language}/propos/`"
+      >
+      </ButtonLink>
+      <ButtonLink
+        class="hidden lg:flex"
+        :label="t('Aide', { ns: 'client' })"
+        :link="`https://www.geoportail.lu/${i18next.language}/documentation/`"
+      >
+      </ButtonLink>
+      <ButtonLink
+        class="hidden lg:flex"
+        :label="t('Contact', { ns: 'client' })"
+        :link="`https://www.geoportail.lu/${i18next.language}/propos/contactez-nous/`"
+      >
+      </ButtonLink>
+      <ButtonLink
+        :label="t('Legalites', { ns: 'client' })"
+        :link="`https://www.geoportail.lu/${i18next.language}/propos/mentions-legales/`"
+      >
+      </ButtonLink>
+      <ButtonLink
+        :label="t('ACT', { ns: 'client' })"
+        :link="`http://www.act.public.lu/`"
+      >
+      </ButtonLink>
+    </div>
+  </footer>
+</template>
