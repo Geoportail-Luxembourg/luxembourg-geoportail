@@ -18,6 +18,7 @@ export const SP_KEY_ZOOM = 'zoom'
 export const SP_KEY_SRS = 'SRS' // TODO:
 export const SP_KEY_X = 'X'
 export const SP_KEY_Y = 'Y'
+export const SP_KEY_SERIAL = 'serial'
 
 // Keys for version 2, legacy
 export const SP_KEY_V2_BGLAYEROPACITY = 'bgOpacity' // Unused, just for legacy permalink
