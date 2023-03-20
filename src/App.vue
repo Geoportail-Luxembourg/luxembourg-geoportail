@@ -35,7 +35,7 @@ watch(layersOpen, () =>
     <header-bar></header-bar>
     <main class="flex grow">
       <!--side bar-->
-      <div v-if="layersOpen" class="w-80 bg-secondary">
+      <div v-if="layersOpen" class="w-full sm:w-80 bg-secondary z-10">
         <layer-panel></layer-panel>
       </div>
       <div class="grow bg-blue-100">
