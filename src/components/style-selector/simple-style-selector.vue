@@ -29,7 +29,8 @@ watch(
     (simpleStyles.value = styleService.checkSelection(
       newBgStyle || [],
       simpleStyleConf
-    ))
+    )),
+  { immediate: true }
 )
 
 function onStylingSelected(item: SimpleStyle) {
