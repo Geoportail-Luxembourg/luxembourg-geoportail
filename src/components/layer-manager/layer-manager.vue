@@ -8,6 +8,7 @@ import { useMapStore } from '@/stores/map.store'
 import type { Layer, LayerId } from '@/stores/map.store.model'
 import { useMetadataStore } from '@/stores/metadata.store'
 import { BLANK_BACKGROUNDLAYER } from '@/composables/background-layer/background-layer.model'
+import useMvtStyles from '@/composables/mvt-styles/mvt-styles.composable'
 
 import LayerManagerItemBackground from './layer-item/layer-item-background.vue'
 import LayerManagerItem from './layer-item/layer-item.vue'
@@ -16,13 +17,14 @@ const { setMetadataId } = useMetadataStore()
 const mapStore = useMapStore()
 const appStore = useAppStore()
 const { bgLayer } = storeToRefs(mapStore)
+const styles = useMvtStyles()
 
 const layers = computed(() => [...mapStore.layers].reverse())
 const isLayerOpenId: ShallowRef<LayerId | undefined> = shallowRef()
 const draggableClassName = 'drag-handle'
-const bgLayerIsEditable = computed(
-  () => bgLayer.value?.id === 556 || bgLayer.value?.id === 529
-) // TODO: Temp, remove when is Editable done
+const bgLayerIsEditable = computed(() =>
+  styles.isLayerStyleEditable(bgLayer.value)
+)
 
 onMounted(() => {
   const sortableLayers = document.getElementById('sortable-layers')

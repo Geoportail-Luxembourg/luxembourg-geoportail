@@ -15,12 +15,14 @@ import StyleSelector from '@/components/style-selector/style-selector.vue'
 import { statePersistorLayersService } from '@/services/state-persistor/state-persistor-layers.service'
 import { statePersistorThemeService } from '@/services/state-persistor/state-persistor-theme.service'
 import { statePersistorLayersOpenService } from '@/services/state-persistor/state-persistor-layersopen.service'
+import { statePersistorStyleService } from '@/services/state-persistor/state-persistor-bgstyle.service'
 import { useAppStore } from '@/stores/app.store'
 import useMap from './composables/map/map.composable'
 
 statePersistorLayersService.bootstrap()
 statePersistorThemeService.bootstrap()
 statePersistorLayersOpenService.bootstrapLayersOpen()
+statePersistorStyleService.bootstrapStyle()
 
 const { layersOpen } = storeToRefs(useAppStore())
 
