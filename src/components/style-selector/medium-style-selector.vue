@@ -5,6 +5,7 @@ import { storeToRefs } from 'pinia'
 
 import { getDefaultMediumStyling } from '@/services/styles/styles.service'
 import MediumStyleItem from './medium-style-item.vue'
+import { StyleItem } from '@/composables/mvt-styles/mvt-styles.model'
 import { Layer } from '@/stores/map.store.model'
 import { useStyleStore } from '@/stores/style.store'
 
@@ -21,6 +22,12 @@ const isColorVisible = computed(
 const styles = computed(
   () => bgStyle.value || getDefaultMediumStyling(props.layer.name)
 )
+
+function changeStyle(i: number, newStyle: StyleItem) {
+  bgStyle.value = styles.value.map((item, index) =>
+    index === i ? newStyle : item
+  )
+}
 </script>
 
 <template>
@@ -33,9 +40,10 @@ const styles = computed(
       }}
     </h5>
     <medium-style-item
-      v-for="item in styles"
+      v-for="(item, i) in styles"
       :key="item.label"
       :style="item"
+      @changeStyle="changeStyle(i, $event)"
       :colorEditable="isColorVisible"
     />
   </div>

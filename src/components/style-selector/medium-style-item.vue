@@ -7,6 +7,22 @@ const props = defineProps<{
   style: StyleItem
   colorEditable: boolean
 }>()
+const emit = defineEmits<{
+  (e: 'changeStyle', style: StyleItem): void
+}>()
+
+function updateColor(colorChangeEvent: Event) {
+  const newStyle = Object.assign(Object.assign({}, props.style), {
+    color: colorChangeEvent.target.value,
+  })
+  emit('changeStyle', newStyle)
+}
+function updateVisibility(visibilityChangeEvent: Event) {
+  const newStyle = Object.assign(Object.assign({}, props.style), {
+    visible: visibilityChangeEvent.target.checked,
+  })
+  emit('changeStyle', newStyle)
+}
 </script>
 
 <template>
@@ -19,15 +35,17 @@ const props = defineProps<{
         type="color"
         class="w-11 h-5 py-[1px] px-[2px]"
         :value="props.style.color"
+        @input="updateColor"
       />
     </div>
     <input
       type="checkbox"
       class="flex-none mr-3"
       :checked="props.style.visible"
+      @change="updateVisibility"
       :aria-label="
         t('Show or hide {{ thematicName }}', {
-          thematicName: props.thematicName,
+          thematicName: props.style.label,
         })
       "
     />
