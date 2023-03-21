@@ -7,11 +7,13 @@ import SimpleStyleSelector from '@/components/style-selector/simple-style-select
 import MediumStyleSelector from '@/components/style-selector/medium-style-selector.vue'
 import { useAppStore } from '@/stores/app.store'
 import { useMapStore } from '@/stores/map.store'
+import { useStyleStore } from '@/stores/style.store'
 import useMvtStyles from '@/composables/mvt-styles/mvt-styles.composable'
 
 const { t } = useTranslation()
 const mapStore = useMapStore()
 const appStore = useAppStore()
+const styleStore = useStyleStore()
 const { bgLayer } = storeToRefs(mapStore)
 const styles = useMvtStyles()
 
@@ -28,6 +30,10 @@ watch(bgLayer, bgLayer => {
 let isSimpleStyleOpen = ref(false)
 let isMediumStyleOpen = ref(false)
 let isAdvancedStyleOpen = ref(false)
+
+function resetStyle() {
+  styleStore.setStyle(null)
+}
 </script>
 
 <template>
@@ -62,5 +68,8 @@ let isAdvancedStyleOpen = ref(false)
       </button>
       <!-- Advanced style editor here -->
     </div>
+    <button @click="resetStyle" class="lux-btn">
+      {{ t('Reset style', { ns: 'client' }) }}
+    </button>
   </div>
 </template>

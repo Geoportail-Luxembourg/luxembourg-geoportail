@@ -36,9 +36,6 @@ watch(
 function onStylingSelected(item: SimpleStyle) {
   styleStore.setSimpleStyle(item)
 }
-function resetStyle() {
-  styleStore.setStyle(null)
-}
 </script>
 
 <template>
@@ -78,8 +75,5 @@ function resetStyle() {
         </span>
       </button>
     </div>
-    <button @click="resetStyle" class="lux-btn">
-      {{ t('Reset style', { ns: 'client' }) }}
-    </button>
   </div>
 </template>
