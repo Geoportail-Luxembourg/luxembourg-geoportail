@@ -11,44 +11,55 @@ const { setLayersOpen } = useAppStore()
     class="flex flex-col w-12 justify-between bg-white z-5 shrink-0 sm:flex-row sm:w-full sm:h-14 sm:shadow-footer"
   >
     <!-- left buttons -->
-    <div
+    <ul
       class="flex flex-col w-full sm:w-80 sm:flex-row justify-start text-primary divide-y sm:divide-y-0 sm:divide-x divide-gray-400 divide-solid box-content border-y sm:border-y-0 border-x border-gray-400"
     >
-      <ButtonIcon
-        :label="t('Layers', { ns: 'client' })"
-        icon="layers"
-        @click="() => setLayersOpen(true)"
-      >
-      </ButtonIcon>
+      <li>
+        <ButtonIcon
+          :label="t('Layers', { ns: 'client' })"
+          icon="layers"
+          @click="() => setLayersOpen(true)"
+        >
+        </ButtonIcon>
+      </li>
+
       <!--TODOs in each button when implemented
         - remove class="text-gray-300"
-        - add click handler that calls setLayersOpen(true) and opens tool 
+        - add click handler that calls setLayersOpen(true) and opens tool (also via app store)
       -->
-      <ButtonIcon
-        class="text-gray-300"
-        :label="t('My Maps', { ns: 'client' })"
-        icon="mymaps"
-      >
-      </ButtonIcon>
-      <ButtonIcon
-        class="text-gray-300"
-        :label="t('Infos', { ns: 'client' })"
-        icon="infos"
-      >
-      </ButtonIcon>
-      <ButtonIcon
-        class="text-gray-300"
-        :label="t('Legends', { ns: 'client' })"
-        icon="legends"
-      >
-      </ButtonIcon>
-      <ButtonIcon
-        class="text-gray-300"
-        :label="t('Routing', { ns: 'client' })"
-        icon="routing"
-      >
-      </ButtonIcon>
-    </div>
+      <li>
+        <ButtonIcon
+          class="text-gray-300"
+          :label="t('My Maps', { ns: 'client' })"
+          icon="mymaps"
+        >
+        </ButtonIcon>
+      </li>
+      <li>
+        <ButtonIcon
+          class="text-gray-300"
+          :label="t('Infos', { ns: 'client' })"
+          icon="infos"
+        >
+        </ButtonIcon>
+      </li>
+      <li>
+        <ButtonIcon
+          class="text-gray-300"
+          :label="t('Legends', { ns: 'client' })"
+          icon="legends"
+        >
+        </ButtonIcon>
+      </li>
+      <li>
+        <ButtonIcon
+          class="text-gray-300"
+          :label="t('Routing', { ns: 'client' })"
+          icon="routing"
+        >
+        </ButtonIcon>
+      </li>
+    </ul>
 
     <!-- center buttons -->
     <div

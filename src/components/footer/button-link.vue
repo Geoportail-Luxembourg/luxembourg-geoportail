@@ -6,9 +6,10 @@ const props = defineProps<{
 </script>
 
 <template>
-  <span
+  <a
     class="h-full flex flex-col justify-center px-[7px] uppercase hover:text-white hover:bg-primary"
+    :href="`${props.link}`"
+    target="_blank"
+    >{{ $props.label }}</a
   >
-    <a :href="`${props.link}`" target="_blank">{{ $props.label }}</a>
-  </span>
 </template>
