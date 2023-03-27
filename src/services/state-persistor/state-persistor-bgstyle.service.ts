@@ -29,15 +29,12 @@ class StatePersistorStyleService {
     const styleStore = useStyleStore()
     const { bgStyle } = storeToRefs(styleStore)
 
-    console.log('persisting style')
     if (!this.styleWatcher) {
       this.styleWatcher = watch(
         bgStyle,
         (value, oldValue) => {
           if (oldValue !== value) {
             const mapStore = useMapStore()
-            // const { bgLayer } = storeToRefs(mapStore)
-            console.log(`style ${mapStore.bgLayer?.name} to store`)
             if (mapStore.bgLayer) {
               storageHelper.setValue(
                 mapStore.bgLayer.name,

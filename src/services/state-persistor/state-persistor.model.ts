@@ -19,6 +19,11 @@ export const SP_KEY_SRS = 'SRS' // TODO:
 export const SP_KEY_X = 'X'
 export const SP_KEY_Y = 'Y'
 export const SP_KEY_SERIAL = 'serial'
+export const SP_KEYS_STYLE = [
+  'basemap_2015_global',
+  'topogr_global',
+  'topo_bw_jpeg',
+]
 
 // Keys for version 2, legacy
 export const SP_KEY_V2_BGLAYEROPACITY = 'bgOpacity' // Unused, just for legacy permalink
