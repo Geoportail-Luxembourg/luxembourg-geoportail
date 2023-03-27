@@ -150,11 +150,6 @@ export default function useMvtStyles() {
         el => el.label === 'Hillshade'
       )
       med_road_style[hillshadeIndex].visible = simpleStyle.hillshade
-      /*
-        .filter(el => el.label === 'Hillshade')
-        .forEach(el => {
-          el.visible = simpleStyle.hillshade
-        })*/
     }
     return med_road_style
   }
