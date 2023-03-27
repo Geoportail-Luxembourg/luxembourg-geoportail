@@ -21,6 +21,8 @@ describe('LayerItem', () => {
         layer: layerMock,
         draggableClassName: 'classnamedragg',
         isOpen: false,
+        isLayerComporatorOpen: false,
+        displayLayerComporatorOpen: false,
       },
     })
 
@@ -38,6 +40,8 @@ describe('LayerItem', () => {
         layer: layerMock,
         draggableClassName: 'classnamedragg',
         isOpen: true,
+        isLayerComporatorOpen: false,
+        displayLayerComporatorOpen: false,
       },
     })
 
@@ -55,6 +59,8 @@ describe('LayerItem', () => {
         layer: layerMock,
         draggableClassName: 'classnamedragg',
         isOpen: true,
+        isLayerComporatorOpen: false,
+        displayLayerComporatorOpen: false,
       },
     })
 

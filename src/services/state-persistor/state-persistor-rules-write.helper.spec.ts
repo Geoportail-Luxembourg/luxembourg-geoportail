@@ -21,7 +21,7 @@ describe('RulesWriteHelper', () => {
     it('returns permalink storage as localStorage for key layersOpen', () => {
       expect(
         RulesWriteHelper.processRulesForKey('layersOpen', {
-          layersOpen: false,
+          layersOpen: 'false',
         })
       ).toBe(0)
     })

@@ -2,17 +2,20 @@
 import { computed, onMounted, ShallowRef, shallowRef } from 'vue'
 import { storeToRefs } from 'pinia'
 import Sortable, { SortableEvent } from 'sortablejs'
+import { useTranslation } from 'i18next-vue'
 
 import { useAppStore } from '@/stores/app.store'
 import { useMapStore } from '@/stores/map.store'
-import type { Layer, LayerId } from '@/stores/map.store.model'
 import { useMetadataStore } from '@/stores/metadata.store'
+import type { Layer, LayerId } from '@/stores/map.store.model'
 import { BLANK_BACKGROUNDLAYER } from '@/composables/background-layer/background-layer.model'
 import useMvtStyles from '@/composables/mvt-styles/mvt-styles.composable'
 
 import LayerManagerItemBackground from './layer-item/layer-item-background.vue'
 import LayerManagerItem from './layer-item/layer-item.vue'
-import { useTranslation } from 'i18next-vue'
+
+import { statePersistorLayerComparatorService } from '@/services/state-persistor/state-persistor-layer-comparator.service'
+import SimpleStyleSelector from '../style-selector/simple-style-selector.vue'
 
 const { t } = useTranslation()
 
@@ -31,6 +34,8 @@ const bgLayerIsEditable = computed(() =>
 
 const emit = defineEmits(['displayCatalog'])
 const { setRemoteLayersOpen } = useAppStore()
+
+statePersistorLayerComparatorService.bootstrap()
 
 onMounted(() => {
   const sortableLayers = document.getElementById('sortable-layers')
@@ -66,12 +71,16 @@ function toggleAccordionItem(layer: Layer) {
 function toggleEditionLayer() {
   appStore.toggleStyleEditorPanel()
 }
+
+function toggleLayerComparator() {
+  appStore.toggleLayerComparator()
+}
 </script>
 
 <template>
   <ul id="sortable-layers">
     <li
-      v-for="layer in layers"
+      v-for="(layer, index) in layers"
       :key="layer.id"
       :id="(layer.id as string)"
       data-cy="myLayer"
@@ -80,8 +89,11 @@ function toggleEditionLayer() {
         :draggableClassName="draggableClassName"
         :layer="layer"
         :isOpen="isLayerOpenId === layer.id"
+        :isLayerComporatorOpen="appStore.layerComparatorOpen"
+        :displayLayerComporatorOpen="index === 0"
         @clickRemove="removeLayer"
         @clickToggle="toggleAccordionItem"
+        @clickToggleLayerComparator="toggleLayerComparator"
         @clickInfo="setMetadataId(layer.id)"
         @changeOpacity="changeOpacityLayer"
       >
