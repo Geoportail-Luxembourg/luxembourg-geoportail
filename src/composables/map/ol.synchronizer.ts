@@ -75,7 +75,7 @@ export class OlSynchronizer {
         openLayers.applyOnBgLayer(map, bgLayer =>
           styleService.applyStyle(
             bgLayer,
-            newStyle || getDefaultMediumStyling(bgLayer)
+            newStyle || getDefaultMediumStyling(bgLayer.get('label'))
           )
         )
     )

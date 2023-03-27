@@ -24,7 +24,7 @@ statePersistorThemeService.bootstrap()
 statePersistorLayersOpenService.bootstrapLayersOpen()
 statePersistorStyleService.bootstrapStyle()
 
-const { layersOpen } = storeToRefs(useAppStore())
+const { layersOpen, styleEditorOpen } = storeToRefs(useAppStore())
 
 watch(layersOpen, () =>
   setTimeout(() => {

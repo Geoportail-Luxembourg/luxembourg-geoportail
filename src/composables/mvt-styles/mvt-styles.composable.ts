@@ -187,6 +187,9 @@ export default function useMvtStyles() {
             'lu_landcover_wood',
             'lu_landcover_grass',
             'lu_waterway_tunnel',
+            'lu_landuse_gras',
+            'lu_landuse_wood',
+            'landcover_grass',
           ].indexOf(prop) !== -1
         ) {
           return
