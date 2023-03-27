@@ -5,6 +5,7 @@ import { storageStyleMapper } from './state-persistor-bgstyle.mapper'
 import { storageHelper } from './storage/storage.helper'
 import { useStyleStore } from '@/stores/style.store'
 import { useMapStore } from '@/stores/map.store'
+import { SP_KEY_SERIAL } from './state-persistor.model'
 // import { bgConfigFixture } from '@/__fixtures__/background.config.fixture'
 
 class StatePersistorStyleService {
@@ -41,6 +42,11 @@ class StatePersistorStyleService {
               storageHelper.setValue(
                 mapStore.bgLayer.name,
                 value || [],
+                storageStyleMapper.styleToLocalStorage
+              )
+              storageHelper.setValue(
+                SP_KEY_SERIAL,
+                value || [],
                 storageStyleMapper.styleToSerial
               )
             }
@@ -63,21 +69,18 @@ class StatePersistorStyleService {
     // const { bgLayer } = storeToRefs(mapStore)
     const bgLayer = mapStore.bgLayer
     console.log(`restoring bg style ${bgLayer?.name}`)
-    /*
     if (bgLayer) {
-        const bgStyle = bgConfigFixture().bg_layers.find((l) => l.id == bgLayer.id)
-        const storedBgStyle = storageHelper.getValue(
-            bgStyle.,
-            storageLayerMapper.bgLayerIdToBgLayer
-        )
-    }
-    */
-    if (bgLayer) {
-      const bgStyle = storageHelper.getValue(
-        bgLayer.name,
+      let bgStyle = storageHelper.getValue(
+        SP_KEY_SERIAL,
         storageStyleMapper.styleSerialToStyle
       )
-      if (bgStyle) {
+      if (bgStyle.length === 0) {
+        bgStyle = storageHelper.getValue(
+          bgLayer.name,
+          storageStyleMapper.styleLocalStorageToStyle
+        )
+      }
+      if (bgStyle && bgStyle.length > 0) {
         styleStore.setStyle(bgStyle)
       }
     }
