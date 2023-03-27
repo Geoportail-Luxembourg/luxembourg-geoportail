@@ -24,6 +24,8 @@ export const SP_KEYS_STYLE = [
   'topogr_global',
   'topo_bw_jpeg',
 ]
+export const SP_KEY_LAYERCOMPARATOR = 'lc'
+export const SP_KEY_LAYERCOMPARATOR_SLIDERRATIO = 'sliderRatio'
 
 // Keys for version 2, legacy
 export const SP_KEY_V2_BGLAYEROPACITY = 'bgOpacity' // Unused, just for legacy permalink

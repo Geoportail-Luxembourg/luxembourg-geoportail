@@ -6,6 +6,8 @@ import {
   SP_KEY_VERSION,
   SP_KEY_SERIAL,
   SP_KEYS_STYLE,
+  SP_KEY_LAYERCOMPARATOR,
+  SP_KEY_LAYERCOMPARATOR_SLIDERRATIO,
   StatePersistorRulesHelper,
 } from './state-persistor.model'
 
@@ -36,11 +38,22 @@ export abstract class RulesWriteHelper extends StatePersistorRulesHelper {
   }
 
   static ruleUsePermalink(currentKey: string) {
-    return [ruleIsVersion, ruleIsThemeForGhPagesHACK].reduce(
+    return [
+      ruleIsLayerComparator,
+      ruleIsVersion,
+      ruleIsThemeForGhPagesHACK,
+    ].reduce(
       (prevResult, currRule) => prevResult || currRule(currentKey),
       false
     )
   }
+}
+
+const ruleIsLayerComparator = (currentKey: string) => {
+  return (
+    currentKey === SP_KEY_LAYERCOMPARATOR ||
+    currentKey === SP_KEY_LAYERCOMPARATOR_SLIDERRATIO
+  )
 }
 
 /**
