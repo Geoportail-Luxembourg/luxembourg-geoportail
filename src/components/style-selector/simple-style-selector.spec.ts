@@ -54,21 +54,21 @@ describe('StyleEditor', () => {
     styleStore.setSimpleStyle(null)
     expect(styleStore.bgStyle).toBeDefined
     if (styleStore.bgStyle) {
-      expect(styleStore.bgStyle[0].unlocalized_label).toBe('Roads primary')
+      expect(styleStore.bgStyle[0].label).toBe('Roads primary')
       expect(styleStore.bgStyle[0].color).toBe('#f7f7f7')
     }
     expect(wrapper.findAll('button').length).toBe(7)
     expect(wrapper.findAll('button')[6].element.textContent).toBe('Reset style')
     await wrapper.vm.onStylingSelected(dummySimpleStyles[0])
     if (styleStore.bgStyle) {
-      expect(styleStore.bgStyle[0].unlocalized_label).toBe('Roads primary')
+      expect(styleStore.bgStyle[0].label).toBe('Roads primary')
       expect(styleStore.bgStyle[0].color).toBe('#ffffff')
     }
     expect(wrapper.vm.simpleStyles[3].selected).toBe(false)
     await wrapper.vm.onStylingSelected(wrapper.vm.simpleStyles[3])
     expect(wrapper.vm.simpleStyles[3].selected).toBe(true)
     if (styleStore.bgStyle) {
-      expect(styleStore.bgStyle[0].unlocalized_label).toBe('Roads primary')
+      expect(styleStore.bgStyle[0].label).toBe('Roads primary')
       expect(styleStore.bgStyle[0].color).toBe('#f9c50d')
     }
   })

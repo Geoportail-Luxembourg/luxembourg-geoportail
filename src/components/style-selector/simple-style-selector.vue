@@ -3,7 +3,7 @@ import { useTranslation } from 'i18next-vue'
 import { ref, watch } from 'vue'
 
 import { useStyleStore } from '@/stores/style.store'
-// import { statePersistorStyleService } from '@/services/state-persistor/state-persistor-style.service'
+import { statePersistorStyleService } from '@/services/state-persistor/state-persistor-bgstyle.service'
 import SimpleStyleItem from './simple-style-item.vue'
 import { bgConfigFixture } from '@/__fixtures__/background.config.fixture'
 import { SimpleRoadStyle } from '@/composables/mvt-styles/mvt-styles.model'
@@ -16,7 +16,7 @@ const styleService = useMvtStyles()
 const { bgStyle } = storeToRefs(styleStore)
 const simpleStyles = ref(bgConfigFixture().simple_styles)
 
-// statePersistorStyleService.bootstrapStyle()
+statePersistorStyleService.bootstrapStyle()
 
 const props = defineProps({
   isOpen: {
