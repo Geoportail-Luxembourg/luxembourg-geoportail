@@ -1,4 +1,4 @@
-import { watch } from 'vue'
+import { watch, computed } from 'vue'
 import type OlMap from 'ol/Map'
 import useOpenLayers from './ol.composable'
 
@@ -8,7 +8,6 @@ import { useStyleStore } from '@/stores/style.store'
 import useMap from './map.composable'
 import { VectorSourceDict } from '@/composables/mvt-styles/mvt-styles.model'
 import useMvtStyles from '@/composables/mvt-styles/mvt-styles.composable'
-import { getDefaultMediumStyling } from '@/services/styles/styles.service'
 
 export class OlSynchronizer {
   previousLayers: Layer[]
@@ -69,15 +68,18 @@ export class OlSynchronizer {
         openLayers.setBgLayer(map, bgLayer, styleStore.bgVectorSources)
     )
 
-    watch(
-      () => styleStore.bgStyle,
-      newStyle =>
-        openLayers.applyOnBgLayer(map, bgLayer =>
-          styleService.applyStyle(
-            bgLayer,
-            newStyle || getDefaultMediumStyling(bgLayer.get('label'))
-          )
-        )
+    const appliedStyle = computed(() =>
+      styleService.applyDefaultStyle(
+        mapStore.bgLayer,
+        styleStore.bgVectorBaseStyles,
+        styleStore.bgStyle
+      )
+    )
+
+    watch(appliedStyle, style =>
+      openLayers.applyOnBgLayer(map, bgLayer =>
+        styleService.applyConsolidatedStyle(bgLayer, style)
+      )
     )
 
     watch(

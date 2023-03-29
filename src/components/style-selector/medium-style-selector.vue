@@ -22,7 +22,7 @@ const isColorVisible = computed(() =>
   COLOR_EDITABLE_LAYERS.includes(props.layer.name)
 )
 const styles = computed(
-  () => bgStyle.value || getDefaultMediumStyling(props.layer.name)
+  () => bgStyle.value || getDefaultMediumStyling(props.layer)
 )
 
 function changeStyle(i: number, newStyle: StyleItem) {

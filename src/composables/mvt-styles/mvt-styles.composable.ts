@@ -4,11 +4,12 @@ import {
   stylePropertyTypeList,
   StyleCapabilities,
   BgLayerDef,
+  VectorStyleDict,
+  StyleSpecification,
 } from '@/composables/mvt-styles/mvt-styles.model'
 import type { Layer } from '@/stores/map.store.model'
 import { bgConfigFixture } from '@/__fixtures__/background.config.fixture'
 import BaseLayer from 'ol/layer/Base'
-import { Map as MaplibreMap } from 'maplibre-gl'
 
 export default function useMvtStyles() {
   function getDefaultMapBoxStyleUrl(label: string | undefined) {
@@ -157,53 +158,60 @@ export default function useMvtStyles() {
     return med_road_style
   }
 
-  function applyStyle(bgLayer: BaseLayer, style: StyleItem[]) {
-    // consider layer to be a Maplibre Layer
-    const mbMap = (bgLayer as any).maplibreMap
-    // check if maplibre map element exists
-    if (!mbMap) return
-    // apply style as soon as vector sources have finished loading
-    if (mbMap.loaded()) {
-      applyStyleOnMap(style, mbMap)
-    } else {
-      new Promise(resolve => mbMap.once('load', resolve)).then(() =>
-        applyStyleOnMap(style, mbMap)
-      )
-    }
-  }
-
-  function applyStyleOnMap(style: StyleItem[], mbMap: any) {
-    style.forEach(item => applyItemToMap(item, mbMap))
-  }
-
-  function applyItemToMap(item: StyleItem, mbMap: MaplibreMap) {
-    for (const styleProperty of stylePropertyTypeList) {
-      const props = item[`${styleProperty}s`] || []
-      props.forEach(prop => {
-        // workaround for broken predefined styles
-        if (
-          [
-            'lu_bridge_path case',
-            'lu_landcover_wood',
-            'lu_landcover_grass',
-            'lu_waterway_tunnel',
-            'lu_landuse_gras',
-            'lu_landuse_wood',
-            'landcover_grass',
-          ].indexOf(prop) !== -1
-        ) {
-          return
-        }
-        if (item.color) {
-          mbMap.setPaintProperty(prop, `${styleProperty}-color`, item.color)
-          mbMap.setPaintProperty(prop, `${styleProperty}-opacity`, 1)
-        }
-        mbMap.setLayoutProperty(
-          prop,
-          'visibility',
-          item.visible ? 'visible' : 'none'
-        )
+  function applyDefaultStyle(
+    bgLayer: Layer | undefined | null,
+    baseStyles: VectorStyleDict,
+    activeStyle: StyleItem[] | null | undefined
+  ): StyleSpecification | undefined {
+    if (!bgLayer) return
+    // need a deep copy of the object to preserve default style
+    if (!baseStyles.get(bgLayer.id)) return
+    const baseStyle: StyleSpecification = JSON.parse(
+      JSON.stringify(baseStyles.get(bgLayer.id))
+    ) as any
+    if (!baseStyle) return
+    if (!baseStyle || !baseStyle.layers) return
+    if (activeStyle) {
+      activeStyle.forEach(styleItem => {
+        baseStyle?.layers.forEach((layer, i) => {
+          for (const styleProperty of stylePropertyTypeList) {
+            const props = styleItem[`${styleProperty}s`] || []
+            if (props.includes(layer.id)) {
+              const basePaint: any = Object.assign(
+                {},
+                baseStyle.layers[i].paint
+              )
+              if (styleItem.color) {
+                basePaint[`${styleProperty}-color`] = styleItem.color
+                basePaint[`${styleProperty}-opacity`] = 1
+                baseStyle.layers[i].paint = basePaint
+              }
+              baseStyle.layers[i].layout = Object.assign(
+                {},
+                baseStyle.layers[i].layout,
+                { visibility: styleItem.visible ? 'visible' : 'none' }
+              )
+            }
+          }
+        })
       })
+    }
+    return baseStyle
+  }
+
+  function applyConsolidatedStyle(
+    bgLayer: BaseLayer,
+    consolidatedStyle: StyleSpecification | undefined
+  ) {
+    if (!consolidatedStyle) return
+    const mbMap = (bgLayer as any).maplibreMap
+    if (!mbMap) return
+    if (mbMap.loaded()) {
+      mbMap.setStyle(consolidatedStyle)
+    } else {
+      new Promise(resolve => mbMap.once('data', resolve)).then(() =>
+        mbMap.setStyle(consolidatedStyle)
+      )
     }
   }
 
@@ -244,7 +252,8 @@ export default function useMvtStyles() {
   return {
     setConfigForLayer,
     getRoadStyleFromSimpleStyle,
-    applyStyle,
+    applyDefaultStyle,
+    applyConsolidatedStyle,
     checkSelection,
     isLayerStyleEditable,
     getStyleCapabilitiesFromLayer,

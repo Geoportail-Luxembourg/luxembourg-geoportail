@@ -1,6 +1,5 @@
 import { acceptHMRUpdate, defineStore } from 'pinia'
 import { shallowRef, ShallowRef } from 'vue'
-
 import useMvtStyles from '@/composables/mvt-styles/mvt-styles.composable'
 import type { LayerId } from '@/stores/map.store.model'
 import {
@@ -8,6 +7,8 @@ import {
   SimpleStyle,
   StyleItem,
   VectorSourceDict,
+  VectorStyleDict,
+  StyleSpecification,
 } from '@/composables/mvt-styles/mvt-styles.model'
 import { bgConfigFixture } from '@/__fixtures__/background.config.fixture'
 
@@ -17,6 +18,9 @@ export const useStyleStore = defineStore(
     const styleService = useMvtStyles()
     const bgStyle: ShallowRef<StyleItem[] | undefined | null> = shallowRef()
     const bgVectorSources: ShallowRef<VectorSourceDict> = shallowRef(new Map())
+    const bgVectorBaseStyles: ShallowRef<VectorStyleDict> = shallowRef(
+      new Map()
+    )
 
     const promises: Promise<{ id: LayerId; config: IMvtConfig }>[] = []
     bgConfigFixture().bg_layers.forEach(bgLayer => {
@@ -38,6 +42,23 @@ export const useStyleStore = defineStore(
       bgVectorSources.value = vectorDict
     })
 
+    function removeBaseStyle(id: LayerId) {
+      const styleDict: VectorStyleDict = new Map()
+      bgVectorBaseStyles.value.forEach((style, key) => {
+        if (key !== id) styleDict.set(key, style)
+      })
+      bgVectorBaseStyles.value = styleDict
+    }
+
+    function setBaseStyle(id: LayerId, baseStyle: StyleSpecification) {
+      const styleDict: VectorStyleDict = new Map()
+      bgVectorBaseStyles.value.forEach((style, key) =>
+        styleDict.set(key, style)
+      )
+      styleDict.set(id, baseStyle)
+      bgVectorBaseStyles.value = styleDict
+    }
+
     function setSimpleStyle(simpleStyle: SimpleStyle | null) {
       bgStyle.value = styleService.getRoadStyleFromSimpleStyle(simpleStyle)
     }
@@ -46,7 +67,15 @@ export const useStyleStore = defineStore(
       bgStyle.value = style
     }
 
-    return { bgStyle, bgVectorSources, setSimpleStyle, setStyle }
+    return {
+      bgStyle,
+      bgVectorSources,
+      bgVectorBaseStyles,
+      removeBaseStyle,
+      setBaseStyle,
+      setSimpleStyle,
+      setStyle,
+    }
   },
   {}
 )
