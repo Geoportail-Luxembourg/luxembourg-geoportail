@@ -23,7 +23,7 @@ const styleCapabilities = computed(() =>
 
 watch(bgLayer, bgLayer => {
   if (!styles.isLayerStyleEditable(bgLayer)) {
-    appStore.toggleStyleEditorPanel(false)
+    appStore.closeStyleEditorPanel()
   }
 })
 
@@ -38,9 +38,7 @@ function resetStyle() {
 
 <template>
   <div v-if="styleCapabilities.isEditable">
-    <button @click="() => appStore.toggleStyleEditorPanel(false)">
-      X close
-    </button>
+    <button @click="() => appStore.closeStyleEditorPanel()">X close</button>
     <h2 class="h-20 shrink-0 flex justify-between lux-panel-title">
       {{ t('Style editor') }}
     </h2>

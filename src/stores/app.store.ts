@@ -16,9 +16,12 @@ export const useAppStore = defineStore(
       layersOpen.value = open
     }
 
-    function toggleStyleEditorPanel(force?: boolean) {
-      styleEditorOpen.value =
-        force !== undefined ? force : !styleEditorOpen.value
+    function toggleStyleEditorPanel() {
+      styleEditorOpen.value = !styleEditorOpen.value
+    }
+
+    function closeStyleEditorPanel() {
+      styleEditorOpen.value = false
     }
 
     return {
@@ -28,6 +31,7 @@ export const useAppStore = defineStore(
       setLang,
       setLayersOpen,
       toggleStyleEditorPanel,
+      closeStyleEditorPanel,
     }
   },
   {}

@@ -13,7 +13,8 @@ const { t } = useTranslation()
 const styleStore = useStyleStore()
 const styleService = useMvtStyles()
 const { bgStyle } = storeToRefs(styleStore)
-const simpleStyles = ref(bgConfigFixture().simple_styles.road)
+const simpleStyleConf = bgConfigFixture().simple_styles.road
+const simpleStyles = ref(simpleStyleConf)
 
 const props = defineProps({
   isOpen: {
@@ -21,7 +22,6 @@ const props = defineProps({
     default: true,
   },
 })
-const simpleStyleConf = bgConfigFixture().simple_styles.road
 // does not seem to work with "computed" => therefore using "watch"
 watch(
   bgStyle,

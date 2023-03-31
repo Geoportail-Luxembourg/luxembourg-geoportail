@@ -12,15 +12,17 @@ const emit = defineEmits<{
 }>()
 
 function updateColor(colorChangeEvent: Event) {
-  const newStyle = Object.assign(Object.assign({}, props.style), {
+  const newStyle = {
+    ...props.style,
     color: colorChangeEvent.target.value,
-  })
+  }
   emit('changeStyle', newStyle)
 }
 function updateVisibility(visibilityChangeEvent: Event) {
-  const newStyle = Object.assign(Object.assign({}, props.style), {
+  const newStyle = {
+    ...props.style,
     visible: visibilityChangeEvent.target.checked,
-  })
+  }
   emit('changeStyle', newStyle)
 }
 </script>
