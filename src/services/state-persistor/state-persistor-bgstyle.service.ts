@@ -17,7 +17,7 @@ class StatePersistorStyleService {
     // eslint-disable-next-line prefer-const
     stop = watchEffect(() => {
       if (styleStore.bgVectorSources) {
-        this.restoreStyle()
+        this.restoreStyle(false)
         if (activatePersistance) this.persistStyle()
         activatePersistance = true
         stop && stop() // test if exists, for HMR support

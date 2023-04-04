@@ -17,7 +17,7 @@ export const useStyleStore = defineStore(
     const bgStyle: ShallowRef<StyleItem[] | undefined | null> = shallowRef()
     const bgVectorSources: ShallowRef<VectorSourceDict> = shallowRef(new Map())
 
-    const promises: Promise<{ id: string; config: IMvtConfig }>[] = []
+    const promises: Promise<{ id: LayerId; config: IMvtConfig }>[] = []
     bgConfigFixture().bg_layers.forEach(bgLayer => {
       if (bgLayer.vector_id) {
         const conf = styleService.setConfigForLayer(

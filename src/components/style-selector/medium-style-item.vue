@@ -12,18 +12,22 @@ const emit = defineEmits<{
 }>()
 
 function updateColor(colorChangeEvent: Event) {
-  const newStyle = {
-    ...props.style,
-    color: colorChangeEvent.target.value,
+  if (colorChangeEvent.target) {
+    const newStyle = {
+      ...props.style,
+      color: (colorChangeEvent.target as HTMLInputElement).value,
+    }
+    emit('changeStyle', newStyle)
   }
-  emit('changeStyle', newStyle)
 }
 function updateVisibility(visibilityChangeEvent: Event) {
-  const newStyle = {
-    ...props.style,
-    visible: visibilityChangeEvent.target.checked,
+  if (visibilityChangeEvent) {
+    const newStyle = {
+      ...props.style,
+      visible: (visibilityChangeEvent.target as HTMLInputElement).checked,
+    }
+    emit('changeStyle', newStyle)
   }
-  emit('changeStyle', newStyle)
 }
 </script>
 
