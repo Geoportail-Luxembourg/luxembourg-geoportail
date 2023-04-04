@@ -47,7 +47,7 @@ onUnmounted(() => document.removeEventListener('click', onClickOutsideOpenBtn))
         aria-haspopup="true"
         @click="onClickOpenBtn"
       >
-        <span>{{ props.placeholder ?? props.options[0].label }}</span
+        <span>{{ props.placeholder ?? props.options[0]?.label }}</span
         ><span class="lux-caret"></span>
       </button>
     </div>
