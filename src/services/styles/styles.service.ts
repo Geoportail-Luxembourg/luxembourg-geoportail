@@ -1,5 +1,5 @@
 import { bgConfigFixture } from '../../__fixtures__/background.config.fixture'
-import { MediumStyle } from './styles.model'
+import { StyleItem as MediumStyle } from '@/composables/mvt-styles/mvt-styles.model'
 
 export function getDefaultMediumStyling(label: string): MediumStyle[] {
   if (label === 'topogr_global' || label === 'topo_bw_jpeg')
@@ -8,10 +8,10 @@ export function getDefaultMediumStyling(label: string): MediumStyle[] {
   return getDefaultMediumRoadmapStyling() // Default value at init app loading
 }
 
-export function getDefaultMediumRoadmapStyling() {
-  return bgConfigFixture().medium_default_styles.road
+export function getDefaultMediumRoadmapStyling(): MediumStyle[] {
+  return bgConfigFixture().medium_default_styles.road as MediumStyle[]
 }
 
-export function getDefaultMediumTopoStyling() {
-  return bgConfigFixture().medium_default_styles.topo
+export function getDefaultMediumTopoStyling(): MediumStyle[] {
+  return bgConfigFixture().medium_default_styles.topo as MediumStyle[]
 }

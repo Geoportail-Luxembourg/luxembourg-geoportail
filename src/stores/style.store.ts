@@ -2,6 +2,7 @@ import { acceptHMRUpdate, defineStore } from 'pinia'
 import { shallowRef, ShallowRef } from 'vue'
 
 import useMvtStyles from '@/composables/mvt-styles/mvt-styles.composable'
+import type { LayerId } from '@/stores/map.store.model'
 import {
   IMvtConfig,
   SimpleStyle,

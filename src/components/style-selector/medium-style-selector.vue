@@ -9,6 +9,8 @@ import { StyleItem } from '@/composables/mvt-styles/mvt-styles.model'
 import { Layer } from '@/stores/map.store.model'
 import { useStyleStore } from '@/stores/style.store'
 
+const COLOR_EDITABLE_LAYERS = ['basemap_2015_global']
+
 const styleStore = useStyleStore()
 const { bgStyle } = storeToRefs(styleStore)
 
@@ -16,8 +18,8 @@ const { t } = useTranslation()
 const props = defineProps<{
   layer: Layer
 }>()
-const isColorVisible = computed(
-  () => props.layer.name === 'basemap_2015_global'
+const isColorVisible = computed(() =>
+  COLOR_EDITABLE_LAYERS.includes(props.layer.name)
 )
 const styles = computed(
   () => bgStyle.value || getDefaultMediumStyling(props.layer.name)

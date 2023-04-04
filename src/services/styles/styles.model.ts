@@ -1,5 +1,5 @@
 export interface MediumStyle {
-  unlocalized_label: string
+  label: string
   color?: string
   styleProperties?: {
     type: string
