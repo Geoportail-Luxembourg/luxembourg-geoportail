@@ -39,3 +39,7 @@ For e2e tests, the code is instrumented with the Istanbul library to obtain resu
 - `report` after running any of the above e2e test suites, the command `npm run report` will display the code coverage report from the data created by e2e tests in `/.nyc_output/out.json`. This recipe is used in the CI workflow.
 
 ⚠️ `test:e2e:ci` command should launch tests on the generated build production. For now, it launches the vite dev server, otherwise the code coverage report is not generated and the next ci command `npx nyc report` will trigger an error.
+
+## Build as a lib for integration in v3
+
+`npx vite build --config vite-dist.config.ts`
