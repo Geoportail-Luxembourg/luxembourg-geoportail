@@ -3,11 +3,13 @@ import { onMounted, onUnmounted, shallowRef, ShallowRef } from 'vue'
 
 import { DropdownOptionModel } from './dropdown-list.model'
 
-const props = defineProps<{
+const props = withDefaults(defineProps<{
   placeholder: string
   options: DropdownOptionModel[]
   modelValue?: string
-}>()
+}>(), {
+  options: () => [{ label: 'Default label', value: 'Default value' }]
+})
 const emit = defineEmits(['change'])
 const isOpen: ShallowRef<boolean> = shallowRef(false)
 const selectedValue: ShallowRef<string | undefined> = shallowRef()
@@ -45,7 +47,7 @@ onUnmounted(() => document.removeEventListener('click', onClickOutsideOpenBtn))
         aria-haspopup="true"
         @click="onClickOpenBtn"
       >
-        <span>{{ props.placeholder ?? props.options[0]?.label }}</span
+        <span>{{ props.placeholder ?? props.options[0].label }}</span
         ><span class="lux-caret"></span>
       </button>
     </div>
