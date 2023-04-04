@@ -1,56 +1,56 @@
-import { defineComponent as f, shallowRef as v, onMounted as k, onUnmounted as w, openBlock as o, createElementBlock as s, createElementVNode as n, normalizeClass as d, unref as i, toDisplayString as _, Fragment as g, renderList as C } from "vue";
-const L = { class: "lux-dropdown" }, B = { class: "h-full" }, E = ["aria-expanded"], V = /* @__PURE__ */ n("span", { class: "lux-caret" }, null, -1), y = { class: "lux-dropdown-wrapper" }, D = ["aria-label", "data-value"], z = /* @__PURE__ */ f({
+import { defineComponent as k, shallowRef as _, onMounted as w, onUnmounted as g, openBlock as o, createElementBlock as s, createElementVNode as l, normalizeClass as d, unref as u, toDisplayString as h, Fragment as C, renderList as D } from "vue";
+const L = { class: "lux-dropdown" }, B = { class: "h-full" }, E = ["aria-expanded"], V = /* @__PURE__ */ l("span", { class: "lux-caret" }, null, -1), y = { class: "lux-dropdown-wrapper" }, O = ["aria-label", "data-value"], F = /* @__PURE__ */ k({
   __name: "dropdown-list",
   props: {
     placeholder: null,
-    options: null,
+    options: { default: () => [{ label: "Default label", value: "Default value" }] },
     modelValue: null
   },
   emits: ["change"],
-  setup(c, { emit: h }) {
-    const a = c, l = v(!1), u = v();
+  setup(i, { emit: f }) {
+    const t = i, a = _(!1), c = _();
     function r(e) {
-      l.value = e === void 0 ? !l.value : e;
-    }
-    function x(e) {
-      e.stopImmediatePropagation(), r();
+      a.value = e === void 0 ? !a.value : e;
     }
     function b(e) {
-      u.value = e.target.dataset.value, h("change", u.value);
+      e.stopImmediatePropagation(), r();
+    }
+    function x(e) {
+      c.value = e.target.dataset.value, f("change", c.value);
     }
     function p() {
       r(!1);
     }
-    return k(() => document.addEventListener("click", p)), w(() => document.removeEventListener("click", p)), (e, O) => {
-      var m;
+    return w(() => document.addEventListener("click", p)), g(() => document.removeEventListener("click", p)), (e, I) => {
+      var m, v;
       return o(), s("div", L, [
-        n("div", B, [
-          n("button", {
+        l("div", B, [
+          l("button", {
             type: "button",
-            class: d(["lux-btn lux-dropdown-btn", i(l) ? "expanded" : ""]),
-            "aria-expanded": i(l),
+            class: d(["lux-btn lux-dropdown-btn", u(a) ? "expanded" : ""]),
+            "aria-expanded": u(a),
             "aria-haspopup": "true",
-            onClick: x
+            onClick: b
           }, [
-            n("span", null, _((m = a.placeholder) != null ? m : a.options[0].label), 1),
+            l("span", null, h((v = t.placeholder) != null ? v : (m = t.options[0]) == null ? void 0 : m.label), 1),
             V
           ], 10, E)
         ]),
-        n("div", y, [
-          n("ul", {
-            class: d(["lux-dropdown-list", i(l) ? "" : "hidden"]),
+        l("div", y, [
+          l("ul", {
+            class: d(["lux-dropdown-list", u(a) ? "" : "hidden"]),
             tabindex: "-1"
           }, [
-            (o(!0), s(g, null, C(a.options, (t) => (o(), s("li", {
-              key: t.value,
-              class: d(c.modelValue === t.value ? "selected" : "")
+            (o(!0), s(C, null, D(t.options, (n) => (o(), s("li", {
+              key: n.value,
+              class: d(i.modelValue === n.value ? "selected" : "")
             }, [
-              n("button", {
+              l("button", {
                 class: "lux-dropdown-list-item",
-                "aria-label": t.ariaLabel,
-                "data-value": t.value,
-                onClick: b
-              }, _(t.label), 9, D)
+                "aria-label": n.ariaLabel,
+                "data-value": n.value,
+                onClick: x
+              }, h(n.label), 9, O)
             ], 2))), 128))
           ], 2)
         ])
@@ -59,5 +59,5 @@ const L = { class: "lux-dropdown" }, B = { class: "h-full" }, E = ["aria-expande
   }
 });
 export {
-  z as DropdownList
+  F as DropdownList
 };
