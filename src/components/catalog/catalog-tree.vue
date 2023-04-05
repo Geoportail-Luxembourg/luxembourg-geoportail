@@ -43,6 +43,8 @@ function toggleParent(node: LayerTreeNodeModel) {
 function toggleLayer(node: LayerTreeNodeModel) {
   layers.toggleLayer(+node.id, !node.checked)
 }
+
+console.log("catalog-tree.vue")
 </script>
 
 <template>
