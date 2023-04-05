@@ -2,9 +2,10 @@ import { acceptHMRUpdate, defineStore } from 'pinia'
 import { shallowRef, ShallowRef } from 'vue'
 
 import useMvtStyles from '@/composables/mvt-styles/mvt-styles.composable'
+import type { LayerId } from '@/stores/map.store.model'
 import {
   IMvtConfig,
-  SimpleRoadStyle,
+  SimpleStyle,
   StyleItem,
   VectorSourceDict,
 } from '@/composables/mvt-styles/mvt-styles.model'
@@ -14,10 +15,10 @@ export const useStyleStore = defineStore(
   'style',
   () => {
     const styleService = useMvtStyles()
-    const bgStyle: ShallowRef<StyleItem[] | undefined> = shallowRef()
+    const bgStyle: ShallowRef<StyleItem[] | undefined | null> = shallowRef()
     const bgVectorSources: ShallowRef<VectorSourceDict> = shallowRef(new Map())
 
-    const promises: Promise<{ id: string; config: IMvtConfig }>[] = []
+    const promises: Promise<{ id: LayerId; config: IMvtConfig }>[] = []
     bgConfigFixture().bg_layers.forEach(bgLayer => {
       if (bgLayer.vector_id) {
         const conf = styleService.setConfigForLayer(
@@ -37,11 +38,11 @@ export const useStyleStore = defineStore(
       bgVectorSources.value = vectorDict
     })
 
-    function setSimpleStyle(simpleStyle: SimpleRoadStyle | null) {
+    function setSimpleStyle(simpleStyle: SimpleStyle | null) {
       bgStyle.value = styleService.getRoadStyleFromSimpleStyle(simpleStyle)
     }
 
-    function setStyle(style: StyleItem[]) {
+    function setStyle(style: StyleItem[] | null) {
       bgStyle.value = style
     }
 

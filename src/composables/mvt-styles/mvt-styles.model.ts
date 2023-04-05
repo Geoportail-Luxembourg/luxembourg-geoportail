@@ -1,5 +1,14 @@
 import { LayerId } from '@/stores/map.store.model'
 
+export interface BgLayerDef {
+  icon_id: string
+  vector_id?: string
+  simple_style_class?: string
+  medium_style_class?: string
+  expert_style_class?: string
+  id: number
+  is_default?: boolean
+}
 export interface IMvtConfig {
   label: string
   defaultMapBoxStyle: string
@@ -10,7 +19,14 @@ export interface IMvtConfig {
 }
 export type VectorSourceDict = Map<LayerId, IMvtConfig>
 
-export interface SimpleRoadStyle {
+export interface StyleCapabilities {
+  isEditable: boolean
+  hasSimpleStyle: boolean
+  hasAdvancedStyle: boolean
+  hasExpertStyle: boolean
+}
+
+export interface SimpleStyle {
   unlocalized_label: string
   hillshade: boolean
   colors: string[]

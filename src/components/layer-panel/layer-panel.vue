@@ -16,9 +16,9 @@ const { setLayersOpen } = useAppStore()
 <template>
   <div data-cy="layerPanel" class="flex flex-col h-full">
     <div class="h-20 shrink-0 flex justify-between lux-panel-title">
-      <span>
+      <h2>
         {{ t('Layers', { ns: 'client' }) }}
-      </span>
+      </h2>
       <span
         ><button
           @click="() => setLayersOpen(false)"

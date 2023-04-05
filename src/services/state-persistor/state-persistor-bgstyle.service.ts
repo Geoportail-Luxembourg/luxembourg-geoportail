@@ -55,17 +55,10 @@ class StatePersistorStyleService {
   }
 
   restoreStyle() {
-    console.log('restoring style')
     const styleStore = useStyleStore()
-    /*const bgLayer = storageHelper.getValue(
-        SP_KEY_BGLAYER,
-        storageLayerMapper.bgLayerIdToBgLayer
-    )*/
-    //const styleStore = useStyleStore()
+    styleStore.setStyle(null)
     const mapStore = useMapStore()
-    // const { bgLayer } = storeToRefs(mapStore)
     const bgLayer = mapStore.bgLayer
-    console.log(`restoring bg style ${bgLayer?.name}`)
     if (bgLayer) {
       let bgStyle = storageHelper.getValue(
         SP_KEY_SERIAL,

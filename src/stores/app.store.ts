@@ -6,14 +6,33 @@ export const useAppStore = defineStore(
   () => {
     const lang = ref('fr')
     const layersOpen = ref()
+    const styleEditorOpen = ref(false)
+
     function setLang(language: string) {
       lang.value = language
     }
+
     function setLayersOpen(open: boolean) {
       layersOpen.value = open
     }
 
-    return { lang, layersOpen, setLang, setLayersOpen }
+    function toggleStyleEditorPanel() {
+      styleEditorOpen.value = !styleEditorOpen.value
+    }
+
+    function closeStyleEditorPanel() {
+      styleEditorOpen.value = false
+    }
+
+    return {
+      lang,
+      layersOpen,
+      styleEditorOpen,
+      setLang,
+      setLayersOpen,
+      toggleStyleEditorPanel,
+      closeStyleEditorPanel,
+    }
   },
   {}
 )

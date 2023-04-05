@@ -1,8 +1,11 @@
 import {
-  SimpleRoadStyle,
+  SimpleStyle,
   StyleItem,
   stylePropertyTypeList,
+  StyleCapabilities,
+  BgLayerDef,
 } from '@/composables/mvt-styles/mvt-styles.model'
+import type { Layer } from '@/stores/map.store.model'
 import { bgConfigFixture } from '@/__fixtures__/background.config.fixture'
 import BaseLayer from 'ol/layer/Base'
 import { Map as MaplibreMap } from 'maplibre-gl'
@@ -137,7 +140,7 @@ export default function useMvtStyles() {
   }
 
   function getRoadStyleFromSimpleStyle(
-    simpleStyle: SimpleRoadStyle | null
+    simpleStyle: SimpleStyle | null
   ): StyleItem[] {
     const med_road_style = bgConfigFixture().medium_default_styles
       .road as StyleItem[]
@@ -184,6 +187,9 @@ export default function useMvtStyles() {
             'lu_landcover_wood',
             'lu_landcover_grass',
             'lu_waterway_tunnel',
+            'lu_landuse_gras',
+            'lu_landuse_wood',
+            'landcover_grass',
           ].indexOf(prop) !== -1
         ) {
           return
@@ -201,11 +207,32 @@ export default function useMvtStyles() {
     }
   }
 
+  function isLayerStyleEditable(bgLayer: Layer | undefined | null): boolean {
+    const bgLayerDef: BgLayerDef | undefined = bgConfigFixture().bg_layers.find(
+      l => l.id == bgLayer?.id
+    )
+    return bgLayerDef?.vector_id !== undefined
+  }
+
+  function getStyleCapabilitiesFromLayer(
+    bgLayer: Layer | undefined | null
+  ): StyleCapabilities {
+    const bgLayerDef: BgLayerDef | undefined = bgConfigFixture().bg_layers.find(
+      l => l.id == bgLayer?.id
+    )
+    return {
+      isEditable: bgLayerDef?.vector_id !== undefined,
+      hasSimpleStyle: bgLayerDef?.simple_style_class !== undefined,
+      hasAdvancedStyle: bgLayerDef?.medium_style_class !== undefined,
+      hasExpertStyle: bgLayerDef?.expert_style_class !== undefined,
+    }
+  }
+
   function checkSelection(
     bgStyle: StyleItem[],
-    simpleStyleConf: SimpleRoadStyle[]
+    simpleStyleConf: SimpleStyle[]
   ) {
-    return simpleStyleConf.map((style: SimpleRoadStyle) =>
+    return simpleStyleConf.map((style: SimpleStyle) =>
       Object.assign(style, {
         selected: style.colors.every(
           (element, i) => bgStyle[i]?.color === element
@@ -219,5 +246,7 @@ export default function useMvtStyles() {
     getRoadStyleFromSimpleStyle,
     applyStyle,
     checkSelection,
+    isLayerStyleEditable,
+    getStyleCapabilitiesFromLayer,
   }
 }

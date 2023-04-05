@@ -3,25 +3,28 @@ import { computed, onMounted, ShallowRef, shallowRef } from 'vue'
 import { storeToRefs } from 'pinia'
 import Sortable, { SortableEvent } from 'sortablejs'
 
+import { useAppStore } from '@/stores/app.store'
 import { useMapStore } from '@/stores/map.store'
 import type { Layer, LayerId } from '@/stores/map.store.model'
+import { useMetadataStore } from '@/stores/metadata.store'
 import { BLANK_BACKGROUNDLAYER } from '@/composables/background-layer/background-layer.model'
+import useMvtStyles from '@/composables/mvt-styles/mvt-styles.composable'
 
 import LayerManagerItemBackground from './layer-item/layer-item-background.vue'
 import LayerManagerItem from './layer-item/layer-item.vue'
-import SimpleStyleSelector from '../style-selector/simple-style-selector.vue'
-import { useMetadataStore } from '@/stores/metadata.store'
-
-const ROAD_MAP_ID = 556
 
 const { setMetadataId } = useMetadataStore()
 const mapStore = useMapStore()
+const appStore = useAppStore()
 const { bgLayer } = storeToRefs(mapStore)
+const styles = useMvtStyles()
 
 const layers = computed(() => [...mapStore.layers].reverse())
 const isLayerOpenId: ShallowRef<LayerId | undefined> = shallowRef()
-const isStyleEditorOpen: ShallowRef<boolean> = shallowRef(false)
 const draggableClassName = 'drag-handle'
+const bgLayerIsEditable = computed(() =>
+  styles.isLayerStyleEditable(bgLayer.value)
+)
 
 onMounted(() => {
   const sortableLayers = document.getElementById('sortable-layers')
@@ -55,7 +58,7 @@ function toggleAccordionItem(layer: Layer) {
 }
 
 function toggleEditionLayer() {
-  isStyleEditorOpen.value = !isStyleEditorOpen.value
+  appStore.toggleStyleEditorPanel()
 }
 </script>
 
@@ -81,16 +84,11 @@ function toggleEditionLayer() {
     <li>
       <layer-manager-item-background
         :layer="bgLayer || BLANK_BACKGROUNDLAYER"
-        :showEditButton="bgLayer?.id === ROAD_MAP_ID"
+        :showEditButton="bgLayerIsEditable"
         @clickInfo="() => bgLayer && setMetadataId(bgLayer.id)"
         @clickEdit="toggleEditionLayer"
       >
       </layer-manager-item-background>
-      <!-- TODO: add medium and advanced style editors -->
-      <simple-style-selector
-        :is-open="isStyleEditorOpen && bgLayer?.id === ROAD_MAP_ID"
-      >
-      </simple-style-selector>
     </li>
   </ul>
 </template>

@@ -8,6 +8,7 @@ import { useStyleStore } from '@/stores/style.store'
 import useMap from './map.composable'
 import { VectorSourceDict } from '@/composables/mvt-styles/mvt-styles.model'
 import useMvtStyles from '@/composables/mvt-styles/mvt-styles.composable'
+import { getDefaultMediumStyling } from '@/services/styles/styles.service'
 
 export class OlSynchronizer {
   previousLayers: Layer[]
@@ -72,7 +73,10 @@ export class OlSynchronizer {
       () => styleStore.bgStyle,
       newStyle =>
         openLayers.applyOnBgLayer(map, bgLayer =>
-          styleService.applyStyle(bgLayer, newStyle || [])
+          styleService.applyStyle(
+            bgLayer,
+            newStyle || getDefaultMediumStyling(bgLayer.get('label'))
+          )
         )
     )
 

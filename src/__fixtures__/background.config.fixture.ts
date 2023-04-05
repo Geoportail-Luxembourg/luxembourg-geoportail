@@ -4,7 +4,9 @@ export const bgConfigFixture = () => ({
       // basemap_2015_global
       icon_id: 'route',
       vector_id: 'roadmap',
+      simple_style_class: 'road',
       medium_style_class: 'road',
+      expert_style_class: 'maputnik',
       id: 556,
       is_default: true,
     },
@@ -13,6 +15,7 @@ export const bgConfigFixture = () => ({
       icon_id: 'topo',
       vector_id: 'topomap',
       medium_style_class: 'topo',
+      expert_style_class: 'maputnik',
       id: 529,
     },
     {
@@ -20,6 +23,7 @@ export const bgConfigFixture = () => ({
       icon_id: 'topo_bw',
       vector_id: 'topomap_gray',
       medium_style_class: 'topo',
+      expert_style_class: 'maputnik',
       id: 502,
     },
     {
@@ -38,88 +42,90 @@ export const bgConfigFixture = () => ({
   bg_layer_theme_defaults: {
     tourisme: 502,
   },
-  simple_styles: [
+  simple_styles: {
     // ['Roads primary','Roads secondary','Vegetation','Buildings','Water', 'Background']
     // ['#bc1515', '#bcffdd','#bcffdd','#bc1133','#bc1133', '#f2f2f2'],
-    {
-      unlocalized_label: 'Light grey',
-      hillshade: false,
-      colors: [
-        '#ffffff',
-        '#ffffff',
-        '#d6e0d7',
-        '#e1e1e1',
-        '#cccccc',
-        '#f2f2f2',
-      ],
-      selected: false,
-    },
-    {
-      unlocalized_label: 'Dark grey',
-      hillshade: false,
-      colors: [
-        '#808080',
-        '#808080',
-        '#494b4a',
-        '#505052',
-        '#232426',
-        '#454545',
-      ],
-      selected: false,
-    },
-    {
-      unlocalized_label: 'Dark sand',
-      hillshade: false,
-      colors: [
-        '#9e9375',
-        '#9e9375',
-        '#6b6249',
-        '#403928',
-        '#b8aa84',
-        '#1a1814',
-      ],
-      selected: false,
-    },
-    {
-      unlocalized_label: 'Kids',
-      hillshade: false,
-      colors: [
-        '#f9c50d',
-        '#ffffff',
-        '#839836',
-        '#d6d3ce',
-        '#2a5ba8',
-        '#eeeeee',
-      ],
-      selected: false,
-    },
-    {
-      unlocalized_label: 'Light mauve',
-      hillshade: false,
-      colors: [
-        '#f3edf5',
-        '#f3edf5',
-        '#9d7da8',
-        '#caa9d1',
-        '#613b5c',
-        '#e5d3e6',
-      ],
-      selected: false,
-    },
-    {
-      unlocalized_label: 'Light Blue',
-      hillshade: false,
-      colors: [
-        '#dceaf5',
-        '#dceaf5',
-        '#5598cf',
-        '#81b7e3',
-        '#3b576e',
-        '#b6cde0',
-      ],
-      selected: false,
-    },
-  ],
+    road: [
+      {
+        unlocalized_label: 'Light grey',
+        hillshade: false,
+        colors: [
+          '#ffffff',
+          '#ffffff',
+          '#d6e0d7',
+          '#e1e1e1',
+          '#cccccc',
+          '#f2f2f2',
+        ],
+        selected: false,
+      },
+      {
+        unlocalized_label: 'Dark grey',
+        hillshade: false,
+        colors: [
+          '#808080',
+          '#808080',
+          '#494b4a',
+          '#505052',
+          '#232426',
+          '#454545',
+        ],
+        selected: false,
+      },
+      {
+        unlocalized_label: 'Dark sand',
+        hillshade: false,
+        colors: [
+          '#9e9375',
+          '#9e9375',
+          '#6b6249',
+          '#403928',
+          '#b8aa84',
+          '#1a1814',
+        ],
+        selected: false,
+      },
+      {
+        unlocalized_label: 'Kids',
+        hillshade: false,
+        colors: [
+          '#f9c50d',
+          '#ffffff',
+          '#839836',
+          '#d6d3ce',
+          '#2a5ba8',
+          '#eeeeee',
+        ],
+        selected: false,
+      },
+      {
+        unlocalized_label: 'Light mauve',
+        hillshade: false,
+        colors: [
+          '#f3edf5',
+          '#f3edf5',
+          '#9d7da8',
+          '#caa9d1',
+          '#613b5c',
+          '#e5d3e6',
+        ],
+        selected: false,
+      },
+      {
+        unlocalized_label: 'Light Blue',
+        hillshade: false,
+        colors: [
+          '#dceaf5',
+          '#dceaf5',
+          '#5598cf',
+          '#81b7e3',
+          '#3b576e',
+          '#b6cde0',
+        ],
+        selected: false,
+      },
+    ],
+  },
   medium_default_styles: {
     road: [
       {
