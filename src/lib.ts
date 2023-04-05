@@ -1,8 +1,4 @@
-import i18next from 'i18next'
-import backend from 'i18next-http-backend'
-import I18NextVue from 'i18next-vue'
-
-import { createApp } from 'vue'
+import { createApp, defineCustomElement, h, getCurrentInstance } from 'vue'
 import { createPinia } from 'pinia'
 import VueDOMPurifyHTML from 'vue-dompurify-html'
 
@@ -12,13 +8,11 @@ initProjections()
 
 import './assets/main.css'
 import DropdownList from '@/components/common/dropdown-list.vue'
-import Catalog from '@/components/catalog/catalog-tree.vue'
+import CatalogTree from '@/components/catalog/catalog-tree.vue'
 
-const app = createApp({})
-
-app.use(createPinia())
-app.use(I18NextVue, { i18next })
-app.use(VueDOMPurifyHTML)
+import i18next from 'i18next'
+import backend from 'i18next-http-backend'
+import I18NextVue from 'i18next-vue'
 
 i18next.use(backend)
 i18next.init({
@@ -33,4 +27,25 @@ i18next.init({
   },
 })
 
-export { app, i18next, DropdownList, Catalog }
+import App from './App.vue'
+
+const app = createApp(App)
+
+app.use(createPinia())
+app.use(I18NextVue, { i18next })
+app.use(VueDOMPurifyHTML)
+
+const createElementInstance = (component = null) => {
+  return defineCustomElement({
+    setup() {
+      const inst = getCurrentInstance();
+      Object.assign(inst.appContext, app._context);
+      Object.assign(inst.provides, app._context.provides);
+
+      // return () => h(component)
+    },
+    render: () => h(component)
+  })
+}
+
+export { app, i18next, createElementInstance, createPinia, VueDOMPurifyHTML, backend, I18NextVue, DropdownList, CatalogTree }
