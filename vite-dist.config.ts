@@ -57,7 +57,7 @@ export default defineConfig(({ command, mode }) => {
             return 'assets/images/[name]-[hash][extname]'
           }
 
-          return 'assets/[name]-[hash][extname]'
+          return 'assets/[name][extname]'
         },
       },
     },
