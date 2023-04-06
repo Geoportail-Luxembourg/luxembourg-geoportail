@@ -8,6 +8,7 @@ initProjections()
 
 import './assets/main.css'
 import DropdownList from '@/components/common/dropdown-list.vue'
+import LayerManager from '@/components/layer-manager/layer-manager.vue'
 import CatalogTree from '@/components/catalog/catalog-tree.vue'
 
 import i18next from 'i18next'
@@ -44,8 +45,13 @@ const createElementInstance = (component = null) => {
 
       // return () => h(component)
     },
-    render: () => h(component)
-  })
+    render: () => h(component),
+    mounted: (c) => {
+      const inst = getCurrentInstance();
+
+      console.log("mounted", c, this, inst)
+    }
+  }, { shadowRoot: false })
 }
 
-export { app, i18next, createElementInstance, createPinia, VueDOMPurifyHTML, backend, I18NextVue, DropdownList, CatalogTree }
+export { app, i18next, createElementInstance, createPinia, VueDOMPurifyHTML, backend, I18NextVue, DropdownList, LayerManager, CatalogTree }
