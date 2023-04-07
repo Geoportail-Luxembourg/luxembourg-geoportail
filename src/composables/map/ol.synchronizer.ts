@@ -1,10 +1,12 @@
-import { watch, computed } from 'vue'
+import { watch, watchEffect } from 'vue'
 import type OlMap from 'ol/Map'
 import useOpenLayers from './ol.composable'
+import { storeToRefs } from 'pinia'
 
 import { Layer } from '@/stores/map.store.model'
 import { useMapStore } from '@/stores/map.store'
 import { useStyleStore } from '@/stores/style.store'
+import { StyleSpecification } from '@/composables/mvt-styles/mvt-styles.model'
 import useMap from './map.composable'
 import { VectorSourceDict } from '@/composables/mvt-styles/mvt-styles.model'
 import useMvtStyles from '@/composables/mvt-styles/mvt-styles.composable'
@@ -18,6 +20,7 @@ export class OlSynchronizer {
     const mapService = useMap()
     const styleService = useMvtStyles()
     const openLayers = useOpenLayers()
+    const { appliedStyle } = storeToRefs(styleStore)
 
     watch(
       () => mapStore.layers,
@@ -68,15 +71,22 @@ export class OlSynchronizer {
         openLayers.setBgLayer(map, bgLayer, styleStore.bgVectorSources)
     )
 
-    const appliedStyle = computed(() =>
-      styleService.applyDefaultStyle(
-        mapStore.bgLayer,
-        styleStore.bgVectorBaseStyles,
-        styleStore.bgStyle
-      )
-    )
+    //const appliedStyle = computed(() =>
+    watchEffect(() => {
+      if (!styleStore.isExpertStyleActive) {
+        // must ignore typing error (too deep)
+        // @ts-ignore
+        appliedStyle.value = styleService.applyDefaultStyle(
+          mapStore.bgLayer,
+          styleStore.bgVectorBaseStyles,
+          styleStore.bgStyle
+        )
+      }
+    })
 
-    watch(appliedStyle, style =>
+    // must ignore typing error (too deep)
+    // @ts-ignore
+    watch(appliedStyle, (style: StyleSpecification) =>
       openLayers.applyOnBgLayer(map, bgLayer =>
         styleService.applyConsolidatedStyle(bgLayer, style)
       )

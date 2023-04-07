@@ -29,6 +29,7 @@ function changeStyle(i: number, newStyle: StyleItem) {
   bgStyle.value = styles.value.map((item, index) =>
     index === i ? newStyle : item
   )
+  styleStore.disableExpertStyle()
 }
 </script>
 

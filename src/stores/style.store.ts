@@ -21,6 +21,9 @@ export const useStyleStore = defineStore(
     const bgVectorBaseStyles: ShallowRef<VectorStyleDict> = shallowRef(
       new Map()
     )
+    const isExpertStyleActive: ShallowRef<boolean> = shallowRef(false)
+    const appliedStyle: ShallowRef<StyleSpecification | undefined> =
+      shallowRef()
 
     const promises: Promise<{ id: LayerId; config: IMvtConfig }>[] = []
     bgConfigFixture().bg_layers.forEach(bgLayer => {
@@ -61,20 +64,34 @@ export const useStyleStore = defineStore(
 
     function setSimpleStyle(simpleStyle: SimpleStyle | null) {
       bgStyle.value = styleService.getRoadStyleFromSimpleStyle(simpleStyle)
+      disableExpertStyle()
     }
 
     function setStyle(style: StyleItem[] | null) {
       bgStyle.value = style
+      disableExpertStyle()
+    }
+
+    function disableExpertStyle() {
+      isExpertStyleActive.value = false
+    }
+
+    function enableExpertStyle() {
+      isExpertStyleActive.value = true
     }
 
     return {
       bgStyle,
       bgVectorSources,
       bgVectorBaseStyles,
+      isExpertStyleActive,
+      appliedStyle,
       removeBaseStyle,
       setBaseStyle,
       setSimpleStyle,
       setStyle,
+      disableExpertStyle,
+      enableExpertStyle,
     }
   },
   {}
