@@ -1,8 +1,7 @@
 import { fileURLToPath, URL } from 'url'
 import { defineConfig } from 'vitest/config'
-import { loadEnv, type UserConfig } from 'vite'
+import { type UserConfig } from 'vite'
 import { resolve } from 'path'
-import IstanbulPlugin from 'vite-plugin-istanbul'
 import vue from '@vitejs/plugin-vue'
 import type { RootNode, TemplateChildNode } from '@vue/compiler-core'
 
@@ -30,34 +29,29 @@ export default defineConfig(({ command, mode }) => {
         '@': fileURLToPath(new URL('./src', import.meta.url)),
       },
     },
-    test: {
-      globals: true,
-      setupFiles: 'vitest.setup.ts',
-    },
+    optimizeDeps: {
+      exclude: ["@vue/runtime-core", "@vue/shared", "@vue/runtime-dom"],
+      force: false,
+      disabled: true,
+    }
   }
 
   base.build = {
+    minify: false,
     lib: {
-      // Could also be a dictionary or array of multiple entry points
-      entry: resolve(__dirname, 'src/lib.ts'),
-      name: 'MyLib',
-      // the proper extensions will be added
-      fileName: 'my-lib',
+      entry: resolve(__dirname, 'src/bundle/lib.ts'),
+      name: 'luxembourg-geoportail',
+      fileName: 'lux.dist',
+    },
+    commonjsOptions: {
+      exclude: ["@vue/runtime-core", "@vue/shared", "@vue/runtime-dom"],
     },
     outDir: 'bundle', // TODO: rename /dist
-    // assetsInlineLimit: 0, // Imported or referenced assets that are smaller than this threshold will be inlined as base64 URLs to avoid extra http requests. Set to 0 to disable inlining altogether.
     rollupOptions: {
-      external: ['vue'],
+      external: ['vue', "@vue/runtime-core", "@vue/shared", "@vue/runtime-dom"],
       output: {
         globals: {
           vue: 'Vue',
-        },
-        assetFileNames: chunkInfo => {
-          if (/\.(gif|jpe?g|png|svg)$/.test(chunkInfo.name ?? '')) {
-            return 'assets/images/[name]-[hash][extname]'
-          }
-
-          return 'assets/[name][extname]'
         },
       },
     },

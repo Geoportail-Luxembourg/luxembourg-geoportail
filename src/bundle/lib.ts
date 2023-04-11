@@ -1,12 +1,13 @@
-import { createApp, defineCustomElement, h, getCurrentInstance } from 'vue'
-import { createPinia } from 'pinia'
+import { h, getCurrentInstance } from 'vue'
 import VueDOMPurifyHTML from 'vue-dompurify-html'
+import { createPinia } from 'pinia'
 
 import { initProjections } from '@/services/projection.utils'
+import { defineCustomElement } from '@/bundle/runtime-dom/apiCustomElement'
 
 initProjections()
 
-import './assets/main.css'
+import '../assets/main.css' // Tell Vite to build the css
 import DropdownList from '@/components/common/dropdown-list.vue'
 import LayerManager from '@/components/layer-manager/layer-manager.vue'
 import CatalogTree from '@/components/catalog/catalog-tree.vue'
@@ -28,30 +29,24 @@ i18next.init({
   },
 })
 
-import App from './App.vue'
+import App from '../App.vue'
 
-const app = createApp(App)
+// const app = createApp(App)
 
-app.use(createPinia())
-app.use(I18NextVue, { i18next })
-app.use(VueDOMPurifyHTML)
+// app.use(createPinia())
+// app.use(I18NextVue, { i18next })
+// app.use(VueDOMPurifyHTML)
 
-const createElementInstance = (component = null) => {
+const createElementInstance = (component = {}, app = null) => {
   return defineCustomElement({
-    setup() {
-      const inst = getCurrentInstance();
-      Object.assign(inst.appContext, app._context);
-      Object.assign(inst.provides, app._context.provides);
+    setup: () => {
+      const inst = getCurrentInstance()!
 
-      // return () => h(component)
+      Object.assign(inst.appContext, app._context)
+      Object.assign(inst.provides, app._context.provides)
     },
-    render: () => h(component),
-    mounted: (c) => {
-      const inst = getCurrentInstance();
-
-      console.log("mounted", c, this, inst)
-    }
+    render: () => h(component)
   }, { shadowRoot: false })
 }
 
-export { app, i18next, createElementInstance, createPinia, VueDOMPurifyHTML, backend, I18NextVue, DropdownList, LayerManager, CatalogTree }
+export { App, i18next, createElementInstance, defineCustomElement, createPinia, backend, VueDOMPurifyHTML, I18NextVue, DropdownList, LayerManager, CatalogTree }
