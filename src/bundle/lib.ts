@@ -1,4 +1,4 @@
-import { h, getCurrentInstance } from 'vue'
+import { h, getCurrentInstance, createApp } from 'vue'
 import VueDOMPurifyHTML from 'vue-dompurify-html'
 import { createPinia } from 'pinia'
 
@@ -31,11 +31,11 @@ i18next.init({
 
 import App from '../App.vue'
 
-// const app = createApp(App)
+const app = createApp(App)
 
-// app.use(createPinia())
-// app.use(I18NextVue, { i18next })
-// app.use(VueDOMPurifyHTML)
+app.use(createPinia())
+app.use(I18NextVue, { i18next })
+app.use(VueDOMPurifyHTML)
 
 const createElementInstance = (component = {}, app = null) => {
   return defineCustomElement({
@@ -49,4 +49,4 @@ const createElementInstance = (component = {}, app = null) => {
   }, { shadowRoot: false })
 }
 
-export { App, i18next, createElementInstance, defineCustomElement, createPinia, backend, VueDOMPurifyHTML, I18NextVue, DropdownList, LayerManager, CatalogTree }
+export { app, App, i18next, createElementInstance, defineCustomElement, createPinia, backend, VueDOMPurifyHTML, I18NextVue, DropdownList, LayerManager, CatalogTree }
