@@ -4,7 +4,7 @@ var __publicField = (obj, key, value) => {
   __defNormalProp(obj, typeof key !== "symbol" ? key + "" : key, value);
   return value;
 };
-import { effectScope, ref, markRaw, toRaw, isRef, isReactive, toRef, getCurrentInstance, inject, watch, unref, reactive, nextTick, computed, getCurrentScope, onScopeDispose, toRefs, defineComponent as defineComponent$1, shallowRef, onMounted, onUnmounted, openBlock, createElementBlock, createElementVNode, normalizeClass, toDisplayString, Fragment, renderList, createCommentVNode, watchEffect, normalizeStyle, createVNode as createVNode$1, resolveComponent, createBlock, createTextVNode, resolveDirective, withDirectives, h } from "vue";
+import { effectScope, ref, markRaw, toRaw, isRef, isReactive, toRef, getCurrentInstance, inject, watch, unref, reactive, nextTick, computed, getCurrentScope, onScopeDispose, toRefs, defineComponent as defineComponent$1, shallowRef, onMounted, onUnmounted, openBlock, createElementBlock, createElementVNode, normalizeClass, toDisplayString, Fragment, renderList, createCommentVNode, watchEffect, normalizeStyle, createVNode as createVNode$1, resolveComponent, createBlock, createTextVNode, resolveDirective, withDirectives, createApp, h } from "vue";
 import { defineComponent, nextTick as nextTick$1, createVNode } from "@vue/runtime-core";
 import { extend as extend$4, isArray, camelize, toNumber, hyphenate } from "@vue/shared";
 import { render as render$1 } from "@vue/runtime-dom";
@@ -1537,7 +1537,7 @@ const MUTATIONS_LAYER_ID = "pinia:mutations";
 const INSPECTOR_ID = "pinia";
 const { assign: assign$1 } = Object;
 const getStoreType = (id) => "\u{1F34D} " + id;
-function registerPiniaDevtools(app, pinia) {
+function registerPiniaDevtools(app2, pinia) {
   setupDevtoolsPlugin({
     id: "dev.esm.pinia",
     label: "Pinia \u{1F34D}",
@@ -1545,7 +1545,7 @@ function registerPiniaDevtools(app, pinia) {
     packageName: "pinia",
     homepage: "https://pinia.vuejs.org",
     componentStateTypes,
-    app
+    app: app2
   }, (api) => {
     if (typeof api.now !== "function") {
       toastMessage("You seem to be using an outdated version of Vue Devtools. Are you still using the Beta release instead of the stable one? You can find the links at https://devtools.vuejs.org/guide/installation.html.");
@@ -1656,14 +1656,14 @@ function registerPiniaDevtools(app, pinia) {
       }
     });
     api.on.getInspectorTree((payload) => {
-      if (payload.app === app && payload.inspectorId === INSPECTOR_ID) {
+      if (payload.app === app2 && payload.inspectorId === INSPECTOR_ID) {
         let stores = [pinia];
         stores = stores.concat(Array.from(pinia._s.values()));
         payload.rootNodes = (payload.filter ? stores.filter((store) => "$id" in store ? store.$id.toLowerCase().includes(payload.filter.toLowerCase()) : PINIA_ROOT_LABEL.toLowerCase().includes(payload.filter.toLowerCase())) : stores).map(formatStoreForInspectorTree);
       }
     });
     api.on.getInspectorState((payload) => {
-      if (payload.app === app && payload.inspectorId === INSPECTOR_ID) {
+      if (payload.app === app2 && payload.inspectorId === INSPECTOR_ID) {
         const inspectedStore = payload.nodeId === PINIA_ROOT_ID ? pinia : pinia._s.get(payload.nodeId);
         if (!inspectedStore) {
           return;
@@ -1674,7 +1674,7 @@ function registerPiniaDevtools(app, pinia) {
       }
     });
     api.on.editInspectorState((payload, ctx) => {
-      if (payload.app === app && payload.inspectorId === INSPECTOR_ID) {
+      if (payload.app === app2 && payload.inspectorId === INSPECTOR_ID) {
         const inspectedStore = payload.nodeId === PINIA_ROOT_ID ? pinia : pinia._s.get(payload.nodeId);
         if (!inspectedStore) {
           return toastMessage(`store "${payload.nodeId}" not found`, "error");
@@ -1713,7 +1713,7 @@ Only state can be modified.`);
     });
   });
 }
-function addStoreToDevtools(app, store) {
+function addStoreToDevtools(app2, store) {
   if (!componentStateTypes.includes(getStoreType(store.$id))) {
     componentStateTypes.push(getStoreType(store.$id));
   }
@@ -1724,7 +1724,7 @@ function addStoreToDevtools(app, store) {
     packageName: "pinia",
     homepage: "https://pinia.vuejs.org",
     componentStateTypes,
-    app,
+    app: app2,
     settings: {
       logStoreChanges: {
         label: "Notify about new/deleted stores",
@@ -1900,7 +1900,7 @@ function patchActionForGrouping(store, actionNames) {
     };
   }
 }
-function devtoolsPlugin({ app, store, options }) {
+function devtoolsPlugin({ app: app2, store, options }) {
   if (store.$id.startsWith("__hot:")) {
     return;
   }
@@ -1919,7 +1919,7 @@ function devtoolsPlugin({ app, store, options }) {
     };
   }
   addStoreToDevtools(
-    app,
+    app2,
     store
   );
 }
@@ -1929,14 +1929,14 @@ function createPinia() {
   let _p = [];
   let toBeInstalled = [];
   const pinia = markRaw({
-    install(app) {
+    install(app2) {
       setActivePinia(pinia);
       {
-        pinia._a = app;
-        app.provide(piniaSymbol, pinia);
-        app.config.globalProperties.$pinia = pinia;
+        pinia._a = app2;
+        app2.provide(piniaSymbol, pinia);
+        app2.config.globalProperties.$pinia = pinia;
         if (USE_DEVTOOLS) {
-          registerPiniaDevtools(app, pinia);
+          registerPiniaDevtools(app2, pinia);
         }
         toBeInstalled.forEach((plugin) => _p.push(plugin));
         toBeInstalled = [];
@@ -11793,7 +11793,7 @@ const BLANK_BACKGROUNDLAYER = {
   name: "blank",
   id: 0
 };
-function install(app, {
+function install(app2, {
   i18next,
   rerenderOn = ["languageChanged", "loaded", "added", "removed"]
 }) {
@@ -11813,8 +11813,8 @@ function install(app, {
         break;
     }
   });
-  app.component("i18next", TranslationComponent);
-  app.mixin({
+  app2.component("i18next", TranslationComponent);
+  app2.mixin({
     beforeCreate() {
       var _a, _b;
       const options = this.$options;
@@ -11853,7 +11853,7 @@ function install(app, {
       (_a = this.__bundles) == null ? void 0 : _a.forEach(([lng, ns]) => i18next.removeResourceBundle(lng, ns));
     }
   });
-  app.config.globalProperties.$t = function(key, options) {
+  app2.config.globalProperties.$t = function(key, options) {
     var _a;
     usingI18n();
     if (i18next.isInitialized) {
@@ -11862,7 +11862,7 @@ function install(app, {
       return key;
     }
   };
-  app.config.globalProperties.$i18next = new Proxy(i18next, {
+  app2.config.globalProperties.$i18next = new Proxy(i18next, {
     get(target, prop) {
       usingI18n();
       return Reflect.get(target, prop);
@@ -82314,12 +82314,16 @@ instance.init({
     loadPath: `${"/"}assets/locales/{{ns}}.{{lng}}.json`
   }
 });
-const createElementInstance = (component = {}, app = null) => {
+const app = createApp(_sfc_main);
+app.use(createPinia());
+app.use(install, { i18next: instance });
+app.use(y);
+const createElementInstance = (component = {}, app2 = null) => {
   return defineCustomElement({
     setup: () => {
       const inst = getCurrentInstance();
-      Object.assign(inst.appContext, app._context);
-      Object.assign(inst.provides, app._context.provides);
+      Object.assign(inst.appContext, app2._context);
+      Object.assign(inst.provides, app2._context.provides);
     },
     render: () => h(component)
   }, { shadowRoot: false });
@@ -82331,6 +82335,7 @@ export {
   install as I18NextVue,
   _sfc_main$j as LayerManager,
   y as VueDOMPurifyHTML,
+  app,
   Backend as backend,
   createElementInstance,
   createPinia,

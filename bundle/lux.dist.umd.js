@@ -1537,7 +1537,7 @@ var __publicField = (obj, key, value) => {
   const INSPECTOR_ID = "pinia";
   const { assign: assign$1 } = Object;
   const getStoreType = (id) => "\u{1F34D} " + id;
-  function registerPiniaDevtools(app, pinia) {
+  function registerPiniaDevtools(app2, pinia) {
     setupDevtoolsPlugin({
       id: "dev.esm.pinia",
       label: "Pinia \u{1F34D}",
@@ -1545,7 +1545,7 @@ var __publicField = (obj, key, value) => {
       packageName: "pinia",
       homepage: "https://pinia.vuejs.org",
       componentStateTypes,
-      app
+      app: app2
     }, (api) => {
       if (typeof api.now !== "function") {
         toastMessage("You seem to be using an outdated version of Vue Devtools. Are you still using the Beta release instead of the stable one? You can find the links at https://devtools.vuejs.org/guide/installation.html.");
@@ -1656,14 +1656,14 @@ var __publicField = (obj, key, value) => {
         }
       });
       api.on.getInspectorTree((payload) => {
-        if (payload.app === app && payload.inspectorId === INSPECTOR_ID) {
+        if (payload.app === app2 && payload.inspectorId === INSPECTOR_ID) {
           let stores = [pinia];
           stores = stores.concat(Array.from(pinia._s.values()));
           payload.rootNodes = (payload.filter ? stores.filter((store) => "$id" in store ? store.$id.toLowerCase().includes(payload.filter.toLowerCase()) : PINIA_ROOT_LABEL.toLowerCase().includes(payload.filter.toLowerCase())) : stores).map(formatStoreForInspectorTree);
         }
       });
       api.on.getInspectorState((payload) => {
-        if (payload.app === app && payload.inspectorId === INSPECTOR_ID) {
+        if (payload.app === app2 && payload.inspectorId === INSPECTOR_ID) {
           const inspectedStore = payload.nodeId === PINIA_ROOT_ID ? pinia : pinia._s.get(payload.nodeId);
           if (!inspectedStore) {
             return;
@@ -1674,7 +1674,7 @@ var __publicField = (obj, key, value) => {
         }
       });
       api.on.editInspectorState((payload, ctx) => {
-        if (payload.app === app && payload.inspectorId === INSPECTOR_ID) {
+        if (payload.app === app2 && payload.inspectorId === INSPECTOR_ID) {
           const inspectedStore = payload.nodeId === PINIA_ROOT_ID ? pinia : pinia._s.get(payload.nodeId);
           if (!inspectedStore) {
             return toastMessage(`store "${payload.nodeId}" not found`, "error");
@@ -1713,7 +1713,7 @@ Only state can be modified.`);
       });
     });
   }
-  function addStoreToDevtools(app, store) {
+  function addStoreToDevtools(app2, store) {
     if (!componentStateTypes.includes(getStoreType(store.$id))) {
       componentStateTypes.push(getStoreType(store.$id));
     }
@@ -1724,7 +1724,7 @@ Only state can be modified.`);
       packageName: "pinia",
       homepage: "https://pinia.vuejs.org",
       componentStateTypes,
-      app,
+      app: app2,
       settings: {
         logStoreChanges: {
           label: "Notify about new/deleted stores",
@@ -1900,7 +1900,7 @@ Only state can be modified.`);
       };
     }
   }
-  function devtoolsPlugin({ app, store, options }) {
+  function devtoolsPlugin({ app: app2, store, options }) {
     if (store.$id.startsWith("__hot:")) {
       return;
     }
@@ -1919,7 +1919,7 @@ Only state can be modified.`);
       };
     }
     addStoreToDevtools(
-      app,
+      app2,
       store
     );
   }
@@ -1929,14 +1929,14 @@ Only state can be modified.`);
     let _p = [];
     let toBeInstalled = [];
     const pinia = vue.markRaw({
-      install(app) {
+      install(app2) {
         setActivePinia(pinia);
         {
-          pinia._a = app;
-          app.provide(piniaSymbol, pinia);
-          app.config.globalProperties.$pinia = pinia;
+          pinia._a = app2;
+          app2.provide(piniaSymbol, pinia);
+          app2.config.globalProperties.$pinia = pinia;
           if (USE_DEVTOOLS) {
-            registerPiniaDevtools(app, pinia);
+            registerPiniaDevtools(app2, pinia);
           }
           toBeInstalled.forEach((plugin) => _p.push(plugin));
           toBeInstalled = [];
@@ -11793,7 +11793,7 @@ This will fail in production.`);
     name: "blank",
     id: 0
   };
-  function install(app, {
+  function install(app2, {
     i18next,
     rerenderOn = ["languageChanged", "loaded", "added", "removed"]
   }) {
@@ -11813,8 +11813,8 @@ This will fail in production.`);
           break;
       }
     });
-    app.component("i18next", TranslationComponent);
-    app.mixin({
+    app2.component("i18next", TranslationComponent);
+    app2.mixin({
       beforeCreate() {
         var _a, _b;
         const options = this.$options;
@@ -11853,7 +11853,7 @@ This will fail in production.`);
         (_a = this.__bundles) == null ? void 0 : _a.forEach(([lng, ns]) => i18next.removeResourceBundle(lng, ns));
       }
     });
-    app.config.globalProperties.$t = function(key, options) {
+    app2.config.globalProperties.$t = function(key, options) {
       var _a;
       usingI18n();
       if (i18next.isInitialized) {
@@ -11862,7 +11862,7 @@ This will fail in production.`);
         return key;
       }
     };
-    app.config.globalProperties.$i18next = new Proxy(i18next, {
+    app2.config.globalProperties.$i18next = new Proxy(i18next, {
       get(target, prop) {
         usingI18n();
         return Reflect.get(target, prop);
@@ -82314,12 +82314,16 @@ uniform ${i3} ${o3} u_${a3};
       loadPath: `${"/"}assets/locales/{{ns}}.{{lng}}.json`
     }
   });
-  const createElementInstance = (component = {}, app = null) => {
+  const app = vue.createApp(_sfc_main);
+  app.use(createPinia());
+  app.use(install, { i18next: instance });
+  app.use(y);
+  const createElementInstance = (component = {}, app2 = null) => {
     return defineCustomElement({
       setup: () => {
         const inst = vue.getCurrentInstance();
-        Object.assign(inst.appContext, app._context);
-        Object.assign(inst.provides, app._context.provides);
+        Object.assign(inst.appContext, app2._context);
+        Object.assign(inst.provides, app2._context.provides);
       },
       render: () => vue.h(component)
     }, { shadowRoot: false });
@@ -82330,6 +82334,7 @@ uniform ${i3} ${o3} u_${a3};
   exports2.I18NextVue = install;
   exports2.LayerManager = _sfc_main$j;
   exports2.VueDOMPurifyHTML = y;
+  exports2.app = app;
   exports2.backend = Backend;
   exports2.createElementInstance = createElementInstance;
   exports2.createPinia = createPinia;
