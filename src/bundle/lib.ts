@@ -25,7 +25,7 @@ i18next.init({
   ns: ['client', 'legends', 'server', 'tooltips'],
   fallbackLng: 'fr',
   backend: {
-    loadPath: `${import.meta.env.BASE_URL}assets/locales/{{ns}}.{{lng}}.json`, // ! use assets instead of ./assets because of theme path in url
+    loadPath: `/static-ngeo/web-components/assets/locales/{{ns}}.{{lng}}.json`,
   },
 })
 
@@ -38,15 +38,31 @@ app.use(I18NextVue, { i18next })
 app.use(VueDOMPurifyHTML)
 
 const createElementInstance = (component = {}, app = null) => {
-  return defineCustomElement({
-    setup: () => {
-      const inst = getCurrentInstance()!
+  return defineCustomElement(
+    {
+      setup: () => {
+        const inst = getCurrentInstance()!
 
-      Object.assign(inst.appContext, app._context)
-      Object.assign(inst.provides, app._context.provides)
+        Object.assign(inst.appContext, app._context)
+        Object.assign(inst.provides, app._context.provides)
+      },
+      render: () => h(component),
     },
-    render: () => h(component)
-  }, { shadowRoot: false })
+    { shadowRoot: false }
+  )
 }
 
-export { app, App, i18next, createElementInstance, defineCustomElement, createPinia, backend, VueDOMPurifyHTML, I18NextVue, DropdownList, LayerManager, CatalogTree }
+export {
+  app,
+  App,
+  i18next,
+  createElementInstance,
+  defineCustomElement,
+  createPinia,
+  backend,
+  VueDOMPurifyHTML,
+  I18NextVue,
+  DropdownList,
+  LayerManager,
+  CatalogTree,
+}
