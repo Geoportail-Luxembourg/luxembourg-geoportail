@@ -82311,7 +82311,7 @@ instance.init({
   ns: ["client", "legends", "server", "tooltips"],
   fallbackLng: "fr",
   backend: {
-    loadPath: `${"/"}assets/locales/{{ns}}.{{lng}}.json`
+    loadPath: `/static-ngeo/web-components/assets/locales/{{ns}}.{{lng}}.json`
   }
 });
 const app = createApp(_sfc_main);
@@ -82319,14 +82319,17 @@ app.use(createPinia());
 app.use(install, { i18next: instance });
 app.use(y);
 const createElementInstance = (component = {}, app2 = null) => {
-  return defineCustomElement({
-    setup: () => {
-      const inst = getCurrentInstance();
-      Object.assign(inst.appContext, app2._context);
-      Object.assign(inst.provides, app2._context.provides);
+  return defineCustomElement(
+    {
+      setup: () => {
+        const inst = getCurrentInstance();
+        Object.assign(inst.appContext, app2._context);
+        Object.assign(inst.provides, app2._context.provides);
+      },
+      render: () => h(component)
     },
-    render: () => h(component)
-  }, { shadowRoot: false });
+    { shadowRoot: false }
+  );
 };
 export {
   _sfc_main as App,
