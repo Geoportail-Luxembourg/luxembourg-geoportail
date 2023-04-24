@@ -66,10 +66,10 @@ function setCustomStyle(styleEvent: Event) {
         </span>
       </a>
       <div
-        class="text-white border-2 relative h-[100px] w-[85px] mx-[10px] my-0 mb-[15px] text-sm after:fill-white after:stroke-white after:absolute after:left-[20px] after:top-[25px] after:w-[3.6em] after:text-center after:content-upload after:cursor-wait"
+        class="text-white border-2 relative h-[100px] w-[85px] mx-[10px] my-0 mb-[15px] text-sm"
       >
         <label
-          class="'inline-block z-[5] w-full h-full cursor-pointer"
+          class="'block z-[5] w-full h-full cursor-pointer after:absolute after:py-[15px] after:px-[15px] after:w-full after:text-center after:content-upload"
           for="uploadMvtStyle"
         >
           <span class="absolute top-[70px] w-full text-center text-base">
