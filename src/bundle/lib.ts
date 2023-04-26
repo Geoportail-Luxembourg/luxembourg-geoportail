@@ -11,6 +11,13 @@ import '../assets/main.css' // Tell Vite to build the css
 import DropdownList from '@/components/common/dropdown-list.vue'
 import LayerManager from '@/components/layer-manager/layer-manager.vue'
 import CatalogTree from '@/components/catalog/catalog-tree.vue'
+import MapContainer from '@/components/map/map-container.vue'
+import BackgroundSelector from '@/components/background-selector/background-selector.vue'
+import RemoteLayers from '@/components/remote-layers/remote-layers.vue'
+import LayerMetadata from '@/components/layer-metadata/layer-metadata.vue'
+import HeaderBar from '@/components/header/header-bar.vue'
+import FooterBar from '@/components/footer/footer-bar.vue'
+import LayerPanel from '@/components/layer-panel/layer-panel.vue'
 
 import i18next from 'i18next'
 import backend from 'i18next-http-backend'
@@ -65,4 +72,11 @@ export {
   DropdownList,
   LayerManager,
   CatalogTree,
+  MapContainer,
+  BackgroundSelector,
+  RemoteLayers,
+  LayerMetadata,
+  HeaderBar,
+  FooterBar,
+  LayerPanel,
 }
