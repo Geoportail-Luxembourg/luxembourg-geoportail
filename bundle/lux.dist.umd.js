@@ -82350,5 +82350,6 @@ uniform ${i3} ${o3} u_${a3};
   exports2.createPinia = createPinia;
   exports2.defineCustomElement = defineCustomElement;
   exports2.i18next = instance;
+  exports2.useMap = useMap;
   Object.defineProperties(exports2, { __esModule: { value: true }, [Symbol.toStringTag]: { value: "Module" } });
 });
