@@ -82342,6 +82342,7 @@ uniform ${i3} ${o3} u_${a3};
   exports2.LayerMetadata = _sfc_main$b;
   exports2.LayerPanel = _sfc_main$1;
   exports2.MapContainer = _sfc_main$g;
+  exports2.OlSynchronizer = OlSynchronizer;
   exports2.RemoteLayers = _sfc_main$d;
   exports2.VueDOMPurifyHTML = y;
   exports2.app = app;

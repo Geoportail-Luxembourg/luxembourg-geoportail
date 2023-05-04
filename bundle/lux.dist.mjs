@@ -82343,6 +82343,7 @@ export {
   _sfc_main$b as LayerMetadata,
   _sfc_main$1 as LayerPanel,
   _sfc_main$g as MapContainer,
+  OlSynchronizer,
   _sfc_main$d as RemoteLayers,
   y as VueDOMPurifyHTML,
   app,
