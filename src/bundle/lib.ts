@@ -18,6 +18,7 @@ import LayerMetadata from '@/components/layer-metadata/layer-metadata.vue'
 import HeaderBar from '@/components/header/header-bar.vue'
 import FooterBar from '@/components/footer/footer-bar.vue'
 import LayerPanel from '@/components/layer-panel/layer-panel.vue'
+import useMap from '@/composables/map/map.composable'
 
 import i18next from 'i18next'
 import backend from 'i18next-http-backend'
@@ -79,4 +80,5 @@ export {
   HeaderBar,
   FooterBar,
   LayerPanel,
+  useMap,
 }

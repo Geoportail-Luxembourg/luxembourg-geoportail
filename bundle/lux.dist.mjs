@@ -82350,5 +82350,6 @@ export {
   createElementInstance,
   createPinia,
   defineCustomElement,
-  instance as i18next
+  instance as i18next,
+  useMap
 };
