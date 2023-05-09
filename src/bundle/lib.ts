@@ -19,6 +19,7 @@ import HeaderBar from '@/components/header/header-bar.vue'
 import FooterBar from '@/components/footer/footer-bar.vue'
 import LayerPanel from '@/components/layer-panel/layer-panel.vue'
 import useMap from '@/composables/map/map.composable'
+import { useThemeStore } from '@/stores/config.store'
 
 import i18next from 'i18next'
 import backend from 'i18next-http-backend'
@@ -81,4 +82,5 @@ export {
   FooterBar,
   LayerPanel,
   useMap,
+  useThemeStore,
 }

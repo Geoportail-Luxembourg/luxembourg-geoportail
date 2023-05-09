@@ -10,6 +10,8 @@ import App from './App.vue'
 
 import './assets/main.css'
 import VueDOMPurifyHTML from 'vue-dompurify-html'
+import { useThemeStore } from './stores/config.store'
+import { themesApiFixture } from './__fixtures__/themes.api.fixture'
 
 initProjections()
 
@@ -33,3 +35,5 @@ app.use(I18NextVue, { i18next })
 app.use(VueDOMPurifyHTML)
 
 app.mount('#app')
+
+useThemeStore().setThemes(themesApiFixture())
