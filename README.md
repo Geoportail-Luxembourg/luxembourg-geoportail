@@ -57,7 +57,11 @@ This will generate an export of all available **Vue components** and **State per
 
 To see what are the components exported, check the `lib.ts` that is the entry point for the build.
 
-⚠️ This build does not contain **Vue.js** dependencies. For this reason, Vue.js must be included in the application that will include the lib.
+⚠️ This build **DOES** contain **Vue.js** dependencies, there is no need to import Vue in your own projet.
+
+⚠️ Vite has been updated from v3 to v4 and is now targetting modern browsers (enabling the usage of BigInt and **nullish coalescing operator)**. This means if you are targetting older browsers, you have to add the right loader in your projet (eg. use `loader: 'babel-loader'` in your webpack config).
+
+See: https://main.vitejs.dev/guide/migration.html#modern-browser-baseline-change for more details.
 
 ### Import the lib in another app
 
@@ -81,47 +85,6 @@ You can include the built lib multiple ways in the `package.json`:
         // ...
       }
     }
-}
-````
-
-### Install Vue.js
-
-Don't forget to also include **Vue.js** as a dependency.
-````
-$ npm install -D vue
-````
-
-If using the **Webpack bundler** (as it is the case in geoportalv3), install `vue-loader` and update the webpack configuration file. Add alias to **Vue.js** to make the lib work with the current Vue instance.
-
-https://vue-loader.vuejs.org/guide/#manual-setup
-
-````
-$ npm install -D vue-loader
-````
-
-````js
-// webpack.config.js
-const { VueLoaderPlugin } = require('vue-loader')
-
-module.exports = {
-  module: {
-    rules: [
-      // ...
-      {
-        test: /\.vue$/,
-        loader: 'vue-loader' // <= Add the rule for Vue
-      }
-    ]
-  },
-  resolve: {
-    extensions: ['.js', '.vue', '.json'],
-    alias: {
-      'vue$': 'vue/dist/vue.esm-bundler.js' // <= Add the alias for Vue
-    }
-  },
-  plugins: [
-    new VueLoaderPlugin() // <= Don't forget the plugin for Vue loader
-  ]
 }
 ````
 

@@ -40,8 +40,8 @@ export default defineConfig(({ command, mode }) => {
     // Imported or referenced assets that are smaller than this threshold will be inlined as base64 URLs to avoid extra http requests. Set to 0 to disable inlining altogether.
     // If you specify build.lib, build.assetsInlineLimit will be ignored and assets will always be inlined, regardless of file size or being a Git LFS placeholder.
     // assetsInlineLimit: 0,
-    minify: false,
-    // cssMinify: true,
+    minify: true,
+    cssMinify: true,
     lib: {
       entry: resolve(__dirname, 'src/bundle/lib.ts'),
       name: 'luxembourg-geoportail',
