@@ -11,6 +11,7 @@ import '../assets/main.css' // Tell Vite to build the css
 import DropdownList from '@/components/common/dropdown-list.vue'
 import LayerManager from '@/components/layer-manager/layer-manager.vue'
 import CatalogTree from '@/components/catalog/catalog-tree.vue'
+import ThemeSelector from '@/components/theme-selector/theme-selector.vue'
 import MapContainer from '@/components/map/map-container.vue'
 import BackgroundSelector from '@/components/background-selector/background-selector.vue'
 import RemoteLayers from '@/components/remote-layers/remote-layers.vue'
@@ -20,6 +21,9 @@ import FooterBar from '@/components/footer/footer-bar.vue'
 import LayerPanel from '@/components/layer-panel/layer-panel.vue'
 import useMap from '@/composables/map/map.composable'
 import { useThemeStore } from '@/stores/config.store'
+import { statePersistorLayersService } from '@/services/state-persistor/state-persistor-layers.service'
+import { statePersistorThemeService } from '@/services/state-persistor/state-persistor-theme.service'
+import { themeSelectorService } from '@/components/theme-selector/theme-selector.service'
 
 import i18next from 'i18next'
 import backend from 'i18next-http-backend'
@@ -74,6 +78,7 @@ export {
   DropdownList,
   LayerManager,
   CatalogTree,
+  ThemeSelector,
   MapContainer,
   BackgroundSelector,
   RemoteLayers,
@@ -83,4 +88,7 @@ export {
   LayerPanel,
   useMap,
   useThemeStore,
+  statePersistorLayersService,
+  statePersistorThemeService,
+  themeSelectorService,
 }
