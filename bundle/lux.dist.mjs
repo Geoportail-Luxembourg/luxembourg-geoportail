@@ -49252,6 +49252,124 @@ const _sfc_main$h = /* @__PURE__ */ defineComponent$1({
     };
   }
 });
+const _hoisted_1$e = { class: "flex flex-row flex-wrap pl-2.5" };
+const _hoisted_2$9 = ["onClick"];
+const _hoisted_3$7 = { class: "text-2xl absolute top-5" };
+const _sfc_main$g = /* @__PURE__ */ defineComponent$1({
+  __name: "theme-grid",
+  props: {
+    themes: null
+  },
+  setup(__props) {
+    const props = __props;
+    const { t } = useTranslation();
+    return (_ctx, _cache) => {
+      return openBlock(), createElementBlock("div", _hoisted_1$e, [
+        (openBlock(true), createElementBlock(Fragment, null, renderList(props.themes, (theme) => {
+          return openBlock(), createElementBlock("button", {
+            class: normalizeClass(["relative shrink-0 h-[150px] w-1/2 px-2.5 text-start text-gray-100/40 uppercase hover:bg-[#ccc]", `bg-${theme.name}-primary hover:text-${theme.name}-primary`]),
+            key: theme.id,
+            onClick: ($event) => _ctx.$emit("setTheme", theme.name)
+          }, [
+            createElementVNode("div", _hoisted_3$7, toDisplayString(unref(t)(`${theme.name}`)), 1),
+            createElementVNode("div", {
+              class: normalizeClass(["text-6xl absolute bottom-1 after:font-icons", `after:content-${theme.name}`])
+            }, null, 2)
+          ], 10, _hoisted_2$9);
+        }), 128))
+      ]);
+    };
+  }
+});
+const _hoisted_1$d = ["aria-expanded"];
+const _hoisted_2$8 = { class: "py-0.5" };
+const _hoisted_3$6 = { class: "px-1 py-0.5 shrink-0 flex flex-row text-[12px] bg-secondary text-white" };
+const _hoisted_4$6 = { class: "py-[3px]" };
+const _hoisted_5$5 = { class: "flex flex-row flex-wrap ml-1 w-12" };
+const _sfc_main$f = /* @__PURE__ */ defineComponent$1({
+  __name: "theme-selector-button",
+  props: {
+    themes: null,
+    currentTheme: null,
+    isOpen: { type: Boolean }
+  },
+  setup(__props) {
+    const props = __props;
+    const { t } = useTranslation();
+    const themesComputed = computed(() => {
+      var _a;
+      return ((_a = props.themes) == null ? void 0 : _a.slice(0, 8)) || [];
+    });
+    return (_ctx, _cache) => {
+      var _a;
+      return openBlock(), createElementBlock("button", {
+        class: "w-full flex flex-row justify-between bg-tertiary text-white px-2 py-1.5 uppercase cursor-pointer hover:bg-white hover:text-primary",
+        "aria-expanded": props.isOpen
+      }, [
+        createElementVNode("span", _hoisted_2$8, toDisplayString(unref(t)("Theme")) + ": " + toDisplayString(unref(t)(`${(_a = props.currentTheme) == null ? void 0 : _a.name}`)), 1),
+        createElementVNode("span", _hoisted_3$6, [
+          createElementVNode("span", _hoisted_4$6, toDisplayString(unref(t)("Changer")), 1),
+          createElementVNode("span", _hoisted_5$5, [
+            (openBlock(true), createElementBlock(Fragment, null, renderList(unref(themesComputed), (theme) => {
+              return openBlock(), createElementBlock("div", {
+                class: normalizeClass(`h-2.5 w-2.5 m-px bg-${theme.name}-primary`),
+                key: theme.id
+              }, null, 2);
+            }), 128))
+          ])
+        ])
+      ], 8, _hoisted_1$d);
+    };
+  }
+});
+const _hoisted_1$c = {
+  key: 0,
+  class: "absolute inset-x-0 top-14 bottom-0 mt-1 bg-primary overflow-y-auto overflow-x-hidden"
+};
+const _sfc_main$e = /* @__PURE__ */ defineComponent$1({
+  __name: "theme-selector",
+  emits: ["toggleThemesGrid"],
+  setup(__props, { emit }) {
+    const themeStore = useThemeStore();
+    const themesService = useThemes();
+    const { theme, themes: themesFromStore } = storeToRefs(themeStore);
+    const themes2 = computed(
+      () => {
+        var _a;
+        return ((_a = themesFromStore.value) == null ? void 0 : _a.filter(
+          (theme2) => {
+            var _a2;
+            return ((_a2 = theme2.metadata) == null ? void 0 : _a2.display_in_switcher) === true;
+          }
+        )) || [];
+      }
+    );
+    const isOpen = shallowRef(false);
+    function toggleThemesGrid() {
+      emit("toggleThemesGrid", isOpen.value = !isOpen.value);
+    }
+    function setTheme(themeName) {
+      themesService.setTheme(themeName);
+      toggleThemesGrid();
+    }
+    return (_ctx, _cache) => {
+      return openBlock(), createElementBlock(Fragment, null, [
+        createVNode$1(_sfc_main$f, {
+          onClick: toggleThemesGrid,
+          themes: unref(themes2),
+          currentTheme: unref(theme),
+          isOpen: unref(isOpen)
+        }, null, 8, ["themes", "currentTheme", "isOpen"]),
+        unref(isOpen) ? (openBlock(), createElementBlock("div", _hoisted_1$c, [
+          createVNode$1(_sfc_main$g, {
+            onSetTheme: setTheme,
+            themes: unref(themes2)
+          }, null, 8, ["themes"])
+        ])) : createCommentVNode("", true)
+      ], 64);
+    };
+  }
+});
 var BaseEvent = function() {
   function BaseEvent2(type) {
     this.propagationStopped;
@@ -78015,7 +78133,7 @@ class StatePersistorMapService {
   }
 }
 const statePersistorMapService = new StatePersistorMapService();
-const _sfc_main$g = /* @__PURE__ */ defineComponent$1({
+const _sfc_main$d = /* @__PURE__ */ defineComponent$1({
   __name: "map-container",
   setup(__props) {
     const map2 = useMap();
@@ -80374,8 +80492,8 @@ class StatePersistorBgLayerService {
   }
 }
 const statePersistorBgLayerService = new StatePersistorBgLayerService();
-const _hoisted_1$e = ["title"];
-const _sfc_main$f = /* @__PURE__ */ defineComponent$1({
+const _hoisted_1$b = ["title"];
+const _sfc_main$c = /* @__PURE__ */ defineComponent$1({
   __name: "background-selector-item",
   props: {
     bgTitle: {
@@ -80408,12 +80526,12 @@ const _sfc_main$f = /* @__PURE__ */ defineComponent$1({
       return openBlock(), createElementBlock("button", {
         title: unref(buttonTitle),
         class: normalizeClass(unref(buttonClasses))
-      }, null, 10, _hoisted_1$e);
+      }, null, 10, _hoisted_1$b);
     };
   }
 });
-const _hoisted_1$d = { class: "flex flex-row-reverse" };
-const _sfc_main$e = /* @__PURE__ */ defineComponent$1({
+const _hoisted_1$a = { class: "flex flex-row-reverse" };
+const _sfc_main$b = /* @__PURE__ */ defineComponent$1({
   __name: "background-selector",
   props: {
     isOpen: {
@@ -80485,11 +80603,11 @@ const _sfc_main$e = /* @__PURE__ */ defineComponent$1({
       isOpen.value = !isOpen.value;
     }
     return (_ctx, _cache) => {
-      return openBlock(), createElementBlock("div", _hoisted_1$d, [
+      return openBlock(), createElementBlock("div", _hoisted_1$a, [
         createElementVNode("div", {
           class: normalizeClass(["lux-bg-sel border border-black", isOpen.value === true ? "hidden" : "block"])
         }, [
-          createVNode$1(_sfc_main$f, {
+          createVNode$1(_sfc_main$c, {
             "aria-expanded": isOpen.value,
             "bg-title": "Select BG layer",
             "bg-name": unref(activeLayerName),
@@ -80507,7 +80625,7 @@ const _sfc_main$e = /* @__PURE__ */ defineComponent$1({
                 layer.id === unref(activeLayerId) ? "border-red-500 border-2" : "border-black border"
               ])
             }, [
-              createVNode$1(_sfc_main$f, {
+              createVNode$1(_sfc_main$c, {
                 "bg-name": layer.name,
                 onClick: ($event) => setBackgroundLayer(layer)
               }, null, 8, ["bg-name", "onClick"])
@@ -80518,14 +80636,14 @@ const _sfc_main$e = /* @__PURE__ */ defineComponent$1({
     };
   }
 });
-const _hoisted_1$c = {
+const _hoisted_1$9 = {
   class: "absolute right-0 top-52 z-50 bg-white lux-modal w-[600px]",
   role: "dialog"
 };
-const _hoisted_2$9 = { class: "lux-modal-header" };
-const _hoisted_3$7 = { class: "p-[15px]" };
-const _hoisted_4$6 = { class: "relative text-center" };
-const _hoisted_5$5 = ["placeholder", "value"];
+const _hoisted_2$7 = { class: "lux-modal-header" };
+const _hoisted_3$5 = { class: "p-[15px]" };
+const _hoisted_4$5 = { class: "relative text-center" };
+const _hoisted_5$4 = ["placeholder", "value"];
 const _hoisted_6$2 = {
   key: 0,
   class: "text-center"
@@ -80545,7 +80663,7 @@ const _hoisted_12$1 = {
   key: 3,
   class: "overflow-auto max-h-[calc(400px-36px)]"
 };
-const _sfc_main$d = /* @__PURE__ */ defineComponent$1({
+const _sfc_main$a = /* @__PURE__ */ defineComponent$1({
   __name: "remote-layers",
   setup(__props) {
     const { t } = useTranslation();
@@ -80627,12 +80745,12 @@ const _sfc_main$d = /* @__PURE__ */ defineComponent$1({
     }
     return (_ctx, _cache) => {
       var _a, _b;
-      return openBlock(), createElementBlock("div", _hoisted_1$c, [
-        createElementVNode("div", _hoisted_2$9, [
+      return openBlock(), createElementBlock("div", _hoisted_1$9, [
+        createElementVNode("div", _hoisted_2$7, [
           createElementVNode("h4", null, toDisplayString(unref(t)("Add external data", { ns: "client" })), 1)
         ]),
-        createElementVNode("div", _hoisted_3$7, [
-          createElementVNode("div", _hoisted_4$6, [
+        createElementVNode("div", _hoisted_3$5, [
+          createElementVNode("div", _hoisted_4$5, [
             createVNode$1(_sfc_main$o, {
               options: unref(wmsLayers),
               placeholder: unref(t)("Predefined wms", { ns: "client" }),
@@ -80646,7 +80764,7 @@ const _sfc_main$d = /* @__PURE__ */ defineComponent$1({
               }),
               value: unref(currentRemoteUrl) || "",
               onChange: onChangeRemoteUrl
-            }, null, 40, _hoisted_5$5),
+            }, null, 40, _hoisted_5$4),
             createElementVNode("button", {
               type: "button",
               class: "lux-btn",
@@ -80689,9 +80807,9 @@ function formatDate(dateString, language = "fr-FR") {
   const date = new Date(dateString);
   return new Intl.DateTimeFormat(language).format(date);
 }
-const _hoisted_1$b = { class: "font-bold" };
-const _hoisted_2$8 = { class: "col-span-2" };
-const _sfc_main$c = /* @__PURE__ */ defineComponent$1({
+const _hoisted_1$8 = { class: "font-bold" };
+const _hoisted_2$6 = { class: "col-span-2" };
+const _sfc_main$9 = /* @__PURE__ */ defineComponent$1({
   __name: "layer-metadata-item",
   props: {
     label: null,
@@ -80701,8 +80819,8 @@ const _sfc_main$c = /* @__PURE__ */ defineComponent$1({
     const props = __props;
     return (_ctx, _cache) => {
       return openBlock(), createElementBlock(Fragment, null, [
-        createElementVNode("span", _hoisted_1$b, toDisplayString(props.label), 1),
-        createElementVNode("span", _hoisted_2$8, toDisplayString(props.value), 1)
+        createElementVNode("span", _hoisted_1$8, toDisplayString(props.label), 1),
+        createElementVNode("span", _hoisted_2$6, toDisplayString(props.value), 1)
       ], 64);
     };
   }
@@ -80881,18 +80999,18 @@ class LayerMetadataService {
   }
 }
 const layerMetadataService = new LayerMetadataService();
-const _hoisted_1$a = {
+const _hoisted_1$7 = {
   key: 0,
   class: "fixed right-32 top-32 z-[100] bg-white lux-modal w-[600px] p-3",
   role: "dialog"
 };
-const _hoisted_2$7 = { class: "lux-modal-header flex flex-row justify-between" };
-const _hoisted_3$6 = { class: "grid gap-2 grid-cols-3 pt-3 text-[13px] font-arial break-words" };
-const _hoisted_4$5 = {
+const _hoisted_2$5 = { class: "lux-modal-header flex flex-row justify-between" };
+const _hoisted_3$4 = { class: "grid gap-2 grid-cols-3 pt-3 text-[13px] font-arial break-words" };
+const _hoisted_4$4 = {
   key: 2,
   class: "col-span-3 grid gap-2 grid-cols-3"
 };
-const _hoisted_5$4 = { class: "font-bold" };
+const _hoisted_5$3 = { class: "font-bold" };
 const _hoisted_6$1 = { class: "col-span-2" };
 const _hoisted_7 = ["title"];
 const _hoisted_8 = ["title"];
@@ -80932,7 +81050,7 @@ const _hoisted_29 = {
   key: 11,
   class: "col-span-3"
 };
-const _sfc_main$b = /* @__PURE__ */ defineComponent$1({
+const _sfc_main$8 = /* @__PURE__ */ defineComponent$1({
   __name: "layer-metadata",
   setup(__props) {
     const metadataStore = useMetadataStore();
@@ -80974,24 +81092,24 @@ const _sfc_main$b = /* @__PURE__ */ defineComponent$1({
     return (_ctx, _cache) => {
       var _a, _b, _c, _d, _e, _f, _g, _h, _i, _j, _k, _l, _m, _n, _o;
       const _directive_dompurify_html = resolveDirective("dompurify-html");
-      return layerMetadata.value ? (openBlock(), createElementBlock("div", _hoisted_1$a, [
-        createElementVNode("div", _hoisted_2$7, [
+      return layerMetadata.value ? (openBlock(), createElementBlock("div", _hoisted_1$7, [
+        createElementVNode("div", _hoisted_2$5, [
           createElementVNode("h1", null, toDisplayString(unref(t)(`${layerMetadata.value.title}`)), 1),
           createElementVNode("button", { onClick: closeLayerMetadata }, "X")
         ]),
-        createElementVNode("div", _hoisted_3$6, [
-          layerMetadata.value.name ? (openBlock(), createBlock(_sfc_main$c, {
+        createElementVNode("div", _hoisted_3$4, [
+          layerMetadata.value.name ? (openBlock(), createBlock(_sfc_main$9, {
             key: 0,
             label: unref(t)("Name"),
             value: layerMetadata.value.name
           }, null, 8, ["label", "value"])) : createCommentVNode("", true),
-          layerMetadata.value.serviceDescription ? (openBlock(), createBlock(_sfc_main$c, {
+          layerMetadata.value.serviceDescription ? (openBlock(), createBlock(_sfc_main$9, {
             key: 1,
             label: unref(t)("Description du Service"),
             value: layerMetadata.value.serviceDescription
           }, null, 8, ["label", "value"])) : createCommentVNode("", true),
-          layerMetadata.value.description ? (openBlock(), createElementBlock("div", _hoisted_4$5, [
-            createElementVNode("span", _hoisted_5$4, toDisplayString(unref(t)("Description")), 1),
+          layerMetadata.value.description ? (openBlock(), createElementBlock("div", _hoisted_4$4, [
+            createElementVNode("span", _hoisted_5$3, toDisplayString(unref(t)("Description")), 1),
             createElementVNode("span", _hoisted_6$1, [
               withDirectives(createElementVNode("span", null, null, 512), [
                 [_directive_dompurify_html, unref(description)]
@@ -81014,7 +81132,7 @@ const _sfc_main$b = /* @__PURE__ */ defineComponent$1({
               }, " - ", 8, _hoisted_8)) : createCommentVNode("", true)
             ])
           ])) : createCommentVNode("", true),
-          layerMetadata.value.legalConstraints ? (openBlock(), createBlock(_sfc_main$c, {
+          layerMetadata.value.legalConstraints ? (openBlock(), createBlock(_sfc_main$9, {
             key: 3,
             label: unref(t)(`Contrainte d'utilisation`),
             value: layerMetadata.value.legalConstraints
@@ -81036,12 +81154,12 @@ const _sfc_main$b = /* @__PURE__ */ defineComponent$1({
               ]);
             }), 128))
           ])) : createCommentVNode("", true),
-          layerMetadata.value.revisionDate ? (openBlock(), createBlock(_sfc_main$c, {
+          layerMetadata.value.revisionDate ? (openBlock(), createBlock(_sfc_main$9, {
             key: 5,
             label: unref(t)("Revision date"),
             value: unref(formatDate)(layerMetadata.value.revisionDate, unref(i18next).language)
           }, null, 8, ["label", "value"])) : createCommentVNode("", true),
-          layerMetadata.value.keyword ? (openBlock(), createBlock(_sfc_main$c, {
+          layerMetadata.value.keyword ? (openBlock(), createBlock(_sfc_main$9, {
             key: 6,
             label: unref(t)("Keywords"),
             value: (_c = layerMetadata.value.keyword) == null ? void 0 : _c.join(",")
@@ -81135,7 +81253,7 @@ class StatePersistorLangService {
   }
 }
 const statePersistorLangService = new StatePersistorLangService();
-const _sfc_main$a = /* @__PURE__ */ defineComponent$1({
+const _sfc_main$7 = /* @__PURE__ */ defineComponent$1({
   __name: "language-selector",
   setup(__props) {
     const { i18next, t } = useTranslation();
@@ -81169,27 +81287,27 @@ const _sfc_main$a = /* @__PURE__ */ defineComponent$1({
   }
 });
 class ThemeSelectorService {
-  setCurrentThemeColors(theme) {
+  setCurrentThemeColors(themeName) {
     const root = document.querySelector(":root");
     const colors = ["primary", "secondary", "tertiary"];
     colors.forEach((colorTone) => {
       const color = getComputedStyle(root).getPropertyValue(
-        `--${theme.name}-${colorTone}`
+        `--${themeName}-${colorTone}`
       );
       root.style.setProperty(`--color-${colorTone}`, color);
     });
   }
 }
 const themeSelectorService = new ThemeSelectorService();
-const _hoisted_1$9 = { class: "w-full h-14 flex bg-white shadow-header z-10 shrink-0" };
-const _hoisted_2$6 = /* @__PURE__ */ createElementVNode("div", { class: "flex-2 p-[5px]" }, [
+const _hoisted_1$6 = { class: "w-full h-14 flex bg-white shadow-header z-10 shrink-0" };
+const _hoisted_2$4 = /* @__PURE__ */ createElementVNode("div", { class: "flex-2 p-[5px]" }, [
   /* @__PURE__ */ createElementVNode("img", { src: _imports_0 })
 ], -1);
-const _hoisted_3$5 = /* @__PURE__ */ createElementVNode("div", { class: "grow text-center" }, "search", -1);
-const _hoisted_4$4 = { class: "h-full flex" };
-const _hoisted_5$3 = { class: "hidden lg:inline-block" };
+const _hoisted_3$3 = /* @__PURE__ */ createElementVNode("div", { class: "grow text-center" }, "search", -1);
+const _hoisted_4$3 = { class: "h-full flex" };
+const _hoisted_5$2 = { class: "hidden lg:inline-block" };
 const _hoisted_6 = { class: "border-l-[1px] border-stone-300 h-full" };
-const _sfc_main$9 = /* @__PURE__ */ defineComponent$1({
+const _sfc_main$6 = /* @__PURE__ */ defineComponent$1({
   __name: "header-bar",
   setup(__props) {
     const { t } = useTranslation();
@@ -81202,28 +81320,28 @@ const _sfc_main$9 = /* @__PURE__ */ defineComponent$1({
       theme,
       (theme2) => {
         if (theme2) {
-          themeSelectorService.setCurrentThemeColors(theme2);
+          themeSelectorService.setCurrentThemeColors(theme2.name);
         }
       },
       { immediate: true }
     );
     return (_ctx, _cache) => {
       var _a, _b;
-      return openBlock(), createElementBlock("header", _hoisted_1$9, [
-        _hoisted_2$6,
-        _hoisted_3$5,
+      return openBlock(), createElementBlock("header", _hoisted_1$6, [
+        _hoisted_2$4,
+        _hoisted_3$3,
         createElementVNode("div", null, [
-          createElementVNode("ul", _hoisted_4$4, [
+          createElementVNode("ul", _hoisted_4$3, [
             createElementVNode("li", null, [
               createElementVNode("button", {
                 class: normalizeClass(["flex items-center before:font-icons before:text-3xl before:w-16 text-primary uppercase h-full mr-3", `before:content-${(_a = unref(theme)) == null ? void 0 : _a.name}`]),
                 onClick: _cache[0] || (_cache[0] = () => unref(setLayersOpen)(!unref(layersOpen)))
               }, [
-                createElementVNode("span", _hoisted_5$3, toDisplayString(unref(t)(`${(_b = unref(theme)) == null ? void 0 : _b.name}`)), 1)
+                createElementVNode("span", _hoisted_5$2, toDisplayString(unref(t)(`${(_b = unref(theme)) == null ? void 0 : _b.name}`)), 1)
               ], 2)
             ]),
             createElementVNode("li", _hoisted_6, [
-              createVNode$1(_sfc_main$a, { class: "flex-none h-full" })
+              createVNode$1(_sfc_main$7, { class: "flex-none h-full" })
             ])
           ])
         ])
@@ -81231,9 +81349,9 @@ const _sfc_main$9 = /* @__PURE__ */ defineComponent$1({
     };
   }
 });
-const _hoisted_1$8 = { class: "h-[42px] w-full sm:h-full sm:w-16 hover:text-white hover:bg-primary" };
-const _hoisted_2$5 = { class: "block text-[13px] sm:text-base uppercase" };
-const _sfc_main$8 = /* @__PURE__ */ defineComponent$1({
+const _hoisted_1$5 = { class: "h-[42px] w-full sm:h-full sm:w-16 hover:text-white hover:bg-primary" };
+const _hoisted_2$3 = { class: "block text-[13px] sm:text-base uppercase" };
+const _sfc_main$5 = /* @__PURE__ */ defineComponent$1({
   __name: "button-icon",
   props: {
     label: null,
@@ -81242,17 +81360,17 @@ const _sfc_main$8 = /* @__PURE__ */ defineComponent$1({
   setup(__props) {
     const props = __props;
     return (_ctx, _cache) => {
-      return openBlock(), createElementBlock("button", _hoisted_1$8, [
+      return openBlock(), createElementBlock("button", _hoisted_1$5, [
         createElementVNode("span", {
           class: normalizeClass(["block text-[1.7rem] sm:text-[2rem] -mt-1.5 -mb-3 after:font-icons", `after:content-${props.icon}`])
         }, null, 2),
-        createElementVNode("span", _hoisted_2$5, toDisplayString(props.label), 1)
+        createElementVNode("span", _hoisted_2$3, toDisplayString(props.label), 1)
       ]);
     };
   }
 });
-const _hoisted_1$7 = ["href"];
-const _sfc_main$7 = /* @__PURE__ */ defineComponent$1({
+const _hoisted_1$4 = ["href"];
+const _sfc_main$4 = /* @__PURE__ */ defineComponent$1({
   __name: "button-link",
   props: {
     label: null,
@@ -81265,239 +81383,121 @@ const _sfc_main$7 = /* @__PURE__ */ defineComponent$1({
         class: "h-full flex flex-col justify-center px-[7px] uppercase hover:text-white hover:bg-primary",
         href: `${props.link}`,
         target: "_blank"
-      }, toDisplayString(_ctx.$props.label), 9, _hoisted_1$7);
+      }, toDisplayString(_ctx.$props.label), 9, _hoisted_1$4);
     };
   }
 });
-const _hoisted_1$6 = { class: "flex flex-col w-12 justify-between bg-white z-5 shrink-0 sm:flex-row sm:w-full sm:h-14 sm:shadow-footer" };
-const _hoisted_2$4 = { class: "flex flex-col w-full sm:w-80 sm:flex-row justify-start text-primary divide-y sm:divide-y-0 sm:divide-x divide-gray-400 divide-solid box-content border-y sm:border-y-0 border-x border-gray-400" };
-const _hoisted_3$4 = { class: "flex flex-col w-12 sm:w-64 sm:flex-row justify-start text-primary divide-y sm:divide-y-0 sm:divide-x divide-gray-400 divide-solid box-content border-y sm:border-y-0 border-x border-gray-400" };
-const _hoisted_4$3 = { class: "w-[466px] hidden sm:flex flex-row justify-end text-gray-500 whitespace-nowrap" };
-const _sfc_main$6 = /* @__PURE__ */ defineComponent$1({
+const _hoisted_1$3 = { class: "flex flex-col w-12 justify-between bg-white z-5 shrink-0 sm:flex-row sm:w-full sm:h-14 sm:shadow-footer" };
+const _hoisted_2$2 = { class: "flex flex-col w-full sm:w-80 sm:flex-row justify-start text-primary divide-y sm:divide-y-0 sm:divide-x divide-gray-400 divide-solid box-content border-y sm:border-y-0 border-x border-gray-400" };
+const _hoisted_3$2 = { class: "flex flex-col w-12 sm:w-64 sm:flex-row justify-start text-primary divide-y sm:divide-y-0 sm:divide-x divide-gray-400 divide-solid box-content border-y sm:border-y-0 border-x border-gray-400" };
+const _hoisted_4$2 = { class: "w-[466px] hidden sm:flex flex-row justify-end text-gray-500 whitespace-nowrap" };
+const _sfc_main$3 = /* @__PURE__ */ defineComponent$1({
   __name: "footer-bar",
   setup(__props) {
     const { t, i18next } = useTranslation();
     const { setLayersOpen } = useAppStore();
     return (_ctx, _cache) => {
-      return openBlock(), createElementBlock("footer", _hoisted_1$6, [
-        createElementVNode("ul", _hoisted_2$4, [
+      return openBlock(), createElementBlock("footer", _hoisted_1$3, [
+        createElementVNode("ul", _hoisted_2$2, [
           createElementVNode("li", null, [
-            createVNode$1(_sfc_main$8, {
+            createVNode$1(_sfc_main$5, {
               label: unref(t)("Layers", { ns: "client" }),
               icon: "layers",
               onClick: _cache[0] || (_cache[0] = () => unref(setLayersOpen)(true))
             }, null, 8, ["label"])
           ]),
           createElementVNode("li", null, [
-            createVNode$1(_sfc_main$8, {
+            createVNode$1(_sfc_main$5, {
               class: "text-gray-300",
               label: unref(t)("My Maps", { ns: "client" }),
               icon: "mymaps"
             }, null, 8, ["label"])
           ]),
           createElementVNode("li", null, [
-            createVNode$1(_sfc_main$8, {
+            createVNode$1(_sfc_main$5, {
               class: "text-gray-300",
               label: unref(t)("Infos", { ns: "client" }),
               icon: "infos"
             }, null, 8, ["label"])
           ]),
           createElementVNode("li", null, [
-            createVNode$1(_sfc_main$8, {
+            createVNode$1(_sfc_main$5, {
               class: "text-gray-300",
               label: unref(t)("Legends", { ns: "client" }),
               icon: "legends"
             }, null, 8, ["label"])
           ]),
           createElementVNode("li", null, [
-            createVNode$1(_sfc_main$8, {
+            createVNode$1(_sfc_main$5, {
               class: "text-gray-300",
               label: unref(t)("Routing", { ns: "client" }),
               icon: "routing"
             }, null, 8, ["label"])
           ])
         ]),
-        createElementVNode("div", _hoisted_3$4, [
-          createVNode$1(_sfc_main$8, {
+        createElementVNode("div", _hoisted_3$2, [
+          createVNode$1(_sfc_main$5, {
             class: "text-gray-300",
             label: unref(t)("Dessin", { ns: "client" }),
             icon: "draw"
           }, null, 8, ["label"]),
-          createVNode$1(_sfc_main$8, {
+          createVNode$1(_sfc_main$5, {
             class: "text-gray-300 hidden sm:block",
             label: unref(t)("Mesurer", { ns: "client" }),
             icon: "measure"
           }, null, 8, ["label"]),
-          createVNode$1(_sfc_main$8, {
+          createVNode$1(_sfc_main$5, {
             class: "text-gray-300 hidden sm:block",
             label: unref(t)("Imprimer", { ns: "client" }),
             icon: "print"
           }, null, 8, ["label"]),
-          createVNode$1(_sfc_main$8, {
+          createVNode$1(_sfc_main$5, {
             class: "text-gray-300",
             label: unref(t)("Partager", { ns: "client" }),
             icon: "share"
           }, null, 8, ["label"])
         ]),
-        createElementVNode("div", _hoisted_4$3, [
-          createVNode$1(_sfc_main$7, {
+        createElementVNode("div", _hoisted_4$2, [
+          createVNode$1(_sfc_main$4, {
             class: "hidden lg:flex",
             label: unref(t)("What's new", { ns: "client" }),
             link: `https://geoportail.lu/${unref(i18next).language}/questions/whats-new/`
           }, null, 8, ["label", "link"]),
-          createVNode$1(_sfc_main$7, {
+          createVNode$1(_sfc_main$4, {
             class: "hidden lg:flex",
             label: unref(t)("Geocatalogue", { ns: "client" }),
             link: ""
           }, null, 8, ["label"]),
-          createVNode$1(_sfc_main$7, {
+          createVNode$1(_sfc_main$4, {
             class: "hidden lg:flex",
             label: unref(t)("Feedback", { ns: "client" }),
             link: ""
           }, null, 8, ["label"]),
-          createVNode$1(_sfc_main$7, {
+          createVNode$1(_sfc_main$4, {
             class: "hidden lg:flex",
             label: unref(t)("A Propos", { ns: "client" }),
             link: `https://www.geoportail.lu/${unref(i18next).language}/propos/`
           }, null, 8, ["label", "link"]),
-          createVNode$1(_sfc_main$7, {
+          createVNode$1(_sfc_main$4, {
             class: "hidden lg:flex",
             label: unref(t)("Aide", { ns: "client" }),
             link: `https://www.geoportail.lu/${unref(i18next).language}/documentation/`
           }, null, 8, ["label", "link"]),
-          createVNode$1(_sfc_main$7, {
+          createVNode$1(_sfc_main$4, {
             class: "hidden lg:flex",
             label: unref(t)("Contact", { ns: "client" }),
             link: `https://www.geoportail.lu/${unref(i18next).language}/propos/contactez-nous/`
           }, null, 8, ["label", "link"]),
-          createVNode$1(_sfc_main$7, {
+          createVNode$1(_sfc_main$4, {
             label: unref(t)("Legalites", { ns: "client" }),
             link: `https://www.geoportail.lu/${unref(i18next).language}/propos/mentions-legales/`
           }, null, 8, ["label", "link"]),
-          createVNode$1(_sfc_main$7, {
+          createVNode$1(_sfc_main$4, {
             label: unref(t)("ACT", { ns: "client" }),
             link: `http://www.act.public.lu/`
           }, null, 8, ["label", "link"])
         ])
       ]);
-    };
-  }
-});
-const _hoisted_1$5 = { class: "flex flex-row flex-wrap pl-2.5" };
-const _hoisted_2$3 = ["onClick"];
-const _hoisted_3$3 = { class: "text-2xl absolute top-5" };
-const _sfc_main$5 = /* @__PURE__ */ defineComponent$1({
-  __name: "theme-grid",
-  props: {
-    themes: null
-  },
-  setup(__props) {
-    const props = __props;
-    const { t } = useTranslation();
-    return (_ctx, _cache) => {
-      return openBlock(), createElementBlock("div", _hoisted_1$5, [
-        (openBlock(true), createElementBlock(Fragment, null, renderList(props.themes, (theme) => {
-          return openBlock(), createElementBlock("button", {
-            class: normalizeClass(["relative shrink-0 h-[150px] w-1/2 px-2.5 text-start text-gray-100/40 uppercase hover:bg-[#ccc]", `bg-${theme.name}-primary hover:text-${theme.name}-primary`]),
-            key: theme.id,
-            onClick: ($event) => _ctx.$emit("setTheme", theme.name)
-          }, [
-            createElementVNode("div", _hoisted_3$3, toDisplayString(unref(t)(`${theme.name}`)), 1),
-            createElementVNode("div", {
-              class: normalizeClass(["text-6xl absolute bottom-1 after:font-icons", `after:content-${theme.name}`])
-            }, null, 2)
-          ], 10, _hoisted_2$3);
-        }), 128))
-      ]);
-    };
-  }
-});
-const _hoisted_1$4 = ["aria-expanded"];
-const _hoisted_2$2 = { class: "py-0.5" };
-const _hoisted_3$2 = { class: "px-1 py-0.5 shrink-0 flex flex-row text-[12px] bg-secondary text-white" };
-const _hoisted_4$2 = { class: "py-[3px]" };
-const _hoisted_5$2 = { class: "flex flex-row flex-wrap ml-1 w-12" };
-const _sfc_main$4 = /* @__PURE__ */ defineComponent$1({
-  __name: "theme-selector-button",
-  props: {
-    themes: null,
-    currentTheme: null,
-    isOpen: { type: Boolean }
-  },
-  setup(__props) {
-    const props = __props;
-    const { t } = useTranslation();
-    const themesComputed = computed(() => {
-      var _a;
-      return ((_a = props.themes) == null ? void 0 : _a.slice(0, 8)) || [];
-    });
-    return (_ctx, _cache) => {
-      var _a;
-      return openBlock(), createElementBlock("button", {
-        class: "w-full flex flex-row justify-between bg-tertiary text-white px-2 py-1.5 uppercase cursor-pointer hover:bg-white hover:text-primary",
-        "aria-expanded": props.isOpen
-      }, [
-        createElementVNode("span", _hoisted_2$2, toDisplayString(unref(t)("Theme")) + ": " + toDisplayString(unref(t)(`${(_a = props.currentTheme) == null ? void 0 : _a.name}`)), 1),
-        createElementVNode("span", _hoisted_3$2, [
-          createElementVNode("span", _hoisted_4$2, toDisplayString(unref(t)("Changer")), 1),
-          createElementVNode("span", _hoisted_5$2, [
-            (openBlock(true), createElementBlock(Fragment, null, renderList(unref(themesComputed), (theme) => {
-              return openBlock(), createElementBlock("div", {
-                class: normalizeClass(`h-2.5 w-2.5 m-px bg-${theme.name}-primary`),
-                key: theme.id
-              }, null, 2);
-            }), 128))
-          ])
-        ])
-      ], 8, _hoisted_1$4);
-    };
-  }
-});
-const _hoisted_1$3 = {
-  key: 0,
-  class: "absolute inset-x-0 top-14 bottom-0 mt-1 bg-primary overflow-y-auto overflow-x-hidden"
-};
-const _sfc_main$3 = /* @__PURE__ */ defineComponent$1({
-  __name: "theme-selector",
-  emits: ["toggleThemesGrid"],
-  setup(__props, { emit }) {
-    const themeStore = useThemeStore();
-    const themesService = useThemes();
-    const { theme, themes: themesFromStore } = storeToRefs(themeStore);
-    const themes2 = computed(
-      () => {
-        var _a;
-        return ((_a = themesFromStore.value) == null ? void 0 : _a.filter(
-          (theme2) => {
-            var _a2;
-            return ((_a2 = theme2.metadata) == null ? void 0 : _a2.display_in_switcher) === true;
-          }
-        )) || [];
-      }
-    );
-    const isOpen = shallowRef(false);
-    function toggleThemesGrid() {
-      emit("toggleThemesGrid", isOpen.value = !isOpen.value);
-    }
-    function setTheme(themeName) {
-      themesService.setTheme(themeName);
-      toggleThemesGrid();
-    }
-    return (_ctx, _cache) => {
-      return openBlock(), createElementBlock(Fragment, null, [
-        createVNode$1(_sfc_main$4, {
-          onClick: toggleThemesGrid,
-          themes: unref(themes2),
-          currentTheme: unref(theme),
-          isOpen: unref(isOpen)
-        }, null, 8, ["themes", "currentTheme", "isOpen"]),
-        unref(isOpen) ? (openBlock(), createElementBlock("div", _hoisted_1$3, [
-          createVNode$1(_sfc_main$5, {
-            onSetTheme: setTheme,
-            themes: unref(themes2)
-          }, null, 8, ["themes"])
-        ])) : createCommentVNode("", true)
-      ], 64);
     };
   }
 });
@@ -81511,7 +81511,7 @@ const _sfc_main$2 = /* @__PURE__ */ defineComponent$1({
     }
     return (_ctx, _cache) => {
       return openBlock(), createElementBlock(Fragment, null, [
-        createVNode$1(_sfc_main$3, { onToggleThemesGrid: toggleThemesGrid }),
+        createVNode$1(_sfc_main$e, { onToggleThemesGrid: toggleThemesGrid }),
         createElementVNode("div", _hoisted_1$2, [
           unref(themeGridIsOpen) === false ? (openBlock(), createBlock(_sfc_main$h, {
             key: 0,
@@ -81559,12 +81559,129 @@ const _sfc_main$1 = /* @__PURE__ */ defineComponent$1({
           !myLayersOpen.value ? (openBlock(), createBlock(_sfc_main$2, { key: 0 })) : createCommentVNode("", true),
           myLayersOpen.value ? (openBlock(), createBlock(_sfc_main$j, { key: 1 })) : createCommentVNode("", true)
         ]),
-        createVNode$1(_sfc_main$d),
-        createVNode$1(_sfc_main$b)
+        createVNode$1(_sfc_main$a),
+        createVNode$1(_sfc_main$8)
       ]);
     };
   }
 });
+class StatePersistorLayersService {
+  bootstrap() {
+    const themeStore = useThemeStore();
+    let stop;
+    stop = watchEffect(() => {
+      if (themeStore.themes) {
+        this.restore();
+        this.persist();
+        stop && stop();
+      }
+    });
+  }
+  persist() {
+    const mapStore = useMapStore();
+    const { layers } = storeToRefs(mapStore);
+    watch(
+      layers,
+      (value, oldValue) => {
+        if (oldValue !== value) {
+          storageHelper.setValue(
+            SP_KEY_LAYERS,
+            value,
+            storageLayerMapper.layersToLayerIds
+          );
+          storageHelper.setValue(
+            SP_KEY_OPACITIES,
+            value,
+            storageLayerMapper.layersToLayerOpacities
+          );
+        }
+      },
+      { immediate: true }
+    );
+  }
+  restore() {
+    const version2 = storageHelper.getInitialVersion();
+    const mapStore = useMapStore();
+    const layers = storageHelper.getValue(
+      SP_KEY_LAYERS,
+      version2 === 2 ? storageLayerMapper.layerNamesToLayersV2 : storageLayerMapper.layerIdsToLayers
+    );
+    const opacities = version2 === 2 ? this.getOpacitiesFromStorageV2() : this.getOpacitiesFromStorage();
+    if (opacities) {
+      layers == null ? void 0 : layers.forEach((layer, index2) => {
+        var _a;
+        if (layer) {
+          layer.opacity = (_a = opacities[index2]) != null ? _a : 1;
+        }
+      });
+    }
+    if (version2 === 2) {
+      storageHelper.removeItem(SP_KEY_V2_BGLAYEROPACITY);
+      storageHelper.removeItem(SP_KEY_V2_LAYERSINDICIES);
+      storageHelper.removeItem(SP_KEY_V2_LAYERSOPACITIES);
+      storageHelper.removeItem(SP_KEY_V2_LAYERSVISIBILITY);
+    }
+    mapStore.addLayers(...(layers == null ? void 0 : layers.filter((layer) => layer)) || []);
+  }
+  getOpacitiesFromStorage() {
+    return storageHelper.getValue(
+      SP_KEY_OPACITIES,
+      storageLayerMapper.layersOpacitiesToNumbers
+    );
+  }
+  getOpacitiesFromStorageV2() {
+    const opacities = storageHelper.getValue(
+      SP_KEY_V2_LAYERSOPACITIES,
+      storageLayerMapper.layersOpacitiesToNumbersV2
+    );
+    const visibility = storageHelper.getValue(
+      SP_KEY_V2_LAYERSVISIBILITY,
+      storageLayerMapper.layersVisibilitiesToBooleansV2
+    );
+    return opacities.map((opacity, index2) => visibility[index2] ? opacity : 0);
+  }
+}
+const statePersistorLayersService = new StatePersistorLayersService();
+class StorageThemeMapper {
+  themeToThemeName(theme) {
+    return (theme == null ? void 0 : theme.name) || "";
+  }
+}
+const storageThemeMapper = new StorageThemeMapper();
+class StatePersistorThemeService {
+  bootstrap() {
+    this.restore();
+    let stop;
+    stop = watchEffect(() => {
+      this.persist();
+      stop && stop();
+    });
+  }
+  persist() {
+    const themeStore = useThemeStore();
+    watch(
+      () => themeStore.theme,
+      (value, oldValue) => {
+        if (oldValue !== value && value) {
+          storageHelper.setValue(
+            SP_KEY_THEME,
+            value,
+            storageThemeMapper.themeToThemeName
+          );
+        }
+      },
+      { immediate: true }
+    );
+  }
+  restore() {
+    const theme = storageHelper.getValue(SP_KEY_THEME);
+    if (theme) {
+      const { setTheme } = useThemeStore();
+      setTheme(theme);
+    }
+  }
+}
+const statePersistorThemeService = new StatePersistorThemeService();
 function _typeof$2(obj) {
   "@babel/helpers - typeof";
   return _typeof$2 = "function" == typeof Symbol && "symbol" == typeof Symbol.iterator ? function(obj2) {
@@ -82482,123 +82599,6 @@ var Backend = function() {
 }();
 Backend.type = "backend";
 const ol = "";
-class StatePersistorLayersService {
-  bootstrap() {
-    const themeStore = useThemeStore();
-    let stop;
-    stop = watchEffect(() => {
-      if (themeStore.themes) {
-        this.restore();
-        this.persist();
-        stop && stop();
-      }
-    });
-  }
-  persist() {
-    const mapStore = useMapStore();
-    const { layers } = storeToRefs(mapStore);
-    watch(
-      layers,
-      (value, oldValue) => {
-        if (oldValue !== value) {
-          storageHelper.setValue(
-            SP_KEY_LAYERS,
-            value,
-            storageLayerMapper.layersToLayerIds
-          );
-          storageHelper.setValue(
-            SP_KEY_OPACITIES,
-            value,
-            storageLayerMapper.layersToLayerOpacities
-          );
-        }
-      },
-      { immediate: true }
-    );
-  }
-  restore() {
-    const version2 = storageHelper.getInitialVersion();
-    const mapStore = useMapStore();
-    const layers = storageHelper.getValue(
-      SP_KEY_LAYERS,
-      version2 === 2 ? storageLayerMapper.layerNamesToLayersV2 : storageLayerMapper.layerIdsToLayers
-    );
-    const opacities = version2 === 2 ? this.getOpacitiesFromStorageV2() : this.getOpacitiesFromStorage();
-    if (opacities) {
-      layers == null ? void 0 : layers.forEach((layer, index2) => {
-        var _a;
-        if (layer) {
-          layer.opacity = (_a = opacities[index2]) != null ? _a : 1;
-        }
-      });
-    }
-    if (version2 === 2) {
-      storageHelper.removeItem(SP_KEY_V2_BGLAYEROPACITY);
-      storageHelper.removeItem(SP_KEY_V2_LAYERSINDICIES);
-      storageHelper.removeItem(SP_KEY_V2_LAYERSOPACITIES);
-      storageHelper.removeItem(SP_KEY_V2_LAYERSVISIBILITY);
-    }
-    mapStore.addLayers(...(layers == null ? void 0 : layers.filter((layer) => layer)) || []);
-  }
-  getOpacitiesFromStorage() {
-    return storageHelper.getValue(
-      SP_KEY_OPACITIES,
-      storageLayerMapper.layersOpacitiesToNumbers
-    );
-  }
-  getOpacitiesFromStorageV2() {
-    const opacities = storageHelper.getValue(
-      SP_KEY_V2_LAYERSOPACITIES,
-      storageLayerMapper.layersOpacitiesToNumbersV2
-    );
-    const visibility = storageHelper.getValue(
-      SP_KEY_V2_LAYERSVISIBILITY,
-      storageLayerMapper.layersVisibilitiesToBooleansV2
-    );
-    return opacities.map((opacity, index2) => visibility[index2] ? opacity : 0);
-  }
-}
-const statePersistorLayersService = new StatePersistorLayersService();
-class StorageThemeMapper {
-  themeToThemeName(theme) {
-    return (theme == null ? void 0 : theme.name) || "";
-  }
-}
-const storageThemeMapper = new StorageThemeMapper();
-class StatePersistorThemeService {
-  bootstrap() {
-    this.restore();
-    let stop;
-    stop = watchEffect(() => {
-      this.persist();
-      stop && stop();
-    });
-  }
-  persist() {
-    const themeStore = useThemeStore();
-    watch(
-      () => themeStore.theme,
-      (value, oldValue) => {
-        if (oldValue !== value && value) {
-          storageHelper.setValue(
-            SP_KEY_THEME,
-            value,
-            storageThemeMapper.themeToThemeName
-          );
-        }
-      },
-      { immediate: true }
-    );
-  }
-  restore() {
-    const theme = storageHelper.getValue(SP_KEY_THEME);
-    if (theme) {
-      const { setTheme } = useThemeStore();
-      setTheme(theme);
-    }
-  }
-}
-const statePersistorThemeService = new StatePersistorThemeService();
 class StatePersistorLayersOpenService {
   bootstrapLayersOpen() {
     this.restoreLayersOpen();
@@ -82651,19 +82651,19 @@ const _sfc_main = /* @__PURE__ */ defineComponent$1({
     );
     return (_ctx, _cache) => {
       return openBlock(), createElementBlock("div", _hoisted_1, [
-        createVNode$1(_sfc_main$9),
+        createVNode$1(_sfc_main$6),
         createElementVNode("main", _hoisted_2, [
           unref(layersOpen) ? (openBlock(), createElementBlock("div", _hoisted_3, [
             createVNode$1(_sfc_main$1)
           ])) : createCommentVNode("", true),
           createElementVNode("div", _hoisted_4, [
-            createVNode$1(_sfc_main$g)
+            createVNode$1(_sfc_main$d)
           ]),
           createElementVNode("div", _hoisted_5, [
-            createVNode$1(_sfc_main$e)
+            createVNode$1(_sfc_main$b)
           ])
         ]),
-        createVNode$1(_sfc_main$6, { class: "fixed bottom-5 sm:relative sm:bottom-0" })
+        createVNode$1(_sfc_main$3, { class: "fixed bottom-5 sm:relative sm:bottom-0" })
       ]);
     };
   }
@@ -82700,17 +82700,18 @@ const createElementInstance = (component = {}, app2 = null) => {
 };
 export {
   _sfc_main as App,
-  _sfc_main$e as BackgroundSelector,
+  _sfc_main$b as BackgroundSelector,
   _sfc_main$h as CatalogTree,
   _sfc_main$o as DropdownList,
-  _sfc_main$6 as FooterBar,
-  _sfc_main$9 as HeaderBar,
+  _sfc_main$3 as FooterBar,
+  _sfc_main$6 as HeaderBar,
   install as I18NextVue,
   _sfc_main$j as LayerManager,
-  _sfc_main$b as LayerMetadata,
+  _sfc_main$8 as LayerMetadata,
   _sfc_main$1 as LayerPanel,
-  _sfc_main$g as MapContainer,
-  _sfc_main$d as RemoteLayers,
+  _sfc_main$d as MapContainer,
+  _sfc_main$a as RemoteLayers,
+  _sfc_main$e as ThemeSelector,
   y as VueDOMPurifyHTML,
   app,
   Backend as backend,
@@ -82718,6 +82719,9 @@ export {
   createPinia,
   defineCustomElement,
   instance as i18next,
+  statePersistorLayersService,
+  statePersistorThemeService,
+  themeSelectorService,
   useMap,
   useThemeStore
 };
