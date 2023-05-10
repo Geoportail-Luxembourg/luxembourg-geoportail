@@ -18,7 +18,7 @@ watch(
   theme,
   theme => {
     if (theme) {
-      themeSelectorService.setCurrentThemeColors(theme)
+      themeSelectorService.setCurrentThemeColors(theme.name)
     }
   },
   { immediate: true }
