@@ -6,4 +6,5 @@
 Updated Vite from v3 to v4, now targetting modern browsers (enabling the usage of BigInt and **nullish coalescing operator)**.
 
 ⚠️ This means you must handle support of these by adding the right loaders in your project if you need to support older browsers (eg. use `loader: 'babel-loader'` in your webpack config).
+* chore(vue): update version, from 3.2.45 to 3.3.1 
 
