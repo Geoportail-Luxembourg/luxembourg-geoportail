@@ -17,7 +17,6 @@ import {
     createVNode,
     defineComponent,
     nextTick,
-    warn,
     ConcreteComponent,
     ComponentOptions,
     ComponentInjectOptions,
@@ -309,7 +308,7 @@ export class VueElement extends BaseClass {
 
         const asyncDef = (this._def as ComponentOptions).__asyncLoader
         if (asyncDef) {
-            asyncDef().then(def => resolve(def, true))
+            asyncDef().then((def: ComponentOptions) => resolve(def, true))
         } else {
             resolve(this._def)
         }
@@ -387,11 +386,14 @@ export class VueElement extends BaseClass {
     }
 
     private _createVNode(): VNode<any, any> {
-        const vnode = createVNode(this._def, extend({}, this._props))
+        // as any because VNode in 3.3.1: /* removed internal: ce */
+        // keeping as is for now, to be updated when core apiCustomElement.ts will be updated
+        const vnode = createVNode(this._def, extend({}, this._props)) as any
+
         if (!this._instance) {
-            vnode.ce = instance => {
+            vnode.ce = (instance: ComponentInternalInstance) => {
                 this._instance = instance
-                instance.isCE = true
+                // instance.isCE = true /* removed internal: isCE */
                 // HMR
                 // if (__DEV__) {
                 //     instance.ceReload = newStyles => {
@@ -432,7 +434,7 @@ export class VueElement extends BaseClass {
                 ) {
                     if (parent instanceof VueElement) {
                         instance.parent = parent._instance
-                        instance.provides = parent._instance!.provides
+                        // instance.provides = parent._instance!.provides /* removed internal: provides */
                         break
                     }
                 }

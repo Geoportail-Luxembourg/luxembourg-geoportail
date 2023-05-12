@@ -50,14 +50,14 @@ app.use(createPinia())
 app.use(I18NextVue, { i18next })
 app.use(VueDOMPurifyHTML)
 
-const createElementInstance = (component = {}, app = null) => {
+const createElementInstance = (component = {}, app: typeof App) => {
   return defineCustomElement(
     {
       setup: () => {
         const inst = getCurrentInstance()!
 
         Object.assign(inst.appContext, app._context)
-        Object.assign(inst.provides, app._context.provides)
+        // Object.assign(inst.provides, app!._context.provides)  /* removed internal: provides */
       },
       render: () => h(component),
     },
