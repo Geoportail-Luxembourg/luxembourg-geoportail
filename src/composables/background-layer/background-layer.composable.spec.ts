@@ -6,6 +6,7 @@ import { useMapStore } from '@/stores/map.store'
 import { useThemeStore } from '@/stores/config.store'
 
 import useBackgroundLayer from './background-layer.composable'
+import { themesApiFixture } from '@/__fixtures__/themes.api.fixture'
 
 describe('useBackgroundLayer', () => {
   let wrapper: VueWrapper
@@ -17,7 +18,7 @@ describe('useBackgroundLayer', () => {
 
   const mapStore = useMapStore(pinia)
   const themeStore = useThemeStore(pinia)
-
+  themeStore.setThemes(themesApiFixture())
   const TestComponent = defineComponent({
     template: '<div>My test component</div>',
     setup() {

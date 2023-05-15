@@ -4,11 +4,14 @@ import { beforeEach, describe, expect, it } from 'vitest'
 
 import Catalog from '@/components/catalog/catalog-tree.vue'
 import LayerTreeNode from '@/components/layer-tree/layer-tree-node.vue'
+import { useThemeStore } from '@/stores/config.store'
+import { themesApiFixture } from '@/__fixtures__/themes.api.fixture'
 
 describe('Catalog', () => {
   let wrapper: VueWrapper
   const pinia = createTestingPinia({
     createSpy: vi.fn,
+    stubActions: false,
     initialState: {
       theme: {
         theme: {
@@ -23,6 +26,8 @@ describe('Catalog', () => {
       },
     },
   })
+  const themeStore = useThemeStore(pinia)
+  themeStore.setThemes(themesApiFixture())
 
   beforeEach(() => {
     wrapper = shallowMount(Catalog, {
