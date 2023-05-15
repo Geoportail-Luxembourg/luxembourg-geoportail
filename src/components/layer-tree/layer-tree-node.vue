@@ -35,15 +35,19 @@ function toggleParent(node: LayerTreeNodeModel) {
     <button
       v-if="node.depth === 1"
       class="group node-1 w-full text-left flex px-2 py-1.5 uppercase bg-tertiary"
-      :class="node.expanded ? 'text-white' : 'text-secondary'"
       :aria-expanded="node.expanded"
       @click="toggleParent(node)"
       :data-cy="`parentLayerLabel-${node.id}`"
     >
-      <div class="grow">{{ label }}</div>
+      <div
+        class="grow"
+        :class="node.expanded ? 'text-white' : 'text-secondary'"
+      >
+        {{ label }}
+      </div>
       <div class="leading-6">
         <div
-          class="fa fa-sharp fa-solid group-hover:text-white"
+          class="fa fa-sharp fa-solid group-hover:text-white text-primary"
           :class="node.expanded ? 'fa-caret-up' : 'fa-caret-down'"
         ></div>
       </div>
@@ -53,9 +57,7 @@ function toggleParent(node: LayerTreeNodeModel) {
     <button
       v-else-if="node.depth > 1 && !isMaxDepth"
       class="w-full text-left flex px-2 py-1.5 pl-2"
-      :class="
-        node.expanded ? 'bg-secondary text-tertiary' : 'bg-white text-primary'
-      "
+      :class="node.expanded ? 'text-tertiary' : 'bg-white text-primary'"
       :aria-expanded="node.expanded"
       @click="toggleParent(node)"
       :data-cy="`parentLayerLabel-${node.id}`"
@@ -72,10 +74,9 @@ function toggleParent(node: LayerTreeNodeModel) {
     <!--    Children-->
     <div
       v-if="!isMaxDepth"
-      class="bg-secondary"
       :class="[
         { 'pl-2': node.depth > 1 },
-        { 'lux-collapse': !isRoot },
+        { 'lux-collapse bg-secondary': !isRoot },
         { expanded: !isRoot && node.expanded },
       ]"
     >
