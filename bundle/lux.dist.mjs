@@ -12035,7 +12035,7 @@ const _hoisted_6$5 = ["aria-expanded", "aria-controls"];
 const _hoisted_7$3 = ["title"];
 const _hoisted_8$3 = ["id"];
 const _hoisted_9$3 = ["title"];
-const _hoisted_10$3 = ["id", "value", "aria-label"];
+const _hoisted_10$2 = ["id", "value", "aria-label"];
 const _sfc_main$m = /* @__PURE__ */ defineComponent$1({
   __name: "layer-item",
   props: {
@@ -12153,7 +12153,7 @@ const _sfc_main$m = /* @__PURE__ */ defineComponent$1({
             onChange: onChangeOpacity,
             class: "m-2.5 w-16 h-[5px] rounded-lg appearance-none cursor-pointer",
             "aria-label": unref(t)("Change opacity for {{ layerName }}", { layerName: unref(getLabel)() })
-          }, null, 40, _hoisted_10$3)
+          }, null, 40, _hoisted_10$2)
         ], 10, _hoisted_8$3)
       ]);
     };
@@ -49069,17 +49069,16 @@ const _hoisted_1$f = {
   key: "node.id"
 };
 const _hoisted_2$a = ["aria-expanded", "data-cy"];
-const _hoisted_3$8 = { class: "grow" };
-const _hoisted_4$7 = { class: "leading-6" };
-const _hoisted_5$6 = ["aria-expanded", "data-cy"];
-const _hoisted_6$3 = { class: "grow" };
-const _hoisted_7$2 = { class: "leading-6" };
-const _hoisted_8$2 = {
+const _hoisted_3$8 = { class: "leading-6" };
+const _hoisted_4$7 = ["aria-expanded", "data-cy"];
+const _hoisted_5$6 = { class: "grow" };
+const _hoisted_6$3 = { class: "leading-6" };
+const _hoisted_7$2 = {
   key: 1,
   class: "flex text-tertiary pr-2"
 };
-const _hoisted_9$2 = ["data-cy"];
-const _hoisted_10$2 = { class: "ml-1 hover:underline" };
+const _hoisted_8$2 = ["data-cy"];
+const _hoisted_9$2 = { class: "ml-1 hover:underline" };
 const _sfc_main$i = /* @__PURE__ */ defineComponent$1({
   __name: "layer-tree-node",
   props: {
@@ -49105,41 +49104,40 @@ const _sfc_main$i = /* @__PURE__ */ defineComponent$1({
       return isParent ? (openBlock(), createElementBlock("div", _hoisted_1$f, [
         __props.node.depth === 1 ? (openBlock(), createElementBlock("button", {
           key: 0,
-          class: normalizeClass(["group node-1 w-full text-left flex px-2 py-1.5 uppercase bg-tertiary", __props.node.expanded ? "text-white" : "text-secondary"]),
+          class: "group node-1 w-full text-left flex px-2 py-1.5 uppercase bg-tertiary",
           "aria-expanded": __props.node.expanded,
           onClick: _cache[0] || (_cache[0] = ($event) => toggleParent(__props.node)),
           "data-cy": `parentLayerLabel-${__props.node.id}`
         }, [
-          createElementVNode("div", _hoisted_3$8, toDisplayString(unref(label)), 1),
-          createElementVNode("div", _hoisted_4$7, [
+          createElementVNode("div", {
+            class: normalizeClass(["grow", __props.node.expanded ? "text-white" : "text-secondary"])
+          }, toDisplayString(unref(label)), 3),
+          createElementVNode("div", _hoisted_3$8, [
             createElementVNode("div", {
-              class: normalizeClass(["fa fa-sharp fa-solid group-hover:text-white", __props.node.expanded ? "fa-caret-up" : "fa-caret-down"])
+              class: normalizeClass(["fa fa-sharp fa-solid group-hover:text-white text-primary", __props.node.expanded ? "fa-caret-up" : "fa-caret-down"])
             }, null, 2)
           ])
-        ], 10, _hoisted_2$a)) : __props.node.depth > 1 && !isMaxDepth ? (openBlock(), createElementBlock("button", {
+        ], 8, _hoisted_2$a)) : __props.node.depth > 1 && !isMaxDepth ? (openBlock(), createElementBlock("button", {
           key: 1,
-          class: normalizeClass([
-            "w-full text-left flex px-2 py-1.5 pl-2",
-            __props.node.expanded ? "bg-secondary text-tertiary" : "bg-white text-primary"
-          ]),
+          class: normalizeClass(["w-full text-left flex px-2 py-1.5 pl-2", __props.node.expanded ? "text-tertiary" : "bg-white text-primary"]),
           "aria-expanded": __props.node.expanded,
           onClick: _cache[1] || (_cache[1] = ($event) => toggleParent(__props.node)),
           "data-cy": `parentLayerLabel-${__props.node.id}`
         }, [
-          createElementVNode("div", _hoisted_6$3, toDisplayString(unref(label)), 1),
-          createElementVNode("div", _hoisted_7$2, [
+          createElementVNode("div", _hoisted_5$6, toDisplayString(unref(label)), 1),
+          createElementVNode("div", _hoisted_6$3, [
             createElementVNode("div", {
               class: normalizeClass(["fa-sharp fa-solid", __props.node.expanded ? "fa-minus" : "fa-plus"])
             }, null, 2)
           ])
-        ], 10, _hoisted_5$6)) : createCommentVNode("", true),
+        ], 10, _hoisted_4$7)) : createCommentVNode("", true),
         !isMaxDepth ? (openBlock(), createElementBlock("div", {
           key: 2,
-          class: normalizeClass(["bg-secondary", [
+          class: normalizeClass([
             { "pl-2": __props.node.depth > 1 },
-            { "lux-collapse": !isRoot },
+            { "lux-collapse bg-secondary": !isRoot },
             { expanded: !isRoot && __props.node.expanded }
-          ]])
+          ])
         }, [
           (openBlock(true), createElementBlock(Fragment, null, renderList(__props.node.children, (child) => {
             return openBlock(), createBlock(_component_layer_tree_node, {
@@ -49150,7 +49148,7 @@ const _sfc_main$i = /* @__PURE__ */ defineComponent$1({
             }, null, 8, ["node"]);
           }), 128))
         ], 2)) : createCommentVNode("", true)
-      ])) : (openBlock(), createElementBlock("div", _hoisted_8$2, [
+      ])) : (openBlock(), createElementBlock("div", _hoisted_7$2, [
         createElementVNode("button", {
           class: "self-start before:text-[.85rem] before:transform before:translate-y-[.1rem] before:inline-block before:content-['\\f129'] fa-solid fa-fw fa-fh fa-info",
           onClick: _cache[4] || (_cache[4] = ($event) => unref(setMetadataId)(__props.node.id))
@@ -49163,8 +49161,8 @@ const _sfc_main$i = /* @__PURE__ */ defineComponent$1({
           createElementVNode("i", {
             class: normalizeClass(["fa-solid", __props.node.checked ? "fa-check-square" : "fa-square"])
           }, null, 2),
-          createElementVNode("span", _hoisted_10$2, toDisplayString(unref(label)), 1)
-        ], 10, _hoisted_9$2)
+          createElementVNode("span", _hoisted_9$2, toDisplayString(unref(label)), 1)
+        ], 10, _hoisted_8$2)
       ]));
     };
   }

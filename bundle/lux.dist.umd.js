@@ -12035,7 +12035,7 @@ This will fail in production.`);
   const _hoisted_7$3 = ["title"];
   const _hoisted_8$3 = ["id"];
   const _hoisted_9$3 = ["title"];
-  const _hoisted_10$3 = ["id", "value", "aria-label"];
+  const _hoisted_10$2 = ["id", "value", "aria-label"];
   const _sfc_main$m = /* @__PURE__ */ vue.defineComponent({
     __name: "layer-item",
     props: {
@@ -12153,7 +12153,7 @@ This will fail in production.`);
               onChange: onChangeOpacity,
               class: "m-2.5 w-16 h-[5px] rounded-lg appearance-none cursor-pointer",
               "aria-label": vue.unref(t)("Change opacity for {{ layerName }}", { layerName: vue.unref(getLabel)() })
-            }, null, 40, _hoisted_10$3)
+            }, null, 40, _hoisted_10$2)
           ], 10, _hoisted_8$3)
         ]);
       };
@@ -49069,17 +49069,16 @@ This will fail in production.`);
     key: "node.id"
   };
   const _hoisted_2$a = ["aria-expanded", "data-cy"];
-  const _hoisted_3$8 = { class: "grow" };
-  const _hoisted_4$7 = { class: "leading-6" };
-  const _hoisted_5$6 = ["aria-expanded", "data-cy"];
-  const _hoisted_6$3 = { class: "grow" };
-  const _hoisted_7$2 = { class: "leading-6" };
-  const _hoisted_8$2 = {
+  const _hoisted_3$8 = { class: "leading-6" };
+  const _hoisted_4$7 = ["aria-expanded", "data-cy"];
+  const _hoisted_5$6 = { class: "grow" };
+  const _hoisted_6$3 = { class: "leading-6" };
+  const _hoisted_7$2 = {
     key: 1,
     class: "flex text-tertiary pr-2"
   };
-  const _hoisted_9$2 = ["data-cy"];
-  const _hoisted_10$2 = { class: "ml-1 hover:underline" };
+  const _hoisted_8$2 = ["data-cy"];
+  const _hoisted_9$2 = { class: "ml-1 hover:underline" };
   const _sfc_main$i = /* @__PURE__ */ vue.defineComponent({
     __name: "layer-tree-node",
     props: {
@@ -49105,41 +49104,40 @@ This will fail in production.`);
         return isParent ? (vue.openBlock(), vue.createElementBlock("div", _hoisted_1$f, [
           __props.node.depth === 1 ? (vue.openBlock(), vue.createElementBlock("button", {
             key: 0,
-            class: vue.normalizeClass(["group node-1 w-full text-left flex px-2 py-1.5 uppercase bg-tertiary", __props.node.expanded ? "text-white" : "text-secondary"]),
+            class: "group node-1 w-full text-left flex px-2 py-1.5 uppercase bg-tertiary",
             "aria-expanded": __props.node.expanded,
             onClick: _cache[0] || (_cache[0] = ($event) => toggleParent(__props.node)),
             "data-cy": `parentLayerLabel-${__props.node.id}`
           }, [
-            vue.createElementVNode("div", _hoisted_3$8, vue.toDisplayString(vue.unref(label)), 1),
-            vue.createElementVNode("div", _hoisted_4$7, [
+            vue.createElementVNode("div", {
+              class: vue.normalizeClass(["grow", __props.node.expanded ? "text-white" : "text-secondary"])
+            }, vue.toDisplayString(vue.unref(label)), 3),
+            vue.createElementVNode("div", _hoisted_3$8, [
               vue.createElementVNode("div", {
-                class: vue.normalizeClass(["fa fa-sharp fa-solid group-hover:text-white", __props.node.expanded ? "fa-caret-up" : "fa-caret-down"])
+                class: vue.normalizeClass(["fa fa-sharp fa-solid group-hover:text-white text-primary", __props.node.expanded ? "fa-caret-up" : "fa-caret-down"])
               }, null, 2)
             ])
-          ], 10, _hoisted_2$a)) : __props.node.depth > 1 && !isMaxDepth ? (vue.openBlock(), vue.createElementBlock("button", {
+          ], 8, _hoisted_2$a)) : __props.node.depth > 1 && !isMaxDepth ? (vue.openBlock(), vue.createElementBlock("button", {
             key: 1,
-            class: vue.normalizeClass([
-              "w-full text-left flex px-2 py-1.5 pl-2",
-              __props.node.expanded ? "bg-secondary text-tertiary" : "bg-white text-primary"
-            ]),
+            class: vue.normalizeClass(["w-full text-left flex px-2 py-1.5 pl-2", __props.node.expanded ? "text-tertiary" : "bg-white text-primary"]),
             "aria-expanded": __props.node.expanded,
             onClick: _cache[1] || (_cache[1] = ($event) => toggleParent(__props.node)),
             "data-cy": `parentLayerLabel-${__props.node.id}`
           }, [
-            vue.createElementVNode("div", _hoisted_6$3, vue.toDisplayString(vue.unref(label)), 1),
-            vue.createElementVNode("div", _hoisted_7$2, [
+            vue.createElementVNode("div", _hoisted_5$6, vue.toDisplayString(vue.unref(label)), 1),
+            vue.createElementVNode("div", _hoisted_6$3, [
               vue.createElementVNode("div", {
                 class: vue.normalizeClass(["fa-sharp fa-solid", __props.node.expanded ? "fa-minus" : "fa-plus"])
               }, null, 2)
             ])
-          ], 10, _hoisted_5$6)) : vue.createCommentVNode("", true),
+          ], 10, _hoisted_4$7)) : vue.createCommentVNode("", true),
           !isMaxDepth ? (vue.openBlock(), vue.createElementBlock("div", {
             key: 2,
-            class: vue.normalizeClass(["bg-secondary", [
+            class: vue.normalizeClass([
               { "pl-2": __props.node.depth > 1 },
-              { "lux-collapse": !isRoot },
+              { "lux-collapse bg-secondary": !isRoot },
               { expanded: !isRoot && __props.node.expanded }
-            ]])
+            ])
           }, [
             (vue.openBlock(true), vue.createElementBlock(vue.Fragment, null, vue.renderList(__props.node.children, (child) => {
               return vue.openBlock(), vue.createBlock(_component_layer_tree_node, {
@@ -49150,7 +49148,7 @@ This will fail in production.`);
               }, null, 8, ["node"]);
             }), 128))
           ], 2)) : vue.createCommentVNode("", true)
-        ])) : (vue.openBlock(), vue.createElementBlock("div", _hoisted_8$2, [
+        ])) : (vue.openBlock(), vue.createElementBlock("div", _hoisted_7$2, [
           vue.createElementVNode("button", {
             class: "self-start before:text-[.85rem] before:transform before:translate-y-[.1rem] before:inline-block before:content-['\\f129'] fa-solid fa-fw fa-fh fa-info",
             onClick: _cache[4] || (_cache[4] = ($event) => vue.unref(setMetadataId)(__props.node.id))
@@ -49163,8 +49161,8 @@ This will fail in production.`);
             vue.createElementVNode("i", {
               class: vue.normalizeClass(["fa-solid", __props.node.checked ? "fa-check-square" : "fa-square"])
             }, null, 2),
-            vue.createElementVNode("span", _hoisted_10$2, vue.toDisplayString(vue.unref(label)), 1)
-          ], 10, _hoisted_9$2)
+            vue.createElementVNode("span", _hoisted_9$2, vue.toDisplayString(vue.unref(label)), 1)
+          ], 10, _hoisted_8$2)
         ]));
       };
     }
