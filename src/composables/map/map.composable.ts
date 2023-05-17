@@ -41,7 +41,7 @@ export default function useMap() {
 
   function layerHasChanged(oldContext: MapContext | null, layer: Layer) {
     const oldLayer = oldContext?.layers?.find(l => l.id === layer.id)
-    return oldLayer === layer
+    return oldLayer !== layer
   }
 
   function contextHasChanged(
@@ -105,7 +105,7 @@ export default function useMap() {
     if (contextHasChanged(newContext, oldContext)) {
       return (newContext.layers as Layer[]).reduce(
         (prev, layer) =>
-          !layerHasChanged(oldContext, layer) ? prev : [...prev, layer],
+          layerHasChanged(oldContext, layer) ? [...prev, layer] : prev,
         [] as Layer[]
       )
     }
