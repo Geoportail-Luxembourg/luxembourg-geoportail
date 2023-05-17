@@ -57065,7 +57065,7 @@ This will fail in production.`);
     function layerHasChanged(oldContext, layer) {
       var _a;
       const oldLayer = (_a = oldContext == null ? void 0 : oldContext.layers) == null ? void 0 : _a.find((l) => l.id === layer.id);
-      return oldLayer === layer;
+      return oldLayer !== layer;
     }
     function contextHasChanged(newContext, oldContext) {
       return !(oldContext === null || !("layers" in newContext) || !("layers" in oldContext) || typeof oldContext.layers === "undefined" || typeof newContext.layers === "undefined" || newContext.layers === oldContext.layers);
@@ -57101,7 +57101,7 @@ This will fail in production.`);
     function getMutatedLayers(newContext, oldContext) {
       if (contextHasChanged(newContext, oldContext)) {
         return newContext.layers.reduce(
-          (prev, layer) => !layerHasChanged(oldContext, layer) ? prev : [...prev, layer],
+          (prev, layer) => layerHasChanged(oldContext, layer) ? [...prev, layer] : prev,
           []
         );
       }
