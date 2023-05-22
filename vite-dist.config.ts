@@ -15,6 +15,7 @@ function removeDataTestAttrs(node: RootNode | TemplateChildNode) {
 
 export default defineConfig(({ command, mode }) => {
   const base: UserConfig = {
+    base: 'http://localhost:8080/dev/main.html/', // set base url to dev for now (to allow switching themes on dev)
     plugins: [
       vue({
         template: {
@@ -30,10 +31,10 @@ export default defineConfig(({ command, mode }) => {
       },
     },
     optimizeDeps: {
-      exclude: ["@vue/runtime-core", "@vue/shared", "@vue/runtime-dom"],
+      exclude: ['@vue/runtime-core', '@vue/shared', '@vue/runtime-dom'],
       force: false,
       disabled: true,
-    }
+    },
   }
 
   base.build = {
@@ -44,11 +45,11 @@ export default defineConfig(({ command, mode }) => {
       fileName: 'lux.dist',
     },
     commonjsOptions: {
-      exclude: ["@vue/runtime-core", "@vue/shared", "@vue/runtime-dom"],
+      exclude: ['@vue/runtime-core', '@vue/shared', '@vue/runtime-dom'],
     },
     outDir: 'bundle', // TODO: rename /dist
     rollupOptions: {
-      external: ['vue', "@vue/runtime-core", "@vue/shared", "@vue/runtime-dom"],
+      external: ['vue', '@vue/runtime-core', '@vue/shared', '@vue/runtime-dom'],
       output: {
         globals: {
           vue: 'Vue',
