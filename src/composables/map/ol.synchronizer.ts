@@ -25,7 +25,6 @@ export class OlSynchronizer {
     watch(
       () => mapStore.layers,
       layers => {
-        console.log('watch layers')
         const oldContext = {
           layers: this.previousLayers,
         }

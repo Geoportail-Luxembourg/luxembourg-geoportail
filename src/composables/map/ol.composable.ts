@@ -117,12 +117,9 @@ function createVectorLayer(
     queryable_id: bgLayer.id,
     metadata: bgLayer.metadata,
   })
-  console.log(`style loaded ? ${newBgBaseLayer?.maplibreMap}`)
-  console.log(`style loaded ? ${newBgBaseLayer?.maplibreMap.loaded()}`)
   const styleStore = useStyleStore()
   if (newBgBaseLayer?.maplibreMap.loaded()) {
     styleStore.setBaseStyle(bgLayer.id, newBgBaseLayer.getStyle())
-    console.log(`style loaded ? ${newBgBaseLayer?.maplibreMap.getStyle()}`)
   } else {
     new Promise(resolve =>
       newBgBaseLayer?.maplibreMap.once('data', resolve)
