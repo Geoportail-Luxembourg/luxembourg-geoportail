@@ -8,7 +8,9 @@ import { createPinia } from 'pinia'
 import { initProjections } from '@/services/projection.utils'
 import App from './App.vue'
 
+import '../node_modules/ol/ol.css'
 import './assets/main.css'
+
 import VueDOMPurifyHTML from 'vue-dompurify-html'
 import { useThemeStore } from './stores/config.store'
 import { themesApiFixture } from './__fixtures__/themes.api.fixture'
