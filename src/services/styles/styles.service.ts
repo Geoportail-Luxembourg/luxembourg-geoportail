@@ -1,17 +1,20 @@
 import { bgConfigFixture } from '../../__fixtures__/background.config.fixture'
-import { StyleItem as MediumStyle } from '@/composables/mvt-styles/mvt-styles.model'
+import {
+  BgLayerDef,
+  StyleItem,
+} from '@/composables/mvt-styles/mvt-styles.model'
+import type { Layer } from '@/stores/map.store.model'
 
-export function getDefaultMediumStyling(label: string): MediumStyle[] {
-  if (label === 'topogr_global' || label === 'topo_bw_jpeg')
-    return getDefaultMediumTopoStyling()
-
-  return getDefaultMediumRoadmapStyling() // Default value at init app loading
+export function getDefaultMediumStyling(bgLayer: Layer): StyleItem[] {
+  const layerDef = getLayerDef(bgLayer)
+  if (!layerDef || !layerDef.medium_style_class) return []
+  return (bgConfigFixture().medium_default_styles as any)[
+    layerDef.medium_style_class
+  ] as any
 }
 
-export function getDefaultMediumRoadmapStyling(): MediumStyle[] {
-  return bgConfigFixture().medium_default_styles.road as MediumStyle[]
-}
-
-export function getDefaultMediumTopoStyling(): MediumStyle[] {
-  return bgConfigFixture().medium_default_styles.topo as MediumStyle[]
+function getLayerDef(
+  bgLayer: Layer | undefined | null
+): BgLayerDef | undefined {
+  return bgConfigFixture().bg_layers.find(l => l.id == bgLayer?.id)
 }

@@ -1,4 +1,6 @@
 import { LayerId } from '@/stores/map.store.model'
+import type { StyleSpecification } from 'maplibre-gl'
+export type { StyleSpecification } from 'maplibre-gl'
 
 export interface BgLayerDef {
   icon_id: string
@@ -18,6 +20,7 @@ export interface IMvtConfig {
   style: string
 }
 export type VectorSourceDict = Map<LayerId, IMvtConfig>
+export type VectorStyleDict = Map<LayerId, StyleSpecification>
 
 export interface StyleCapabilities {
   isEditable: boolean

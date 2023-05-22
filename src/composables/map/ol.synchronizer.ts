@@ -1,14 +1,15 @@
-import { watch } from 'vue'
+import { watch, watchEffect } from 'vue'
 import type OlMap from 'ol/Map'
 import useOpenLayers from './ol.composable'
+import { storeToRefs } from 'pinia'
 
 import { Layer } from '@/stores/map.store.model'
 import { useMapStore } from '@/stores/map.store'
 import { useStyleStore } from '@/stores/style.store'
+import { StyleSpecification } from '@/composables/mvt-styles/mvt-styles.model'
 import useMap from './map.composable'
 import { VectorSourceDict } from '@/composables/mvt-styles/mvt-styles.model'
 import useMvtStyles from '@/composables/mvt-styles/mvt-styles.composable'
-import { getDefaultMediumStyling } from '@/services/styles/styles.service'
 
 export class OlSynchronizer {
   previousLayers: Layer[]
@@ -19,11 +20,11 @@ export class OlSynchronizer {
     const mapService = useMap()
     const styleService = useMvtStyles()
     const openLayers = useOpenLayers()
+    const { appliedStyle } = storeToRefs(styleStore)
 
     watch(
       () => mapStore.layers,
       layers => {
-        console.log('watch layers')
         const oldContext = {
           layers: this.previousLayers,
         }
@@ -69,16 +70,35 @@ export class OlSynchronizer {
         openLayers.setBgLayer(map, bgLayer, styleStore.bgVectorSources)
     )
 
-    watch(
-      () => styleStore.bgStyle,
-      newStyle =>
-        openLayers.applyOnBgLayer(map, bgLayer =>
-          styleService.applyStyle(
-            bgLayer,
-            newStyle || getDefaultMediumStyling(bgLayer.get('label'))
-          )
+    //const appliedStyle = computed(() =>
+    watchEffect(() => {
+      if (!styleStore.isExpertStyleActive) {
+        // must ignore typing error (too deep)
+        // @ts-ignore
+        appliedStyle.value = styleService.applyDefaultStyle(
+          mapStore.bgLayer,
+          styleStore.bgVectorBaseStyles,
+          styleStore.bgStyle
         )
-    )
+      }
+    })
+
+    // must ignore typing error (too deep)
+    // @ts-ignore
+    watch(appliedStyle, (style: StyleSpecification) => {
+      if (styleStore.bgStyle === null && !styleStore.isExpertStyleActive) {
+        styleService
+          .unregisterStyle(styleStore.styleId)
+          .then((styleStore.styleId = null))
+      } else {
+        styleService
+          .registerStyle(style, styleStore.styleId)
+          .then(id => (styleStore.styleId = id))
+      }
+      openLayers.applyOnBgLayer(map, bgLayer =>
+        styleService.applyConsolidatedStyle(bgLayer, style)
+      )
+    })
 
     watch(
       () => styleStore.bgVectorSources,

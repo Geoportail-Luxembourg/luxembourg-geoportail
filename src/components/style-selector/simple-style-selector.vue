@@ -16,12 +16,6 @@ const { bgStyle } = storeToRefs(styleStore)
 const simpleStyleConf = bgConfigFixture().simple_styles.road
 const simpleStyles = ref(simpleStyleConf)
 
-const props = defineProps({
-  isOpen: {
-    type: Boolean,
-    default: true,
-  },
-})
 // does not seem to work with "computed" => therefore using "watch"
 watch(
   bgStyle,
@@ -39,14 +33,11 @@ function onStylingSelected(item: SimpleStyle) {
 </script>
 
 <template>
-  <div
-    :title="t('Simple style editor', { ns: 'client' })"
-    :class="`border-2 p-[10px] ${props.isOpen ? '' : 'hidden'}`"
-  >
+  <div class="text-white border-2 p-[10px] m-[10px]">
     <!-- TODO: create clean container for simple and advanced style editors -->
-    <div class="w-full text-white text-lg text-center">
+    <h5 class="text-center mb-3">
       {{ t('Select a style', { ns: 'client' }) }}
-    </div>
+    </h5>
     <div
       v-for="item in simpleStyles"
       :key="item.unlocalized_label"

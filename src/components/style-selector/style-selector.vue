@@ -5,6 +5,7 @@ import { useTranslation } from 'i18next-vue'
 
 import SimpleStyleSelector from '@/components/style-selector/simple-style-selector.vue'
 import MediumStyleSelector from '@/components/style-selector/medium-style-selector.vue'
+import ExpertStyleSelector from '@/components/style-selector/expert-style-selector.vue'
 import { useAppStore } from '@/stores/app.store'
 import { useMapStore } from '@/stores/map.store'
 import { useStyleStore } from '@/stores/style.store'
@@ -64,7 +65,11 @@ function resetStyle() {
       <button @click="() => (isAdvancedStyleOpen = !isAdvancedStyleOpen)">
         {{ t('Advanced settings') }}
       </button>
-      <!-- Advanced style editor here -->
+      <expert-style-selector
+        :class="isAdvancedStyleOpen ? '' : 'hidden'"
+        v-if="bgLayer"
+        :layer="bgLayer"
+      />
     </div>
     <button @click="resetStyle" class="lux-btn">
       {{ t('Reset style', { ns: 'client' }) }}

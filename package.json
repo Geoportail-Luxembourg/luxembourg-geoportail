@@ -25,6 +25,7 @@
   },
   "dependencies": {
     "@camptocamp/ogc-client": "^0.3.4",
+    "file-saver": "^2.0.5",
     "ol": "^7.3.0",
     "pinia": "^2.0.26",
     "sortablejs": "^1.15.0",

@@ -21,6 +21,7 @@ import {
   TILE_GRID_RESOLUTION,
   TILE_MATRIX_IDS,
 } from '@/__fixtures__/wmts.fixture'
+import { useStyleStore } from '@/stores/style.store'
 
 const proxyWmsUrl = 'https://map.geoportail.lu/ogcproxywms'
 export const remoteProxyWms = 'https://map.geoportail.lu/httpsproxy'
@@ -90,6 +91,46 @@ function createWmtsLayer(layer: Layer): TileLayer<WMTS> {
   })
 
   return olLayer
+}
+
+function createVectorLayer(
+  vectorSources: VectorSourceDict,
+  bgLayer: Layer
+): BaseLayer | undefined {
+  const mapService = useMap()
+
+  const styleSource = vectorSources.get(bgLayer.id)
+  if (!styleSource) {
+    return
+  }
+  const options = Object.assign(
+    {
+      container: mapService.getOlMap().getTarget(),
+    },
+    styleSource
+  )
+
+  const newBgBaseLayer = new MapLibreLayer({
+    maplibreOptions: options,
+    label: bgLayer.name,
+    id: bgLayer.id,
+    queryable_id: bgLayer.id,
+    metadata: bgLayer.metadata,
+  })
+  const styleStore = useStyleStore()
+  if (newBgBaseLayer?.maplibreMap.loaded()) {
+    styleStore.setBaseStyle(bgLayer.id, newBgBaseLayer.getStyle())
+  } else {
+    new Promise(resolve =>
+      newBgBaseLayer?.maplibreMap.once('data', resolve)
+    ).then(() =>
+      styleStore.setBaseStyle(
+        bgLayer.id,
+        newBgBaseLayer?.maplibreMap.getStyle()
+      )
+    )
+  }
+  return newBgBaseLayer
 }
 
 function getLayerWmtsUrl(layer: Layer, requestScheme = 'https') {
@@ -217,29 +258,13 @@ export default function useOpenLayers() {
       if (isLayerCached(bgLayer)) {
         bgBaseLayer = getLayerFromCache(bgLayer)
       } else {
-        const styleSource = vectorSources && vectorSources.get(bgLayer.id)
-        const mapService = useMap()
-
-        if (styleSource) {
-          const options = Object.assign(
-            {
-              container: mapService.getOlMap().getTarget(),
-            },
-            styleSource
-          )
-          addLayerToCache(
-            bgLayer.id,
-            (bgBaseLayer = new MapLibreLayer({
-              maplibreOptions: options,
-              label: bgLayer.name,
-              id: bgLayer.id,
-              queryable_id: bgLayer.id,
-              metadata: bgLayer.metadata,
-            }))
-          )
-        } else {
-          addLayerToCache(bgLayer.id, (bgBaseLayer = createLayer(bgLayer)))
+        // try to create vector layer from vector sources
+        if (vectorSources) {
+          bgBaseLayer = createVectorLayer(vectorSources, bgLayer)
         }
+        // if no vector layer has been created, add raster layer
+        bgBaseLayer = bgBaseLayer ? bgBaseLayer : createLayer(bgLayer)
+        addLayerToCache(bgLayer.id, bgBaseLayer)
       }
     }
 
@@ -256,7 +281,7 @@ export default function useOpenLayers() {
         olMap.addLayer(bgBaseLayer)
       }
     }
-    statePersistorStyleService.restoreStyle()
+    statePersistorStyleService.restoreStyle(true)
   }
 
   return {

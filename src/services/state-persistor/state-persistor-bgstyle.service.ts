@@ -6,6 +6,7 @@ import { storageHelper } from './storage/storage.helper'
 import { useStyleStore } from '@/stores/style.store'
 import { useMapStore } from '@/stores/map.store'
 import { SP_KEY_SERIAL } from './state-persistor.model'
+import { StyleItem } from '@/composables/mvt-styles/mvt-styles.model'
 // import { bgConfigFixture } from '@/__fixtures__/background.config.fixture'
 
 class StatePersistorStyleService {
@@ -17,7 +18,7 @@ class StatePersistorStyleService {
     // eslint-disable-next-line prefer-const
     stop = watchEffect(() => {
       if (styleStore.bgVectorSources) {
-        this.restoreStyle()
+        this.restoreStyle(false)
         if (activatePersistance) this.persistStyle()
         activatePersistance = true
         stop && stop() // test if exists, for HMR support
@@ -54,16 +55,19 @@ class StatePersistorStyleService {
     }
   }
 
-  restoreStyle() {
+  restoreStyle(localStorageOnly: boolean) {
     const styleStore = useStyleStore()
     styleStore.setStyle(null)
     const mapStore = useMapStore()
     const bgLayer = mapStore.bgLayer
     if (bgLayer) {
-      let bgStyle = storageHelper.getValue(
-        SP_KEY_SERIAL,
-        storageStyleMapper.styleSerialToStyle
-      )
+      let bgStyle: StyleItem[] = []
+      if (!localStorageOnly) {
+        bgStyle = storageHelper.getValue(
+          SP_KEY_SERIAL,
+          storageStyleMapper.styleSerialToStyle
+        )
+      }
       if (bgStyle.length === 0) {
         bgStyle = storageHelper.getValue(
           bgLayer.name,
