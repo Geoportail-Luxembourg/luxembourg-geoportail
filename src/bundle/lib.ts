@@ -1,6 +1,6 @@
-import { h, getCurrentInstance, createApp } from 'vue'
+import { h, getCurrentInstance, createApp, watch } from 'vue'
 import VueDOMPurifyHTML from 'vue-dompurify-html'
-import { createPinia } from 'pinia'
+import { createPinia, storeToRefs } from 'pinia'
 
 import { initProjections } from '@/services/projection.utils'
 import { defineCustomElement } from '@/bundle/runtime-dom/apiCustomElement'
@@ -20,6 +20,7 @@ import HeaderBar from '@/components/header/header-bar.vue'
 import FooterBar from '@/components/footer/footer-bar.vue'
 import LayerPanel from '@/components/layer-panel/layer-panel.vue'
 import useMap from '@/composables/map/map.composable'
+import { useMapStore } from '@/stores/map.store'
 import { useThemeStore } from '@/stores/config.store'
 import { statePersistorLayersService } from '@/services/state-persistor/state-persistor-layers.service'
 import { statePersistorThemeService } from '@/services/state-persistor/state-persistor-theme.service'
@@ -65,6 +66,28 @@ const createElementInstance = (component = {}, app = null) => {
   )
 }
 
+const mapStore = useMapStore()
+const { layers } = storeToRefs(mapStore)
+
+const themeStore = useThemeStore()
+const { theme } = storeToRefs(themeStore)
+
+//trigger 'changedTheme' event for v3
+const changedTheme = new CustomEvent('changedTheme', {
+  detail: {
+    theme,
+  },
+})
+watch(
+  theme,
+  theme => {
+    if (theme) {
+      window.dispatchEvent(changedTheme)
+    }
+  },
+  { immediate: true }
+)
+
 export {
   app,
   App,
@@ -87,6 +110,8 @@ export {
   FooterBar,
   LayerPanel,
   useMap,
+  useMapStore,
+  layers,
   useThemeStore,
   statePersistorLayersService,
   statePersistorThemeService,
