@@ -16,11 +16,7 @@ const { appliedStyle } = storeToRefs(styleStore)
 const { t } = useTranslation()
 
 function downloadCustomStyleFile() {
-  const currentStyle = styleService.applyDefaultStyle(
-    mapStore.bgLayer,
-    styleStore.bgVectorBaseStyles,
-    styleStore.bgStyle
-  )
+  const currentStyle = appliedStyle.value
   const content = JSON.stringify(currentStyle)
   const blob = new Blob([content], { type: 'text/plain;charset=utf-8' })
   const fileName = 'styles.json'
@@ -42,11 +38,21 @@ function setCustomStyle(styleEvent: Event) {
   }
 
   file.text().then(result => {
-    appliedStyle.value = JSON.parse(result)
     styleStore.enableExpertStyle()
+    appliedStyle.value = JSON.parse(result)
   })
   // Reset form value
   ;(styleEvent.target as HTMLInputElement).value = ''
+}
+
+function getStyleUrl() {
+  if (styleStore.styleId === null) {
+    return styleService.getDefaultMapBoxStyleUrl(
+      styleService.getVectorId(mapStore.bgLayer)
+    )
+  } else {
+    return `${styleService.getvtstyleUrl_}?id=${styleStore.styleId}`
+  }
 }
 </script>
 
@@ -86,7 +92,7 @@ function setCustomStyle(styleEvent: Event) {
       </div>
     </div>
     <a
-      href="https://maputnik.github.io/editor/?style={{mainCtrl.getUrlVtStyle()}}"
+      :href="`https://maputnik.github.io/editor/?style=${getStyleUrl()}`"
       target="_blank"
       class="lux-btn text-center"
       >{{ t('Open Maputnik editor') }}</a

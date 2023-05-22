@@ -199,6 +199,37 @@ export default function useMvtStyles() {
     return baseStyle
   }
 
+  const getvtstyleUrl_ = 'http://localhost:8080/getvtstyle'
+  const uploadvtstyleUrl_ = 'http://localhost:8080/uploadvtstyle'
+  const deletevtstyleUrl_ = 'http://localhost:8080/deletevtstyle'
+
+  function unregisterStyle(styleId: String | null) {
+    if (styleId === null) {
+      return Promise.resolve()
+    } else {
+      const url = `${deletevtstyleUrl_}?id=${styleId}`
+      return fetch(url).catch(() => '')
+    }
+  }
+
+  function registerStyle(style: StyleSpecification, oldStyleId: String | null) {
+    return unregisterStyle(oldStyleId).then(() => {
+      const formData = new FormData()
+      const data = JSON.stringify(style)
+      const blob = new Blob([data], { type: 'application/json' })
+      formData.append('style', blob, 'style.json')
+      const options = {
+        method: 'POST',
+        body: formData,
+      }
+      return fetch(uploadvtstyleUrl_, options)
+        .then(response => response.json())
+        .then(result => {
+          return result.id
+        })
+    })
+  }
+
   function applyConsolidatedStyle(
     bgLayer: BaseLayer,
     consolidatedStyle: StyleSpecification | undefined
@@ -213,6 +244,13 @@ export default function useMvtStyles() {
         mbMap.setStyle(consolidatedStyle)
       )
     }
+  }
+
+  function getVectorId(bgLayer: Layer | undefined | null): String | undefined {
+    const bgLayerDef: BgLayerDef | undefined = bgConfigFixture().bg_layers.find(
+      l => l.id == bgLayer?.id
+    )
+    return bgLayerDef?.vector_id
   }
 
   function isLayerStyleEditable(bgLayer: Layer | undefined | null): boolean {
@@ -250,12 +288,17 @@ export default function useMvtStyles() {
   }
 
   return {
+    getDefaultMapBoxStyleUrl,
     setConfigForLayer,
     getRoadStyleFromSimpleStyle,
     applyDefaultStyle,
     applyConsolidatedStyle,
+    getVectorId,
+    unregisterStyle,
+    registerStyle,
     checkSelection,
     isLayerStyleEditable,
     getStyleCapabilitiesFromLayer,
+    getvtstyleUrl_,
   }
 }

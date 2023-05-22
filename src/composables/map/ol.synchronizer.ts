@@ -86,11 +86,20 @@ export class OlSynchronizer {
 
     // must ignore typing error (too deep)
     // @ts-ignore
-    watch(appliedStyle, (style: StyleSpecification) =>
+    watch(appliedStyle, (style: StyleSpecification) => {
+      if (styleStore.bgStyle === null && !styleStore.isExpertStyleActive) {
+        styleService
+          .unregisterStyle(styleStore.styleId)
+          .then((styleStore.styleId = null))
+      } else {
+        styleService
+          .registerStyle(style, styleStore.styleId)
+          .then(id => (styleStore.styleId = id))
+      }
       openLayers.applyOnBgLayer(map, bgLayer =>
         styleService.applyConsolidatedStyle(bgLayer, style)
       )
-    )
+    })
 
     watch(
       () => styleStore.bgVectorSources,

@@ -22,6 +22,7 @@ export const useStyleStore = defineStore(
       new Map()
     )
     const isExpertStyleActive: ShallowRef<boolean> = shallowRef(false)
+    const styleId: ShallowRef<String | null> = shallowRef(null)
     const appliedStyle: ShallowRef<StyleSpecification | undefined> =
       shallowRef()
 
@@ -92,6 +93,7 @@ export const useStyleStore = defineStore(
       setStyle,
       disableExpertStyle,
       enableExpertStyle,
+      styleId,
     }
   },
   {}
