@@ -1,6 +1,9 @@
 <script setup lang="ts">
-import { watch } from 'vue'
+import { onMounted, onUnmounted, watch } from 'vue'
 import { storeToRefs } from 'pinia'
+
+import MapLibreLayer from '@geoblocks/ol-maplibre-layer'
+declare type MapLibreLayer = typeof MapLibreLayer
 
 import HeaderBar from './components/header/header-bar.vue'
 import FooterBar from './components/footer/footer-bar.vue'
@@ -24,11 +27,31 @@ statePersistorStyleService.bootstrapStyle()
 
 const { layersOpen, styleEditorOpen } = storeToRefs(useAppStore())
 
-watch(layersOpen, () =>
+watch(layersOpen, () => 
   setTimeout(() => {
-    useMap().getOlMap().updateSize()
+    resizeMap()
   }, 50)
 )
+
+onMounted(() => window.addEventListener("resize", resizeMap))
+onUnmounted(() => window.removeEventListener("resize", resizeMap))
+
+function resizeMap() {
+  // Update all canvas size when layer panel is opened/closed
+  const map = useMap().getOlMap()
+
+  // Update ol layers' canvas size
+  map.updateSize()
+
+  // And trigger update MapLibre layers' canvas size
+  map.getAllLayers().forEach(layer => {
+    if (layer instanceof MapLibreLayer) {
+      (layer as MapLibreLayer).maplibreMap.resize()
+    }
+  })
+
+  // TODO: Add slide effect and do this update after slide animation ends
+}
 </script>
 
 <template>
