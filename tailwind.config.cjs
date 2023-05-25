@@ -176,6 +176,9 @@ module.exports = {
     'hd:bg-hybrid_sm_hi',
     ...generateThemeSafelist(),
     ...generateIconSafelist(),
+    {
+      pattern: /ol-*/,
+    }
   ],
   plugins: [],
 }

@@ -4,7 +4,7 @@ var __publicField = (obj, key, value) => {
   __defNormalProp(obj, typeof key !== "symbol" ? key + "" : key, value);
   return value;
 };
-import { effectScope, ref, markRaw, toRaw, isRef, isReactive, toRef, getCurrentInstance, inject, watch, unref, reactive, nextTick, computed, getCurrentScope, onScopeDispose, toRefs, defineComponent as defineComponent$1, shallowRef, onMounted, onUnmounted, openBlock, createElementBlock, createElementVNode, normalizeClass, toDisplayString, Fragment, renderList, createCommentVNode, watchEffect, normalizeStyle, createVNode as createVNode$1, resolveComponent, createBlock, createTextVNode, resolveDirective, withDirectives, createApp, h } from "vue";
+import { effectScope, ref, markRaw, toRaw, isRef, isReactive, toRef, getCurrentInstance, inject, watch, unref, reactive, nextTick, computed, getCurrentScope, onScopeDispose, toRefs, defineComponent as defineComponent$1, shallowRef, onMounted, onUnmounted, openBlock, createElementBlock, createElementVNode, normalizeClass, toDisplayString, Fragment, renderList, createCommentVNode, watchEffect, normalizeStyle, createVNode as createVNode$1, resolveComponent, createBlock, provide, createTextVNode, resolveDirective, withDirectives, createApp, h } from "vue";
 import { defineComponent, nextTick as nextTick$1, createVNode } from "@vue/runtime-core";
 import { extend as extend$4, isArray, camelize, toNumber, hyphenate } from "@vue/shared";
 import { render as render$1 } from "@vue/runtime-dom";
@@ -1494,11 +1494,11 @@ function formatStoreForInspectorState(store) {
   }
   return state;
 }
-function formatEventData(events) {
-  if (!events)
+function formatEventData(events2) {
+  if (!events2)
     return {};
-  if (Array.isArray(events)) {
-    return events.reduce((data, event) => {
+  if (Array.isArray(events2)) {
+    return events2.reduce((data, event) => {
       data.keys.push(event.key);
       data.operations.push(event.type);
       data.oldValue[event.key] = event.oldValue;
@@ -1512,10 +1512,10 @@ function formatEventData(events) {
     });
   } else {
     return {
-      operation: formatDisplay(events.type),
-      key: formatDisplay(events.key),
-      oldValue: events.oldValue,
-      newValue: events.newValue
+      operation: formatDisplay(events2.type),
+      key: formatDisplay(events2.key),
+      oldValue: events2.oldValue,
+      newValue: events2.newValue
     };
   }
 }
@@ -1809,7 +1809,7 @@ function addStoreToDevtools(app2, store) {
         }
       }, { deep: true });
     });
-    store.$subscribe(({ events, type }, state) => {
+    store.$subscribe(({ events: events2, type }, state) => {
       api.notifyComponentUpdate();
       api.sendInspectorState(INSPECTOR_ID);
       if (!isTimelineActive)
@@ -1817,7 +1817,7 @@ function addStoreToDevtools(app2, store) {
       const eventData = {
         time: now2(),
         title: formatMutationType(type),
-        data: assign$1({ store: formatDisplay(store.$id) }, formatEventData(events)),
+        data: assign$1({ store: formatDisplay(store.$id) }, formatEventData(events2)),
         groupId: activeAction
       };
       activeAction = void 0;
@@ -1825,16 +1825,16 @@ function addStoreToDevtools(app2, store) {
         eventData.subtitle = "\u2935\uFE0F";
       } else if (type === MutationType.patchObject) {
         eventData.subtitle = "\u{1F9E9}";
-      } else if (events && !Array.isArray(events)) {
-        eventData.subtitle = events.type;
+      } else if (events2 && !Array.isArray(events2)) {
+        eventData.subtitle = events2.type;
       }
-      if (events) {
+      if (events2) {
         eventData.data["rawEvent(s)"] = {
           _custom: {
             display: "DebuggerEvent",
             type: "object",
             tooltip: "raw DebuggerEvent[]",
-            value: events
+            value: events2
           }
         };
       }
@@ -2614,7 +2614,7 @@ function floor(n, decimals) {
 function ceil(n, decimals) {
   return Math.ceil(toFixed(n, decimals));
 }
-var __extends$12 = globalThis && globalThis.__extends || function() {
+var __extends$14 = globalThis && globalThis.__extends || function() {
   var extendStatics = function(d, b) {
     extendStatics = Object.setPrototypeOf || { __proto__: [] } instanceof Array && function(d2, b2) {
       d2.__proto__ = b2;
@@ -2641,7 +2641,7 @@ var EXTENT$1 = [-HALF_SIZE, -HALF_SIZE, HALF_SIZE, HALF_SIZE];
 var WORLD_EXTENT = [-180, -85, 180, 85];
 var MAX_SAFE_Y = RADIUS$1 * Math.log(Math.tan(Math.PI / 2));
 var EPSG3857Projection = function(_super) {
-  __extends$12(EPSG3857Projection2, _super);
+  __extends$14(EPSG3857Projection2, _super);
   function EPSG3857Projection2(code) {
     return _super.call(this, {
       code,
@@ -2704,7 +2704,7 @@ function toEPSG4326(input, opt_output, opt_dimension) {
   }
   return output2;
 }
-var __extends$11 = globalThis && globalThis.__extends || function() {
+var __extends$13 = globalThis && globalThis.__extends || function() {
   var extendStatics = function(d, b) {
     extendStatics = Object.setPrototypeOf || { __proto__: [] } instanceof Array && function(d2, b2) {
       d2.__proto__ = b2;
@@ -2729,7 +2729,7 @@ var RADIUS = 6378137;
 var EXTENT = [-180, -90, 180, 90];
 var METERS_PER_UNIT = Math.PI * RADIUS / 180;
 var EPSG4326Projection = function(_super) {
-  __extends$11(EPSG4326Projection2, _super);
+  __extends$13(EPSG4326Projection2, _super);
   function EPSG4326Projection2(code, opt_axisOrientation) {
     return _super.call(this, {
       code,
@@ -2829,7 +2829,7 @@ function getUid(obj) {
   return obj.ol_uid || (obj.ol_uid = String(++uidCounter_));
 }
 var VERSION = "6.15.1";
-var __extends$10 = globalThis && globalThis.__extends || function() {
+var __extends$12 = globalThis && globalThis.__extends || function() {
   var extendStatics = function(d, b) {
     extendStatics = Object.setPrototypeOf || { __proto__: [] } instanceof Array && function(d2, b2) {
       d2.__proto__ = b2;
@@ -2851,7 +2851,7 @@ var __extends$10 = globalThis && globalThis.__extends || function() {
   };
 }();
 var AssertionError = function(_super) {
-  __extends$10(AssertionError2, _super);
+  __extends$12(AssertionError2, _super);
   function AssertionError2(code) {
     var _this = this;
     var path = "v" + VERSION.split("-")[0];
@@ -9568,7 +9568,7 @@ const _hoisted_3$c = ["aria-expanded"];
 const _hoisted_4$b = /* @__PURE__ */ createElementVNode("span", { class: "lux-caret" }, null, -1);
 const _hoisted_5$9 = { class: "lux-dropdown-wrapper" };
 const _hoisted_6$6 = ["aria-label", "data-value"];
-const _sfc_main$o = /* @__PURE__ */ defineComponent$1({
+const _sfc_main$s = /* @__PURE__ */ defineComponent$1({
   __name: "dropdown-list",
   props: {
     placeholder: null,
@@ -11989,7 +11989,7 @@ const _hoisted_1$j = { class: "lux-layer-manager-item mt-2.5" };
 const _hoisted_2$e = ["title"];
 const _hoisted_3$b = { class: "flex-1 text-left cursor-default" };
 const _hoisted_4$a = ["title"];
-const _sfc_main$n = /* @__PURE__ */ defineComponent$1({
+const _sfc_main$r = /* @__PURE__ */ defineComponent$1({
   __name: "layer-item-background",
   props: {
     showEditButton: { type: Boolean },
@@ -12036,7 +12036,7 @@ const _hoisted_7$3 = ["title"];
 const _hoisted_8$3 = ["id"];
 const _hoisted_9$3 = ["title"];
 const _hoisted_10$2 = ["id", "value", "aria-label"];
-const _sfc_main$m = /* @__PURE__ */ defineComponent$1({
+const _sfc_main$q = /* @__PURE__ */ defineComponent$1({
   __name: "layer-item",
   props: {
     layer: null,
@@ -13169,7 +13169,7 @@ class StatePersistorStyleService {
   }
 }
 const statePersistorStyleService = new StatePersistorStyleService();
-const _sfc_main$l = /* @__PURE__ */ defineComponent$1({
+const _sfc_main$p = /* @__PURE__ */ defineComponent$1({
   __name: "simple-style-item",
   props: {
     styleName: null,
@@ -13194,7 +13194,7 @@ const _hoisted_3$9 = ["title"];
 const _hoisted_4$8 = { class: "text-white" };
 const _hoisted_5$7 = ["title", "onClick"];
 const _hoisted_6$4 = { class: "flex" };
-const _sfc_main$k = /* @__PURE__ */ defineComponent$1({
+const _sfc_main$o = /* @__PURE__ */ defineComponent$1({
   __name: "simple-style-selector",
   props: {
     isOpen: {
@@ -13245,7 +13245,7 @@ const _sfc_main$k = /* @__PURE__ */ defineComponent$1({
               class: "w-full"
             }, [
               createElementVNode("span", _hoisted_6$4, [
-                createVNode$1(_sfc_main$l, {
+                createVNode$1(_sfc_main$p, {
                   colors: item.colors,
                   "style-name": item.unlocalized_label
                 }, null, 8, ["colors", "style-name"])
@@ -13281,7 +13281,7 @@ const useMetadataStore = defineStore(
 );
 const _hoisted_1$g = { id: "sortable-layers" };
 const _hoisted_2$b = ["id"];
-const _sfc_main$j = /* @__PURE__ */ defineComponent$1({
+const _sfc_main$n = /* @__PURE__ */ defineComponent$1({
   __name: "layer-manager",
   setup(__props) {
     const ROAD_MAP_ID = 556;
@@ -13329,7 +13329,7 @@ const _sfc_main$j = /* @__PURE__ */ defineComponent$1({
             key: layer.id,
             id: layer.id
           }, [
-            createVNode$1(_sfc_main$m, {
+            createVNode$1(_sfc_main$q, {
               draggableClassName,
               layer,
               isOpen: unref(isLayerOpenId) === layer.id,
@@ -13341,13 +13341,13 @@ const _sfc_main$j = /* @__PURE__ */ defineComponent$1({
           ], 8, _hoisted_2$b);
         }), 128)),
         createElementVNode("li", null, [
-          createVNode$1(_sfc_main$n, {
+          createVNode$1(_sfc_main$r, {
             layer: unref(bgLayer) || unref(BLANK_BACKGROUNDLAYER),
             showEditButton: ((_a = unref(bgLayer)) == null ? void 0 : _a.id) === ROAD_MAP_ID,
             onClickInfo: _cache[0] || (_cache[0] = () => unref(bgLayer) && unref(setMetadataId)(unref(bgLayer).id)),
             onClickEdit: toggleEditionLayer
           }, null, 8, ["layer", "showEditButton"]),
-          createVNode$1(_sfc_main$k, {
+          createVNode$1(_sfc_main$o, {
             "is-open": unref(isStyleEditorOpen) && ((_b = unref(bgLayer)) == null ? void 0 : _b.id) === ROAD_MAP_ID
           }, null, 8, ["is-open"])
         ])
@@ -13619,9 +13619,9 @@ var EventEmitter = function() {
   }
   _createClass$1(EventEmitter2, [{
     key: "on",
-    value: function on2(events, listener) {
+    value: function on2(events2, listener) {
       var _this = this;
-      events.split(" ").forEach(function(event) {
+      events2.split(" ").forEach(function(event) {
         _this.observers[event] = _this.observers[event] || [];
         _this.observers[event].push(listener);
       });
@@ -49079,7 +49079,7 @@ const _hoisted_7$2 = {
 };
 const _hoisted_8$2 = ["data-cy"];
 const _hoisted_9$2 = { class: "ml-1 hover:underline" };
-const _sfc_main$i = /* @__PURE__ */ defineComponent$1({
+const _sfc_main$m = /* @__PURE__ */ defineComponent$1({
   __name: "layer-tree-node",
   props: {
     node: null
@@ -49212,7 +49212,7 @@ class LayerTreeService {
   }
 }
 const layerTreeService = new LayerTreeService();
-const _sfc_main$h = /* @__PURE__ */ defineComponent$1({
+const _sfc_main$l = /* @__PURE__ */ defineComponent$1({
   __name: "catalog-tree",
   setup(__props) {
     const mapStore2 = useMapStore();
@@ -49241,7 +49241,7 @@ const _sfc_main$h = /* @__PURE__ */ defineComponent$1({
       layers2.toggleLayer(+node.id, !node.checked);
     }
     return (_ctx, _cache) => {
-      return unref(layerTree) ? (openBlock(), createBlock(_sfc_main$i, {
+      return unref(layerTree) ? (openBlock(), createBlock(_sfc_main$m, {
         node: unref(layerTree),
         key: unref(layerTree).id,
         onToggleParent: toggleParent,
@@ -49253,7 +49253,7 @@ const _sfc_main$h = /* @__PURE__ */ defineComponent$1({
 const _hoisted_1$e = { class: "flex flex-row flex-wrap pl-2.5" };
 const _hoisted_2$9 = ["onClick"];
 const _hoisted_3$7 = { class: "text-2xl absolute top-5" };
-const _sfc_main$g = /* @__PURE__ */ defineComponent$1({
+const _sfc_main$k = /* @__PURE__ */ defineComponent$1({
   __name: "theme-grid",
   props: {
     themes: null
@@ -49284,7 +49284,7 @@ const _hoisted_2$8 = { class: "py-0.5" };
 const _hoisted_3$6 = { class: "px-1 py-0.5 shrink-0 flex flex-row text-[12px] bg-secondary text-white" };
 const _hoisted_4$6 = { class: "py-[3px]" };
 const _hoisted_5$5 = { class: "flex flex-row flex-wrap ml-1 w-12" };
-const _sfc_main$f = /* @__PURE__ */ defineComponent$1({
+const _sfc_main$j = /* @__PURE__ */ defineComponent$1({
   __name: "theme-selector-button",
   props: {
     themes: null,
@@ -49324,7 +49324,7 @@ const _hoisted_1$c = {
   key: 0,
   class: "absolute inset-x-0 top-14 bottom-0 mt-1 bg-primary overflow-y-auto overflow-x-hidden"
 };
-const _sfc_main$e = /* @__PURE__ */ defineComponent$1({
+const _sfc_main$i = /* @__PURE__ */ defineComponent$1({
   __name: "theme-selector",
   emits: ["toggleThemesGrid"],
   setup(__props, { emit }) {
@@ -49352,14 +49352,14 @@ const _sfc_main$e = /* @__PURE__ */ defineComponent$1({
     }
     return (_ctx, _cache) => {
       return openBlock(), createElementBlock(Fragment, null, [
-        createVNode$1(_sfc_main$f, {
+        createVNode$1(_sfc_main$j, {
           onClick: toggleThemesGrid,
           themes: unref(themes2),
           currentTheme: unref(theme2),
           isOpen: unref(isOpen)
         }, null, 8, ["themes", "currentTheme", "isOpen"]),
         unref(isOpen) ? (openBlock(), createElementBlock("div", _hoisted_1$c, [
-          createVNode$1(_sfc_main$g, {
+          createVNode$1(_sfc_main$k, {
             onSetTheme: setTheme,
             themes: unref(themes2)
           }, null, 8, ["themes"])
@@ -49368,25 +49368,6 @@ const _sfc_main$e = /* @__PURE__ */ defineComponent$1({
     };
   }
 });
-var BaseEvent = function() {
-  function BaseEvent2(type) {
-    this.propagationStopped;
-    this.defaultPrevented;
-    this.type = type;
-    this.target = null;
-  }
-  BaseEvent2.prototype.preventDefault = function() {
-    this.defaultPrevented = true;
-  };
-  BaseEvent2.prototype.stopPropagation = function() {
-    this.propagationStopped = true;
-  };
-  return BaseEvent2;
-}();
-const Event = BaseEvent;
-const ObjectEventType = {
-  PROPERTYCHANGE: "propertychange"
-};
 var Disposable = function() {
   function Disposable2() {
     this.disposed = false;
@@ -49500,380 +49481,6 @@ function memoizeOne(fn) {
     return lastResult;
   };
 }
-var __extends$$ = globalThis && globalThis.__extends || function() {
-  var extendStatics = function(d, b) {
-    extendStatics = Object.setPrototypeOf || { __proto__: [] } instanceof Array && function(d2, b2) {
-      d2.__proto__ = b2;
-    } || function(d2, b2) {
-      for (var p2 in b2)
-        if (Object.prototype.hasOwnProperty.call(b2, p2))
-          d2[p2] = b2[p2];
-    };
-    return extendStatics(d, b);
-  };
-  return function(d, b) {
-    if (typeof b !== "function" && b !== null)
-      throw new TypeError("Class extends value " + String(b) + " is not a constructor or null");
-    extendStatics(d, b);
-    function __() {
-      this.constructor = d;
-    }
-    d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
-  };
-}();
-var Target = function(_super) {
-  __extends$$(Target2, _super);
-  function Target2(opt_target) {
-    var _this = _super.call(this) || this;
-    _this.eventTarget_ = opt_target;
-    _this.pendingRemovals_ = null;
-    _this.dispatching_ = null;
-    _this.listeners_ = null;
-    return _this;
-  }
-  Target2.prototype.addEventListener = function(type, listener) {
-    if (!type || !listener) {
-      return;
-    }
-    var listeners = this.listeners_ || (this.listeners_ = {});
-    var listenersForType = listeners[type] || (listeners[type] = []);
-    if (listenersForType.indexOf(listener) === -1) {
-      listenersForType.push(listener);
-    }
-  };
-  Target2.prototype.dispatchEvent = function(event) {
-    var isString = typeof event === "string";
-    var type = isString ? event : event.type;
-    var listeners = this.listeners_ && this.listeners_[type];
-    if (!listeners) {
-      return;
-    }
-    var evt = isString ? new Event(event) : event;
-    if (!evt.target) {
-      evt.target = this.eventTarget_ || this;
-    }
-    var dispatching = this.dispatching_ || (this.dispatching_ = {});
-    var pendingRemovals = this.pendingRemovals_ || (this.pendingRemovals_ = {});
-    if (!(type in dispatching)) {
-      dispatching[type] = 0;
-      pendingRemovals[type] = 0;
-    }
-    ++dispatching[type];
-    var propagate;
-    for (var i = 0, ii = listeners.length; i < ii; ++i) {
-      if ("handleEvent" in listeners[i]) {
-        propagate = listeners[i].handleEvent(evt);
-      } else {
-        propagate = listeners[i].call(this, evt);
-      }
-      if (propagate === false || evt.propagationStopped) {
-        propagate = false;
-        break;
-      }
-    }
-    if (--dispatching[type] === 0) {
-      var pr = pendingRemovals[type];
-      delete pendingRemovals[type];
-      while (pr--) {
-        this.removeEventListener(type, VOID);
-      }
-      delete dispatching[type];
-    }
-    return propagate;
-  };
-  Target2.prototype.disposeInternal = function() {
-    this.listeners_ && clear(this.listeners_);
-  };
-  Target2.prototype.getListeners = function(type) {
-    return this.listeners_ && this.listeners_[type] || void 0;
-  };
-  Target2.prototype.hasListener = function(opt_type) {
-    if (!this.listeners_) {
-      return false;
-    }
-    return opt_type ? opt_type in this.listeners_ : Object.keys(this.listeners_).length > 0;
-  };
-  Target2.prototype.removeEventListener = function(type, listener) {
-    var listeners = this.listeners_ && this.listeners_[type];
-    if (listeners) {
-      var index2 = listeners.indexOf(listener);
-      if (index2 !== -1) {
-        if (this.pendingRemovals_ && type in this.pendingRemovals_) {
-          listeners[index2] = VOID;
-          ++this.pendingRemovals_[type];
-        } else {
-          listeners.splice(index2, 1);
-          if (listeners.length === 0) {
-            delete this.listeners_[type];
-          }
-        }
-      }
-    }
-  };
-  return Target2;
-}(Disposable$1);
-const EventTarget = Target;
-const EventType = {
-  CHANGE: "change",
-  ERROR: "error",
-  BLUR: "blur",
-  CLEAR: "clear",
-  CONTEXTMENU: "contextmenu",
-  CLICK: "click",
-  DBLCLICK: "dblclick",
-  DRAGENTER: "dragenter",
-  DRAGOVER: "dragover",
-  DROP: "drop",
-  FOCUS: "focus",
-  KEYDOWN: "keydown",
-  KEYPRESS: "keypress",
-  LOAD: "load",
-  RESIZE: "resize",
-  TOUCHMOVE: "touchmove",
-  WHEEL: "wheel"
-};
-function listen(target, type, listener, opt_this, opt_once) {
-  if (opt_this && opt_this !== target) {
-    listener = listener.bind(opt_this);
-  }
-  if (opt_once) {
-    var originalListener_1 = listener;
-    listener = function() {
-      target.removeEventListener(type, listener);
-      originalListener_1.apply(this, arguments);
-    };
-  }
-  var eventsKey = {
-    target,
-    type,
-    listener
-  };
-  target.addEventListener(type, listener);
-  return eventsKey;
-}
-function listenOnce(target, type, listener, opt_this) {
-  return listen(target, type, listener, opt_this, true);
-}
-function unlistenByKey(key) {
-  if (key && key.target) {
-    key.target.removeEventListener(key.type, key.listener);
-    clear(key);
-  }
-}
-var __extends$_ = globalThis && globalThis.__extends || function() {
-  var extendStatics = function(d, b) {
-    extendStatics = Object.setPrototypeOf || { __proto__: [] } instanceof Array && function(d2, b2) {
-      d2.__proto__ = b2;
-    } || function(d2, b2) {
-      for (var p2 in b2)
-        if (Object.prototype.hasOwnProperty.call(b2, p2))
-          d2[p2] = b2[p2];
-    };
-    return extendStatics(d, b);
-  };
-  return function(d, b) {
-    if (typeof b !== "function" && b !== null)
-      throw new TypeError("Class extends value " + String(b) + " is not a constructor or null");
-    extendStatics(d, b);
-    function __() {
-      this.constructor = d;
-    }
-    d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
-  };
-}();
-var Observable = function(_super) {
-  __extends$_(Observable2, _super);
-  function Observable2() {
-    var _this = _super.call(this) || this;
-    _this.on = _this.onInternal;
-    _this.once = _this.onceInternal;
-    _this.un = _this.unInternal;
-    _this.revision_ = 0;
-    return _this;
-  }
-  Observable2.prototype.changed = function() {
-    ++this.revision_;
-    this.dispatchEvent(EventType.CHANGE);
-  };
-  Observable2.prototype.getRevision = function() {
-    return this.revision_;
-  };
-  Observable2.prototype.onInternal = function(type, listener) {
-    if (Array.isArray(type)) {
-      var len = type.length;
-      var keys = new Array(len);
-      for (var i = 0; i < len; ++i) {
-        keys[i] = listen(this, type[i], listener);
-      }
-      return keys;
-    } else {
-      return listen(this, type, listener);
-    }
-  };
-  Observable2.prototype.onceInternal = function(type, listener) {
-    var key;
-    if (Array.isArray(type)) {
-      var len = type.length;
-      key = new Array(len);
-      for (var i = 0; i < len; ++i) {
-        key[i] = listenOnce(this, type[i], listener);
-      }
-    } else {
-      key = listenOnce(this, type, listener);
-    }
-    listener.ol_key = key;
-    return key;
-  };
-  Observable2.prototype.unInternal = function(type, listener) {
-    var key = listener.ol_key;
-    if (key) {
-      unByKey(key);
-    } else if (Array.isArray(type)) {
-      for (var i = 0, ii = type.length; i < ii; ++i) {
-        this.removeEventListener(type[i], listener);
-      }
-    } else {
-      this.removeEventListener(type, listener);
-    }
-  };
-  return Observable2;
-}(EventTarget);
-Observable.prototype.on;
-Observable.prototype.once;
-Observable.prototype.un;
-function unByKey(key) {
-  if (Array.isArray(key)) {
-    for (var i = 0, ii = key.length; i < ii; ++i) {
-      unlistenByKey(key[i]);
-    }
-  } else {
-    unlistenByKey(key);
-  }
-}
-const Observable$1 = Observable;
-var __extends$Z = globalThis && globalThis.__extends || function() {
-  var extendStatics = function(d, b) {
-    extendStatics = Object.setPrototypeOf || { __proto__: [] } instanceof Array && function(d2, b2) {
-      d2.__proto__ = b2;
-    } || function(d2, b2) {
-      for (var p2 in b2)
-        if (Object.prototype.hasOwnProperty.call(b2, p2))
-          d2[p2] = b2[p2];
-    };
-    return extendStatics(d, b);
-  };
-  return function(d, b) {
-    if (typeof b !== "function" && b !== null)
-      throw new TypeError("Class extends value " + String(b) + " is not a constructor or null");
-    extendStatics(d, b);
-    function __() {
-      this.constructor = d;
-    }
-    d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
-  };
-}();
-var ObjectEvent = function(_super) {
-  __extends$Z(ObjectEvent2, _super);
-  function ObjectEvent2(type, key, oldValue) {
-    var _this = _super.call(this, type) || this;
-    _this.key = key;
-    _this.oldValue = oldValue;
-    return _this;
-  }
-  return ObjectEvent2;
-}(Event);
-var BaseObject = function(_super) {
-  __extends$Z(BaseObject2, _super);
-  function BaseObject2(opt_values) {
-    var _this = _super.call(this) || this;
-    _this.on;
-    _this.once;
-    _this.un;
-    getUid(_this);
-    _this.values_ = null;
-    if (opt_values !== void 0) {
-      _this.setProperties(opt_values);
-    }
-    return _this;
-  }
-  BaseObject2.prototype.get = function(key) {
-    var value;
-    if (this.values_ && this.values_.hasOwnProperty(key)) {
-      value = this.values_[key];
-    }
-    return value;
-  };
-  BaseObject2.prototype.getKeys = function() {
-    return this.values_ && Object.keys(this.values_) || [];
-  };
-  BaseObject2.prototype.getProperties = function() {
-    return this.values_ && assign({}, this.values_) || {};
-  };
-  BaseObject2.prototype.hasProperties = function() {
-    return !!this.values_;
-  };
-  BaseObject2.prototype.notify = function(key, oldValue) {
-    var eventType;
-    eventType = "change:".concat(key);
-    if (this.hasListener(eventType)) {
-      this.dispatchEvent(new ObjectEvent(eventType, key, oldValue));
-    }
-    eventType = ObjectEventType.PROPERTYCHANGE;
-    if (this.hasListener(eventType)) {
-      this.dispatchEvent(new ObjectEvent(eventType, key, oldValue));
-    }
-  };
-  BaseObject2.prototype.addChangeListener = function(key, listener) {
-    this.addEventListener("change:".concat(key), listener);
-  };
-  BaseObject2.prototype.removeChangeListener = function(key, listener) {
-    this.removeEventListener("change:".concat(key), listener);
-  };
-  BaseObject2.prototype.set = function(key, value, opt_silent) {
-    var values = this.values_ || (this.values_ = {});
-    if (opt_silent) {
-      values[key] = value;
-    } else {
-      var oldValue = values[key];
-      values[key] = value;
-      if (oldValue !== value) {
-        this.notify(key, oldValue);
-      }
-    }
-  };
-  BaseObject2.prototype.setProperties = function(values, opt_silent) {
-    for (var key in values) {
-      this.set(key, values[key], opt_silent);
-    }
-  };
-  BaseObject2.prototype.applyProperties = function(source) {
-    if (!source.values_) {
-      return;
-    }
-    assign(this.values_ || (this.values_ = {}), source.values_);
-  };
-  BaseObject2.prototype.unset = function(key, opt_silent) {
-    if (this.values_ && key in this.values_) {
-      var oldValue = this.values_[key];
-      delete this.values_[key];
-      if (isEmpty$1(this.values_)) {
-        this.values_ = null;
-      }
-      if (!opt_silent) {
-        this.notify(key, oldValue);
-      }
-    }
-  };
-  return BaseObject2;
-}(Observable$1);
-const BaseObject$1 = BaseObject;
-const MapEventType = {
-  POSTRENDER: "postrender",
-  MOVESTART: "movestart",
-  MOVEEND: "moveend",
-  LOADSTART: "loadstart",
-  LOADEND: "loadend"
-};
 var ua = typeof navigator !== "undefined" && typeof navigator.userAgent !== "undefined" ? navigator.userAgent.toLowerCase() : "";
 var FIREFOX = ua.indexOf("firefox") !== -1;
 var SAFARI = ua.indexOf("safari") !== -1 && ua.indexOf("chrom") == -1;
@@ -49897,1045 +49504,6 @@ var PASSIVE_EVENT_LISTENERS = function() {
   }
   return passive;
 }();
-function createCanvasContext2D(opt_width, opt_height, opt_canvasPool, opt_Context2DSettings) {
-  var canvas;
-  if (opt_canvasPool && opt_canvasPool.length) {
-    canvas = opt_canvasPool.shift();
-  } else if (WORKER_OFFSCREEN_CANVAS) {
-    canvas = new OffscreenCanvas(opt_width || 300, opt_height || 300);
-  } else {
-    canvas = document.createElement("canvas");
-  }
-  if (opt_width) {
-    canvas.width = opt_width;
-  }
-  if (opt_height) {
-    canvas.height = opt_height;
-  }
-  return canvas.getContext("2d", opt_Context2DSettings);
-}
-function releaseCanvas(context) {
-  var canvas = context.canvas;
-  canvas.width = 1;
-  canvas.height = 1;
-  context.clearRect(0, 0, 1, 1);
-}
-function replaceNode(newNode, oldNode) {
-  var parent = oldNode.parentNode;
-  if (parent) {
-    parent.replaceChild(newNode, oldNode);
-  }
-}
-function removeNode(node) {
-  return node && node.parentNode ? node.parentNode.removeChild(node) : null;
-}
-function removeChildren(node) {
-  while (node.lastChild) {
-    node.removeChild(node.lastChild);
-  }
-}
-function replaceChildren(node, children) {
-  var oldChildren = node.childNodes;
-  for (var i = 0; true; ++i) {
-    var oldChild = oldChildren[i];
-    var newChild = children[i];
-    if (!oldChild && !newChild) {
-      break;
-    }
-    if (oldChild === newChild) {
-      continue;
-    }
-    if (!oldChild) {
-      node.appendChild(newChild);
-      continue;
-    }
-    if (!newChild) {
-      node.removeChild(oldChild);
-      --i;
-      continue;
-    }
-    node.insertBefore(newChild, oldChild);
-  }
-}
-var __extends$Y = globalThis && globalThis.__extends || function() {
-  var extendStatics = function(d, b) {
-    extendStatics = Object.setPrototypeOf || { __proto__: [] } instanceof Array && function(d2, b2) {
-      d2.__proto__ = b2;
-    } || function(d2, b2) {
-      for (var p2 in b2)
-        if (Object.prototype.hasOwnProperty.call(b2, p2))
-          d2[p2] = b2[p2];
-    };
-    return extendStatics(d, b);
-  };
-  return function(d, b) {
-    if (typeof b !== "function" && b !== null)
-      throw new TypeError("Class extends value " + String(b) + " is not a constructor or null");
-    extendStatics(d, b);
-    function __() {
-      this.constructor = d;
-    }
-    d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
-  };
-}();
-var Control = function(_super) {
-  __extends$Y(Control2, _super);
-  function Control2(options) {
-    var _this = _super.call(this) || this;
-    var element = options.element;
-    if (element && !options.target && !element.style.pointerEvents) {
-      element.style.pointerEvents = "auto";
-    }
-    _this.element = element ? element : null;
-    _this.target_ = null;
-    _this.map_ = null;
-    _this.listenerKeys = [];
-    if (options.render) {
-      _this.render = options.render;
-    }
-    if (options.target) {
-      _this.setTarget(options.target);
-    }
-    return _this;
-  }
-  Control2.prototype.disposeInternal = function() {
-    removeNode(this.element);
-    _super.prototype.disposeInternal.call(this);
-  };
-  Control2.prototype.getMap = function() {
-    return this.map_;
-  };
-  Control2.prototype.setMap = function(map2) {
-    if (this.map_) {
-      removeNode(this.element);
-    }
-    for (var i = 0, ii = this.listenerKeys.length; i < ii; ++i) {
-      unlistenByKey(this.listenerKeys[i]);
-    }
-    this.listenerKeys.length = 0;
-    this.map_ = map2;
-    if (map2) {
-      var target = this.target_ ? this.target_ : map2.getOverlayContainerStopEvent();
-      target.appendChild(this.element);
-      if (this.render !== VOID) {
-        this.listenerKeys.push(listen(map2, MapEventType.POSTRENDER, this.render, this));
-      }
-      map2.render();
-    }
-  };
-  Control2.prototype.render = function(mapEvent) {
-  };
-  Control2.prototype.setTarget = function(target) {
-    this.target_ = typeof target === "string" ? document.getElementById(target) : target;
-  };
-  return Control2;
-}(BaseObject$1);
-const Control$1 = Control;
-var CLASS_HIDDEN = "ol-hidden";
-var CLASS_UNSELECTABLE = "ol-unselectable";
-var CLASS_CONTROL = "ol-control";
-var CLASS_COLLAPSED = "ol-collapsed";
-const LayerProperty = {
-  OPACITY: "opacity",
-  VISIBLE: "visible",
-  EXTENT: "extent",
-  Z_INDEX: "zIndex",
-  MAX_RESOLUTION: "maxResolution",
-  MIN_RESOLUTION: "minResolution",
-  MAX_ZOOM: "maxZoom",
-  MIN_ZOOM: "minZoom",
-  SOURCE: "source",
-  MAP: "map"
-};
-var __extends$X = globalThis && globalThis.__extends || function() {
-  var extendStatics = function(d, b) {
-    extendStatics = Object.setPrototypeOf || { __proto__: [] } instanceof Array && function(d2, b2) {
-      d2.__proto__ = b2;
-    } || function(d2, b2) {
-      for (var p2 in b2)
-        if (Object.prototype.hasOwnProperty.call(b2, p2))
-          d2[p2] = b2[p2];
-    };
-    return extendStatics(d, b);
-  };
-  return function(d, b) {
-    if (typeof b !== "function" && b !== null)
-      throw new TypeError("Class extends value " + String(b) + " is not a constructor or null");
-    extendStatics(d, b);
-    function __() {
-      this.constructor = d;
-    }
-    d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
-  };
-}();
-var BaseLayer = function(_super) {
-  __extends$X(BaseLayer2, _super);
-  function BaseLayer2(options) {
-    var _this = _super.call(this) || this;
-    _this.on;
-    _this.once;
-    _this.un;
-    _this.background_ = options.background;
-    var properties = assign({}, options);
-    if (typeof options.properties === "object") {
-      delete properties.properties;
-      assign(properties, options.properties);
-    }
-    properties[LayerProperty.OPACITY] = options.opacity !== void 0 ? options.opacity : 1;
-    assert(typeof properties[LayerProperty.OPACITY] === "number", 64);
-    properties[LayerProperty.VISIBLE] = options.visible !== void 0 ? options.visible : true;
-    properties[LayerProperty.Z_INDEX] = options.zIndex;
-    properties[LayerProperty.MAX_RESOLUTION] = options.maxResolution !== void 0 ? options.maxResolution : Infinity;
-    properties[LayerProperty.MIN_RESOLUTION] = options.minResolution !== void 0 ? options.minResolution : 0;
-    properties[LayerProperty.MIN_ZOOM] = options.minZoom !== void 0 ? options.minZoom : -Infinity;
-    properties[LayerProperty.MAX_ZOOM] = options.maxZoom !== void 0 ? options.maxZoom : Infinity;
-    _this.className_ = properties.className !== void 0 ? properties.className : "ol-layer";
-    delete properties.className;
-    _this.setProperties(properties);
-    _this.state_ = null;
-    return _this;
-  }
-  BaseLayer2.prototype.getBackground = function() {
-    return this.background_;
-  };
-  BaseLayer2.prototype.getClassName = function() {
-    return this.className_;
-  };
-  BaseLayer2.prototype.getLayerState = function(opt_managed) {
-    var state = this.state_ || {
-      layer: this,
-      managed: opt_managed === void 0 ? true : opt_managed
-    };
-    var zIndex = this.getZIndex();
-    state.opacity = clamp(Math.round(this.getOpacity() * 100) / 100, 0, 1);
-    state.visible = this.getVisible();
-    state.extent = this.getExtent();
-    state.zIndex = zIndex === void 0 && !state.managed ? Infinity : zIndex;
-    state.maxResolution = this.getMaxResolution();
-    state.minResolution = Math.max(this.getMinResolution(), 0);
-    state.minZoom = this.getMinZoom();
-    state.maxZoom = this.getMaxZoom();
-    this.state_ = state;
-    return state;
-  };
-  BaseLayer2.prototype.getLayersArray = function(opt_array) {
-    return abstract();
-  };
-  BaseLayer2.prototype.getLayerStatesArray = function(opt_states) {
-    return abstract();
-  };
-  BaseLayer2.prototype.getExtent = function() {
-    return this.get(LayerProperty.EXTENT);
-  };
-  BaseLayer2.prototype.getMaxResolution = function() {
-    return this.get(LayerProperty.MAX_RESOLUTION);
-  };
-  BaseLayer2.prototype.getMinResolution = function() {
-    return this.get(LayerProperty.MIN_RESOLUTION);
-  };
-  BaseLayer2.prototype.getMinZoom = function() {
-    return this.get(LayerProperty.MIN_ZOOM);
-  };
-  BaseLayer2.prototype.getMaxZoom = function() {
-    return this.get(LayerProperty.MAX_ZOOM);
-  };
-  BaseLayer2.prototype.getOpacity = function() {
-    return this.get(LayerProperty.OPACITY);
-  };
-  BaseLayer2.prototype.getSourceState = function() {
-    return abstract();
-  };
-  BaseLayer2.prototype.getVisible = function() {
-    return this.get(LayerProperty.VISIBLE);
-  };
-  BaseLayer2.prototype.getZIndex = function() {
-    return this.get(LayerProperty.Z_INDEX);
-  };
-  BaseLayer2.prototype.setBackground = function(opt_background) {
-    this.background_ = opt_background;
-    this.changed();
-  };
-  BaseLayer2.prototype.setExtent = function(extent) {
-    this.set(LayerProperty.EXTENT, extent);
-  };
-  BaseLayer2.prototype.setMaxResolution = function(maxResolution) {
-    this.set(LayerProperty.MAX_RESOLUTION, maxResolution);
-  };
-  BaseLayer2.prototype.setMinResolution = function(minResolution) {
-    this.set(LayerProperty.MIN_RESOLUTION, minResolution);
-  };
-  BaseLayer2.prototype.setMaxZoom = function(maxZoom) {
-    this.set(LayerProperty.MAX_ZOOM, maxZoom);
-  };
-  BaseLayer2.prototype.setMinZoom = function(minZoom) {
-    this.set(LayerProperty.MIN_ZOOM, minZoom);
-  };
-  BaseLayer2.prototype.setOpacity = function(opacity) {
-    assert(typeof opacity === "number", 64);
-    this.set(LayerProperty.OPACITY, opacity);
-  };
-  BaseLayer2.prototype.setVisible = function(visible) {
-    this.set(LayerProperty.VISIBLE, visible);
-  };
-  BaseLayer2.prototype.setZIndex = function(zindex) {
-    this.set(LayerProperty.Z_INDEX, zindex);
-  };
-  BaseLayer2.prototype.disposeInternal = function() {
-    if (this.state_) {
-      this.state_.layer = null;
-      this.state_ = null;
-    }
-    _super.prototype.disposeInternal.call(this);
-  };
-  return BaseLayer2;
-}(BaseObject$1);
-const BaseLayer$1 = BaseLayer;
-const RenderEventType = {
-  PRERENDER: "prerender",
-  POSTRENDER: "postrender",
-  PRECOMPOSE: "precompose",
-  POSTCOMPOSE: "postcompose",
-  RENDERCOMPLETE: "rendercomplete"
-};
-var __extends$W = globalThis && globalThis.__extends || function() {
-  var extendStatics = function(d, b) {
-    extendStatics = Object.setPrototypeOf || { __proto__: [] } instanceof Array && function(d2, b2) {
-      d2.__proto__ = b2;
-    } || function(d2, b2) {
-      for (var p2 in b2)
-        if (Object.prototype.hasOwnProperty.call(b2, p2))
-          d2[p2] = b2[p2];
-    };
-    return extendStatics(d, b);
-  };
-  return function(d, b) {
-    if (typeof b !== "function" && b !== null)
-      throw new TypeError("Class extends value " + String(b) + " is not a constructor or null");
-    extendStatics(d, b);
-    function __() {
-      this.constructor = d;
-    }
-    d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
-  };
-}();
-var Layer = function(_super) {
-  __extends$W(Layer2, _super);
-  function Layer2(options) {
-    var _this = this;
-    var baseOptions = assign({}, options);
-    delete baseOptions.source;
-    _this = _super.call(this, baseOptions) || this;
-    _this.on;
-    _this.once;
-    _this.un;
-    _this.mapPrecomposeKey_ = null;
-    _this.mapRenderKey_ = null;
-    _this.sourceChangeKey_ = null;
-    _this.renderer_ = null;
-    _this.rendered = false;
-    if (options.render) {
-      _this.render = options.render;
-    }
-    if (options.map) {
-      _this.setMap(options.map);
-    }
-    _this.addChangeListener(LayerProperty.SOURCE, _this.handleSourcePropertyChange_);
-    var source = options.source ? options.source : null;
-    _this.setSource(source);
-    return _this;
-  }
-  Layer2.prototype.getLayersArray = function(opt_array) {
-    var array = opt_array ? opt_array : [];
-    array.push(this);
-    return array;
-  };
-  Layer2.prototype.getLayerStatesArray = function(opt_states) {
-    var states = opt_states ? opt_states : [];
-    states.push(this.getLayerState());
-    return states;
-  };
-  Layer2.prototype.getSource = function() {
-    return this.get(LayerProperty.SOURCE) || null;
-  };
-  Layer2.prototype.getRenderSource = function() {
-    return this.getSource();
-  };
-  Layer2.prototype.getSourceState = function() {
-    var source = this.getSource();
-    return !source ? "undefined" : source.getState();
-  };
-  Layer2.prototype.handleSourceChange_ = function() {
-    this.changed();
-  };
-  Layer2.prototype.handleSourcePropertyChange_ = function() {
-    if (this.sourceChangeKey_) {
-      unlistenByKey(this.sourceChangeKey_);
-      this.sourceChangeKey_ = null;
-    }
-    var source = this.getSource();
-    if (source) {
-      this.sourceChangeKey_ = listen(source, EventType.CHANGE, this.handleSourceChange_, this);
-    }
-    this.changed();
-  };
-  Layer2.prototype.getFeatures = function(pixel) {
-    if (!this.renderer_) {
-      return new Promise(function(resolve) {
-        return resolve([]);
-      });
-    }
-    return this.renderer_.getFeatures(pixel);
-  };
-  Layer2.prototype.getData = function(pixel) {
-    if (!this.renderer_ || !this.rendered) {
-      return null;
-    }
-    return this.renderer_.getData(pixel);
-  };
-  Layer2.prototype.render = function(frameState, target) {
-    var layerRenderer = this.getRenderer();
-    if (layerRenderer.prepareFrame(frameState)) {
-      this.rendered = true;
-      return layerRenderer.renderFrame(frameState, target);
-    }
-  };
-  Layer2.prototype.unrender = function() {
-    this.rendered = false;
-  };
-  Layer2.prototype.setMapInternal = function(map2) {
-    if (!map2) {
-      this.unrender();
-    }
-    this.set(LayerProperty.MAP, map2);
-  };
-  Layer2.prototype.getMapInternal = function() {
-    return this.get(LayerProperty.MAP);
-  };
-  Layer2.prototype.setMap = function(map2) {
-    if (this.mapPrecomposeKey_) {
-      unlistenByKey(this.mapPrecomposeKey_);
-      this.mapPrecomposeKey_ = null;
-    }
-    if (!map2) {
-      this.changed();
-    }
-    if (this.mapRenderKey_) {
-      unlistenByKey(this.mapRenderKey_);
-      this.mapRenderKey_ = null;
-    }
-    if (map2) {
-      this.mapPrecomposeKey_ = listen(map2, RenderEventType.PRECOMPOSE, function(evt) {
-        var renderEvent = evt;
-        var layerStatesArray = renderEvent.frameState.layerStatesArray;
-        var layerState = this.getLayerState(false);
-        assert(!layerStatesArray.some(function(arrayLayerState) {
-          return arrayLayerState.layer === layerState.layer;
-        }), 67);
-        layerStatesArray.push(layerState);
-      }, this);
-      this.mapRenderKey_ = listen(this, EventType.CHANGE, map2.render, map2);
-      this.changed();
-    }
-  };
-  Layer2.prototype.setSource = function(source) {
-    this.set(LayerProperty.SOURCE, source);
-  };
-  Layer2.prototype.getRenderer = function() {
-    if (!this.renderer_) {
-      this.renderer_ = this.createRenderer();
-    }
-    return this.renderer_;
-  };
-  Layer2.prototype.hasRenderer = function() {
-    return !!this.renderer_;
-  };
-  Layer2.prototype.createRenderer = function() {
-    return null;
-  };
-  Layer2.prototype.disposeInternal = function() {
-    if (this.renderer_) {
-      this.renderer_.dispose();
-      delete this.renderer_;
-    }
-    this.setSource(null);
-    _super.prototype.disposeInternal.call(this);
-  };
-  return Layer2;
-}(BaseLayer$1);
-function inView(layerState, viewState) {
-  if (!layerState.visible) {
-    return false;
-  }
-  var resolution = viewState.resolution;
-  if (resolution < layerState.minResolution || resolution >= layerState.maxResolution) {
-    return false;
-  }
-  var zoom = viewState.zoom;
-  return zoom > layerState.minZoom && zoom <= layerState.maxZoom;
-}
-const Layer$1 = Layer;
-var __extends$V = globalThis && globalThis.__extends || function() {
-  var extendStatics = function(d, b) {
-    extendStatics = Object.setPrototypeOf || { __proto__: [] } instanceof Array && function(d2, b2) {
-      d2.__proto__ = b2;
-    } || function(d2, b2) {
-      for (var p2 in b2)
-        if (Object.prototype.hasOwnProperty.call(b2, p2))
-          d2[p2] = b2[p2];
-    };
-    return extendStatics(d, b);
-  };
-  return function(d, b) {
-    if (typeof b !== "function" && b !== null)
-      throw new TypeError("Class extends value " + String(b) + " is not a constructor or null");
-    extendStatics(d, b);
-    function __() {
-      this.constructor = d;
-    }
-    d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
-  };
-}();
-var Attribution = function(_super) {
-  __extends$V(Attribution2, _super);
-  function Attribution2(opt_options) {
-    var _this = this;
-    var options = opt_options ? opt_options : {};
-    _this = _super.call(this, {
-      element: document.createElement("div"),
-      render: options.render,
-      target: options.target
-    }) || this;
-    _this.ulElement_ = document.createElement("ul");
-    _this.collapsed_ = options.collapsed !== void 0 ? options.collapsed : true;
-    _this.userCollapsed_ = _this.collapsed_;
-    _this.overrideCollapsible_ = options.collapsible !== void 0;
-    _this.collapsible_ = options.collapsible !== void 0 ? options.collapsible : true;
-    if (!_this.collapsible_) {
-      _this.collapsed_ = false;
-    }
-    var className = options.className !== void 0 ? options.className : "ol-attribution";
-    var tipLabel = options.tipLabel !== void 0 ? options.tipLabel : "Attributions";
-    var expandClassName = options.expandClassName !== void 0 ? options.expandClassName : className + "-expand";
-    var collapseLabel = options.collapseLabel !== void 0 ? options.collapseLabel : "\u203A";
-    var collapseClassName = options.collapseClassName !== void 0 ? options.collapseClassName : className + "-collapse";
-    if (typeof collapseLabel === "string") {
-      _this.collapseLabel_ = document.createElement("span");
-      _this.collapseLabel_.textContent = collapseLabel;
-      _this.collapseLabel_.className = collapseClassName;
-    } else {
-      _this.collapseLabel_ = collapseLabel;
-    }
-    var label = options.label !== void 0 ? options.label : "i";
-    if (typeof label === "string") {
-      _this.label_ = document.createElement("span");
-      _this.label_.textContent = label;
-      _this.label_.className = expandClassName;
-    } else {
-      _this.label_ = label;
-    }
-    var activeLabel = _this.collapsible_ && !_this.collapsed_ ? _this.collapseLabel_ : _this.label_;
-    _this.toggleButton_ = document.createElement("button");
-    _this.toggleButton_.setAttribute("type", "button");
-    _this.toggleButton_.setAttribute("aria-expanded", String(!_this.collapsed_));
-    _this.toggleButton_.title = tipLabel;
-    _this.toggleButton_.appendChild(activeLabel);
-    _this.toggleButton_.addEventListener(EventType.CLICK, _this.handleClick_.bind(_this), false);
-    var cssClasses = className + " " + CLASS_UNSELECTABLE + " " + CLASS_CONTROL + (_this.collapsed_ && _this.collapsible_ ? " " + CLASS_COLLAPSED : "") + (_this.collapsible_ ? "" : " ol-uncollapsible");
-    var element = _this.element;
-    element.className = cssClasses;
-    element.appendChild(_this.toggleButton_);
-    element.appendChild(_this.ulElement_);
-    _this.renderedAttributions_ = [];
-    _this.renderedVisible_ = true;
-    return _this;
-  }
-  Attribution2.prototype.collectSourceAttributions_ = function(frameState) {
-    var lookup = {};
-    var visibleAttributions = [];
-    var collapsible = true;
-    var layerStatesArray = frameState.layerStatesArray;
-    for (var i = 0, ii = layerStatesArray.length; i < ii; ++i) {
-      var layerState = layerStatesArray[i];
-      if (!inView(layerState, frameState.viewState)) {
-        continue;
-      }
-      var source = layerState.layer.getSource();
-      if (!source) {
-        continue;
-      }
-      var attributionGetter = source.getAttributions();
-      if (!attributionGetter) {
-        continue;
-      }
-      var attributions = attributionGetter(frameState);
-      if (!attributions) {
-        continue;
-      }
-      collapsible = collapsible && source.getAttributionsCollapsible() !== false;
-      if (Array.isArray(attributions)) {
-        for (var j = 0, jj = attributions.length; j < jj; ++j) {
-          if (!(attributions[j] in lookup)) {
-            visibleAttributions.push(attributions[j]);
-            lookup[attributions[j]] = true;
-          }
-        }
-      } else {
-        if (!(attributions in lookup)) {
-          visibleAttributions.push(attributions);
-          lookup[attributions] = true;
-        }
-      }
-    }
-    if (!this.overrideCollapsible_) {
-      this.setCollapsible(collapsible);
-    }
-    return visibleAttributions;
-  };
-  Attribution2.prototype.updateElement_ = function(frameState) {
-    if (!frameState) {
-      if (this.renderedVisible_) {
-        this.element.style.display = "none";
-        this.renderedVisible_ = false;
-      }
-      return;
-    }
-    var attributions = this.collectSourceAttributions_(frameState);
-    var visible = attributions.length > 0;
-    if (this.renderedVisible_ != visible) {
-      this.element.style.display = visible ? "" : "none";
-      this.renderedVisible_ = visible;
-    }
-    if (equals(attributions, this.renderedAttributions_)) {
-      return;
-    }
-    removeChildren(this.ulElement_);
-    for (var i = 0, ii = attributions.length; i < ii; ++i) {
-      var element = document.createElement("li");
-      element.innerHTML = attributions[i];
-      this.ulElement_.appendChild(element);
-    }
-    this.renderedAttributions_ = attributions;
-  };
-  Attribution2.prototype.handleClick_ = function(event) {
-    event.preventDefault();
-    this.handleToggle_();
-    this.userCollapsed_ = this.collapsed_;
-  };
-  Attribution2.prototype.handleToggle_ = function() {
-    this.element.classList.toggle(CLASS_COLLAPSED);
-    if (this.collapsed_) {
-      replaceNode(this.collapseLabel_, this.label_);
-    } else {
-      replaceNode(this.label_, this.collapseLabel_);
-    }
-    this.collapsed_ = !this.collapsed_;
-    this.toggleButton_.setAttribute("aria-expanded", String(!this.collapsed_));
-  };
-  Attribution2.prototype.getCollapsible = function() {
-    return this.collapsible_;
-  };
-  Attribution2.prototype.setCollapsible = function(collapsible) {
-    if (this.collapsible_ === collapsible) {
-      return;
-    }
-    this.collapsible_ = collapsible;
-    this.element.classList.toggle("ol-uncollapsible");
-    if (this.userCollapsed_) {
-      this.handleToggle_();
-    }
-  };
-  Attribution2.prototype.setCollapsed = function(collapsed) {
-    this.userCollapsed_ = collapsed;
-    if (!this.collapsible_ || this.collapsed_ === collapsed) {
-      return;
-    }
-    this.handleToggle_();
-  };
-  Attribution2.prototype.getCollapsed = function() {
-    return this.collapsed_;
-  };
-  Attribution2.prototype.render = function(mapEvent) {
-    this.updateElement_(mapEvent.frameState);
-  };
-  return Attribution2;
-}(Control$1);
-const Attribution$1 = Attribution;
-const CollectionEventType = {
-  ADD: "add",
-  REMOVE: "remove"
-};
-var __extends$U = globalThis && globalThis.__extends || function() {
-  var extendStatics = function(d, b) {
-    extendStatics = Object.setPrototypeOf || { __proto__: [] } instanceof Array && function(d2, b2) {
-      d2.__proto__ = b2;
-    } || function(d2, b2) {
-      for (var p2 in b2)
-        if (Object.prototype.hasOwnProperty.call(b2, p2))
-          d2[p2] = b2[p2];
-    };
-    return extendStatics(d, b);
-  };
-  return function(d, b) {
-    if (typeof b !== "function" && b !== null)
-      throw new TypeError("Class extends value " + String(b) + " is not a constructor or null");
-    extendStatics(d, b);
-    function __() {
-      this.constructor = d;
-    }
-    d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
-  };
-}();
-var Property$1 = {
-  LENGTH: "length"
-};
-var CollectionEvent = function(_super) {
-  __extends$U(CollectionEvent2, _super);
-  function CollectionEvent2(type, opt_element, opt_index) {
-    var _this = _super.call(this, type) || this;
-    _this.element = opt_element;
-    _this.index = opt_index;
-    return _this;
-  }
-  return CollectionEvent2;
-}(Event);
-var Collection = function(_super) {
-  __extends$U(Collection2, _super);
-  function Collection2(opt_array, opt_options) {
-    var _this = _super.call(this) || this;
-    _this.on;
-    _this.once;
-    _this.un;
-    var options = opt_options || {};
-    _this.unique_ = !!options.unique;
-    _this.array_ = opt_array ? opt_array : [];
-    if (_this.unique_) {
-      for (var i = 0, ii = _this.array_.length; i < ii; ++i) {
-        _this.assertUnique_(_this.array_[i], i);
-      }
-    }
-    _this.updateLength_();
-    return _this;
-  }
-  Collection2.prototype.clear = function() {
-    while (this.getLength() > 0) {
-      this.pop();
-    }
-  };
-  Collection2.prototype.extend = function(arr2) {
-    for (var i = 0, ii = arr2.length; i < ii; ++i) {
-      this.push(arr2[i]);
-    }
-    return this;
-  };
-  Collection2.prototype.forEach = function(f) {
-    var array = this.array_;
-    for (var i = 0, ii = array.length; i < ii; ++i) {
-      f(array[i], i, array);
-    }
-  };
-  Collection2.prototype.getArray = function() {
-    return this.array_;
-  };
-  Collection2.prototype.item = function(index2) {
-    return this.array_[index2];
-  };
-  Collection2.prototype.getLength = function() {
-    return this.get(Property$1.LENGTH);
-  };
-  Collection2.prototype.insertAt = function(index2, elem) {
-    if (this.unique_) {
-      this.assertUnique_(elem);
-    }
-    this.array_.splice(index2, 0, elem);
-    this.updateLength_();
-    this.dispatchEvent(new CollectionEvent(CollectionEventType.ADD, elem, index2));
-  };
-  Collection2.prototype.pop = function() {
-    return this.removeAt(this.getLength() - 1);
-  };
-  Collection2.prototype.push = function(elem) {
-    if (this.unique_) {
-      this.assertUnique_(elem);
-    }
-    var n = this.getLength();
-    this.insertAt(n, elem);
-    return this.getLength();
-  };
-  Collection2.prototype.remove = function(elem) {
-    var arr2 = this.array_;
-    for (var i = 0, ii = arr2.length; i < ii; ++i) {
-      if (arr2[i] === elem) {
-        return this.removeAt(i);
-      }
-    }
-    return void 0;
-  };
-  Collection2.prototype.removeAt = function(index2) {
-    var prev = this.array_[index2];
-    this.array_.splice(index2, 1);
-    this.updateLength_();
-    this.dispatchEvent(new CollectionEvent(CollectionEventType.REMOVE, prev, index2));
-    return prev;
-  };
-  Collection2.prototype.setAt = function(index2, elem) {
-    var n = this.getLength();
-    if (index2 < n) {
-      if (this.unique_) {
-        this.assertUnique_(elem, index2);
-      }
-      var prev = this.array_[index2];
-      this.array_[index2] = elem;
-      this.dispatchEvent(new CollectionEvent(CollectionEventType.REMOVE, prev, index2));
-      this.dispatchEvent(new CollectionEvent(CollectionEventType.ADD, elem, index2));
-    } else {
-      for (var j = n; j < index2; ++j) {
-        this.insertAt(j, void 0);
-      }
-      this.insertAt(index2, elem);
-    }
-  };
-  Collection2.prototype.updateLength_ = function() {
-    this.set(Property$1.LENGTH, this.array_.length);
-  };
-  Collection2.prototype.assertUnique_ = function(elem, opt_except) {
-    for (var i = 0, ii = this.array_.length; i < ii; ++i) {
-      if (this.array_[i] === elem && i !== opt_except) {
-        throw new AssertionError$1(58);
-      }
-    }
-  };
-  return Collection2;
-}(BaseObject$1);
-const Collection$1 = Collection;
-function easeIn(t) {
-  return Math.pow(t, 3);
-}
-function easeOut(t) {
-  return 1 - easeIn(1 - t);
-}
-function inAndOut(t) {
-  return 3 * t * t - 2 * t * t * t;
-}
-function linear(t) {
-  return t;
-}
-var __extends$T = globalThis && globalThis.__extends || function() {
-  var extendStatics = function(d, b) {
-    extendStatics = Object.setPrototypeOf || { __proto__: [] } instanceof Array && function(d2, b2) {
-      d2.__proto__ = b2;
-    } || function(d2, b2) {
-      for (var p2 in b2)
-        if (Object.prototype.hasOwnProperty.call(b2, p2))
-          d2[p2] = b2[p2];
-    };
-    return extendStatics(d, b);
-  };
-  return function(d, b) {
-    if (typeof b !== "function" && b !== null)
-      throw new TypeError("Class extends value " + String(b) + " is not a constructor or null");
-    extendStatics(d, b);
-    function __() {
-      this.constructor = d;
-    }
-    d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
-  };
-}();
-var Rotate = function(_super) {
-  __extends$T(Rotate2, _super);
-  function Rotate2(opt_options) {
-    var _this = this;
-    var options = opt_options ? opt_options : {};
-    _this = _super.call(this, {
-      element: document.createElement("div"),
-      render: options.render,
-      target: options.target
-    }) || this;
-    var className = options.className !== void 0 ? options.className : "ol-rotate";
-    var label = options.label !== void 0 ? options.label : "\u21E7";
-    var compassClassName = options.compassClassName !== void 0 ? options.compassClassName : "ol-compass";
-    _this.label_ = null;
-    if (typeof label === "string") {
-      _this.label_ = document.createElement("span");
-      _this.label_.className = compassClassName;
-      _this.label_.textContent = label;
-    } else {
-      _this.label_ = label;
-      _this.label_.classList.add(compassClassName);
-    }
-    var tipLabel = options.tipLabel ? options.tipLabel : "Reset rotation";
-    var button = document.createElement("button");
-    button.className = className + "-reset";
-    button.setAttribute("type", "button");
-    button.title = tipLabel;
-    button.appendChild(_this.label_);
-    button.addEventListener(EventType.CLICK, _this.handleClick_.bind(_this), false);
-    var cssClasses = className + " " + CLASS_UNSELECTABLE + " " + CLASS_CONTROL;
-    var element = _this.element;
-    element.className = cssClasses;
-    element.appendChild(button);
-    _this.callResetNorth_ = options.resetNorth ? options.resetNorth : void 0;
-    _this.duration_ = options.duration !== void 0 ? options.duration : 250;
-    _this.autoHide_ = options.autoHide !== void 0 ? options.autoHide : true;
-    _this.rotation_ = void 0;
-    if (_this.autoHide_) {
-      _this.element.classList.add(CLASS_HIDDEN);
-    }
-    return _this;
-  }
-  Rotate2.prototype.handleClick_ = function(event) {
-    event.preventDefault();
-    if (this.callResetNorth_ !== void 0) {
-      this.callResetNorth_();
-    } else {
-      this.resetNorth_();
-    }
-  };
-  Rotate2.prototype.resetNorth_ = function() {
-    var map2 = this.getMap();
-    var view = map2.getView();
-    if (!view) {
-      return;
-    }
-    var rotation = view.getRotation();
-    if (rotation !== void 0) {
-      if (this.duration_ > 0 && rotation % (2 * Math.PI) !== 0) {
-        view.animate({
-          rotation: 0,
-          duration: this.duration_,
-          easing: easeOut
-        });
-      } else {
-        view.setRotation(0);
-      }
-    }
-  };
-  Rotate2.prototype.render = function(mapEvent) {
-    var frameState = mapEvent.frameState;
-    if (!frameState) {
-      return;
-    }
-    var rotation = frameState.viewState.rotation;
-    if (rotation != this.rotation_) {
-      var transform2 = "rotate(" + rotation + "rad)";
-      if (this.autoHide_) {
-        var contains = this.element.classList.contains(CLASS_HIDDEN);
-        if (!contains && rotation === 0) {
-          this.element.classList.add(CLASS_HIDDEN);
-        } else if (contains && rotation !== 0) {
-          this.element.classList.remove(CLASS_HIDDEN);
-        }
-      }
-      this.label_.style.transform = transform2;
-    }
-    this.rotation_ = rotation;
-  };
-  return Rotate2;
-}(Control$1);
-const Rotate$1 = Rotate;
-var __extends$S = globalThis && globalThis.__extends || function() {
-  var extendStatics = function(d, b) {
-    extendStatics = Object.setPrototypeOf || { __proto__: [] } instanceof Array && function(d2, b2) {
-      d2.__proto__ = b2;
-    } || function(d2, b2) {
-      for (var p2 in b2)
-        if (Object.prototype.hasOwnProperty.call(b2, p2))
-          d2[p2] = b2[p2];
-    };
-    return extendStatics(d, b);
-  };
-  return function(d, b) {
-    if (typeof b !== "function" && b !== null)
-      throw new TypeError("Class extends value " + String(b) + " is not a constructor or null");
-    extendStatics(d, b);
-    function __() {
-      this.constructor = d;
-    }
-    d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
-  };
-}();
-var Zoom = function(_super) {
-  __extends$S(Zoom2, _super);
-  function Zoom2(opt_options) {
-    var _this = this;
-    var options = opt_options ? opt_options : {};
-    _this = _super.call(this, {
-      element: document.createElement("div"),
-      target: options.target
-    }) || this;
-    var className = options.className !== void 0 ? options.className : "ol-zoom";
-    var delta = options.delta !== void 0 ? options.delta : 1;
-    var zoomInClassName = options.zoomInClassName !== void 0 ? options.zoomInClassName : className + "-in";
-    var zoomOutClassName = options.zoomOutClassName !== void 0 ? options.zoomOutClassName : className + "-out";
-    var zoomInLabel = options.zoomInLabel !== void 0 ? options.zoomInLabel : "+";
-    var zoomOutLabel = options.zoomOutLabel !== void 0 ? options.zoomOutLabel : "\u2013";
-    var zoomInTipLabel = options.zoomInTipLabel !== void 0 ? options.zoomInTipLabel : "Zoom in";
-    var zoomOutTipLabel = options.zoomOutTipLabel !== void 0 ? options.zoomOutTipLabel : "Zoom out";
-    var inElement = document.createElement("button");
-    inElement.className = zoomInClassName;
-    inElement.setAttribute("type", "button");
-    inElement.title = zoomInTipLabel;
-    inElement.appendChild(typeof zoomInLabel === "string" ? document.createTextNode(zoomInLabel) : zoomInLabel);
-    inElement.addEventListener(EventType.CLICK, _this.handleClick_.bind(_this, delta), false);
-    var outElement = document.createElement("button");
-    outElement.className = zoomOutClassName;
-    outElement.setAttribute("type", "button");
-    outElement.title = zoomOutTipLabel;
-    outElement.appendChild(typeof zoomOutLabel === "string" ? document.createTextNode(zoomOutLabel) : zoomOutLabel);
-    outElement.addEventListener(EventType.CLICK, _this.handleClick_.bind(_this, -delta), false);
-    var cssClasses = className + " " + CLASS_UNSELECTABLE + " " + CLASS_CONTROL;
-    var element = _this.element;
-    element.className = cssClasses;
-    element.appendChild(inElement);
-    element.appendChild(outElement);
-    _this.duration_ = options.duration !== void 0 ? options.duration : 250;
-    return _this;
-  }
-  Zoom2.prototype.handleClick_ = function(delta, event) {
-    event.preventDefault();
-    this.zoomByDelta_(delta);
-  };
-  Zoom2.prototype.zoomByDelta_ = function(delta) {
-    var map2 = this.getMap();
-    var view = map2.getView();
-    if (!view) {
-      return;
-    }
-    var currentZoom = view.getZoom();
-    if (currentZoom !== void 0) {
-      var newZoom = view.getConstrainedZoom(currentZoom + delta);
-      if (this.duration_ > 0) {
-        if (view.getAnimating()) {
-          view.cancelAnimations();
-        }
-        view.animate({
-          zoom: newZoom,
-          duration: this.duration_,
-          easing: easeOut
-        });
-      } else {
-        view.setZoom(newZoom);
-      }
-    }
-  };
-  return Zoom2;
-}(Control$1);
-const Zoom$1 = Zoom;
-const MapProperty = {
-  LAYERGROUP: "layergroup",
-  SIZE: "size",
-  TARGET: "target",
-  VIEW: "view"
-};
-const PointerEventType = {
-  POINTERMOVE: "pointermove",
-  POINTERDOWN: "pointerdown",
-  POINTERUP: "pointerup",
-  POINTEROVER: "pointerover",
-  POINTEROUT: "pointerout",
-  POINTERENTER: "pointerenter",
-  POINTERLEAVE: "pointerleave",
-  POINTERCANCEL: "pointercancel"
-};
 new Array(6);
 function create() {
   return [1, 0, 0, 1, 0, 0];
@@ -51152,7 +49720,732 @@ function getKey$1(src2, crossOrigin, color) {
   return crossOrigin + ":" + src2 + ":" + colorString;
 }
 var shared = new IconImageCache();
-var __extends$R = globalThis && globalThis.__extends || function() {
+var BaseEvent = function() {
+  function BaseEvent2(type) {
+    this.propagationStopped;
+    this.defaultPrevented;
+    this.type = type;
+    this.target = null;
+  }
+  BaseEvent2.prototype.preventDefault = function() {
+    this.defaultPrevented = true;
+  };
+  BaseEvent2.prototype.stopPropagation = function() {
+    this.propagationStopped = true;
+  };
+  return BaseEvent2;
+}();
+const Event = BaseEvent;
+const ObjectEventType = {
+  PROPERTYCHANGE: "propertychange"
+};
+var __extends$11 = globalThis && globalThis.__extends || function() {
+  var extendStatics = function(d, b) {
+    extendStatics = Object.setPrototypeOf || { __proto__: [] } instanceof Array && function(d2, b2) {
+      d2.__proto__ = b2;
+    } || function(d2, b2) {
+      for (var p2 in b2)
+        if (Object.prototype.hasOwnProperty.call(b2, p2))
+          d2[p2] = b2[p2];
+    };
+    return extendStatics(d, b);
+  };
+  return function(d, b) {
+    if (typeof b !== "function" && b !== null)
+      throw new TypeError("Class extends value " + String(b) + " is not a constructor or null");
+    extendStatics(d, b);
+    function __() {
+      this.constructor = d;
+    }
+    d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
+  };
+}();
+var Target = function(_super) {
+  __extends$11(Target2, _super);
+  function Target2(opt_target) {
+    var _this = _super.call(this) || this;
+    _this.eventTarget_ = opt_target;
+    _this.pendingRemovals_ = null;
+    _this.dispatching_ = null;
+    _this.listeners_ = null;
+    return _this;
+  }
+  Target2.prototype.addEventListener = function(type, listener) {
+    if (!type || !listener) {
+      return;
+    }
+    var listeners = this.listeners_ || (this.listeners_ = {});
+    var listenersForType = listeners[type] || (listeners[type] = []);
+    if (listenersForType.indexOf(listener) === -1) {
+      listenersForType.push(listener);
+    }
+  };
+  Target2.prototype.dispatchEvent = function(event) {
+    var isString = typeof event === "string";
+    var type = isString ? event : event.type;
+    var listeners = this.listeners_ && this.listeners_[type];
+    if (!listeners) {
+      return;
+    }
+    var evt = isString ? new Event(event) : event;
+    if (!evt.target) {
+      evt.target = this.eventTarget_ || this;
+    }
+    var dispatching = this.dispatching_ || (this.dispatching_ = {});
+    var pendingRemovals = this.pendingRemovals_ || (this.pendingRemovals_ = {});
+    if (!(type in dispatching)) {
+      dispatching[type] = 0;
+      pendingRemovals[type] = 0;
+    }
+    ++dispatching[type];
+    var propagate;
+    for (var i = 0, ii = listeners.length; i < ii; ++i) {
+      if ("handleEvent" in listeners[i]) {
+        propagate = listeners[i].handleEvent(evt);
+      } else {
+        propagate = listeners[i].call(this, evt);
+      }
+      if (propagate === false || evt.propagationStopped) {
+        propagate = false;
+        break;
+      }
+    }
+    if (--dispatching[type] === 0) {
+      var pr = pendingRemovals[type];
+      delete pendingRemovals[type];
+      while (pr--) {
+        this.removeEventListener(type, VOID);
+      }
+      delete dispatching[type];
+    }
+    return propagate;
+  };
+  Target2.prototype.disposeInternal = function() {
+    this.listeners_ && clear(this.listeners_);
+  };
+  Target2.prototype.getListeners = function(type) {
+    return this.listeners_ && this.listeners_[type] || void 0;
+  };
+  Target2.prototype.hasListener = function(opt_type) {
+    if (!this.listeners_) {
+      return false;
+    }
+    return opt_type ? opt_type in this.listeners_ : Object.keys(this.listeners_).length > 0;
+  };
+  Target2.prototype.removeEventListener = function(type, listener) {
+    var listeners = this.listeners_ && this.listeners_[type];
+    if (listeners) {
+      var index2 = listeners.indexOf(listener);
+      if (index2 !== -1) {
+        if (this.pendingRemovals_ && type in this.pendingRemovals_) {
+          listeners[index2] = VOID;
+          ++this.pendingRemovals_[type];
+        } else {
+          listeners.splice(index2, 1);
+          if (listeners.length === 0) {
+            delete this.listeners_[type];
+          }
+        }
+      }
+    }
+  };
+  return Target2;
+}(Disposable$1);
+const EventTarget = Target;
+const EventType = {
+  CHANGE: "change",
+  ERROR: "error",
+  BLUR: "blur",
+  CLEAR: "clear",
+  CONTEXTMENU: "contextmenu",
+  CLICK: "click",
+  DBLCLICK: "dblclick",
+  DRAGENTER: "dragenter",
+  DRAGOVER: "dragover",
+  DROP: "drop",
+  FOCUS: "focus",
+  KEYDOWN: "keydown",
+  KEYPRESS: "keypress",
+  LOAD: "load",
+  RESIZE: "resize",
+  TOUCHMOVE: "touchmove",
+  WHEEL: "wheel"
+};
+function listen(target, type, listener, opt_this, opt_once) {
+  if (opt_this && opt_this !== target) {
+    listener = listener.bind(opt_this);
+  }
+  if (opt_once) {
+    var originalListener_1 = listener;
+    listener = function() {
+      target.removeEventListener(type, listener);
+      originalListener_1.apply(this, arguments);
+    };
+  }
+  var eventsKey = {
+    target,
+    type,
+    listener
+  };
+  target.addEventListener(type, listener);
+  return eventsKey;
+}
+function listenOnce(target, type, listener, opt_this) {
+  return listen(target, type, listener, opt_this, true);
+}
+function unlistenByKey(key) {
+  if (key && key.target) {
+    key.target.removeEventListener(key.type, key.listener);
+    clear(key);
+  }
+}
+var __extends$10 = globalThis && globalThis.__extends || function() {
+  var extendStatics = function(d, b) {
+    extendStatics = Object.setPrototypeOf || { __proto__: [] } instanceof Array && function(d2, b2) {
+      d2.__proto__ = b2;
+    } || function(d2, b2) {
+      for (var p2 in b2)
+        if (Object.prototype.hasOwnProperty.call(b2, p2))
+          d2[p2] = b2[p2];
+    };
+    return extendStatics(d, b);
+  };
+  return function(d, b) {
+    if (typeof b !== "function" && b !== null)
+      throw new TypeError("Class extends value " + String(b) + " is not a constructor or null");
+    extendStatics(d, b);
+    function __() {
+      this.constructor = d;
+    }
+    d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
+  };
+}();
+var Observable = function(_super) {
+  __extends$10(Observable2, _super);
+  function Observable2() {
+    var _this = _super.call(this) || this;
+    _this.on = _this.onInternal;
+    _this.once = _this.onceInternal;
+    _this.un = _this.unInternal;
+    _this.revision_ = 0;
+    return _this;
+  }
+  Observable2.prototype.changed = function() {
+    ++this.revision_;
+    this.dispatchEvent(EventType.CHANGE);
+  };
+  Observable2.prototype.getRevision = function() {
+    return this.revision_;
+  };
+  Observable2.prototype.onInternal = function(type, listener) {
+    if (Array.isArray(type)) {
+      var len = type.length;
+      var keys = new Array(len);
+      for (var i = 0; i < len; ++i) {
+        keys[i] = listen(this, type[i], listener);
+      }
+      return keys;
+    } else {
+      return listen(this, type, listener);
+    }
+  };
+  Observable2.prototype.onceInternal = function(type, listener) {
+    var key;
+    if (Array.isArray(type)) {
+      var len = type.length;
+      key = new Array(len);
+      for (var i = 0; i < len; ++i) {
+        key[i] = listenOnce(this, type[i], listener);
+      }
+    } else {
+      key = listenOnce(this, type, listener);
+    }
+    listener.ol_key = key;
+    return key;
+  };
+  Observable2.prototype.unInternal = function(type, listener) {
+    var key = listener.ol_key;
+    if (key) {
+      unByKey(key);
+    } else if (Array.isArray(type)) {
+      for (var i = 0, ii = type.length; i < ii; ++i) {
+        this.removeEventListener(type[i], listener);
+      }
+    } else {
+      this.removeEventListener(type, listener);
+    }
+  };
+  return Observable2;
+}(EventTarget);
+Observable.prototype.on;
+Observable.prototype.once;
+Observable.prototype.un;
+function unByKey(key) {
+  if (Array.isArray(key)) {
+    for (var i = 0, ii = key.length; i < ii; ++i) {
+      unlistenByKey(key[i]);
+    }
+  } else {
+    unlistenByKey(key);
+  }
+}
+const Observable$1 = Observable;
+var __extends$$ = globalThis && globalThis.__extends || function() {
+  var extendStatics = function(d, b) {
+    extendStatics = Object.setPrototypeOf || { __proto__: [] } instanceof Array && function(d2, b2) {
+      d2.__proto__ = b2;
+    } || function(d2, b2) {
+      for (var p2 in b2)
+        if (Object.prototype.hasOwnProperty.call(b2, p2))
+          d2[p2] = b2[p2];
+    };
+    return extendStatics(d, b);
+  };
+  return function(d, b) {
+    if (typeof b !== "function" && b !== null)
+      throw new TypeError("Class extends value " + String(b) + " is not a constructor or null");
+    extendStatics(d, b);
+    function __() {
+      this.constructor = d;
+    }
+    d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
+  };
+}();
+var ObjectEvent = function(_super) {
+  __extends$$(ObjectEvent2, _super);
+  function ObjectEvent2(type, key, oldValue) {
+    var _this = _super.call(this, type) || this;
+    _this.key = key;
+    _this.oldValue = oldValue;
+    return _this;
+  }
+  return ObjectEvent2;
+}(Event);
+var BaseObject = function(_super) {
+  __extends$$(BaseObject2, _super);
+  function BaseObject2(opt_values) {
+    var _this = _super.call(this) || this;
+    _this.on;
+    _this.once;
+    _this.un;
+    getUid(_this);
+    _this.values_ = null;
+    if (opt_values !== void 0) {
+      _this.setProperties(opt_values);
+    }
+    return _this;
+  }
+  BaseObject2.prototype.get = function(key) {
+    var value;
+    if (this.values_ && this.values_.hasOwnProperty(key)) {
+      value = this.values_[key];
+    }
+    return value;
+  };
+  BaseObject2.prototype.getKeys = function() {
+    return this.values_ && Object.keys(this.values_) || [];
+  };
+  BaseObject2.prototype.getProperties = function() {
+    return this.values_ && assign({}, this.values_) || {};
+  };
+  BaseObject2.prototype.hasProperties = function() {
+    return !!this.values_;
+  };
+  BaseObject2.prototype.notify = function(key, oldValue) {
+    var eventType;
+    eventType = "change:".concat(key);
+    if (this.hasListener(eventType)) {
+      this.dispatchEvent(new ObjectEvent(eventType, key, oldValue));
+    }
+    eventType = ObjectEventType.PROPERTYCHANGE;
+    if (this.hasListener(eventType)) {
+      this.dispatchEvent(new ObjectEvent(eventType, key, oldValue));
+    }
+  };
+  BaseObject2.prototype.addChangeListener = function(key, listener) {
+    this.addEventListener("change:".concat(key), listener);
+  };
+  BaseObject2.prototype.removeChangeListener = function(key, listener) {
+    this.removeEventListener("change:".concat(key), listener);
+  };
+  BaseObject2.prototype.set = function(key, value, opt_silent) {
+    var values = this.values_ || (this.values_ = {});
+    if (opt_silent) {
+      values[key] = value;
+    } else {
+      var oldValue = values[key];
+      values[key] = value;
+      if (oldValue !== value) {
+        this.notify(key, oldValue);
+      }
+    }
+  };
+  BaseObject2.prototype.setProperties = function(values, opt_silent) {
+    for (var key in values) {
+      this.set(key, values[key], opt_silent);
+    }
+  };
+  BaseObject2.prototype.applyProperties = function(source) {
+    if (!source.values_) {
+      return;
+    }
+    assign(this.values_ || (this.values_ = {}), source.values_);
+  };
+  BaseObject2.prototype.unset = function(key, opt_silent) {
+    if (this.values_ && key in this.values_) {
+      var oldValue = this.values_[key];
+      delete this.values_[key];
+      if (isEmpty$1(this.values_)) {
+        this.values_ = null;
+      }
+      if (!opt_silent) {
+        this.notify(key, oldValue);
+      }
+    }
+  };
+  return BaseObject2;
+}(Observable$1);
+const BaseObject$1 = BaseObject;
+const LayerProperty = {
+  OPACITY: "opacity",
+  VISIBLE: "visible",
+  EXTENT: "extent",
+  Z_INDEX: "zIndex",
+  MAX_RESOLUTION: "maxResolution",
+  MIN_RESOLUTION: "minResolution",
+  MAX_ZOOM: "maxZoom",
+  MIN_ZOOM: "minZoom",
+  SOURCE: "source",
+  MAP: "map"
+};
+var __extends$_ = globalThis && globalThis.__extends || function() {
+  var extendStatics = function(d, b) {
+    extendStatics = Object.setPrototypeOf || { __proto__: [] } instanceof Array && function(d2, b2) {
+      d2.__proto__ = b2;
+    } || function(d2, b2) {
+      for (var p2 in b2)
+        if (Object.prototype.hasOwnProperty.call(b2, p2))
+          d2[p2] = b2[p2];
+    };
+    return extendStatics(d, b);
+  };
+  return function(d, b) {
+    if (typeof b !== "function" && b !== null)
+      throw new TypeError("Class extends value " + String(b) + " is not a constructor or null");
+    extendStatics(d, b);
+    function __() {
+      this.constructor = d;
+    }
+    d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
+  };
+}();
+var BaseLayer = function(_super) {
+  __extends$_(BaseLayer2, _super);
+  function BaseLayer2(options) {
+    var _this = _super.call(this) || this;
+    _this.on;
+    _this.once;
+    _this.un;
+    _this.background_ = options.background;
+    var properties = assign({}, options);
+    if (typeof options.properties === "object") {
+      delete properties.properties;
+      assign(properties, options.properties);
+    }
+    properties[LayerProperty.OPACITY] = options.opacity !== void 0 ? options.opacity : 1;
+    assert(typeof properties[LayerProperty.OPACITY] === "number", 64);
+    properties[LayerProperty.VISIBLE] = options.visible !== void 0 ? options.visible : true;
+    properties[LayerProperty.Z_INDEX] = options.zIndex;
+    properties[LayerProperty.MAX_RESOLUTION] = options.maxResolution !== void 0 ? options.maxResolution : Infinity;
+    properties[LayerProperty.MIN_RESOLUTION] = options.minResolution !== void 0 ? options.minResolution : 0;
+    properties[LayerProperty.MIN_ZOOM] = options.minZoom !== void 0 ? options.minZoom : -Infinity;
+    properties[LayerProperty.MAX_ZOOM] = options.maxZoom !== void 0 ? options.maxZoom : Infinity;
+    _this.className_ = properties.className !== void 0 ? properties.className : "ol-layer";
+    delete properties.className;
+    _this.setProperties(properties);
+    _this.state_ = null;
+    return _this;
+  }
+  BaseLayer2.prototype.getBackground = function() {
+    return this.background_;
+  };
+  BaseLayer2.prototype.getClassName = function() {
+    return this.className_;
+  };
+  BaseLayer2.prototype.getLayerState = function(opt_managed) {
+    var state = this.state_ || {
+      layer: this,
+      managed: opt_managed === void 0 ? true : opt_managed
+    };
+    var zIndex = this.getZIndex();
+    state.opacity = clamp(Math.round(this.getOpacity() * 100) / 100, 0, 1);
+    state.visible = this.getVisible();
+    state.extent = this.getExtent();
+    state.zIndex = zIndex === void 0 && !state.managed ? Infinity : zIndex;
+    state.maxResolution = this.getMaxResolution();
+    state.minResolution = Math.max(this.getMinResolution(), 0);
+    state.minZoom = this.getMinZoom();
+    state.maxZoom = this.getMaxZoom();
+    this.state_ = state;
+    return state;
+  };
+  BaseLayer2.prototype.getLayersArray = function(opt_array) {
+    return abstract();
+  };
+  BaseLayer2.prototype.getLayerStatesArray = function(opt_states) {
+    return abstract();
+  };
+  BaseLayer2.prototype.getExtent = function() {
+    return this.get(LayerProperty.EXTENT);
+  };
+  BaseLayer2.prototype.getMaxResolution = function() {
+    return this.get(LayerProperty.MAX_RESOLUTION);
+  };
+  BaseLayer2.prototype.getMinResolution = function() {
+    return this.get(LayerProperty.MIN_RESOLUTION);
+  };
+  BaseLayer2.prototype.getMinZoom = function() {
+    return this.get(LayerProperty.MIN_ZOOM);
+  };
+  BaseLayer2.prototype.getMaxZoom = function() {
+    return this.get(LayerProperty.MAX_ZOOM);
+  };
+  BaseLayer2.prototype.getOpacity = function() {
+    return this.get(LayerProperty.OPACITY);
+  };
+  BaseLayer2.prototype.getSourceState = function() {
+    return abstract();
+  };
+  BaseLayer2.prototype.getVisible = function() {
+    return this.get(LayerProperty.VISIBLE);
+  };
+  BaseLayer2.prototype.getZIndex = function() {
+    return this.get(LayerProperty.Z_INDEX);
+  };
+  BaseLayer2.prototype.setBackground = function(opt_background) {
+    this.background_ = opt_background;
+    this.changed();
+  };
+  BaseLayer2.prototype.setExtent = function(extent) {
+    this.set(LayerProperty.EXTENT, extent);
+  };
+  BaseLayer2.prototype.setMaxResolution = function(maxResolution) {
+    this.set(LayerProperty.MAX_RESOLUTION, maxResolution);
+  };
+  BaseLayer2.prototype.setMinResolution = function(minResolution) {
+    this.set(LayerProperty.MIN_RESOLUTION, minResolution);
+  };
+  BaseLayer2.prototype.setMaxZoom = function(maxZoom) {
+    this.set(LayerProperty.MAX_ZOOM, maxZoom);
+  };
+  BaseLayer2.prototype.setMinZoom = function(minZoom) {
+    this.set(LayerProperty.MIN_ZOOM, minZoom);
+  };
+  BaseLayer2.prototype.setOpacity = function(opacity) {
+    assert(typeof opacity === "number", 64);
+    this.set(LayerProperty.OPACITY, opacity);
+  };
+  BaseLayer2.prototype.setVisible = function(visible) {
+    this.set(LayerProperty.VISIBLE, visible);
+  };
+  BaseLayer2.prototype.setZIndex = function(zindex) {
+    this.set(LayerProperty.Z_INDEX, zindex);
+  };
+  BaseLayer2.prototype.disposeInternal = function() {
+    if (this.state_) {
+      this.state_.layer = null;
+      this.state_ = null;
+    }
+    _super.prototype.disposeInternal.call(this);
+  };
+  return BaseLayer2;
+}(BaseObject$1);
+const BaseLayer$1 = BaseLayer;
+const RenderEventType = {
+  PRERENDER: "prerender",
+  POSTRENDER: "postrender",
+  PRECOMPOSE: "precompose",
+  POSTCOMPOSE: "postcompose",
+  RENDERCOMPLETE: "rendercomplete"
+};
+var __extends$Z = globalThis && globalThis.__extends || function() {
+  var extendStatics = function(d, b) {
+    extendStatics = Object.setPrototypeOf || { __proto__: [] } instanceof Array && function(d2, b2) {
+      d2.__proto__ = b2;
+    } || function(d2, b2) {
+      for (var p2 in b2)
+        if (Object.prototype.hasOwnProperty.call(b2, p2))
+          d2[p2] = b2[p2];
+    };
+    return extendStatics(d, b);
+  };
+  return function(d, b) {
+    if (typeof b !== "function" && b !== null)
+      throw new TypeError("Class extends value " + String(b) + " is not a constructor or null");
+    extendStatics(d, b);
+    function __() {
+      this.constructor = d;
+    }
+    d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
+  };
+}();
+var Layer = function(_super) {
+  __extends$Z(Layer2, _super);
+  function Layer2(options) {
+    var _this = this;
+    var baseOptions = assign({}, options);
+    delete baseOptions.source;
+    _this = _super.call(this, baseOptions) || this;
+    _this.on;
+    _this.once;
+    _this.un;
+    _this.mapPrecomposeKey_ = null;
+    _this.mapRenderKey_ = null;
+    _this.sourceChangeKey_ = null;
+    _this.renderer_ = null;
+    _this.rendered = false;
+    if (options.render) {
+      _this.render = options.render;
+    }
+    if (options.map) {
+      _this.setMap(options.map);
+    }
+    _this.addChangeListener(LayerProperty.SOURCE, _this.handleSourcePropertyChange_);
+    var source = options.source ? options.source : null;
+    _this.setSource(source);
+    return _this;
+  }
+  Layer2.prototype.getLayersArray = function(opt_array) {
+    var array = opt_array ? opt_array : [];
+    array.push(this);
+    return array;
+  };
+  Layer2.prototype.getLayerStatesArray = function(opt_states) {
+    var states = opt_states ? opt_states : [];
+    states.push(this.getLayerState());
+    return states;
+  };
+  Layer2.prototype.getSource = function() {
+    return this.get(LayerProperty.SOURCE) || null;
+  };
+  Layer2.prototype.getRenderSource = function() {
+    return this.getSource();
+  };
+  Layer2.prototype.getSourceState = function() {
+    var source = this.getSource();
+    return !source ? "undefined" : source.getState();
+  };
+  Layer2.prototype.handleSourceChange_ = function() {
+    this.changed();
+  };
+  Layer2.prototype.handleSourcePropertyChange_ = function() {
+    if (this.sourceChangeKey_) {
+      unlistenByKey(this.sourceChangeKey_);
+      this.sourceChangeKey_ = null;
+    }
+    var source = this.getSource();
+    if (source) {
+      this.sourceChangeKey_ = listen(source, EventType.CHANGE, this.handleSourceChange_, this);
+    }
+    this.changed();
+  };
+  Layer2.prototype.getFeatures = function(pixel) {
+    if (!this.renderer_) {
+      return new Promise(function(resolve) {
+        return resolve([]);
+      });
+    }
+    return this.renderer_.getFeatures(pixel);
+  };
+  Layer2.prototype.getData = function(pixel) {
+    if (!this.renderer_ || !this.rendered) {
+      return null;
+    }
+    return this.renderer_.getData(pixel);
+  };
+  Layer2.prototype.render = function(frameState, target) {
+    var layerRenderer = this.getRenderer();
+    if (layerRenderer.prepareFrame(frameState)) {
+      this.rendered = true;
+      return layerRenderer.renderFrame(frameState, target);
+    }
+  };
+  Layer2.prototype.unrender = function() {
+    this.rendered = false;
+  };
+  Layer2.prototype.setMapInternal = function(map2) {
+    if (!map2) {
+      this.unrender();
+    }
+    this.set(LayerProperty.MAP, map2);
+  };
+  Layer2.prototype.getMapInternal = function() {
+    return this.get(LayerProperty.MAP);
+  };
+  Layer2.prototype.setMap = function(map2) {
+    if (this.mapPrecomposeKey_) {
+      unlistenByKey(this.mapPrecomposeKey_);
+      this.mapPrecomposeKey_ = null;
+    }
+    if (!map2) {
+      this.changed();
+    }
+    if (this.mapRenderKey_) {
+      unlistenByKey(this.mapRenderKey_);
+      this.mapRenderKey_ = null;
+    }
+    if (map2) {
+      this.mapPrecomposeKey_ = listen(map2, RenderEventType.PRECOMPOSE, function(evt) {
+        var renderEvent = evt;
+        var layerStatesArray = renderEvent.frameState.layerStatesArray;
+        var layerState = this.getLayerState(false);
+        assert(!layerStatesArray.some(function(arrayLayerState) {
+          return arrayLayerState.layer === layerState.layer;
+        }), 67);
+        layerStatesArray.push(layerState);
+      }, this);
+      this.mapRenderKey_ = listen(this, EventType.CHANGE, map2.render, map2);
+      this.changed();
+    }
+  };
+  Layer2.prototype.setSource = function(source) {
+    this.set(LayerProperty.SOURCE, source);
+  };
+  Layer2.prototype.getRenderer = function() {
+    if (!this.renderer_) {
+      this.renderer_ = this.createRenderer();
+    }
+    return this.renderer_;
+  };
+  Layer2.prototype.hasRenderer = function() {
+    return !!this.renderer_;
+  };
+  Layer2.prototype.createRenderer = function() {
+    return null;
+  };
+  Layer2.prototype.disposeInternal = function() {
+    if (this.renderer_) {
+      this.renderer_.dispose();
+      delete this.renderer_;
+    }
+    this.setSource(null);
+    _super.prototype.disposeInternal.call(this);
+  };
+  return Layer2;
+}(BaseLayer$1);
+function inView(layerState, viewState) {
+  if (!layerState.visible) {
+    return false;
+  }
+  var resolution = viewState.resolution;
+  if (resolution < layerState.minResolution || resolution >= layerState.maxResolution) {
+    return false;
+  }
+  var zoom = viewState.zoom;
+  return zoom > layerState.minZoom && zoom <= layerState.maxZoom;
+}
+const Layer$1 = Layer;
+var __extends$Y = globalThis && globalThis.__extends || function() {
   var extendStatics = function(d, b) {
     extendStatics = Object.setPrototypeOf || { __proto__: [] } instanceof Array && function(d2, b2) {
       d2.__proto__ = b2;
@@ -51174,7 +50467,7 @@ var __extends$R = globalThis && globalThis.__extends || function() {
   };
 }();
 var MapRenderer = function(_super) {
-  __extends$R(MapRenderer2, _super);
+  __extends$Y(MapRenderer2, _super);
   function MapRenderer2(map2) {
     var _this = _super.call(this) || this;
     _this.map_ = map2;
@@ -51267,7 +50560,7 @@ function expireIconCache(map2, frameState) {
   shared.expire();
 }
 const MapRenderer$1 = MapRenderer;
-var __extends$Q = globalThis && globalThis.__extends || function() {
+var __extends$X = globalThis && globalThis.__extends || function() {
   var extendStatics = function(d, b) {
     extendStatics = Object.setPrototypeOf || { __proto__: [] } instanceof Array && function(d2, b2) {
       d2.__proto__ = b2;
@@ -51289,7 +50582,7 @@ var __extends$Q = globalThis && globalThis.__extends || function() {
   };
 }();
 var RenderEvent = function(_super) {
-  __extends$Q(RenderEvent2, _super);
+  __extends$X(RenderEvent2, _super);
   function RenderEvent2(type, opt_inversePixelTransform, opt_frameState, opt_context) {
     var _this = _super.call(this, type) || this;
     _this.inversePixelTransform = opt_inversePixelTransform;
@@ -51300,12 +50593,77 @@ var RenderEvent = function(_super) {
   return RenderEvent2;
 }(Event);
 const RenderEvent$1 = RenderEvent;
+var CLASS_HIDDEN = "ol-hidden";
+var CLASS_UNSELECTABLE = "ol-unselectable";
+var CLASS_UNSUPPORTED = "ol-unsupported";
+var CLASS_CONTROL = "ol-control";
+var CLASS_COLLAPSED = "ol-collapsed";
+function createCanvasContext2D(opt_width, opt_height, opt_canvasPool, opt_Context2DSettings) {
+  var canvas;
+  if (opt_canvasPool && opt_canvasPool.length) {
+    canvas = opt_canvasPool.shift();
+  } else if (WORKER_OFFSCREEN_CANVAS) {
+    canvas = new OffscreenCanvas(opt_width || 300, opt_height || 300);
+  } else {
+    canvas = document.createElement("canvas");
+  }
+  if (opt_width) {
+    canvas.width = opt_width;
+  }
+  if (opt_height) {
+    canvas.height = opt_height;
+  }
+  return canvas.getContext("2d", opt_Context2DSettings);
+}
+function releaseCanvas(context) {
+  var canvas = context.canvas;
+  canvas.width = 1;
+  canvas.height = 1;
+  context.clearRect(0, 0, 1, 1);
+}
+function replaceNode(newNode, oldNode) {
+  var parent = oldNode.parentNode;
+  if (parent) {
+    parent.replaceChild(newNode, oldNode);
+  }
+}
+function removeNode(node) {
+  return node && node.parentNode ? node.parentNode.removeChild(node) : null;
+}
+function removeChildren(node) {
+  while (node.lastChild) {
+    node.removeChild(node.lastChild);
+  }
+}
+function replaceChildren(node, children) {
+  var oldChildren = node.childNodes;
+  for (var i = 0; true; ++i) {
+    var oldChild = oldChildren[i];
+    var newChild = children[i];
+    if (!oldChild && !newChild) {
+      break;
+    }
+    if (oldChild === newChild) {
+      continue;
+    }
+    if (!oldChild) {
+      node.appendChild(newChild);
+      continue;
+    }
+    if (!newChild) {
+      node.removeChild(oldChild);
+      --i;
+      continue;
+    }
+    node.insertBefore(newChild, oldChild);
+  }
+}
 var checkedFonts = new BaseObject$1();
 var labelCache = new EventTarget();
 labelCache.setSize = function() {
   console.warn("labelCache is deprecated.");
 };
-var __extends$P = globalThis && globalThis.__extends || function() {
+var __extends$W = globalThis && globalThis.__extends || function() {
   var extendStatics = function(d, b) {
     extendStatics = Object.setPrototypeOf || { __proto__: [] } instanceof Array && function(d2, b2) {
       d2.__proto__ = b2;
@@ -51327,7 +50685,7 @@ var __extends$P = globalThis && globalThis.__extends || function() {
   };
 }();
 var CompositeMapRenderer = function(_super) {
-  __extends$P(CompositeMapRenderer2, _super);
+  __extends$W(CompositeMapRenderer2, _super);
   function CompositeMapRenderer2(map2) {
     var _this = _super.call(this, map2) || this;
     _this.fontChangeListenerKey_ = listen(checkedFonts, ObjectEventType.PROPERTYCHANGE, map2.redrawText.bind(map2));
@@ -51430,7 +50788,154 @@ var CompositeMapRenderer = function(_super) {
   return CompositeMapRenderer2;
 }(MapRenderer$1);
 const CompositeMapRenderer$1 = CompositeMapRenderer;
-var __extends$O = globalThis && globalThis.__extends || function() {
+const CollectionEventType = {
+  ADD: "add",
+  REMOVE: "remove"
+};
+var __extends$V = globalThis && globalThis.__extends || function() {
+  var extendStatics = function(d, b) {
+    extendStatics = Object.setPrototypeOf || { __proto__: [] } instanceof Array && function(d2, b2) {
+      d2.__proto__ = b2;
+    } || function(d2, b2) {
+      for (var p2 in b2)
+        if (Object.prototype.hasOwnProperty.call(b2, p2))
+          d2[p2] = b2[p2];
+    };
+    return extendStatics(d, b);
+  };
+  return function(d, b) {
+    if (typeof b !== "function" && b !== null)
+      throw new TypeError("Class extends value " + String(b) + " is not a constructor or null");
+    extendStatics(d, b);
+    function __() {
+      this.constructor = d;
+    }
+    d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
+  };
+}();
+var Property$1 = {
+  LENGTH: "length"
+};
+var CollectionEvent = function(_super) {
+  __extends$V(CollectionEvent2, _super);
+  function CollectionEvent2(type, opt_element, opt_index) {
+    var _this = _super.call(this, type) || this;
+    _this.element = opt_element;
+    _this.index = opt_index;
+    return _this;
+  }
+  return CollectionEvent2;
+}(Event);
+var Collection = function(_super) {
+  __extends$V(Collection2, _super);
+  function Collection2(opt_array, opt_options) {
+    var _this = _super.call(this) || this;
+    _this.on;
+    _this.once;
+    _this.un;
+    var options = opt_options || {};
+    _this.unique_ = !!options.unique;
+    _this.array_ = opt_array ? opt_array : [];
+    if (_this.unique_) {
+      for (var i = 0, ii = _this.array_.length; i < ii; ++i) {
+        _this.assertUnique_(_this.array_[i], i);
+      }
+    }
+    _this.updateLength_();
+    return _this;
+  }
+  Collection2.prototype.clear = function() {
+    while (this.getLength() > 0) {
+      this.pop();
+    }
+  };
+  Collection2.prototype.extend = function(arr2) {
+    for (var i = 0, ii = arr2.length; i < ii; ++i) {
+      this.push(arr2[i]);
+    }
+    return this;
+  };
+  Collection2.prototype.forEach = function(f) {
+    var array = this.array_;
+    for (var i = 0, ii = array.length; i < ii; ++i) {
+      f(array[i], i, array);
+    }
+  };
+  Collection2.prototype.getArray = function() {
+    return this.array_;
+  };
+  Collection2.prototype.item = function(index2) {
+    return this.array_[index2];
+  };
+  Collection2.prototype.getLength = function() {
+    return this.get(Property$1.LENGTH);
+  };
+  Collection2.prototype.insertAt = function(index2, elem) {
+    if (this.unique_) {
+      this.assertUnique_(elem);
+    }
+    this.array_.splice(index2, 0, elem);
+    this.updateLength_();
+    this.dispatchEvent(new CollectionEvent(CollectionEventType.ADD, elem, index2));
+  };
+  Collection2.prototype.pop = function() {
+    return this.removeAt(this.getLength() - 1);
+  };
+  Collection2.prototype.push = function(elem) {
+    if (this.unique_) {
+      this.assertUnique_(elem);
+    }
+    var n = this.getLength();
+    this.insertAt(n, elem);
+    return this.getLength();
+  };
+  Collection2.prototype.remove = function(elem) {
+    var arr2 = this.array_;
+    for (var i = 0, ii = arr2.length; i < ii; ++i) {
+      if (arr2[i] === elem) {
+        return this.removeAt(i);
+      }
+    }
+    return void 0;
+  };
+  Collection2.prototype.removeAt = function(index2) {
+    var prev = this.array_[index2];
+    this.array_.splice(index2, 1);
+    this.updateLength_();
+    this.dispatchEvent(new CollectionEvent(CollectionEventType.REMOVE, prev, index2));
+    return prev;
+  };
+  Collection2.prototype.setAt = function(index2, elem) {
+    var n = this.getLength();
+    if (index2 < n) {
+      if (this.unique_) {
+        this.assertUnique_(elem, index2);
+      }
+      var prev = this.array_[index2];
+      this.array_[index2] = elem;
+      this.dispatchEvent(new CollectionEvent(CollectionEventType.REMOVE, prev, index2));
+      this.dispatchEvent(new CollectionEvent(CollectionEventType.ADD, elem, index2));
+    } else {
+      for (var j = n; j < index2; ++j) {
+        this.insertAt(j, void 0);
+      }
+      this.insertAt(index2, elem);
+    }
+  };
+  Collection2.prototype.updateLength_ = function() {
+    this.set(Property$1.LENGTH, this.array_.length);
+  };
+  Collection2.prototype.assertUnique_ = function(elem, opt_except) {
+    for (var i = 0, ii = this.array_.length; i < ii; ++i) {
+      if (this.array_[i] === elem && i !== opt_except) {
+        throw new AssertionError$1(58);
+      }
+    }
+  };
+  return Collection2;
+}(BaseObject$1);
+const Collection$1 = Collection;
+var __extends$U = globalThis && globalThis.__extends || function() {
   var extendStatics = function(d, b) {
     extendStatics = Object.setPrototypeOf || { __proto__: [] } instanceof Array && function(d2, b2) {
       d2.__proto__ = b2;
@@ -51452,7 +50957,7 @@ var __extends$O = globalThis && globalThis.__extends || function() {
   };
 }();
 var GroupEvent = function(_super) {
-  __extends$O(GroupEvent2, _super);
+  __extends$U(GroupEvent2, _super);
   function GroupEvent2(type, layer) {
     var _this = _super.call(this, type) || this;
     _this.layer = layer;
@@ -51464,7 +50969,7 @@ var Property = {
   LAYERS: "layers"
 };
 var LayerGroup = function(_super) {
-  __extends$O(LayerGroup2, _super);
+  __extends$U(LayerGroup2, _super);
   function LayerGroup2(opt_options) {
     var _this = this;
     var options = opt_options || {};
@@ -51598,7 +51103,7 @@ var LayerGroup = function(_super) {
   return LayerGroup2;
 }(BaseLayer$1);
 const LayerGroup$1 = LayerGroup;
-var __extends$N = globalThis && globalThis.__extends || function() {
+var __extends$T = globalThis && globalThis.__extends || function() {
   var extendStatics = function(d, b) {
     extendStatics = Object.setPrototypeOf || { __proto__: [] } instanceof Array && function(d2, b2) {
       d2.__proto__ = b2;
@@ -51620,7 +51125,7 @@ var __extends$N = globalThis && globalThis.__extends || function() {
   };
 }();
 var MapEvent = function(_super) {
-  __extends$N(MapEvent2, _super);
+  __extends$T(MapEvent2, _super);
   function MapEvent2(type, map2, opt_frameState) {
     var _this = _super.call(this, type) || this;
     _this.map = map2;
@@ -51630,7 +51135,7 @@ var MapEvent = function(_super) {
   return MapEvent2;
 }(Event);
 const MapEvent$1 = MapEvent;
-var __extends$M = globalThis && globalThis.__extends || function() {
+var __extends$S = globalThis && globalThis.__extends || function() {
   var extendStatics = function(d, b) {
     extendStatics = Object.setPrototypeOf || { __proto__: [] } instanceof Array && function(d2, b2) {
       d2.__proto__ = b2;
@@ -51652,7 +51157,7 @@ var __extends$M = globalThis && globalThis.__extends || function() {
   };
 }();
 var MapBrowserEvent = function(_super) {
-  __extends$M(MapBrowserEvent2, _super);
+  __extends$S(MapBrowserEvent2, _super);
   function MapBrowserEvent2(type, map2, originalEvent, opt_dragging, opt_frameState, opt_activePointers) {
     var _this = _super.call(this, type, map2, opt_frameState) || this;
     _this.originalEvent = originalEvent;
@@ -51717,7 +51222,17 @@ const MapBrowserEventType = {
   POINTERLEAVE: "pointerleave",
   POINTERCANCEL: "pointercancel"
 };
-var __extends$L = globalThis && globalThis.__extends || function() {
+const PointerEventType = {
+  POINTERMOVE: "pointermove",
+  POINTERDOWN: "pointerdown",
+  POINTERUP: "pointerup",
+  POINTEROVER: "pointerover",
+  POINTEROUT: "pointerout",
+  POINTERENTER: "pointerenter",
+  POINTERLEAVE: "pointerleave",
+  POINTERCANCEL: "pointercancel"
+};
+var __extends$R = globalThis && globalThis.__extends || function() {
   var extendStatics = function(d, b) {
     extendStatics = Object.setPrototypeOf || { __proto__: [] } instanceof Array && function(d2, b2) {
       d2.__proto__ = b2;
@@ -51739,7 +51254,7 @@ var __extends$L = globalThis && globalThis.__extends || function() {
   };
 }();
 var MapBrowserEventHandler = function(_super) {
-  __extends$L(MapBrowserEventHandler2, _super);
+  __extends$R(MapBrowserEventHandler2, _super);
   function MapBrowserEventHandler2(map2, moveTolerance) {
     var _this = _super.call(this, map2) || this;
     _this.map_ = map2;
@@ -51874,6 +51389,19 @@ var MapBrowserEventHandler = function(_super) {
   return MapBrowserEventHandler2;
 }(EventTarget);
 const MapBrowserEventHandler$1 = MapBrowserEventHandler;
+const MapEventType = {
+  POSTRENDER: "postrender",
+  MOVESTART: "movestart",
+  MOVEEND: "moveend",
+  LOADSTART: "loadstart",
+  LOADEND: "loadend"
+};
+const MapProperty = {
+  LAYERGROUP: "layergroup",
+  SIZE: "size",
+  TARGET: "target",
+  VIEW: "view"
+};
 var DROP = Infinity;
 var PriorityQueue = function() {
   function PriorityQueue2(priorityFunction, keyFunction) {
@@ -52011,7 +51539,7 @@ const TileState = {
   ERROR: 3,
   EMPTY: 4
 };
-var __extends$K = globalThis && globalThis.__extends || function() {
+var __extends$Q = globalThis && globalThis.__extends || function() {
   var extendStatics = function(d, b) {
     extendStatics = Object.setPrototypeOf || { __proto__: [] } instanceof Array && function(d2, b2) {
       d2.__proto__ = b2;
@@ -52033,7 +51561,7 @@ var __extends$K = globalThis && globalThis.__extends || function() {
   };
 }();
 var TileQueue = function(_super) {
-  __extends$K(TileQueue2, _super);
+  __extends$Q(TileQueue2, _super);
   function TileQueue2(tilePriorityFunction, tileChangeCallback) {
     var _this = _super.call(
       this,
@@ -52278,6 +51806,18 @@ function createSnapToZero(opt_tolerance) {
     }
   };
 }
+function easeIn(t) {
+  return Math.pow(t, 3);
+}
+function easeOut(t) {
+  return 1 - easeIn(1 - t);
+}
+function inAndOut(t) {
+  return 3 * t * t - 2 * t * t * t;
+}
+function linear(t) {
+  return t;
+}
 const GeometryLayout = {
   XY: "XY",
   XYZ: "XYZ",
@@ -52353,7 +51893,7 @@ function translate(flatCoordinates, offset, end, stride, deltaX, deltaY, opt_des
   }
   return dest;
 }
-var __extends$J = globalThis && globalThis.__extends || function() {
+var __extends$P = globalThis && globalThis.__extends || function() {
   var extendStatics = function(d, b) {
     extendStatics = Object.setPrototypeOf || { __proto__: [] } instanceof Array && function(d2, b2) {
       d2.__proto__ = b2;
@@ -52376,7 +51916,7 @@ var __extends$J = globalThis && globalThis.__extends || function() {
 }();
 var tmpTransform = create();
 var Geometry = function(_super) {
-  __extends$J(Geometry2, _super);
+  __extends$P(Geometry2, _super);
   function Geometry2() {
     var _this = _super.call(this) || this;
     _this.extent_ = createEmpty();
@@ -52467,7 +52007,7 @@ var Geometry = function(_super) {
   return Geometry2;
 }(BaseObject$1);
 const Geometry$1 = Geometry;
-var __extends$I = globalThis && globalThis.__extends || function() {
+var __extends$O = globalThis && globalThis.__extends || function() {
   var extendStatics = function(d, b) {
     extendStatics = Object.setPrototypeOf || { __proto__: [] } instanceof Array && function(d2, b2) {
       d2.__proto__ = b2;
@@ -52489,7 +52029,7 @@ var __extends$I = globalThis && globalThis.__extends || function() {
   };
 }();
 var SimpleGeometry = function(_super) {
-  __extends$I(SimpleGeometry2, _super);
+  __extends$O(SimpleGeometry2, _super);
   function SimpleGeometry2() {
     var _this = _super.call(this) || this;
     _this.layout = GeometryLayout.XY;
@@ -52910,7 +52450,7 @@ function linearRings(flatCoordinates, offset, ends, stride) {
   }
   return area;
 }
-var __extends$H = globalThis && globalThis.__extends || function() {
+var __extends$N = globalThis && globalThis.__extends || function() {
   var extendStatics = function(d, b) {
     extendStatics = Object.setPrototypeOf || { __proto__: [] } instanceof Array && function(d2, b2) {
       d2.__proto__ = b2;
@@ -52932,7 +52472,7 @@ var __extends$H = globalThis && globalThis.__extends || function() {
   };
 }();
 var LinearRing = function(_super) {
-  __extends$H(LinearRing2, _super);
+  __extends$N(LinearRing2, _super);
   function LinearRing2(coordinates2, opt_layout) {
     var _this = _super.call(this) || this;
     _this.maxDelta_ = -1;
@@ -52991,7 +52531,7 @@ var LinearRing = function(_super) {
   return LinearRing2;
 }(SimpleGeometry$1);
 const LinearRing$1 = LinearRing;
-var __extends$G = globalThis && globalThis.__extends || function() {
+var __extends$M = globalThis && globalThis.__extends || function() {
   var extendStatics = function(d, b) {
     extendStatics = Object.setPrototypeOf || { __proto__: [] } instanceof Array && function(d2, b2) {
       d2.__proto__ = b2;
@@ -53013,7 +52553,7 @@ var __extends$G = globalThis && globalThis.__extends || function() {
   };
 }();
 var Point = function(_super) {
-  __extends$G(Point2, _super);
+  __extends$M(Point2, _super);
   function Point2(coordinates2, opt_layout) {
     var _this = _super.call(this) || this;
     _this.setCoordinates(coordinates2, opt_layout);
@@ -53272,7 +52812,7 @@ function orientLinearRings(flatCoordinates, offset, ends, stride, opt_right) {
   }
   return offset;
 }
-var __extends$F = globalThis && globalThis.__extends || function() {
+var __extends$L = globalThis && globalThis.__extends || function() {
   var extendStatics = function(d, b) {
     extendStatics = Object.setPrototypeOf || { __proto__: [] } instanceof Array && function(d2, b2) {
       d2.__proto__ = b2;
@@ -53294,7 +52834,7 @@ var __extends$F = globalThis && globalThis.__extends || function() {
   };
 }();
 var Polygon = function(_super) {
-  __extends$F(Polygon2, _super);
+  __extends$L(Polygon2, _super);
   function Polygon2(coordinates2, opt_layout, opt_ends) {
     var _this = _super.call(this) || this;
     _this.ends_ = [];
@@ -53452,7 +52992,7 @@ function fromExtent(extent) {
     flatCoordinates.length
   ]);
 }
-var __extends$E = globalThis && globalThis.__extends || function() {
+var __extends$K = globalThis && globalThis.__extends || function() {
   var extendStatics = function(d, b) {
     extendStatics = Object.setPrototypeOf || { __proto__: [] } instanceof Array && function(d2, b2) {
       d2.__proto__ = b2;
@@ -53475,7 +53015,7 @@ var __extends$E = globalThis && globalThis.__extends || function() {
 }();
 var DEFAULT_MIN_ZOOM = 0;
 var View = function(_super) {
-  __extends$E(View2, _super);
+  __extends$K(View2, _super);
   function View2(opt_options) {
     var _this = _super.call(this) || this;
     _this.on;
@@ -54391,7 +53931,7 @@ function toSize(size, opt_size) {
     return opt_size;
   }
 }
-var __extends$D = globalThis && globalThis.__extends || function() {
+var __extends$J = globalThis && globalThis.__extends || function() {
   var extendStatics = function(d, b) {
     extendStatics = Object.setPrototypeOf || { __proto__: [] } instanceof Array && function(d2, b2) {
       d2.__proto__ = b2;
@@ -54434,7 +53974,7 @@ function setLayerMapProperty(layer, map2) {
   }
 }
 var PluggableMap = function(_super) {
-  __extends$D(PluggableMap2, _super);
+  __extends$J(PluggableMap2, _super);
   function PluggableMap2(options) {
     var _this = _super.call(this) || this;
     _this.on;
@@ -55140,6 +54680,714 @@ function createOptionsInternal(options) {
   };
 }
 const PluggableMap$1 = PluggableMap;
+var __extends$I = globalThis && globalThis.__extends || function() {
+  var extendStatics = function(d, b) {
+    extendStatics = Object.setPrototypeOf || { __proto__: [] } instanceof Array && function(d2, b2) {
+      d2.__proto__ = b2;
+    } || function(d2, b2) {
+      for (var p2 in b2)
+        if (Object.prototype.hasOwnProperty.call(b2, p2))
+          d2[p2] = b2[p2];
+    };
+    return extendStatics(d, b);
+  };
+  return function(d, b) {
+    if (typeof b !== "function" && b !== null)
+      throw new TypeError("Class extends value " + String(b) + " is not a constructor or null");
+    extendStatics(d, b);
+    function __() {
+      this.constructor = d;
+    }
+    d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
+  };
+}();
+var Control = function(_super) {
+  __extends$I(Control2, _super);
+  function Control2(options) {
+    var _this = _super.call(this) || this;
+    var element = options.element;
+    if (element && !options.target && !element.style.pointerEvents) {
+      element.style.pointerEvents = "auto";
+    }
+    _this.element = element ? element : null;
+    _this.target_ = null;
+    _this.map_ = null;
+    _this.listenerKeys = [];
+    if (options.render) {
+      _this.render = options.render;
+    }
+    if (options.target) {
+      _this.setTarget(options.target);
+    }
+    return _this;
+  }
+  Control2.prototype.disposeInternal = function() {
+    removeNode(this.element);
+    _super.prototype.disposeInternal.call(this);
+  };
+  Control2.prototype.getMap = function() {
+    return this.map_;
+  };
+  Control2.prototype.setMap = function(map2) {
+    if (this.map_) {
+      removeNode(this.element);
+    }
+    for (var i = 0, ii = this.listenerKeys.length; i < ii; ++i) {
+      unlistenByKey(this.listenerKeys[i]);
+    }
+    this.listenerKeys.length = 0;
+    this.map_ = map2;
+    if (map2) {
+      var target = this.target_ ? this.target_ : map2.getOverlayContainerStopEvent();
+      target.appendChild(this.element);
+      if (this.render !== VOID) {
+        this.listenerKeys.push(listen(map2, MapEventType.POSTRENDER, this.render, this));
+      }
+      map2.render();
+    }
+  };
+  Control2.prototype.render = function(mapEvent) {
+  };
+  Control2.prototype.setTarget = function(target) {
+    this.target_ = typeof target === "string" ? document.getElementById(target) : target;
+  };
+  return Control2;
+}(BaseObject$1);
+const Control$1 = Control;
+var __extends$H = globalThis && globalThis.__extends || function() {
+  var extendStatics = function(d, b) {
+    extendStatics = Object.setPrototypeOf || { __proto__: [] } instanceof Array && function(d2, b2) {
+      d2.__proto__ = b2;
+    } || function(d2, b2) {
+      for (var p2 in b2)
+        if (Object.prototype.hasOwnProperty.call(b2, p2))
+          d2[p2] = b2[p2];
+    };
+    return extendStatics(d, b);
+  };
+  return function(d, b) {
+    if (typeof b !== "function" && b !== null)
+      throw new TypeError("Class extends value " + String(b) + " is not a constructor or null");
+    extendStatics(d, b);
+    function __() {
+      this.constructor = d;
+    }
+    d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
+  };
+}();
+var Attribution = function(_super) {
+  __extends$H(Attribution2, _super);
+  function Attribution2(opt_options) {
+    var _this = this;
+    var options = opt_options ? opt_options : {};
+    _this = _super.call(this, {
+      element: document.createElement("div"),
+      render: options.render,
+      target: options.target
+    }) || this;
+    _this.ulElement_ = document.createElement("ul");
+    _this.collapsed_ = options.collapsed !== void 0 ? options.collapsed : true;
+    _this.userCollapsed_ = _this.collapsed_;
+    _this.overrideCollapsible_ = options.collapsible !== void 0;
+    _this.collapsible_ = options.collapsible !== void 0 ? options.collapsible : true;
+    if (!_this.collapsible_) {
+      _this.collapsed_ = false;
+    }
+    var className = options.className !== void 0 ? options.className : "ol-attribution";
+    var tipLabel = options.tipLabel !== void 0 ? options.tipLabel : "Attributions";
+    var expandClassName = options.expandClassName !== void 0 ? options.expandClassName : className + "-expand";
+    var collapseLabel = options.collapseLabel !== void 0 ? options.collapseLabel : "\u203A";
+    var collapseClassName = options.collapseClassName !== void 0 ? options.collapseClassName : className + "-collapse";
+    if (typeof collapseLabel === "string") {
+      _this.collapseLabel_ = document.createElement("span");
+      _this.collapseLabel_.textContent = collapseLabel;
+      _this.collapseLabel_.className = collapseClassName;
+    } else {
+      _this.collapseLabel_ = collapseLabel;
+    }
+    var label = options.label !== void 0 ? options.label : "i";
+    if (typeof label === "string") {
+      _this.label_ = document.createElement("span");
+      _this.label_.textContent = label;
+      _this.label_.className = expandClassName;
+    } else {
+      _this.label_ = label;
+    }
+    var activeLabel = _this.collapsible_ && !_this.collapsed_ ? _this.collapseLabel_ : _this.label_;
+    _this.toggleButton_ = document.createElement("button");
+    _this.toggleButton_.setAttribute("type", "button");
+    _this.toggleButton_.setAttribute("aria-expanded", String(!_this.collapsed_));
+    _this.toggleButton_.title = tipLabel;
+    _this.toggleButton_.appendChild(activeLabel);
+    _this.toggleButton_.addEventListener(EventType.CLICK, _this.handleClick_.bind(_this), false);
+    var cssClasses = className + " " + CLASS_UNSELECTABLE + " " + CLASS_CONTROL + (_this.collapsed_ && _this.collapsible_ ? " " + CLASS_COLLAPSED : "") + (_this.collapsible_ ? "" : " ol-uncollapsible");
+    var element = _this.element;
+    element.className = cssClasses;
+    element.appendChild(_this.toggleButton_);
+    element.appendChild(_this.ulElement_);
+    _this.renderedAttributions_ = [];
+    _this.renderedVisible_ = true;
+    return _this;
+  }
+  Attribution2.prototype.collectSourceAttributions_ = function(frameState) {
+    var lookup = {};
+    var visibleAttributions = [];
+    var collapsible = true;
+    var layerStatesArray = frameState.layerStatesArray;
+    for (var i = 0, ii = layerStatesArray.length; i < ii; ++i) {
+      var layerState = layerStatesArray[i];
+      if (!inView(layerState, frameState.viewState)) {
+        continue;
+      }
+      var source = layerState.layer.getSource();
+      if (!source) {
+        continue;
+      }
+      var attributionGetter = source.getAttributions();
+      if (!attributionGetter) {
+        continue;
+      }
+      var attributions = attributionGetter(frameState);
+      if (!attributions) {
+        continue;
+      }
+      collapsible = collapsible && source.getAttributionsCollapsible() !== false;
+      if (Array.isArray(attributions)) {
+        for (var j = 0, jj = attributions.length; j < jj; ++j) {
+          if (!(attributions[j] in lookup)) {
+            visibleAttributions.push(attributions[j]);
+            lookup[attributions[j]] = true;
+          }
+        }
+      } else {
+        if (!(attributions in lookup)) {
+          visibleAttributions.push(attributions);
+          lookup[attributions] = true;
+        }
+      }
+    }
+    if (!this.overrideCollapsible_) {
+      this.setCollapsible(collapsible);
+    }
+    return visibleAttributions;
+  };
+  Attribution2.prototype.updateElement_ = function(frameState) {
+    if (!frameState) {
+      if (this.renderedVisible_) {
+        this.element.style.display = "none";
+        this.renderedVisible_ = false;
+      }
+      return;
+    }
+    var attributions = this.collectSourceAttributions_(frameState);
+    var visible = attributions.length > 0;
+    if (this.renderedVisible_ != visible) {
+      this.element.style.display = visible ? "" : "none";
+      this.renderedVisible_ = visible;
+    }
+    if (equals(attributions, this.renderedAttributions_)) {
+      return;
+    }
+    removeChildren(this.ulElement_);
+    for (var i = 0, ii = attributions.length; i < ii; ++i) {
+      var element = document.createElement("li");
+      element.innerHTML = attributions[i];
+      this.ulElement_.appendChild(element);
+    }
+    this.renderedAttributions_ = attributions;
+  };
+  Attribution2.prototype.handleClick_ = function(event) {
+    event.preventDefault();
+    this.handleToggle_();
+    this.userCollapsed_ = this.collapsed_;
+  };
+  Attribution2.prototype.handleToggle_ = function() {
+    this.element.classList.toggle(CLASS_COLLAPSED);
+    if (this.collapsed_) {
+      replaceNode(this.collapseLabel_, this.label_);
+    } else {
+      replaceNode(this.label_, this.collapseLabel_);
+    }
+    this.collapsed_ = !this.collapsed_;
+    this.toggleButton_.setAttribute("aria-expanded", String(!this.collapsed_));
+  };
+  Attribution2.prototype.getCollapsible = function() {
+    return this.collapsible_;
+  };
+  Attribution2.prototype.setCollapsible = function(collapsible) {
+    if (this.collapsible_ === collapsible) {
+      return;
+    }
+    this.collapsible_ = collapsible;
+    this.element.classList.toggle("ol-uncollapsible");
+    if (this.userCollapsed_) {
+      this.handleToggle_();
+    }
+  };
+  Attribution2.prototype.setCollapsed = function(collapsed) {
+    this.userCollapsed_ = collapsed;
+    if (!this.collapsible_ || this.collapsed_ === collapsed) {
+      return;
+    }
+    this.handleToggle_();
+  };
+  Attribution2.prototype.getCollapsed = function() {
+    return this.collapsed_;
+  };
+  Attribution2.prototype.render = function(mapEvent) {
+    this.updateElement_(mapEvent.frameState);
+  };
+  return Attribution2;
+}(Control$1);
+const Attribution$1 = Attribution;
+var __extends$G = globalThis && globalThis.__extends || function() {
+  var extendStatics = function(d, b) {
+    extendStatics = Object.setPrototypeOf || { __proto__: [] } instanceof Array && function(d2, b2) {
+      d2.__proto__ = b2;
+    } || function(d2, b2) {
+      for (var p2 in b2)
+        if (Object.prototype.hasOwnProperty.call(b2, p2))
+          d2[p2] = b2[p2];
+    };
+    return extendStatics(d, b);
+  };
+  return function(d, b) {
+    if (typeof b !== "function" && b !== null)
+      throw new TypeError("Class extends value " + String(b) + " is not a constructor or null");
+    extendStatics(d, b);
+    function __() {
+      this.constructor = d;
+    }
+    d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
+  };
+}();
+var Rotate = function(_super) {
+  __extends$G(Rotate2, _super);
+  function Rotate2(opt_options) {
+    var _this = this;
+    var options = opt_options ? opt_options : {};
+    _this = _super.call(this, {
+      element: document.createElement("div"),
+      render: options.render,
+      target: options.target
+    }) || this;
+    var className = options.className !== void 0 ? options.className : "ol-rotate";
+    var label = options.label !== void 0 ? options.label : "\u21E7";
+    var compassClassName = options.compassClassName !== void 0 ? options.compassClassName : "ol-compass";
+    _this.label_ = null;
+    if (typeof label === "string") {
+      _this.label_ = document.createElement("span");
+      _this.label_.className = compassClassName;
+      _this.label_.textContent = label;
+    } else {
+      _this.label_ = label;
+      _this.label_.classList.add(compassClassName);
+    }
+    var tipLabel = options.tipLabel ? options.tipLabel : "Reset rotation";
+    var button = document.createElement("button");
+    button.className = className + "-reset";
+    button.setAttribute("type", "button");
+    button.title = tipLabel;
+    button.appendChild(_this.label_);
+    button.addEventListener(EventType.CLICK, _this.handleClick_.bind(_this), false);
+    var cssClasses = className + " " + CLASS_UNSELECTABLE + " " + CLASS_CONTROL;
+    var element = _this.element;
+    element.className = cssClasses;
+    element.appendChild(button);
+    _this.callResetNorth_ = options.resetNorth ? options.resetNorth : void 0;
+    _this.duration_ = options.duration !== void 0 ? options.duration : 250;
+    _this.autoHide_ = options.autoHide !== void 0 ? options.autoHide : true;
+    _this.rotation_ = void 0;
+    if (_this.autoHide_) {
+      _this.element.classList.add(CLASS_HIDDEN);
+    }
+    return _this;
+  }
+  Rotate2.prototype.handleClick_ = function(event) {
+    event.preventDefault();
+    if (this.callResetNorth_ !== void 0) {
+      this.callResetNorth_();
+    } else {
+      this.resetNorth_();
+    }
+  };
+  Rotate2.prototype.resetNorth_ = function() {
+    var map2 = this.getMap();
+    var view = map2.getView();
+    if (!view) {
+      return;
+    }
+    var rotation = view.getRotation();
+    if (rotation !== void 0) {
+      if (this.duration_ > 0 && rotation % (2 * Math.PI) !== 0) {
+        view.animate({
+          rotation: 0,
+          duration: this.duration_,
+          easing: easeOut
+        });
+      } else {
+        view.setRotation(0);
+      }
+    }
+  };
+  Rotate2.prototype.render = function(mapEvent) {
+    var frameState = mapEvent.frameState;
+    if (!frameState) {
+      return;
+    }
+    var rotation = frameState.viewState.rotation;
+    if (rotation != this.rotation_) {
+      var transform2 = "rotate(" + rotation + "rad)";
+      if (this.autoHide_) {
+        var contains = this.element.classList.contains(CLASS_HIDDEN);
+        if (!contains && rotation === 0) {
+          this.element.classList.add(CLASS_HIDDEN);
+        } else if (contains && rotation !== 0) {
+          this.element.classList.remove(CLASS_HIDDEN);
+        }
+      }
+      this.label_.style.transform = transform2;
+    }
+    this.rotation_ = rotation;
+  };
+  return Rotate2;
+}(Control$1);
+const Rotate$1 = Rotate;
+var __extends$F = globalThis && globalThis.__extends || function() {
+  var extendStatics = function(d, b) {
+    extendStatics = Object.setPrototypeOf || { __proto__: [] } instanceof Array && function(d2, b2) {
+      d2.__proto__ = b2;
+    } || function(d2, b2) {
+      for (var p2 in b2)
+        if (Object.prototype.hasOwnProperty.call(b2, p2))
+          d2[p2] = b2[p2];
+    };
+    return extendStatics(d, b);
+  };
+  return function(d, b) {
+    if (typeof b !== "function" && b !== null)
+      throw new TypeError("Class extends value " + String(b) + " is not a constructor or null");
+    extendStatics(d, b);
+    function __() {
+      this.constructor = d;
+    }
+    d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
+  };
+}();
+var Zoom = function(_super) {
+  __extends$F(Zoom2, _super);
+  function Zoom2(opt_options) {
+    var _this = this;
+    var options = opt_options ? opt_options : {};
+    _this = _super.call(this, {
+      element: document.createElement("div"),
+      target: options.target
+    }) || this;
+    var className = options.className !== void 0 ? options.className : "ol-zoom";
+    var delta = options.delta !== void 0 ? options.delta : 1;
+    var zoomInClassName = options.zoomInClassName !== void 0 ? options.zoomInClassName : className + "-in";
+    var zoomOutClassName = options.zoomOutClassName !== void 0 ? options.zoomOutClassName : className + "-out";
+    var zoomInLabel = options.zoomInLabel !== void 0 ? options.zoomInLabel : "+";
+    var zoomOutLabel = options.zoomOutLabel !== void 0 ? options.zoomOutLabel : "\u2013";
+    var zoomInTipLabel = options.zoomInTipLabel !== void 0 ? options.zoomInTipLabel : "Zoom in";
+    var zoomOutTipLabel = options.zoomOutTipLabel !== void 0 ? options.zoomOutTipLabel : "Zoom out";
+    var inElement = document.createElement("button");
+    inElement.className = zoomInClassName;
+    inElement.setAttribute("type", "button");
+    inElement.title = zoomInTipLabel;
+    inElement.appendChild(typeof zoomInLabel === "string" ? document.createTextNode(zoomInLabel) : zoomInLabel);
+    inElement.addEventListener(EventType.CLICK, _this.handleClick_.bind(_this, delta), false);
+    var outElement = document.createElement("button");
+    outElement.className = zoomOutClassName;
+    outElement.setAttribute("type", "button");
+    outElement.title = zoomOutTipLabel;
+    outElement.appendChild(typeof zoomOutLabel === "string" ? document.createTextNode(zoomOutLabel) : zoomOutLabel);
+    outElement.addEventListener(EventType.CLICK, _this.handleClick_.bind(_this, -delta), false);
+    var cssClasses = className + " " + CLASS_UNSELECTABLE + " " + CLASS_CONTROL;
+    var element = _this.element;
+    element.className = cssClasses;
+    element.appendChild(inElement);
+    element.appendChild(outElement);
+    _this.duration_ = options.duration !== void 0 ? options.duration : 250;
+    return _this;
+  }
+  Zoom2.prototype.handleClick_ = function(delta, event) {
+    event.preventDefault();
+    this.zoomByDelta_(delta);
+  };
+  Zoom2.prototype.zoomByDelta_ = function(delta) {
+    var map2 = this.getMap();
+    var view = map2.getView();
+    if (!view) {
+      return;
+    }
+    var currentZoom = view.getZoom();
+    if (currentZoom !== void 0) {
+      var newZoom = view.getConstrainedZoom(currentZoom + delta);
+      if (this.duration_ > 0) {
+        if (view.getAnimating()) {
+          view.cancelAnimations();
+        }
+        view.animate({
+          zoom: newZoom,
+          duration: this.duration_,
+          easing: easeOut
+        });
+      } else {
+        view.setZoom(newZoom);
+      }
+    }
+  };
+  return Zoom2;
+}(Control$1);
+const Zoom$1 = Zoom;
+var __extends$E = globalThis && globalThis.__extends || function() {
+  var extendStatics = function(d, b) {
+    extendStatics = Object.setPrototypeOf || { __proto__: [] } instanceof Array && function(d2, b2) {
+      d2.__proto__ = b2;
+    } || function(d2, b2) {
+      for (var p2 in b2)
+        if (Object.prototype.hasOwnProperty.call(b2, p2))
+          d2[p2] = b2[p2];
+    };
+    return extendStatics(d, b);
+  };
+  return function(d, b) {
+    if (typeof b !== "function" && b !== null)
+      throw new TypeError("Class extends value " + String(b) + " is not a constructor or null");
+    extendStatics(d, b);
+    function __() {
+      this.constructor = d;
+    }
+    d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
+  };
+}();
+var events = [
+  "fullscreenchange",
+  "webkitfullscreenchange",
+  "MSFullscreenChange"
+];
+var FullScreenEventType = {
+  ENTERFULLSCREEN: "enterfullscreen",
+  LEAVEFULLSCREEN: "leavefullscreen"
+};
+var FullScreen = function(_super) {
+  __extends$E(FullScreen2, _super);
+  function FullScreen2(opt_options) {
+    var _this = this;
+    var options = opt_options ? opt_options : {};
+    _this = _super.call(this, {
+      element: document.createElement("div"),
+      target: options.target
+    }) || this;
+    _this.on;
+    _this.once;
+    _this.un;
+    _this.keys_ = options.keys !== void 0 ? options.keys : false;
+    _this.source_ = options.source;
+    _this.isInFullscreen_ = false;
+    _this.boundHandleMapTargetChange_ = _this.handleMapTargetChange_.bind(_this);
+    _this.cssClassName_ = options.className !== void 0 ? options.className : "ol-full-screen";
+    _this.documentListeners_ = [];
+    _this.activeClassName_ = options.activeClassName !== void 0 ? options.activeClassName.split(" ") : [_this.cssClassName_ + "-true"];
+    _this.inactiveClassName_ = options.inactiveClassName !== void 0 ? options.inactiveClassName.split(" ") : [_this.cssClassName_ + "-false"];
+    var label = options.label !== void 0 ? options.label : "\u2922";
+    _this.labelNode_ = typeof label === "string" ? document.createTextNode(label) : label;
+    var labelActive = options.labelActive !== void 0 ? options.labelActive : "\xD7";
+    _this.labelActiveNode_ = typeof labelActive === "string" ? document.createTextNode(labelActive) : labelActive;
+    var tipLabel = options.tipLabel ? options.tipLabel : "Toggle full-screen";
+    _this.button_ = document.createElement("button");
+    _this.button_.title = tipLabel;
+    _this.button_.setAttribute("type", "button");
+    _this.button_.appendChild(_this.labelNode_);
+    _this.button_.addEventListener(EventType.CLICK, _this.handleClick_.bind(_this), false);
+    _this.setClassName_(_this.button_, _this.isInFullscreen_);
+    _this.element.className = "".concat(_this.cssClassName_, " ").concat(CLASS_UNSELECTABLE, " ").concat(CLASS_CONTROL);
+    _this.element.appendChild(_this.button_);
+    return _this;
+  }
+  FullScreen2.prototype.handleClick_ = function(event) {
+    event.preventDefault();
+    this.handleFullScreen_();
+  };
+  FullScreen2.prototype.handleFullScreen_ = function() {
+    var map2 = this.getMap();
+    if (!map2) {
+      return;
+    }
+    var doc = map2.getOwnerDocument();
+    if (!isFullScreenSupported(doc)) {
+      return;
+    }
+    if (isFullScreen(doc)) {
+      exitFullScreen(doc);
+    } else {
+      var element = void 0;
+      if (this.source_) {
+        element = typeof this.source_ === "string" ? doc.getElementById(this.source_) : this.source_;
+      } else {
+        element = map2.getTargetElement();
+      }
+      if (this.keys_) {
+        requestFullScreenWithKeys(element);
+      } else {
+        requestFullScreen(element);
+      }
+    }
+  };
+  FullScreen2.prototype.handleFullScreenChange_ = function() {
+    var map2 = this.getMap();
+    if (!map2) {
+      return;
+    }
+    var wasInFullscreen = this.isInFullscreen_;
+    this.isInFullscreen_ = isFullScreen(map2.getOwnerDocument());
+    if (wasInFullscreen !== this.isInFullscreen_) {
+      this.setClassName_(this.button_, this.isInFullscreen_);
+      if (this.isInFullscreen_) {
+        replaceNode(this.labelActiveNode_, this.labelNode_);
+        this.dispatchEvent(FullScreenEventType.ENTERFULLSCREEN);
+      } else {
+        replaceNode(this.labelNode_, this.labelActiveNode_);
+        this.dispatchEvent(FullScreenEventType.LEAVEFULLSCREEN);
+      }
+      map2.updateSize();
+    }
+  };
+  FullScreen2.prototype.setClassName_ = function(element, fullscreen) {
+    var _a, _b, _c, _d;
+    if (fullscreen) {
+      (_a = element.classList).remove.apply(_a, this.inactiveClassName_);
+      (_b = element.classList).add.apply(_b, this.activeClassName_);
+    } else {
+      (_c = element.classList).remove.apply(_c, this.activeClassName_);
+      (_d = element.classList).add.apply(_d, this.inactiveClassName_);
+    }
+  };
+  FullScreen2.prototype.setMap = function(map2) {
+    var oldMap = this.getMap();
+    if (oldMap) {
+      oldMap.removeChangeListener(MapProperty.TARGET, this.boundHandleMapTargetChange_);
+    }
+    _super.prototype.setMap.call(this, map2);
+    this.handleMapTargetChange_();
+    if (map2) {
+      map2.addChangeListener(MapProperty.TARGET, this.boundHandleMapTargetChange_);
+    }
+  };
+  FullScreen2.prototype.handleMapTargetChange_ = function() {
+    var listeners = this.documentListeners_;
+    for (var i = 0, ii = listeners.length; i < ii; ++i) {
+      unlistenByKey(listeners[i]);
+    }
+    listeners.length = 0;
+    var map2 = this.getMap();
+    if (map2) {
+      var doc = map2.getOwnerDocument();
+      if (isFullScreenSupported(doc)) {
+        this.element.classList.remove(CLASS_UNSUPPORTED);
+      } else {
+        this.element.classList.add(CLASS_UNSUPPORTED);
+      }
+      for (var i = 0, ii = events.length; i < ii; ++i) {
+        listeners.push(listen(doc, events[i], this.handleFullScreenChange_, this));
+      }
+      this.handleFullScreenChange_();
+    }
+  };
+  return FullScreen2;
+}(Control$1);
+function isFullScreenSupported(doc) {
+  var body = doc.body;
+  return !!(body["webkitRequestFullscreen"] || body["msRequestFullscreen"] && doc["msFullscreenEnabled"] || body.requestFullscreen && doc.fullscreenEnabled);
+}
+function isFullScreen(doc) {
+  return !!(doc["webkitIsFullScreen"] || doc["msFullscreenElement"] || doc.fullscreenElement);
+}
+function requestFullScreen(element) {
+  if (element.requestFullscreen) {
+    element.requestFullscreen();
+  } else if (element["msRequestFullscreen"]) {
+    element["msRequestFullscreen"]();
+  } else if (element["webkitRequestFullscreen"]) {
+    element["webkitRequestFullscreen"]();
+  }
+}
+function requestFullScreenWithKeys(element) {
+  if (element["webkitRequestFullscreen"]) {
+    element["webkitRequestFullscreen"]();
+  } else {
+    requestFullScreen(element);
+  }
+}
+function exitFullScreen(doc) {
+  if (doc.exitFullscreen) {
+    doc.exitFullscreen();
+  } else if (doc["msExitFullscreen"]) {
+    doc["msExitFullscreen"]();
+  } else if (doc["webkitExitFullscreen"]) {
+    doc["webkitExitFullscreen"]();
+  }
+}
+const FullScreen$1 = FullScreen;
+var __extends$D = globalThis && globalThis.__extends || function() {
+  var extendStatics = function(d, b) {
+    extendStatics = Object.setPrototypeOf || { __proto__: [] } instanceof Array && function(d2, b2) {
+      d2.__proto__ = b2;
+    } || function(d2, b2) {
+      for (var p2 in b2)
+        if (Object.prototype.hasOwnProperty.call(b2, p2))
+          d2[p2] = b2[p2];
+    };
+    return extendStatics(d, b);
+  };
+  return function(d, b) {
+    if (typeof b !== "function" && b !== null)
+      throw new TypeError("Class extends value " + String(b) + " is not a constructor or null");
+    extendStatics(d, b);
+    function __() {
+      this.constructor = d;
+    }
+    d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
+  };
+}();
+var ZoomToExtent$1 = function(_super) {
+  __extends$D(ZoomToExtent2, _super);
+  function ZoomToExtent2(opt_options) {
+    var _this = this;
+    var options = opt_options ? opt_options : {};
+    _this = _super.call(this, {
+      element: document.createElement("div"),
+      target: options.target
+    }) || this;
+    _this.extent = options.extent ? options.extent : null;
+    var className = options.className !== void 0 ? options.className : "ol-zoom-extent";
+    var label = options.label !== void 0 ? options.label : "E";
+    var tipLabel = options.tipLabel !== void 0 ? options.tipLabel : "Fit to extent";
+    var button = document.createElement("button");
+    button.setAttribute("type", "button");
+    button.title = tipLabel;
+    button.appendChild(typeof label === "string" ? document.createTextNode(label) : label);
+    button.addEventListener(EventType.CLICK, _this.handleClick_.bind(_this), false);
+    var cssClasses = className + " " + CLASS_UNSELECTABLE + " " + CLASS_CONTROL;
+    var element = _this.element;
+    element.className = cssClasses;
+    element.appendChild(button);
+    return _this;
+  }
+  ZoomToExtent2.prototype.handleClick_ = function(event) {
+    event.preventDefault();
+    this.handleZoomToExtent();
+  };
+  ZoomToExtent2.prototype.handleZoomToExtent = function() {
+    var map2 = this.getMap();
+    var view = map2.getView();
+    var extent = !this.extent ? view.getProjection().getExtent() : this.extent;
+    view.fitInternal(fromExtent(extent));
+  };
+  return ZoomToExtent2;
+}(Control$1);
+const OlControlZoomToExtent = ZoomToExtent$1;
 function defaults$2(opt_options) {
   var options = opt_options ? opt_options : {};
   var controls = new Collection$1();
@@ -57041,19 +57289,16 @@ function useMap() {
   function getOlMap() {
     return map;
   }
-  function createMap(target) {
+  function createMap() {
     map = new OlMap({
       view: new OlView({
         zoom: 10,
         center: [682439, 6379152],
         multiWorld: true
       }),
-      target,
-      controls: defaults$2({
-        zoom: false,
-        rotate: false
-      })
+      controls: []
     });
+    return map;
   }
   function equalsLayer(layerA, layerB) {
     return layerA === layerB;
@@ -78131,25 +78376,124 @@ class StatePersistorMapService {
   }
 }
 const statePersistorMapService = new StatePersistorMapService();
+function useControl(ControlClass, options) {
+  const control = new ControlClass(options);
+  const map2 = useMap();
+  const olMap = inject("olMap");
+  onMounted(() => {
+    olMap.addControl(control);
+    olMap.changed();
+  });
+  onUnmounted(() => {
+    const olMap2 = map2.getOlMap();
+    olMap2.removeControl(control);
+    olMap2.changed();
+  });
+  return {
+    control
+  };
+}
+const _sfc_main$h = /* @__PURE__ */ defineComponent$1({
+  __name: "attribution",
+  props: {
+    className: { default: "geoportailv3-attribution" },
+    collapsed: { type: Boolean, default: false },
+    collapsible: { type: Boolean, default: false }
+  },
+  setup(__props) {
+    const props = __props;
+    useControl(Attribution$1, props);
+    return (_ctx, _cache) => {
+      return null;
+    };
+  }
+});
+const _sfc_main$g = /* @__PURE__ */ defineComponent$1({
+  __name: "fullscreen",
+  props: {
+    className: null,
+    label: { default: "\uE01C" },
+    labelActive: { default: "\uE02C" }
+  },
+  setup(__props) {
+    const props = __props;
+    useControl(FullScreen$1, props);
+    return (_ctx, _cache) => {
+      return null;
+    };
+  }
+});
+const _sfc_main$f = /* @__PURE__ */ defineComponent$1({
+  __name: "zoom",
+  props: {
+    className: null,
+    zoomInLabel: { default: "\uE032" },
+    zoomOutLabel: { default: "\uE033" }
+  },
+  setup(__props) {
+    const props = __props;
+    useControl(Zoom$1, props);
+    return (_ctx, _cache) => {
+      return null;
+    };
+  }
+});
+class ZoomToExtent extends OlControlZoomToExtent {
+  constructor(optOptions) {
+    super(optOptions);
+    __publicField(this, "ol3dm");
+  }
+  handleZoomToExtent() {
+    if (this.ol3dm && this.ol3dm.luxCameraExtentInRadians && this.ol3dm.is3dEnabled())
+      ;
+    else {
+      super.handleZoomToExtent();
+    }
+  }
+}
+const _sfc_main$e = /* @__PURE__ */ defineComponent$1({
+  __name: "zoom-to-extent",
+  props: {
+    className: null,
+    label: { default: "\uE01B" },
+    tipLabel: null,
+    extent: null
+  },
+  setup(__props) {
+    const props = __props;
+    useControl(ZoomToExtent, props);
+    return (_ctx, _cache) => {
+      return null;
+    };
+  }
+});
 const _sfc_main$d = /* @__PURE__ */ defineComponent$1({
   __name: "map-container",
   setup(__props) {
     const map2 = useMap();
     const mapContainer = ref(null);
-    onMounted(async () => {
+    const olMap = map2.createMap();
+    const DEFAULT_EXTENT = [425152.9429259216, 632446599999133e-8, 914349.9239510496, 6507914867875754e-9];
+    onMounted(() => {
       if (mapContainer.value) {
-        map2.createMap(mapContainer.value);
-        new OlSynchronizer(map2.getOlMap());
+        new OlSynchronizer(olMap);
         statePersistorMapService.bootstrap();
-        window.olMap = map2.getOlMap();
+        olMap.setTarget(mapContainer.value);
+        window.olMap = olMap;
       }
     });
+    provide("olMap", olMap);
     return (_ctx, _cache) => {
       return openBlock(), createElementBlock("div", {
         ref_key: "mapContainer",
         ref: mapContainer,
         class: "h-full w-full bg-white"
-      }, null, 512);
+      }, [
+        createVNode$1(_sfc_main$f),
+        createVNode$1(_sfc_main$e, { extent: DEFAULT_EXTENT }),
+        createVNode$1(_sfc_main$g),
+        createVNode$1(_sfc_main$h)
+      ], 512);
     };
   }
 });
@@ -80749,7 +81093,7 @@ const _sfc_main$a = /* @__PURE__ */ defineComponent$1({
         ]),
         createElementVNode("div", _hoisted_3$5, [
           createElementVNode("div", _hoisted_4$5, [
-            createVNode$1(_sfc_main$o, {
+            createVNode$1(_sfc_main$s, {
               options: unref(wmsLayers),
               placeholder: unref(t)("Predefined wms", { ns: "client" }),
               onChange: onChangeRemoteEndpoint
@@ -80788,7 +81132,7 @@ const _sfc_main$a = /* @__PURE__ */ defineComponent$1({
             })), 1)
           ])) : createCommentVNode("", true),
           !unref(isLoading) ? (openBlock(), createElementBlock("div", _hoisted_12$1, [
-            unref(layerTree) ? (openBlock(), createBlock(_sfc_main$i, {
+            unref(layerTree) ? (openBlock(), createBlock(_sfc_main$m, {
               key: 0,
               class: "block p-[10px] mb-[11px]",
               node: unref(layerTree),
@@ -81272,7 +81616,7 @@ const _sfc_main$7 = /* @__PURE__ */ defineComponent$1({
     }
     return (_ctx, _cache) => {
       return openBlock(), createElementBlock("div", null, [
-        createVNode$1(_sfc_main$o, {
+        createVNode$1(_sfc_main$s, {
           class: "lux-navbar-dropdown lux-dropdown-inline text-white h-full",
           options: unref(availableLanguages),
           placeholder: unref(placeholder),
@@ -81509,9 +81853,9 @@ const _sfc_main$2 = /* @__PURE__ */ defineComponent$1({
     }
     return (_ctx, _cache) => {
       return openBlock(), createElementBlock(Fragment, null, [
-        createVNode$1(_sfc_main$e, { onToggleThemesGrid: toggleThemesGrid }),
+        createVNode$1(_sfc_main$i, { onToggleThemesGrid: toggleThemesGrid }),
         createElementVNode("div", _hoisted_1$2, [
-          unref(themeGridIsOpen) === false ? (openBlock(), createBlock(_sfc_main$h, {
+          unref(themeGridIsOpen) === false ? (openBlock(), createBlock(_sfc_main$l, {
             key: 0,
             class: "pt-5 absolute inset-x-2.5 bg-primary overflow-y-auto overflow-x-hidden"
           })) : createCommentVNode("", true)
@@ -81555,7 +81899,7 @@ const _sfc_main$1 = /* @__PURE__ */ defineComponent$1({
         ]),
         createElementVNode("div", _hoisted_5$1, [
           !myLayersOpen.value ? (openBlock(), createBlock(_sfc_main$2, { key: 0 })) : createCommentVNode("", true),
-          myLayersOpen.value ? (openBlock(), createBlock(_sfc_main$j, { key: 1 })) : createCommentVNode("", true)
+          myLayersOpen.value ? (openBlock(), createBlock(_sfc_main$n, { key: 1 })) : createCommentVNode("", true)
         ]),
         createVNode$1(_sfc_main$a),
         createVNode$1(_sfc_main$8)
@@ -82643,9 +82987,20 @@ const _sfc_main = /* @__PURE__ */ defineComponent$1({
     watch(
       layersOpen,
       () => setTimeout(() => {
-        useMap().getOlMap().updateSize();
+        resizeMap();
       }, 50)
     );
+    onMounted(() => window.addEventListener("resize", resizeMap));
+    onUnmounted(() => window.removeEventListener("resize", resizeMap));
+    function resizeMap() {
+      const map2 = useMap().getOlMap();
+      map2.updateSize();
+      map2.getAllLayers().forEach((layer) => {
+        if (layer instanceof MapLibreLayer) {
+          layer.maplibreMap.resize();
+        }
+      });
+    }
     return (_ctx, _cache) => {
       return openBlock(), createElementBlock("div", _hoisted_1, [
         createVNode$1(_sfc_main$6),
@@ -82716,17 +83071,17 @@ watch(
 export {
   _sfc_main as App,
   _sfc_main$b as BackgroundSelector,
-  _sfc_main$h as CatalogTree,
-  _sfc_main$o as DropdownList,
+  _sfc_main$l as CatalogTree,
+  _sfc_main$s as DropdownList,
   _sfc_main$3 as FooterBar,
   _sfc_main$6 as HeaderBar,
   install as I18NextVue,
-  _sfc_main$j as LayerManager,
+  _sfc_main$n as LayerManager,
   _sfc_main$8 as LayerMetadata,
   _sfc_main$1 as LayerPanel,
   _sfc_main$d as MapContainer,
   _sfc_main$a as RemoteLayers,
-  _sfc_main$e as ThemeSelector,
+  _sfc_main$i as ThemeSelector,
   y as VueDOMPurifyHTML,
   app,
   Backend as backend,

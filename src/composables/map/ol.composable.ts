@@ -63,6 +63,7 @@ function createWmtsLayer(layer: Layer): TileLayer<WMTS> {
   const hasRetina = getLayerHasRetina(layer)
   const projection = getProjection(PROJECTION_WEBMERCATOR)!
   const extent = projection!.getExtent()
+  
   const olLayer = new TileLayer({
     source: new WMTS({
       url: getLayerWmtsUrl(layer),
@@ -236,7 +237,10 @@ export default function useOpenLayers() {
               queryable_id: bgLayer.id,
               metadata: bgLayer.metadata,
             }))
-          )
+          );
+
+          // TODO: fix this to display attribution, but at that time, this brokes the vue runtime-dom
+          // (bgBaseLayer as typeof MapLibreLayer).maplibreMap.setAttributions(bgLayer.metadata?.attribution)
         } else {
           addLayerToCache(bgLayer.id, (bgBaseLayer = createLayer(bgLayer)))
         }
