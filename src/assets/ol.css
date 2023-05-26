@@ -36,4 +36,12 @@
     @apply list-none p-1 text-sm mb-0;
     color: #6b818f;
   }
+
+  .location-button {
+    z-index: 2;
+    bottom: 55px;
+    padding: 0;
+    right: 8px;
+    border: 1px solid #8394a0;
+  }
 }
