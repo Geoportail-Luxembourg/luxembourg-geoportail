@@ -6,6 +6,7 @@ import { OlSynchronizer } from '@/composables/map/ol.synchronizer'
 import { statePersistorMapService } from '@/services/state-persistor/state-persistor-map.service'
 
 import AttributionControl from '../map-controls/attribution.vue'
+import LocationControl from '../map-controls/location.vue'
 import FullscreenControl from '../map-controls/fullscreen.vue'
 import ZoomControl from '../map-controls/zoom.vue'
 import ZoomToExtentControl from '../map-controls/zoom-to-extent.vue'
@@ -40,5 +41,6 @@ provide("olMap", olMap)
     <zoom-to-extent-control :extent="DEFAULT_EXTENT" />
     <fullscreen-control />
     <attribution-control />
+    <location-control />
   </div>
 </template>
