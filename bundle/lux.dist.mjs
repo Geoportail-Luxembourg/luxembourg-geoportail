@@ -81557,9 +81557,7 @@ const _sfc_main$1 = /* @__PURE__ */ defineComponent$1({
         createElementVNode("div", _hoisted_5$1, [
           !myLayersOpen.value ? (openBlock(), createBlock(_sfc_main$2, { key: 0 })) : createCommentVNode("", true),
           myLayersOpen.value ? (openBlock(), createBlock(_sfc_main$j, { key: 1 })) : createCommentVNode("", true)
-        ]),
-        createVNode$1(_sfc_main$a),
-        createVNode$1(_sfc_main$8)
+        ])
       ]);
     };
   }
@@ -82666,7 +82664,9 @@ const _sfc_main = /* @__PURE__ */ defineComponent$1({
             createVNode$1(_sfc_main$1)
           ])) : createCommentVNode("", true),
           createElementVNode("div", _hoisted_4, [
-            createVNode$1(_sfc_main$d)
+            createVNode$1(_sfc_main$d),
+            createVNode$1(_sfc_main$a),
+            createVNode$1(_sfc_main$8)
           ]),
           createElementVNode("div", _hoisted_5, [
             createVNode$1(_sfc_main$b)
@@ -82732,6 +82732,7 @@ export {
   statePersistorThemeService,
   storeToRefs,
   themeSelectorService,
+  useAppStore,
   useMap,
   useMapStore,
   useThemeStore,

@@ -20,6 +20,7 @@ import HeaderBar from '@/components/header/header-bar.vue'
 import FooterBar from '@/components/footer/footer-bar.vue'
 import LayerPanel from '@/components/layer-panel/layer-panel.vue'
 import useMap from '@/composables/map/map.composable'
+import { useAppStore } from '@/stores/app.store'
 import { useMapStore } from '@/stores/map.store'
 import { useThemeStore } from '@/stores/config.store'
 import { statePersistorLayersService } from '@/services/state-persistor/state-persistor-layers.service'
@@ -90,6 +91,7 @@ export {
   FooterBar,
   LayerPanel,
   useMap,
+  useAppStore,
   useMapStore,
   useThemeStore,
   statePersistorLayersService,
