@@ -66,28 +66,6 @@ const createElementInstance = (component = {}, app = null) => {
   )
 }
 
-const mapStore = useMapStore()
-const { layers } = storeToRefs(mapStore)
-
-const themeStore = useThemeStore()
-const { theme } = storeToRefs(themeStore)
-
-//trigger 'changedTheme' event for v3
-const changedTheme = new CustomEvent('changedTheme', {
-  detail: {
-    theme,
-  },
-})
-watch(
-  theme,
-  theme => {
-    if (theme) {
-      window.dispatchEvent(changedTheme)
-    }
-  },
-  { immediate: true }
-)
-
 export {
   app,
   App,
@@ -95,6 +73,8 @@ export {
   createElementInstance,
   defineCustomElement,
   createPinia,
+  storeToRefs,
+  watch,
   backend,
   VueDOMPurifyHTML,
   I18NextVue,
@@ -111,7 +91,6 @@ export {
   LayerPanel,
   useMap,
   useMapStore,
-  layers,
   useThemeStore,
   statePersistorLayersService,
   statePersistorThemeService,
