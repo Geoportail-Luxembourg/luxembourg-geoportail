@@ -4,8 +4,6 @@ import { useTranslation } from 'i18next-vue'
 
 import CatalogTab from '@/components/catalog/catalog-tab.vue'
 import LayerManager from '@/components/layer-manager/layer-manager.vue'
-import RemoteLayers from '@/components/remote-layers/remote-layers.vue'
-import LayerMetadata from '../layer-metadata/layer-metadata.vue'
 import { useAppStore } from '@/stores/app.store'
 
 const { t } = useTranslation()
@@ -51,7 +49,5 @@ const { setLayersOpen } = useAppStore()
       <catalog-tab v-if="!myLayersOpen"></catalog-tab>
       <layer-manager data-cy="myLayers" v-if="myLayersOpen"></layer-manager>
     </div>
-    <remote-layers></remote-layers>
-    <layer-metadata></layer-metadata>
   </div>
 </template>

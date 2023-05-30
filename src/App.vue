@@ -11,6 +11,8 @@ import BackgroundSelector from '@/components/background-selector/background-sele
 
 import LayerPanel from '@/components/layer-panel/layer-panel.vue'
 import MapContainer from '@/components/map/map-container.vue'
+import RemoteLayers from '@/components/remote-layers/remote-layers.vue'
+import LayerMetadata from '@/components/layer-metadata/layer-metadata.vue'
 
 import { statePersistorLayersService } from '@/services/state-persistor/state-persistor-layers.service'
 import { statePersistorThemeService } from '@/services/state-persistor/state-persistor-theme.service'
@@ -24,14 +26,14 @@ statePersistorLayersOpenService.bootstrapLayersOpen()
 
 const { layersOpen } = storeToRefs(useAppStore())
 
-watch(layersOpen, () => 
+watch(layersOpen, () =>
   setTimeout(() => {
     resizeMap()
   }, 50)
 )
 
-onMounted(() => window.addEventListener("resize", resizeMap))
-onUnmounted(() => window.removeEventListener("resize", resizeMap))
+onMounted(() => window.addEventListener('resize', resizeMap))
+onUnmounted(() => window.removeEventListener('resize', resizeMap))
 
 function resizeMap() {
   // Update all canvas size when layer panel is opened/closed
@@ -43,7 +45,7 @@ function resizeMap() {
   // And trigger update MapLibre layers' canvas size
   map.getAllLayers().forEach(layer => {
     if (layer instanceof MapLibreLayer) {
-      (layer as MapLibreLayer).maplibreMap.resize()
+      ;(layer as MapLibreLayer).maplibreMap.resize()
     }
   })
 
@@ -61,6 +63,8 @@ function resizeMap() {
       </div>
       <div class="grow bg-blue-100">
         <map-container></map-container>
+        <remote-layers></remote-layers>
+        <layer-metadata></layer-metadata>
       </div>
       <div class="absolute right-1 top-16">
         <background-selector></background-selector>

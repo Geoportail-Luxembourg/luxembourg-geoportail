@@ -81556,9 +81556,7 @@ uniform ${i3} ${o3} u_${a3};
           vue.createElementVNode("div", _hoisted_5$1, [
             !myLayersOpen.value ? (vue.openBlock(), vue.createBlock(_sfc_main$2, { key: 0 })) : vue.createCommentVNode("", true),
             myLayersOpen.value ? (vue.openBlock(), vue.createBlock(_sfc_main$j, { key: 1 })) : vue.createCommentVNode("", true)
-          ]),
-          vue.createVNode(_sfc_main$a),
-          vue.createVNode(_sfc_main$8)
+          ])
         ]);
       };
     }
@@ -82665,7 +82663,9 @@ uniform ${i3} ${o3} u_${a3};
               vue.createVNode(_sfc_main$1)
             ])) : vue.createCommentVNode("", true),
             vue.createElementVNode("div", _hoisted_4, [
-              vue.createVNode(_sfc_main$d)
+              vue.createVNode(_sfc_main$d),
+              vue.createVNode(_sfc_main$a),
+              vue.createVNode(_sfc_main$8)
             ]),
             vue.createElementVNode("div", _hoisted_5, [
               vue.createVNode(_sfc_main$b)
@@ -82734,6 +82734,7 @@ uniform ${i3} ${o3} u_${a3};
   exports2.statePersistorThemeService = statePersistorThemeService;
   exports2.storeToRefs = storeToRefs;
   exports2.themeSelectorService = themeSelectorService;
+  exports2.useAppStore = useAppStore;
   exports2.useMap = useMap;
   exports2.useMapStore = useMapStore;
   exports2.useThemeStore = useThemeStore;
