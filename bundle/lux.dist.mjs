@@ -5,6 +5,7 @@ var __publicField = (obj, key, value) => {
   return value;
 };
 import { effectScope, ref, markRaw, toRaw, isRef, isReactive, toRef, getCurrentInstance, inject, watch, unref, reactive, nextTick, computed, getCurrentScope, onScopeDispose, toRefs, defineComponent as defineComponent$1, shallowRef, onMounted, onUnmounted, openBlock, createElementBlock, createElementVNode, normalizeClass, toDisplayString, Fragment, renderList, createCommentVNode, watchEffect, normalizeStyle, createVNode as createVNode$1, resolveComponent, createBlock, createTextVNode, resolveDirective, withDirectives, createApp, h } from "vue";
+import { watch as watch2 } from "vue";
 import { defineComponent, nextTick as nextTick$1, createVNode } from "@vue/runtime-core";
 import { extend as extend$4, isArray, camelize, toNumber, hyphenate } from "@vue/shared";
 import { render as render$1 } from "@vue/runtime-dom";
@@ -11770,33 +11771,33 @@ Sortable.mount(new AutoScrollPlugin());
 Sortable.mount(Remove, Revert);
 const useMapStore = defineStore("map", () => {
   const map2 = ref({});
-  const layers2 = shallowRef([]);
+  const layers = shallowRef([]);
   const bgLayer = ref(void 0);
   function setBgLayer(layer) {
     bgLayer.value = layer;
   }
   function addLayers(...newLayers) {
-    layers2.value = [.../* @__PURE__ */ new Set([...layers2.value, ...newLayers])];
+    layers.value = [.../* @__PURE__ */ new Set([...layers.value, ...newLayers])];
   }
   function removeLayers(...layerIds) {
-    layers2.value = layers2.value.filter(
+    layers.value = layers.value.filter(
       (layer) => layerIds.indexOf(layer.id) === -1
     );
   }
   function hasLayer(layerId) {
     var _a;
-    return !!((_a = layers2.value) == null ? void 0 : _a.find((layer) => layer.id === layerId));
+    return !!((_a = layers.value) == null ? void 0 : _a.find((layer) => layer.id === layerId));
   }
   function reorderLayers(layersId) {
     var _a;
-    layers2.value = [
-      ...((_a = layers2.value) == null ? void 0 : _a.sort(
+    layers.value = [
+      ...((_a = layers.value) == null ? void 0 : _a.sort(
         (a, b) => layersId.indexOf(a.id) - layersId.indexOf(b.id)
       )) || []
     ];
   }
   function setLayerOpacity(layerId, opacity) {
-    layers2.value = layers2.value.map((elt) => {
+    layers.value = layers.value.map((elt) => {
       if (elt.id === layerId) {
         return { ...elt, opacity, previousOpacity: elt.opacity };
       }
@@ -11805,7 +11806,7 @@ const useMapStore = defineStore("map", () => {
   }
   return {
     map: map2,
-    layers: layers2,
+    layers,
     bgLayer,
     addLayers,
     removeLayers,
@@ -13126,10 +13127,10 @@ class StatePersistorStyleService {
         bgStyle,
         (value, oldValue) => {
           if (oldValue !== value) {
-            const mapStore2 = useMapStore();
-            if (mapStore2.bgLayer) {
+            const mapStore = useMapStore();
+            if (mapStore.bgLayer) {
               storageHelper.setValue(
-                mapStore2.bgLayer.name,
+                mapStore.bgLayer.name,
                 value || [],
                 storageStyleMapper.styleToLocalStorage
               );
@@ -13148,8 +13149,8 @@ class StatePersistorStyleService {
   restoreStyle() {
     console.log("restoring style");
     const styleStore = useStyleStore();
-    const mapStore2 = useMapStore();
-    const bgLayer = mapStore2.bgLayer;
+    const mapStore = useMapStore();
+    const bgLayer = mapStore.bgLayer;
     console.log(`restoring bg style ${bgLayer == null ? void 0 : bgLayer.name}`);
     if (bgLayer) {
       let bgStyle = storageHelper.getValue(
@@ -13286,9 +13287,9 @@ const _sfc_main$j = /* @__PURE__ */ defineComponent$1({
   setup(__props) {
     const ROAD_MAP_ID = 556;
     const { setMetadataId } = useMetadataStore();
-    const mapStore2 = useMapStore();
-    const { bgLayer } = storeToRefs(mapStore2);
-    const layers2 = computed(() => [...mapStore2.layers].reverse());
+    const mapStore = useMapStore();
+    const { bgLayer } = storeToRefs(mapStore);
+    const layers = computed(() => [...mapStore.layers].reverse());
     const isLayerOpenId = shallowRef();
     const isStyleEditorOpen = shallowRef(false);
     const draggableClassName = "drag-handle";
@@ -13307,13 +13308,13 @@ const _sfc_main$j = /* @__PURE__ */ defineComponent$1({
     });
     function sortMethod(event) {
       const items = event.to.children;
-      mapStore2.reorderLayers([...items].map((val) => Number(val.id)).reverse());
+      mapStore.reorderLayers([...items].map((val) => Number(val.id)).reverse());
     }
     function changeOpacityLayer(layer, opacity) {
-      mapStore2.setLayerOpacity(layer.id, opacity / 100);
+      mapStore.setLayerOpacity(layer.id, opacity / 100);
     }
     function removeLayer(layer) {
-      mapStore2.removeLayers(layer.id);
+      mapStore.removeLayers(layer.id);
     }
     function toggleAccordionItem(layer) {
       isLayerOpenId.value = isLayerOpenId.value !== layer.id ? layer.id : void 0;
@@ -13324,7 +13325,7 @@ const _sfc_main$j = /* @__PURE__ */ defineComponent$1({
     return (_ctx, _cache) => {
       var _a, _b;
       return openBlock(), createElementBlock("ul", _hoisted_1$g, [
-        (openBlock(true), createElementBlock(Fragment, null, renderList(unref(layers2), (layer) => {
+        (openBlock(true), createElementBlock(Fragment, null, renderList(unref(layers), (layer) => {
           return openBlock(), createElementBlock("li", {
             key: layer.id,
             id: layer.id
@@ -16376,10 +16377,10 @@ const useThemeStore = defineStore(
       var _a;
       return (_a = config.value) == null ? void 0 : _a.themes;
     });
-    const theme2 = computed(
+    const theme = computed(
       () => {
         var _a;
-        return (_a = themes2.value) == null ? void 0 : _a.find((theme22) => theme22.name === themeName.value);
+        return (_a = themes2.value) == null ? void 0 : _a.find((theme2) => theme2.name === themeName.value);
       }
     );
     const bgLayers = computed(() => {
@@ -16396,7 +16397,7 @@ const useThemeStore = defineStore(
       config,
       themes: themes2,
       themeName,
-      theme: theme2,
+      theme,
       bgLayers,
       setTheme,
       setThemes
@@ -48952,8 +48953,8 @@ function useThemes() {
     return findByIdOrName(void 0, name, node);
   }
   function findByIdOrName(id, name, node) {
-    const { theme: theme2 } = useThemeStore();
-    node = node || theme2;
+    const { theme } = useThemeStore();
+    node = node || theme;
     if (id && (node == null ? void 0 : node.id) === id || name && (node == null ? void 0 : node.name) === name) {
       return node;
     } else if (node == null ? void 0 : node.children) {
@@ -49011,8 +49012,8 @@ function useLayers() {
     if (!((_a = layer.metadata) == null ? void 0 : _a.exclusion)) {
       return;
     }
-    const mapStore2 = useMapStore();
-    const excludedLayers = mapStore2.layers.filter(
+    const mapStore = useMapStore();
+    const excludedLayers = mapStore.layers.filter(
       (_layer) => {
         var _a2, _b;
         return hasIntersect(
@@ -49022,7 +49023,7 @@ function useLayers() {
       }
     );
     if (excludedLayers.length > 0) {
-      mapStore2.removeLayers(...excludedLayers.map((_layer) => _layer.id));
+      mapStore.removeLayers(...excludedLayers.map((_layer) => _layer.id));
       alert(
         instance.t(
           "The layer <b>{{layersToRemove}}</b> has been removed because it cannot be displayed while the layer <b>{{layer}}</b> is displayed",
@@ -49038,16 +49039,16 @@ function useLayers() {
   }
   function toggleLayer(id, show = true) {
     var _a;
-    const themeStore2 = useThemeStore();
-    const mapStore2 = useMapStore();
-    const layer = themes.findById(id, themeStore2.theme);
+    const themeStore = useThemeStore();
+    const mapStore = useMapStore();
+    const layer = themes.findById(id, themeStore.theme);
     if (layer) {
       const linkedLayers = ((_a = layer.metadata) == null ? void 0 : _a.linked_layers) || [];
       if (show === false) {
-        mapStore2.removeLayers(layer.id, ...linkedLayers);
+        mapStore.removeLayers(layer.id, ...linkedLayers);
       } else {
         handleExclusionLayers(layer);
-        mapStore2.addLayers(
+        mapStore.addLayers(
           initLayer(layer),
           ...linkedLayers.map(
             (layerId) => initLayer(
@@ -49195,15 +49196,15 @@ class LayerTreeService {
       };
     }
   }
-  updateLayers(node, layers2) {
+  updateLayers(node, layers) {
     const { id } = node;
     if (node.children) {
       return {
         ...node,
-        children: node.children.map((child) => this.updateLayers(child, layers2))
+        children: node.children.map((child) => this.updateLayers(child, layers))
       };
     } else {
-      const checked = !!(layers2 == null ? void 0 : layers2.find((l) => l.id === id));
+      const checked = !!(layers == null ? void 0 : layers.find((l) => l.id === id));
       return {
         ...node,
         checked
@@ -49215,18 +49216,18 @@ const layerTreeService = new LayerTreeService();
 const _sfc_main$h = /* @__PURE__ */ defineComponent$1({
   __name: "catalog-tree",
   setup(__props) {
-    const mapStore2 = useMapStore();
-    const themeStore2 = useThemeStore();
-    const layers2 = useLayers();
+    const mapStore = useMapStore();
+    const themeStore = useThemeStore();
+    const layers = useLayers();
     const layerTree = shallowRef();
     watchEffect(updateLayerTree);
     function updateLayerTree() {
       var _a;
-      if (themeStore2.theme && mapStore2.layers) {
-        const treeModel = layerTree.value && layerTree.value.id === ((_a = themeStore2.theme) == null ? void 0 : _a.id) ? layerTree.value : themesToLayerTree(themeStore2.theme);
+      if (themeStore.theme && mapStore.layers) {
+        const treeModel = layerTree.value && layerTree.value.id === ((_a = themeStore.theme) == null ? void 0 : _a.id) ? layerTree.value : themesToLayerTree(themeStore.theme);
         layerTree.value = layerTreeService.updateLayers(
           treeModel,
-          mapStore2.layers
+          mapStore.layers
         );
       }
     }
@@ -49238,7 +49239,7 @@ const _sfc_main$h = /* @__PURE__ */ defineComponent$1({
       );
     }
     function toggleLayer(node) {
-      layers2.toggleLayer(+node.id, !node.checked);
+      layers.toggleLayer(+node.id, !node.checked);
     }
     return (_ctx, _cache) => {
       return unref(layerTree) ? (openBlock(), createBlock(_sfc_main$i, {
@@ -49263,15 +49264,15 @@ const _sfc_main$g = /* @__PURE__ */ defineComponent$1({
     const { t } = useTranslation();
     return (_ctx, _cache) => {
       return openBlock(), createElementBlock("div", _hoisted_1$e, [
-        (openBlock(true), createElementBlock(Fragment, null, renderList(props.themes, (theme2) => {
+        (openBlock(true), createElementBlock(Fragment, null, renderList(props.themes, (theme) => {
           return openBlock(), createElementBlock("button", {
-            class: normalizeClass(["relative shrink-0 h-[150px] w-1/2 px-2.5 text-start text-gray-100/40 uppercase hover:bg-[#ccc]", `bg-${theme2.name}-primary hover:text-${theme2.name}-primary`]),
-            key: theme2.id,
-            onClick: ($event) => _ctx.$emit("setTheme", theme2.name)
+            class: normalizeClass(["relative shrink-0 h-[150px] w-1/2 px-2.5 text-start text-gray-100/40 uppercase hover:bg-[#ccc]", `bg-${theme.name}-primary hover:text-${theme.name}-primary`]),
+            key: theme.id,
+            onClick: ($event) => _ctx.$emit("setTheme", theme.name)
           }, [
-            createElementVNode("div", _hoisted_3$7, toDisplayString(unref(t)(`${theme2.name}`)), 1),
+            createElementVNode("div", _hoisted_3$7, toDisplayString(unref(t)(`${theme.name}`)), 1),
             createElementVNode("div", {
-              class: normalizeClass(["text-6xl absolute bottom-1 after:font-icons", `after:content-${theme2.name}`])
+              class: normalizeClass(["text-6xl absolute bottom-1 after:font-icons", `after:content-${theme.name}`])
             }, null, 2)
           ], 10, _hoisted_2$9);
         }), 128))
@@ -49308,10 +49309,10 @@ const _sfc_main$f = /* @__PURE__ */ defineComponent$1({
         createElementVNode("span", _hoisted_3$6, [
           createElementVNode("span", _hoisted_4$6, toDisplayString(unref(t)("Changer")), 1),
           createElementVNode("span", _hoisted_5$5, [
-            (openBlock(true), createElementBlock(Fragment, null, renderList(unref(themesComputed), (theme2) => {
+            (openBlock(true), createElementBlock(Fragment, null, renderList(unref(themesComputed), (theme) => {
               return openBlock(), createElementBlock("div", {
-                class: normalizeClass(`h-2.5 w-2.5 m-px bg-${theme2.name}-primary`),
-                key: theme2.id
+                class: normalizeClass(`h-2.5 w-2.5 m-px bg-${theme.name}-primary`),
+                key: theme.id
               }, null, 2);
             }), 128))
           ])
@@ -49328,16 +49329,16 @@ const _sfc_main$e = /* @__PURE__ */ defineComponent$1({
   __name: "theme-selector",
   emits: ["toggleThemesGrid"],
   setup(__props, { emit }) {
-    const themeStore2 = useThemeStore();
+    const themeStore = useThemeStore();
     const themesService = useThemes();
-    const { theme: theme2, themes: themesFromStore } = storeToRefs(themeStore2);
+    const { theme, themes: themesFromStore } = storeToRefs(themeStore);
     const themes2 = computed(
       () => {
         var _a;
         return ((_a = themesFromStore.value) == null ? void 0 : _a.filter(
-          (theme22) => {
+          (theme2) => {
             var _a2;
-            return ((_a2 = theme22.metadata) == null ? void 0 : _a2.display_in_switcher) === true;
+            return ((_a2 = theme2.metadata) == null ? void 0 : _a2.display_in_switcher) === true;
           }
         )) || [];
       }
@@ -49355,7 +49356,7 @@ const _sfc_main$e = /* @__PURE__ */ defineComponent$1({
         createVNode$1(_sfc_main$f, {
           onClick: toggleThemesGrid,
           themes: unref(themes2),
-          currentTheme: unref(theme2),
+          currentTheme: unref(theme),
           isOpen: unref(isOpen)
         }, null, 8, ["themes", "currentTheme", "isOpen"]),
         unref(isOpen) ? (openBlock(), createElementBlock("div", _hoisted_1$c, [
@@ -51470,7 +51471,7 @@ var LayerGroup = function(_super) {
     var options = opt_options || {};
     var baseOptions = assign({}, options);
     delete baseOptions.layers;
-    var layers2 = options.layers;
+    var layers = options.layers;
     _this = _super.call(this, baseOptions) || this;
     _this.on;
     _this.once;
@@ -51478,16 +51479,16 @@ var LayerGroup = function(_super) {
     _this.layersListenerKeys_ = [];
     _this.listenerKeys_ = {};
     _this.addChangeListener(Property.LAYERS, _this.handleLayersChanged_);
-    if (layers2) {
-      if (Array.isArray(layers2)) {
-        layers2 = new Collection$1(layers2.slice(), { unique: true });
+    if (layers) {
+      if (Array.isArray(layers)) {
+        layers = new Collection$1(layers.slice(), { unique: true });
       } else {
-        assert(typeof layers2.getArray === "function", 43);
+        assert(typeof layers.getArray === "function", 43);
       }
     } else {
-      layers2 = new Collection$1(void 0, { unique: true });
+      layers = new Collection$1(void 0, { unique: true });
     }
-    _this.setLayers(layers2);
+    _this.setLayers(layers);
     return _this;
   }
   LayerGroup2.prototype.handleLayerChange_ = function() {
@@ -51496,13 +51497,13 @@ var LayerGroup = function(_super) {
   LayerGroup2.prototype.handleLayersChanged_ = function() {
     this.layersListenerKeys_.forEach(unlistenByKey);
     this.layersListenerKeys_.length = 0;
-    var layers2 = this.getLayers();
-    this.layersListenerKeys_.push(listen(layers2, CollectionEventType.ADD, this.handleLayersAdd_, this), listen(layers2, CollectionEventType.REMOVE, this.handleLayersRemove_, this));
+    var layers = this.getLayers();
+    this.layersListenerKeys_.push(listen(layers, CollectionEventType.ADD, this.handleLayersAdd_, this), listen(layers, CollectionEventType.REMOVE, this.handleLayersRemove_, this));
     for (var id in this.listenerKeys_) {
       this.listenerKeys_[id].forEach(unlistenByKey);
     }
     clear(this.listenerKeys_);
-    var layersArray = layers2.getArray();
+    var layersArray = layers.getArray();
     for (var i = 0, ii = layersArray.length; i < ii; i++) {
       var layer = layersArray[i];
       this.registerLayerListeners_(layer);
@@ -51543,7 +51544,7 @@ var LayerGroup = function(_super) {
   LayerGroup2.prototype.getLayers = function() {
     return this.get(Property.LAYERS);
   };
-  LayerGroup2.prototype.setLayers = function(layers2) {
+  LayerGroup2.prototype.setLayers = function(layers) {
     var collection = this.getLayers();
     if (collection) {
       var currentLayers = collection.getArray();
@@ -51551,7 +51552,7 @@ var LayerGroup = function(_super) {
         this.dispatchEvent(new GroupEvent("removelayer", currentLayers[i]));
       }
     }
-    this.set(Property.LAYERS, layers2);
+    this.set(Property.LAYERS, layers);
   };
   LayerGroup2.prototype.getLayersArray = function(opt_array) {
     var array = opt_array !== void 0 ? opt_array : [];
@@ -54427,9 +54428,9 @@ function setLayerMapProperty(layer, map2) {
     return;
   }
   if (layer instanceof LayerGroup$1) {
-    var layers2 = layer.getLayers().getArray();
-    for (var i = 0, ii = layers2.length; i < ii; ++i) {
-      setLayerMapProperty(layers2[i], map2);
+    var layers = layer.getLayers().getArray();
+    for (var i = 0, ii = layers.length; i < ii; ++i) {
+      setLayerMapProperty(layers[i], map2);
     }
   }
 }
@@ -54570,8 +54571,8 @@ var PluggableMap = function(_super) {
     this.getInteractions().push(interaction);
   };
   PluggableMap2.prototype.addLayer = function(layer) {
-    var layers2 = this.getLayerGroup().getLayers();
-    layers2.push(layer);
+    var layers = this.getLayerGroup().getLayers();
+    layers.push(layer);
   };
   PluggableMap2.prototype.handleLayerAdd_ = function(event) {
     setLayerMapProperty(event.layer, this);
@@ -54612,18 +54613,18 @@ var PluggableMap = function(_super) {
     return features;
   };
   PluggableMap2.prototype.getAllLayers = function() {
-    var layers2 = [];
+    var layers = [];
     function addLayersFrom(layerGroup) {
       layerGroup.forEach(function(layer) {
         if (layer instanceof LayerGroup$1) {
           addLayersFrom(layer.getLayers());
         } else {
-          layers2.push(layer);
+          layers.push(layer);
         }
       });
     }
     addLayersFrom(this.getLayers());
-    return layers2;
+    return layers;
   };
   PluggableMap2.prototype.forEachLayerAtPixel = function(pixel, callback, opt_options) {
     if (!this.frameState_ || !this.renderer_) {
@@ -54697,19 +54698,19 @@ var PluggableMap = function(_super) {
   PluggableMap2.prototype.getLayerGroup = function() {
     return this.get(MapProperty.LAYERGROUP);
   };
-  PluggableMap2.prototype.setLayers = function(layers2) {
+  PluggableMap2.prototype.setLayers = function(layers) {
     var group = this.getLayerGroup();
-    if (layers2 instanceof Collection$1) {
-      group.setLayers(layers2);
+    if (layers instanceof Collection$1) {
+      group.setLayers(layers);
       return;
     }
     var collection = group.getLayers();
     collection.clear();
-    collection.extend(layers2);
+    collection.extend(layers);
   };
   PluggableMap2.prototype.getLayers = function() {
-    var layers2 = this.getLayerGroup().getLayers();
-    return layers2;
+    var layers = this.getLayerGroup().getLayers();
+    return layers;
   };
   PluggableMap2.prototype.getLoadingOrNotReady = function() {
     var layerStatesArray = this.getLayerGroup().getLayerStatesArray();
@@ -54962,8 +54963,8 @@ var PluggableMap = function(_super) {
     return this.getInteractions().remove(interaction);
   };
   PluggableMap2.prototype.removeLayer = function(layer) {
-    var layers2 = this.getLayerGroup().getLayers();
-    return layers2.remove(layer);
+    var layers = this.getLayerGroup().getLayers();
+    return layers.remove(layer);
   };
   PluggableMap2.prototype.handleLayerRemove_ = function(event) {
     removeLayerMapProperty(event.layer);
@@ -60118,12 +60119,12 @@ var ImageWMS = function(_super) {
       "FORMAT": "image/png"
     };
     if (params2 === void 0 || params2["LAYER"] === void 0) {
-      var layers2 = this.params_.LAYERS;
-      var isSingleLayer = !Array.isArray(layers2) || layers2.length === 1;
+      var layers = this.params_.LAYERS;
+      var isSingleLayer = !Array.isArray(layers) || layers.length === 1;
       if (!isSingleLayer) {
         return void 0;
       }
-      baseParams["LAYER"] = layers2;
+      baseParams["LAYER"] = layers;
     }
     if (resolution !== void 0) {
       var mpu = this.getProjection() ? this.getProjection().getMetersPerUnit() : 1;
@@ -77776,7 +77777,7 @@ function getOlcsExtent() {
   );
 }
 function createWmsLayer(layer) {
-  const { name, layers: layers2, imageType, url, id } = layer;
+  const { name, layers, imageType, url, id } = layer;
   const olLayer = new ImageLayer$1({
     properties: {
       "olcs.extent": getOlcsExtent(),
@@ -77789,7 +77790,7 @@ function createWmsLayer(layer) {
       serverType: "mapserver",
       params: {
         FORMAT: imageType,
-        LAYERS: layers2
+        LAYERS: layers
       },
       ...url !== void 0 && url !== null || remoteProxyWms ? { crossOrigin: "anonymous" } : {}
     })
@@ -77872,9 +77873,9 @@ function useOpenLayers() {
       olMap.removeLayer(layerToRemove);
     }
   }
-  function reorderLayers(olMap, layers2) {
+  function reorderLayers(olMap, layers) {
     const arrayLayers = olMap.getLayers().getArray();
-    layers2.forEach((layer, idx) => {
+    layers.forEach((layer, idx) => {
       const baseLayer = arrayLayers.find(
         (mapLayer) => mapLayer.get("id") === layer.id
       );
@@ -77975,20 +77976,20 @@ class OlSynchronizer {
   constructor(map2) {
     __publicField(this, "previousLayers");
     __publicField(this, "previousVectorSources");
-    const mapStore2 = useMapStore();
+    const mapStore = useMapStore();
     const styleStore = useStyleStore();
     const mapService = useMap();
     const styleService = useMvtStyles();
     const openLayers = useOpenLayers();
     watch(
-      () => mapStore2.layers,
-      (layers2) => {
+      () => mapStore.layers,
+      (layers) => {
         console.log("watch layers");
         const oldContext = {
           layers: this.previousLayers
         };
         const newContext = {
-          layers: layers2
+          layers
         };
         const removedLayers = mapService.getRemovedLayers(
           newContext,
@@ -78012,11 +78013,11 @@ class OlSynchronizer {
         if (newContext.layers) {
           openLayers.reorderLayers(map2, newContext.layers);
         }
-        this.previousLayers = layers2;
+        this.previousLayers = layers;
       }
     );
     watch(
-      () => mapStore2.bgLayer,
+      () => mapStore.bgLayer,
       (bgLayer) => bgLayer !== void 0 && openLayers.setBgLayer(map2, bgLayer, styleStore.bgVectorSources)
     );
     watch(
@@ -78033,8 +78034,8 @@ class OlSynchronizer {
         for (const id of newVectorSources.keys()) {
           if (!this.previousVectorSources || this.previousVectorSources.get(id) !== newVectorSources.get(id)) {
             openLayers.removeFromCache(id);
-            if (id === ((_a = mapStore2 == null ? void 0 : mapStore2.bgLayer) == null ? void 0 : _a.id)) {
-              openLayers.setBgLayer(map2, mapStore2 == null ? void 0 : mapStore2.bgLayer, newVectorSources);
+            if (id === ((_a = mapStore == null ? void 0 : mapStore.bgLayer) == null ? void 0 : _a.id)) {
+              openLayers.setBgLayer(map2, mapStore == null ? void 0 : mapStore.bgLayer, newVectorSources);
             }
           }
         }
@@ -78154,9 +78155,9 @@ const _sfc_main$d = /* @__PURE__ */ defineComponent$1({
   }
 });
 function useBackgroundLayer() {
-  const theme2 = useThemes();
-  const mapStore2 = useMapStore();
-  const layers2 = useLayers();
+  const theme = useThemes();
+  const mapStore = useMapStore();
+  const layers = useLayers();
   const defaultSelectedBgId = computed(() => {
     var _a;
     const theme_name = (_a = useThemeStore().theme) == null ? void 0 : _a.name;
@@ -78167,7 +78168,7 @@ function useBackgroundLayer() {
     return getDefaultSelectedId();
   });
   function setBgLayer(layerId) {
-    const newBgLayer = theme2.findBgLayerById(layerId);
+    const newBgLayer = theme.findBgLayerById(layerId);
     setMapBackground(newBgLayer || null);
   }
   function setMapBackground(bgLayer) {
@@ -78181,10 +78182,10 @@ function useBackgroundLayer() {
           `Only WMTS and MVT BG layers are currently implemented (not ${bgLayer.type} for ${bgLayer.name})`
         );
       }
-      layers2.handleExclusionLayers(bgLayer);
-      mapStore2.setBgLayer(layers2.initLayer(bgLayer));
+      layers.handleExclusionLayers(bgLayer);
+      mapStore.setBgLayer(layers.initLayer(bgLayer));
     } else {
-      mapStore2.setBgLayer(null);
+      mapStore.setBgLayer(null);
     }
   }
   function getDefaultSelectedId() {
@@ -79323,9 +79324,9 @@ class WmsEndpoint {
       "WMS",
       "CAPABILITIES",
       capabilitiesUrl
-    ).then(({ info, layers: layers2, version: version2 }) => {
+    ).then(({ info, layers, version: version2 }) => {
       this._info = info;
-      this._layers = layers2;
+      this._layers = layers;
       this._version = version2;
     });
     this._info = null;
@@ -80258,11 +80259,11 @@ class WmtsEndpoint {
       this.layers = this.mapToRemoteLayers((_a = result.Contents) == null ? void 0 : _a.Layer);
     });
   }
-  mapToRemoteLayers(layers2) {
+  mapToRemoteLayers(layers) {
     return [
       {
         type: REMOTE_SERVICE_TYPE.WMTS,
-        children: layers2.map(
+        children: layers.map(
           (layer) => ({
             type: REMOTE_SERVICE_TYPE.WMTS,
             abstract: layer.Abstract,
@@ -80342,13 +80343,13 @@ function sortLayerTreeNoChildrenFirst(a, b) {
 function remoteLayersToLayerTreeMapper(node, urlWms, depth = 0) {
   const { name = "", type = REMOTE_SERVICE_TYPE.WMS, children } = node;
   const id = `${type}||${urlWms}||${name}`.split("-").join("%2D");
-  const mapStore2 = useMapStore();
+  const mapStore = useMapStore();
   return {
     id,
     name,
     depth,
     children: children == null ? void 0 : children.sort(sortLayerTreeNoChildrenFirst).map((child) => remoteLayersToLayerTreeMapper(child, urlWms, depth + 1)),
-    checked: mapStore2.hasLayer(id),
+    checked: mapStore.hasLayer(id),
     expanded: false
   };
 }
@@ -80386,20 +80387,20 @@ class StorageLayerMapper {
   }
   layerIdsToLayers(layerIdsText) {
     const themes2 = useThemes();
-    const layers2 = useLayers();
+    const layers = useLayers();
     const layerIds = layerIdsText ? layerIdsText.split(STORAGE_SEPARATOR) : [];
     return layerIds.map((layerId) => {
       const layer = remoteLayersService.isRemoteLayer(layerId) ? remoteLayerIdtoLayer(layerId) : themes2.findById(parseInt(layerId, 10));
-      return layer ? layers2.initLayer(layer) : void 0;
+      return layer ? layers.initLayer(layer) : void 0;
     });
   }
   layerNamesToLayersV2(layersNamesText) {
     const themes2 = useThemes();
-    const layers2 = useLayers();
+    const layers = useLayers();
     const layersNames = layersNamesText ? layersNamesText.split(STORAGE_SEPARATOR_V2) : [];
     return layersNames.map((layerName) => {
       const layer = themes2.findByName(layerName);
-      return layer ? layers2.initLayer(layer) : void 0;
+      return layer ? layers.initLayer(layer) : void 0;
     });
   }
   layersOpacitiesToNumbers(opacitiesText, separator = STORAGE_SEPARATOR) {
@@ -80408,11 +80409,11 @@ class StorageLayerMapper {
   layersVisibilitiesToBooleansV2(visibilitiesText) {
     return stringToBooleans(visibilitiesText, STORAGE_SEPARATOR_V2);
   }
-  layersToLayerIds(layers2) {
-    return (layers2 == null ? void 0 : layers2.map((layer) => layer.id).join(STORAGE_SEPARATOR)) || "";
+  layersToLayerIds(layers) {
+    return (layers == null ? void 0 : layers.map((layer) => layer.id).join(STORAGE_SEPARATOR)) || "";
   }
-  layersToLayerOpacities(layers2) {
-    return (layers2 == null ? void 0 : layers2.map((layer) => {
+  layersToLayerOpacities(layers) {
+    return (layers == null ? void 0 : layers.map((layer) => {
       var _a;
       return (_a = layer.opacity) != null ? _a : 1;
     }).join(STORAGE_SEPARATOR)) || "";
@@ -80437,10 +80438,10 @@ const V2_BGLAYER_TO_V3_ = {
 };
 class StatePersistorBgLayerService {
   bootstrap() {
-    const themeStore2 = useThemeStore();
+    const themeStore = useThemeStore();
     let stop;
     stop = watchEffect(() => {
-      if (themeStore2.bgLayers.length > 0) {
+      if (themeStore.bgLayers.length > 0) {
         this.restore();
         this.persist();
         stop && stop();
@@ -80448,8 +80449,8 @@ class StatePersistorBgLayerService {
     });
   }
   persist() {
-    const mapStore2 = useMapStore();
-    const { bgLayer } = storeToRefs(mapStore2);
+    const mapStore = useMapStore();
+    const { bgLayer } = storeToRefs(mapStore);
     watch(
       bgLayer,
       (value, oldValue) => {
@@ -80541,9 +80542,9 @@ const _sfc_main$b = /* @__PURE__ */ defineComponent$1({
     const props = __props;
     const { t } = useTranslation();
     const backgroundLayer = useBackgroundLayer();
-    const mapStore2 = useMapStore();
-    const themeStore2 = useThemeStore();
-    const { bgLayer: bgLayerContext } = storeToRefs(mapStore2);
+    const mapStore = useMapStore();
+    const themeStore = useThemeStore();
+    const { bgLayer: bgLayerContext } = storeToRefs(mapStore);
     statePersistorBgLayerService.bootstrap();
     const isOpen = ref(props.isOpen);
     const bgLayers = ref([]);
@@ -80560,7 +80561,7 @@ const _sfc_main$b = /* @__PURE__ */ defineComponent$1({
       }
     );
     watch(
-      () => themeStore2.bgLayers,
+      () => themeStore.bgLayers,
       (bgLayersContext) => {
         bgLayers.value = bgConfigFixture().bg_layers.map(
           (bgl) => Object.assign(
@@ -80577,9 +80578,9 @@ const _sfc_main$b = /* @__PURE__ */ defineComponent$1({
       { immediate: true }
     );
     watch(
-      () => mapStore2.bgLayer,
+      () => mapStore.bgLayer,
       (bgLayerContext2, bgLayerContextOld) => {
-        const layersContext = mapStore2.layers;
+        const layersContext = mapStore.layers;
         if (bgLayerContextOld === void 0 && bgLayerContext2 === null && (layersContext == null ? void 0 : layersContext.length) === 0) {
           backgroundLayer.setBgLayer(backgroundLayer.defaultSelectedBgId.value);
           if (bgLayerContext2 === null) {
@@ -80665,8 +80666,8 @@ const _sfc_main$a = /* @__PURE__ */ defineComponent$1({
   __name: "remote-layers",
   setup(__props) {
     const { t } = useTranslation();
-    const mapStore2 = useMapStore();
-    const layers2 = useLayers();
+    const mapStore = useMapStore();
+    const layers = useLayers();
     const wmsLayers = shallowRef([]);
     const layerTree = shallowRef();
     let isLoading = false;
@@ -80677,7 +80678,7 @@ const _sfc_main$a = /* @__PURE__ */ defineComponent$1({
     function updateLayerTree() {
       layerTree.value = layerTree.value ? layerTreeService.updateLayers(
         layerTree.value,
-        mapStore2.layers
+        mapStore.layers
       ) : void 0;
     }
     remoteLayersService.fetchRemoteWmsEndpoint().then((wmsLayersFetch) => {
@@ -80700,7 +80701,7 @@ const _sfc_main$a = /* @__PURE__ */ defineComponent$1({
           remoteLayers[0],
           currentRemoteUrl
         );
-        layerTree.value = layerTreeService.updateLayers(treeLayers, mapStore2.layers);
+        layerTree.value = layerTreeService.updateLayers(treeLayers, mapStore.layers);
       }
     }
     async function onChangeRemoteEndpoint(url) {
@@ -80726,18 +80727,18 @@ const _sfc_main$a = /* @__PURE__ */ defineComponent$1({
       const { id, name } = node;
       const remoteEndpoint = currentRemoteEndpoint;
       if (node.checked === true) {
-        mapStore2.removeLayers(id);
+        mapStore.removeLayers(id);
       } else {
         const remoteLayer = remoteEndpoint == null ? void 0 : remoteEndpoint.getLayerByName(name);
         if (remoteLayer) {
-          const layer = layers2.initLayer(
+          const layer = layers.initLayer(
             remoteLayerToLayer({
               id,
               url: remoteLayersService.getProxyfiedUrl(currentRemoteUrl),
               remoteLayer
             })
           );
-          mapStore2.addLayers(layer);
+          mapStore.addLayers(layer);
         }
       }
     }
@@ -81312,13 +81313,13 @@ const _sfc_main$6 = /* @__PURE__ */ defineComponent$1({
     const appStore = useAppStore();
     const { layersOpen } = storeToRefs(appStore);
     const { setLayersOpen } = appStore;
-    const themeStore2 = useThemeStore();
-    const { theme: theme2 } = storeToRefs(themeStore2);
+    const themeStore = useThemeStore();
+    const { theme } = storeToRefs(themeStore);
     watch(
-      theme2,
-      (theme22) => {
-        if (theme22) {
-          themeSelectorService.setCurrentThemeColors(theme22.name);
+      theme,
+      (theme2) => {
+        if (theme2) {
+          themeSelectorService.setCurrentThemeColors(theme2.name);
         }
       },
       { immediate: true }
@@ -81332,10 +81333,10 @@ const _sfc_main$6 = /* @__PURE__ */ defineComponent$1({
           createElementVNode("ul", _hoisted_4$3, [
             createElementVNode("li", null, [
               createElementVNode("button", {
-                class: normalizeClass(["flex items-center before:font-icons before:text-3xl before:w-16 text-primary uppercase h-full mr-3", `before:content-${(_a = unref(theme2)) == null ? void 0 : _a.name}`]),
+                class: normalizeClass(["flex items-center before:font-icons before:text-3xl before:w-16 text-primary uppercase h-full mr-3", `before:content-${(_a = unref(theme)) == null ? void 0 : _a.name}`]),
                 onClick: _cache[0] || (_cache[0] = () => unref(setLayersOpen)(!unref(layersOpen)))
               }, [
-                createElementVNode("span", _hoisted_5$2, toDisplayString(unref(t)(`${(_b = unref(theme2)) == null ? void 0 : _b.name}`)), 1)
+                createElementVNode("span", _hoisted_5$2, toDisplayString(unref(t)(`${(_b = unref(theme)) == null ? void 0 : _b.name}`)), 1)
               ], 2)
             ]),
             createElementVNode("li", _hoisted_6, [
@@ -81565,10 +81566,10 @@ const _sfc_main$1 = /* @__PURE__ */ defineComponent$1({
 });
 class StatePersistorLayersService {
   bootstrap() {
-    const themeStore2 = useThemeStore();
+    const themeStore = useThemeStore();
     let stop;
     stop = watchEffect(() => {
-      if (themeStore2.themes) {
+      if (themeStore.themes) {
         this.restore();
         this.persist();
         stop && stop();
@@ -81576,10 +81577,10 @@ class StatePersistorLayersService {
     });
   }
   persist() {
-    const mapStore2 = useMapStore();
-    const { layers: layers2 } = storeToRefs(mapStore2);
+    const mapStore = useMapStore();
+    const { layers } = storeToRefs(mapStore);
     watch(
-      layers2,
+      layers,
       (value, oldValue) => {
         if (oldValue !== value) {
           storageHelper.setValue(
@@ -81599,14 +81600,14 @@ class StatePersistorLayersService {
   }
   restore() {
     const version2 = storageHelper.getInitialVersion();
-    const mapStore2 = useMapStore();
-    const layers2 = storageHelper.getValue(
+    const mapStore = useMapStore();
+    const layers = storageHelper.getValue(
       SP_KEY_LAYERS,
       version2 === 2 ? storageLayerMapper.layerNamesToLayersV2 : storageLayerMapper.layerIdsToLayers
     );
     const opacities = version2 === 2 ? this.getOpacitiesFromStorageV2() : this.getOpacitiesFromStorage();
     if (opacities) {
-      layers2 == null ? void 0 : layers2.forEach((layer, index2) => {
+      layers == null ? void 0 : layers.forEach((layer, index2) => {
         var _a;
         if (layer) {
           layer.opacity = (_a = opacities[index2]) != null ? _a : 1;
@@ -81619,7 +81620,7 @@ class StatePersistorLayersService {
       storageHelper.removeItem(SP_KEY_V2_LAYERSOPACITIES);
       storageHelper.removeItem(SP_KEY_V2_LAYERSVISIBILITY);
     }
-    mapStore2.addLayers(...(layers2 == null ? void 0 : layers2.filter((layer) => layer)) || []);
+    mapStore.addLayers(...(layers == null ? void 0 : layers.filter((layer) => layer)) || []);
   }
   getOpacitiesFromStorage() {
     return storageHelper.getValue(
@@ -81641,8 +81642,8 @@ class StatePersistorLayersService {
 }
 const statePersistorLayersService = new StatePersistorLayersService();
 class StorageThemeMapper {
-  themeToThemeName(theme2) {
-    return (theme2 == null ? void 0 : theme2.name) || "";
+  themeToThemeName(theme) {
+    return (theme == null ? void 0 : theme.name) || "";
   }
 }
 const storageThemeMapper = new StorageThemeMapper();
@@ -81656,9 +81657,9 @@ class StatePersistorThemeService {
     });
   }
   persist() {
-    const themeStore2 = useThemeStore();
+    const themeStore = useThemeStore();
     watch(
-      () => themeStore2.theme,
+      () => themeStore.theme,
       (value, oldValue) => {
         if (oldValue !== value && value) {
           storageHelper.setValue(
@@ -81672,10 +81673,10 @@ class StatePersistorThemeService {
     );
   }
   restore() {
-    const theme2 = storageHelper.getValue(SP_KEY_THEME);
-    if (theme2) {
+    const theme = storageHelper.getValue(SP_KEY_THEME);
+    if (theme) {
       const { setTheme } = useThemeStore();
-      setTheme(theme2);
+      setTheme(theme);
     }
   }
 }
@@ -82643,9 +82644,20 @@ const _sfc_main = /* @__PURE__ */ defineComponent$1({
     watch(
       layersOpen,
       () => setTimeout(() => {
-        useMap().getOlMap().updateSize();
+        resizeMap();
       }, 50)
     );
+    onMounted(() => window.addEventListener("resize", resizeMap));
+    onUnmounted(() => window.removeEventListener("resize", resizeMap));
+    function resizeMap() {
+      const map2 = useMap().getOlMap();
+      map2.updateSize();
+      map2.getAllLayers().forEach((layer) => {
+        if (layer instanceof MapLibreLayer) {
+          layer.maplibreMap.resize();
+        }
+      });
+    }
     return (_ctx, _cache) => {
       return openBlock(), createElementBlock("div", _hoisted_1, [
         createVNode$1(_sfc_main$6),
@@ -82695,24 +82707,6 @@ const createElementInstance = (component = {}, app2 = null) => {
     { shadowRoot: false }
   );
 };
-const mapStore = useMapStore();
-const { layers } = storeToRefs(mapStore);
-const themeStore = useThemeStore();
-const { theme } = storeToRefs(themeStore);
-const changedTheme = new CustomEvent("changedTheme", {
-  detail: {
-    theme
-  }
-});
-watch(
-  theme,
-  (theme2) => {
-    if (theme2) {
-      window.dispatchEvent(changedTheme);
-    }
-  },
-  { immediate: true }
-);
 export {
   _sfc_main as App,
   _sfc_main$b as BackgroundSelector,
@@ -82734,11 +82728,12 @@ export {
   createPinia,
   defineCustomElement,
   instance as i18next,
-  layers,
   statePersistorLayersService,
   statePersistorThemeService,
+  storeToRefs,
   themeSelectorService,
   useMap,
   useMapStore,
-  useThemeStore
+  useThemeStore,
+  watch2 as watch
 };
