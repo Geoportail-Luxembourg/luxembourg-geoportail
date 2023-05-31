@@ -12,6 +12,11 @@ import useMvtStyles from '@/composables/mvt-styles/mvt-styles.composable'
 
 import LayerManagerItemBackground from './layer-item/layer-item-background.vue'
 import LayerManagerItem from './layer-item/layer-item.vue'
+import SimpleStyleSelector from '../style-selector/simple-style-selector.vue'
+import { useTranslation } from 'i18next-vue'
+
+const { t } = useTranslation()
+const ROAD_MAP_ID = 556
 
 const { setMetadataId } = useMetadataStore()
 const mapStore = useMapStore()
@@ -25,6 +30,9 @@ const draggableClassName = 'drag-handle'
 const bgLayerIsEditable = computed(() =>
   styles.isLayerStyleEditable(bgLayer.value)
 )
+
+const emit = defineEmits(['displayCatalog'])
+const { setRemoteLayersOpen } = useAppStore()
 
 onMounted(() => {
   const sortableLayers = document.getElementById('sortable-layers')
@@ -89,6 +97,28 @@ function toggleEditionLayer() {
         @clickEdit="toggleEditionLayer"
       >
       </layer-manager-item-background>
+      <div class="flex flex-row justify-center space-x-1 my-2">
+        <button
+          data-cy="addLayer"
+          class="bg-white text-primary hover:bg-primary hover:text-white border border-slate-300 py-1.5 px-2.5"
+          @click="emit('displayCatalog')"
+        >
+          {{ t('+ Add layers', { ns: 'client' }) }}
+        </button>
+        <button
+          data-cy="addRemoteLayer"
+          class="bg-white text-primary hover:bg-primary hover:text-white border border-slate-300 py-1.5 px-2.5"
+          @click="setRemoteLayersOpen(true)"
+        >
+          {{ t('+ Add external Wms', { ns: 'client' }) }}
+        </button>
+      </div>
+
+      <!-- TODO: add medium and advanced style editors -->
+      <simple-style-selector
+        :is-open="isStyleEditorOpen && bgLayer?.id === ROAD_MAP_ID"
+      >
+      </simple-style-selector>
     </li>
   </ul>
 </template>

@@ -8,12 +8,16 @@ export const useAppStore = defineStore(
     const layersOpen = ref()
     const styleEditorOpen = ref(false)
 
+    const remoteLayersOpen = ref()
     function setLang(language: string) {
       lang.value = language
     }
 
     function setLayersOpen(open: boolean) {
       layersOpen.value = open
+    }
+    function setRemoteLayersOpen(open: boolean) {
+      remoteLayersOpen.value = open
     }
 
     function toggleStyleEditorPanel() {
@@ -30,6 +34,7 @@ export const useAppStore = defineStore(
       styleEditorOpen,
       setLang,
       setLayersOpen,
+      setRemoteLayersOpen,
       toggleStyleEditorPanel,
       closeStyleEditorPanel,
     }
