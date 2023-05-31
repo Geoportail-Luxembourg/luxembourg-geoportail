@@ -9,7 +9,7 @@ import { useMapStore } from '@/stores/map.store'
 import { storeToRefs } from 'pinia'
 
 const { t } = useTranslation()
-const myLayersOpen = ref(true)
+const myLayersOpen = ref(false)
 const { setLayersOpen } = useAppStore()
 const { layers } = storeToRefs(useMapStore())
 </script>

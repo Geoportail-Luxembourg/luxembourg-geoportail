@@ -11780,7 +11780,6 @@ const useMapStore = defineStore("map", () => {
     layers.value = [.../* @__PURE__ */ new Set([...layers.value, ...newLayers])];
   }
   function removeLayers(...layerIds) {
-    console.log("REMOVE", layerIds);
     layers.value = layers.value.filter(
       (layer) => layerIds.indexOf(layer.id) === -1
     );
@@ -81531,7 +81530,7 @@ const _sfc_main$1 = /* @__PURE__ */ defineComponent$1({
   __name: "layer-panel",
   setup(__props) {
     const { t } = useTranslation();
-    const myLayersOpen = ref(true);
+    const myLayersOpen = ref(false);
     const { setLayersOpen } = useAppStore();
     const { layers } = storeToRefs(useMapStore());
     return (_ctx, _cache) => {

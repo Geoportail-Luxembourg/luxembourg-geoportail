@@ -11779,7 +11779,6 @@ This will fail in production.`);
       layers.value = [.../* @__PURE__ */ new Set([...layers.value, ...newLayers])];
     }
     function removeLayers(...layerIds) {
-      console.log("REMOVE", layerIds);
       layers.value = layers.value.filter(
         (layer) => layerIds.indexOf(layer.id) === -1
       );
@@ -81530,7 +81529,7 @@ uniform ${i3} ${o3} u_${a3};
     __name: "layer-panel",
     setup(__props) {
       const { t } = useTranslation();
-      const myLayersOpen = vue.ref(true);
+      const myLayersOpen = vue.ref(false);
       const { setLayersOpen } = useAppStore();
       const { layers } = storeToRefs(useMapStore());
       return (_ctx, _cache) => {
