@@ -5,10 +5,13 @@ import { useTranslation } from 'i18next-vue'
 import CatalogTab from '@/components/catalog/catalog-tab.vue'
 import LayerManager from '@/components/layer-manager/layer-manager.vue'
 import { useAppStore } from '@/stores/app.store'
+import { useMapStore } from '@/stores/map.store'
+import { storeToRefs } from 'pinia'
 
 const { t } = useTranslation()
 const myLayersOpen = ref(true)
 const { setLayersOpen } = useAppStore()
+const { layers } = storeToRefs(useMapStore())
 </script>
 
 <template>
@@ -33,7 +36,7 @@ const { setLayersOpen } = useAppStore()
         class="text-white basis-1/2 hover:bg-primary cursor-pointer text-center uppercase"
         :class="myLayersOpen ? 'bg-primary' : 'bg-tertiary'"
       >
-        {{ t('my_layers', { ns: 'client' }) }}
+        {{ t('my_layers', { ns: 'client' }) }} ({{ layers.length }})
       </button>
       <button
         data-cy="catalogButton"
