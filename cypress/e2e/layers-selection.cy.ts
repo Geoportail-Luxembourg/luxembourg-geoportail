@@ -19,6 +19,13 @@ describe('Catalogue', () => {
       cy.get('[data-cy="myLayers"] > li').should('have.length', 3)
     })
 
+    it('displays title with updated number of layers', () => {
+      cy.get('[data-cy="myLayersButton"]').should(
+        'have.text',
+        'Mes couches (2) '
+      )
+    })
+
     it('toggles the layer visibility', () => {
       cy.url().should('contains', 'opacities=1-1')
       expect(localStorage.getItem('opacities')).to.eq('1-1')

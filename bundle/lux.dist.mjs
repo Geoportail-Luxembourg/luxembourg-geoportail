@@ -11780,6 +11780,7 @@ const useMapStore = defineStore("map", () => {
     layers.value = [.../* @__PURE__ */ new Set([...layers.value, ...newLayers])];
   }
   function removeLayers(...layerIds) {
+    console.log("REMOVE", layerIds);
     layers.value = layers.value.filter(
       (layer) => layerIds.indexOf(layer.id) === -1
     );
@@ -81532,6 +81533,7 @@ const _sfc_main$1 = /* @__PURE__ */ defineComponent$1({
     const { t } = useTranslation();
     const myLayersOpen = ref(true);
     const { setLayersOpen } = useAppStore();
+    const { layers } = storeToRefs(useMapStore());
     return (_ctx, _cache) => {
       return openBlock(), createElementBlock("div", _hoisted_1$1, [
         createElementVNode("div", _hoisted_2$1, [
@@ -81548,7 +81550,7 @@ const _sfc_main$1 = /* @__PURE__ */ defineComponent$1({
           createElementVNode("button", {
             onClick: _cache[1] || (_cache[1] = () => myLayersOpen.value = true),
             class: normalizeClass(["text-white basis-1/2 hover:bg-primary cursor-pointer text-center uppercase", myLayersOpen.value ? "bg-primary" : "bg-tertiary"])
-          }, toDisplayString(unref(t)("my_layers", { ns: "client" })), 3),
+          }, toDisplayString(unref(t)("my_layers", { ns: "client" })) + " (" + toDisplayString(unref(layers).length) + ") ", 3),
           createElementVNode("button", {
             onClick: _cache[2] || (_cache[2] = ($event) => myLayersOpen.value = false),
             class: normalizeClass(["text-white basis-1/2 hover:bg-primary cursor-pointer text-center uppercase", myLayersOpen.value ? "bg-tertiary" : "bg-primary"])
