@@ -3,6 +3,7 @@ import type { AUTWindowOlMap } from '../types'
 describe('Background selector', () => {
   beforeEach(() => {
     cy.visit('/')
+    cy.get('[data-cy="myLayersButton"]').click()
   })
 
   it('renders the background selector properly', () => {

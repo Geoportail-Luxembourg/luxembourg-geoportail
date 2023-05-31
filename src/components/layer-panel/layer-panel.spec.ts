@@ -14,13 +14,13 @@ describe('LayerPanel', () => {
       },
     })
 
-    expect(wrapper.findComponent(CatalogTab).exists()).toBe(false)
-    expect(wrapper.findComponent(LayerManager).exists()).toBe(true)
-
-    wrapper.vm.myLayersOpen = false
-    await wrapper.vm.$nextTick() // "Wait for the DOM to update before continuing the test"
-
     expect(wrapper.findComponent(CatalogTab).exists()).toBe(true)
     expect(wrapper.findComponent(LayerManager).exists()).toBe(false)
+
+    wrapper.vm.myLayersOpen = true
+    await wrapper.vm.$nextTick() // "Wait for the DOM to update before continuing the test"
+
+    expect(wrapper.findComponent(CatalogTab).exists()).toBe(false)
+    expect(wrapper.findComponent(LayerManager).exists()).toBe(true)
   })
 })
