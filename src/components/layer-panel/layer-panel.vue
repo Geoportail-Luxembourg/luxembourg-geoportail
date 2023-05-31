@@ -15,8 +15,8 @@ const { layers } = storeToRefs(useMapStore())
 </script>
 
 <template>
-  <div data-cy="layerPanel" class="flex flex-col h-full">
-    <div class="h-20 shrink-0 flex justify-between lux-panel-title">
+  <div data-cy="layerPanel" class="flex flex-col h-full pt-1.5">
+    <div class="h-16 shrink-0 flex justify-between lux-panel-title">
       <span>
         {{ t('Layers', { ns: 'client' }) }}
       </span>

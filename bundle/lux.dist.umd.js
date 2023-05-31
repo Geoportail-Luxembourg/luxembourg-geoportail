@@ -9562,7 +9562,7 @@ This will fail in production.`);
     }
   }
   const main = "";
-  const _hoisted_1$k = { class: "lux-dropdown" };
+  const _hoisted_1$j = { class: "lux-dropdown" };
   const _hoisted_2$f = { class: "h-full" };
   const _hoisted_3$d = ["aria-expanded"];
   const _hoisted_4$b = /* @__PURE__ */ vue.createElementVNode("span", { class: "lux-caret" }, null, -1);
@@ -9598,7 +9598,7 @@ This will fail in production.`);
       vue.onUnmounted(() => document.removeEventListener("click", onClickOutsideOpenBtn));
       return (_ctx, _cache) => {
         var _a, _b;
-        return vue.openBlock(), vue.createElementBlock("div", _hoisted_1$k, [
+        return vue.openBlock(), vue.createElementBlock("div", _hoisted_1$j, [
           vue.createElementVNode("div", _hoisted_2$f, [
             vue.createElementVNode("button", {
               type: "button",
@@ -77679,7 +77679,7 @@ uniform ${i3} ${o3} u_${a3};
     }
   }
   const statePersistorBgLayerService = new StatePersistorBgLayerService();
-  const _hoisted_1$j = ["title"];
+  const _hoisted_1$i = ["title"];
   const _sfc_main$m = /* @__PURE__ */ vue.defineComponent({
     __name: "background-selector-item",
     props: {
@@ -77713,11 +77713,11 @@ uniform ${i3} ${o3} u_${a3};
         return vue.openBlock(), vue.createElementBlock("button", {
           title: vue.unref(buttonTitle),
           class: vue.normalizeClass(vue.unref(buttonClasses))
-        }, null, 10, _hoisted_1$j);
+        }, null, 10, _hoisted_1$i);
       };
     }
   });
-  const _hoisted_1$i = { class: "flex flex-row-reverse" };
+  const _hoisted_1$h = { class: "flex flex-row-reverse" };
   const _sfc_main$l = /* @__PURE__ */ vue.defineComponent({
     __name: "background-selector",
     props: {
@@ -77790,7 +77790,7 @@ uniform ${i3} ${o3} u_${a3};
         isOpen.value = !isOpen.value;
       }
       return (_ctx, _cache) => {
-        return vue.openBlock(), vue.createElementBlock("div", _hoisted_1$i, [
+        return vue.openBlock(), vue.createElementBlock("div", _hoisted_1$h, [
           vue.createElementVNode("div", {
             class: vue.normalizeClass(["lux-bg-sel border border-black", isOpen.value === true ? "hidden" : "block"])
           }, [
@@ -77841,7 +77841,7 @@ uniform ${i3} ${o3} u_${a3};
     },
     {}
   );
-  const _hoisted_1$h = {
+  const _hoisted_1$g = {
     class: "mb-px",
     key: "node.id"
   };
@@ -77878,7 +77878,7 @@ uniform ${i3} ${o3} u_${a3};
       }
       return (_ctx, _cache) => {
         const _component_layer_tree_node = vue.resolveComponent("layer-tree-node", true);
-        return isParent ? (vue.openBlock(), vue.createElementBlock("div", _hoisted_1$h, [
+        return isParent ? (vue.openBlock(), vue.createElementBlock("div", _hoisted_1$g, [
           __props.node.depth === 1 ? (vue.openBlock(), vue.createElementBlock("button", {
             key: 0,
             class: "group node-1 w-full text-left flex px-2 py-1.5 uppercase bg-tertiary",
@@ -78004,7 +78004,7 @@ uniform ${i3} ${o3} u_${a3};
     },
     {}
   );
-  const _hoisted_1$g = {
+  const _hoisted_1$f = {
     key: 0,
     class: "fixed right-32 top-32 z-[100] bg-white lux-modal w-[600px]",
     role: "dialog"
@@ -78116,7 +78116,7 @@ uniform ${i3} ${o3} u_${a3};
       }
       return (_ctx, _cache) => {
         var _a, _b;
-        return vue.unref(remoteLayersOpen) ? (vue.openBlock(), vue.createElementBlock("div", _hoisted_1$g, [
+        return vue.unref(remoteLayersOpen) ? (vue.openBlock(), vue.createElementBlock("div", _hoisted_1$f, [
           vue.createElementVNode("div", _hoisted_2$d, [
             vue.createElementVNode("h4", null, vue.toDisplayString(vue.unref(t)("Add external data", { ns: "client" })), 1),
             vue.createElementVNode("button", {
@@ -78181,7 +78181,7 @@ uniform ${i3} ${o3} u_${a3};
     const date = new Date(dateString);
     return new Intl.DateTimeFormat(language).format(date);
   }
-  const _hoisted_1$f = { class: "font-bold" };
+  const _hoisted_1$e = { class: "font-bold" };
   const _hoisted_2$c = { class: "col-span-2" };
   const _sfc_main$i = /* @__PURE__ */ vue.defineComponent({
     __name: "layer-metadata-item",
@@ -78193,7 +78193,7 @@ uniform ${i3} ${o3} u_${a3};
       const props = __props;
       return (_ctx, _cache) => {
         return vue.openBlock(), vue.createElementBlock(vue.Fragment, null, [
-          vue.createElementVNode("span", _hoisted_1$f, vue.toDisplayString(props.label), 1),
+          vue.createElementVNode("span", _hoisted_1$e, vue.toDisplayString(props.label), 1),
           vue.createElementVNode("span", _hoisted_2$c, vue.toDisplayString(props.value), 1)
         ], 64);
       };
@@ -78373,7 +78373,7 @@ uniform ${i3} ${o3} u_${a3};
     }
   }
   const layerMetadataService = new LayerMetadataService();
-  const _hoisted_1$e = {
+  const _hoisted_1$d = {
     key: 0,
     class: "fixed right-32 top-32 z-[100] bg-white lux-modal w-[600px] p-3",
     role: "dialog"
@@ -78466,7 +78466,7 @@ uniform ${i3} ${o3} u_${a3};
       return (_ctx, _cache) => {
         var _a, _b, _c, _d, _e, _f, _g, _h, _i, _j, _k, _l, _m, _n, _o;
         const _directive_dompurify_html = vue.resolveDirective("dompurify-html");
-        return layerMetadata.value ? (vue.openBlock(), vue.createElementBlock("div", _hoisted_1$e, [
+        return layerMetadata.value ? (vue.openBlock(), vue.createElementBlock("div", _hoisted_1$d, [
           vue.createElementVNode("div", _hoisted_2$b, [
             vue.createElementVNode("h1", null, vue.toDisplayString(vue.unref(t)(`${layerMetadata.value.title}`)), 1),
             vue.createElementVNode("button", { onClick: closeLayerMetadata }, "X")
@@ -78658,7 +78658,7 @@ uniform ${i3} ${o3} u_${a3};
     }
   }
   const themeSelectorService = new ThemeSelectorService();
-  const _hoisted_1$d = { class: "w-full h-14 flex bg-white shadow-header z-10 shrink-0" };
+  const _hoisted_1$c = { class: "w-full h-14 flex bg-white shadow-header z-10 shrink-0" };
   const _hoisted_2$a = /* @__PURE__ */ vue.createElementVNode("div", { class: "flex-2 p-[5px]" }, [
     /* @__PURE__ */ vue.createElementVNode("img", { src: _imports_0 })
   ], -1);
@@ -78686,7 +78686,7 @@ uniform ${i3} ${o3} u_${a3};
       );
       return (_ctx, _cache) => {
         var _a, _b;
-        return vue.openBlock(), vue.createElementBlock("header", _hoisted_1$d, [
+        return vue.openBlock(), vue.createElementBlock("header", _hoisted_1$c, [
           _hoisted_2$a,
           _hoisted_3$9,
           vue.createElementVNode("div", null, [
@@ -78708,7 +78708,7 @@ uniform ${i3} ${o3} u_${a3};
       };
     }
   });
-  const _hoisted_1$c = { class: "h-[42px] w-full sm:h-full sm:w-16 hover:text-white hover:bg-primary" };
+  const _hoisted_1$b = { class: "h-[42px] w-full sm:h-full sm:w-16 hover:text-white hover:bg-primary" };
   const _hoisted_2$9 = { class: "block text-[13px] sm:text-base uppercase" };
   const _sfc_main$e = /* @__PURE__ */ vue.defineComponent({
     __name: "button-icon",
@@ -78719,7 +78719,7 @@ uniform ${i3} ${o3} u_${a3};
     setup(__props) {
       const props = __props;
       return (_ctx, _cache) => {
-        return vue.openBlock(), vue.createElementBlock("button", _hoisted_1$c, [
+        return vue.openBlock(), vue.createElementBlock("button", _hoisted_1$b, [
           vue.createElementVNode("span", {
             class: vue.normalizeClass(["block text-[1.7rem] sm:text-[2rem] -mt-1.5 -mb-3 after:font-icons", `after:content-${props.icon}`])
           }, null, 2),
@@ -78728,7 +78728,7 @@ uniform ${i3} ${o3} u_${a3};
       };
     }
   });
-  const _hoisted_1$b = ["href"];
+  const _hoisted_1$a = ["href"];
   const _sfc_main$d = /* @__PURE__ */ vue.defineComponent({
     __name: "button-link",
     props: {
@@ -78742,11 +78742,11 @@ uniform ${i3} ${o3} u_${a3};
           class: "h-full flex flex-col justify-center px-[7px] uppercase hover:text-white hover:bg-primary",
           href: `${props.link}`,
           target: "_blank"
-        }, vue.toDisplayString(_ctx.$props.label), 9, _hoisted_1$b);
+        }, vue.toDisplayString(_ctx.$props.label), 9, _hoisted_1$a);
       };
     }
   });
-  const _hoisted_1$a = { class: "flex flex-col w-12 justify-between bg-white z-5 shrink-0 sm:flex-row sm:w-full sm:h-14 sm:shadow-footer" };
+  const _hoisted_1$9 = { class: "flex flex-col w-12 justify-between bg-white z-5 shrink-0 sm:flex-row sm:w-full sm:h-14 sm:shadow-footer" };
   const _hoisted_2$8 = { class: "flex flex-col w-full sm:w-80 sm:flex-row justify-start text-primary divide-y sm:divide-y-0 sm:divide-x divide-gray-400 divide-solid box-content border-y sm:border-y-0 border-x border-gray-400" };
   const _hoisted_3$8 = { class: "flex flex-col w-12 sm:w-64 sm:flex-row justify-start text-primary divide-y sm:divide-y-0 sm:divide-x divide-gray-400 divide-solid box-content border-y sm:border-y-0 border-x border-gray-400" };
   const _hoisted_4$6 = { class: "w-[466px] hidden sm:flex flex-row justify-end text-gray-500 whitespace-nowrap" };
@@ -78756,7 +78756,7 @@ uniform ${i3} ${o3} u_${a3};
       const { t, i18next } = useTranslation();
       const { setLayersOpen } = useAppStore();
       return (_ctx, _cache) => {
-        return vue.openBlock(), vue.createElementBlock("footer", _hoisted_1$a, [
+        return vue.openBlock(), vue.createElementBlock("footer", _hoisted_1$9, [
           vue.createElementVNode("ul", _hoisted_2$8, [
             vue.createElementVNode("li", null, [
               vue.createVNode(_sfc_main$e, {
@@ -78909,7 +78909,7 @@ uniform ${i3} ${o3} u_${a3};
       };
     }
   });
-  const _hoisted_1$9 = { class: "flex flex-row flex-wrap pl-2.5" };
+  const _hoisted_1$8 = { class: "flex flex-row flex-wrap pl-2.5" };
   const _hoisted_2$7 = ["onClick"];
   const _hoisted_3$7 = { class: "text-2xl absolute top-5" };
   const _sfc_main$a = /* @__PURE__ */ vue.defineComponent({
@@ -78921,7 +78921,7 @@ uniform ${i3} ${o3} u_${a3};
       const props = __props;
       const { t } = useTranslation();
       return (_ctx, _cache) => {
-        return vue.openBlock(), vue.createElementBlock("div", _hoisted_1$9, [
+        return vue.openBlock(), vue.createElementBlock("div", _hoisted_1$8, [
           (vue.openBlock(true), vue.createElementBlock(vue.Fragment, null, vue.renderList(props.themes, (theme) => {
             return vue.openBlock(), vue.createElementBlock("button", {
               class: vue.normalizeClass(["relative shrink-0 h-[150px] w-1/2 px-2.5 text-start text-gray-100/40 uppercase hover:bg-[#ccc]", `bg-${theme.name}-primary hover:text-${theme.name}-primary`]),
@@ -78938,7 +78938,7 @@ uniform ${i3} ${o3} u_${a3};
       };
     }
   });
-  const _hoisted_1$8 = ["aria-expanded"];
+  const _hoisted_1$7 = ["aria-expanded"];
   const _hoisted_2$6 = { class: "py-0.5" };
   const _hoisted_3$6 = { class: "px-1 py-0.5 shrink-0 flex flex-row text-[12px] bg-secondary text-white" };
   const _hoisted_4$5 = { class: "py-[3px]" };
@@ -78975,11 +78975,11 @@ uniform ${i3} ${o3} u_${a3};
               }), 128))
             ])
           ])
-        ], 8, _hoisted_1$8);
+        ], 8, _hoisted_1$7);
       };
     }
   });
-  const _hoisted_1$7 = {
+  const _hoisted_1$6 = {
     key: 0,
     class: "absolute inset-x-0 top-14 bottom-0 mt-1 bg-primary overflow-y-auto overflow-x-hidden"
   };
@@ -79017,7 +79017,7 @@ uniform ${i3} ${o3} u_${a3};
             currentTheme: vue.unref(theme),
             isOpen: vue.unref(isOpen)
           }, null, 8, ["themes", "currentTheme", "isOpen"]),
-          vue.unref(isOpen) ? (vue.openBlock(), vue.createElementBlock("div", _hoisted_1$7, [
+          vue.unref(isOpen) ? (vue.openBlock(), vue.createElementBlock("div", _hoisted_1$6, [
             vue.createVNode(_sfc_main$a, {
               onSetTheme: setTheme,
               themes: vue.unref(themes2)
@@ -79027,7 +79027,6 @@ uniform ${i3} ${o3} u_${a3};
       };
     }
   });
-  const _hoisted_1$6 = { class: "pt-5" };
   const _sfc_main$7 = /* @__PURE__ */ vue.defineComponent({
     __name: "catalog-tab",
     setup(__props) {
@@ -79038,12 +79037,10 @@ uniform ${i3} ${o3} u_${a3};
       return (_ctx, _cache) => {
         return vue.openBlock(), vue.createElementBlock(vue.Fragment, null, [
           vue.createVNode(_sfc_main$8, { onToggleThemesGrid: toggleThemesGrid }),
-          vue.createElementVNode("div", _hoisted_1$6, [
-            vue.unref(themeGridIsOpen) === false ? (vue.openBlock(), vue.createBlock(_sfc_main$b, {
-              key: 0,
-              class: "pt-5 absolute inset-x-2.5 bg-primary overflow-y-auto overflow-x-hidden"
-            })) : vue.createCommentVNode("", true)
-          ])
+          vue.unref(themeGridIsOpen) === false ? (vue.openBlock(), vue.createBlock(_sfc_main$b, {
+            key: 0,
+            class: "pt-5 absolute inset-x-2.5 bg-primary overflow-y-auto overflow-x-hidden"
+          })) : vue.createCommentVNode("", true)
         ], 64);
       };
     }
@@ -81551,8 +81548,8 @@ uniform ${i3} ${o3} u_${a3};
       };
     }
   });
-  const _hoisted_1$1 = { class: "flex flex-col h-full" };
-  const _hoisted_2$1 = { class: "h-20 shrink-0 flex justify-between lux-panel-title" };
+  const _hoisted_1$1 = { class: "flex flex-col h-full pt-1.5" };
+  const _hoisted_2$1 = { class: "h-16 shrink-0 flex justify-between lux-panel-title" };
   const _hoisted_3$1 = ["aria-label"];
   const _hoisted_4$1 = { class: "flex flex-row gap-2 h-10 text-2xl" };
   const _hoisted_5$1 = { class: "relative grow p-2.5 bg-primary overflow-auto" };
