@@ -17,12 +17,16 @@ import {
 import { remoteLayersService } from '../../services/remote-layers/remote-layers.service'
 import { OgcClientWmsEndpoint } from '../../services/remote-layers/remote-layers.model'
 import { WmtsEndpoint } from '@/services/remote-layers/wmts.endpoint'
+import { storeToRefs } from 'pinia'
+import { useAppStore } from '@/stores/app.store'
 
 const { t } = useTranslation()
 const mapStore = useMapStore()
 const layers = useLayers()
 const wmsLayers: ShallowRef<DropdownOptionModel[]> = shallowRef([])
 const layerTree: ShallowRef<LayerTreeNodeModel | undefined> = shallowRef()
+const { remoteLayersOpen } = storeToRefs(useAppStore())
+const { setRemoteLayersOpen } = useAppStore()
 
 let isLoading = false
 let inputRemoteUrl: string
@@ -118,12 +122,14 @@ function toggleLayer(node: LayerTreeNodeModel) {
 
 <template>
   <div
+    v-if="remoteLayersOpen"
     data-cy="remoteLayerBox"
-    class="absolute right-0 top-52 z-50 bg-white lux-modal w-[600px]"
+    class="fixed right-32 top-32 z-[100] bg-white lux-modal w-[600px]"
     role="dialog"
   >
-    <div class="lux-modal-header">
+    <div class="lux-modal-header flex flex-row justify-between">
       <h4>{{ t('Add external data', { ns: 'client' }) }}</h4>
+      <button @click="() => setRemoteLayersOpen(false)">X</button>
     </div>
 
     <div class="p-[15px]">
