@@ -25,6 +25,7 @@ describe('Test existence of main components', () => {
     cy.get('[data-cy="catalog"]')
     cy.get('[data-cy="myLayersButton"]').click()
     cy.get('[data-cy="myLayers"]')
+    cy.get('[data-cy="addRemoteLayer"]').click()
     cy.get('[data-cy="remoteLayerBox"]')
     cy.get('[data-cy="langSelect"]')
   })

@@ -9564,7 +9564,7 @@ This will fail in production.`);
   const main = "";
   const _hoisted_1$k = { class: "lux-dropdown" };
   const _hoisted_2$f = { class: "h-full" };
-  const _hoisted_3$c = ["aria-expanded"];
+  const _hoisted_3$d = ["aria-expanded"];
   const _hoisted_4$b = /* @__PURE__ */ vue.createElementVNode("span", { class: "lux-caret" }, null, -1);
   const _hoisted_5$9 = { class: "lux-dropdown-wrapper" };
   const _hoisted_6$6 = ["aria-label", "data-value"];
@@ -9609,7 +9609,7 @@ This will fail in production.`);
             }, [
               vue.createElementVNode("span", null, vue.toDisplayString((_b = props.placeholder) != null ? _b : (_a = props.options[0]) == null ? void 0 : _a.label), 1),
               _hoisted_4$b
-            ], 10, _hoisted_3$c)
+            ], 10, _hoisted_3$d)
           ]),
           vue.createElementVNode("div", _hoisted_5$9, [
             vue.createElementVNode("ul", {
@@ -11987,7 +11987,7 @@ This will fail in production.`);
   }
   const _hoisted_1$j = { class: "lux-layer-manager-item mt-2.5" };
   const _hoisted_2$e = ["title"];
-  const _hoisted_3$b = { class: "flex-1 text-left cursor-default" };
+  const _hoisted_3$c = { class: "flex-1 text-left cursor-default" };
   const _hoisted_4$a = ["title"];
   const _sfc_main$n = /* @__PURE__ */ vue.defineComponent({
     __name: "layer-item-background",
@@ -12015,7 +12015,7 @@ This will fail in production.`);
             title: vue.unref(txtTitleLabel),
             onClick: _cache[0] || (_cache[0] = (...args) => vue.unref(onClickInfo) && vue.unref(onClickInfo)(...args))
           }, null, 8, _hoisted_2$e),
-          vue.createElementVNode("span", _hoisted_3$b, vue.toDisplayString(getLabel()), 1),
+          vue.createElementVNode("span", _hoisted_3$c, vue.toDisplayString(getLabel()), 1),
           __props.showEditButton ? (vue.openBlock(), vue.createElementBlock("button", {
             key: 0,
             class: "fa fa-pencil",
@@ -12028,7 +12028,7 @@ This will fail in production.`);
   });
   const _hoisted_1$i = { class: "lux-layer-manager-item relative" };
   const _hoisted_2$d = { class: "w-full flex flex-nowrap items-start gap-x-2" };
-  const _hoisted_3$a = ["title"];
+  const _hoisted_3$b = ["title"];
   const _hoisted_4$9 = ["title"];
   const _hoisted_5$8 = ["aria-expanded", "aria-controls"];
   const _hoisted_6$5 = ["aria-expanded", "aria-controls"];
@@ -12108,7 +12108,7 @@ This will fail in production.`);
             vue.createElementVNode("button", {
               class: vue.normalizeClass(["fa-solid fa-bars cursor-move mt-1", __props.draggableClassName]),
               title: vue.unref(txtDraggableLabel)
-            }, null, 10, _hoisted_3$a),
+            }, null, 10, _hoisted_3$b),
             vue.createElementVNode("button", {
               class: "fa-solid fa-info mt-1",
               title: vue.unref(txtTitleLabel),
@@ -13190,7 +13190,7 @@ This will fail in production.`);
   });
   const _hoisted_1$h = ["title"];
   const _hoisted_2$c = { class: "w-full text-white text-lg text-center" };
-  const _hoisted_3$9 = ["title"];
+  const _hoisted_3$a = ["title"];
   const _hoisted_4$8 = { class: "text-white" };
   const _hoisted_5$7 = ["title", "onClick"];
   const _hoisted_6$4 = { class: "flex" };
@@ -13251,7 +13251,7 @@ This will fail in production.`);
                   }, null, 8, ["colors", "style-name"])
                 ])
               ], 8, _hoisted_5$7)
-            ], 10, _hoisted_3$9);
+            ], 10, _hoisted_3$a);
           }), 128)),
           vue.createElementVNode("button", {
             onClick: resetStyle,
@@ -13279,11 +13279,40 @@ This will fail in production.`);
     },
     {}
   );
+  const useAppStore = defineStore(
+    "app",
+    () => {
+      const lang = vue.ref("fr");
+      const layersOpen = vue.ref();
+      const remoteLayersOpen = vue.ref();
+      function setLang(language) {
+        lang.value = language;
+      }
+      function setLayersOpen(open2) {
+        layersOpen.value = open2;
+      }
+      function setRemoteLayersOpen(open2) {
+        remoteLayersOpen.value = open2;
+      }
+      return {
+        lang,
+        layersOpen,
+        remoteLayersOpen,
+        setLang,
+        setLayersOpen,
+        setRemoteLayersOpen
+      };
+    },
+    {}
+  );
   const _hoisted_1$g = { id: "sortable-layers" };
   const _hoisted_2$b = ["id"];
+  const _hoisted_3$9 = { class: "flex flex-row justify-center space-x-1 my-2" };
   const _sfc_main$j = /* @__PURE__ */ vue.defineComponent({
     __name: "layer-manager",
-    setup(__props) {
+    emits: ["displayCatalog"],
+    setup(__props, { emit }) {
+      const { t } = useTranslation();
       const ROAD_MAP_ID = 556;
       const { setMetadataId } = useMetadataStore();
       const mapStore = useMapStore();
@@ -13292,6 +13321,7 @@ This will fail in production.`);
       const isLayerOpenId = vue.shallowRef();
       const isStyleEditorOpen = vue.shallowRef(false);
       const draggableClassName = "drag-handle";
+      const { setRemoteLayersOpen } = useAppStore();
       vue.onMounted(() => {
         const sortableLayers = document.getElementById("sortable-layers");
         if (sortableLayers) {
@@ -13347,6 +13377,16 @@ This will fail in production.`);
               onClickInfo: _cache[0] || (_cache[0] = () => vue.unref(bgLayer) && vue.unref(setMetadataId)(vue.unref(bgLayer).id)),
               onClickEdit: toggleEditionLayer
             }, null, 8, ["layer", "showEditButton"]),
+            vue.createElementVNode("div", _hoisted_3$9, [
+              vue.createElementVNode("button", {
+                class: "bg-white text-primary hover:bg-primary hover:text-white border border-slate-300 py-1.5 px-2.5",
+                onClick: _cache[1] || (_cache[1] = ($event) => emit("displayCatalog"))
+              }, vue.toDisplayString(vue.unref(t)("+ Add layers", { ns: "client" })), 1),
+              vue.createElementVNode("button", {
+                class: "bg-white text-primary hover:bg-primary hover:text-white border border-slate-300 py-1.5 px-2.5",
+                onClick: _cache[2] || (_cache[2] = ($event) => vue.unref(setRemoteLayersOpen)(true))
+              }, vue.toDisplayString(vue.unref(t)("+ Add external Wms", { ns: "client" })), 1)
+            ]),
             vue.createVNode(_sfc_main$k, {
               "is-open": vue.unref(isStyleEditorOpen) && ((_b = vue.unref(bgLayer)) == null ? void 0 : _b.id) === ROAD_MAP_ID
             }, null, 8, ["is-open"])
@@ -80635,10 +80675,11 @@ uniform ${i3} ${o3} u_${a3};
     }
   });
   const _hoisted_1$9 = {
-    class: "absolute right-0 top-52 z-50 bg-white lux-modal w-[600px]",
+    key: 0,
+    class: "fixed right-32 top-32 z-[100] bg-white lux-modal w-[600px]",
     role: "dialog"
   };
-  const _hoisted_2$7 = { class: "lux-modal-header" };
+  const _hoisted_2$7 = { class: "lux-modal-header flex flex-row justify-between" };
   const _hoisted_3$5 = { class: "p-[15px]" };
   const _hoisted_4$5 = { class: "relative text-center" };
   const _hoisted_5$4 = ["placeholder", "value"];
@@ -80669,6 +80710,8 @@ uniform ${i3} ${o3} u_${a3};
       const layers = useLayers();
       const wmsLayers = vue.shallowRef([]);
       const layerTree = vue.shallowRef();
+      const { remoteLayersOpen } = storeToRefs(useAppStore());
+      const { setRemoteLayersOpen } = useAppStore();
       let isLoading = false;
       let inputRemoteUrl;
       let currentRemoteUrl;
@@ -80743,9 +80786,12 @@ uniform ${i3} ${o3} u_${a3};
       }
       return (_ctx, _cache) => {
         var _a, _b;
-        return vue.openBlock(), vue.createElementBlock("div", _hoisted_1$9, [
+        return vue.unref(remoteLayersOpen) ? (vue.openBlock(), vue.createElementBlock("div", _hoisted_1$9, [
           vue.createElementVNode("div", _hoisted_2$7, [
-            vue.createElementVNode("h4", null, vue.toDisplayString(vue.unref(t)("Add external data", { ns: "client" })), 1)
+            vue.createElementVNode("h4", null, vue.toDisplayString(vue.unref(t)("Add external data", { ns: "client" })), 1),
+            vue.createElementVNode("button", {
+              onClick: _cache[0] || (_cache[0] = () => vue.unref(setRemoteLayersOpen)(false))
+            }, "X")
           ]),
           vue.createElementVNode("div", _hoisted_3$5, [
             vue.createElementVNode("div", _hoisted_4$5, [
@@ -80797,7 +80843,7 @@ uniform ${i3} ${o3} u_${a3};
               }, null, 8, ["node"])) : vue.createCommentVNode("", true)
             ])) : vue.createCommentVNode("", true)
           ])
-        ]);
+        ])) : vue.createCommentVNode("", true);
       };
     }
   });
@@ -81201,21 +81247,6 @@ uniform ${i3} ${o3} u_${a3};
     }
   });
   const _imports_0 = "data:image/png;base64,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";
-  const useAppStore = defineStore(
-    "app",
-    () => {
-      const lang = vue.ref("fr");
-      const layersOpen = vue.ref();
-      function setLang(language) {
-        lang.value = language;
-      }
-      function setLayersOpen(open2) {
-        layersOpen.value = open2;
-      }
-      return { lang, layersOpen, setLang, setLayersOpen };
-    },
-    {}
-  );
   class StatePersistorLangService {
     bootstrap() {
       this.restore();
@@ -81556,7 +81587,10 @@ uniform ${i3} ${o3} u_${a3};
           ]),
           vue.createElementVNode("div", _hoisted_5$1, [
             !myLayersOpen.value ? (vue.openBlock(), vue.createBlock(_sfc_main$2, { key: 0 })) : vue.createCommentVNode("", true),
-            myLayersOpen.value ? (vue.openBlock(), vue.createBlock(_sfc_main$j, { key: 1 })) : vue.createCommentVNode("", true)
+            myLayersOpen.value ? (vue.openBlock(), vue.createBlock(_sfc_main$j, {
+              key: 1,
+              onDisplayCatalog: _cache[3] || (_cache[3] = () => myLayersOpen.value = false)
+            })) : vue.createCommentVNode("", true)
           ])
         ]);
       };

@@ -50,7 +50,11 @@ const { layers } = storeToRefs(useMapStore())
     <!--catalog tab-->
     <div class="relative grow p-2.5 bg-primary overflow-auto">
       <catalog-tab v-if="!myLayersOpen"></catalog-tab>
-      <layer-manager data-cy="myLayers" v-if="myLayersOpen"></layer-manager>
+      <layer-manager
+        data-cy="myLayers"
+        v-if="myLayersOpen"
+        @display-catalog="() => (myLayersOpen = false)"
+      ></layer-manager>
     </div>
   </div>
 </template>
