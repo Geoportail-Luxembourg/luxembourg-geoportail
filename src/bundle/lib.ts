@@ -9,9 +9,6 @@ initProjections()
 
 import '../assets/main.css' // Tell Vite to build the css
 import DropdownList from '@/components/common/dropdown-list.vue'
-import LayerManager from '@/components/layer-manager/layer-manager.vue'
-import CatalogTree from '@/components/catalog/catalog-tree.vue'
-import ThemeSelector from '@/components/theme-selector/theme-selector.vue'
 import MapContainer from '@/components/map/map-container.vue'
 import BackgroundSelector from '@/components/background-selector/background-selector.vue'
 import RemoteLayers from '@/components/remote-layers/remote-layers.vue'
@@ -80,9 +77,6 @@ export {
   VueDOMPurifyHTML,
   I18NextVue,
   DropdownList,
-  LayerManager,
-  CatalogTree,
-  ThemeSelector,
   MapContainer,
   BackgroundSelector,
   RemoteLayers,
