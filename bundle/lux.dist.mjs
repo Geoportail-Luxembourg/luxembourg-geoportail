@@ -9563,7 +9563,7 @@ class VueElement extends BaseClass {
   }
 }
 const main = "";
-const _hoisted_1$k = { class: "lux-dropdown" };
+const _hoisted_1$j = { class: "lux-dropdown" };
 const _hoisted_2$f = { class: "h-full" };
 const _hoisted_3$d = ["aria-expanded"];
 const _hoisted_4$b = /* @__PURE__ */ createElementVNode("span", { class: "lux-caret" }, null, -1);
@@ -9599,7 +9599,7 @@ const _sfc_main$o = /* @__PURE__ */ defineComponent$1({
     onUnmounted(() => document.removeEventListener("click", onClickOutsideOpenBtn));
     return (_ctx, _cache) => {
       var _a, _b;
-      return openBlock(), createElementBlock("div", _hoisted_1$k, [
+      return openBlock(), createElementBlock("div", _hoisted_1$j, [
         createElementVNode("div", _hoisted_2$f, [
           createElementVNode("button", {
             type: "button",
@@ -77680,7 +77680,7 @@ class StatePersistorBgLayerService {
   }
 }
 const statePersistorBgLayerService = new StatePersistorBgLayerService();
-const _hoisted_1$j = ["title"];
+const _hoisted_1$i = ["title"];
 const _sfc_main$m = /* @__PURE__ */ defineComponent$1({
   __name: "background-selector-item",
   props: {
@@ -77714,11 +77714,11 @@ const _sfc_main$m = /* @__PURE__ */ defineComponent$1({
       return openBlock(), createElementBlock("button", {
         title: unref(buttonTitle),
         class: normalizeClass(unref(buttonClasses))
-      }, null, 10, _hoisted_1$j);
+      }, null, 10, _hoisted_1$i);
     };
   }
 });
-const _hoisted_1$i = { class: "flex flex-row-reverse" };
+const _hoisted_1$h = { class: "flex flex-row-reverse" };
 const _sfc_main$l = /* @__PURE__ */ defineComponent$1({
   __name: "background-selector",
   props: {
@@ -77791,7 +77791,7 @@ const _sfc_main$l = /* @__PURE__ */ defineComponent$1({
       isOpen.value = !isOpen.value;
     }
     return (_ctx, _cache) => {
-      return openBlock(), createElementBlock("div", _hoisted_1$i, [
+      return openBlock(), createElementBlock("div", _hoisted_1$h, [
         createElementVNode("div", {
           class: normalizeClass(["lux-bg-sel border border-black", isOpen.value === true ? "hidden" : "block"])
         }, [
@@ -77842,7 +77842,7 @@ const useMetadataStore = defineStore(
   },
   {}
 );
-const _hoisted_1$h = {
+const _hoisted_1$g = {
   class: "mb-px",
   key: "node.id"
 };
@@ -77879,7 +77879,7 @@ const _sfc_main$k = /* @__PURE__ */ defineComponent$1({
     }
     return (_ctx, _cache) => {
       const _component_layer_tree_node = resolveComponent("layer-tree-node", true);
-      return isParent ? (openBlock(), createElementBlock("div", _hoisted_1$h, [
+      return isParent ? (openBlock(), createElementBlock("div", _hoisted_1$g, [
         __props.node.depth === 1 ? (openBlock(), createElementBlock("button", {
           key: 0,
           class: "group node-1 w-full text-left flex px-2 py-1.5 uppercase bg-tertiary",
@@ -78005,7 +78005,7 @@ const useAppStore = defineStore(
   },
   {}
 );
-const _hoisted_1$g = {
+const _hoisted_1$f = {
   key: 0,
   class: "fixed right-32 top-32 z-[100] bg-white lux-modal w-[600px]",
   role: "dialog"
@@ -78117,7 +78117,7 @@ const _sfc_main$j = /* @__PURE__ */ defineComponent$1({
     }
     return (_ctx, _cache) => {
       var _a, _b;
-      return unref(remoteLayersOpen) ? (openBlock(), createElementBlock("div", _hoisted_1$g, [
+      return unref(remoteLayersOpen) ? (openBlock(), createElementBlock("div", _hoisted_1$f, [
         createElementVNode("div", _hoisted_2$d, [
           createElementVNode("h4", null, toDisplayString(unref(t)("Add external data", { ns: "client" })), 1),
           createElementVNode("button", {
@@ -78182,7 +78182,7 @@ function formatDate(dateString, language = "fr-FR") {
   const date = new Date(dateString);
   return new Intl.DateTimeFormat(language).format(date);
 }
-const _hoisted_1$f = { class: "font-bold" };
+const _hoisted_1$e = { class: "font-bold" };
 const _hoisted_2$c = { class: "col-span-2" };
 const _sfc_main$i = /* @__PURE__ */ defineComponent$1({
   __name: "layer-metadata-item",
@@ -78194,7 +78194,7 @@ const _sfc_main$i = /* @__PURE__ */ defineComponent$1({
     const props = __props;
     return (_ctx, _cache) => {
       return openBlock(), createElementBlock(Fragment, null, [
-        createElementVNode("span", _hoisted_1$f, toDisplayString(props.label), 1),
+        createElementVNode("span", _hoisted_1$e, toDisplayString(props.label), 1),
         createElementVNode("span", _hoisted_2$c, toDisplayString(props.value), 1)
       ], 64);
     };
@@ -78374,7 +78374,7 @@ class LayerMetadataService {
   }
 }
 const layerMetadataService = new LayerMetadataService();
-const _hoisted_1$e = {
+const _hoisted_1$d = {
   key: 0,
   class: "fixed right-32 top-32 z-[100] bg-white lux-modal w-[600px] p-3",
   role: "dialog"
@@ -78467,7 +78467,7 @@ const _sfc_main$h = /* @__PURE__ */ defineComponent$1({
     return (_ctx, _cache) => {
       var _a, _b, _c, _d, _e, _f, _g, _h, _i, _j, _k, _l, _m, _n, _o;
       const _directive_dompurify_html = resolveDirective("dompurify-html");
-      return layerMetadata.value ? (openBlock(), createElementBlock("div", _hoisted_1$e, [
+      return layerMetadata.value ? (openBlock(), createElementBlock("div", _hoisted_1$d, [
         createElementVNode("div", _hoisted_2$b, [
           createElementVNode("h1", null, toDisplayString(unref(t)(`${layerMetadata.value.title}`)), 1),
           createElementVNode("button", { onClick: closeLayerMetadata }, "X")
@@ -78659,7 +78659,7 @@ class ThemeSelectorService {
   }
 }
 const themeSelectorService = new ThemeSelectorService();
-const _hoisted_1$d = { class: "w-full h-14 flex bg-white shadow-header z-10 shrink-0" };
+const _hoisted_1$c = { class: "w-full h-14 flex bg-white shadow-header z-10 shrink-0" };
 const _hoisted_2$a = /* @__PURE__ */ createElementVNode("div", { class: "flex-2 p-[5px]" }, [
   /* @__PURE__ */ createElementVNode("img", { src: _imports_0 })
 ], -1);
@@ -78687,7 +78687,7 @@ const _sfc_main$f = /* @__PURE__ */ defineComponent$1({
     );
     return (_ctx, _cache) => {
       var _a, _b;
-      return openBlock(), createElementBlock("header", _hoisted_1$d, [
+      return openBlock(), createElementBlock("header", _hoisted_1$c, [
         _hoisted_2$a,
         _hoisted_3$9,
         createElementVNode("div", null, [
@@ -78709,7 +78709,7 @@ const _sfc_main$f = /* @__PURE__ */ defineComponent$1({
     };
   }
 });
-const _hoisted_1$c = { class: "h-[42px] w-full sm:h-full sm:w-16 hover:text-white hover:bg-primary" };
+const _hoisted_1$b = { class: "h-[42px] w-full sm:h-full sm:w-16 hover:text-white hover:bg-primary" };
 const _hoisted_2$9 = { class: "block text-[13px] sm:text-base uppercase" };
 const _sfc_main$e = /* @__PURE__ */ defineComponent$1({
   __name: "button-icon",
@@ -78720,7 +78720,7 @@ const _sfc_main$e = /* @__PURE__ */ defineComponent$1({
   setup(__props) {
     const props = __props;
     return (_ctx, _cache) => {
-      return openBlock(), createElementBlock("button", _hoisted_1$c, [
+      return openBlock(), createElementBlock("button", _hoisted_1$b, [
         createElementVNode("span", {
           class: normalizeClass(["block text-[1.7rem] sm:text-[2rem] -mt-1.5 -mb-3 after:font-icons", `after:content-${props.icon}`])
         }, null, 2),
@@ -78729,7 +78729,7 @@ const _sfc_main$e = /* @__PURE__ */ defineComponent$1({
     };
   }
 });
-const _hoisted_1$b = ["href"];
+const _hoisted_1$a = ["href"];
 const _sfc_main$d = /* @__PURE__ */ defineComponent$1({
   __name: "button-link",
   props: {
@@ -78743,11 +78743,11 @@ const _sfc_main$d = /* @__PURE__ */ defineComponent$1({
         class: "h-full flex flex-col justify-center px-[7px] uppercase hover:text-white hover:bg-primary",
         href: `${props.link}`,
         target: "_blank"
-      }, toDisplayString(_ctx.$props.label), 9, _hoisted_1$b);
+      }, toDisplayString(_ctx.$props.label), 9, _hoisted_1$a);
     };
   }
 });
-const _hoisted_1$a = { class: "flex flex-col w-12 justify-between bg-white z-5 shrink-0 sm:flex-row sm:w-full sm:h-14 sm:shadow-footer" };
+const _hoisted_1$9 = { class: "flex flex-col w-12 justify-between bg-white z-5 shrink-0 sm:flex-row sm:w-full sm:h-14 sm:shadow-footer" };
 const _hoisted_2$8 = { class: "flex flex-col w-full sm:w-80 sm:flex-row justify-start text-primary divide-y sm:divide-y-0 sm:divide-x divide-gray-400 divide-solid box-content border-y sm:border-y-0 border-x border-gray-400" };
 const _hoisted_3$8 = { class: "flex flex-col w-12 sm:w-64 sm:flex-row justify-start text-primary divide-y sm:divide-y-0 sm:divide-x divide-gray-400 divide-solid box-content border-y sm:border-y-0 border-x border-gray-400" };
 const _hoisted_4$6 = { class: "w-[466px] hidden sm:flex flex-row justify-end text-gray-500 whitespace-nowrap" };
@@ -78757,7 +78757,7 @@ const _sfc_main$c = /* @__PURE__ */ defineComponent$1({
     const { t, i18next } = useTranslation();
     const { setLayersOpen } = useAppStore();
     return (_ctx, _cache) => {
-      return openBlock(), createElementBlock("footer", _hoisted_1$a, [
+      return openBlock(), createElementBlock("footer", _hoisted_1$9, [
         createElementVNode("ul", _hoisted_2$8, [
           createElementVNode("li", null, [
             createVNode$1(_sfc_main$e, {
@@ -78910,7 +78910,7 @@ const _sfc_main$b = /* @__PURE__ */ defineComponent$1({
     };
   }
 });
-const _hoisted_1$9 = { class: "flex flex-row flex-wrap pl-2.5" };
+const _hoisted_1$8 = { class: "flex flex-row flex-wrap pl-2.5" };
 const _hoisted_2$7 = ["onClick"];
 const _hoisted_3$7 = { class: "text-2xl absolute top-5" };
 const _sfc_main$a = /* @__PURE__ */ defineComponent$1({
@@ -78922,7 +78922,7 @@ const _sfc_main$a = /* @__PURE__ */ defineComponent$1({
     const props = __props;
     const { t } = useTranslation();
     return (_ctx, _cache) => {
-      return openBlock(), createElementBlock("div", _hoisted_1$9, [
+      return openBlock(), createElementBlock("div", _hoisted_1$8, [
         (openBlock(true), createElementBlock(Fragment, null, renderList(props.themes, (theme) => {
           return openBlock(), createElementBlock("button", {
             class: normalizeClass(["relative shrink-0 h-[150px] w-1/2 px-2.5 text-start text-gray-100/40 uppercase hover:bg-[#ccc]", `bg-${theme.name}-primary hover:text-${theme.name}-primary`]),
@@ -78939,7 +78939,7 @@ const _sfc_main$a = /* @__PURE__ */ defineComponent$1({
     };
   }
 });
-const _hoisted_1$8 = ["aria-expanded"];
+const _hoisted_1$7 = ["aria-expanded"];
 const _hoisted_2$6 = { class: "py-0.5" };
 const _hoisted_3$6 = { class: "px-1 py-0.5 shrink-0 flex flex-row text-[12px] bg-secondary text-white" };
 const _hoisted_4$5 = { class: "py-[3px]" };
@@ -78976,11 +78976,11 @@ const _sfc_main$9 = /* @__PURE__ */ defineComponent$1({
             }), 128))
           ])
         ])
-      ], 8, _hoisted_1$8);
+      ], 8, _hoisted_1$7);
     };
   }
 });
-const _hoisted_1$7 = {
+const _hoisted_1$6 = {
   key: 0,
   class: "absolute inset-x-0 top-14 bottom-0 mt-1 bg-primary overflow-y-auto overflow-x-hidden"
 };
@@ -79018,7 +79018,7 @@ const _sfc_main$8 = /* @__PURE__ */ defineComponent$1({
           currentTheme: unref(theme),
           isOpen: unref(isOpen)
         }, null, 8, ["themes", "currentTheme", "isOpen"]),
-        unref(isOpen) ? (openBlock(), createElementBlock("div", _hoisted_1$7, [
+        unref(isOpen) ? (openBlock(), createElementBlock("div", _hoisted_1$6, [
           createVNode$1(_sfc_main$a, {
             onSetTheme: setTheme,
             themes: unref(themes2)
@@ -79028,7 +79028,6 @@ const _sfc_main$8 = /* @__PURE__ */ defineComponent$1({
     };
   }
 });
-const _hoisted_1$6 = { class: "pt-5" };
 const _sfc_main$7 = /* @__PURE__ */ defineComponent$1({
   __name: "catalog-tab",
   setup(__props) {
@@ -79039,12 +79038,10 @@ const _sfc_main$7 = /* @__PURE__ */ defineComponent$1({
     return (_ctx, _cache) => {
       return openBlock(), createElementBlock(Fragment, null, [
         createVNode$1(_sfc_main$8, { onToggleThemesGrid: toggleThemesGrid }),
-        createElementVNode("div", _hoisted_1$6, [
-          unref(themeGridIsOpen) === false ? (openBlock(), createBlock(_sfc_main$b, {
-            key: 0,
-            class: "pt-5 absolute inset-x-2.5 bg-primary overflow-y-auto overflow-x-hidden"
-          })) : createCommentVNode("", true)
-        ])
+        unref(themeGridIsOpen) === false ? (openBlock(), createBlock(_sfc_main$b, {
+          key: 0,
+          class: "pt-5 absolute inset-x-2.5 bg-primary overflow-y-auto overflow-x-hidden"
+        })) : createCommentVNode("", true)
       ], 64);
     };
   }
@@ -81552,8 +81549,8 @@ const _sfc_main$2 = /* @__PURE__ */ defineComponent$1({
     };
   }
 });
-const _hoisted_1$1 = { class: "flex flex-col h-full" };
-const _hoisted_2$1 = { class: "h-20 shrink-0 flex justify-between lux-panel-title" };
+const _hoisted_1$1 = { class: "flex flex-col h-full pt-1.5" };
+const _hoisted_2$1 = { class: "h-16 shrink-0 flex justify-between lux-panel-title" };
 const _hoisted_3$1 = ["aria-label"];
 const _hoisted_4$1 = { class: "flex flex-row gap-2 h-10 text-2xl" };
 const _hoisted_5$1 = { class: "relative grow p-2.5 bg-primary overflow-auto" };
