@@ -5,6 +5,7 @@ describe('Permalink/State persistor - Layers', () => {
         cy.visit(
           '/?lang=lb&X=762744&Y=6414661&version=3&zoom=11&layers=346-354-269&opacities=0.5-1-0.7&bgLayer=orthogr_2013_global'
         )
+        cy.get('[data-cy="myLayersButton"]').click()
         cy.get('[data-cy="myLayers"] .lux-layer-manager-item-content input')
           .eq(0)
           .should('have.value', '75')
@@ -22,6 +23,7 @@ describe('Permalink/State persistor - Layers', () => {
         cy.visit(
           '/?lang=lb&X=762744&Y=6414661&version=3&zoom=11&layers=346-354-269&opacities=1&bgLayer=orthogr_2013_global'
         )
+        cy.get('[data-cy="myLayersButton"]').click()
         cy.url().should('contains', 'opacities=1-1-1')
         cy.get('[data-cy="myLayers"] .lux-layer-manager-item-content input')
           .should('have.length', 3)
