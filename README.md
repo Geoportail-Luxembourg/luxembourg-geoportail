@@ -6,9 +6,9 @@
 
 To start local dev environment with HMR support:
 
-````
+```
 $ npm run start
-````
+```
 
 ## 🔧 Scripts
 
@@ -42,17 +42,18 @@ For e2e tests, the code is instrumented with the Istanbul library to obtain resu
 
 ⚠️ `test:e2e:ci` command should launch tests on the generated build production. For now, it launches the vite dev server, otherwise the code coverage report is not generated and the next ci command `npx nyc report` will trigger an error.
 
-
 ## 📦 Build as a lib for integration (in geoportal v3)
 
 In order to use the new Lux components made with Vuejs as an external dep, follow steps below.
 
 ### Build the lib
+
 In the project **luxembourg-geoportail**, build the app as library with this command:
 
-````
+```
 $ npx vite build --config vite-dist.config.ts
-````
+```
+
 This will generate an export of all available **Vue components** and **State persistor services** that can be used in a independant application (eg. geoportalv3 legacy app).
 
 To see what are the components exported, check the `lib.ts` that is the entry point for the build.
@@ -62,10 +63,11 @@ To see what are the components exported, check the `lib.ts` that is the entry po
 ### Import the lib in another app
 
 You can include the built lib multiple ways in the `package.json`:
+
 - using `npm link`
 - using `git`
 
-````js
+```js
 // Example of a package.json
 // including the lib with git and a specific branch (GSLUX-602-IntegrationV3)
 "packages": {
@@ -82,24 +84,25 @@ You can include the built lib multiple ways in the `package.json`:
       }
     }
 }
-````
+```
 
 ### Install Vue.js
 
 Don't forget to also include **Vue.js** as a dependency.
-````
+
+```
 $ npm install -D vue
-````
+```
 
 If using the **Webpack bundler** (as it is the case in geoportalv3), install `vue-loader` and update the webpack configuration file. Add alias to **Vue.js** to make the lib work with the current Vue instance.
 
 https://vue-loader.vuejs.org/guide/#manual-setup
 
-````
+```
 $ npm install -D vue-loader
-````
+```
 
-````js
+```js
 // webpack.config.js
 const { VueLoaderPlugin } = require('vue-loader')
 
@@ -109,28 +112,27 @@ module.exports = {
       // ...
       {
         test: /\.vue$/,
-        loader: 'vue-loader' // <= Add the rule for Vue
-      }
-    ]
+        loader: 'vue-loader', // <= Add the rule for Vue
+      },
+    ],
   },
   resolve: {
     extensions: ['.js', '.vue', '.json'],
     alias: {
-      'vue$': 'vue/dist/vue.esm-bundler.js' // <= Add the alias for Vue
-    }
+      vue$: 'vue/dist/vue.esm-bundler.js', // <= Add the alias for Vue
+    },
   },
   plugins: [
-    new VueLoaderPlugin() // <= Don't forget the plugin for Vue loader
-  ]
+    new VueLoaderPlugin(), // <= Don't forget the plugin for Vue loader
+  ],
 }
-````
+```
 
 ### Make assets available
 
 Assets like translations are imported using an absolute path. Make them accessible via the right path. For geoportalv3, we choose to copy the assets directory with the `CopyPlugin`:
 
-
-````js
+```js
 // webpack.config.js
 const CopyPlugin = require('copy-webpack-plugin')
 const path = require('path')
@@ -142,9 +144,18 @@ module.exports = {
     new VueLoaderPlugin(),
     new CopyPlugin({
       patterns: [
-        { from: path.resolve(__dirname, 'node_modules', 'luxembourg-geoportail', 'bundle', 'assets'), to: 'assets' }
+        {
+          from: path.resolve(
+            __dirname,
+            'node_modules',
+            'luxembourg-geoportail',
+            'bundle',
+            'assets'
+          ),
+          to: 'assets',
+        },
       ],
-    })
-  ]
+    }),
+  ],
 }
-````
+```

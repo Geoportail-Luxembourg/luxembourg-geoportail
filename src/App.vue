@@ -3,7 +3,7 @@ import { onMounted, onUnmounted, watch } from 'vue'
 import { storeToRefs } from 'pinia'
 
 import MapLibreLayer from '@geoblocks/ol-maplibre-layer'
-declare type MapLibreLayer = typeof MapLibreLayer
+declare type MapLibreLayerType = typeof MapLibreLayer
 
 import HeaderBar from './components/header/header-bar.vue'
 import FooterBar from './components/footer/footer-bar.vue'
@@ -48,7 +48,7 @@ function resizeMap() {
   // And trigger update MapLibre layers' canvas size
   map.getAllLayers().forEach(layer => {
     if (layer instanceof MapLibreLayer) {
-      ;(layer as MapLibreLayer).maplibreMap.resize()
+      ;(layer as MapLibreLayerType).maplibreMap.resize()
     }
   })
 
