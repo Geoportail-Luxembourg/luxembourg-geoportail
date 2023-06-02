@@ -1,6 +1,4 @@
 <script setup lang="ts">
-import '../node_modules/ol/ol.css'
-
 import { watch } from 'vue'
 import { storeToRefs } from 'pinia'
 
