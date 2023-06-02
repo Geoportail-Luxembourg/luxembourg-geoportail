@@ -1,0 +1,39 @@
+@import "main.css";
+
+@tailwind components;
+
+@layer components {  
+  .ol-control {
+    @apply absolute rounded p-1;
+  }
+
+  .ol-control button {
+    @apply w-10 h-10 text-xl text-center font-normal indent-0 block lux-btn m-[-1px] p-0 border-[1px] border-[color:var(--color-btn-ol)];
+    font-family: "geoportail-icons-wc";
+  }
+  
+  .ol-zoom {
+    @apply top-2 left-2;
+  }
+  
+  .ol-full-screen {
+    @apply left-2 top-36 right-auto;
+  }
+  
+  .ol-zoom-extent {
+    @apply left-2 top-[86px];
+  }
+  
+  .geoportailv3-attribution {    
+    @apply left-0 right-auto bottom-0 mb-0 p-0;
+  }
+  
+  .geoportailv3-attribution button {
+    @apply hidden;
+  }
+  
+  .geoportailv3-attribution ul {
+    @apply list-none p-1 text-sm mb-0;
+    color: #6b818f;
+  }
+}
