@@ -693,6 +693,10 @@ video {
 .lux-btn {
     border: 1px solid var(--button-bg-color);
   }
+.lux-close-cross::after {
+  --tw-content: '\e02c';
+  content: var(--tw-content);
+}
 .lux-input {
   border-width: 1px;
   padding-top: 6px;
@@ -1095,9 +1099,6 @@ video {
 .grow {
   flex-grow: 1;
 }
-.basis-1\/2 {
-  flex-basis: 50%;
-}
 .transform {
   transform: translate(var(--tw-translate-x), var(--tw-translate-y)) rotate(var(--tw-rotate)) skewX(var(--tw-skew-x)) skewY(var(--tw-skew-y)) scaleX(var(--tw-scale-x)) scaleY(var(--tw-scale-y));
 }
@@ -1396,6 +1397,10 @@ video {
 .px-2\.5 {
   padding-left: 0.625rem;
   padding-right: 0.625rem;
+}
+.px-4 {
+  padding-left: 1rem;
+  padding-right: 1rem;
 }
 .px-\[7px\] {
   padding-left: 7px;
