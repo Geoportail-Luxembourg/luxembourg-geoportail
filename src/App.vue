@@ -63,7 +63,7 @@ function resizeMap() {
       <div v-if="styleEditorOpen" class="w-80 bg-primary">
         <style-selector />
       </div>
-      <div class="grow bg-blue-100">
+      <div class="grow bg-blue-100 relative">
         <map-container></map-container>
         <remote-layers></remote-layers>
         <layer-metadata></layer-metadata>
@@ -72,6 +72,6 @@ function resizeMap() {
         <background-selector></background-selector>
       </div>
     </main>
-    <footer-bar class="fixed bottom-5 sm:relative sm:bottom-0"> </footer-bar>
+    <footer-bar class="fixed bottom-5 sm:static z-20"> </footer-bar>
   </div>
 </template>
