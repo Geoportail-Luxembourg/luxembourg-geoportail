@@ -3,13 +3,16 @@ import { onMounted, onUnmounted, shallowRef, ShallowRef } from 'vue'
 
 import { DropdownOptionModel } from './dropdown-list.model'
 
-const props = withDefaults(defineProps<{
-  placeholder: string
-  options: DropdownOptionModel[]
-  modelValue?: string
-}>(), {
-  options: () => [{ label: 'Default label', value: 'Default value' }]
-})
+const props = withDefaults(
+  defineProps<{
+    placeholder: string
+    options: DropdownOptionModel[]
+    modelValue?: string
+  }>(),
+  {
+    options: () => [{ label: 'Default label', value: 'Default value' }],
+  }
+)
 const emit = defineEmits(['change'])
 const isOpen: ShallowRef<boolean> = shallowRef(false)
 const selectedValue: ShallowRef<string | undefined> = shallowRef()

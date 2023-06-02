@@ -17,10 +17,10 @@
     "coverage-report": "nyc report",
     "type-check:dev": "npm run type-check -- --watch",
     "type-check": "vue-tsc --noEmit -p tsconfig.vitest.json --composite false",
-    "lint:js": "eslint . --ext .vue,.js,.cjs,.mjs,.ts,.cts,.mts --ignore-path .gitignore",
-    "lint:prettier": "prettier --check . --ignore-path .gitignore",
+    "lint:js": "eslint . --ext .vue,.js,.cjs,.mjs,.ts,.cts,.mts --ignore-path .prettierignore",
+    "lint:prettier": "prettier --check . --ignore-path .prettierignore",
     "lint": "npm run lint:js && npm run lint:prettier",
-    "format": "prettier --write --list-different . --ignore-path .gitignore && npm run lint:js -- --fix",
+    "format": "prettier --write --list-different . --ignore-path .prettierignore && npm run lint:js -- --fix",
     "prepare": "husky install"
   },
   "dependencies": {

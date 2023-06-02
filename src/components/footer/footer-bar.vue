@@ -9,7 +9,6 @@ import { useAppStore } from '@/stores/app.store'
 const { t, i18next } = useTranslation()
 const { setLayersOpen } = useAppStore()
 const { layersOpen } = storeToRefs(useAppStore())
-
 </script>
 <template>
   <footer

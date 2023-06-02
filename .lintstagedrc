@@ -1,4 +1,4 @@
 {
-  "*": "prettier --check . --ignore-path .gitignore",
-  "*.(vue|js|cjs|mjs|ts|cts|mts)": "eslint . --ignore-path .gitignore"
+  "*": "prettier --check . --ignore-path .prettierignore",
+  "*.(vue|js|cjs|mjs|ts|cts|mts)": "eslint . --ignore-path .prettierignore"
 }
