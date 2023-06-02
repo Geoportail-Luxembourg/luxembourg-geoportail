@@ -33,16 +33,18 @@ const { layers } = storeToRefs(useMapStore())
       <button
         data-cy="myLayersButton"
         @click="() => (myLayersOpen = true)"
-        class="text-white basis-1/2 hover:bg-primary cursor-pointer text-center uppercase"
+        class="text-white px-4 hover:bg-primary cursor-pointer text-center uppercase"
         :class="myLayersOpen ? 'bg-primary' : 'bg-tertiary'"
+        :aria-expanded="myLayersOpen"
       >
         {{ t('my_layers', { ns: 'client' }) }} ({{ layers.length }})
       </button>
       <button
         data-cy="catalogButton"
         @click="myLayersOpen = false"
-        class="text-white basis-1/2 hover:bg-primary cursor-pointer text-center uppercase"
+        class="text-white px-4 hover:bg-primary cursor-pointer text-center uppercase"
         :class="myLayersOpen ? 'bg-tertiary' : 'bg-primary'"
+        :aria-expanded="!myLayersOpen"
       >
         {{ t('Catalog', { ns: 'client' }) }}
       </button>
