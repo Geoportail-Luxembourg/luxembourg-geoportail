@@ -183,7 +183,7 @@ module.exports = {
     ...generateIconSafelist(),
     {
       pattern: /ol-*/,
-    }
+    },
   ],
   plugins: [],
 }

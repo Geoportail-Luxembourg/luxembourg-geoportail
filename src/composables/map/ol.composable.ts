@@ -64,7 +64,7 @@ function createWmtsLayer(layer: Layer): TileLayer<WMTS> {
   const hasRetina = getLayerHasRetina(layer)
   const projection = getProjection(PROJECTION_WEBMERCATOR)!
   const extent = projection!.getExtent()
-  
+
   const olLayer = new TileLayer({
     source: new WMTS({
       url: getLayerWmtsUrl(layer),
@@ -263,7 +263,7 @@ export default function useOpenLayers() {
         if (vectorSources) {
           // TODO: fix this to display attribution, but at that time, this brokes the vue runtime-dom
           // (bgBaseLayer as typeof MapLibreLayer).maplibreMap.setAttributions(bgLayer.metadata?.attribution)
-          
+
           bgBaseLayer = createVectorLayer(vectorSources, bgLayer)
         }
         // if no vector layer has been created, add raster layer

@@ -1,4 +1,3 @@
-
 import { inject, onMounted, onUnmounted } from 'vue'
 
 import Control from 'ol/control/Control'
@@ -9,7 +8,7 @@ import useMap from '@/composables/map/map.composable'
 export default function useControl(ControlClass: typeof Control, options: any) {
   const control = new ControlClass(options)
   const map = useMap()
-  const olMap = inject("olMap") as OlMap
+  const olMap = inject('olMap') as OlMap
 
   onMounted(() => {
     olMap.addControl(control)
@@ -23,6 +22,6 @@ export default function useControl(ControlClass: typeof Control, options: any) {
   })
 
   return {
-    control
+    control,
   }
 }
