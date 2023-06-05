@@ -12,11 +12,9 @@ import useMvtStyles from '@/composables/mvt-styles/mvt-styles.composable'
 
 import LayerManagerItemBackground from './layer-item/layer-item-background.vue'
 import LayerManagerItem from './layer-item/layer-item.vue'
-import SimpleStyleSelector from '../style-selector/simple-style-selector.vue'
 import { useTranslation } from 'i18next-vue'
 
 const { t } = useTranslation()
-const ROAD_MAP_ID = 556
 
 const { setMetadataId } = useMetadataStore()
 const mapStore = useMapStore()
@@ -113,12 +111,6 @@ function toggleEditionLayer() {
           {{ t('+ Add external Wms', { ns: 'client' }) }}
         </button>
       </div>
-
-      <!-- TODO: add medium and advanced style editors -->
-      <simple-style-selector
-        :is-open="isStyleEditorOpen && bgLayer?.id === ROAD_MAP_ID"
-      >
-      </simple-style-selector>
     </li>
   </ul>
 </template>
