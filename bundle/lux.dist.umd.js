@@ -5,8 +5,8 @@ var __publicField = (obj, key, value) => {
   return value;
 };
 (function(global2, factory) {
-  typeof exports === "object" && typeof module !== "undefined" ? factory(exports, require("vue"), require("@vue/runtime-core"), require("@vue/shared"), require("@vue/runtime-dom")) : typeof define === "function" && define.amd ? define(["exports", "vue", "@vue/runtime-core", "@vue/shared", "@vue/runtime-dom"], factory) : (global2 = typeof globalThis !== "undefined" ? globalThis : global2 || self, factory(global2["luxembourg-geoportail"] = {}, global2.Vue, global2.runtimeCore, global2.shared$1, global2.runtimeDom));
-})(this, function(exports2, vue, runtimeCore, shared$1, runtimeDom) {
+  typeof exports === "object" && typeof module !== "undefined" ? factory(exports, require("vue"), require("@vue/shared")) : typeof define === "function" && define.amd ? define(["exports", "vue", "@vue/shared"], factory) : (global2 = typeof globalThis !== "undefined" ? globalThis : global2 || self, factory(global2["luxembourg-geoportail"] = {}, global2.Vue, global2.shared$1));
+})(this, function(exports2, vue, shared$1) {
   "use strict";
   function _mergeNamespaces(n, m) {
     for (var i = 0; i < m.length; i++) {
@@ -9366,7 +9366,7 @@ This will fail in production.`);
     ]);
   }
   function defineCustomElement(options, config, hydrate2) {
-    const Comp = runtimeCore.defineComponent(options);
+    const Comp = vue.defineComponent(options);
     class VueCustomElement extends VueElement {
       constructor(initialProps) {
         super(Comp, initialProps, config, hydrate2);
@@ -9425,9 +9425,9 @@ This will fail in production.`);
     }
     disconnectedCallback() {
       this._connected = false;
-      runtimeCore.nextTick(() => {
+      vue.nextTick(() => {
         if (!this._connected) {
-          runtimeDom.render(null, this._root);
+          vue.render(null, this._root);
           this._instance = null;
         }
       });
@@ -9518,10 +9518,10 @@ This will fail in production.`);
       }
     }
     _update() {
-      runtimeDom.render(this._createVNode(), this._root);
+      vue.render(this._createVNode(), this._root);
     }
     _createVNode() {
-      const vnode = runtimeCore.createVNode(this._def, shared$1.extend({}, this._props));
+      const vnode = vue.createVNode(this._def, shared$1.extend({}, this._props));
       if (!this._instance) {
         vnode.ce = (instance2) => {
           this._instance = instance2;
@@ -38213,7 +38213,7 @@ uniform ${i3} ${o3} u_${a3};
     }
     setItem(key, value) {
       const queryParams = new URL(window.location.toString()).search;
-      const url = `${"http://localhost:8080/dev/main.html/"}${key}/${value}${queryParams}`;
+      const url = `${"/"}${key}/${value}${queryParams}`;
       try {
         window.history.replaceState(null, "", url);
       } catch (error) {
