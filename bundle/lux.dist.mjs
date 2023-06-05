@@ -4,11 +4,9 @@ var __publicField = (obj, key, value) => {
   __defNormalProp(obj, typeof key !== "symbol" ? key + "" : key, value);
   return value;
 };
-import { effectScope, ref, markRaw, toRaw, isRef, isReactive, toRef, getCurrentInstance, inject, watch, unref, reactive, nextTick, computed, getCurrentScope, onScopeDispose, toRefs, defineComponent as defineComponent$1, shallowRef, onMounted, onUnmounted, openBlock, createElementBlock, createElementVNode, normalizeClass, toDisplayString, Fragment, renderList, watchEffect, createVNode as createVNode$1, resolveComponent, createCommentVNode, createBlock, createTextVNode, resolveDirective, withDirectives, normalizeStyle, createApp, h } from "vue";
+import { effectScope, ref, markRaw, toRaw, isRef, isReactive, toRef, getCurrentInstance, inject, watch, unref, reactive, nextTick, computed, getCurrentScope, onScopeDispose, toRefs, defineComponent, render as render$1, createVNode, shallowRef, onMounted, onUnmounted, openBlock, createElementBlock, createElementVNode, normalizeClass, toDisplayString, Fragment, renderList, watchEffect, resolveComponent, createCommentVNode, createBlock, createTextVNode, resolveDirective, withDirectives, normalizeStyle, createApp, h } from "vue";
 import { watch as watch2 } from "vue";
-import { defineComponent, nextTick as nextTick$1, createVNode } from "@vue/runtime-core";
 import { extend as extend$4, isArray, camelize, toNumber, hyphenate } from "@vue/shared";
-import { render as render$1 } from "@vue/runtime-dom";
 function _mergeNamespaces(n, m) {
   for (var i = 0; i < m.length; i++) {
     const e = m[i];
@@ -9426,7 +9424,7 @@ class VueElement extends BaseClass {
   }
   disconnectedCallback() {
     this._connected = false;
-    nextTick$1(() => {
+    nextTick(() => {
       if (!this._connected) {
         render$1(null, this._root);
         this._instance = null;
@@ -9569,7 +9567,7 @@ const _hoisted_3$d = ["aria-expanded"];
 const _hoisted_4$b = /* @__PURE__ */ createElementVNode("span", { class: "lux-caret" }, null, -1);
 const _hoisted_5$9 = { class: "lux-dropdown-wrapper" };
 const _hoisted_6$7 = ["aria-label", "data-value"];
-const _sfc_main$o = /* @__PURE__ */ defineComponent$1({
+const _sfc_main$o = /* @__PURE__ */ defineComponent({
   __name: "dropdown-list",
   props: {
     placeholder: null,
@@ -38214,7 +38212,7 @@ class UrlStorageAsPath extends UrlStorage {
   }
   setItem(key, value) {
     const queryParams = new URL(window.location.toString()).search;
-    const url = `${"http://localhost:8080/dev/main.html/"}${key}/${value}${queryParams}`;
+    const url = `${"/"}${key}/${value}${queryParams}`;
     try {
       window.history.replaceState(null, "", url);
     } catch (error2) {
@@ -39456,7 +39454,7 @@ class StatePersistorMapService {
   }
 }
 const statePersistorMapService = new StatePersistorMapService();
-const _sfc_main$n = /* @__PURE__ */ defineComponent$1({
+const _sfc_main$n = /* @__PURE__ */ defineComponent({
   __name: "map-container",
   setup(__props) {
     const map2 = useMap();
@@ -39602,7 +39600,7 @@ function useTranslation() {
   };
 }
 var slotNamePattern = new RegExp("{\\s*([a-z0-9\\-]+)\\s*}", "gi");
-var TranslationComponent = defineComponent$1({
+var TranslationComponent = defineComponent({
   props: {
     "translation": {
       type: String,
@@ -77681,7 +77679,7 @@ class StatePersistorBgLayerService {
 }
 const statePersistorBgLayerService = new StatePersistorBgLayerService();
 const _hoisted_1$i = ["title"];
-const _sfc_main$m = /* @__PURE__ */ defineComponent$1({
+const _sfc_main$m = /* @__PURE__ */ defineComponent({
   __name: "background-selector-item",
   props: {
     bgTitle: {
@@ -77719,7 +77717,7 @@ const _sfc_main$m = /* @__PURE__ */ defineComponent$1({
   }
 });
 const _hoisted_1$h = { class: "flex flex-row-reverse" };
-const _sfc_main$l = /* @__PURE__ */ defineComponent$1({
+const _sfc_main$l = /* @__PURE__ */ defineComponent({
   __name: "background-selector",
   props: {
     isOpen: {
@@ -77795,7 +77793,7 @@ const _sfc_main$l = /* @__PURE__ */ defineComponent$1({
         createElementVNode("div", {
           class: normalizeClass(["lux-bg-sel border border-black", isOpen.value === true ? "hidden" : "block"])
         }, [
-          createVNode$1(_sfc_main$m, {
+          createVNode(_sfc_main$m, {
             "aria-expanded": isOpen.value,
             "bg-title": "Select BG layer",
             "bg-name": unref(activeLayerName),
@@ -77813,7 +77811,7 @@ const _sfc_main$l = /* @__PURE__ */ defineComponent$1({
                 layer.id === unref(activeLayerId) ? "border-red-500 border-2" : "border-black border"
               ])
             }, [
-              createVNode$1(_sfc_main$m, {
+              createVNode(_sfc_main$m, {
                 "bg-name": layer.name,
                 onClick: ($event) => setBackgroundLayer(layer)
               }, null, 8, ["bg-name", "onClick"])
@@ -77857,7 +77855,7 @@ const _hoisted_7$4 = {
 };
 const _hoisted_8$3 = ["data-cy"];
 const _hoisted_9$3 = { class: "ml-1 hover:underline" };
-const _sfc_main$k = /* @__PURE__ */ defineComponent$1({
+const _sfc_main$k = /* @__PURE__ */ defineComponent({
   __name: "layer-tree-node",
   props: {
     node: null
@@ -78033,7 +78031,7 @@ const _hoisted_12$1 = {
   key: 3,
   class: "overflow-auto max-h-[calc(400px-36px)]"
 };
-const _sfc_main$j = /* @__PURE__ */ defineComponent$1({
+const _sfc_main$j = /* @__PURE__ */ defineComponent({
   __name: "remote-layers",
   setup(__props) {
     const { t } = useTranslation();
@@ -78126,7 +78124,7 @@ const _sfc_main$j = /* @__PURE__ */ defineComponent$1({
         ]),
         createElementVNode("div", _hoisted_3$b, [
           createElementVNode("div", _hoisted_4$9, [
-            createVNode$1(_sfc_main$o, {
+            createVNode(_sfc_main$o, {
               options: unref(wmsLayers),
               placeholder: unref(t)("Predefined wms", { ns: "client" }),
               onChange: onChangeRemoteEndpoint
@@ -78184,7 +78182,7 @@ function formatDate(dateString, language = "fr-FR") {
 }
 const _hoisted_1$e = { class: "font-bold" };
 const _hoisted_2$b = { class: "col-span-2" };
-const _sfc_main$i = /* @__PURE__ */ defineComponent$1({
+const _sfc_main$i = /* @__PURE__ */ defineComponent({
   __name: "layer-metadata-item",
   props: {
     label: null,
@@ -78425,7 +78423,7 @@ const _hoisted_29 = {
   key: 11,
   class: "col-span-3"
 };
-const _sfc_main$h = /* @__PURE__ */ defineComponent$1({
+const _sfc_main$h = /* @__PURE__ */ defineComponent({
   __name: "layer-metadata",
   setup(__props) {
     const metadataStore = useMetadataStore();
@@ -78613,7 +78611,7 @@ class StatePersistorLangService {
   }
 }
 const statePersistorLangService = new StatePersistorLangService();
-const _sfc_main$g = /* @__PURE__ */ defineComponent$1({
+const _sfc_main$g = /* @__PURE__ */ defineComponent({
   __name: "language-selector",
   setup(__props) {
     const { i18next, t } = useTranslation();
@@ -78634,7 +78632,7 @@ const _sfc_main$g = /* @__PURE__ */ defineComponent$1({
     }
     return (_ctx, _cache) => {
       return openBlock(), createElementBlock("div", null, [
-        createVNode$1(_sfc_main$o, {
+        createVNode(_sfc_main$o, {
           class: "lux-navbar-dropdown lux-dropdown-inline text-white h-full",
           options: unref(availableLanguages),
           placeholder: unref(placeholder),
@@ -78667,7 +78665,7 @@ const _hoisted_3$9 = /* @__PURE__ */ createElementVNode("div", { class: "grow te
 const _hoisted_4$7 = { class: "h-full flex" };
 const _hoisted_5$5 = { class: "hidden lg:inline-block" };
 const _hoisted_6$3 = { class: "border-l-[1px] border-stone-300 h-full" };
-const _sfc_main$f = /* @__PURE__ */ defineComponent$1({
+const _sfc_main$f = /* @__PURE__ */ defineComponent({
   __name: "header-bar",
   setup(__props) {
     const { t } = useTranslation();
@@ -78701,7 +78699,7 @@ const _sfc_main$f = /* @__PURE__ */ defineComponent$1({
               ], 2)
             ]),
             createElementVNode("li", _hoisted_6$3, [
-              createVNode$1(_sfc_main$g, { class: "flex-none h-full" })
+              createVNode(_sfc_main$g, { class: "flex-none h-full" })
             ])
           ])
         ])
@@ -78710,7 +78708,7 @@ const _sfc_main$f = /* @__PURE__ */ defineComponent$1({
   }
 });
 const _hoisted_1$b = { class: "block text-[13px] sm:text-base uppercase" };
-const _sfc_main$e = /* @__PURE__ */ defineComponent$1({
+const _sfc_main$e = /* @__PURE__ */ defineComponent({
   __name: "button-icon",
   props: {
     label: null,
@@ -78732,7 +78730,7 @@ const _sfc_main$e = /* @__PURE__ */ defineComponent$1({
   }
 });
 const _hoisted_1$a = ["href"];
-const _sfc_main$d = /* @__PURE__ */ defineComponent$1({
+const _sfc_main$d = /* @__PURE__ */ defineComponent({
   __name: "button-link",
   props: {
     label: null,
@@ -78753,7 +78751,7 @@ const _hoisted_1$9 = { class: "flex flex-col w-12 justify-between bg-white z-5 s
 const _hoisted_2$8 = { class: "flex flex-col w-full sm:w-80 sm:flex-row justify-start text-primary divide-y sm:divide-y-0 sm:divide-x divide-gray-400 divide-solid box-content border-y sm:border-y-0 border-x border-gray-400" };
 const _hoisted_3$8 = { class: "flex flex-col w-12 sm:w-64 sm:flex-row justify-start text-primary divide-y sm:divide-y-0 sm:divide-x divide-gray-400 divide-solid box-content border-y sm:border-y-0 border-x border-gray-400" };
 const _hoisted_4$6 = { class: "w-[466px] hidden sm:flex flex-row justify-end text-gray-500 whitespace-nowrap" };
-const _sfc_main$c = /* @__PURE__ */ defineComponent$1({
+const _sfc_main$c = /* @__PURE__ */ defineComponent({
   __name: "footer-bar",
   setup(__props) {
     const { t, i18next } = useTranslation();
@@ -78763,7 +78761,7 @@ const _sfc_main$c = /* @__PURE__ */ defineComponent$1({
       return openBlock(), createElementBlock("footer", _hoisted_1$9, [
         createElementVNode("ul", _hoisted_2$8, [
           createElementVNode("li", null, [
-            createVNode$1(_sfc_main$e, {
+            createVNode(_sfc_main$e, {
               label: unref(t)("Layers", { ns: "client" }),
               icon: "layers",
               active: unref(layersOpen),
@@ -78771,28 +78769,28 @@ const _sfc_main$c = /* @__PURE__ */ defineComponent$1({
             }, null, 8, ["label", "active"])
           ]),
           createElementVNode("li", null, [
-            createVNode$1(_sfc_main$e, {
+            createVNode(_sfc_main$e, {
               class: "text-gray-300",
               label: unref(t)("My Maps", { ns: "client" }),
               icon: "mymaps"
             }, null, 8, ["label"])
           ]),
           createElementVNode("li", null, [
-            createVNode$1(_sfc_main$e, {
+            createVNode(_sfc_main$e, {
               class: "text-gray-300",
               label: unref(t)("Infos", { ns: "client" }),
               icon: "infos"
             }, null, 8, ["label"])
           ]),
           createElementVNode("li", null, [
-            createVNode$1(_sfc_main$e, {
+            createVNode(_sfc_main$e, {
               class: "text-gray-300",
               label: unref(t)("Legends", { ns: "client" }),
               icon: "legends"
             }, null, 8, ["label"])
           ]),
           createElementVNode("li", null, [
-            createVNode$1(_sfc_main$e, {
+            createVNode(_sfc_main$e, {
               class: "text-gray-300",
               label: unref(t)("Routing", { ns: "client" }),
               icon: "routing"
@@ -78800,63 +78798,63 @@ const _sfc_main$c = /* @__PURE__ */ defineComponent$1({
           ])
         ]),
         createElementVNode("div", _hoisted_3$8, [
-          createVNode$1(_sfc_main$e, {
+          createVNode(_sfc_main$e, {
             class: "text-gray-300",
             label: unref(t)("Dessin", { ns: "client" }),
             icon: "draw"
           }, null, 8, ["label"]),
-          createVNode$1(_sfc_main$e, {
+          createVNode(_sfc_main$e, {
             class: "text-gray-300 hidden sm:block",
             label: unref(t)("Mesurer", { ns: "client" }),
             icon: "measure"
           }, null, 8, ["label"]),
-          createVNode$1(_sfc_main$e, {
+          createVNode(_sfc_main$e, {
             class: "text-gray-300 hidden sm:block",
             label: unref(t)("Imprimer", { ns: "client" }),
             icon: "print"
           }, null, 8, ["label"]),
-          createVNode$1(_sfc_main$e, {
+          createVNode(_sfc_main$e, {
             class: "text-gray-300",
             label: unref(t)("Partager", { ns: "client" }),
             icon: "share"
           }, null, 8, ["label"])
         ]),
         createElementVNode("div", _hoisted_4$6, [
-          createVNode$1(_sfc_main$d, {
+          createVNode(_sfc_main$d, {
             class: "hidden lg:flex",
             label: unref(t)("What's new", { ns: "client" }),
             link: `https://geoportail.lu/${unref(i18next).language}/questions/whats-new/`
           }, null, 8, ["label", "link"]),
-          createVNode$1(_sfc_main$d, {
+          createVNode(_sfc_main$d, {
             class: "hidden lg:flex",
             label: unref(t)("Geocatalogue", { ns: "client" }),
             link: ""
           }, null, 8, ["label"]),
-          createVNode$1(_sfc_main$d, {
+          createVNode(_sfc_main$d, {
             class: "hidden lg:flex",
             label: unref(t)("Feedback", { ns: "client" }),
             link: ""
           }, null, 8, ["label"]),
-          createVNode$1(_sfc_main$d, {
+          createVNode(_sfc_main$d, {
             class: "hidden lg:flex",
             label: unref(t)("A Propos", { ns: "client" }),
             link: `https://www.geoportail.lu/${unref(i18next).language}/propos/`
           }, null, 8, ["label", "link"]),
-          createVNode$1(_sfc_main$d, {
+          createVNode(_sfc_main$d, {
             class: "hidden lg:flex",
             label: unref(t)("Aide", { ns: "client" }),
             link: `https://www.geoportail.lu/${unref(i18next).language}/documentation/`
           }, null, 8, ["label", "link"]),
-          createVNode$1(_sfc_main$d, {
+          createVNode(_sfc_main$d, {
             class: "hidden lg:flex",
             label: unref(t)("Contact", { ns: "client" }),
             link: `https://www.geoportail.lu/${unref(i18next).language}/propos/contactez-nous/`
           }, null, 8, ["label", "link"]),
-          createVNode$1(_sfc_main$d, {
+          createVNode(_sfc_main$d, {
             label: unref(t)("Legalites", { ns: "client" }),
             link: `https://www.geoportail.lu/${unref(i18next).language}/propos/mentions-legales/`
           }, null, 8, ["label", "link"]),
-          createVNode$1(_sfc_main$d, {
+          createVNode(_sfc_main$d, {
             label: unref(t)("ACT", { ns: "client" }),
             link: `http://www.act.public.lu/`
           }, null, 8, ["label", "link"])
@@ -78876,7 +78874,7 @@ function themesToLayerTree(node, depth = 0) {
     expanded: (metadata == null ? void 0 : metadata.is_expanded) || false
   };
 }
-const _sfc_main$b = /* @__PURE__ */ defineComponent$1({
+const _sfc_main$b = /* @__PURE__ */ defineComponent({
   __name: "catalog-tree",
   setup(__props) {
     const mapStore = useMapStore();
@@ -78917,7 +78915,7 @@ const _sfc_main$b = /* @__PURE__ */ defineComponent$1({
 const _hoisted_1$8 = { class: "flex flex-row flex-wrap pl-2.5" };
 const _hoisted_2$7 = ["onClick"];
 const _hoisted_3$7 = { class: "text-2xl absolute top-5" };
-const _sfc_main$a = /* @__PURE__ */ defineComponent$1({
+const _sfc_main$a = /* @__PURE__ */ defineComponent({
   __name: "theme-grid",
   props: {
     themes: null
@@ -78948,7 +78946,7 @@ const _hoisted_2$6 = { class: "py-0.5" };
 const _hoisted_3$6 = { class: "px-1 py-0.5 shrink-0 flex flex-row text-[12px] bg-secondary text-white" };
 const _hoisted_4$5 = { class: "py-[3px]" };
 const _hoisted_5$4 = { class: "flex flex-row flex-wrap ml-1 w-12" };
-const _sfc_main$9 = /* @__PURE__ */ defineComponent$1({
+const _sfc_main$9 = /* @__PURE__ */ defineComponent({
   __name: "theme-selector-button",
   props: {
     themes: null,
@@ -78988,7 +78986,7 @@ const _hoisted_1$6 = {
   key: 0,
   class: "absolute inset-x-0 top-14 bottom-0 mt-1 bg-primary overflow-y-auto overflow-x-hidden"
 };
-const _sfc_main$8 = /* @__PURE__ */ defineComponent$1({
+const _sfc_main$8 = /* @__PURE__ */ defineComponent({
   __name: "theme-selector",
   emits: ["toggleThemesGrid"],
   setup(__props, { emit }) {
@@ -79016,14 +79014,14 @@ const _sfc_main$8 = /* @__PURE__ */ defineComponent$1({
     }
     return (_ctx, _cache) => {
       return openBlock(), createElementBlock(Fragment, null, [
-        createVNode$1(_sfc_main$9, {
+        createVNode(_sfc_main$9, {
           onClick: toggleThemesGrid,
           themes: unref(themes2),
           currentTheme: unref(theme),
           isOpen: unref(isOpen)
         }, null, 8, ["themes", "currentTheme", "isOpen"]),
         unref(isOpen) ? (openBlock(), createElementBlock("div", _hoisted_1$6, [
-          createVNode$1(_sfc_main$a, {
+          createVNode(_sfc_main$a, {
             onSetTheme: setTheme,
             themes: unref(themes2)
           }, null, 8, ["themes"])
@@ -79032,7 +79030,7 @@ const _sfc_main$8 = /* @__PURE__ */ defineComponent$1({
     };
   }
 });
-const _sfc_main$7 = /* @__PURE__ */ defineComponent$1({
+const _sfc_main$7 = /* @__PURE__ */ defineComponent({
   __name: "catalog-tab",
   setup(__props) {
     const themeGridIsOpen = shallowRef(false);
@@ -79041,7 +79039,7 @@ const _sfc_main$7 = /* @__PURE__ */ defineComponent$1({
     }
     return (_ctx, _cache) => {
       return openBlock(), createElementBlock(Fragment, null, [
-        createVNode$1(_sfc_main$8, { onToggleThemesGrid: toggleThemesGrid }),
+        createVNode(_sfc_main$8, { onToggleThemesGrid: toggleThemesGrid }),
         unref(themeGridIsOpen) === false ? (openBlock(), createBlock(_sfc_main$b, {
           key: 0,
           class: "pt-5 absolute inset-x-2.5 bg-primary overflow-y-auto overflow-x-hidden"
@@ -81201,7 +81199,7 @@ const _hoisted_1$5 = { class: "lux-layer-manager-item mt-2.5" };
 const _hoisted_2$5 = ["title"];
 const _hoisted_3$5 = { class: "flex-1 text-left cursor-default" };
 const _hoisted_4$4 = ["title"];
-const _sfc_main$6 = /* @__PURE__ */ defineComponent$1({
+const _sfc_main$6 = /* @__PURE__ */ defineComponent({
   __name: "layer-item-background",
   props: {
     showEditButton: { type: Boolean },
@@ -81248,7 +81246,7 @@ const _hoisted_7$1 = ["title"];
 const _hoisted_8 = ["id"];
 const _hoisted_9 = ["title"];
 const _hoisted_10 = ["id", "value", "aria-label"];
-const _sfc_main$5 = /* @__PURE__ */ defineComponent$1({
+const _sfc_main$5 = /* @__PURE__ */ defineComponent({
   __name: "layer-item",
   props: {
     layer: null,
@@ -81371,7 +81369,7 @@ const _sfc_main$5 = /* @__PURE__ */ defineComponent$1({
     };
   }
 });
-const _sfc_main$4 = /* @__PURE__ */ defineComponent$1({
+const _sfc_main$4 = /* @__PURE__ */ defineComponent({
   __name: "simple-style-item",
   props: {
     styleName: null,
@@ -81396,7 +81394,7 @@ const _hoisted_3$3 = ["title"];
 const _hoisted_4$2 = { class: "text-white" };
 const _hoisted_5$2 = ["title", "onClick"];
 const _hoisted_6$1 = { class: "flex" };
-const _sfc_main$3 = /* @__PURE__ */ defineComponent$1({
+const _sfc_main$3 = /* @__PURE__ */ defineComponent({
   __name: "simple-style-selector",
   props: {
     isOpen: {
@@ -81447,7 +81445,7 @@ const _sfc_main$3 = /* @__PURE__ */ defineComponent$1({
               class: "w-full"
             }, [
               createElementVNode("span", _hoisted_6$1, [
-                createVNode$1(_sfc_main$4, {
+                createVNode(_sfc_main$4, {
                   colors: item.colors,
                   "style-name": item.unlocalized_label
                 }, null, 8, ["colors", "style-name"])
@@ -81466,7 +81464,7 @@ const _sfc_main$3 = /* @__PURE__ */ defineComponent$1({
 const _hoisted_1$2 = { id: "sortable-layers" };
 const _hoisted_2$2 = ["id"];
 const _hoisted_3$2 = { class: "flex flex-row justify-center space-x-1 my-2" };
-const _sfc_main$2 = /* @__PURE__ */ defineComponent$1({
+const _sfc_main$2 = /* @__PURE__ */ defineComponent({
   __name: "layer-manager",
   emits: ["displayCatalog"],
   setup(__props, { emit }) {
@@ -81517,7 +81515,7 @@ const _sfc_main$2 = /* @__PURE__ */ defineComponent$1({
             key: layer.id,
             id: layer.id
           }, [
-            createVNode$1(_sfc_main$5, {
+            createVNode(_sfc_main$5, {
               draggableClassName,
               layer,
               isOpen: unref(isLayerOpenId) === layer.id,
@@ -81529,7 +81527,7 @@ const _sfc_main$2 = /* @__PURE__ */ defineComponent$1({
           ], 8, _hoisted_2$2);
         }), 128)),
         createElementVNode("li", null, [
-          createVNode$1(_sfc_main$6, {
+          createVNode(_sfc_main$6, {
             layer: unref(bgLayer) || unref(BLANK_BACKGROUNDLAYER),
             showEditButton: ((_a = unref(bgLayer)) == null ? void 0 : _a.id) === ROAD_MAP_ID,
             onClickInfo: _cache[0] || (_cache[0] = () => unref(bgLayer) && unref(setMetadataId)(unref(bgLayer).id)),
@@ -81545,7 +81543,7 @@ const _sfc_main$2 = /* @__PURE__ */ defineComponent$1({
               onClick: _cache[2] || (_cache[2] = ($event) => unref(setRemoteLayersOpen)(true))
             }, toDisplayString(unref(t)("+ Add external Wms", { ns: "client" })), 1)
           ]),
-          createVNode$1(_sfc_main$3, {
+          createVNode(_sfc_main$3, {
             "is-open": unref(isStyleEditorOpen) && ((_b = unref(bgLayer)) == null ? void 0 : _b.id) === ROAD_MAP_ID
           }, null, 8, ["is-open"])
         ])
@@ -81560,7 +81558,7 @@ const _hoisted_4$1 = { class: "flex flex-row gap-2 h-10 text-2xl" };
 const _hoisted_5$1 = ["aria-expanded"];
 const _hoisted_6 = ["aria-expanded"];
 const _hoisted_7 = { class: "relative grow p-2.5 bg-primary overflow-auto" };
-const _sfc_main$1 = /* @__PURE__ */ defineComponent$1({
+const _sfc_main$1 = /* @__PURE__ */ defineComponent({
   __name: "layer-panel",
   setup(__props) {
     const { t } = useTranslation();
@@ -82672,7 +82670,7 @@ const _hoisted_3 = {
 };
 const _hoisted_4 = { class: "grow bg-blue-100" };
 const _hoisted_5 = { class: "absolute right-1 top-16" };
-const _sfc_main = /* @__PURE__ */ defineComponent$1({
+const _sfc_main = /* @__PURE__ */ defineComponent({
   __name: "App",
   setup(__props) {
     statePersistorLayersService.bootstrap();
@@ -82698,21 +82696,21 @@ const _sfc_main = /* @__PURE__ */ defineComponent$1({
     }
     return (_ctx, _cache) => {
       return openBlock(), createElementBlock("div", _hoisted_1, [
-        createVNode$1(_sfc_main$f),
+        createVNode(_sfc_main$f),
         createElementVNode("main", _hoisted_2, [
           unref(layersOpen) ? (openBlock(), createElementBlock("div", _hoisted_3, [
-            createVNode$1(_sfc_main$1)
+            createVNode(_sfc_main$1)
           ])) : createCommentVNode("", true),
           createElementVNode("div", _hoisted_4, [
-            createVNode$1(_sfc_main$n),
-            createVNode$1(_sfc_main$j),
-            createVNode$1(_sfc_main$h)
+            createVNode(_sfc_main$n),
+            createVNode(_sfc_main$j),
+            createVNode(_sfc_main$h)
           ]),
           createElementVNode("div", _hoisted_5, [
-            createVNode$1(_sfc_main$l)
+            createVNode(_sfc_main$l)
           ])
         ]),
-        createVNode$1(_sfc_main$c, { class: "fixed bottom-5 sm:relative sm:bottom-0" })
+        createVNode(_sfc_main$c, { class: "fixed bottom-5 sm:relative sm:bottom-0" })
       ]);
     };
   }
