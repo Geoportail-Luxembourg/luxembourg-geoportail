@@ -16,6 +16,8 @@ $ npm run start
 - `dev` runs your app for development, reloading on file changes
 - `build` builds your app and outputs it in your `dist` directory
 - `build-only` builds your app and outputs it in your `dist` directory, but without type checking
+- `build:lib:prod` builds custom elements as lib
+- `build:lib:dev` builds custom elements as lib with base URL for local dev environnement (--base=/dev/main)
 - `test`, `test:unit`, `test:unit:ci` runs your test suite with Vitest. See _Unit testing_ section
 - `test:e2e`, `test:e2e:ci`, `test:e2e:dev` see _End to end testing_ section
 - `report` create code coverage report for e2e tests
@@ -51,7 +53,13 @@ In order to use the new Lux components made with Vuejs as an external dep, follo
 In the project **luxembourg-geoportail**, build the app as library with this command:
 
 ```
-$ npx vite build --config vite-dist.config.ts
+$ npm run build:lib:prod
+```
+
+When using the lib in local developpement mode within the geoportailv3 docker composition, use (this sets the necessary base URL option --base=/dev/main):
+
+```
+$ npm run build:lib:dev
 ```
 
 This will generate an export of all available **Vue components** and **State persistor services** that can be used in a independant application (eg. geoportalv3 legacy app).
@@ -85,6 +93,19 @@ You can include the built lib multiple ways in the `package.json`:
     }
 }
 ```
+
+### Develop on lib within geoportailv3 environnement
+
+A simple way to develop on the lib and test it directly from within the geoportailv3 context is to map your `luxembourg-geoportal` repository as a volume to webpack_dev_server service of the docker composition:
+
+```
+  webpack_dev_server:
+    volumes:
+      # map vue custom elements for dev:
+      - /[your-path]/luxembourg-geoportail:/usr/lib/node_modules/luxembourg-geoportail
+```
+
+To see changes applied you then need to run `npm run build:lib:dev` and refresh your browser on `http://localhost:8080/dev/main.html`.
 
 ### Install Vue.js
 

@@ -15,7 +15,6 @@ function removeDataTestAttrs(node: RootNode | TemplateChildNode) {
 
 export default defineConfig((/*{ command, mode }*/) => {
   const base: UserConfig = {
-    base: 'http://localhost:8080/dev/main.html/', // set base url to dev for now (to allow switching themes on dev)
     plugins: [
       vue({
         template: {
