@@ -1,31 +1,44 @@
 <script setup lang="ts">
-import { onMounted, ref } from 'vue'
-import OlMap from 'ol/Map'
+import { onMounted, provide, ref } from 'vue'
 
 import useMap from '@/composables/map/map.composable'
 import { OlSynchronizer } from '@/composables/map/ol.synchronizer'
 import { statePersistorMapService } from '@/services/state-persistor/state-persistor-map.service'
 
+import AttributionControl from '../map-controls/attribution-control.vue'
+import LocationControl from '../map-controls/location-control.vue'
+import FullscreenControl from '../map-controls/fullscreen-control.vue'
+import ZoomControl from '../map-controls/zoom-control.vue'
+import ZoomToExtentControl from '../map-controls/zoom-to-extent-control.vue'
+
 const map = useMap()
 const mapContainer = ref(null)
+const olMap = map.createMap()
 
-onMounted(async () => {
+const DEFAULT_EXTENT = [
+  425152.9429259216, 6324465.99999133, 914349.9239510496, 6507914.867875754,
+] // TODO: comming from legacy var "defaultExtent", to be moved to config
+
+onMounted(() => {
   if (mapContainer.value) {
-    map.createMap(mapContainer.value)
-    new OlSynchronizer(map.getOlMap())
-
+    new OlSynchronizer(olMap)
     statePersistorMapService.bootstrap()
+    olMap.setTarget(mapContainer.value)
 
     // Direct access to olMap for cypress
-    window.olMap = map.getOlMap() as OlMap
+    window.olMap = olMap
   }
 })
+
+provide('olMap', olMap)
 </script>
 
 <template>
-  <div
-    data-cy="mapContainer"
-    ref="mapContainer"
-    class="h-full w-full bg-white"
-  ></div>
+  <div data-cy="mapContainer" ref="mapContainer" class="h-full w-full bg-white">
+    <zoom-control />
+    <zoom-to-extent-control :extent="DEFAULT_EXTENT" />
+    <fullscreen-control />
+    <attribution-control />
+    <location-control />
+  </div>
 </template>

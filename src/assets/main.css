@@ -121,7 +121,7 @@
   }
 
   .lux-layer-manager-item-content {
-    @apply select-text w-full transition-[height] duration-[0.25s] overflow-hidden h-0 ease-linear grid grid-flow-col auto-cols-max;
+    @apply select-text w-full transition-[height] duration-[0.25s] overflow-hidden ease-linear grid grid-flow-col auto-cols-max;
   }
 
   .lux-sortable-ghost {
@@ -171,6 +171,7 @@
     --color-secondary: #97bbd3;
     --color-tertiary: #1f5d87;
     --color-navbar-default: #777;
+    --color-btn-ol: #8394a0;
     --main-primary: #2980b9;
     --main-secondary: #97bbd3;
     --main-tertiary: #1f5d87;

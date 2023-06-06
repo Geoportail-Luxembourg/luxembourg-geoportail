@@ -1,4 +1,3 @@
-import { defaults as defaultControls } from 'ol/control'
 import OlMap from 'ol/Map'
 import OlView from 'ol/View'
 
@@ -19,19 +18,17 @@ export default function useMap() {
     return map
   }
 
-  function createMap(target: string | HTMLElement) {
+  function createMap() {
     map = new OlMap({
       view: new OlView({
         zoom: 10,
         center: [682439, 6379152],
         multiWorld: true,
       }),
-      target,
-      controls: defaultControls({
-        zoom: false,
-        rotate: false,
-      }),
+      controls: [],
     })
+
+    return map
   }
 
   function equalsLayer(layerA: Layer, layerB: Layer) {

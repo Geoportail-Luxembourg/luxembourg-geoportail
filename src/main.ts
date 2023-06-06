@@ -8,8 +8,10 @@ import { createPinia } from 'pinia'
 import { initProjections } from '@/services/projection.utils'
 import App from './App.vue'
 
-import './assets/main.css'
 import VueDOMPurifyHTML from 'vue-dompurify-html'
+
+import './assets/main.css'
+import './assets/ol.css'
 
 initProjections()
 
