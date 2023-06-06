@@ -1,7 +1,5 @@
 ## Geoportail Luxembourg WebApp
 
-[![Built with open-wc recommendations](https://img.shields.io/badge/built%20with-open--wc-blue.svg)](https://github.com/open-wc)
-
 ## Quickstart
 
 To start local dev environment with HMR support:
@@ -17,13 +15,16 @@ $ npm run start
 - `build` builds your app and outputs it in your `dist` directory
 - `build-only` builds your app and outputs it in your `dist` directory, but without type checking
 - `build:lib:prod` builds custom elements as lib
-- `build:lib:dev` builds custom elements as lib with base URL for local dev environnement (--base=/dev/main)
+- `build:lib:dev` builds custom elements as lib with base URL for local dev environnement (`--base=/dev/main`)
 - `test`, `test:unit`, `test:unit:ci` runs your test suite with Vitest. See _Unit testing_ section
 - `test:e2e`, `test:e2e:ci`, `test:e2e:dev` see _End to end testing_ section
-- `report` create code coverage report for e2e tests
-- `lint`, `lint:js`, `lint:prettier` runs the linter for your project
+- `coverage-report` create code coverage report for e2e tests
+- `type-check`, `type-check:dev`, runs type checking on project (`/src/bundle` is excluded). Use `type-check:dev` to keep type-checking alive.
+- `lint`, `lint:js`, `lint:prettier` runs the linter for your project (`/src/bundle` and fixtures are excluded)
 - `format` format the code with prettier (write mode)
 - `prepare` runs `husky install` command
+
+A `.prettierignore` file is used by prettier and lint to exclude some files (such as the built bundle, the lib files, or the fixtures, ...).
 
 ## 💉 Test
 
@@ -56,7 +57,7 @@ In the project **luxembourg-geoportail**, build the app as library with this com
 $ npm run build:lib:prod
 ```
 
-When using the lib in local developpement mode within the geoportailv3 docker composition, use (this sets the necessary base URL option --base=/dev/main):
+When using the lib in local developpement mode within the geoportailv3 docker composition, use (this sets the necessary base URL option `--base=/dev/main`):
 
 ```
 $ npm run build:lib:dev
@@ -64,9 +65,9 @@ $ npm run build:lib:dev
 
 This will generate an export of all available **Vue components** and **State persistor services** that can be used in a independant application (eg. geoportalv3 legacy app).
 
-To see what are the components exported, check the `lib.ts` that is the entry point for the build.
+To see what are the components exported, check the `/src/bundle/lib.ts` that is the entry point for the build of the library.
 
-⚠️ This build does not contain **Vue.js** dependencies. For this reason, Vue.js must be included in the application that will include the lib.
+⚠️ This build includes its own **Vue.js** dependencies and will export Vue's utilities such as watchers that can be used to interact with the lib state. For this reason, avoid including another Vue.js dep in the targeted project.
 
 ### Import the lib in another app
 
@@ -106,48 +107,6 @@ A simple way to develop on the lib and test it directly from within the geoporta
 ```
 
 To see changes applied you then need to run `npm run build:lib:dev` and refresh your browser on `http://localhost:8080/dev/main.html`.
-
-### Install Vue.js
-
-Don't forget to also include **Vue.js** as a dependency.
-
-```
-$ npm install -D vue
-```
-
-If using the **Webpack bundler** (as it is the case in geoportalv3), install `vue-loader` and update the webpack configuration file. Add alias to **Vue.js** to make the lib work with the current Vue instance.
-
-https://vue-loader.vuejs.org/guide/#manual-setup
-
-```
-$ npm install -D vue-loader
-```
-
-```js
-// webpack.config.js
-const { VueLoaderPlugin } = require('vue-loader')
-
-module.exports = {
-  module: {
-    rules: [
-      // ...
-      {
-        test: /\.vue$/,
-        loader: 'vue-loader', // <= Add the rule for Vue
-      },
-    ],
-  },
-  resolve: {
-    extensions: ['.js', '.vue', '.json'],
-    alias: {
-      vue$: 'vue/dist/vue.esm-bundler.js', // <= Add the alias for Vue
-    },
-  },
-  plugins: [
-    new VueLoaderPlugin(), // <= Don't forget the plugin for Vue loader
-  ],
-}
-```
 
 ### Make assets available
 
