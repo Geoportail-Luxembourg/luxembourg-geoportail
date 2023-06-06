@@ -121,7 +121,7 @@
   }
 
   .lux-layer-manager-item-content {
-    @apply select-text w-full transition-[height] duration-[0.25s] overflow-hidden h-0 ease-linear grid grid-flow-col auto-cols-max;
+    @apply select-text w-full transition-[height] duration-[0.25s] overflow-hidden ease-linear grid grid-flow-col auto-cols-max;
   }
 
   .lux-sortable-ghost {
