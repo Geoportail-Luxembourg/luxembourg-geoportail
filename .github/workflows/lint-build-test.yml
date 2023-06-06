@@ -22,6 +22,7 @@ jobs:
           cache: 'npm'
       - run: npm ci
       - run: npm run lint
+      - run: npm run type-check
       - run: npm run build-only -- --mode=e2e
       - run: npm run test:unit:ci
       - run: npm run test:e2e:ci
