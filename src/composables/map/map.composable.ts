@@ -18,7 +18,7 @@ export default function useMap() {
     return map
   }
 
-  function createMap(/*target: string | HTMLElement*/) {
+  function createMap() {
     map = new OlMap({
       view: new OlView({
         zoom: 10,
