@@ -1,20 +1,16 @@
 <script setup lang="ts">
 import { onMounted, onUnmounted, watch } from 'vue'
 import { storeToRefs } from 'pinia'
-
 import MapLibreLayer from '@geoblocks/ol-maplibre-layer'
-declare type MapLibreLayerType = typeof MapLibreLayer
-
+import { MapLibreLayerType } from './composables/map/map.model'
 import HeaderBar from './components/header/header-bar.vue'
 import FooterBar from './components/footer/footer-bar.vue'
 import BackgroundSelector from '@/components/background-selector/background-selector.vue'
-
 import LayerPanel from '@/components/layer-panel/layer-panel.vue'
 import MapContainer from '@/components/map/map-container.vue'
 import StyleSelector from '@/components/style-selector/style-selector.vue'
 import RemoteLayers from '@/components/remote-layers/remote-layers.vue'
 import LayerMetadata from '@/components/layer-metadata/layer-metadata.vue'
-
 import { statePersistorLayersService } from '@/services/state-persistor/state-persistor-layers.service'
 import { statePersistorThemeService } from '@/services/state-persistor/state-persistor-theme.service'
 import { statePersistorLayersOpenService } from '@/services/state-persistor/state-persistor-layersopen.service'

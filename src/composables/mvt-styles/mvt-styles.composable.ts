@@ -246,7 +246,7 @@ export default function useMvtStyles() {
     }
   }
 
-  function getVectorId(bgLayer: Layer | undefined | null): String | undefined {
+  function getVectorId(bgLayer: Layer | undefined | null): string | undefined {
     const bgLayerDef: BgLayerDef | undefined = bgConfigFixture().bg_layers.find(
       l => l.id == bgLayer?.id
     )
