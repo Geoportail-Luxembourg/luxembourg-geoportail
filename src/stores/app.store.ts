@@ -32,6 +32,7 @@ export const useAppStore = defineStore(
       lang,
       layersOpen,
       styleEditorOpen,
+      remoteLayersOpen,
       setLang,
       setLayersOpen,
       setRemoteLayersOpen,
