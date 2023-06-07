@@ -24,6 +24,7 @@
   "A4 portrait": "A4 portrait",
   "Abort": "Abort",
   "Access constraints :": "Access constraints",
+  "Activate categories": "Activate categories",
   "Activate offline mode": "Activate offline mode",
   "Activer Google Streetview": "Enable Google Street View",
   "Add external data": "Add external data",
@@ -323,6 +324,7 @@
   "Search Maps": "Search Maps",
   "Select a style": "Select a style",
   "Select style: {{styleName}}": "Select style: {{styleName}}",
+  "Select a colour for every theme": "Select a colour for every theme",
   "Section": "Section",
   "Section cadastrale": "Cadastral section",
   "Send feedback to support team": "Send feedback to support team",
@@ -331,6 +333,7 @@
   "Show extent": "Show extent",
   "Show long url": "Show long URL",
   "Show orientation": "Show orientation",
+  "Show or hide {{ thematicName }}": "Show or hide {{ thematicName }}",
   "Size": "Size",
   "Sort \"{{layerName}}\" in the list": "Sort \"{{layerName}}\" in the list",
   "Statut": "Status",
@@ -1710,5 +1713,12 @@
   "Dark sand": "Brown",
   "Kids": "Colourful",
   "Light mauve": "Magenta",
-  "Light Blue": "Blue"
+  "Light Blue": "Blue",
+  "Roads primary": "Main roads",
+  "Roads secondary": "Secondary roads",
+  "Vegetation": "Vegetation",
+  "Buildings": "Buildings",
+  "Water": "Hydrology",
+  "Arrière-fond": "Background",
+  "Hillshade": "Relief"
 }

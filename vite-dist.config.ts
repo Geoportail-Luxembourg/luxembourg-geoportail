@@ -1,9 +1,10 @@
 import { fileURLToPath, URL } from 'url'
 import { defineConfig } from 'vitest/config'
 import { type UserConfig } from 'vite'
-import { resolve } from 'path'
+import { resolve, path } from 'path'
 import vue from '@vitejs/plugin-vue'
 import type { RootNode, TemplateChildNode } from '@vue/compiler-core'
+import replaceFiles from 'vite-plugin-replace-files';
 
 function removeDataTestAttrs(node: RootNode | TemplateChildNode) {
   if (node.type === 1 /* NodeTypes.ELEMENT */) {
@@ -16,6 +17,12 @@ function removeDataTestAttrs(node: RootNode | TemplateChildNode) {
 export default defineConfig((/*{ command, mode }*/) => {
   const base: UserConfig = {
     plugins: [
+      replaceFiles([
+        {
+          file: 'src/__fixtures__/themes.api.fixture.ts',
+          replacement: 'src/bundle/__fixtures__/themes.api.fixture.ts',
+        },
+      ]),
       vue({
         template: {
           compilerOptions: {
@@ -30,7 +37,6 @@ export default defineConfig((/*{ command, mode }*/) => {
       },
     },
     optimizeDeps: {
-      exclude: ['@vue/runtime-core', '@vue/shared', '@vue/runtime-dom'],
       force: false,
       disabled: true,
     },
@@ -43,12 +49,8 @@ export default defineConfig((/*{ command, mode }*/) => {
       name: 'luxembourg-geoportail',
       fileName: 'lux.dist',
     },
-    commonjsOptions: {
-      exclude: ['@vue/runtime-core', '@vue/shared', '@vue/runtime-dom'],
-    },
     outDir: 'bundle', // TODO: rename /dist
     rollupOptions: {
-      external: ['vue', '@vue/runtime-core', '@vue/shared', '@vue/runtime-dom'],
       output: {
         globals: {
           vue: 'Vue',
