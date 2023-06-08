@@ -48837,7 +48837,6 @@ const useThemeStore = defineStore(
   },
   {}
 );
-const themesApiFixture = () => ({});
 function useThemes() {
   function findById(id, node) {
     return findByIdOrName(id, void 0, node);
@@ -48871,16 +48870,12 @@ function useThemes() {
     const { setTheme: setTheme2 } = useThemeStore();
     setTheme2(name);
   }
-  async function fetchThemes() {
-    return new Promise((resolve2) => resolve2(themesApiFixture()));
-  }
   return {
     findById,
     findByName,
     findBgLayerById,
     findBgLayerByName,
-    setTheme,
-    fetchThemes
+    setTheme
   };
 }
 const themes = useThemes();

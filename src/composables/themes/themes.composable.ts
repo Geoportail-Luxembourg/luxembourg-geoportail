@@ -1,5 +1,4 @@
-import type { ConfigModel, ThemeNodeModel } from './themes.model'
-import { themesApiFixture } from '@/__fixtures__/themes.api.fixture'
+import type { ThemeNodeModel } from './themes.model'
 import { useThemeStore } from '@/stores/config.store'
 import { LayerId } from '@/stores/map.store.model'
 
@@ -56,16 +55,11 @@ export default function useThemes() {
     setTheme(name)
   }
 
-  async function fetchThemes(): Promise<ConfigModel> {
-    return new Promise(resolve => resolve(themesApiFixture()))
-  }
-
   return {
     findById,
     findByName,
     findBgLayerById,
     findBgLayerByName,
     setTheme,
-    fetchThemes,
   }
 }

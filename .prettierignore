@@ -27,7 +27,6 @@
 
 # fixtures
 /src/__fixtures__/
-/src/bundle/__fixtures__/
 
 storybook-static
 custom-elements.json
