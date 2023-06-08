@@ -1,10 +1,9 @@
 import { fileURLToPath, URL } from 'url'
 import { defineConfig } from 'vitest/config'
 import { type UserConfig } from 'vite'
-import { resolve, path } from 'path'
+import { resolve } from 'path'
 import vue from '@vitejs/plugin-vue'
 import type { RootNode, TemplateChildNode } from '@vue/compiler-core'
-import replaceFiles from 'vite-plugin-replace-files';
 
 function removeDataTestAttrs(node: RootNode | TemplateChildNode) {
   if (node.type === 1 /* NodeTypes.ELEMENT */) {
@@ -17,12 +16,6 @@ function removeDataTestAttrs(node: RootNode | TemplateChildNode) {
 export default defineConfig((/*{ command, mode }*/) => {
   const base: UserConfig = {
     plugins: [
-      replaceFiles([
-        {
-          file: 'src/__fixtures__/themes.api.fixture.ts',
-          replacement: 'src/bundle/__fixtures__/themes.api.fixture.ts',
-        },
-      ]),
       vue({
         template: {
           compilerOptions: {
