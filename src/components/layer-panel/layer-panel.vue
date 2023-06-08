@@ -17,9 +17,9 @@ const { layers } = storeToRefs(useMapStore())
 <template>
   <div data-cy="layerPanel" class="flex flex-col h-full pt-1.5">
     <div class="h-16 shrink-0 flex justify-between lux-panel-title">
-      <h2>
+      <div>
         {{ t('Layers', { ns: 'client' }) }}
-      </h2>
+      </div>
       <span
         ><button
           @click="() => setLayersOpen(false)"
