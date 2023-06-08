@@ -1,8 +1,6 @@
 <script setup lang="ts">
 import { onMounted, provide, ref } from 'vue'
 
-import compareSlider from '@/components/slider/compare-slider.vue'
-
 import useMap from '@/composables/map/map.composable'
 import { OlSynchronizer } from '@/composables/map/ol.synchronizer'
 import { statePersistorMapService } from '@/services/state-persistor/state-persistor-map.service'
@@ -37,6 +35,7 @@ provide('olMap', olMap)
 
 <template>
   <div
+    id="map-container"
     data-cy="mapContainer"
     ref="mapContainer"
     class="h-full w-full bg-white absolute"
