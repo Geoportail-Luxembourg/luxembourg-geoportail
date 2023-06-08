@@ -6,12 +6,14 @@ import type {
   LayerComparison,
   MapContext,
 } from '@/stores/map.store.model'
+import { ShallowRef, shallowRef } from 'vue'
 
 export const PROJECTION_WEBMERCATOR = 'EPSG:3857'
 export const PROJECTION_WGS84 = 'EPSG:4326'
 export const PROJECTION_LUX = 'EPSG:2169'
 
 let map: OlMap
+const olMap: ShallowRef<OlMap | undefined> = shallowRef()
 
 export default function useMap() {
   function getOlMap() {
@@ -19,7 +21,7 @@ export default function useMap() {
   }
 
   function createMap() {
-    map = new OlMap({
+    olMap.value = map = new OlMap({
       view: new OlView({
         zoom: 10,
         center: [682439, 6379152],
@@ -114,6 +116,7 @@ export default function useMap() {
   }
 
   return {
+    olMap,
     getOlMap,
     createMap,
     equalsLayer,

@@ -10,20 +10,20 @@ import { useMetadataStore } from '@/stores/metadata.store'
 import type { Layer, LayerId } from '@/stores/map.store.model'
 import { BLANK_BACKGROUNDLAYER } from '@/composables/background-layer/background-layer.model'
 import useMvtStyles from '@/composables/mvt-styles/mvt-styles.composable'
+import { useSliderComparatorStore } from '@/stores/slider-comparator.store'
 
 import LayerManagerItemBackground from './layer-item/layer-item-background.vue'
 import LayerManagerItem from './layer-item/layer-item.vue'
-
-import { statePersistorLayerComparatorService } from '@/services/state-persistor/state-persistor-layer-comparator.service'
-import SimpleStyleSelector from '../style-selector/simple-style-selector.vue'
 
 const { t } = useTranslation()
 
 const { setMetadataId } = useMetadataStore()
 const mapStore = useMapStore()
 const appStore = useAppStore()
-const { bgLayer } = storeToRefs(mapStore)
 const styles = useMvtStyles()
+const sliderStore = useSliderComparatorStore()
+const { bgLayer } = storeToRefs(mapStore)
+const { sliderActive } = storeToRefs(sliderStore)
 
 const layers = computed(() => [...mapStore.layers].reverse())
 const isLayerOpenId: ShallowRef<LayerId | undefined> = shallowRef()
@@ -34,8 +34,6 @@ const bgLayerIsEditable = computed(() =>
 
 const emit = defineEmits(['displayCatalog'])
 const { setRemoteLayersOpen } = useAppStore()
-
-statePersistorLayerComparatorService.bootstrap()
 
 onMounted(() => {
   const sortableLayers = document.getElementById('sortable-layers')
@@ -73,7 +71,7 @@ function toggleEditionLayer() {
 }
 
 function toggleLayerComparator() {
-  appStore.toggleLayerComparator()
+  sliderStore.toggleSlider()
 }
 </script>
 
@@ -89,7 +87,7 @@ function toggleLayerComparator() {
         :draggableClassName="draggableClassName"
         :layer="layer"
         :isOpen="isLayerOpenId === layer.id"
-        :isLayerComporatorOpen="appStore.layerComparatorOpen"
+        :isLayerComporatorOpen="sliderActive"
         :displayLayerComporatorOpen="index === 0"
         @clickRemove="removeLayer"
         @clickToggle="toggleAccordionItem"

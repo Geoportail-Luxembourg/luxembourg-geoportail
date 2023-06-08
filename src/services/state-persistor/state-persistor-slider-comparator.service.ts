@@ -1,6 +1,9 @@
 import { watch, watchEffect, WatchStopHandle } from 'vue'
 
-import { DEFAULT_SLIDER_RATIO, useAppStore } from '@/stores/app.store'
+import {
+  DEFAULT_SLIDER_RATIO,
+  useSliderComparatorStore,
+} from '@/stores/slider-comparator.store'
 import {
   SP_KEY_LAYERCOMPARATOR,
   SP_KEY_LAYERCOMPARATOR_SLIDERRATIO,
@@ -21,23 +24,19 @@ class StatePersistorLayerComparatorService implements StatePersistorService {
   }
 
   persist() {
-    const appStore = useAppStore()
+    const sliderStore = useSliderComparatorStore()
 
     watch(
-      () => appStore.layerComparatorOpen,
-      (value, oldValue) => {
-        if (oldValue !== value) {
-          storageHelper.setValue(SP_KEY_LAYERCOMPARATOR, value)
+      [() => sliderStore.sliderActive, () => sliderStore.sliderRatio],
+      ([newSliderActive, newSliderRatio], [oldSliderActive]) => {
+        if (newSliderActive !== oldSliderActive) {
+          storageHelper.setValue(SP_KEY_LAYERCOMPARATOR, newSliderActive)
         }
-      }
-    )
 
-    watch(
-      () => appStore.layerComparatorSliderRatio,
-      (value, oldValue) => {
-        if (oldValue !== value) {
-          storageHelper.setValue(SP_KEY_LAYERCOMPARATOR_SLIDERRATIO, value)
-        }
+        storageHelper.setValue(
+          SP_KEY_LAYERCOMPARATOR_SLIDERRATIO,
+          newSliderRatio
+        )
       }
     )
   }
@@ -47,20 +46,19 @@ class StatePersistorLayerComparatorService implements StatePersistorService {
       storageHelper.getValue(SP_KEY_LAYERCOMPARATOR, stringToBoolean)
     )
     const sliderRatio = <number | null | undefined>(
-      storageHelper.getValue(SP_KEY_LAYERCOMPARATOR, stringToNumber)
+      storageHelper.getValue(SP_KEY_LAYERCOMPARATOR_SLIDERRATIO, stringToNumber)
     )
-    const { toggleLayerComparator, setLayerComparatorSliderRatio } =
-      useAppStore()
+    const { toggleSlider, setRatio } = useSliderComparatorStore()
 
     if (typeof lc !== 'undefined' && lc !== null) {
-      toggleLayerComparator(lc)
+      toggleSlider(lc)
 
       if (typeof sliderRatio !== undefined && sliderRatio !== null) {
-        setLayerComparatorSliderRatio(sliderRatio ?? DEFAULT_SLIDER_RATIO)
+        setRatio(sliderRatio ?? DEFAULT_SLIDER_RATIO)
       }
     }
   }
 }
 
-export const statePersistorLayerComparatorService =
+export const statePersistorSliderComparatorService =
   new StatePersistorLayerComparatorService()

@@ -183,11 +183,15 @@ export default function useOpenLayers() {
     olMap.addLayer(baseLayer)
   }
 
-  function removeLayer(olMap: OlMap, layerId: LayerId) {
-    const layerToRemove = olMap
+  function findLayer(olMap: OlMap, layerId: LayerId) {
+    return olMap
       .getLayers()
       .getArray()
       .find(layer => layer.get('id') === layerId)
+  }
+
+  function removeLayer(olMap: OlMap, layerId: LayerId) {
+    const layerToRemove = findLayer(olMap, layerId)
     if (layerToRemove) {
       olMap.removeLayer(layerToRemove)
     }
@@ -244,6 +248,7 @@ export default function useOpenLayers() {
     const bgLayer = mapLayers.getArray().find(layer => layer.getZIndex() === -1)
     if (bgLayer) callbackFunction(bgLayer)
   }
+
   function setBgLayer(
     olMap: OlMap,
     bgLayer: Layer | null,
@@ -291,6 +296,7 @@ export default function useOpenLayers() {
   return {
     createLayer,
     addLayer,
+    findLayer,
     removeLayer,
     removeFromCache,
     reorderLayers,
