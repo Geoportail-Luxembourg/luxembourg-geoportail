@@ -1,9 +1,10 @@
 <script setup lang="ts">
-import { useTranslation } from 'i18next-vue'
 import { watch } from 'vue'
+import { storeToRefs } from 'pinia'
+import { useTranslation } from 'i18next-vue'
+
 import LanguageSelector from '@/components/nav-bars/language-selector.vue'
 import { useAppStore } from '@/stores/app.store'
-import { storeToRefs } from 'pinia'
 import { useThemeStore } from '@/stores/config.store'
 import { themeSelectorService } from '../theme-selector/theme-selector.service'
 
@@ -18,7 +19,7 @@ watch(
   theme,
   theme => {
     if (theme) {
-      themeSelectorService.setCurrentThemeColors(theme)
+      themeSelectorService.setCurrentThemeColors(theme.name)
     }
   },
   { immediate: true }

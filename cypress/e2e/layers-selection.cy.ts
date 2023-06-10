@@ -19,6 +19,13 @@ describe('Catalogue', () => {
       cy.get('[data-cy="myLayers"] > li').should('have.length', 3)
     })
 
+    it('displays title with updated number of layers', () => {
+      cy.get('[data-cy="myLayersButton"]').should(
+        'have.text',
+        'Mes couches (2) '
+      )
+    })
+
     it('toggles the layer visibility', () => {
       cy.url().should('contains', 'opacities=1-1')
       expect(localStorage.getItem('opacities')).to.eq('1-1')
@@ -64,22 +71,33 @@ describe('Catalogue', () => {
   })
 })
 
+describe('LayerManager', () => {
+  beforeEach(() => {
+    cy.visit('/')
+  })
+  it('opens catalog when clicking button "+ Add layer"', () => {
+    cy.get('[data-cy="myLayersButton"]').click()
+    cy.get('[data-cy="addLayer"]').click()
+    cy.get('[data-cy="catalog"]').should('be.visible')
+  })
+})
+
 describe('Remote layers', () => {
   beforeEach(() => {
     cy.visit('/')
   })
 
   it('adds layers from the remote layers modale', () => {
-    cy.get('[data-cy="remoteLayerBox"]').find('button').first().click()
+    cy.get('[data-cy="myLayersButton"]').click()
+    cy.get('[data-cy="addRemoteLayer"]').click()
     cy.get('[data-cy="remoteLayerBox"]').find('button').eq(1).click()
+    cy.get('[data-cy="remoteLayerBox"]').find('button').eq(2).click()
     cy.get(
       '[data-cy="parentLayerLabel-WMS||http://wmts1.geoportail.lu/opendata/service||Ortho"]'
     ).click()
     cy.get(
       '[data-cy="layerLabel-WMS||http://wmts1.geoportail.lu/opendata/service||ortho_2001"]'
     ).click()
-
-    cy.get('[data-cy="myLayersButton"]').click()
     cy.get('[data-cy="myLayers"] > li').should('have.length', 2)
   })
 })

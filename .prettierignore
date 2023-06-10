@@ -1,0 +1,32 @@
+## editors
+/.idea
+*.iml
+/.vscode
+
+## system files
+.DS_Store
+
+## npm
+/node_modules/
+/npm-debug.log
+
+## testing
+/coverage/
+/.nyc_output/
+
+## temp folders
+/.tmp/
+
+# build
+/bundle/
+/src/bundle/runtime-dom/
+/_site/
+/dist/
+/out-tsc/
+.parcel-cache
+
+# fixtures
+/src/__fixtures__/
+
+storybook-static
+custom-elements.json

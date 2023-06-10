@@ -4,21 +4,22 @@ import { useTranslation } from 'i18next-vue'
 
 import CatalogTab from '@/components/catalog/catalog-tab.vue'
 import LayerManager from '@/components/layer-manager/layer-manager.vue'
-import RemoteLayers from '@/components/remote-layers/remote-layers.vue'
-import LayerMetadata from '../layer-metadata/layer-metadata.vue'
 import { useAppStore } from '@/stores/app.store'
+import { useMapStore } from '@/stores/map.store'
+import { storeToRefs } from 'pinia'
 
 const { t } = useTranslation()
-const myLayersOpen = ref(true)
+const myLayersOpen = ref(false)
 const { setLayersOpen } = useAppStore()
+const { layers } = storeToRefs(useMapStore())
 </script>
 
 <template>
-  <div data-cy="layerPanel" class="flex flex-col h-full">
-    <div class="h-20 shrink-0 flex justify-between lux-panel-title">
-      <h2>
+  <div data-cy="layerPanel" class="flex flex-col h-full pt-1.5">
+    <div class="h-16 shrink-0 flex justify-between lux-panel-title">
+      <div>
         {{ t('Layers', { ns: 'client' }) }}
-      </h2>
+      </div>
       <span
         ><button
           @click="() => setLayersOpen(false)"
@@ -32,16 +33,18 @@ const { setLayersOpen } = useAppStore()
       <button
         data-cy="myLayersButton"
         @click="() => (myLayersOpen = true)"
-        class="text-white basis-1/2 hover:bg-primary cursor-pointer text-center uppercase"
+        class="text-white px-4 hover:bg-primary cursor-pointer text-center uppercase"
         :class="myLayersOpen ? 'bg-primary' : 'bg-tertiary'"
+        :aria-expanded="myLayersOpen"
       >
-        {{ t('my_layers', { ns: 'client' }) }}
+        {{ t('my_layers', { ns: 'client' }) }} ({{ layers.length }})
       </button>
       <button
         data-cy="catalogButton"
         @click="myLayersOpen = false"
-        class="text-white basis-1/2 hover:bg-primary cursor-pointer text-center uppercase"
+        class="text-white px-4 hover:bg-primary cursor-pointer text-center uppercase"
         :class="myLayersOpen ? 'bg-tertiary' : 'bg-primary'"
+        :aria-expanded="!myLayersOpen"
       >
         {{ t('Catalog', { ns: 'client' }) }}
       </button>
@@ -49,9 +52,11 @@ const { setLayersOpen } = useAppStore()
     <!--catalog tab-->
     <div class="relative grow p-2.5 bg-primary overflow-auto">
       <catalog-tab v-if="!myLayersOpen"></catalog-tab>
-      <layer-manager data-cy="myLayers" v-if="myLayersOpen"></layer-manager>
+      <layer-manager
+        data-cy="myLayers"
+        v-if="myLayersOpen"
+        @display-catalog="() => (myLayersOpen = false)"
+      ></layer-manager>
     </div>
-    <remote-layers></remote-layers>
-    <layer-metadata></layer-metadata>
   </div>
 </template>

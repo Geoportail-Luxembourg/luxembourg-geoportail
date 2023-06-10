@@ -1,10 +1,14 @@
 <script setup lang="ts">
+import { storeToRefs } from 'pinia'
+
 import ButtonIcon from './button-icon.vue'
 import ButtonLink from './button-link.vue'
 import { useTranslation } from 'i18next-vue'
 import { useAppStore } from '@/stores/app.store'
+
 const { t, i18next } = useTranslation()
 const { setLayersOpen } = useAppStore()
+const { layersOpen } = storeToRefs(useAppStore())
 </script>
 <template>
   <footer
@@ -18,7 +22,8 @@ const { setLayersOpen } = useAppStore()
         <ButtonIcon
           :label="t('Layers', { ns: 'client' })"
           icon="layers"
-          @click="() => setLayersOpen(true)"
+          :active="layersOpen"
+          @click="() => setLayersOpen(!layersOpen)"
         >
         </ButtonIcon>
       </li>
