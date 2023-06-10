@@ -110,7 +110,7 @@ To see changes applied you then need to run `npm run build:lib:dev` and refresh 
 
 ### Make assets available
 
-Assets like translations are imported using an absolute path. Make them accessible via the right path. For geoportalv3, we choose to copy the assets directory with the `CopyPlugin`:
+Assets like translations are imported using an absolute path. Make them accessible via the right path. For example, copy the assets directory with the `CopyPlugin`:
 
 ```js
 // webpack.config.js
@@ -138,4 +138,13 @@ module.exports = {
     }),
   ],
 }
+```
+
+⚠️ For geoportalv3 we choose to copy the assets in the Dockerfile.
+
+```bash
+# copy web component styles and translations from bundle to static-ngeo
+RUN mkdir /etc/static-ngeo/web-components \
+    && cp -r /usr/lib/node_modules/luxembourg-geoportail/bundle/assets/ /etc/static-ngeo/web-components/assets/ \
+    && cp /usr/lib/node_modules/luxembourg-geoportail/bundle/style.css /etc/static-ngeo/web-components/style.css
 ```
