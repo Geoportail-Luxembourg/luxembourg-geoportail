@@ -30,5 +30,8 @@ module.exports = {
   },
   parserOptions: {
     ecmaVersion: 'latest',
+    ecmaFeatures: {
+      jsx: false,
+    },
   },
 }
