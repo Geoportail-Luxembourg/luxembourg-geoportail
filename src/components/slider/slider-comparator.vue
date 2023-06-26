@@ -169,6 +169,7 @@ onUnmounted(() => {
     :style="styleObject"
     role="seperator"
     aria-controls="map-container"
+    data-cy="sliderElement"
   >
     <span class="lux-slider-line"></span>
     <span class="lux-slider-arrows">
