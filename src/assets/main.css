@@ -188,7 +188,7 @@
   }
 
   .lux-slider-layer-label {
-    @apply w-32 bg-white hover:cursor-default absolute bottom-14 p-2 right-7;
+    @apply w-32 bg-white hover:cursor-default absolute bottom-14 p-2 right-7 font-bold;
   }
 }
 
