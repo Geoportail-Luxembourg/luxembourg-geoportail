@@ -16,6 +16,7 @@ import LayerMetadata from '@/components/layer-metadata/layer-metadata.vue'
 import HeaderBar from '@/components/header/header-bar.vue'
 import FooterBar from '@/components/footer/footer-bar.vue'
 import LayerPanel from '@/components/layer-panel/layer-panel.vue'
+import SliderComparator from '@/components/slider/slider-comparator.vue'
 import useMap from '@/composables/map/map.composable'
 import { useAppStore } from '@/stores/app.store'
 import { useMapStore } from '@/stores/map.store'
@@ -84,6 +85,7 @@ export {
   HeaderBar,
   FooterBar,
   LayerPanel,
+  SliderComparator,
   useMap,
   useAppStore,
   useMapStore,
