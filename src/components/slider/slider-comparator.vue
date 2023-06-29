@@ -41,6 +41,7 @@ const styleObject = reactive({ left: '0' })
 let isDragging = false
 let olLayerPrerenderEvent: EventsKey
 let olLayerPostrenderEvent: EventsKey
+let mapWrapperElement: HTMLElement
 
 statePersistorSliderComparatorService.bootstrap()
 
@@ -121,8 +122,7 @@ function onMouseMove(payload: MouseEvent) {
     return
   }
 
-  const mapContainerOffsetLeft =
-    olMap.value?.getTargetElement()?.parentElement?.offsetLeft!
+  const mapContainerOffsetLeft = mapWrapperElement.offsetLeft!
 
   moveSplitBar(payload.clientX - mapContainerOffsetLeft)
 }
@@ -144,6 +144,11 @@ function onKeyDownEsc() {
 }
 
 onMounted(() => {
+  // Keep ".map-wrapper" for v3 compatibility
+  mapWrapperElement = olMap.value
+    ?.getTargetElement()
+    ?.closest('.map-wrapper') as HTMLElement
+
   document.addEventListener('mousemove', onMouseMove)
   document.addEventListener('mouseup', onMouseUp)
 })
@@ -151,6 +156,9 @@ onMounted(() => {
 onUnmounted(() => {
   document.addEventListener('mousemove', onMouseMove)
   document.removeEventListener('mouseup', onMouseUp)
+
+  // Unbind event for HMR support
+  deactivate()
 })
 </script>
 

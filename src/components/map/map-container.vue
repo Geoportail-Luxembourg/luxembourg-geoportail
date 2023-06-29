@@ -46,5 +46,4 @@ provide('olMap', olMap)
     <attribution-control />
     <location-control />
   </div>
-  <compare-slider class="absolute" />
 </template>

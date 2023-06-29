@@ -72,7 +72,7 @@ function resizeMap() {
       </div>
 
       <!-- Map container and slider comparator -->
-      <div class="grow bg-blue-100 relative">
+      <div class="map-wrapper grow bg-blue-100 relative">
         <map-container />
         <slider-comparator />
         <remote-layers />
