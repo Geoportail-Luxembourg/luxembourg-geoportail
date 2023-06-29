@@ -44469,7 +44469,7 @@ uniform ${i3} ${o3} u_${a3};
     }
     setItem(key, value) {
       const queryParams = new URL(window.location.toString()).search;
-      const url = `${"/dev/main.html/"}${key}/${value}${queryParams}`;
+      const url = `${"/"}${key}/${value}${queryParams}`;
       try {
         window.history.replaceState(null, "", url);
       } catch (error) {
@@ -51854,7 +51854,7 @@ uniform ${i3} ${o3} u_${a3};
     key: 1,
     class: "flex text-tertiary pr-2"
   };
-  const _hoisted_8$4 = ["data-cy"];
+  const _hoisted_8$5 = ["data-cy"];
   const _hoisted_9$3 = { class: "ml-1 hover:underline" };
   const _sfc_main$o = /* @__PURE__ */ defineComponent({
     __name: "layer-tree-node",
@@ -51939,7 +51939,7 @@ uniform ${i3} ${o3} u_${a3};
               class: normalizeClass(["fa-solid", __props.node.checked ? "fa-check-square" : "fa-square"])
             }, null, 2),
             createBaseVNode("span", _hoisted_9$3, toDisplayString(unref(label)), 1)
-          ], 10, _hoisted_8$4)
+          ], 10, _hoisted_8$5)
         ]));
       };
     }
@@ -52028,7 +52028,7 @@ uniform ${i3} ${o3} u_${a3};
     class: "text-center"
   };
   const _hoisted_7$4 = { class: "lux-label" };
-  const _hoisted_8$3 = {
+  const _hoisted_8$4 = {
     key: 1,
     class: "text-center"
   };
@@ -52161,7 +52161,7 @@ uniform ${i3} ${o3} u_${a3};
               })), 1),
               createTextVNode(" " + toDisplayString((_a = unref(currentRemoteEndpoint).getServiceInfo()) == null ? void 0 : _a.abstract), 1)
             ])) : createCommentVNode("", true),
-            !unref(isLoading) && unref(currentRemoteEndpoint) ? (openBlock(), createElementBlock("div", _hoisted_8$3, [
+            !unref(isLoading) && unref(currentRemoteEndpoint) ? (openBlock(), createElementBlock("div", _hoisted_8$4, [
               createBaseVNode("span", _hoisted_9$2, toDisplayString(unref(t)("Access constraints :", {
                 ns: "client"
               })), 1),
@@ -52397,7 +52397,7 @@ uniform ${i3} ${o3} u_${a3};
   const _hoisted_5$9 = { class: "font-bold" };
   const _hoisted_6$6 = { class: "col-span-2" };
   const _hoisted_7$3 = ["title"];
-  const _hoisted_8$2 = ["title"];
+  const _hoisted_8$3 = ["title"];
   const _hoisted_9$1 = {
     key: 4,
     class: "col-span-3"
@@ -52513,7 +52513,7 @@ uniform ${i3} ${o3} u_${a3};
                   }),
                   onClick: hideFullDescription,
                   class: "text-secondary hover:underline"
-                }, " - ", 8, _hoisted_8$2)) : createCommentVNode("", true)
+                }, " - ", 8, _hoisted_8$3)) : createCommentVNode("", true)
               ])
             ])) : createCommentVNode("", true),
             layerMetadata.value.legalConstraints ? (openBlock(), createBlock(_sfc_main$m, {
@@ -55254,7 +55254,7 @@ uniform ${i3} ${o3} u_${a3};
   const _hoisted_5$6 = ["aria-expanded", "aria-controls"];
   const _hoisted_6$4 = ["aria-expanded", "aria-controls"];
   const _hoisted_7$2 = ["title"];
-  const _hoisted_8$1 = ["id"];
+  const _hoisted_8$2 = ["id"];
   const _hoisted_9 = ["title"];
   const _hoisted_10 = ["id", "value", "aria-label"];
   const _sfc_main$9 = /* @__PURE__ */ defineComponent({
@@ -55375,7 +55375,7 @@ uniform ${i3} ${o3} u_${a3};
               class: "m-2.5 w-16 h-[5px] rounded-lg appearance-none cursor-pointer",
               "aria-label": unref(t)("Change opacity for {{ layerName }}", { layerName: unref(getLabel)() })
             }, null, 40, _hoisted_10)
-          ], 10, _hoisted_8$1)
+          ], 10, _hoisted_8$2)
         ]);
       };
     }
@@ -55474,15 +55474,16 @@ uniform ${i3} ${o3} u_${a3};
   const _hoisted_3$5 = ["aria-label"];
   const _hoisted_4$5 = { class: "flex flex-row gap-2 h-10 text-2xl" };
   const _hoisted_5$5 = ["aria-expanded"];
-  const _hoisted_6$3 = ["aria-expanded"];
-  const _hoisted_7$1 = { class: "relative grow p-2.5 bg-primary overflow-auto" };
+  const _hoisted_6$3 = { key: 0 };
+  const _hoisted_7$1 = ["aria-expanded"];
+  const _hoisted_8$1 = { class: "relative grow p-2.5 bg-primary overflow-auto" };
   const _sfc_main$7 = /* @__PURE__ */ defineComponent({
     __name: "layer-panel",
     setup(__props) {
       const { t } = useTranslation();
-      const myLayersOpen = ref(false);
       const { setLayersOpen } = useAppStore();
       const { layers } = storeToRefs(useMapStore());
+      const myLayersOpen = ref(false);
       return (_ctx, _cache) => {
         return openBlock(), createElementBlock("div", _hoisted_1$6, [
           createBaseVNode("div", _hoisted_2$6, [
@@ -55500,14 +55501,17 @@ uniform ${i3} ${o3} u_${a3};
               onClick: _cache[1] || (_cache[1] = () => myLayersOpen.value = true),
               class: normalizeClass(["text-white px-4 hover:bg-primary cursor-pointer text-center uppercase", myLayersOpen.value ? "bg-primary" : "bg-tertiary"]),
               "aria-expanded": myLayersOpen.value
-            }, toDisplayString(unref(t)("my_layers", { ns: "client" })) + " (" + toDisplayString(unref(layers).length) + ") ", 11, _hoisted_5$5),
+            }, [
+              createTextVNode(toDisplayString(unref(t)("my_layers", { ns: "client" })) + " ", 1),
+              unref(layers).length ? (openBlock(), createElementBlock("span", _hoisted_6$3, "(" + toDisplayString(unref(layers).length) + ")", 1)) : createCommentVNode("", true)
+            ], 10, _hoisted_5$5),
             createBaseVNode("button", {
               onClick: _cache[2] || (_cache[2] = ($event) => myLayersOpen.value = false),
               class: normalizeClass(["text-white px-4 hover:bg-primary cursor-pointer text-center uppercase", myLayersOpen.value ? "bg-tertiary" : "bg-primary"]),
               "aria-expanded": !myLayersOpen.value
-            }, toDisplayString(unref(t)("Catalog", { ns: "client" })), 11, _hoisted_6$3)
+            }, toDisplayString(unref(t)("Catalog", { ns: "client" })), 11, _hoisted_7$1)
           ]),
-          createBaseVNode("div", _hoisted_7$1, [
+          createBaseVNode("div", _hoisted_8$1, [
             !myLayersOpen.value ? (openBlock(), createBlock(_sfc_main$b, { key: 0 })) : createCommentVNode("", true),
             myLayersOpen.value ? (openBlock(), createBlock(_sfc_main$8, {
               key: 1,
