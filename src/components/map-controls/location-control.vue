@@ -15,7 +15,7 @@ const props = withDefaults(
     tipLabel?: string
   }>(),
   {
-    className: 'location-button',
+    className: 'lux-location-button',
     label: '\ue800',
     tipLabel: 'Location',
   }

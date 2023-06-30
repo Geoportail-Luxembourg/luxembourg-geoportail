@@ -37,11 +37,20 @@
     color: #6b818f;
   }
 
-  .location-button {
-    z-index: 2;
-    bottom: 55px;
-    padding: 0;
-    right: 8px;
+  .lux-control-button {
+    @apply z-10 right-2 p-0;
     border: 1px solid #8394a0;
+  }
+
+  .lux-location-button {
+    @apply lux-control-button bottom-14;
+  }
+
+  .lux-infobar-wrapper {
+    @apply lux-control-button bottom-12 absolute;
+  }
+
+  .lux-infobar-content {
+    @apply bg-white;
   }
 }
