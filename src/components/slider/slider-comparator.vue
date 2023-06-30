@@ -115,6 +115,9 @@ function moveSplitBar(offsetLeft: number) {
 
 function onMouseDown() {
   isDragging = true
+
+  document.addEventListener('mousemove', onMouseMove)
+  document.addEventListener('mouseup', onMouseUp)
 }
 
 function onMouseMove(payload: MouseEvent) {
@@ -129,6 +132,9 @@ function onMouseMove(payload: MouseEvent) {
 
 function onMouseUp() {
   isDragging = false
+
+  document.removeEventListener('mousemove', onMouseMove)
+  document.removeEventListener('mouseup', onMouseUp)
 }
 
 function onKeyDownRight() {
@@ -148,9 +154,6 @@ onMounted(() => {
   mapWrapperElement = olMap.value
     ?.getTargetElement()
     ?.closest('.map-wrapper') as HTMLElement
-
-  document.addEventListener('mousemove', onMouseMove)
-  document.addEventListener('mouseup', onMouseUp)
 })
 
 onUnmounted(() => {
