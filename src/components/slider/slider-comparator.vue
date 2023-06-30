@@ -154,7 +154,7 @@ onMounted(() => {
 })
 
 onUnmounted(() => {
-  document.addEventListener('mousemove', onMouseMove)
+  document.removeEventListener('mousemove', onMouseMove)
   document.removeEventListener('mouseup', onMouseUp)
 
   // Unbind event for HMR support
@@ -172,6 +172,7 @@ onUnmounted(() => {
     @keydown.space="onKeyDownRight"
     @keydown.right="onKeyDownRight"
     @keydown.left="onKeyDownLeft"
+    @keydown.delete="onKeyDownLeft"
     @keydown.esc="onKeyDownEsc"
     class="left-[20px] absolute h-full w-[32px] block"
     :style="styleObject"
