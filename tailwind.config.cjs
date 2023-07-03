@@ -68,6 +68,7 @@ module.exports = {
       boxShadow: {
         header: '0px 2px 6px -1px rgb(0 0 0 / 50%)',
         footer: '0px 2px 6px 1px rgb(0 0 0 / 50%)',
+        modal: '0 5px 10px rgba(0 0 0 / 20%)',
       },
       screens: {
         hd: {
