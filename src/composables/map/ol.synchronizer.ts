@@ -21,6 +21,12 @@ export class OlSynchronizer {
     const styleService = useMvtStyles()
     const openLayers = useOpenLayers()
     const { appliedStyle } = storeToRefs(styleStore)
+    const { viewZoom } = storeToRefs(mapStore)
+
+    watch(
+      viewZoom,
+      viewZoom => viewZoom !== undefined && map.getView().setZoom(viewZoom)
+    )
 
     watch(
       () => mapStore.layers,
@@ -70,7 +76,6 @@ export class OlSynchronizer {
         openLayers.setBgLayer(map, bgLayer, styleStore.bgVectorSources)
     )
 
-    //const appliedStyle = computed(() =>
     watchEffect(() => {
       if (!styleStore.isExpertStyleActive) {
         // must ignore typing error (too deep)

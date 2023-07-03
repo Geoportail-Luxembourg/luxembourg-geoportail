@@ -48,9 +48,10 @@ function onChangeScale(scale: number) {
 
 <template>
   <dropdown-list
-    class="lux-dropdown"
+    class="lux-dropdown-up border-none"
     :options="dropdownOptions"
     :placeholder="placeholder"
+    v-model="viewZoom"
     @change="onChangeScale"
   ></dropdown-list>
 </template>
