@@ -4,6 +4,7 @@ import { useTranslation } from 'i18next-vue'
 
 import { useMapStore } from '@/stores/map.store'
 import DropdownList from '@/components/common/dropdown-list.vue'
+import ModalDialog from '@/components/common/modal-dialog.vue'
 import { DropdownOptionModel } from '@/components/common/dropdown-list.model'
 import LayerTreeNode from '@/components/layer-tree/layer-tree-node.vue'
 import { LayerTreeNodeModel } from '@/components/layer-tree/layer-tree.model'
@@ -121,19 +122,13 @@ function toggleLayer(node: LayerTreeNodeModel) {
 </script>
 
 <template>
-  <div
+  <ModalDialog
     v-if="remoteLayersOpen"
-    data-cy="remoteLayerBox"
-    class="fixed right-32 top-32 z-[100] bg-white lux-modal w-[600px]"
-    role="dialog"
+    :title="t('Add external data', { ns: 'client' })"
+    @close="setRemoteLayersOpen(false)"
   >
-    <div class="lux-modal-header flex flex-row justify-between">
-      <h4>{{ t('Add external data', { ns: 'client' }) }}</h4>
-      <button @click="() => setRemoteLayersOpen(false)">X</button>
-    </div>
-
-    <div class="p-[15px]">
-      <div class="relative text-center">
+    <template v-slot:content>
+      <div class="relative text-center" data-cy="remoteLayerModalContent">
         <dropdown-list
           :options="wmsLayers"
           :placeholder="t('Predefined wms', { ns: 'client' })"
@@ -188,6 +183,18 @@ function toggleLayer(node: LayerTreeNodeModel) {
           @toggle-layer="toggleLayer"
         ></layer-tree-node>
       </div>
-    </div>
-  </div>
+    </template>
+    <template v-slot:footer>
+      <div class="flex flex-row justify-end">
+        <button
+          type="button"
+          class="lux-btn"
+          data-dismiss="modal"
+          @click="setRemoteLayersOpen(false)"
+        >
+          {{ t('Close', { ns: 'client' }) }}
+        </button>
+      </div>
+    </template>
+  </ModalDialog>
 </template>
