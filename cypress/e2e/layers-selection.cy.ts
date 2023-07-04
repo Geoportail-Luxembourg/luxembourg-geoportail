@@ -5,6 +5,12 @@ describe('Catalogue', () => {
     cy.visit('/')
   })
 
+  describe('When selected layers list is empty', () => {
+    it('displays title without the counter', () => {
+      cy.get('[data-cy="myLayersButton"]').should('have.text', 'Mes couches ')
+    })
+  })
+
   describe('When user adds layers from the catalog', () => {
     beforeEach(() => {
       cy.get('[data-cy="catalogButton"]').click()
@@ -22,7 +28,7 @@ describe('Catalogue', () => {
     it('displays title with updated number of layers', () => {
       cy.get('[data-cy="myLayersButton"]').should(
         'have.text',
-        'Mes couches (2) '
+        'Mes couches (2)'
       )
     })
 
