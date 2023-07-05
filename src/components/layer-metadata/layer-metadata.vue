@@ -58,6 +58,7 @@ function closeLayerMetadata() {
   <ModalDialog
     v-if="layerMetadata"
     :backdrop="false"
+    :footer="false"
     :title="t(`${layerMetadata.title}`, { ns: 'client' })"
     @close="closeLayerMetadata"
   >

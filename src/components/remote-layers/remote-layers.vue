@@ -184,17 +184,5 @@ function toggleLayer(node: LayerTreeNodeModel) {
         ></layer-tree-node>
       </div>
     </template>
-    <template v-slot:footer>
-      <div class="flex flex-row justify-end">
-        <button
-          type="button"
-          class="lux-btn"
-          data-dismiss="modal"
-          @click="setRemoteLayersOpen(false)"
-        >
-          {{ t('Close', { ns: 'client' }) }}
-        </button>
-      </div>
-    </template>
   </ModalDialog>
 </template>
