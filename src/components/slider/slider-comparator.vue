@@ -66,6 +66,16 @@ watch(sliderOffset, sliderOffset => {
   olMap.value?.render()
 })
 
+watch([sliderActive, sliderElement], ([isActive, sliderElement]) => {
+  if (isActive && sliderElement) {
+    focusOnSlider(sliderElement)
+  }
+})
+
+function focusOnSlider(sliderElement: HTMLElement) {
+  sliderElement.focus({ focusVisible: true } as any) // TODO: FocusOptions
+}
+
 function activate() {
   const olLayer = openLayers.getLayerFromCache(sliderTopLayer.value)
 
