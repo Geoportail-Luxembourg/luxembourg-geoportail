@@ -162,6 +162,10 @@
   .lux-navbar-dropdown .lux-dropdown-list-item {
     @apply uppercase text-center;
   }
+
+  .lux-remote-services-dropdown .lux-dropdown-wrapper {
+    @apply fixed w-56;
+  }
 }
 
 .fa-solid {

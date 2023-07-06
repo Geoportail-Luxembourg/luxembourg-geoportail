@@ -130,6 +130,7 @@ function toggleLayer(node: LayerTreeNodeModel) {
     <template v-slot:content>
       <div class="relative text-center" data-cy="remoteLayerModalContent">
         <dropdown-list
+          class="lux-remote-services-dropdown"
           :options="wmsLayers"
           :placeholder="t('Predefined wms', { ns: 'client' })"
           @change="onChangeRemoteEndpoint"

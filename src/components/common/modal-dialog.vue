@@ -11,6 +11,10 @@ defineProps({
     type: Boolean,
     default: true,
   },
+  maxHeight: {
+    type: Boolean,
+    default: false,
+  },
   title: String,
 })
 defineEmits<{
@@ -59,7 +63,10 @@ function close() {
             </button>
           </div>
           <!-- content slot -->
-          <div class="p-[15px] max-h-96 overflow-y-auto">
+          <div
+            class="p-[15px] overflow-y-auto"
+            :class="maxHeight ? 'max-h-96' : 'max-h-full'"
+          >
             <slot name="content"></slot>
           </div>
           <!-- footer (optional)-->
