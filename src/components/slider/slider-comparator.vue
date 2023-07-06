@@ -1,44 +1,36 @@
 <script setup lang="ts">
 import { storeToRefs } from 'pinia'
-import {
-  computed,
-  onMounted,
-  onUnmounted,
-  reactive,
-  ref,
-  Ref,
-  watch,
-} from 'vue'
-import { useTranslation } from 'i18next-vue'
+import { computed, onMounted, onUnmounted, ref, Ref, watch } from 'vue'
 import { getRenderPixel } from 'ol/render'
 import { EventTypes, unByKey } from 'ol/Observable'
 import EventType from 'ol/render/EventType'
 import RenderEvent from 'ol/render/Event'
 import { EventsKey } from 'ol/events'
 
-import { useSliderComparatorStore } from '@/stores/slider-comparator.store'
 import useOpenLayers from '@/composables/map/ol.composable'
 import useMap from '@/composables/map/map.composable'
 import { statePersistorSliderComparatorService } from '@/services/state-persistor/state-persistor-slider-comparator.service'
+import { useSliderComparatorStore } from '@/stores/slider-comparator.store'
 
-const DEFAULT_STEP_ONKEYDOWN = 30
+import SplitterElement from './splitter-element.vue'
 
-const { t } = useTranslation()
 const sliderStore = useSliderComparatorStore()
 const openLayers = useOpenLayers()
 const olMap = useMap().olMap
-const sliderElement: Ref<HTMLElement | null> = ref(null)
+const splitterElement: Ref<InstanceType<typeof SplitterElement> | null> =
+  ref(null)
 const { sliderActive, sliderRatio, sliderTopLayer } = storeToRefs(sliderStore)
+const splitterElementOffset = computed(
+  () => splitterElement.value?.sliderElement?.offsetWidth || 0
+)
 const sliderOffset = computed(() =>
-  olMap.value && sliderElement.value
+  olMap.value && splitterElement.value
     ? sliderRatio.value * olMap.value.getSize()![0] -
-      sliderElement.value.offsetWidth / 2 +
+      splitterElement.value?.sliderElement?.offsetWidth! / 2 +
       olMap.value.getViewport().offsetLeft
     : 0
 )
-const styleObject = reactive({ left: '0' })
 
-let isDragging = false
 let olLayerPrerenderEvent: EventsKey
 let olLayerPostrenderEvent: EventsKey
 let mapWrapperElement: HTMLElement
@@ -61,20 +53,9 @@ watch([sliderTopLayer, sliderActive], ([topLayer, isActive], [oldTopLayer]) => {
   olMap.value?.render()
 })
 
-watch(sliderOffset, sliderOffset => {
-  styleObject.left = `${sliderOffset}px`
+watch(sliderOffset, () => {
   olMap.value?.render()
 })
-
-watch([sliderActive, sliderElement], ([isActive, sliderElement]) => {
-  if (isActive && sliderElement) {
-    focusOnSlider(sliderElement)
-  }
-})
-
-function focusOnSlider(sliderElement: HTMLElement) {
-  sliderElement.focus({ focusVisible: true } as any) // TODO: FocusOptions
-}
 
 function activate() {
   const olLayer = openLayers.getLayerFromCache(sliderTopLayer.value)
@@ -84,7 +65,7 @@ function activate() {
     function (event) {
       const ctx = <CanvasRenderingContext2D>(<RenderEvent>event).context
       const mapSize = olMap.value?.getSize()!
-      const width = sliderOffset.value + sliderElement.value!.offsetWidth / 2
+      const width = sliderOffset.value + splitterElementOffset.value / 2
       const tl = getRenderPixel(<RenderEvent>event, [width, 0])
       const tr = getRenderPixel(<RenderEvent>event, [mapSize[0], 0])
       const bl = getRenderPixel(<RenderEvent>event, [width, mapSize[1]])
@@ -115,47 +96,14 @@ function deactivate() {
   unByKey([olLayerPrerenderEvent, olLayerPostrenderEvent])
 }
 
-function moveSplitBar(offsetLeft: number) {
+function onMoveSplitBar(offsetLeft: number) {
   const mapSize = olMap.value?.getSize()!
-  const newRatio =
-    (offsetLeft + sliderElement.value!.offsetWidth / 2) / mapSize[0]
+  const newRatio = offsetLeft / mapSize[0]
 
   sliderStore.setRatio(newRatio)
 }
 
-function onMouseDown() {
-  isDragging = true
-
-  document.addEventListener('mousemove', onMouseMove)
-  document.addEventListener('mouseup', onMouseUp)
-}
-
-function onMouseMove(payload: MouseEvent) {
-  if (!isDragging) {
-    return
-  }
-
-  const mapContainerOffsetLeft = mapWrapperElement.offsetLeft!
-
-  moveSplitBar(payload.clientX - mapContainerOffsetLeft)
-}
-
-function onMouseUp() {
-  isDragging = false
-
-  document.removeEventListener('mousemove', onMouseMove)
-  document.removeEventListener('mouseup', onMouseUp)
-}
-
-function onKeyDownRight() {
-  moveSplitBar(sliderElement.value!.offsetLeft + DEFAULT_STEP_ONKEYDOWN)
-}
-
-function onKeyDownLeft() {
-  moveSplitBar(sliderElement.value!.offsetLeft - DEFAULT_STEP_ONKEYDOWN)
-}
-
-function onKeyDownEsc() {
+function onEscSplitBar() {
   sliderStore.toggleSlider()
 }
 
@@ -167,40 +115,21 @@ onMounted(() => {
 })
 
 onUnmounted(() => {
-  document.removeEventListener('mousemove', onMouseMove)
-  document.removeEventListener('mouseup', onMouseUp)
-
   // Unbind event for HMR support
   deactivate()
 })
 </script>
 
 <template>
-  <button
-    ref="sliderElement"
-    v-if="sliderActive"
-    @mousedown="onMouseDown"
-    @mousemove="onMouseMove"
-    @mouseup="onMouseUp"
-    @keydown.space="onKeyDownRight"
-    @keydown.right="onKeyDownRight"
-    @keydown.left="onKeyDownLeft"
-    @keydown.delete="onKeyDownLeft"
-    @keydown.esc="onKeyDownEsc"
-    class="left-[20px] absolute h-full w-[32px] block"
-    :style="styleObject"
-    role="seperator"
-    aria-controls="map-container"
-    data-cy="sliderElement"
-  >
-    <span class="lux-slider-line"></span>
-    <span class="lux-slider-arrows">
-      <span></span>
-      <span></span>
-    </span>
-    <span class="lux-slider-layer-label" v-if="sliderTopLayer">
-      <i class="fa fa-arrow-left mr-2"></i>
-      <span>{{ t(sliderTopLayer.name) }}</span>
-    </span>
-  </button>
+  <splitter-element
+    v-if="sliderTopLayer && sliderActive"
+    ref="splitterElement"
+    :sliderActive="sliderActive"
+    :sliderRatio="sliderRatio"
+    :sliderTopLayer="sliderTopLayer"
+    :sliderOffset="sliderOffset"
+    :containerOffset="mapWrapperElement?.offsetLeft || 0"
+    @moveSplitBar="onMoveSplitBar"
+    @escSplitBar="onEscSplitBar"
+  ></splitter-element>
 </template>
