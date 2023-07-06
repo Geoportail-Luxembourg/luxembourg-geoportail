@@ -13,7 +13,6 @@ import type { Layer, LayerId } from '@/stores/map.store.model'
 import useMap from './map.composable'
 import { VectorSourceDict } from '@/composables/mvt-styles/mvt-styles.model'
 import { statePersistorStyleService } from '@/services/state-persistor/state-persistor-bgstyle.service'
-import { PROJECTION_WEBMERCATOR, PROJECTION_WGS84 } from './map.composable'
 import { isHiDpi, stringToBoolean } from '@/services/utils'
 import { storageHelper } from '@/services/state-persistor/storage/storage.helper'
 import { SP_KEY_IPV6 } from '@/services/state-persistor/state-persistor.model'
@@ -22,6 +21,7 @@ import {
   TILE_MATRIX_IDS,
 } from '@/__fixtures__/wmts.fixture'
 import { useStyleStore } from '@/stores/style.store'
+import { PROJECTIONS } from '@/services/projection.utils'
 
 const proxyWmsUrl = 'https://map.geoportail.lu/ogcproxywms'
 export const remoteProxyWms = 'https://map.geoportail.lu/httpsproxy'
@@ -29,8 +29,8 @@ export const remoteProxyWms = 'https://map.geoportail.lu/httpsproxy'
 function getOlcsExtent() {
   return transformExtent(
     [5.31, 49.38, 6.64, 50.21],
-    PROJECTION_WGS84,
-    PROJECTION_WEBMERCATOR
+    PROJECTIONS.WGS84,
+    PROJECTIONS.WEBMERCATOR
   )
 }
 
@@ -62,7 +62,7 @@ function createWmsLayer(layer: Layer): ImageLayer<ImageWMS> {
 function createWmtsLayer(layer: Layer): TileLayer<WMTS> {
   const { name, imageType, id } = layer
   const hasRetina = getLayerHasRetina(layer)
-  const projection = getProjection(PROJECTION_WEBMERCATOR)!
+  const projection = getProjection(PROJECTIONS.WEBMERCATOR)!
   const extent = projection!.getExtent()
 
   const olLayer = new TileLayer({

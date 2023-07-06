@@ -7,7 +7,8 @@
     @apply absolute rounded p-1;
   }
 
-  .ol-control button {
+  .ol-control > button,
+  .ol-control-button {
     @apply w-10 h-10 text-xl text-center font-normal indent-0 block lux-btn m-[-1px] p-0 border-[1px] border-[color:var(--color-btn-ol)];
     font-family: 'geoportail-icons-wc';
   }
@@ -37,11 +38,12 @@
     color: #6b818f;
   }
 
-  .location-button {
-    z-index: 2;
-    bottom: 55px;
-    padding: 0;
-    right: 8px;
+  .lux-control-button {
+    @apply z-10 right-2 p-0;
     border: 1px solid #8394a0;
+  }
+
+  .lux-location-button {
+    @apply lux-control-button bottom-14;
   }
 }

@@ -3,11 +3,10 @@ import { getTransform, ProjectionLike, transform } from 'ol/proj'
 import { Coordinate } from 'ol/coordinate'
 import ObjectEventType from 'ol/ObjectEventType'
 
-import useMap, {
-  PROJECTION_WEBMERCATOR,
-  PROJECTION_LUX,
-  PROJECTION_WGS84,
-} from '@/composables/map/map.composable'
+import useMap from '@/composables/map/map.composable'
+import { debounce, stringToNumber } from '@/services/utils'
+import { useMapStore } from '@/stores/map.store'
+
 import {
   SP_KEY_ZOOM,
   SP_KEY_X,
@@ -20,7 +19,7 @@ import {
   KeyZoomV2ToV3,
   V2_ZOOM_TO_V3_ZOOM_,
 } from './state-persistor-map.mapper'
-import { debounce, stringToNumber } from '@/services/utils'
+import { PROJECTIONS } from '../projection.utils'
 
 class StatePersistorMapService implements StatePersistorService {
   bootstrap(): void {
@@ -29,10 +28,17 @@ class StatePersistorMapService implements StatePersistorService {
   }
 
   persistZoom() {
+    const mapStore = useMapStore()
     const view = useMap().getOlMap().getView()
     const fnStorageSetValueZoom = () => {
-      const zoom = view.getZoom()
-      storageHelper.setValue(SP_KEY_ZOOM, zoom ? Math.ceil(zoom) : null)
+      const viewZoom = view.getZoom()
+      const zoom = viewZoom ? Math.ceil(viewZoom) : null
+
+      storageHelper.setValue(SP_KEY_ZOOM, zoom)
+
+      if (zoom) {
+        mapStore.setViewZoom(zoom)
+      }
     }
 
     fnStorageSetValueZoom()
@@ -80,8 +86,8 @@ class StatePersistorMapService implements StatePersistorService {
     const y = storageHelper.getValue(SP_KEY_Y, stringToNumber)
     const srs = storageHelper.getValue(SP_KEY_SRS) as ProjectionLike
     const lurefToWebMercatorFn = getTransform(
-      PROJECTION_LUX,
-      PROJECTION_WEBMERCATOR
+      PROJECTIONS.LUREF,
+      PROJECTIONS.WEBMERCATOR
     )
 
     // TODO: delete params as in legacy?
@@ -102,7 +108,7 @@ class StatePersistorMapService implements StatePersistorService {
     if (x != null && y != null) {
       // keep "!=" for not null AND not undefined
       if (version === 3 && srs != null) {
-        viewCenter = transform([x, y], srs, PROJECTION_WEBMERCATOR)
+        viewCenter = transform([x, y], srs, PROJECTIONS.WEBMERCATOR)
       } else {
         viewCenter =
           version === 3 ? [x, y] : lurefToWebMercatorFn([y, x], undefined, 2)
@@ -110,8 +116,8 @@ class StatePersistorMapService implements StatePersistorService {
     } else {
       viewCenter = transform(
         [6, 49.7],
-        PROJECTION_WGS84,
-        PROJECTION_WEBMERCATOR
+        PROJECTIONS.WGS84,
+        PROJECTIONS.WEBMERCATOR
       )
     }
 

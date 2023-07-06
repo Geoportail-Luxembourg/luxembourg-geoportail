@@ -148,7 +148,7 @@
   "Effacer": "Läschen",
   "Effacer tous les dessins": "all d'Zeechnunge läschen",
   "Elevation": "Héicht",
-  "Elevation: {{ ctrl.featureElevation }}": "Héicht: {{ ctrl.featureElevation }}",
+  "Elevation: {{ featureElevation }}": "Héicht: {{ featureElevation }}",
   "Email": "Email",
   "En cochant cette case, l'utilisateur déclare avoir lu, compris et accepté les <a href=\"casipofiles/Disclaimer.pdf\">conditions générales d'utilisation </a>de ce site web.": "",
   "En cochant cette case, l'utilisateur déclare avoir lu, compris et accepté les <a href=\"pagfiles/Disclaimer.pdf\">conditions générales d'utilisation </a>de ce site web.": "Heimat erklärt der, déi <a href='/main/wsgi/pag/files/Disclaimer.pdf'>allgemeng Geschäftsbedingungen</a> vun dësem Site gelies an akzeptéiert ze hunn.",

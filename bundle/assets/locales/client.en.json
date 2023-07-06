@@ -148,7 +148,7 @@
   "Effacer": "Delete",
   "Effacer tous les dessins": "Delete all drawings",
   "Elevation": "Elevation",
-  "Elevation: {{ ctrl.featureElevation }}": "Elevation: {{ ctrl.featureElevation }}",
+  "Elevation: {{ featureElevation }}": "Elevation: {{ featureElevation }}",
   "Email": "Email",
   "En cochant cette case, l'utilisateur déclare avoir lu, compris et accepté les <a href=\"casipofiles/Disclaimer.pdf\">conditions générales d'utilisation </a>de ce site web.": "En cochant cette case, l'utilisateur déclare avoir lu, compris et accepté les <a href=\"casipofiles/Disclaimer.pdf\">conditions générales d'utilisation </a>de ce site web.",
   "En cochant cette case, l'utilisateur déclare avoir lu, compris et accepté les <a href=\"pagfiles/Disclaimer.pdf\">conditions générales d'utilisation </a>de ce site web.": "By checking this box, the user declares that he has read, understood and accepted the <a href=\"/main/wsgi/pag/files/Disclaimer.pdf\">general terms of use of this website.",

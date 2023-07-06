@@ -105,11 +105,19 @@
   }
 
   .lux-caret {
-    @apply inline-block w-0 h-0 align-middle;
+    @apply inline-block w-0 h-0 align-middle ml-2;
     border-top: 4px dashed;
     border-top: 4px solid \9;
     border-right: 4px solid transparent;
     border-left: 4px solid transparent;
+  }
+
+  .lux-dropdown-up .lux-caret {
+    @apply rotate-180 -translate-y-0.5;
+  }
+
+  .lux-dropdown-up .lux-dropdown-list {
+    @apply bottom-full;
   }
 
   .lux-collapse {
@@ -161,6 +169,41 @@
 
   .lux-navbar-dropdown .lux-dropdown-list-item {
     @apply uppercase text-center;
+  }
+
+  .lux-scale-line > div {
+    border: 2px solid grey;
+    border-top: none;
+    color: black;
+    cursor: default;
+    font-size: 12px;
+    text-align: center;
+    margin: 1px;
+  }
+
+  .lux-control-button {
+    @apply z-10 right-2 p-0;
+    border: 1px solid #8394a0;
+  }
+
+  .lux-infobar-wrapper {
+    @apply lux-control-button bottom-2 absolute flex bg-white;
+  }
+
+  .lux-infobar-wrapper.ol-control {
+    @apply p-0;
+  }
+
+  .lux-infobar-wrapper .lux-dropdown-btn {
+    @apply border-none w-full rounded-sm;
+  }
+
+  .lux-infobar-content {
+    @apply bg-white flex items-center;
+  }
+
+  .lux-infobar-content .lux-dropdown-list {
+    @apply mb-1;
   }
 }
 

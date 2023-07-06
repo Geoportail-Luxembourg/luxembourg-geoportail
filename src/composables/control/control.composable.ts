@@ -10,18 +10,23 @@ export default function useControl(ControlClass: typeof Control, options: any) {
   const map = useMap()
   const olMap = inject('olMap') as OlMap
 
-  onMounted(() => {
+  onMounted(() => addControlToMap())
+  onUnmounted(() => removeControlFromMap())
+
+  function addControlToMap() {
     olMap.addControl(control)
     olMap.changed()
-  })
+  }
 
-  onUnmounted(() => {
+  function removeControlFromMap() {
     const olMap = map.getOlMap()
     olMap.removeControl(control)
     olMap.changed()
-  })
+  }
 
   return {
     control,
+    addControlToMap,
+    removeControlFromMap,
   }
 }

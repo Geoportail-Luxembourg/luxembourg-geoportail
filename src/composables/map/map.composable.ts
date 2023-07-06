@@ -7,10 +7,6 @@ import type {
   MapContext,
 } from '@/stores/map.store.model'
 
-export const PROJECTION_WEBMERCATOR = 'EPSG:3857'
-export const PROJECTION_WGS84 = 'EPSG:4326'
-export const PROJECTION_LUX = 'EPSG:2169'
-
 let map: OlMap
 
 export default function useMap() {

@@ -7,6 +7,8 @@ export const useMapStore = defineStore('map', () => {
   const map: Ref<MapContext> = ref({})
   const layers: ShallowRef<Layer[]> = shallowRef([])
   const bgLayer: Ref<Layer | undefined | null> = ref(undefined) // undefined => at start app | null => blank bgLayer
+  const mapProjection: Ref<string | undefined> = ref(undefined)
+  const viewZoom: Ref<number | undefined> = ref()
 
   function setBgLayer(layer: Layer | null) {
     bgLayer.value = layer
@@ -43,16 +45,23 @@ export const useMapStore = defineStore('map', () => {
     })
   }
 
+  function setViewZoom(zoom: number) {
+    viewZoom.value = zoom
+  }
+
   return {
     map,
     layers,
     bgLayer,
+    mapProjection,
+    viewZoom,
     addLayers,
     removeLayers,
     reorderLayers,
     setLayerOpacity,
     setBgLayer,
     hasLayer,
+    setViewZoom,
   }
 })
 

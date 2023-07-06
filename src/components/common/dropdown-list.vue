@@ -7,7 +7,7 @@ const props = withDefaults(
   defineProps<{
     placeholder: string
     options: DropdownOptionModel[]
-    modelValue?: string
+    modelValue?: string | number
   }>(),
   {
     options: () => [{ label: 'Default label', value: 'Default value' }],
