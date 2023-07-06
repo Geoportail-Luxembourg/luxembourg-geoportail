@@ -3,10 +3,6 @@ import { useTranslation } from 'i18next-vue'
 import { ShallowRef, shallowRef } from 'vue'
 const { t } = useTranslation()
 defineProps({
-  backdrop: {
-    type: Boolean,
-    default: true,
-  },
   footer: {
     type: Boolean,
     default: true,
@@ -29,10 +25,7 @@ function close() {
 <template>
   <Teleport to="body">
     <!-- backdrop -->
-    <div
-      v-if="backdrop"
-      class="fixed inset-0 bg-gray-900 opacity-40 z-[1050]"
-    ></div>
+    <div class="fixed inset-0 bg-gray-900 opacity-40 z-[1050]"></div>
     <!-- modal -->
     <Transition
       appear
