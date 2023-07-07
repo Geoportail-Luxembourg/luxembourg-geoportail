@@ -66,10 +66,10 @@ function activate() {
       const ctx = <CanvasRenderingContext2D>(<RenderEvent>event).context
       const mapSize = olMap.value?.getSize()!
       const width = sliderOffset.value + splitterElementOffset.value / 2
-      const tl = getRenderPixel(<RenderEvent>event, [width, 0])
-      const tr = getRenderPixel(<RenderEvent>event, [mapSize[0], 0])
-      const bl = getRenderPixel(<RenderEvent>event, [width, mapSize[1]])
-      const br = getRenderPixel(<RenderEvent>event, mapSize)
+      const tl = getRenderPixel(<RenderEvent>event, [0, 0])
+      const tr = getRenderPixel(<RenderEvent>event, [width, 0])
+      const bl = getRenderPixel(<RenderEvent>event, [0, mapSize[1]])
+      const br = getRenderPixel(<RenderEvent>event, [width, mapSize[0]])
 
       ctx.save()
       ctx.beginPath()
