@@ -166,7 +166,7 @@
   .lux-remote-services-dropdown .lux-dropdown-wrapper {
     @apply fixed w-56;
   }
-  
+
   .lux-slider-line {
     @apply absolute h-full w-[4px] left-[50%] bg-primary ml-[-2px] cursor-ew-resize block top-0;
   }

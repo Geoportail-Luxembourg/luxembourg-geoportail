@@ -8,8 +8,8 @@ const props = defineProps<{
   layer: Layer
   draggableClassName: string
   isOpen: boolean
-  isLayerComporatorOpen: boolean
-  displayLayerComporatorOpen: boolean
+  isLayerComparatorOpen: boolean
+  displayLayerComparatorOpen: boolean
 }>()
 const emit = defineEmits([
   'clickInfo',
@@ -147,9 +147,9 @@ function dispatchChangeOpacity() {
         "
       />
       <button
-        v-if="displayLayerComporatorOpen"
+        v-if="displayLayerComparatorOpen"
         class="fa ml-auto text-sm cursor-pointer"
-        :class="props.isLayerComporatorOpen ? 'fa-adjust' : 'fa-circle'"
+        :class="props.isLayerComparatorOpen ? 'fa-adjust' : 'fa-circle'"
         :aria-label="
           t('Toggle layer comparator for {{ layerName }}', {
             layerName: getLabel(),
