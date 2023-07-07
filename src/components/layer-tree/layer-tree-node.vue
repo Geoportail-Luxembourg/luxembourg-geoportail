@@ -74,9 +74,10 @@ function toggleParent(node: LayerTreeNodeModel) {
     <!--    Children-->
     <div
       v-if="!isMaxDepth"
+      class="bg-secondary"
       :class="[
         { 'pl-2': node.depth > 1 },
-        { 'lux-collapse bg-secondary': !isRoot },
+        { 'lux-collapse': !isRoot },
         { expanded: !isRoot && node.expanded },
       ]"
     >
