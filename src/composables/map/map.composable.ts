@@ -1,3 +1,4 @@
+import { ShallowRef, shallowRef } from 'vue'
 import OlMap from 'ol/Map'
 import OlView from 'ol/View'
 
@@ -6,7 +7,6 @@ import type {
   LayerComparison,
   MapContext,
 } from '@/stores/map.store.model'
-import { ShallowRef, shallowRef } from 'vue'
 
 export const PROJECTION_WEBMERCATOR = 'EPSG:3857'
 export const PROJECTION_WGS84 = 'EPSG:4326'

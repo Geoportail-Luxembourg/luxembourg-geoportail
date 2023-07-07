@@ -1,19 +1,14 @@
-import { acceptHMRUpdate, defineStore } from 'pinia'
 import { ref } from 'vue'
-
-import { DEFAULT_SLIDER_RATIO } from './slider-comparator.store'
+import { acceptHMRUpdate, defineStore } from 'pinia'
 
 export const DEFAULT_LANG = 'fr'
 export const DEFAULT_LAYER_PANEL_OPENED = true
-export const DEFAULT_COMPARATOR_OPENED = false
 
 export const useAppStore = defineStore(
   'app',
   () => {
     const lang = ref(DEFAULT_LANG)
     const layersOpen = ref(DEFAULT_LAYER_PANEL_OPENED)
-    const layerComparatorOpen = ref(false)
-    const layerComparatorSliderRatio = ref<number | undefined>(undefined)
     const remoteLayersOpen = ref()
     const styleEditorOpen = ref(false)
 
@@ -37,18 +32,6 @@ export const useAppStore = defineStore(
       styleEditorOpen.value = false
     }
 
-    function toggleLayerComparator(open?: boolean) {
-      layerComparatorOpen.value = open ?? !layerComparatorOpen.value
-
-      if (typeof layerComparatorSliderRatio.value === 'undefined') {
-        layerComparatorSliderRatio.value = DEFAULT_SLIDER_RATIO
-      }
-    }
-
-    function setLayerComparatorSliderRatio(value: number) {
-      layerComparatorSliderRatio.value = value
-    }
-
     return {
       lang,
       layersOpen,
@@ -59,10 +42,6 @@ export const useAppStore = defineStore(
       setRemoteLayersOpen,
       toggleStyleEditorPanel,
       closeStyleEditorPanel,
-      layerComparatorOpen,
-      layerComparatorSliderRatio,
-      toggleLayerComparator,
-      setLayerComparatorSliderRatio,
     }
   },
   {}
