@@ -1271,6 +1271,17 @@ function formatProp(key, value, raw) {
     return raw ? value : [`${key}=`, value];
   }
 }
+function assertNumber(val, type) {
+  if (!(process.env.NODE_ENV !== "production"))
+    return;
+  if (val === void 0) {
+    return;
+  } else if (typeof val !== "number") {
+    warn(`${type} is not a valid number - got ${JSON.stringify(val)}.`);
+  } else if (isNaN(val)) {
+    warn(`${type} is NaN - the duration expression might be incorrect.`);
+  }
+}
 const ErrorTypeStrings = {
   ["sp"]: "serverPrefetch hook",
   ["bc"]: "beforeCreate hook",
@@ -2317,6 +2328,283 @@ function traverse(value, seen) {
   }
   return value;
 }
+function useTransitionState() {
+  const state = {
+    isMounted: false,
+    isLeaving: false,
+    isUnmounting: false,
+    leavingVNodes: /* @__PURE__ */ new Map()
+  };
+  onMounted(() => {
+    state.isMounted = true;
+  });
+  onBeforeUnmount(() => {
+    state.isUnmounting = true;
+  });
+  return state;
+}
+const TransitionHookValidator = [Function, Array];
+const BaseTransitionImpl = {
+  name: `BaseTransition`,
+  props: {
+    mode: String,
+    appear: Boolean,
+    persisted: Boolean,
+    onBeforeEnter: TransitionHookValidator,
+    onEnter: TransitionHookValidator,
+    onAfterEnter: TransitionHookValidator,
+    onEnterCancelled: TransitionHookValidator,
+    onBeforeLeave: TransitionHookValidator,
+    onLeave: TransitionHookValidator,
+    onAfterLeave: TransitionHookValidator,
+    onLeaveCancelled: TransitionHookValidator,
+    onBeforeAppear: TransitionHookValidator,
+    onAppear: TransitionHookValidator,
+    onAfterAppear: TransitionHookValidator,
+    onAppearCancelled: TransitionHookValidator
+  },
+  setup(props, { slots }) {
+    const instance2 = getCurrentInstance();
+    const state = useTransitionState();
+    let prevTransitionKey;
+    return () => {
+      const children = slots.default && getTransitionRawChildren(slots.default(), true);
+      if (!children || !children.length) {
+        return;
+      }
+      let child = children[0];
+      if (children.length > 1) {
+        let hasFound = false;
+        for (const c2 of children) {
+          if (c2.type !== Comment) {
+            if (process.env.NODE_ENV !== "production" && hasFound) {
+              warn("<transition> can only be used on a single element or component. Use <transition-group> for lists.");
+              break;
+            }
+            child = c2;
+            hasFound = true;
+            if (!(process.env.NODE_ENV !== "production"))
+              break;
+          }
+        }
+      }
+      const rawProps = toRaw(props);
+      const { mode: mode2 } = rawProps;
+      if (process.env.NODE_ENV !== "production" && mode2 && mode2 !== "in-out" && mode2 !== "out-in" && mode2 !== "default") {
+        warn(`invalid <transition> mode: ${mode2}`);
+      }
+      if (state.isLeaving) {
+        return emptyPlaceholder(child);
+      }
+      const innerChild = getKeepAliveChild(child);
+      if (!innerChild) {
+        return emptyPlaceholder(child);
+      }
+      const enterHooks = resolveTransitionHooks(innerChild, rawProps, state, instance2);
+      setTransitionHooks(innerChild, enterHooks);
+      const oldChild = instance2.subTree;
+      const oldInnerChild = oldChild && getKeepAliveChild(oldChild);
+      let transitionKeyChanged = false;
+      const { getTransitionKey } = innerChild.type;
+      if (getTransitionKey) {
+        const key = getTransitionKey();
+        if (prevTransitionKey === void 0) {
+          prevTransitionKey = key;
+        } else if (key !== prevTransitionKey) {
+          prevTransitionKey = key;
+          transitionKeyChanged = true;
+        }
+      }
+      if (oldInnerChild && oldInnerChild.type !== Comment && (!isSameVNodeType(innerChild, oldInnerChild) || transitionKeyChanged)) {
+        const leavingHooks = resolveTransitionHooks(oldInnerChild, rawProps, state, instance2);
+        setTransitionHooks(oldInnerChild, leavingHooks);
+        if (mode2 === "out-in") {
+          state.isLeaving = true;
+          leavingHooks.afterLeave = () => {
+            state.isLeaving = false;
+            if (instance2.update.active !== false) {
+              instance2.update();
+            }
+          };
+          return emptyPlaceholder(child);
+        } else if (mode2 === "in-out" && innerChild.type !== Comment) {
+          leavingHooks.delayLeave = (el, earlyRemove, delayedLeave) => {
+            const leavingVNodesCache = getLeavingNodesForType(state, oldInnerChild);
+            leavingVNodesCache[String(oldInnerChild.key)] = oldInnerChild;
+            el._leaveCb = () => {
+              earlyRemove();
+              el._leaveCb = void 0;
+              delete enterHooks.delayedLeave;
+            };
+            enterHooks.delayedLeave = delayedLeave;
+          };
+        }
+      }
+      return child;
+    };
+  }
+};
+const BaseTransition = BaseTransitionImpl;
+function getLeavingNodesForType(state, vnode) {
+  const { leavingVNodes } = state;
+  let leavingVNodesCache = leavingVNodes.get(vnode.type);
+  if (!leavingVNodesCache) {
+    leavingVNodesCache = /* @__PURE__ */ Object.create(null);
+    leavingVNodes.set(vnode.type, leavingVNodesCache);
+  }
+  return leavingVNodesCache;
+}
+function resolveTransitionHooks(vnode, props, state, instance2) {
+  const { appear, mode: mode2, persisted = false, onBeforeEnter, onEnter, onAfterEnter, onEnterCancelled, onBeforeLeave, onLeave, onAfterLeave, onLeaveCancelled, onBeforeAppear, onAppear, onAfterAppear, onAppearCancelled } = props;
+  const key = String(vnode.key);
+  const leavingVNodesCache = getLeavingNodesForType(state, vnode);
+  const callHook2 = (hook, args) => {
+    hook && callWithAsyncErrorHandling(hook, instance2, 9, args);
+  };
+  const callAsyncHook = (hook, args) => {
+    const done = args[1];
+    callHook2(hook, args);
+    if (isArray(hook)) {
+      if (hook.every((hook2) => hook2.length <= 1))
+        done();
+    } else if (hook.length <= 1) {
+      done();
+    }
+  };
+  const hooks = {
+    mode: mode2,
+    persisted,
+    beforeEnter(el) {
+      let hook = onBeforeEnter;
+      if (!state.isMounted) {
+        if (appear) {
+          hook = onBeforeAppear || onBeforeEnter;
+        } else {
+          return;
+        }
+      }
+      if (el._leaveCb) {
+        el._leaveCb(true);
+      }
+      const leavingVNode = leavingVNodesCache[key];
+      if (leavingVNode && isSameVNodeType(vnode, leavingVNode) && leavingVNode.el._leaveCb) {
+        leavingVNode.el._leaveCb();
+      }
+      callHook2(hook, [el]);
+    },
+    enter(el) {
+      let hook = onEnter;
+      let afterHook = onAfterEnter;
+      let cancelHook = onEnterCancelled;
+      if (!state.isMounted) {
+        if (appear) {
+          hook = onAppear || onEnter;
+          afterHook = onAfterAppear || onAfterEnter;
+          cancelHook = onAppearCancelled || onEnterCancelled;
+        } else {
+          return;
+        }
+      }
+      let called = false;
+      const done = el._enterCb = (cancelled) => {
+        if (called)
+          return;
+        called = true;
+        if (cancelled) {
+          callHook2(cancelHook, [el]);
+        } else {
+          callHook2(afterHook, [el]);
+        }
+        if (hooks.delayedLeave) {
+          hooks.delayedLeave();
+        }
+        el._enterCb = void 0;
+      };
+      if (hook) {
+        callAsyncHook(hook, [el, done]);
+      } else {
+        done();
+      }
+    },
+    leave(el, remove2) {
+      const key2 = String(vnode.key);
+      if (el._enterCb) {
+        el._enterCb(true);
+      }
+      if (state.isUnmounting) {
+        return remove2();
+      }
+      callHook2(onBeforeLeave, [el]);
+      let called = false;
+      const done = el._leaveCb = (cancelled) => {
+        if (called)
+          return;
+        called = true;
+        remove2();
+        if (cancelled) {
+          callHook2(onLeaveCancelled, [el]);
+        } else {
+          callHook2(onAfterLeave, [el]);
+        }
+        el._leaveCb = void 0;
+        if (leavingVNodesCache[key2] === vnode) {
+          delete leavingVNodesCache[key2];
+        }
+      };
+      leavingVNodesCache[key2] = vnode;
+      if (onLeave) {
+        callAsyncHook(onLeave, [el, done]);
+      } else {
+        done();
+      }
+    },
+    clone(vnode2) {
+      return resolveTransitionHooks(vnode2, props, state, instance2);
+    }
+  };
+  return hooks;
+}
+function emptyPlaceholder(vnode) {
+  if (isKeepAlive(vnode)) {
+    vnode = cloneVNode(vnode);
+    vnode.children = null;
+    return vnode;
+  }
+}
+function getKeepAliveChild(vnode) {
+  return isKeepAlive(vnode) ? vnode.children ? vnode.children[0] : void 0 : vnode;
+}
+function setTransitionHooks(vnode, hooks) {
+  if (vnode.shapeFlag & 6 && vnode.component) {
+    setTransitionHooks(vnode.component.subTree, hooks);
+  } else if (vnode.shapeFlag & 128) {
+    vnode.ssContent.transition = hooks.clone(vnode.ssContent);
+    vnode.ssFallback.transition = hooks.clone(vnode.ssFallback);
+  } else {
+    vnode.transition = hooks;
+  }
+}
+function getTransitionRawChildren(children, keepComment = false, parentKey) {
+  let ret = [];
+  let keyedFragmentCount = 0;
+  for (let i = 0; i < children.length; i++) {
+    let child = children[i];
+    const key = parentKey == null ? child.key : String(parentKey) + String(child.key != null ? child.key : i);
+    if (child.type === Fragment) {
+      if (child.patchFlag & 128)
+        keyedFragmentCount++;
+      ret = ret.concat(getTransitionRawChildren(child.children, keepComment, key));
+    } else if (keepComment || child.type !== Comment) {
+      ret.push(key != null ? cloneVNode(child, { key }) : child);
+    }
+  }
+  if (keyedFragmentCount > 1) {
+    for (let i = 0; i < ret.length; i++) {
+      ret[i].patchFlag = -2;
+    }
+  }
+  return ret;
+}
 function defineComponent(options) {
   return isFunction(options) ? { setup: options, name: options.name } : options;
 }
@@ -2523,6 +2811,44 @@ function renderList(source, renderItem, cache2, index2) {
   }
   return ret;
 }
+function renderSlot(slots, name, props = {}, fallback, noSlotted) {
+  if (currentRenderingInstance.isCE || currentRenderingInstance.parent && isAsyncWrapper(currentRenderingInstance.parent) && currentRenderingInstance.parent.isCE) {
+    if (name !== "default")
+      props.name = name;
+    return createVNode("slot", props, fallback && fallback());
+  }
+  let slot = slots[name];
+  if (process.env.NODE_ENV !== "production" && slot && slot.length > 1) {
+    warn(`SSR-optimized slot function detected in a non-SSR-optimized render function. You need to mark this component with $dynamic-slots in the parent template.`);
+    slot = () => [];
+  }
+  if (slot && slot._c) {
+    slot._d = false;
+  }
+  openBlock();
+  const validSlotContent = slot && ensureValidVNode(slot(props));
+  const rendered = createBlock(Fragment, {
+    key: props.key || validSlotContent && validSlotContent.key || `_${name}`
+  }, validSlotContent || (fallback ? fallback() : []), validSlotContent && slots._ === 1 ? 64 : -2);
+  if (!noSlotted && rendered.scopeId) {
+    rendered.slotScopeIds = [rendered.scopeId + "-s"];
+  }
+  if (slot && slot._c) {
+    slot._d = true;
+  }
+  return rendered;
+}
+function ensureValidVNode(vnodes) {
+  return vnodes.some((child) => {
+    if (!isVNode(child))
+      return true;
+    if (child.type === Comment)
+      return false;
+    if (child.type === Fragment && !ensureValidVNode(child.children))
+      return false;
+    return true;
+  }) ? vnodes : null;
+}
 const getPublicInstance = (i) => {
   if (!i)
     return null;
@@ -2723,7 +3049,7 @@ function applyOptions(instance2) {
   const ctx = instance2.ctx;
   shouldCacheAccess = false;
   if (options.beforeCreate) {
-    callHook(options.beforeCreate, instance2, "bc");
+    callHook$1(options.beforeCreate, instance2, "bc");
   }
   const {
     data: dataOptions,
@@ -2853,7 +3179,7 @@ function applyOptions(instance2) {
     });
   }
   if (created) {
-    callHook(created, instance2, "c");
+    callHook$1(created, instance2, "c");
   }
   function registerLifecycleHook(register2, hook) {
     if (isArray(hook)) {
@@ -2936,7 +3262,7 @@ function resolveInjections(injectOptions, ctx, checkDuplicateProperties = NOOP, 
     }
   }
 }
-function callHook(hook, instance2, type) {
+function callHook$1(hook, instance2, type) {
   callWithAsyncErrorHandling(isArray(hook) ? hook.map((h2) => h2.bind(instance2.proxy)) : hook.bind(instance2.proxy), instance2, type);
 }
 function createWatcher(raw, ctx, publicThis, key) {
@@ -4792,6 +5118,172 @@ function getSequence(arr2) {
   return result;
 }
 const isTeleport = (type) => type.__isTeleport;
+const isTeleportDisabled = (props) => props && (props.disabled || props.disabled === "");
+const isTargetSVG = (target) => typeof SVGElement !== "undefined" && target instanceof SVGElement;
+const resolveTarget = (props, select) => {
+  const targetSelector = props && props.to;
+  if (isString(targetSelector)) {
+    if (!select) {
+      process.env.NODE_ENV !== "production" && warn(`Current renderer does not support string target for Teleports. (missing querySelector renderer option)`);
+      return null;
+    } else {
+      const target = select(targetSelector);
+      if (!target) {
+        process.env.NODE_ENV !== "production" && warn(`Failed to locate Teleport target with selector "${targetSelector}". Note the target element must exist before the component is mounted - i.e. the target cannot be rendered by the component itself, and ideally should be outside of the entire Vue component tree.`);
+      }
+      return target;
+    }
+  } else {
+    if (process.env.NODE_ENV !== "production" && !targetSelector && !isTeleportDisabled(props)) {
+      warn(`Invalid Teleport target: ${targetSelector}`);
+    }
+    return targetSelector;
+  }
+};
+const TeleportImpl = {
+  __isTeleport: true,
+  process(n1, n2, container, anchor, parentComponent, parentSuspense, isSVG, slotScopeIds, optimized, internals) {
+    const { mc: mountChildren, pc: patchChildren, pbc: patchBlockChildren, o: { insert, querySelector, createText, createComment } } = internals;
+    const disabled = isTeleportDisabled(n2.props);
+    let { shapeFlag, children, dynamicChildren } = n2;
+    if (process.env.NODE_ENV !== "production" && isHmrUpdating) {
+      optimized = false;
+      dynamicChildren = null;
+    }
+    if (n1 == null) {
+      const placeholder = n2.el = process.env.NODE_ENV !== "production" ? createComment("teleport start") : createText("");
+      const mainAnchor = n2.anchor = process.env.NODE_ENV !== "production" ? createComment("teleport end") : createText("");
+      insert(placeholder, container, anchor);
+      insert(mainAnchor, container, anchor);
+      const target = n2.target = resolveTarget(n2.props, querySelector);
+      const targetAnchor = n2.targetAnchor = createText("");
+      if (target) {
+        insert(targetAnchor, target);
+        isSVG = isSVG || isTargetSVG(target);
+      } else if (process.env.NODE_ENV !== "production" && !disabled) {
+        warn("Invalid Teleport target on mount:", target, `(${typeof target})`);
+      }
+      const mount2 = (container2, anchor2) => {
+        if (shapeFlag & 16) {
+          mountChildren(children, container2, anchor2, parentComponent, parentSuspense, isSVG, slotScopeIds, optimized);
+        }
+      };
+      if (disabled) {
+        mount2(container, mainAnchor);
+      } else if (target) {
+        mount2(target, targetAnchor);
+      }
+    } else {
+      n2.el = n1.el;
+      const mainAnchor = n2.anchor = n1.anchor;
+      const target = n2.target = n1.target;
+      const targetAnchor = n2.targetAnchor = n1.targetAnchor;
+      const wasDisabled = isTeleportDisabled(n1.props);
+      const currentContainer = wasDisabled ? container : target;
+      const currentAnchor = wasDisabled ? mainAnchor : targetAnchor;
+      isSVG = isSVG || isTargetSVG(target);
+      if (dynamicChildren) {
+        patchBlockChildren(n1.dynamicChildren, dynamicChildren, currentContainer, parentComponent, parentSuspense, isSVG, slotScopeIds);
+        traverseStaticChildren(n1, n2, true);
+      } else if (!optimized) {
+        patchChildren(n1, n2, currentContainer, currentAnchor, parentComponent, parentSuspense, isSVG, slotScopeIds, false);
+      }
+      if (disabled) {
+        if (!wasDisabled) {
+          moveTeleport(n2, container, mainAnchor, internals, 1);
+        }
+      } else {
+        if ((n2.props && n2.props.to) !== (n1.props && n1.props.to)) {
+          const nextTarget = n2.target = resolveTarget(n2.props, querySelector);
+          if (nextTarget) {
+            moveTeleport(n2, nextTarget, null, internals, 0);
+          } else if (process.env.NODE_ENV !== "production") {
+            warn("Invalid Teleport target on update:", target, `(${typeof target})`);
+          }
+        } else if (wasDisabled) {
+          moveTeleport(n2, target, targetAnchor, internals, 1);
+        }
+      }
+    }
+    updateCssVars(n2);
+  },
+  remove(vnode, parentComponent, parentSuspense, optimized, { um: unmount, o: { remove: hostRemove } }, doRemove) {
+    const { shapeFlag, children, anchor, targetAnchor, target, props } = vnode;
+    if (target) {
+      hostRemove(targetAnchor);
+    }
+    if (doRemove || !isTeleportDisabled(props)) {
+      hostRemove(anchor);
+      if (shapeFlag & 16) {
+        for (let i = 0; i < children.length; i++) {
+          const child = children[i];
+          unmount(child, parentComponent, parentSuspense, true, !!child.dynamicChildren);
+        }
+      }
+    }
+  },
+  move: moveTeleport,
+  hydrate: hydrateTeleport
+};
+function moveTeleport(vnode, container, parentAnchor, { o: { insert }, m: move }, moveType = 2) {
+  if (moveType === 0) {
+    insert(vnode.targetAnchor, container, parentAnchor);
+  }
+  const { el, anchor, shapeFlag, children, props } = vnode;
+  const isReorder = moveType === 2;
+  if (isReorder) {
+    insert(el, container, parentAnchor);
+  }
+  if (!isReorder || isTeleportDisabled(props)) {
+    if (shapeFlag & 16) {
+      for (let i = 0; i < children.length; i++) {
+        move(children[i], container, parentAnchor, 2);
+      }
+    }
+  }
+  if (isReorder) {
+    insert(anchor, container, parentAnchor);
+  }
+}
+function hydrateTeleport(node, vnode, parentComponent, parentSuspense, slotScopeIds, optimized, { o: { nextSibling, parentNode, querySelector } }, hydrateChildren) {
+  const target = vnode.target = resolveTarget(vnode.props, querySelector);
+  if (target) {
+    const targetNode = target._lpa || target.firstChild;
+    if (vnode.shapeFlag & 16) {
+      if (isTeleportDisabled(vnode.props)) {
+        vnode.anchor = hydrateChildren(nextSibling(node), vnode, parentNode(node), parentComponent, parentSuspense, slotScopeIds, optimized);
+        vnode.targetAnchor = targetNode;
+      } else {
+        vnode.anchor = nextSibling(node);
+        let targetAnchor = targetNode;
+        while (targetAnchor) {
+          targetAnchor = nextSibling(targetAnchor);
+          if (targetAnchor && targetAnchor.nodeType === 8 && targetAnchor.data === "teleport anchor") {
+            vnode.targetAnchor = targetAnchor;
+            target._lpa = vnode.targetAnchor && nextSibling(vnode.targetAnchor);
+            break;
+          }
+        }
+        hydrateChildren(targetNode, vnode, target, parentComponent, parentSuspense, slotScopeIds, optimized);
+      }
+    }
+    updateCssVars(vnode);
+  }
+  return vnode.anchor && nextSibling(vnode.anchor);
+}
+const Teleport = TeleportImpl;
+function updateCssVars(vnode) {
+  const ctx = vnode.ctx;
+  if (ctx && ctx.ut) {
+    let node = vnode.children[0].el;
+    while (node !== vnode.targetAnchor) {
+      if (node.nodeType === 1)
+        node.setAttribute("data-v-owner", ctx.uid);
+      node = node.nextSibling;
+    }
+    ctx.ut();
+  }
+}
 const Fragment = Symbol(process.env.NODE_ENV !== "production" ? "Fragment" : void 0);
 const Text = Symbol(process.env.NODE_ENV !== "production" ? "Text" : void 0);
 const Comment = Symbol(process.env.NODE_ENV !== "production" ? "Comment" : void 0);
@@ -5947,6 +6439,263 @@ function shouldSetAsProp(el, key, value, isSVG) {
   }
   return key in el;
 }
+const TRANSITION = "transition";
+const ANIMATION = "animation";
+const Transition = (props, { slots }) => h(BaseTransition, resolveTransitionProps(props), slots);
+Transition.displayName = "Transition";
+const DOMTransitionPropsValidators = {
+  name: String,
+  type: String,
+  css: {
+    type: Boolean,
+    default: true
+  },
+  duration: [String, Number, Object],
+  enterFromClass: String,
+  enterActiveClass: String,
+  enterToClass: String,
+  appearFromClass: String,
+  appearActiveClass: String,
+  appearToClass: String,
+  leaveFromClass: String,
+  leaveActiveClass: String,
+  leaveToClass: String
+};
+Transition.props = /* @__PURE__ */ extend$4({}, BaseTransition.props, DOMTransitionPropsValidators);
+const callHook = (hook, args = []) => {
+  if (isArray(hook)) {
+    hook.forEach((h2) => h2(...args));
+  } else if (hook) {
+    hook(...args);
+  }
+};
+const hasExplicitCallback = (hook) => {
+  return hook ? isArray(hook) ? hook.some((h2) => h2.length > 1) : hook.length > 1 : false;
+};
+function resolveTransitionProps(rawProps) {
+  const baseProps = {};
+  for (const key in rawProps) {
+    if (!(key in DOMTransitionPropsValidators)) {
+      baseProps[key] = rawProps[key];
+    }
+  }
+  if (rawProps.css === false) {
+    return baseProps;
+  }
+  const { name = "v", type, duration, enterFromClass = `${name}-enter-from`, enterActiveClass = `${name}-enter-active`, enterToClass = `${name}-enter-to`, appearFromClass = enterFromClass, appearActiveClass = enterActiveClass, appearToClass = enterToClass, leaveFromClass = `${name}-leave-from`, leaveActiveClass = `${name}-leave-active`, leaveToClass = `${name}-leave-to` } = rawProps;
+  const durations = normalizeDuration(duration);
+  const enterDuration = durations && durations[0];
+  const leaveDuration = durations && durations[1];
+  const { onBeforeEnter, onEnter, onEnterCancelled, onLeave, onLeaveCancelled, onBeforeAppear = onBeforeEnter, onAppear = onEnter, onAppearCancelled = onEnterCancelled } = baseProps;
+  const finishEnter = (el, isAppear, done) => {
+    removeTransitionClass(el, isAppear ? appearToClass : enterToClass);
+    removeTransitionClass(el, isAppear ? appearActiveClass : enterActiveClass);
+    done && done();
+  };
+  const finishLeave = (el, done) => {
+    el._isLeaving = false;
+    removeTransitionClass(el, leaveFromClass);
+    removeTransitionClass(el, leaveToClass);
+    removeTransitionClass(el, leaveActiveClass);
+    done && done();
+  };
+  const makeEnterHook = (isAppear) => {
+    return (el, done) => {
+      const hook = isAppear ? onAppear : onEnter;
+      const resolve2 = () => finishEnter(el, isAppear, done);
+      callHook(hook, [el, resolve2]);
+      nextFrame(() => {
+        removeTransitionClass(el, isAppear ? appearFromClass : enterFromClass);
+        addTransitionClass(el, isAppear ? appearToClass : enterToClass);
+        if (!hasExplicitCallback(hook)) {
+          whenTransitionEnds(el, type, enterDuration, resolve2);
+        }
+      });
+    };
+  };
+  return extend$4(baseProps, {
+    onBeforeEnter(el) {
+      callHook(onBeforeEnter, [el]);
+      addTransitionClass(el, enterFromClass);
+      addTransitionClass(el, enterActiveClass);
+    },
+    onBeforeAppear(el) {
+      callHook(onBeforeAppear, [el]);
+      addTransitionClass(el, appearFromClass);
+      addTransitionClass(el, appearActiveClass);
+    },
+    onEnter: makeEnterHook(false),
+    onAppear: makeEnterHook(true),
+    onLeave(el, done) {
+      el._isLeaving = true;
+      const resolve2 = () => finishLeave(el, done);
+      addTransitionClass(el, leaveFromClass);
+      forceReflow();
+      addTransitionClass(el, leaveActiveClass);
+      nextFrame(() => {
+        if (!el._isLeaving) {
+          return;
+        }
+        removeTransitionClass(el, leaveFromClass);
+        addTransitionClass(el, leaveToClass);
+        if (!hasExplicitCallback(onLeave)) {
+          whenTransitionEnds(el, type, leaveDuration, resolve2);
+        }
+      });
+      callHook(onLeave, [el, resolve2]);
+    },
+    onEnterCancelled(el) {
+      finishEnter(el, false);
+      callHook(onEnterCancelled, [el]);
+    },
+    onAppearCancelled(el) {
+      finishEnter(el, true);
+      callHook(onAppearCancelled, [el]);
+    },
+    onLeaveCancelled(el) {
+      finishLeave(el);
+      callHook(onLeaveCancelled, [el]);
+    }
+  });
+}
+function normalizeDuration(duration) {
+  if (duration == null) {
+    return null;
+  } else if (isObject(duration)) {
+    return [NumberOf(duration.enter), NumberOf(duration.leave)];
+  } else {
+    const n = NumberOf(duration);
+    return [n, n];
+  }
+}
+function NumberOf(val) {
+  const res = toNumber(val);
+  if (process.env.NODE_ENV !== "production") {
+    assertNumber(res, "<transition> explicit duration");
+  }
+  return res;
+}
+function addTransitionClass(el, cls) {
+  cls.split(/\s+/).forEach((c2) => c2 && el.classList.add(c2));
+  (el._vtc || (el._vtc = /* @__PURE__ */ new Set())).add(cls);
+}
+function removeTransitionClass(el, cls) {
+  cls.split(/\s+/).forEach((c2) => c2 && el.classList.remove(c2));
+  const { _vtc } = el;
+  if (_vtc) {
+    _vtc.delete(cls);
+    if (!_vtc.size) {
+      el._vtc = void 0;
+    }
+  }
+}
+function nextFrame(cb) {
+  requestAnimationFrame(() => {
+    requestAnimationFrame(cb);
+  });
+}
+let endId = 0;
+function whenTransitionEnds(el, expectedType, explicitTimeout, resolve2) {
+  const id = el._endId = ++endId;
+  const resolveIfNotStale = () => {
+    if (id === el._endId) {
+      resolve2();
+    }
+  };
+  if (explicitTimeout) {
+    return setTimeout(resolveIfNotStale, explicitTimeout);
+  }
+  const { type, timeout, propCount } = getTransitionInfo(el, expectedType);
+  if (!type) {
+    return resolve2();
+  }
+  const endEvent = type + "end";
+  let ended = 0;
+  const end = () => {
+    el.removeEventListener(endEvent, onEnd);
+    resolveIfNotStale();
+  };
+  const onEnd = (e) => {
+    if (e.target === el && ++ended >= propCount) {
+      end();
+    }
+  };
+  setTimeout(() => {
+    if (ended < propCount) {
+      end();
+    }
+  }, timeout + 1);
+  el.addEventListener(endEvent, onEnd);
+}
+function getTransitionInfo(el, expectedType) {
+  const styles = window.getComputedStyle(el);
+  const getStyleProperties = (key) => (styles[key] || "").split(", ");
+  const transitionDelays = getStyleProperties(`${TRANSITION}Delay`);
+  const transitionDurations = getStyleProperties(`${TRANSITION}Duration`);
+  const transitionTimeout = getTimeout(transitionDelays, transitionDurations);
+  const animationDelays = getStyleProperties(`${ANIMATION}Delay`);
+  const animationDurations = getStyleProperties(`${ANIMATION}Duration`);
+  const animationTimeout = getTimeout(animationDelays, animationDurations);
+  let type = null;
+  let timeout = 0;
+  let propCount = 0;
+  if (expectedType === TRANSITION) {
+    if (transitionTimeout > 0) {
+      type = TRANSITION;
+      timeout = transitionTimeout;
+      propCount = transitionDurations.length;
+    }
+  } else if (expectedType === ANIMATION) {
+    if (animationTimeout > 0) {
+      type = ANIMATION;
+      timeout = animationTimeout;
+      propCount = animationDurations.length;
+    }
+  } else {
+    timeout = Math.max(transitionTimeout, animationTimeout);
+    type = timeout > 0 ? transitionTimeout > animationTimeout ? TRANSITION : ANIMATION : null;
+    propCount = type ? type === TRANSITION ? transitionDurations.length : animationDurations.length : 0;
+  }
+  const hasTransform = type === TRANSITION && /\b(transform|all)(,|$)/.test(getStyleProperties(`${TRANSITION}Property`).toString());
+  return {
+    type,
+    timeout,
+    propCount,
+    hasTransform
+  };
+}
+function getTimeout(delays, durations) {
+  while (delays.length < durations.length) {
+    delays = delays.concat(delays);
+  }
+  return Math.max(...durations.map((d, i) => toMs(d) + toMs(delays[i])));
+}
+function toMs(s) {
+  return Number(s.slice(0, -1).replace(",", ".")) * 1e3;
+}
+function forceReflow() {
+  return document.body.offsetHeight;
+}
+const keyNames = {
+  esc: "escape",
+  space: " ",
+  up: "arrow-up",
+  left: "arrow-left",
+  right: "arrow-right",
+  down: "arrow-down",
+  delete: "backspace"
+};
+const withKeys = (fn, modifiers) => {
+  return (event) => {
+    if (!("key" in event)) {
+      return;
+    }
+    const eventKey = hyphenate(event.key);
+    if (modifiers.some((k) => k === eventKey || keyNames[k] === eventKey)) {
+      return fn(event);
+    }
+  };
+};
 const rendererOptions = /* @__PURE__ */ extend$4({ patchProp }, nodeOps);
 let renderer;
 function ensureRenderer() {
@@ -15569,13 +16318,13 @@ class VueElement extends BaseClass {
   }
 }
 const main = "";
-const _hoisted_1$o = { class: "lux-dropdown" };
-const _hoisted_2$i = { class: "h-full" };
-const _hoisted_3$g = ["aria-expanded"];
-const _hoisted_4$e = /* @__PURE__ */ createBaseVNode("span", { class: "lux-caret" }, null, -1);
-const _hoisted_5$c = { class: "lux-dropdown-wrapper" };
-const _hoisted_6$9 = ["aria-label", "data-value"];
-const _sfc_main$x = /* @__PURE__ */ defineComponent({
+const _hoisted_1$p = { class: "lux-dropdown" };
+const _hoisted_2$j = { class: "h-full" };
+const _hoisted_3$h = ["aria-expanded"];
+const _hoisted_4$f = /* @__PURE__ */ createBaseVNode("span", { class: "lux-caret" }, null, -1);
+const _hoisted_5$d = { class: "lux-dropdown-wrapper" };
+const _hoisted_6$a = ["aria-label", "data-value"];
+const _sfc_main$y = /* @__PURE__ */ defineComponent({
   __name: "dropdown-list",
   props: {
     placeholder: null,
@@ -15605,8 +16354,8 @@ const _sfc_main$x = /* @__PURE__ */ defineComponent({
     onUnmounted(() => document.removeEventListener("click", onClickOutsideOpenBtn));
     return (_ctx, _cache) => {
       var _a, _b;
-      return openBlock(), createElementBlock("div", _hoisted_1$o, [
-        createBaseVNode("div", _hoisted_2$i, [
+      return openBlock(), createElementBlock("div", _hoisted_1$p, [
+        createBaseVNode("div", _hoisted_2$j, [
           createBaseVNode("button", {
             type: "button",
             class: normalizeClass(["lux-btn lux-dropdown-btn", unref(isOpen) ? "expanded" : ""]),
@@ -15615,10 +16364,10 @@ const _sfc_main$x = /* @__PURE__ */ defineComponent({
             onClick: onClickOpenBtn
           }, [
             createBaseVNode("span", null, toDisplayString((_b = props.placeholder) != null ? _b : (_a = props.options[0]) == null ? void 0 : _a.label), 1),
-            _hoisted_4$e
-          ], 10, _hoisted_3$g)
+            _hoisted_4$f
+          ], 10, _hoisted_3$h)
         ]),
-        createBaseVNode("div", _hoisted_5$c, [
+        createBaseVNode("div", _hoisted_5$d, [
           createBaseVNode("ul", {
             class: normalizeClass(["lux-dropdown-list", unref(isOpen) ? "" : "hidden"]),
             tabindex: "-1"
@@ -15633,7 +16382,7 @@ const _sfc_main$x = /* @__PURE__ */ defineComponent({
                   "aria-label": option2.ariaLabel,
                   "data-value": option2.value,
                   onClick: onClickItem
-                }, toDisplayString(option2.label), 9, _hoisted_6$9)
+                }, toDisplayString(option2.label), 9, _hoisted_6$a)
               ], 2);
             }), 128))
           ], 2)
@@ -45876,7 +46625,7 @@ function useControl(ControlClass, options) {
     control
   };
 }
-const _sfc_main$w = /* @__PURE__ */ defineComponent({
+const _sfc_main$x = /* @__PURE__ */ defineComponent({
   __name: "attribution-control",
   props: {
     className: { default: "geoportailv3-attribution" },
@@ -46043,8 +46792,8 @@ var TranslationComponent = defineComponent({
     };
   }
 });
-const _hoisted_1$n = ["title"];
-const _sfc_main$v = /* @__PURE__ */ defineComponent({
+const _hoisted_1$o = ["title"];
+const _sfc_main$w = /* @__PURE__ */ defineComponent({
   __name: "location-control",
   props: {
     className: { default: "location-button" },
@@ -46069,12 +46818,12 @@ const _sfc_main$v = /* @__PURE__ */ defineComponent({
         createBaseVNode("button", {
           title: unref(t)(props.tipLabel),
           onClick: handleCenterToLocation
-        }, toDisplayString(props.label), 9, _hoisted_1$n)
+        }, toDisplayString(props.label), 9, _hoisted_1$o)
       ], 2);
     };
   }
 });
-const _sfc_main$u = /* @__PURE__ */ defineComponent({
+const _sfc_main$v = /* @__PURE__ */ defineComponent({
   __name: "fullscreen-control",
   props: {
     className: null,
@@ -46089,7 +46838,7 @@ const _sfc_main$u = /* @__PURE__ */ defineComponent({
     };
   }
 });
-const _sfc_main$t = /* @__PURE__ */ defineComponent({
+const _sfc_main$u = /* @__PURE__ */ defineComponent({
   __name: "zoom-control",
   props: {
     className: null,
@@ -46117,7 +46866,7 @@ class ZoomToExtent extends OlControlZoomToExtent {
     }
   }
 }
-const _sfc_main$s = /* @__PURE__ */ defineComponent({
+const _sfc_main$t = /* @__PURE__ */ defineComponent({
   __name: "zoom-to-extent-control",
   props: {
     className: null,
@@ -46133,7 +46882,7 @@ const _sfc_main$s = /* @__PURE__ */ defineComponent({
     };
   }
 });
-const _sfc_main$r = /* @__PURE__ */ defineComponent({
+const _sfc_main$s = /* @__PURE__ */ defineComponent({
   __name: "map-container",
   setup(__props) {
     const map2 = useMap();
@@ -46160,11 +46909,11 @@ const _sfc_main$r = /* @__PURE__ */ defineComponent({
         ref: mapContainer,
         class: "h-full w-full bg-white"
       }, [
-        createVNode(_sfc_main$t),
-        createVNode(_sfc_main$s, { extent: DEFAULT_EXTENT }),
         createVNode(_sfc_main$u),
-        createVNode(_sfc_main$w),
-        createVNode(_sfc_main$v)
+        createVNode(_sfc_main$t, { extent: DEFAULT_EXTENT }),
+        createVNode(_sfc_main$v),
+        createVNode(_sfc_main$x),
+        createVNode(_sfc_main$w)
       ], 512);
     };
   }
@@ -51675,8 +52424,8 @@ class StatePersistorBgLayerService {
   }
 }
 const statePersistorBgLayerService = new StatePersistorBgLayerService();
-const _hoisted_1$m = ["title"];
-const _sfc_main$q = /* @__PURE__ */ defineComponent({
+const _hoisted_1$n = ["title"];
+const _sfc_main$r = /* @__PURE__ */ defineComponent({
   __name: "background-selector-item",
   props: {
     bgTitle: {
@@ -51709,12 +52458,12 @@ const _sfc_main$q = /* @__PURE__ */ defineComponent({
       return openBlock(), createElementBlock("button", {
         title: unref(buttonTitle),
         class: normalizeClass(unref(buttonClasses))
-      }, null, 10, _hoisted_1$m);
+      }, null, 10, _hoisted_1$n);
     };
   }
 });
-const _hoisted_1$l = { class: "flex flex-row-reverse" };
-const _sfc_main$p = /* @__PURE__ */ defineComponent({
+const _hoisted_1$m = { class: "flex flex-row-reverse" };
+const _sfc_main$q = /* @__PURE__ */ defineComponent({
   __name: "background-selector",
   props: {
     isOpen: {
@@ -51786,11 +52535,11 @@ const _sfc_main$p = /* @__PURE__ */ defineComponent({
       isOpen.value = !isOpen.value;
     }
     return (_ctx, _cache) => {
-      return openBlock(), createElementBlock("div", _hoisted_1$l, [
+      return openBlock(), createElementBlock("div", _hoisted_1$m, [
         createBaseVNode("div", {
           class: normalizeClass(["lux-bg-sel border border-black", isOpen.value === true ? "hidden" : "block"])
         }, [
-          createVNode(_sfc_main$q, {
+          createVNode(_sfc_main$r, {
             "aria-expanded": isOpen.value,
             "bg-title": "Select BG layer",
             "bg-name": unref(activeLayerName),
@@ -51808,13 +52557,108 @@ const _sfc_main$p = /* @__PURE__ */ defineComponent({
                 layer.id === unref(activeLayerId) ? "border-red-500 border-2" : "border-black border"
               ])
             }, [
-              createVNode(_sfc_main$q, {
+              createVNode(_sfc_main$r, {
                 "bg-name": layer.name,
                 onClick: ($event) => setBackgroundLayer(layer)
               }, null, 8, ["bg-name", "onClick"])
             ], 2);
           }), 128))
         ], 2)
+      ]);
+    };
+  }
+});
+const _hoisted_1$l = /* @__PURE__ */ createBaseVNode("div", { class: "fixed inset-0 bg-gray-900 opacity-40 z-[1050]" }, null, -1);
+const _hoisted_2$i = { class: "bg-white shadow-modal rounded-lg overflow-hidden w-[700px]" };
+const _hoisted_3$g = { class: "relative flex flex-row justify-center p-4 border-b-[1px]" };
+const _hoisted_4$e = { class: "text-xl" };
+const _hoisted_5$c = /* @__PURE__ */ createBaseVNode("span", { "aria-hidden": "true" }, "\xD7", -1);
+const _hoisted_6$9 = [
+  _hoisted_5$c
+];
+const _hoisted_7$6 = {
+  key: 0,
+  class: "p-[15px] border-t-[1px]"
+};
+const _hoisted_8$6 = { class: "flex flex-row justify-end" };
+const _sfc_main$p = /* @__PURE__ */ defineComponent({
+  __name: "modal-dialog",
+  props: {
+    footer: {
+      type: Boolean,
+      default: true
+    },
+    maxHeight: {
+      type: Boolean,
+      default: false
+    },
+    title: String
+  },
+  emits: ["close"],
+  setup(__props) {
+    const { t } = useTranslation();
+    const modal = ref();
+    onMounted(() => {
+      modal.value.focus();
+    });
+    const displayModal = shallowRef(true);
+    function close() {
+      displayModal.value = false;
+    }
+    return (_ctx, _cache) => {
+      return openBlock(), createBlock(Teleport, { to: "body" }, [
+        _hoisted_1$l,
+        createVNode(Transition, {
+          appear: "",
+          "enter-active-class": "duration-200 ease-out",
+          "enter-from-class": "transform opacity-0 -translate-y-60",
+          "enter-to-class": "opacity-100 translate-y-0",
+          "leave-active-class": "duration-200 ease-in",
+          "leave-from-class": "opacity-100 translate-y-0",
+          "leave-to-class": "transform opacity-0 -translate-y-60",
+          onAfterLeave: _cache[3] || (_cache[3] = ($event) => _ctx.$emit("close"))
+        }, {
+          default: withCtx(() => [
+            unref(displayModal) ? (openBlock(), createElementBlock("div", {
+              key: 0,
+              role: "dialog",
+              ref_key: "modal",
+              ref: modal,
+              tabindex: "0",
+              onKeydown: _cache[2] || (_cache[2] = withKeys(($event) => close(), ["esc"])),
+              class: "fixed inset-x-0 inset-y-8 flex items-start justify-center z-[1100] outline-none"
+            }, [
+              createBaseVNode("div", _hoisted_2$i, [
+                createBaseVNode("div", _hoisted_3$g, [
+                  createBaseVNode("h4", _hoisted_4$e, toDisplayString(__props.title), 1),
+                  createBaseVNode("button", {
+                    type: "button",
+                    class: "absolute right-2 top-1 text-slate-400 text-[24px]",
+                    "data-dismiss": "modal",
+                    "aria-label": "Close",
+                    onClick: _cache[0] || (_cache[0] = ($event) => close())
+                  }, _hoisted_6$9)
+                ]),
+                createBaseVNode("div", {
+                  class: normalizeClass(["p-[15px] overflow-y-auto", __props.maxHeight ? "max-h-96" : "max-h-full"])
+                }, [
+                  renderSlot(_ctx.$slots, "content")
+                ], 2),
+                __props.footer ? (openBlock(), createElementBlock("div", _hoisted_7$6, [
+                  createBaseVNode("div", _hoisted_8$6, [
+                    createBaseVNode("button", {
+                      type: "button",
+                      class: "lux-btn",
+                      "data-dismiss": "modal",
+                      onClick: _cache[1] || (_cache[1] = ($event) => close())
+                    }, toDisplayString(unref(t)("Close", { ns: "client" })), 1)
+                  ])
+                ])) : createCommentVNode("", true)
+              ])
+            ], 544)) : createCommentVNode("", true)
+          ]),
+          _: 3
+        })
       ]);
     };
   }
@@ -51906,11 +52750,11 @@ const _sfc_main$o = /* @__PURE__ */ defineComponent({
         ], 10, _hoisted_4$d)) : createCommentVNode("", true),
         !isMaxDepth ? (openBlock(), createElementBlock("div", {
           key: 2,
-          class: normalizeClass([
+          class: normalizeClass(["bg-secondary", [
             { "pl-2": __props.node.depth > 1 },
-            { "lux-collapse bg-secondary": !isRoot },
+            { "lux-collapse": !isRoot },
             { expanded: !isRoot && __props.node.expanded }
-          ])
+          ]])
         }, [
           (openBlock(true), createElementBlock(Fragment, null, renderList(__props.node.children, (child) => {
             return openBlock(), createBlock(_component_layer_tree_node, {
@@ -52010,31 +52854,24 @@ const useAppStore = defineStore(
   },
   {}
 );
-const _hoisted_1$j = {
-  key: 0,
-  class: "fixed right-32 top-32 z-[100] bg-white lux-modal w-[600px]",
-  role: "dialog"
-};
-const _hoisted_2$g = { class: "lux-modal-header flex flex-row justify-between" };
-const _hoisted_3$e = { class: "p-[15px]" };
-const _hoisted_4$c = { class: "relative text-center" };
-const _hoisted_5$a = ["placeholder", "value"];
-const _hoisted_6$7 = {
+const _hoisted_1$j = { class: "relative text-center" };
+const _hoisted_2$g = ["placeholder", "value"];
+const _hoisted_3$e = {
   key: 0,
   class: "text-center"
 };
-const _hoisted_7$4 = { class: "lux-label" };
-const _hoisted_8$4 = {
+const _hoisted_4$c = { class: "lux-label" };
+const _hoisted_5$a = {
   key: 1,
   class: "text-center"
 };
-const _hoisted_9$2 = { class: "lux-label" };
-const _hoisted_10$2 = {
+const _hoisted_6$7 = { class: "lux-label" };
+const _hoisted_7$4 = {
   key: 2,
   class: "text-center"
 };
-const _hoisted_11$1 = /* @__PURE__ */ createBaseVNode("div", { class: "fa fa-refresh fa-spin" }, null, -1);
-const _hoisted_12$1 = {
+const _hoisted_8$4 = /* @__PURE__ */ createBaseVNode("div", { class: "fa fa-refresh fa-spin" }, null, -1);
+const _hoisted_9$2 = {
   key: 3,
   class: "overflow-auto max-h-[calc(400px-36px)]"
 };
@@ -52121,65 +52958,67 @@ const _sfc_main$n = /* @__PURE__ */ defineComponent({
       }
     }
     return (_ctx, _cache) => {
-      var _a, _b;
-      return unref(remoteLayersOpen) ? (openBlock(), createElementBlock("div", _hoisted_1$j, [
-        createBaseVNode("div", _hoisted_2$g, [
-          createBaseVNode("h4", null, toDisplayString(unref(t)("Add external data", { ns: "client" })), 1),
-          createBaseVNode("button", {
-            onClick: _cache[0] || (_cache[0] = () => unref(setRemoteLayersOpen)(false))
-          }, "X")
-        ]),
-        createBaseVNode("div", _hoisted_3$e, [
-          createBaseVNode("div", _hoisted_4$c, [
-            createVNode(_sfc_main$x, {
-              options: unref(wmsLayers),
-              placeholder: unref(t)("Predefined wms", { ns: "client" }),
-              onChange: onChangeRemoteEndpoint
-            }, null, 8, ["options", "placeholder"]),
-            createBaseVNode("input", {
-              class: "lux-input w-[300px]",
-              type: "url",
-              placeholder: unref(t)("Choose or write a WMS url", {
+      return unref(remoteLayersOpen) ? (openBlock(), createBlock(_sfc_main$p, {
+        key: 0,
+        title: unref(t)("Add external data", { ns: "client" }),
+        onClose: _cache[0] || (_cache[0] = ($event) => unref(setRemoteLayersOpen)(false))
+      }, {
+        content: withCtx(() => {
+          var _a, _b;
+          return [
+            createBaseVNode("div", _hoisted_1$j, [
+              createVNode(_sfc_main$y, {
+                class: "lux-remote-services-dropdown",
+                options: unref(wmsLayers),
+                placeholder: unref(t)("Predefined wms", { ns: "client" }),
+                onChange: onChangeRemoteEndpoint
+              }, null, 8, ["options", "placeholder"]),
+              createBaseVNode("input", {
+                class: "lux-input w-[300px]",
+                type: "url",
+                placeholder: unref(t)("Choose or write a WMS url", {
+                  ns: "client"
+                }),
+                value: unref(currentRemoteUrl) || "",
+                onChange: onChangeRemoteUrl
+              }, null, 40, _hoisted_2$g),
+              createBaseVNode("button", {
+                type: "button",
+                class: "lux-btn",
+                onClick: onClickGetLayers
+              }, toDisplayString(unref(t)("Get the layers", { ns: "client" })), 1)
+            ]),
+            !unref(isLoading) && unref(currentRemoteEndpoint) ? (openBlock(), createElementBlock("div", _hoisted_3$e, [
+              createBaseVNode("span", _hoisted_4$c, toDisplayString(unref(t)("Description du service :", {
                 ns: "client"
-              }),
-              value: unref(currentRemoteUrl) || "",
-              onChange: onChangeRemoteUrl
-            }, null, 40, _hoisted_5$a),
-            createBaseVNode("button", {
-              type: "button",
-              class: "lux-btn",
-              onClick: onClickGetLayers
-            }, toDisplayString(unref(t)("Get the layers", { ns: "client" })), 1)
-          ]),
-          !unref(isLoading) && unref(currentRemoteEndpoint) ? (openBlock(), createElementBlock("div", _hoisted_6$7, [
-            createBaseVNode("span", _hoisted_7$4, toDisplayString(unref(t)("Description du service :", {
-              ns: "client"
-            })), 1),
-            createTextVNode(" " + toDisplayString((_a = unref(currentRemoteEndpoint).getServiceInfo()) == null ? void 0 : _a.abstract), 1)
-          ])) : createCommentVNode("", true),
-          !unref(isLoading) && unref(currentRemoteEndpoint) ? (openBlock(), createElementBlock("div", _hoisted_8$4, [
-            createBaseVNode("span", _hoisted_9$2, toDisplayString(unref(t)("Access constraints :", {
-              ns: "client"
-            })), 1),
-            createTextVNode(" " + toDisplayString((_b = unref(currentRemoteEndpoint).getServiceInfo()) == null ? void 0 : _b.constraints), 1)
-          ])) : createCommentVNode("", true),
-          unref(isLoading) ? (openBlock(), createElementBlock("div", _hoisted_10$2, [
-            _hoisted_11$1,
-            createBaseVNode("span", null, toDisplayString(unref(t)("Chargement des informations", {
-              ns: "client"
-            })), 1)
-          ])) : createCommentVNode("", true),
-          !unref(isLoading) ? (openBlock(), createElementBlock("div", _hoisted_12$1, [
-            unref(layerTree) ? (openBlock(), createBlock(_sfc_main$o, {
-              key: 0,
-              class: "block p-[10px] mb-[11px]",
-              node: unref(layerTree),
-              onToggleParent: toggleParent,
-              onToggleLayer: toggleLayer
-            }, null, 8, ["node"])) : createCommentVNode("", true)
-          ])) : createCommentVNode("", true)
-        ])
-      ])) : createCommentVNode("", true);
+              })), 1),
+              createTextVNode(" " + toDisplayString((_a = unref(currentRemoteEndpoint).getServiceInfo()) == null ? void 0 : _a.abstract), 1)
+            ])) : createCommentVNode("", true),
+            !unref(isLoading) && unref(currentRemoteEndpoint) ? (openBlock(), createElementBlock("div", _hoisted_5$a, [
+              createBaseVNode("span", _hoisted_6$7, toDisplayString(unref(t)("Access constraints :", {
+                ns: "client"
+              })), 1),
+              createTextVNode(" " + toDisplayString((_b = unref(currentRemoteEndpoint).getServiceInfo()) == null ? void 0 : _b.constraints), 1)
+            ])) : createCommentVNode("", true),
+            unref(isLoading) ? (openBlock(), createElementBlock("div", _hoisted_7$4, [
+              _hoisted_8$4,
+              createBaseVNode("span", null, toDisplayString(unref(t)("Chargement des informations", {
+                ns: "client"
+              })), 1)
+            ])) : createCommentVNode("", true),
+            !unref(isLoading) ? (openBlock(), createElementBlock("div", _hoisted_9$2, [
+              unref(layerTree) ? (openBlock(), createBlock(_sfc_main$o, {
+                key: 0,
+                class: "block p-[10px] mb-[11px]",
+                node: unref(layerTree),
+                onToggleParent: toggleParent,
+                onToggleLayer: toggleLayer
+              }, null, 8, ["node"])) : createCommentVNode("", true)
+            ])) : createCommentVNode("", true)
+          ];
+        }),
+        _: 1
+      }, 8, ["title"])) : createCommentVNode("", true);
     };
   }
 });
@@ -52379,54 +53218,48 @@ class LayerMetadataService {
   }
 }
 const layerMetadataService = new LayerMetadataService();
-const _hoisted_1$h = {
-  key: 0,
-  class: "fixed right-32 top-32 z-[100] bg-white lux-modal w-[600px] p-3",
-  role: "dialog"
-};
-const _hoisted_2$e = { class: "lux-modal-header flex flex-row justify-between" };
-const _hoisted_3$d = { class: "grid gap-2 grid-cols-3 pt-3 text-[13px] font-arial break-words" };
-const _hoisted_4$b = {
+const _hoisted_1$h = { class: "grid gap-2 grid-cols-3 pt-3 text-[13px] font-arial break-words" };
+const _hoisted_2$e = {
   key: 2,
   class: "col-span-3 grid gap-2 grid-cols-3"
 };
-const _hoisted_5$9 = { class: "font-bold" };
-const _hoisted_6$6 = { class: "col-span-2" };
-const _hoisted_7$3 = ["title"];
-const _hoisted_8$3 = ["title"];
-const _hoisted_9$1 = {
+const _hoisted_3$d = { class: "font-bold" };
+const _hoisted_4$b = { class: "col-span-2" };
+const _hoisted_5$9 = ["title"];
+const _hoisted_6$6 = ["title"];
+const _hoisted_7$3 = {
   key: 4,
   class: "col-span-3"
 };
-const _hoisted_10$1 = { class: "font-bold" };
-const _hoisted_11 = { class: "col-span-2" };
-const _hoisted_12 = ["href"];
-const _hoisted_13 = {
+const _hoisted_8$3 = { class: "font-bold" };
+const _hoisted_9$1 = { class: "col-span-2" };
+const _hoisted_10$1 = ["href"];
+const _hoisted_11 = {
   key: 7,
   class: "col-span-3 grid gap-2 grid-cols-3"
 };
-const _hoisted_14 = { class: "font-bold" };
-const _hoisted_15 = { class: "col-span-2" };
-const _hoisted_16 = { key: 0 };
-const _hoisted_17 = { key: 1 };
-const _hoisted_18 = { key: 2 };
-const _hoisted_19 = { key: 3 };
-const _hoisted_20 = { key: 4 };
-const _hoisted_21 = ["href"];
-const _hoisted_22 = {
+const _hoisted_12 = { class: "font-bold" };
+const _hoisted_13 = { class: "col-span-2" };
+const _hoisted_14 = { key: 0 };
+const _hoisted_15 = { key: 1 };
+const _hoisted_16 = { key: 2 };
+const _hoisted_17 = { key: 3 };
+const _hoisted_18 = { key: 4 };
+const _hoisted_19 = ["href"];
+const _hoisted_20 = {
   key: 8,
   class: "grid gap-2 grid-cols-3 col-span-3"
 };
-const _hoisted_23 = { class: "font-bold" };
-const _hoisted_24 = { class: "col-span-2" };
-const _hoisted_25 = ["href"];
-const _hoisted_26 = {
+const _hoisted_21 = { class: "font-bold" };
+const _hoisted_22 = { class: "col-span-2" };
+const _hoisted_23 = ["href"];
+const _hoisted_24 = {
   key: 9,
   class: "col-span-3"
 };
-const _hoisted_27 = { key: 10 };
-const _hoisted_28 = { class: "text-xl" };
-const _hoisted_29 = {
+const _hoisted_25 = { key: 10 };
+const _hoisted_26 = { class: "text-xl" };
+const _hoisted_27 = {
   key: 11,
   class: "col-span-3"
 };
@@ -52442,7 +53275,7 @@ const _sfc_main$l = /* @__PURE__ */ defineComponent({
     watch(metadataId, async (id) => {
       var _a, _b;
       layerMetadata.value = id ? await layerMetadataService.getLayerMetadata(id, i18next.language) : void 0;
-      displayFullDescription.value = (((_b = (_a = layerMetadata.value) == null ? void 0 : _a.description) == null ? void 0 : _b.length) || "") < MAX_DESCRIPTION_LENGTH;
+      displayFullDescription.value = (((_b = (_a = layerMetadata.value) == null ? void 0 : _a.description) == null ? void 0 : _b.length) || 0) < MAX_DESCRIPTION_LENGTH;
     });
     onMounted(() => {
       i18next.on("languageChanged", async () => {
@@ -52470,115 +53303,122 @@ const _sfc_main$l = /* @__PURE__ */ defineComponent({
       metadataStore.clearMetadataId();
     }
     return (_ctx, _cache) => {
-      var _a, _b, _c, _d, _e, _f, _g, _h, _i, _j, _k, _l, _m, _n, _o;
       const _directive_dompurify_html = resolveDirective("dompurify-html");
-      return layerMetadata.value ? (openBlock(), createElementBlock("div", _hoisted_1$h, [
-        createBaseVNode("div", _hoisted_2$e, [
-          createBaseVNode("h1", null, toDisplayString(unref(t)(`${layerMetadata.value.title}`)), 1),
-          createBaseVNode("button", { onClick: closeLayerMetadata }, "X")
-        ]),
-        createBaseVNode("div", _hoisted_3$d, [
-          layerMetadata.value.name ? (openBlock(), createBlock(_sfc_main$m, {
-            key: 0,
-            label: unref(t)("Name"),
-            value: layerMetadata.value.name
-          }, null, 8, ["label", "value"])) : createCommentVNode("", true),
-          layerMetadata.value.serviceDescription ? (openBlock(), createBlock(_sfc_main$m, {
-            key: 1,
-            label: unref(t)("Description du Service"),
-            value: layerMetadata.value.serviceDescription
-          }, null, 8, ["label", "value"])) : createCommentVNode("", true),
-          layerMetadata.value.description ? (openBlock(), createElementBlock("div", _hoisted_4$b, [
-            createBaseVNode("span", _hoisted_5$9, toDisplayString(unref(t)("Description")), 1),
-            createBaseVNode("span", _hoisted_6$6, [
-              withDirectives(createBaseVNode("span", null, null, 512), [
-                [_directive_dompurify_html, unref(description)]
-              ]),
-              !displayFullDescription.value ? (openBlock(), createElementBlock("button", {
+      return layerMetadata.value ? (openBlock(), createBlock(_sfc_main$p, {
+        key: 0,
+        footer: false,
+        "max-height": true,
+        title: unref(t)(`${layerMetadata.value.title}`, { ns: "client" }),
+        onClose: closeLayerMetadata
+      }, {
+        content: withCtx(() => {
+          var _a, _b, _c, _d, _e, _f, _g, _h, _i, _j, _k, _l, _m, _n, _o;
+          return [
+            createBaseVNode("div", _hoisted_1$h, [
+              layerMetadata.value.name ? (openBlock(), createBlock(_sfc_main$m, {
                 key: 0,
-                title: unref(t)("Display full description", {
-                  ns: "client"
-                }),
-                onClick: showFullDescription,
-                class: "text-secondary hover:underline"
-              }, " ... ", 8, _hoisted_7$3)) : createCommentVNode("", true),
-              displayFullDescription.value && (((_a = unref(description)) == null ? void 0 : _a.length) || "") > MAX_DESCRIPTION_LENGTH ? (openBlock(), createElementBlock("button", {
+                label: unref(t)("Name"),
+                value: layerMetadata.value.name
+              }, null, 8, ["label", "value"])) : createCommentVNode("", true),
+              layerMetadata.value.serviceDescription ? (openBlock(), createBlock(_sfc_main$m, {
                 key: 1,
-                title: unref(t)("Hide full description", {
-                  ns: "client"
-                }),
-                onClick: hideFullDescription,
-                class: "text-secondary hover:underline"
-              }, " - ", 8, _hoisted_8$3)) : createCommentVNode("", true)
-            ])
-          ])) : createCommentVNode("", true),
-          layerMetadata.value.legalConstraints ? (openBlock(), createBlock(_sfc_main$m, {
-            key: 3,
-            label: unref(t)(`Contrainte d'utilisation`),
-            value: layerMetadata.value.legalConstraints
-          }, null, 8, ["label", "value"])) : createCommentVNode("", true),
-          ((_b = layerMetadata.value.link) == null ? void 0 : _b.length) !== 0 ? (openBlock(), createElementBlock("div", _hoisted_9$1, [
-            (openBlock(true), createElementBlock(Fragment, null, renderList(layerMetadata.value.link, (link) => {
-              return openBlock(), createElementBlock("div", {
-                class: "grid gap-2 grid-cols-3",
-                key: link
-              }, [
-                createBaseVNode("span", _hoisted_10$1, toDisplayString(unref(t)("Url vers la resource")), 1),
-                createBaseVNode("span", _hoisted_11, [
+                label: unref(t)("Description du Service"),
+                value: layerMetadata.value.serviceDescription
+              }, null, 8, ["label", "value"])) : createCommentVNode("", true),
+              layerMetadata.value.description ? (openBlock(), createElementBlock("div", _hoisted_2$e, [
+                createBaseVNode("span", _hoisted_3$d, toDisplayString(unref(t)("Description")), 1),
+                createBaseVNode("span", _hoisted_4$b, [
+                  withDirectives(createBaseVNode("span", null, null, 512), [
+                    [_directive_dompurify_html, unref(description)]
+                  ]),
+                  !displayFullDescription.value ? (openBlock(), createElementBlock("button", {
+                    key: 0,
+                    title: unref(t)("Display full description", {
+                      ns: "client"
+                    }),
+                    onClick: showFullDescription,
+                    class: "text-secondary hover:underline"
+                  }, " ... ", 8, _hoisted_5$9)) : createCommentVNode("", true),
+                  displayFullDescription.value && (((_a = unref(description)) == null ? void 0 : _a.length) || 0) > MAX_DESCRIPTION_LENGTH ? (openBlock(), createElementBlock("button", {
+                    key: 1,
+                    title: unref(t)("Hide full description", {
+                      ns: "client"
+                    }),
+                    onClick: hideFullDescription,
+                    class: "text-secondary hover:underline"
+                  }, " - ", 8, _hoisted_6$6)) : createCommentVNode("", true)
+                ])
+              ])) : createCommentVNode("", true),
+              layerMetadata.value.legalConstraints ? (openBlock(), createBlock(_sfc_main$m, {
+                key: 3,
+                label: unref(t)(`Contrainte d'utilisation`),
+                value: layerMetadata.value.legalConstraints
+              }, null, 8, ["label", "value"])) : createCommentVNode("", true),
+              ((_b = layerMetadata.value.link) == null ? void 0 : _b.length) !== 0 ? (openBlock(), createElementBlock("div", _hoisted_7$3, [
+                (openBlock(true), createElementBlock(Fragment, null, renderList(layerMetadata.value.link, (link) => {
+                  return openBlock(), createElementBlock("div", {
+                    class: "grid gap-2 grid-cols-3",
+                    key: link
+                  }, [
+                    createBaseVNode("span", _hoisted_8$3, toDisplayString(unref(t)("Url vers la resource")), 1),
+                    createBaseVNode("span", _hoisted_9$1, [
+                      createBaseVNode("a", {
+                        class: "text-secondary hover:underline",
+                        target: "_blank",
+                        href: link
+                      }, toDisplayString(link), 9, _hoisted_10$1)
+                    ])
+                  ]);
+                }), 128))
+              ])) : createCommentVNode("", true),
+              layerMetadata.value.revisionDate ? (openBlock(), createBlock(_sfc_main$m, {
+                key: 5,
+                label: unref(t)("Revision date"),
+                value: unref(formatDate)(layerMetadata.value.revisionDate, unref(i18next).language)
+              }, null, 8, ["label", "value"])) : createCommentVNode("", true),
+              layerMetadata.value.keyword ? (openBlock(), createBlock(_sfc_main$m, {
+                key: 6,
+                label: unref(t)("Keywords"),
+                value: (_c = layerMetadata.value.keyword) == null ? void 0 : _c.join(",")
+              }, null, 8, ["label", "value"])) : createCommentVNode("", true),
+              layerMetadata.value.responsibleParty ? (openBlock(), createElementBlock("div", _hoisted_11, [
+                createBaseVNode("div", _hoisted_12, toDisplayString(unref(t)("Contact")), 1),
+                createBaseVNode("div", _hoisted_13, [
+                  ((_d = layerMetadata.value.responsibleParty) == null ? void 0 : _d.organisaton) ? (openBlock(), createElementBlock("p", _hoisted_14, toDisplayString((_e = layerMetadata.value.responsibleParty) == null ? void 0 : _e.organisaton), 1)) : createCommentVNode("", true),
+                  ((_f = layerMetadata.value.responsibleParty) == null ? void 0 : _f.name) ? (openBlock(), createElementBlock("p", _hoisted_15, toDisplayString((_g = layerMetadata.value.responsibleParty) == null ? void 0 : _g.name), 1)) : createCommentVNode("", true),
+                  ((_h = layerMetadata.value.responsibleParty) == null ? void 0 : _h.unknown) ? (openBlock(), createElementBlock("p", _hoisted_16, toDisplayString((_i = layerMetadata.value.responsibleParty) == null ? void 0 : _i.unknown), 1)) : createCommentVNode("", true),
+                  ((_j = layerMetadata.value.responsibleParty) == null ? void 0 : _j.address) ? (openBlock(), createElementBlock("p", _hoisted_17, toDisplayString((_k = layerMetadata.value.responsibleParty) == null ? void 0 : _k.address), 1)) : createCommentVNode("", true),
+                  ((_l = layerMetadata.value.responsibleParty) == null ? void 0 : _l.email) ? (openBlock(), createElementBlock("p", _hoisted_18, [
+                    createBaseVNode("a", {
+                      class: "text-secondary hover:underline",
+                      href: "mailto:" + ((_m = layerMetadata.value.responsibleParty) == null ? void 0 : _m.email)
+                    }, toDisplayString((_n = layerMetadata.value.responsibleParty) == null ? void 0 : _n.email), 9, _hoisted_19)
+                  ])) : createCommentVNode("", true)
+                ])
+              ])) : createCommentVNode("", true),
+              layerMetadata.value.metadataLink ? (openBlock(), createElementBlock("div", _hoisted_20, [
+                createBaseVNode("span", _hoisted_21, toDisplayString(unref(t)("Link to the metadata")), 1),
+                createBaseVNode("span", _hoisted_22, [
                   createBaseVNode("a", {
                     class: "text-secondary hover:underline",
                     target: "_blank",
-                    href: link
-                  }, toDisplayString(link), 9, _hoisted_12)
+                    href: layerMetadata.value.metadataLink
+                  }, toDisplayString(unref(t)("link")), 9, _hoisted_23)
                 ])
-              ]);
-            }), 128))
-          ])) : createCommentVNode("", true),
-          layerMetadata.value.revisionDate ? (openBlock(), createBlock(_sfc_main$m, {
-            key: 5,
-            label: unref(t)("Revision date"),
-            value: unref(formatDate)(layerMetadata.value.revisionDate, unref(i18next).language)
-          }, null, 8, ["label", "value"])) : createCommentVNode("", true),
-          layerMetadata.value.keyword ? (openBlock(), createBlock(_sfc_main$m, {
-            key: 6,
-            label: unref(t)("Keywords"),
-            value: (_c = layerMetadata.value.keyword) == null ? void 0 : _c.join(",")
-          }, null, 8, ["label", "value"])) : createCommentVNode("", true),
-          layerMetadata.value.responsibleParty ? (openBlock(), createElementBlock("div", _hoisted_13, [
-            createBaseVNode("span", _hoisted_14, toDisplayString(unref(t)("Contact")), 1),
-            createBaseVNode("span", _hoisted_15, [
-              ((_d = layerMetadata.value.responsibleParty) == null ? void 0 : _d.organisaton) ? (openBlock(), createElementBlock("p", _hoisted_16, toDisplayString((_e = layerMetadata.value.responsibleParty) == null ? void 0 : _e.organisaton), 1)) : createCommentVNode("", true),
-              ((_f = layerMetadata.value.responsibleParty) == null ? void 0 : _f.name) ? (openBlock(), createElementBlock("p", _hoisted_17, toDisplayString((_g = layerMetadata.value.responsibleParty) == null ? void 0 : _g.name), 1)) : createCommentVNode("", true),
-              ((_h = layerMetadata.value.responsibleParty) == null ? void 0 : _h.unknown) ? (openBlock(), createElementBlock("p", _hoisted_18, toDisplayString((_i = layerMetadata.value.responsibleParty) == null ? void 0 : _i.unknown), 1)) : createCommentVNode("", true),
-              ((_j = layerMetadata.value.responsibleParty) == null ? void 0 : _j.address) ? (openBlock(), createElementBlock("p", _hoisted_19, toDisplayString((_k = layerMetadata.value.responsibleParty) == null ? void 0 : _k.address), 1)) : createCommentVNode("", true),
-              ((_l = layerMetadata.value.responsibleParty) == null ? void 0 : _l.email) ? (openBlock(), createElementBlock("p", _hoisted_20, [
-                createBaseVNode("a", {
-                  class: "text-secondary hover:underline",
-                  href: "mailto:" + ((_m = layerMetadata.value.responsibleParty) == null ? void 0 : _m.email)
-                }, toDisplayString((_n = layerMetadata.value.responsibleParty) == null ? void 0 : _n.email), 9, _hoisted_21)
-              ])) : createCommentVNode("", true)
+              ])) : createCommentVNode("", true),
+              layerMetadata.value.isError ? (openBlock(), createElementBlock("div", _hoisted_24, toDisplayString(unref(t)("The metadata is right now not available")), 1)) : createCommentVNode("", true),
+              layerMetadata.value.legendHtml ? (openBlock(), createElementBlock("div", _hoisted_25, [
+                createBaseVNode("h4", _hoisted_26, toDisplayString(unref(t)("Legend")), 1),
+                withDirectives(createBaseVNode("span", null, null, 512), [
+                  [_directive_dompurify_html, (_o = layerMetadata.value.legendHtml) == null ? void 0 : _o.innerHTML]
+                ])
+              ])) : createCommentVNode("", true),
+              !layerMetadata.value.hasLegend ? (openBlock(), createElementBlock("div", _hoisted_27, toDisplayString(unref(t)("The legend is not available for this layer")), 1)) : createCommentVNode("", true)
             ])
-          ])) : createCommentVNode("", true),
-          layerMetadata.value.metadataLink ? (openBlock(), createElementBlock("div", _hoisted_22, [
-            createBaseVNode("span", _hoisted_23, toDisplayString(unref(t)("Link to the metadata")), 1),
-            createBaseVNode("span", _hoisted_24, [
-              createBaseVNode("a", {
-                class: "text-secondary hover:underline",
-                target: "_blank",
-                href: layerMetadata.value.metadataLink
-              }, toDisplayString(unref(t)("link")), 9, _hoisted_25)
-            ])
-          ])) : createCommentVNode("", true),
-          layerMetadata.value.isError ? (openBlock(), createElementBlock("div", _hoisted_26, toDisplayString(unref(t)("The metadata is right now not available")), 1)) : createCommentVNode("", true),
-          layerMetadata.value.legendHtml ? (openBlock(), createElementBlock("div", _hoisted_27, [
-            createBaseVNode("h4", _hoisted_28, toDisplayString(unref(t)("Legend")), 1),
-            withDirectives(createBaseVNode("span", null, null, 512), [
-              [_directive_dompurify_html, (_o = layerMetadata.value.legendHtml) == null ? void 0 : _o.innerHTML]
-            ])
-          ])) : createCommentVNode("", true),
-          !layerMetadata.value.hasLegend ? (openBlock(), createElementBlock("div", _hoisted_29, toDisplayString(unref(t)("The legend is not available for this layer")), 1)) : createCommentVNode("", true)
-        ])
-      ])) : createCommentVNode("", true);
+          ];
+        }),
+        _: 1
+      }, 8, ["title"])) : createCommentVNode("", true);
     };
   }
 });
@@ -52639,7 +53479,7 @@ const _sfc_main$k = /* @__PURE__ */ defineComponent({
     }
     return (_ctx, _cache) => {
       return openBlock(), createElementBlock("div", null, [
-        createVNode(_sfc_main$x, {
+        createVNode(_sfc_main$y, {
           class: "lux-navbar-dropdown lux-dropdown-inline text-white h-full",
           options: unref(availableLanguages),
           placeholder: unref(placeholder),
@@ -57041,12 +57881,12 @@ const _sfc_main = /* @__PURE__ */ defineComponent({
             createVNode(_sfc_main$1)
           ])) : createCommentVNode("", true),
           createBaseVNode("div", _hoisted_5, [
-            createVNode(_sfc_main$r),
+            createVNode(_sfc_main$s),
             createVNode(_sfc_main$n),
             createVNode(_sfc_main$l)
           ]),
           createBaseVNode("div", _hoisted_6, [
-            createVNode(_sfc_main$p)
+            createVNode(_sfc_main$q)
           ])
         ]),
         createVNode(_sfc_main$g, { class: "fixed bottom-5 sm:relative sm:bottom-0" })
@@ -57086,14 +57926,14 @@ const createElementInstance = (component = {}, app2 = null) => {
 };
 export {
   _sfc_main as App,
-  _sfc_main$p as BackgroundSelector,
-  _sfc_main$x as DropdownList,
+  _sfc_main$q as BackgroundSelector,
+  _sfc_main$y as DropdownList,
   _sfc_main$g as FooterBar,
   _sfc_main$j as HeaderBar,
   install as I18NextVue,
   _sfc_main$l as LayerMetadata,
   _sfc_main$7 as LayerPanel,
-  _sfc_main$r as MapContainer,
+  _sfc_main$s as MapContainer,
   _sfc_main$n as RemoteLayers,
   y as VueDOMPurifyHTML,
   app,
