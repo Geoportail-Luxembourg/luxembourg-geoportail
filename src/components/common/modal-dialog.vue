@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { useTranslation } from 'i18next-vue'
-import { ShallowRef, shallowRef } from 'vue'
+import { ShallowRef, shallowRef, onMounted, ref } from 'vue'
 const { t } = useTranslation()
 defineProps({
   footer: {
@@ -16,6 +16,11 @@ defineProps({
 defineEmits<{
   (e: 'close'): void
 }>()
+// focus for esc key
+const modal = ref()
+onMounted(() => {
+  modal.value.focus()
+})
 const displayModal: ShallowRef<boolean> = shallowRef(true)
 function close() {
   displayModal.value = false
@@ -39,9 +44,13 @@ function close() {
     >
       <div
         v-if="displayModal"
-        class="fixed inset-x-0 inset-y-8 flex items-start justify-center z-[1100]"
+        role="dialog"
+        ref="modal"
+        tabindex="0"
+        @keydown.esc="close()"
+        class="fixed inset-x-0 inset-y-8 flex items-start justify-center z-[1100] outline-none"
       >
-        <div class="bg-white shadow-modal rounded-lg overflow-hidden max-w-2xl">
+        <div class="bg-white shadow-modal rounded-lg overflow-hidden w-[700px]">
           <!-- header (title)-->
           <div class="relative flex flex-row justify-center p-4 border-b-[1px]">
             <h4 class="text-xl">{{ title }}</h4>

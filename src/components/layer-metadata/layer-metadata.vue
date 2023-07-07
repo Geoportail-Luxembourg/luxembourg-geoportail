@@ -21,7 +21,7 @@ watch(metadataId, async id => {
     ? await layerMetadataService.getLayerMetadata(id, i18next.language)
     : undefined
   displayFullDescription.value =
-    +(layerMetadata.value?.description?.length || '') < MAX_DESCRIPTION_LENGTH
+    (layerMetadata.value?.description?.length || 0) < MAX_DESCRIPTION_LENGTH
 })
 
 onMounted(() => {
@@ -103,7 +103,7 @@ function closeLayerMetadata() {
               "
               v-if="
                 displayFullDescription &&
-                +(description?.length || '') > MAX_DESCRIPTION_LENGTH
+                (description?.length || 0) > MAX_DESCRIPTION_LENGTH
               "
               @click="hideFullDescription"
               class="text-secondary hover:underline"
@@ -148,8 +148,8 @@ function closeLayerMetadata() {
           class="col-span-3 grid gap-2 grid-cols-3"
           v-if="layerMetadata.responsibleParty"
         >
-          <span class="font-bold">{{ t('Contact') }}</span>
-          <span class="col-span-2">
+          <div class="font-bold">{{ t('Contact') }}</div>
+          <div class="col-span-2">
             <p v-if="layerMetadata.responsibleParty?.organisaton">
               {{ layerMetadata.responsibleParty?.organisaton }}
             </p>
@@ -169,7 +169,7 @@ function closeLayerMetadata() {
                 >{{ layerMetadata.responsibleParty?.email }}</a
               >
             </p>
-          </span>
+          </div>
         </div>
         <div
           class="grid gap-2 grid-cols-3 col-span-3"
