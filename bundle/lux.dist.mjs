@@ -16318,13 +16318,13 @@ class VueElement extends BaseClass {
   }
 }
 const main = "";
-const _hoisted_1$p = { class: "lux-dropdown" };
-const _hoisted_2$j = { class: "h-full" };
-const _hoisted_3$h = ["aria-expanded"];
-const _hoisted_4$f = /* @__PURE__ */ createBaseVNode("span", { class: "lux-caret" }, null, -1);
-const _hoisted_5$d = { class: "lux-dropdown-wrapper" };
+const _hoisted_1$q = { class: "lux-dropdown" };
+const _hoisted_2$k = { class: "h-full" };
+const _hoisted_3$i = ["aria-expanded"];
+const _hoisted_4$g = /* @__PURE__ */ createBaseVNode("span", { class: "lux-caret" }, null, -1);
+const _hoisted_5$e = { class: "lux-dropdown-wrapper" };
 const _hoisted_6$a = ["aria-label", "data-value"];
-const _sfc_main$y = /* @__PURE__ */ defineComponent({
+const _sfc_main$A = /* @__PURE__ */ defineComponent({
   __name: "dropdown-list",
   props: {
     placeholder: null,
@@ -16354,8 +16354,8 @@ const _sfc_main$y = /* @__PURE__ */ defineComponent({
     onUnmounted(() => document.removeEventListener("click", onClickOutsideOpenBtn));
     return (_ctx, _cache) => {
       var _a, _b;
-      return openBlock(), createElementBlock("div", _hoisted_1$p, [
-        createBaseVNode("div", _hoisted_2$j, [
+      return openBlock(), createElementBlock("div", _hoisted_1$q, [
+        createBaseVNode("div", _hoisted_2$k, [
           createBaseVNode("button", {
             type: "button",
             class: normalizeClass(["lux-btn lux-dropdown-btn", unref(isOpen) ? "expanded" : ""]),
@@ -16364,10 +16364,10 @@ const _sfc_main$y = /* @__PURE__ */ defineComponent({
             onClick: onClickOpenBtn
           }, [
             createBaseVNode("span", null, toDisplayString((_b = props.placeholder) != null ? _b : (_a = props.options[0]) == null ? void 0 : _a.label), 1),
-            _hoisted_4$f
-          ], 10, _hoisted_3$h)
+            _hoisted_4$g
+          ], 10, _hoisted_3$i)
         ]),
-        createBaseVNode("div", _hoisted_5$d, [
+        createBaseVNode("div", _hoisted_5$e, [
           createBaseVNode("ul", {
             class: normalizeClass(["lux-dropdown-list", unref(isOpen) ? "" : "hidden"]),
             tabindex: "-1"
@@ -16875,7 +16875,7 @@ var Target = function(_super) {
   return Target2;
 }(Disposable$1);
 const EventTarget = Target;
-const EventType = {
+const EventType$1 = {
   CHANGE: "change",
   ERROR: "error",
   BLUR: "blur",
@@ -16955,7 +16955,7 @@ var Observable = function(_super) {
   }
   Observable2.prototype.changed = function() {
     ++this.revision_;
-    this.dispatchEvent(EventType.CHANGE);
+    this.dispatchEvent(EventType$1.CHANGE);
   };
   Observable2.prototype.getRevision = function() {
     return this.revision_;
@@ -17012,7 +17012,6 @@ function unByKey(key) {
     unlistenByKey(key);
   }
 }
-const Observable$1 = Observable;
 var __extends$$ = globalThis && globalThis.__extends || function() {
   var extendStatics = function(d, b) {
     extendStatics = Object.setPrototypeOf || { __proto__: [] } instanceof Array && function(d2, b2) {
@@ -17127,7 +17126,7 @@ var BaseObject = function(_super) {
     }
   };
   return BaseObject2;
-}(Observable$1);
+}(Observable);
 const BaseObject$1 = BaseObject;
 const LayerProperty = {
   OPACITY: "opacity",
@@ -17284,7 +17283,7 @@ var BaseLayer = function(_super) {
   return BaseLayer2;
 }(BaseObject$1);
 const BaseLayer$1 = BaseLayer;
-const RenderEventType = {
+const EventType = {
   PRERENDER: "prerender",
   POSTRENDER: "postrender",
   PRECOMPOSE: "precompose",
@@ -17368,7 +17367,7 @@ var Layer = function(_super) {
     }
     var source = this.getSource();
     if (source) {
-      this.sourceChangeKey_ = listen(source, EventType.CHANGE, this.handleSourceChange_, this);
+      this.sourceChangeKey_ = listen(source, EventType$1.CHANGE, this.handleSourceChange_, this);
     }
     this.changed();
   };
@@ -17418,7 +17417,7 @@ var Layer = function(_super) {
       this.mapRenderKey_ = null;
     }
     if (map2) {
-      this.mapPrecomposeKey_ = listen(map2, RenderEventType.PRECOMPOSE, function(evt) {
+      this.mapPrecomposeKey_ = listen(map2, EventType.PRECOMPOSE, function(evt) {
         var renderEvent = evt;
         var layerStatesArray = renderEvent.frameState.layerStatesArray;
         var layerState = this.getLayerState(false);
@@ -17427,7 +17426,7 @@ var Layer = function(_super) {
         }), 67);
         layerStatesArray.push(layerState);
       }, this);
-      this.mapRenderKey_ = listen(this, EventType.CHANGE, map2.render, map2);
+      this.mapRenderKey_ = listen(this, EventType$1.CHANGE, map2.render, map2);
       this.changed();
     }
   };
@@ -17746,7 +17745,7 @@ var CompositeMapRenderer = function(_super) {
       return;
     }
     this.calculateMatrices2D(frameState);
-    this.dispatchRenderEvent(RenderEventType.PRECOMPOSE, frameState);
+    this.dispatchRenderEvent(EventType.PRECOMPOSE, frameState);
     var layerStatesArray = frameState.layerStatesArray.sort(function(a, b) {
       return a.zIndex - b.zIndex;
     });
@@ -17781,7 +17780,7 @@ var CompositeMapRenderer = function(_super) {
       declutterLayers[i].renderDeclutter(frameState);
     }
     replaceChildren(this.element_, this.children_);
-    this.dispatchRenderEvent(RenderEventType.POSTCOMPOSE, frameState);
+    this.dispatchRenderEvent(EventType.POSTCOMPOSE, frameState);
     if (!this.renderedVisible_) {
       this.element_.style.display = "";
       this.renderedVisible_ = true;
@@ -18041,7 +18040,7 @@ var LayerGroup = function(_super) {
   LayerGroup2.prototype.registerLayerListeners_ = function(layer) {
     var listenerKeys = [
       listen(layer, ObjectEventType.PROPERTYCHANGE, this.handleLayerChange_, this),
-      listen(layer, EventType.CHANGE, this.handleLayerChange_, this)
+      listen(layer, EventType$1.CHANGE, this.handleLayerChange_, this)
     ];
     if (layer instanceof LayerGroup2) {
       listenerKeys.push(listen(layer, "addlayer", this.handleLayerGroupAdd_, this), listen(layer, "removelayer", this.handleLayerGroupRemove_, this));
@@ -18233,8 +18232,8 @@ var MapBrowserEvent = function(_super) {
 const MapBrowserEvent$1 = MapBrowserEvent;
 const MapBrowserEventType = {
   SINGLECLICK: "singleclick",
-  CLICK: EventType.CLICK,
-  DBLCLICK: EventType.DBLCLICK,
+  CLICK: EventType$1.CLICK,
+  DBLCLICK: EventType$1.DBLCLICK,
   POINTERDRAG: "pointerdrag",
   POINTERMOVE: "pointermove",
   POINTERDOWN: "pointerdown",
@@ -18295,7 +18294,7 @@ var MapBrowserEventHandler = function(_super) {
     _this.originalPointerMoveEvent_;
     _this.relayedListenerKey_ = listen(element, PointerEventType.POINTERMOVE, _this.relayMoveEvent_, _this);
     _this.boundHandleTouchMove_ = _this.handleTouchMove_.bind(_this);
-    _this.element_.addEventListener(EventType.TOUCHMOVE, _this.boundHandleTouchMove_, PASSIVE_EVENT_LISTENERS ? { passive: false } : false);
+    _this.element_.addEventListener(EventType$1.TOUCHMOVE, _this.boundHandleTouchMove_, PASSIVE_EVENT_LISTENERS ? { passive: false } : false);
     return _this;
   }
   MapBrowserEventHandler2.prototype.emulateClick_ = function(pointerEvent) {
@@ -18399,7 +18398,7 @@ var MapBrowserEventHandler = function(_super) {
       unlistenByKey(this.relayedListenerKey_);
       this.relayedListenerKey_ = null;
     }
-    this.element_.removeEventListener(EventType.TOUCHMOVE, this.boundHandleTouchMove_);
+    this.element_.removeEventListener(EventType$1.TOUCHMOVE, this.boundHandleTouchMove_);
     if (this.pointerdownListenerKey_) {
       unlistenByKey(this.pointerdownListenerKey_);
       this.pointerdownListenerKey_ = null;
@@ -18605,7 +18604,7 @@ var TileQueue = function(_super) {
     var added = _super.prototype.enqueue.call(this, element);
     if (added) {
       var tile = element[0];
-      tile.addEventListener(EventType.CHANGE, this.boundHandleTileChange_);
+      tile.addEventListener(EventType$1.CHANGE, this.boundHandleTileChange_);
     }
     return added;
   };
@@ -18616,7 +18615,7 @@ var TileQueue = function(_super) {
     var tile = event.target;
     var state = tile.getState();
     if (state === TileState.LOADED || state === TileState.ERROR || state === TileState.EMPTY) {
-      tile.removeEventListener(EventType.CHANGE, this.boundHandleTileChange_);
+      tile.removeEventListener(EventType$1.CHANGE, this.boundHandleTileChange_);
       var tileKey = tile.getKey();
       if (tileKey in this.tilesLoadingKeys_) {
         delete this.tilesLoadingKeys_[tileKey];
@@ -21340,7 +21339,7 @@ var PluggableMap = function(_super) {
     }
     var originalEvent = mapBrowserEvent.originalEvent;
     var eventType = originalEvent.type;
-    if (eventType === PointerEventType.POINTERDOWN || eventType === EventType.WHEEL || eventType === EventType.KEYDOWN) {
+    if (eventType === PointerEventType.POINTERDOWN || eventType === EventType$1.WHEEL || eventType === EventType$1.KEYDOWN) {
       var doc2 = this.getOwnerDocument();
       var rootNode = this.viewport_.getRootNode ? this.viewport_.getRootNode() : doc2;
       var target = originalEvent.target;
@@ -21384,8 +21383,8 @@ var PluggableMap = function(_super) {
     }
     if (frameState && this.renderer_ && !frameState.animate) {
       if (this.renderComplete_ === true) {
-        if (this.hasListener(RenderEventType.RENDERCOMPLETE)) {
-          this.renderer_.dispatchRenderEvent(RenderEventType.RENDERCOMPLETE, frameState);
+        if (this.hasListener(EventType.RENDERCOMPLETE)) {
+          this.renderer_.dispatchRenderEvent(EventType.RENDERCOMPLETE, frameState);
         }
         if (this.loaded_ === false) {
           this.loaded_ = true;
@@ -21414,8 +21413,8 @@ var PluggableMap = function(_super) {
         unlistenByKey(this.targetChangeHandlerKeys_[i]);
       }
       this.targetChangeHandlerKeys_ = null;
-      this.viewport_.removeEventListener(EventType.CONTEXTMENU, this.boundHandleBrowserEvent_);
-      this.viewport_.removeEventListener(EventType.WHEEL, this.boundHandleBrowserEvent_);
+      this.viewport_.removeEventListener(EventType$1.CONTEXTMENU, this.boundHandleBrowserEvent_);
+      this.viewport_.removeEventListener(EventType$1.WHEEL, this.boundHandleBrowserEvent_);
       this.mapBrowserEventHandler_.dispose();
       this.mapBrowserEventHandler_ = null;
       removeNode(this.viewport_);
@@ -21442,14 +21441,14 @@ var PluggableMap = function(_super) {
       for (var key in MapBrowserEventType) {
         this.mapBrowserEventHandler_.addEventListener(MapBrowserEventType[key], this.handleMapBrowserEvent.bind(this));
       }
-      this.viewport_.addEventListener(EventType.CONTEXTMENU, this.boundHandleBrowserEvent_, false);
-      this.viewport_.addEventListener(EventType.WHEEL, this.boundHandleBrowserEvent_, PASSIVE_EVENT_LISTENERS ? { passive: false } : false);
+      this.viewport_.addEventListener(EventType$1.CONTEXTMENU, this.boundHandleBrowserEvent_, false);
+      this.viewport_.addEventListener(EventType$1.WHEEL, this.boundHandleBrowserEvent_, PASSIVE_EVENT_LISTENERS ? { passive: false } : false);
       var defaultView = this.getOwnerDocument().defaultView;
       var keyboardEventTarget = !this.keyboardEventTarget_ ? targetElement : this.keyboardEventTarget_;
       this.targetChangeHandlerKeys_ = [
-        listen(keyboardEventTarget, EventType.KEYDOWN, this.handleBrowserEvent, this),
-        listen(keyboardEventTarget, EventType.KEYPRESS, this.handleBrowserEvent, this),
-        listen(defaultView, EventType.RESIZE, this.updateSize, this)
+        listen(keyboardEventTarget, EventType$1.KEYDOWN, this.handleBrowserEvent, this),
+        listen(keyboardEventTarget, EventType$1.KEYPRESS, this.handleBrowserEvent, this),
+        listen(defaultView, EventType$1.RESIZE, this.updateSize, this)
       ];
     }
     this.updateSize();
@@ -21473,7 +21472,7 @@ var PluggableMap = function(_super) {
     if (view) {
       this.updateViewportSize_();
       this.viewPropertyListenerKey_ = listen(view, ObjectEventType.PROPERTYCHANGE, this.handleViewPropertyChanged_, this);
-      this.viewChangeListenerKey_ = listen(view, EventType.CHANGE, this.handleViewPropertyChanged_, this);
+      this.viewChangeListenerKey_ = listen(view, EventType$1.CHANGE, this.handleViewPropertyChanged_, this);
       view.resolveConstraints(0);
     }
     this.render();
@@ -21488,7 +21487,7 @@ var PluggableMap = function(_super) {
       this.handleLayerAdd_(new GroupEvent("addlayer", layerGroup));
       this.layerGroupPropertyListenerKeys_ = [
         listen(layerGroup, ObjectEventType.PROPERTYCHANGE, this.render, this),
-        listen(layerGroup, EventType.CHANGE, this.render, this),
+        listen(layerGroup, EventType$1.CHANGE, this.render, this),
         listen(layerGroup, "addlayer", this.handleLayerAdd_, this),
         listen(layerGroup, "removelayer", this.handleLayerRemove_, this)
       ];
@@ -21590,7 +21589,7 @@ var PluggableMap = function(_super) {
       }
     }
     this.dispatchEvent(new MapEvent$1(MapEventType.POSTRENDER, this, frameState));
-    this.renderComplete_ = this.hasListener(MapEventType.LOADSTART) || this.hasListener(MapEventType.LOADEND) || this.hasListener(RenderEventType.RENDERCOMPLETE) ? !this.tileQueue_.getTilesLoading() && !this.tileQueue_.getCount() && !this.getLoadingOrNotReady() : void 0;
+    this.renderComplete_ = this.hasListener(MapEventType.LOADSTART) || this.hasListener(MapEventType.LOADEND) || this.hasListener(EventType.RENDERCOMPLETE) ? !this.tileQueue_.getTilesLoading() && !this.tileQueue_.getCount() && !this.getLoadingOrNotReady() : void 0;
     if (!this.postRenderTimeoutHandle_) {
       this.postRenderTimeoutHandle_ = setTimeout(function() {
         _this.postRenderTimeoutHandle_ = void 0;
@@ -21842,7 +21841,7 @@ var Attribution = function(_super) {
     _this.toggleButton_.setAttribute("aria-expanded", String(!_this.collapsed_));
     _this.toggleButton_.title = tipLabel;
     _this.toggleButton_.appendChild(activeLabel);
-    _this.toggleButton_.addEventListener(EventType.CLICK, _this.handleClick_.bind(_this), false);
+    _this.toggleButton_.addEventListener(EventType$1.CLICK, _this.handleClick_.bind(_this), false);
     var cssClasses = className + " " + CLASS_UNSELECTABLE + " " + CLASS_CONTROL + (_this.collapsed_ && _this.collapsible_ ? " " + CLASS_COLLAPSED : "") + (_this.collapsible_ ? "" : " ol-uncollapsible");
     var element = _this.element;
     element.className = cssClasses;
@@ -22012,7 +22011,7 @@ var Rotate = function(_super) {
     button.setAttribute("type", "button");
     button.title = tipLabel;
     button.appendChild(_this.label_);
-    button.addEventListener(EventType.CLICK, _this.handleClick_.bind(_this), false);
+    button.addEventListener(EventType$1.CLICK, _this.handleClick_.bind(_this), false);
     var cssClasses = className + " " + CLASS_UNSELECTABLE + " " + CLASS_CONTROL;
     var element = _this.element;
     element.className = cssClasses;
@@ -22119,13 +22118,13 @@ var Zoom = function(_super) {
     inElement.setAttribute("type", "button");
     inElement.title = zoomInTipLabel;
     inElement.appendChild(typeof zoomInLabel === "string" ? document.createTextNode(zoomInLabel) : zoomInLabel);
-    inElement.addEventListener(EventType.CLICK, _this.handleClick_.bind(_this, delta), false);
+    inElement.addEventListener(EventType$1.CLICK, _this.handleClick_.bind(_this, delta), false);
     var outElement = document.createElement("button");
     outElement.className = zoomOutClassName;
     outElement.setAttribute("type", "button");
     outElement.title = zoomOutTipLabel;
     outElement.appendChild(typeof zoomOutLabel === "string" ? document.createTextNode(zoomOutLabel) : zoomOutLabel);
-    outElement.addEventListener(EventType.CLICK, _this.handleClick_.bind(_this, -delta), false);
+    outElement.addEventListener(EventType$1.CLICK, _this.handleClick_.bind(_this, -delta), false);
     var cssClasses = className + " " + CLASS_UNSELECTABLE + " " + CLASS_CONTROL;
     var element = _this.element;
     element.className = cssClasses;
@@ -22223,7 +22222,7 @@ var FullScreen = function(_super) {
     _this.button_.title = tipLabel;
     _this.button_.setAttribute("type", "button");
     _this.button_.appendChild(_this.labelNode_);
-    _this.button_.addEventListener(EventType.CLICK, _this.handleClick_.bind(_this), false);
+    _this.button_.addEventListener(EventType$1.CLICK, _this.handleClick_.bind(_this), false);
     _this.setClassName_(_this.button_, _this.isInFullscreen_);
     _this.element.className = "".concat(_this.cssClassName_, " ").concat(CLASS_UNSELECTABLE, " ").concat(CLASS_CONTROL);
     _this.element.appendChild(_this.button_);
@@ -22391,7 +22390,7 @@ var ZoomToExtent$1 = function(_super) {
     button.setAttribute("type", "button");
     button.title = tipLabel;
     button.appendChild(typeof label === "string" ? document.createTextNode(label) : label);
-    button.addEventListener(EventType.CLICK, _this.handleClick_.bind(_this), false);
+    button.addEventListener(EventType$1.CLICK, _this.handleClick_.bind(_this), false);
     var cssClasses = className + " " + CLASS_UNSELECTABLE + " " + CLASS_CONTROL;
     var element = _this.element;
     element.className = cssClasses;
@@ -23195,7 +23194,7 @@ var KeyboardPan = function(_super) {
   }
   KeyboardPan2.prototype.handleEvent = function(mapBrowserEvent) {
     var stopEvent = false;
-    if (mapBrowserEvent.type == EventType.KEYDOWN) {
+    if (mapBrowserEvent.type == EventType$1.KEYDOWN) {
       var keyEvent = mapBrowserEvent.originalEvent;
       var keyCode = keyEvent.keyCode;
       if (this.condition_(mapBrowserEvent) && (keyCode == KeyCode.DOWN || keyCode == KeyCode.LEFT || keyCode == KeyCode.RIGHT || keyCode == KeyCode.UP)) {
@@ -23257,7 +23256,7 @@ var KeyboardZoom = function(_super) {
   }
   KeyboardZoom2.prototype.handleEvent = function(mapBrowserEvent) {
     var stopEvent = false;
-    if (mapBrowserEvent.type == EventType.KEYDOWN || mapBrowserEvent.type == EventType.KEYPRESS) {
+    if (mapBrowserEvent.type == EventType$1.KEYDOWN || mapBrowserEvent.type == EventType$1.KEYPRESS) {
       var keyEvent = mapBrowserEvent.originalEvent;
       var charCode = keyEvent.charCode;
       if (this.condition_(mapBrowserEvent) && (charCode == "+".charCodeAt(0) || charCode == "-".charCodeAt(0))) {
@@ -23389,7 +23388,7 @@ var MouseWheelZoom = function(_super) {
       return true;
     }
     var type = mapBrowserEvent.type;
-    if (type !== EventType.WHEEL) {
+    if (type !== EventType$1.WHEEL) {
       return true;
     }
     var map2 = mapBrowserEvent.map;
@@ -23399,7 +23398,7 @@ var MouseWheelZoom = function(_super) {
       this.lastAnchor_ = mapBrowserEvent.coordinate;
     }
     var delta;
-    if (mapBrowserEvent.type == EventType.WHEEL) {
+    if (mapBrowserEvent.type == EventType$1.WHEEL) {
       delta = wheelEvent.deltaY;
       if (FIREFOX && wheelEvent.deltaMode === WheelEvent.DOM_DELTA_PIXEL) {
         delta /= DEVICE_PIXEL_RATIO;
@@ -23734,7 +23733,7 @@ var LayerRenderer = function(_super) {
   LayerRenderer2.prototype.loadImage = function(image) {
     var imageState = image.getState();
     if (imageState != ImageState.LOADED && imageState != ImageState.ERROR) {
-      image.addEventListener(EventType.CHANGE, this.boundHandleImageChange_);
+      image.addEventListener(EventType$1.CHANGE, this.boundHandleImageChange_);
     }
     if (imageState == ImageState.IDLE) {
       image.load();
@@ -23753,7 +23752,7 @@ var LayerRenderer = function(_super) {
     _super.prototype.disposeInternal.call(this);
   };
   return LayerRenderer2;
-}(Observable$1);
+}(Observable);
 const LayerRenderer$1 = LayerRenderer;
 var __extends$o = globalThis && globalThis.__extends || function() {
   var extendStatics = function(d, b) {
@@ -23891,10 +23890,10 @@ var CanvasLayerRenderer = function(_super) {
   };
   CanvasLayerRenderer2.prototype.preRender = function(context, frameState) {
     this.frameState = frameState;
-    this.dispatchRenderEvent_(RenderEventType.PRERENDER, context, frameState);
+    this.dispatchRenderEvent_(EventType.PRERENDER, context, frameState);
   };
   CanvasLayerRenderer2.prototype.postRender = function(context, frameState) {
-    this.dispatchRenderEvent_(RenderEventType.POSTRENDER, context, frameState);
+    this.dispatchRenderEvent_(EventType.POSTRENDER, context, frameState);
   };
   CanvasLayerRenderer2.prototype.getRenderTransform = function(center, resolution, rotation, pixelRatio, width, height, offsetX) {
     var dx1 = width / 2;
@@ -23982,7 +23981,7 @@ var ImageBase = function(_super) {
     return _this;
   }
   ImageBase2.prototype.changed = function() {
-    this.dispatchEvent(EventType.CHANGE);
+    this.dispatchEvent(EventType$1.CHANGE);
   };
   ImageBase2.prototype.getExtent = function() {
     return this.extent;
@@ -24082,7 +24081,7 @@ function listenImage(image, loadHandler, errorHandler) {
   var decoding = false;
   var loaded = false;
   var listenerKeys = [
-    listenOnce(img, EventType.LOAD, function() {
+    listenOnce(img, EventType$1.LOAD, function() {
       loaded = true;
       if (!decoding) {
         loadHandler();
@@ -24105,7 +24104,7 @@ function listenImage(image, loadHandler, errorHandler) {
       }
     });
   } else {
-    listenerKeys.push(listenOnce(img, EventType.ERROR, errorHandler));
+    listenerKeys.push(listenOnce(img, EventType$1.ERROR, errorHandler));
   }
   return function unlisten() {
     listening = false;
@@ -24308,12 +24307,13 @@ const PROJECTION_WEBMERCATOR = "EPSG:3857";
 const PROJECTION_WGS84 = "EPSG:4326";
 const PROJECTION_LUX = "EPSG:2169";
 let map;
+const olMap = shallowRef();
 function useMap() {
   function getOlMap() {
     return map;
   }
   function createMap() {
-    map = new OlMap({
+    olMap.value = map = new OlMap({
       view: new OlView({
         zoom: 10,
         center: [682439, 6379152],
@@ -24376,6 +24376,7 @@ function useMap() {
     return [];
   }
   return {
+    olMap,
     getOlMap,
     createMap,
     equalsLayer,
@@ -24723,7 +24724,7 @@ var Tile = function(_super) {
     return _this;
   }
   Tile2.prototype.changed = function() {
-    this.dispatchEvent(EventType.CHANGE);
+    this.dispatchEvent(EventType$1.CHANGE);
   };
   Tile2.prototype.release = function() {
   };
@@ -25381,7 +25382,7 @@ var ReprojTile = function(_super) {
         var state = tile.getState();
         if (state == TileState.IDLE || state == TileState.LOADING) {
           leftToLoad_1++;
-          var sourceListenKey_1 = listen(tile, EventType.CHANGE, function(e) {
+          var sourceListenKey_1 = listen(tile, EventType$1.CHANGE, function(e) {
             var state2 = tile.getState();
             if (state2 == TileState.LOADED || state2 == TileState.ERROR || state2 == TileState.EMPTY) {
               unlistenByKey(sourceListenKey_1);
@@ -26971,7 +26972,7 @@ var TileImage = function(_super) {
     var tileUrl = urlTileCoord ? this.tileUrlFunction(urlTileCoord, pixelRatio, projection) : void 0;
     var tile = new this.tileClass(tileCoord, tileUrl !== void 0 ? TileState.IDLE : TileState.EMPTY, tileUrl !== void 0 ? tileUrl : "", this.crossOrigin, this.tileLoadFunction, this.tileOptions);
     tile.key = key;
-    tile.addEventListener(EventType.CHANGE, this.handleTileChange.bind(this));
+    tile.addEventListener(EventType$1.CHANGE, this.handleTileChange.bind(this));
     return tile;
   };
   TileImage2.prototype.getTile = function(z, x, y2, pixelRatio, projection) {
@@ -27143,7 +27144,7 @@ var ReprojImage = function(_super) {
       if (sourceState == ImageState.LOADED || sourceState == ImageState.ERROR) {
         this.reproject_();
       } else {
-        this.sourceListenerKey_ = listen(this.sourceImage_, EventType.CHANGE, function(e) {
+        this.sourceListenerKey_ = listen(this.sourceImage_, EventType$1.CHANGE, function(e) {
           var sourceState2 = this.sourceImage_.getState();
           if (sourceState2 == ImageState.LOADED || sourceState2 == ImageState.ERROR) {
             this.unlistenSource_();
@@ -27443,7 +27444,7 @@ var ImageWMS = function(_super) {
     var url = this.getRequestUrl_(requestExtent, this.imageSize_, pixelRatio, projection, params2);
     this.image_ = new ImageWrapper$1(requestExtent, resolution, pixelRatio, url, this.crossOrigin_, this.imageLoadFunction_);
     this.renderedRevision_ = this.getRevision();
-    this.image_.addEventListener(EventType.CHANGE, this.handleImageChange.bind(this));
+    this.image_.addEventListener(EventType$1.CHANGE, this.handleImageChange.bind(this));
     return this.image_;
   };
   ImageWMS2.prototype.getImageLoadFunction = function() {
@@ -45064,6 +45065,8 @@ const SP_KEYS_STYLE = [
   "topogr_global",
   "topo_bw_jpeg"
 ];
+const SP_KEY_LAYERCOMPARATOR = "lc";
+const SP_KEY_LAYERCOMPARATOR_SLIDERRATIO = "sliderRatio";
 const SP_KEY_V2_BGLAYEROPACITY = "bgOpacity";
 const SP_KEY_V2_LAYERSINDICIES = "layers_indices";
 const SP_KEY_V2_LAYERSOPACITIES = "layers_opacity";
@@ -45137,12 +45140,19 @@ class RulesWriteHelper extends StatePersistorRulesHelper {
     return void 0;
   }
   static ruleUsePermalink(currentKey) {
-    return [ruleIsVersion, ruleIsThemeForGhPagesHACK].reduce(
+    return [
+      ruleIsLayerComparator,
+      ruleIsVersion,
+      ruleIsThemeForGhPagesHACK
+    ].reduce(
       (prevResult, currRule) => prevResult || currRule(currentKey),
       false
     );
   }
 }
+const ruleIsLayerComparator = (currentKey) => {
+  return currentKey === SP_KEY_LAYERCOMPARATOR || currentKey === SP_KEY_LAYERCOMPARATOR_SLIDERRATIO;
+};
 const ruleIsVersion = (currentKey) => {
   return currentKey === SP_KEY_VERSION;
 };
@@ -46343,18 +46353,21 @@ function useOpenLayers() {
     }
     return layer;
   }
-  function addLayer(olMap, layer) {
+  function addLayer(olMap2, layer) {
     const baseLayer = getLayerFromCache(layer);
-    olMap.addLayer(baseLayer);
+    olMap2.addLayer(baseLayer);
   }
-  function removeLayer(olMap, layerId) {
-    const layerToRemove = olMap.getLayers().getArray().find((layer) => layer.get("id") === layerId);
+  function findLayer(olMap2, layerId) {
+    return olMap2.getLayers().getArray().find((layer) => layer.get("id") === layerId);
+  }
+  function removeLayer(olMap2, layerId) {
+    const layerToRemove = findLayer(olMap2, layerId);
     if (layerToRemove) {
-      olMap.removeLayer(layerToRemove);
+      olMap2.removeLayer(layerToRemove);
     }
   }
-  function reorderLayers(olMap, layers) {
-    const arrayLayers = olMap.getLayers().getArray();
+  function reorderLayers(olMap2, layers) {
+    const arrayLayers = olMap2.getLayers().getArray();
     layers.forEach((layer, idx) => {
       const baseLayer = arrayLayers.find(
         (mapLayer) => mapLayer.get("id") === layer.id
@@ -46362,8 +46375,8 @@ function useOpenLayers() {
       baseLayer == null ? void 0 : baseLayer.setZIndex(idx + 1);
     });
   }
-  function setLayerOpacity(olMap, layerId, opacity) {
-    const layer = olMap.getLayers().getArray().find((layer2) => layer2.get("id") === layerId);
+  function setLayerOpacity(olMap2, layerId, opacity) {
+    const layer = olMap2.getLayers().getArray().find((layer2) => layer2.get("id") === layerId);
     if (layer)
       layer.setOpacity(opacity);
   }
@@ -46387,14 +46400,14 @@ function useOpenLayers() {
       return newLayer;
     }
   }
-  function applyOnBgLayer(olMap, callbackFunction) {
-    const mapLayers = olMap.getLayers();
+  function applyOnBgLayer(olMap2, callbackFunction) {
+    const mapLayers = olMap2.getLayers();
     const bgLayer = mapLayers.getArray().find((layer) => layer.getZIndex() === -1);
     if (bgLayer)
       callbackFunction(bgLayer);
   }
-  function setBgLayer(olMap, bgLayer, vectorSources) {
-    const mapLayers = olMap.getLayers();
+  function setBgLayer(olMap2, bgLayer, vectorSources) {
+    const mapLayers = olMap2.getLayers();
     const currentBgLayerPos = mapLayers.getArray().findIndex((layer) => layer.getZIndex() === -1);
     let bgBaseLayer = void 0;
     if (bgLayer) {
@@ -46418,7 +46431,7 @@ function useOpenLayers() {
     } else {
       if (bgBaseLayer) {
         bgBaseLayer.setZIndex(-1);
-        olMap.addLayer(bgBaseLayer);
+        olMap2.addLayer(bgBaseLayer);
       }
     }
     statePersistorStyleService.restoreStyle(true);
@@ -46426,6 +46439,7 @@ function useOpenLayers() {
   return {
     createLayer,
     addLayer,
+    findLayer,
     removeLayer,
     removeFromCache,
     reorderLayers,
@@ -46611,21 +46625,21 @@ const statePersistorMapService = new StatePersistorMapService();
 function useControl(ControlClass, options) {
   const control = new ControlClass(options);
   const map2 = useMap();
-  const olMap = inject("olMap");
+  const olMap2 = inject("olMap");
   onMounted(() => {
-    olMap.addControl(control);
-    olMap.changed();
+    olMap2.addControl(control);
+    olMap2.changed();
   });
   onUnmounted(() => {
-    const olMap2 = map2.getOlMap();
-    olMap2.removeControl(control);
-    olMap2.changed();
+    const olMap22 = map2.getOlMap();
+    olMap22.removeControl(control);
+    olMap22.changed();
   });
   return {
     control
   };
 }
-const _sfc_main$x = /* @__PURE__ */ defineComponent({
+const _sfc_main$z = /* @__PURE__ */ defineComponent({
   __name: "attribution-control",
   props: {
     className: { default: "geoportailv3-attribution" },
@@ -46792,8 +46806,8 @@ var TranslationComponent = defineComponent({
     };
   }
 });
-const _hoisted_1$o = ["title"];
-const _sfc_main$w = /* @__PURE__ */ defineComponent({
+const _hoisted_1$p = ["title"];
+const _sfc_main$y = /* @__PURE__ */ defineComponent({
   __name: "location-control",
   props: {
     className: { default: "location-button" },
@@ -46818,12 +46832,12 @@ const _sfc_main$w = /* @__PURE__ */ defineComponent({
         createBaseVNode("button", {
           title: unref(t)(props.tipLabel),
           onClick: handleCenterToLocation
-        }, toDisplayString(props.label), 9, _hoisted_1$o)
+        }, toDisplayString(props.label), 9, _hoisted_1$p)
       ], 2);
     };
   }
 });
-const _sfc_main$v = /* @__PURE__ */ defineComponent({
+const _sfc_main$x = /* @__PURE__ */ defineComponent({
   __name: "fullscreen-control",
   props: {
     className: null,
@@ -46838,7 +46852,7 @@ const _sfc_main$v = /* @__PURE__ */ defineComponent({
     };
   }
 });
-const _sfc_main$u = /* @__PURE__ */ defineComponent({
+const _sfc_main$w = /* @__PURE__ */ defineComponent({
   __name: "zoom-control",
   props: {
     className: null,
@@ -46866,7 +46880,7 @@ class ZoomToExtent extends OlControlZoomToExtent {
     }
   }
 }
-const _sfc_main$t = /* @__PURE__ */ defineComponent({
+const _sfc_main$v = /* @__PURE__ */ defineComponent({
   __name: "zoom-to-extent-control",
   props: {
     className: null,
@@ -46882,12 +46896,12 @@ const _sfc_main$t = /* @__PURE__ */ defineComponent({
     };
   }
 });
-const _sfc_main$s = /* @__PURE__ */ defineComponent({
+const _sfc_main$u = /* @__PURE__ */ defineComponent({
   __name: "map-container",
   setup(__props) {
     const map2 = useMap();
     const mapContainer = ref(null);
-    const olMap = map2.createMap();
+    const olMap2 = map2.createMap();
     const DEFAULT_EXTENT = [
       425152.9429259216,
       632446599999133e-8,
@@ -46896,24 +46910,25 @@ const _sfc_main$s = /* @__PURE__ */ defineComponent({
     ];
     onMounted(() => {
       if (mapContainer.value) {
-        new OlSynchronizer(olMap);
+        new OlSynchronizer(olMap2);
         statePersistorMapService.bootstrap();
-        olMap.setTarget(mapContainer.value);
-        window.olMap = olMap;
+        olMap2.setTarget(mapContainer.value);
+        window.olMap = olMap2;
       }
     });
-    provide("olMap", olMap);
+    provide("olMap", olMap2);
     return (_ctx, _cache) => {
       return openBlock(), createElementBlock("div", {
+        id: "map-container",
         ref_key: "mapContainer",
         ref: mapContainer,
-        class: "h-full w-full bg-white"
+        class: "h-full w-full bg-white absolute"
       }, [
-        createVNode(_sfc_main$u),
-        createVNode(_sfc_main$t, { extent: DEFAULT_EXTENT }),
-        createVNode(_sfc_main$v),
+        createVNode(_sfc_main$w),
+        createVNode(_sfc_main$v, { extent: DEFAULT_EXTENT }),
         createVNode(_sfc_main$x),
-        createVNode(_sfc_main$w)
+        createVNode(_sfc_main$z),
+        createVNode(_sfc_main$y)
       ], 512);
     };
   }
@@ -52424,8 +52439,8 @@ class StatePersistorBgLayerService {
   }
 }
 const statePersistorBgLayerService = new StatePersistorBgLayerService();
-const _hoisted_1$n = ["title"];
-const _sfc_main$r = /* @__PURE__ */ defineComponent({
+const _hoisted_1$o = ["title"];
+const _sfc_main$t = /* @__PURE__ */ defineComponent({
   __name: "background-selector-item",
   props: {
     bgTitle: {
@@ -52458,12 +52473,12 @@ const _sfc_main$r = /* @__PURE__ */ defineComponent({
       return openBlock(), createElementBlock("button", {
         title: unref(buttonTitle),
         class: normalizeClass(unref(buttonClasses))
-      }, null, 10, _hoisted_1$n);
+      }, null, 10, _hoisted_1$o);
     };
   }
 });
-const _hoisted_1$m = { class: "flex flex-row-reverse" };
-const _sfc_main$q = /* @__PURE__ */ defineComponent({
+const _hoisted_1$n = { class: "flex flex-row-reverse" };
+const _sfc_main$s = /* @__PURE__ */ defineComponent({
   __name: "background-selector",
   props: {
     isOpen: {
@@ -52535,11 +52550,11 @@ const _sfc_main$q = /* @__PURE__ */ defineComponent({
       isOpen.value = !isOpen.value;
     }
     return (_ctx, _cache) => {
-      return openBlock(), createElementBlock("div", _hoisted_1$m, [
+      return openBlock(), createElementBlock("div", _hoisted_1$n, [
         createBaseVNode("div", {
           class: normalizeClass(["lux-bg-sel border border-black", isOpen.value === true ? "hidden" : "block"])
         }, [
-          createVNode(_sfc_main$r, {
+          createVNode(_sfc_main$t, {
             "aria-expanded": isOpen.value,
             "bg-title": "Select BG layer",
             "bg-name": unref(activeLayerName),
@@ -52557,7 +52572,7 @@ const _sfc_main$q = /* @__PURE__ */ defineComponent({
                 layer.id === unref(activeLayerId) ? "border-red-500 border-2" : "border-black border"
               ])
             }, [
-              createVNode(_sfc_main$r, {
+              createVNode(_sfc_main$t, {
                 "bg-name": layer.name,
                 onClick: ($event) => setBackgroundLayer(layer)
               }, null, 8, ["bg-name", "onClick"])
@@ -52568,20 +52583,20 @@ const _sfc_main$q = /* @__PURE__ */ defineComponent({
     };
   }
 });
-const _hoisted_1$l = /* @__PURE__ */ createBaseVNode("div", { class: "fixed inset-0 bg-gray-900 opacity-40 z-[1050]" }, null, -1);
-const _hoisted_2$i = { class: "bg-white shadow-modal rounded-lg overflow-hidden w-[700px]" };
-const _hoisted_3$g = { class: "relative flex flex-row justify-center p-4 border-b-[1px]" };
-const _hoisted_4$e = { class: "text-xl" };
-const _hoisted_5$c = /* @__PURE__ */ createBaseVNode("span", { "aria-hidden": "true" }, "\xD7", -1);
+const _hoisted_1$m = /* @__PURE__ */ createBaseVNode("div", { class: "fixed inset-0 bg-gray-900 opacity-40 z-[1050]" }, null, -1);
+const _hoisted_2$j = { class: "bg-white shadow-modal rounded-lg overflow-hidden w-[700px]" };
+const _hoisted_3$h = { class: "relative flex flex-row justify-center p-4 border-b-[1px]" };
+const _hoisted_4$f = { class: "text-xl" };
+const _hoisted_5$d = /* @__PURE__ */ createBaseVNode("span", { "aria-hidden": "true" }, "\xD7", -1);
 const _hoisted_6$9 = [
-  _hoisted_5$c
+  _hoisted_5$d
 ];
 const _hoisted_7$6 = {
   key: 0,
   class: "p-[15px] border-t-[1px]"
 };
 const _hoisted_8$6 = { class: "flex flex-row justify-end" };
-const _sfc_main$p = /* @__PURE__ */ defineComponent({
+const _sfc_main$r = /* @__PURE__ */ defineComponent({
   __name: "modal-dialog",
   props: {
     footer: {
@@ -52607,7 +52622,7 @@ const _sfc_main$p = /* @__PURE__ */ defineComponent({
     }
     return (_ctx, _cache) => {
       return openBlock(), createBlock(Teleport, { to: "body" }, [
-        _hoisted_1$l,
+        _hoisted_1$m,
         createVNode(Transition, {
           appear: "",
           "enter-active-class": "duration-200 ease-out",
@@ -52628,9 +52643,9 @@ const _sfc_main$p = /* @__PURE__ */ defineComponent({
               onKeydown: _cache[2] || (_cache[2] = withKeys(($event) => close(), ["esc"])),
               class: "fixed inset-x-0 inset-y-8 flex items-start justify-center z-[1100] outline-none"
             }, [
-              createBaseVNode("div", _hoisted_2$i, [
-                createBaseVNode("div", _hoisted_3$g, [
-                  createBaseVNode("h4", _hoisted_4$e, toDisplayString(__props.title), 1),
+              createBaseVNode("div", _hoisted_2$j, [
+                createBaseVNode("div", _hoisted_3$h, [
+                  createBaseVNode("h4", _hoisted_4$f, toDisplayString(__props.title), 1),
                   createBaseVNode("button", {
                     type: "button",
                     class: "absolute right-2 top-1 text-slate-400 text-[24px]",
@@ -52681,14 +52696,14 @@ const useMetadataStore = defineStore(
   },
   {}
 );
-const _hoisted_1$k = {
+const _hoisted_1$l = {
   class: "mb-px",
   key: "node.id"
 };
-const _hoisted_2$h = ["aria-expanded", "data-cy"];
-const _hoisted_3$f = { class: "leading-6" };
-const _hoisted_4$d = ["aria-expanded", "data-cy"];
-const _hoisted_5$b = { class: "grow" };
+const _hoisted_2$i = ["aria-expanded", "data-cy"];
+const _hoisted_3$g = { class: "leading-6" };
+const _hoisted_4$e = ["aria-expanded", "data-cy"];
+const _hoisted_5$c = { class: "grow" };
 const _hoisted_6$8 = { class: "leading-6" };
 const _hoisted_7$5 = {
   key: 1,
@@ -52696,7 +52711,7 @@ const _hoisted_7$5 = {
 };
 const _hoisted_8$5 = ["data-cy"];
 const _hoisted_9$3 = { class: "ml-1 hover:underline" };
-const _sfc_main$o = /* @__PURE__ */ defineComponent({
+const _sfc_main$q = /* @__PURE__ */ defineComponent({
   __name: "layer-tree-node",
   props: {
     node: null
@@ -52718,7 +52733,7 @@ const _sfc_main$o = /* @__PURE__ */ defineComponent({
     }
     return (_ctx, _cache) => {
       const _component_layer_tree_node = resolveComponent("layer-tree-node", true);
-      return isParent ? (openBlock(), createElementBlock("div", _hoisted_1$k, [
+      return isParent ? (openBlock(), createElementBlock("div", _hoisted_1$l, [
         __props.node.depth === 1 ? (openBlock(), createElementBlock("button", {
           key: 0,
           class: "group node-1 w-full text-left flex px-2 py-1.5 uppercase bg-tertiary",
@@ -52729,25 +52744,25 @@ const _sfc_main$o = /* @__PURE__ */ defineComponent({
           createBaseVNode("div", {
             class: normalizeClass(["grow", __props.node.expanded ? "text-white" : "text-secondary"])
           }, toDisplayString(unref(label)), 3),
-          createBaseVNode("div", _hoisted_3$f, [
+          createBaseVNode("div", _hoisted_3$g, [
             createBaseVNode("div", {
               class: normalizeClass(["fa fa-sharp fa-solid group-hover:text-white text-primary", __props.node.expanded ? "fa-caret-up" : "fa-caret-down"])
             }, null, 2)
           ])
-        ], 8, _hoisted_2$h)) : __props.node.depth > 1 && !isMaxDepth ? (openBlock(), createElementBlock("button", {
+        ], 8, _hoisted_2$i)) : __props.node.depth > 1 && !isMaxDepth ? (openBlock(), createElementBlock("button", {
           key: 1,
           class: normalizeClass(["w-full text-left flex px-2 py-1.5 pl-2", __props.node.expanded ? "text-tertiary" : "bg-white text-primary"]),
           "aria-expanded": __props.node.expanded,
           onClick: _cache[1] || (_cache[1] = ($event) => toggleParent(__props.node)),
           "data-cy": `parentLayerLabel-${__props.node.id}`
         }, [
-          createBaseVNode("div", _hoisted_5$b, toDisplayString(unref(label)), 1),
+          createBaseVNode("div", _hoisted_5$c, toDisplayString(unref(label)), 1),
           createBaseVNode("div", _hoisted_6$8, [
             createBaseVNode("div", {
               class: normalizeClass(["fa-sharp fa-solid", __props.node.expanded ? "fa-minus" : "fa-plus"])
             }, null, 2)
           ])
-        ], 10, _hoisted_4$d)) : createCommentVNode("", true),
+        ], 10, _hoisted_4$e)) : createCommentVNode("", true),
         !isMaxDepth ? (openBlock(), createElementBlock("div", {
           key: 2,
           class: normalizeClass(["bg-secondary", [
@@ -52818,13 +52833,15 @@ class LayerTreeService {
   }
 }
 const layerTreeService = new LayerTreeService();
+const DEFAULT_LANG = "fr";
+const DEFAULT_LAYER_PANEL_OPENED = true;
 const useAppStore = defineStore(
   "app",
   () => {
-    const lang = ref("fr");
-    const layersOpen = ref();
-    const styleEditorOpen = ref(false);
+    const lang = ref(DEFAULT_LANG);
+    const layersOpen = ref(DEFAULT_LAYER_PANEL_OPENED);
     const remoteLayersOpen = ref();
+    const styleEditorOpen = ref(false);
     function setLang(language) {
       lang.value = language;
     }
@@ -52854,14 +52871,14 @@ const useAppStore = defineStore(
   },
   {}
 );
-const _hoisted_1$j = { class: "relative text-center" };
-const _hoisted_2$g = ["placeholder", "value"];
-const _hoisted_3$e = {
+const _hoisted_1$k = { class: "relative text-center" };
+const _hoisted_2$h = ["placeholder", "value"];
+const _hoisted_3$f = {
   key: 0,
   class: "text-center"
 };
-const _hoisted_4$c = { class: "lux-label" };
-const _hoisted_5$a = {
+const _hoisted_4$d = { class: "lux-label" };
+const _hoisted_5$b = {
   key: 1,
   class: "text-center"
 };
@@ -52875,7 +52892,7 @@ const _hoisted_9$2 = {
   key: 3,
   class: "overflow-auto max-h-[calc(400px-36px)]"
 };
-const _sfc_main$n = /* @__PURE__ */ defineComponent({
+const _sfc_main$p = /* @__PURE__ */ defineComponent({
   __name: "remote-layers",
   setup(__props) {
     const { t } = useTranslation();
@@ -52958,7 +52975,7 @@ const _sfc_main$n = /* @__PURE__ */ defineComponent({
       }
     }
     return (_ctx, _cache) => {
-      return unref(remoteLayersOpen) ? (openBlock(), createBlock(_sfc_main$p, {
+      return unref(remoteLayersOpen) ? (openBlock(), createBlock(_sfc_main$r, {
         key: 0,
         title: unref(t)("Add external data", { ns: "client" }),
         onClose: _cache[0] || (_cache[0] = ($event) => unref(setRemoteLayersOpen)(false))
@@ -52966,8 +52983,8 @@ const _sfc_main$n = /* @__PURE__ */ defineComponent({
         content: withCtx(() => {
           var _a, _b;
           return [
-            createBaseVNode("div", _hoisted_1$j, [
-              createVNode(_sfc_main$y, {
+            createBaseVNode("div", _hoisted_1$k, [
+              createVNode(_sfc_main$A, {
                 class: "lux-remote-services-dropdown",
                 options: unref(wmsLayers),
                 placeholder: unref(t)("Predefined wms", { ns: "client" }),
@@ -52981,20 +52998,20 @@ const _sfc_main$n = /* @__PURE__ */ defineComponent({
                 }),
                 value: unref(currentRemoteUrl) || "",
                 onChange: onChangeRemoteUrl
-              }, null, 40, _hoisted_2$g),
+              }, null, 40, _hoisted_2$h),
               createBaseVNode("button", {
                 type: "button",
                 class: "lux-btn",
                 onClick: onClickGetLayers
               }, toDisplayString(unref(t)("Get the layers", { ns: "client" })), 1)
             ]),
-            !unref(isLoading) && unref(currentRemoteEndpoint) ? (openBlock(), createElementBlock("div", _hoisted_3$e, [
-              createBaseVNode("span", _hoisted_4$c, toDisplayString(unref(t)("Description du service :", {
+            !unref(isLoading) && unref(currentRemoteEndpoint) ? (openBlock(), createElementBlock("div", _hoisted_3$f, [
+              createBaseVNode("span", _hoisted_4$d, toDisplayString(unref(t)("Description du service :", {
                 ns: "client"
               })), 1),
               createTextVNode(" " + toDisplayString((_a = unref(currentRemoteEndpoint).getServiceInfo()) == null ? void 0 : _a.abstract), 1)
             ])) : createCommentVNode("", true),
-            !unref(isLoading) && unref(currentRemoteEndpoint) ? (openBlock(), createElementBlock("div", _hoisted_5$a, [
+            !unref(isLoading) && unref(currentRemoteEndpoint) ? (openBlock(), createElementBlock("div", _hoisted_5$b, [
               createBaseVNode("span", _hoisted_6$7, toDisplayString(unref(t)("Access constraints :", {
                 ns: "client"
               })), 1),
@@ -53007,7 +53024,7 @@ const _sfc_main$n = /* @__PURE__ */ defineComponent({
               })), 1)
             ])) : createCommentVNode("", true),
             !unref(isLoading) ? (openBlock(), createElementBlock("div", _hoisted_9$2, [
-              unref(layerTree) ? (openBlock(), createBlock(_sfc_main$o, {
+              unref(layerTree) ? (openBlock(), createBlock(_sfc_main$q, {
                 key: 0,
                 class: "block p-[10px] mb-[11px]",
                 node: unref(layerTree),
@@ -53026,9 +53043,9 @@ function formatDate(dateString, language = "fr-FR") {
   const date = new Date(dateString);
   return new Intl.DateTimeFormat(language).format(date);
 }
-const _hoisted_1$i = { class: "font-bold" };
-const _hoisted_2$f = { class: "col-span-2" };
-const _sfc_main$m = /* @__PURE__ */ defineComponent({
+const _hoisted_1$j = { class: "font-bold" };
+const _hoisted_2$g = { class: "col-span-2" };
+const _sfc_main$o = /* @__PURE__ */ defineComponent({
   __name: "layer-metadata-item",
   props: {
     label: null,
@@ -53038,8 +53055,8 @@ const _sfc_main$m = /* @__PURE__ */ defineComponent({
     const props = __props;
     return (_ctx, _cache) => {
       return openBlock(), createElementBlock(Fragment, null, [
-        createBaseVNode("span", _hoisted_1$i, toDisplayString(props.label), 1),
-        createBaseVNode("span", _hoisted_2$f, toDisplayString(props.value), 1)
+        createBaseVNode("span", _hoisted_1$j, toDisplayString(props.label), 1),
+        createBaseVNode("span", _hoisted_2$g, toDisplayString(props.value), 1)
       ], 64);
     };
   }
@@ -53218,14 +53235,14 @@ class LayerMetadataService {
   }
 }
 const layerMetadataService = new LayerMetadataService();
-const _hoisted_1$h = { class: "grid gap-2 grid-cols-3 pt-3 text-[13px] font-arial break-words" };
-const _hoisted_2$e = {
+const _hoisted_1$i = { class: "grid gap-2 grid-cols-3 pt-3 text-[13px] font-arial break-words" };
+const _hoisted_2$f = {
   key: 2,
   class: "col-span-3 grid gap-2 grid-cols-3"
 };
-const _hoisted_3$d = { class: "font-bold" };
-const _hoisted_4$b = { class: "col-span-2" };
-const _hoisted_5$9 = ["title"];
+const _hoisted_3$e = { class: "font-bold" };
+const _hoisted_4$c = { class: "col-span-2" };
+const _hoisted_5$a = ["title"];
 const _hoisted_6$6 = ["title"];
 const _hoisted_7$3 = {
   key: 4,
@@ -53234,7 +53251,7 @@ const _hoisted_7$3 = {
 const _hoisted_8$3 = { class: "font-bold" };
 const _hoisted_9$1 = { class: "col-span-2" };
 const _hoisted_10$1 = ["href"];
-const _hoisted_11 = {
+const _hoisted_11$1 = {
   key: 7,
   class: "col-span-3 grid gap-2 grid-cols-3"
 };
@@ -53263,7 +53280,7 @@ const _hoisted_27 = {
   key: 11,
   class: "col-span-3"
 };
-const _sfc_main$l = /* @__PURE__ */ defineComponent({
+const _sfc_main$n = /* @__PURE__ */ defineComponent({
   __name: "layer-metadata",
   setup(__props) {
     const metadataStore = useMetadataStore();
@@ -53304,7 +53321,7 @@ const _sfc_main$l = /* @__PURE__ */ defineComponent({
     }
     return (_ctx, _cache) => {
       const _directive_dompurify_html = resolveDirective("dompurify-html");
-      return layerMetadata.value ? (openBlock(), createBlock(_sfc_main$p, {
+      return layerMetadata.value ? (openBlock(), createBlock(_sfc_main$r, {
         key: 0,
         footer: false,
         "max-height": true,
@@ -53314,20 +53331,20 @@ const _sfc_main$l = /* @__PURE__ */ defineComponent({
         content: withCtx(() => {
           var _a, _b, _c, _d, _e, _f, _g, _h, _i, _j, _k, _l, _m, _n, _o;
           return [
-            createBaseVNode("div", _hoisted_1$h, [
-              layerMetadata.value.name ? (openBlock(), createBlock(_sfc_main$m, {
+            createBaseVNode("div", _hoisted_1$i, [
+              layerMetadata.value.name ? (openBlock(), createBlock(_sfc_main$o, {
                 key: 0,
                 label: unref(t)("Name"),
                 value: layerMetadata.value.name
               }, null, 8, ["label", "value"])) : createCommentVNode("", true),
-              layerMetadata.value.serviceDescription ? (openBlock(), createBlock(_sfc_main$m, {
+              layerMetadata.value.serviceDescription ? (openBlock(), createBlock(_sfc_main$o, {
                 key: 1,
                 label: unref(t)("Description du Service"),
                 value: layerMetadata.value.serviceDescription
               }, null, 8, ["label", "value"])) : createCommentVNode("", true),
-              layerMetadata.value.description ? (openBlock(), createElementBlock("div", _hoisted_2$e, [
-                createBaseVNode("span", _hoisted_3$d, toDisplayString(unref(t)("Description")), 1),
-                createBaseVNode("span", _hoisted_4$b, [
+              layerMetadata.value.description ? (openBlock(), createElementBlock("div", _hoisted_2$f, [
+                createBaseVNode("span", _hoisted_3$e, toDisplayString(unref(t)("Description")), 1),
+                createBaseVNode("span", _hoisted_4$c, [
                   withDirectives(createBaseVNode("span", null, null, 512), [
                     [_directive_dompurify_html, unref(description)]
                   ]),
@@ -53338,7 +53355,7 @@ const _sfc_main$l = /* @__PURE__ */ defineComponent({
                     }),
                     onClick: showFullDescription,
                     class: "text-secondary hover:underline"
-                  }, " ... ", 8, _hoisted_5$9)) : createCommentVNode("", true),
+                  }, " ... ", 8, _hoisted_5$a)) : createCommentVNode("", true),
                   displayFullDescription.value && (((_a = unref(description)) == null ? void 0 : _a.length) || 0) > MAX_DESCRIPTION_LENGTH ? (openBlock(), createElementBlock("button", {
                     key: 1,
                     title: unref(t)("Hide full description", {
@@ -53349,7 +53366,7 @@ const _sfc_main$l = /* @__PURE__ */ defineComponent({
                   }, " - ", 8, _hoisted_6$6)) : createCommentVNode("", true)
                 ])
               ])) : createCommentVNode("", true),
-              layerMetadata.value.legalConstraints ? (openBlock(), createBlock(_sfc_main$m, {
+              layerMetadata.value.legalConstraints ? (openBlock(), createBlock(_sfc_main$o, {
                 key: 3,
                 label: unref(t)(`Contrainte d'utilisation`),
                 value: layerMetadata.value.legalConstraints
@@ -53371,17 +53388,17 @@ const _sfc_main$l = /* @__PURE__ */ defineComponent({
                   ]);
                 }), 128))
               ])) : createCommentVNode("", true),
-              layerMetadata.value.revisionDate ? (openBlock(), createBlock(_sfc_main$m, {
+              layerMetadata.value.revisionDate ? (openBlock(), createBlock(_sfc_main$o, {
                 key: 5,
                 label: unref(t)("Revision date"),
                 value: unref(formatDate)(layerMetadata.value.revisionDate, unref(i18next).language)
               }, null, 8, ["label", "value"])) : createCommentVNode("", true),
-              layerMetadata.value.keyword ? (openBlock(), createBlock(_sfc_main$m, {
+              layerMetadata.value.keyword ? (openBlock(), createBlock(_sfc_main$o, {
                 key: 6,
                 label: unref(t)("Keywords"),
                 value: (_c = layerMetadata.value.keyword) == null ? void 0 : _c.join(",")
               }, null, 8, ["label", "value"])) : createCommentVNode("", true),
-              layerMetadata.value.responsibleParty ? (openBlock(), createElementBlock("div", _hoisted_11, [
+              layerMetadata.value.responsibleParty ? (openBlock(), createElementBlock("div", _hoisted_11$1, [
                 createBaseVNode("div", _hoisted_12, toDisplayString(unref(t)("Contact")), 1),
                 createBaseVNode("div", _hoisted_13, [
                   ((_d = layerMetadata.value.responsibleParty) == null ? void 0 : _d.organisaton) ? (openBlock(), createElementBlock("p", _hoisted_14, toDisplayString((_e = layerMetadata.value.responsibleParty) == null ? void 0 : _e.organisaton), 1)) : createCommentVNode("", true),
@@ -53458,7 +53475,7 @@ class StatePersistorLangService {
   }
 }
 const statePersistorLangService = new StatePersistorLangService();
-const _sfc_main$k = /* @__PURE__ */ defineComponent({
+const _sfc_main$m = /* @__PURE__ */ defineComponent({
   __name: "language-selector",
   setup(__props) {
     const { i18next, t } = useTranslation();
@@ -53479,7 +53496,7 @@ const _sfc_main$k = /* @__PURE__ */ defineComponent({
     }
     return (_ctx, _cache) => {
       return openBlock(), createElementBlock("div", null, [
-        createVNode(_sfc_main$y, {
+        createVNode(_sfc_main$A, {
           class: "lux-navbar-dropdown lux-dropdown-inline text-white h-full",
           options: unref(availableLanguages),
           placeholder: unref(placeholder),
@@ -53504,15 +53521,15 @@ class ThemeSelectorService {
   }
 }
 const themeSelectorService = new ThemeSelectorService();
-const _hoisted_1$g = { class: "w-full h-14 flex bg-white shadow-header z-10 shrink-0" };
-const _hoisted_2$d = /* @__PURE__ */ createBaseVNode("div", { class: "flex-2 p-[5px]" }, [
+const _hoisted_1$h = { class: "w-full h-14 flex bg-white shadow-header z-10 shrink-0" };
+const _hoisted_2$e = /* @__PURE__ */ createBaseVNode("div", { class: "flex-2 p-[5px]" }, [
   /* @__PURE__ */ createBaseVNode("img", { src: _imports_0 })
 ], -1);
-const _hoisted_3$c = /* @__PURE__ */ createBaseVNode("div", { class: "grow text-center" }, "search", -1);
-const _hoisted_4$a = { class: "h-full flex" };
-const _hoisted_5$8 = { class: "hidden lg:inline-block" };
+const _hoisted_3$d = /* @__PURE__ */ createBaseVNode("div", { class: "grow text-center" }, "search", -1);
+const _hoisted_4$b = { class: "h-full flex" };
+const _hoisted_5$9 = { class: "hidden lg:inline-block" };
 const _hoisted_6$5 = { class: "border-l-[1px] border-stone-300 h-full" };
-const _sfc_main$j = /* @__PURE__ */ defineComponent({
+const _sfc_main$l = /* @__PURE__ */ defineComponent({
   __name: "header-bar",
   setup(__props) {
     const { t } = useTranslation();
@@ -53532,21 +53549,21 @@ const _sfc_main$j = /* @__PURE__ */ defineComponent({
     );
     return (_ctx, _cache) => {
       var _a, _b;
-      return openBlock(), createElementBlock("header", _hoisted_1$g, [
-        _hoisted_2$d,
-        _hoisted_3$c,
+      return openBlock(), createElementBlock("header", _hoisted_1$h, [
+        _hoisted_2$e,
+        _hoisted_3$d,
         createBaseVNode("div", null, [
-          createBaseVNode("ul", _hoisted_4$a, [
+          createBaseVNode("ul", _hoisted_4$b, [
             createBaseVNode("li", null, [
               createBaseVNode("button", {
                 class: normalizeClass(["flex items-center before:font-icons before:text-3xl before:w-16 text-primary uppercase h-full mr-3", `before:content-${(_a = unref(theme)) == null ? void 0 : _a.name}`]),
                 onClick: _cache[0] || (_cache[0] = () => unref(setLayersOpen)(!unref(layersOpen)))
               }, [
-                createBaseVNode("span", _hoisted_5$8, toDisplayString(unref(t)(`${(_b = unref(theme)) == null ? void 0 : _b.name}`)), 1)
+                createBaseVNode("span", _hoisted_5$9, toDisplayString(unref(t)(`${(_b = unref(theme)) == null ? void 0 : _b.name}`)), 1)
               ], 2)
             ]),
             createBaseVNode("li", _hoisted_6$5, [
-              createVNode(_sfc_main$k, { class: "flex-none h-full" })
+              createVNode(_sfc_main$m, { class: "flex-none h-full" })
             ])
           ])
         ])
@@ -53554,8 +53571,8 @@ const _sfc_main$j = /* @__PURE__ */ defineComponent({
     };
   }
 });
-const _hoisted_1$f = { class: "block text-[13px] sm:text-base uppercase" };
-const _sfc_main$i = /* @__PURE__ */ defineComponent({
+const _hoisted_1$g = { class: "block text-[13px] sm:text-base uppercase" };
+const _sfc_main$k = /* @__PURE__ */ defineComponent({
   __name: "button-icon",
   props: {
     label: null,
@@ -53571,13 +53588,13 @@ const _sfc_main$i = /* @__PURE__ */ defineComponent({
         createBaseVNode("span", {
           class: normalizeClass(["block text-[1.7rem] sm:text-[2rem] -mt-1.5 -mb-3 after:font-icons", props.active ? "lux-close-cross" : `after:content-${props.icon}`])
         }, null, 2),
-        createBaseVNode("span", _hoisted_1$f, toDisplayString(props.label), 1)
+        createBaseVNode("span", _hoisted_1$g, toDisplayString(props.label), 1)
       ], 2);
     };
   }
 });
-const _hoisted_1$e = ["href"];
-const _sfc_main$h = /* @__PURE__ */ defineComponent({
+const _hoisted_1$f = ["href"];
+const _sfc_main$j = /* @__PURE__ */ defineComponent({
   __name: "button-link",
   props: {
     label: null,
@@ -53590,25 +53607,25 @@ const _sfc_main$h = /* @__PURE__ */ defineComponent({
         class: "h-full flex flex-col justify-center px-[7px] uppercase hover:text-white hover:bg-primary",
         href: `${props.link}`,
         target: "_blank"
-      }, toDisplayString(_ctx.$props.label), 9, _hoisted_1$e);
+      }, toDisplayString(_ctx.$props.label), 9, _hoisted_1$f);
     };
   }
 });
-const _hoisted_1$d = { class: "flex flex-col w-12 justify-between bg-white z-5 shrink-0 sm:flex-row sm:w-full sm:h-14 sm:shadow-footer" };
-const _hoisted_2$c = { class: "flex flex-col w-full sm:w-80 sm:flex-row justify-start text-primary divide-y sm:divide-y-0 sm:divide-x divide-gray-400 divide-solid box-content border-y sm:border-y-0 border-x border-gray-400" };
-const _hoisted_3$b = { class: "flex flex-col w-12 sm:w-64 sm:flex-row justify-start text-primary divide-y sm:divide-y-0 sm:divide-x divide-gray-400 divide-solid box-content border-y sm:border-y-0 border-x border-gray-400" };
-const _hoisted_4$9 = { class: "w-[466px] hidden sm:flex flex-row justify-end text-gray-500 whitespace-nowrap" };
-const _sfc_main$g = /* @__PURE__ */ defineComponent({
+const _hoisted_1$e = { class: "flex flex-col w-12 justify-between bg-white z-5 shrink-0 sm:flex-row sm:w-full sm:h-14 sm:shadow-footer" };
+const _hoisted_2$d = { class: "flex flex-col w-full sm:w-80 sm:flex-row justify-start text-primary divide-y sm:divide-y-0 sm:divide-x divide-gray-400 divide-solid box-content border-y sm:border-y-0 border-x border-gray-400" };
+const _hoisted_3$c = { class: "flex flex-col w-12 sm:w-64 sm:flex-row justify-start text-primary divide-y sm:divide-y-0 sm:divide-x divide-gray-400 divide-solid box-content border-y sm:border-y-0 border-x border-gray-400" };
+const _hoisted_4$a = { class: "w-[466px] hidden sm:flex flex-row justify-end text-gray-500 whitespace-nowrap" };
+const _sfc_main$i = /* @__PURE__ */ defineComponent({
   __name: "footer-bar",
   setup(__props) {
     const { t, i18next } = useTranslation();
     const { setLayersOpen } = useAppStore();
     const { layersOpen } = storeToRefs(useAppStore());
     return (_ctx, _cache) => {
-      return openBlock(), createElementBlock("footer", _hoisted_1$d, [
-        createBaseVNode("ul", _hoisted_2$c, [
+      return openBlock(), createElementBlock("footer", _hoisted_1$e, [
+        createBaseVNode("ul", _hoisted_2$d, [
           createBaseVNode("li", null, [
-            createVNode(_sfc_main$i, {
+            createVNode(_sfc_main$k, {
               label: unref(t)("Layers", { ns: "client" }),
               icon: "layers",
               active: unref(layersOpen),
@@ -53616,92 +53633,92 @@ const _sfc_main$g = /* @__PURE__ */ defineComponent({
             }, null, 8, ["label", "active"])
           ]),
           createBaseVNode("li", null, [
-            createVNode(_sfc_main$i, {
+            createVNode(_sfc_main$k, {
               class: "text-gray-300",
               label: unref(t)("My Maps", { ns: "client" }),
               icon: "mymaps"
             }, null, 8, ["label"])
           ]),
           createBaseVNode("li", null, [
-            createVNode(_sfc_main$i, {
+            createVNode(_sfc_main$k, {
               class: "text-gray-300",
               label: unref(t)("Infos", { ns: "client" }),
               icon: "infos"
             }, null, 8, ["label"])
           ]),
           createBaseVNode("li", null, [
-            createVNode(_sfc_main$i, {
+            createVNode(_sfc_main$k, {
               class: "text-gray-300",
               label: unref(t)("Legends", { ns: "client" }),
               icon: "legends"
             }, null, 8, ["label"])
           ]),
           createBaseVNode("li", null, [
-            createVNode(_sfc_main$i, {
+            createVNode(_sfc_main$k, {
               class: "text-gray-300",
               label: unref(t)("Routing", { ns: "client" }),
               icon: "routing"
             }, null, 8, ["label"])
           ])
         ]),
-        createBaseVNode("div", _hoisted_3$b, [
-          createVNode(_sfc_main$i, {
+        createBaseVNode("div", _hoisted_3$c, [
+          createVNode(_sfc_main$k, {
             class: "text-gray-300",
             label: unref(t)("Dessin", { ns: "client" }),
             icon: "draw"
           }, null, 8, ["label"]),
-          createVNode(_sfc_main$i, {
+          createVNode(_sfc_main$k, {
             class: "text-gray-300 hidden sm:block",
             label: unref(t)("Mesurer", { ns: "client" }),
             icon: "measure"
           }, null, 8, ["label"]),
-          createVNode(_sfc_main$i, {
+          createVNode(_sfc_main$k, {
             class: "text-gray-300 hidden sm:block",
             label: unref(t)("Imprimer", { ns: "client" }),
             icon: "print"
           }, null, 8, ["label"]),
-          createVNode(_sfc_main$i, {
+          createVNode(_sfc_main$k, {
             class: "text-gray-300",
             label: unref(t)("Partager", { ns: "client" }),
             icon: "share"
           }, null, 8, ["label"])
         ]),
-        createBaseVNode("div", _hoisted_4$9, [
-          createVNode(_sfc_main$h, {
+        createBaseVNode("div", _hoisted_4$a, [
+          createVNode(_sfc_main$j, {
             class: "hidden lg:flex",
             label: unref(t)("What's new", { ns: "client" }),
             link: `https://geoportail.lu/${unref(i18next).language}/questions/whats-new/`
           }, null, 8, ["label", "link"]),
-          createVNode(_sfc_main$h, {
+          createVNode(_sfc_main$j, {
             class: "hidden lg:flex",
             label: unref(t)("Geocatalogue", { ns: "client" }),
             link: ""
           }, null, 8, ["label"]),
-          createVNode(_sfc_main$h, {
+          createVNode(_sfc_main$j, {
             class: "hidden lg:flex",
             label: unref(t)("Feedback", { ns: "client" }),
             link: ""
           }, null, 8, ["label"]),
-          createVNode(_sfc_main$h, {
+          createVNode(_sfc_main$j, {
             class: "hidden lg:flex",
             label: unref(t)("A Propos", { ns: "client" }),
             link: `https://www.geoportail.lu/${unref(i18next).language}/propos/`
           }, null, 8, ["label", "link"]),
-          createVNode(_sfc_main$h, {
+          createVNode(_sfc_main$j, {
             class: "hidden lg:flex",
             label: unref(t)("Aide", { ns: "client" }),
             link: `https://www.geoportail.lu/${unref(i18next).language}/documentation/`
           }, null, 8, ["label", "link"]),
-          createVNode(_sfc_main$h, {
+          createVNode(_sfc_main$j, {
             class: "hidden lg:flex",
             label: unref(t)("Contact", { ns: "client" }),
             link: `https://www.geoportail.lu/${unref(i18next).language}/propos/contactez-nous/`
           }, null, 8, ["label", "link"]),
-          createVNode(_sfc_main$h, {
+          createVNode(_sfc_main$j, {
             label: unref(t)("Legalites", { ns: "client" }),
             link: `https://www.geoportail.lu/${unref(i18next).language}/propos/mentions-legales/`
           }, null, 8, ["label", "link"]),
-          createVNode(_sfc_main$h, {
+          createVNode(_sfc_main$j, {
             label: unref(t)("ACT", { ns: "client" }),
             link: `http://www.act.public.lu/`
           }, null, 8, ["label", "link"])
@@ -53721,7 +53738,7 @@ function themesToLayerTree(node, depth = 0) {
     expanded: (metadata == null ? void 0 : metadata.is_expanded) || false
   };
 }
-const _sfc_main$f = /* @__PURE__ */ defineComponent({
+const _sfc_main$h = /* @__PURE__ */ defineComponent({
   __name: "catalog-tree",
   setup(__props) {
     const mapStore = useMapStore();
@@ -53750,7 +53767,7 @@ const _sfc_main$f = /* @__PURE__ */ defineComponent({
       layers.toggleLayer(+node.id, !node.checked);
     }
     return (_ctx, _cache) => {
-      return unref(layerTree) ? (openBlock(), createBlock(_sfc_main$o, {
+      return unref(layerTree) ? (openBlock(), createBlock(_sfc_main$q, {
         node: unref(layerTree),
         key: unref(layerTree).id,
         onToggleParent: toggleParent,
@@ -53759,10 +53776,10 @@ const _sfc_main$f = /* @__PURE__ */ defineComponent({
     };
   }
 });
-const _hoisted_1$c = { class: "flex flex-row flex-wrap pl-2.5" };
-const _hoisted_2$b = ["onClick"];
-const _hoisted_3$a = { class: "text-2xl absolute top-5" };
-const _sfc_main$e = /* @__PURE__ */ defineComponent({
+const _hoisted_1$d = { class: "flex flex-row flex-wrap pl-2.5" };
+const _hoisted_2$c = ["onClick"];
+const _hoisted_3$b = { class: "text-2xl absolute top-5" };
+const _sfc_main$g = /* @__PURE__ */ defineComponent({
   __name: "theme-grid",
   props: {
     themes: null
@@ -53771,29 +53788,29 @@ const _sfc_main$e = /* @__PURE__ */ defineComponent({
     const props = __props;
     const { t } = useTranslation();
     return (_ctx, _cache) => {
-      return openBlock(), createElementBlock("div", _hoisted_1$c, [
+      return openBlock(), createElementBlock("div", _hoisted_1$d, [
         (openBlock(true), createElementBlock(Fragment, null, renderList(props.themes, (theme) => {
           return openBlock(), createElementBlock("button", {
             class: normalizeClass(["relative shrink-0 h-[150px] w-1/2 px-2.5 text-start text-gray-100/40 uppercase hover:bg-[#ccc]", `bg-${theme.name}-primary hover:text-${theme.name}-primary`]),
             key: theme.id,
             onClick: ($event) => _ctx.$emit("setTheme", theme.name)
           }, [
-            createBaseVNode("div", _hoisted_3$a, toDisplayString(unref(t)(`${theme.name}`)), 1),
+            createBaseVNode("div", _hoisted_3$b, toDisplayString(unref(t)(`${theme.name}`)), 1),
             createBaseVNode("div", {
               class: normalizeClass(["text-6xl absolute bottom-1 after:font-icons", `after:content-${theme.name}`])
             }, null, 2)
-          ], 10, _hoisted_2$b);
+          ], 10, _hoisted_2$c);
         }), 128))
       ]);
     };
   }
 });
-const _hoisted_1$b = ["aria-expanded"];
-const _hoisted_2$a = { class: "py-0.5" };
-const _hoisted_3$9 = { class: "px-1 py-0.5 shrink-0 flex flex-row text-[12px] bg-secondary text-white" };
-const _hoisted_4$8 = { class: "py-[3px]" };
-const _hoisted_5$7 = { class: "flex flex-row flex-wrap ml-1 w-12" };
-const _sfc_main$d = /* @__PURE__ */ defineComponent({
+const _hoisted_1$c = ["aria-expanded"];
+const _hoisted_2$b = { class: "py-0.5" };
+const _hoisted_3$a = { class: "px-1 py-0.5 shrink-0 flex flex-row text-[12px] bg-secondary text-white" };
+const _hoisted_4$9 = { class: "py-[3px]" };
+const _hoisted_5$8 = { class: "flex flex-row flex-wrap ml-1 w-12" };
+const _sfc_main$f = /* @__PURE__ */ defineComponent({
   __name: "theme-selector-button",
   props: {
     themes: null,
@@ -53813,10 +53830,10 @@ const _sfc_main$d = /* @__PURE__ */ defineComponent({
         class: "w-full flex flex-row justify-between bg-tertiary text-white px-2 py-1.5 uppercase cursor-pointer hover:bg-white hover:text-primary",
         "aria-expanded": props.isOpen
       }, [
-        createBaseVNode("span", _hoisted_2$a, toDisplayString(unref(t)("Theme")) + ": " + toDisplayString(unref(t)(`${(_a = props.currentTheme) == null ? void 0 : _a.name}`)), 1),
-        createBaseVNode("span", _hoisted_3$9, [
-          createBaseVNode("span", _hoisted_4$8, toDisplayString(unref(t)("Changer")), 1),
-          createBaseVNode("span", _hoisted_5$7, [
+        createBaseVNode("span", _hoisted_2$b, toDisplayString(unref(t)("Theme")) + ": " + toDisplayString(unref(t)(`${(_a = props.currentTheme) == null ? void 0 : _a.name}`)), 1),
+        createBaseVNode("span", _hoisted_3$a, [
+          createBaseVNode("span", _hoisted_4$9, toDisplayString(unref(t)("Changer")), 1),
+          createBaseVNode("span", _hoisted_5$8, [
             (openBlock(true), createElementBlock(Fragment, null, renderList(unref(themesComputed), (theme) => {
               return openBlock(), createElementBlock("div", {
                 class: normalizeClass(`h-2.5 w-2.5 m-px bg-${theme.name}-primary`),
@@ -53825,15 +53842,15 @@ const _sfc_main$d = /* @__PURE__ */ defineComponent({
             }), 128))
           ])
         ])
-      ], 8, _hoisted_1$b);
+      ], 8, _hoisted_1$c);
     };
   }
 });
-const _hoisted_1$a = {
+const _hoisted_1$b = {
   key: 0,
   class: "absolute inset-x-0 top-14 bottom-0 mt-1 bg-primary overflow-y-auto overflow-x-hidden"
 };
-const _sfc_main$c = /* @__PURE__ */ defineComponent({
+const _sfc_main$e = /* @__PURE__ */ defineComponent({
   __name: "theme-selector",
   emits: ["toggleThemesGrid"],
   setup(__props, { emit: emit2 }) {
@@ -53861,14 +53878,14 @@ const _sfc_main$c = /* @__PURE__ */ defineComponent({
     }
     return (_ctx, _cache) => {
       return openBlock(), createElementBlock(Fragment, null, [
-        createVNode(_sfc_main$d, {
+        createVNode(_sfc_main$f, {
           onClick: toggleThemesGrid,
           themes: unref(themes2),
           currentTheme: unref(theme),
           isOpen: unref(isOpen)
         }, null, 8, ["themes", "currentTheme", "isOpen"]),
-        unref(isOpen) ? (openBlock(), createElementBlock("div", _hoisted_1$a, [
-          createVNode(_sfc_main$e, {
+        unref(isOpen) ? (openBlock(), createElementBlock("div", _hoisted_1$b, [
+          createVNode(_sfc_main$g, {
             onSetTheme: setTheme,
             themes: unref(themes2)
           }, null, 8, ["themes"])
@@ -53877,7 +53894,7 @@ const _sfc_main$c = /* @__PURE__ */ defineComponent({
     };
   }
 });
-const _sfc_main$b = /* @__PURE__ */ defineComponent({
+const _sfc_main$d = /* @__PURE__ */ defineComponent({
   __name: "catalog-tab",
   setup(__props) {
     const themeGridIsOpen = shallowRef(false);
@@ -53886,8 +53903,8 @@ const _sfc_main$b = /* @__PURE__ */ defineComponent({
     }
     return (_ctx, _cache) => {
       return openBlock(), createElementBlock(Fragment, null, [
-        createVNode(_sfc_main$c, { onToggleThemesGrid: toggleThemesGrid }),
-        unref(themeGridIsOpen) === false ? (openBlock(), createBlock(_sfc_main$f, {
+        createVNode(_sfc_main$e, { onToggleThemesGrid: toggleThemesGrid }),
+        unref(themeGridIsOpen) === false ? (openBlock(), createBlock(_sfc_main$h, {
           key: 0,
           class: "pt-5 absolute inset-x-2.5 bg-primary overflow-y-auto overflow-x-hidden"
         })) : createCommentVNode("", true)
@@ -56028,6 +56045,39 @@ _extends(Remove, {
 });
 Sortable.mount(new AutoScrollPlugin());
 Sortable.mount(Remove, Revert);
+const DEFAULT_SLIDER_RATIO = 0.5;
+const DEFAULT_SLIDER_OPENED = false;
+const useSliderComparatorStore = defineStore(
+  "slider",
+  () => {
+    const mapStore = useMapStore();
+    const sliderRatio = ref(DEFAULT_SLIDER_RATIO);
+    const sliderActive = ref(DEFAULT_SLIDER_OPENED);
+    const sliderTopLayer = computed(
+      () => [...mapStore.layers].reverse()[0]
+    );
+    function setRatio(ratio) {
+      let newRatio = ratio;
+      if (ratio < 0.1) {
+        newRatio = 0.1;
+      } else if (ratio > 0.9) {
+        newRatio = 0.9;
+      }
+      sliderRatio.value = newRatio;
+    }
+    function toggleSlider(open2) {
+      sliderActive.value = open2 != null ? open2 : !sliderActive.value;
+    }
+    return {
+      sliderActive,
+      sliderRatio,
+      sliderTopLayer,
+      setRatio,
+      toggleSlider
+    };
+  },
+  {}
+);
 function useLayer(layer, context) {
   const { t } = useTranslation();
   function getLabel() {
@@ -56042,11 +56092,11 @@ function useLayer(layer, context) {
     onClickInfo
   };
 }
-const _hoisted_1$9 = { class: "lux-layer-manager-item mt-2.5" };
-const _hoisted_2$9 = ["title"];
-const _hoisted_3$8 = { class: "flex-1 text-left cursor-default" };
-const _hoisted_4$7 = ["title"];
-const _sfc_main$a = /* @__PURE__ */ defineComponent({
+const _hoisted_1$a = { class: "lux-layer-manager-item mt-2.5" };
+const _hoisted_2$a = ["title"];
+const _hoisted_3$9 = { class: "flex-1 text-left cursor-default" };
+const _hoisted_4$8 = ["title"];
+const _sfc_main$c = /* @__PURE__ */ defineComponent({
   __name: "layer-item-background",
   props: {
     showEditButton: { type: Boolean },
@@ -56066,45 +56116,49 @@ const _sfc_main$a = /* @__PURE__ */ defineComponent({
       return t(props.layer.name, { ns: "client" });
     }
     return (_ctx, _cache) => {
-      return openBlock(), createElementBlock("div", _hoisted_1$9, [
+      return openBlock(), createElementBlock("div", _hoisted_1$a, [
         createBaseVNode("button", {
           class: "fa fa-info w-3",
           title: unref(txtTitleLabel),
           onClick: _cache[0] || (_cache[0] = (...args) => unref(onClickInfo) && unref(onClickInfo)(...args))
-        }, null, 8, _hoisted_2$9),
-        createBaseVNode("span", _hoisted_3$8, toDisplayString(getLabel()), 1),
+        }, null, 8, _hoisted_2$a),
+        createBaseVNode("span", _hoisted_3$9, toDisplayString(getLabel()), 1),
         __props.showEditButton ? (openBlock(), createElementBlock("button", {
           key: 0,
           class: "fa fa-pencil",
           title: unref(t)("Open editor panel", { ns: "client" }),
           onClick: _cache[1] || (_cache[1] = ($event) => _ctx.$emit("clickEdit"))
-        }, null, 8, _hoisted_4$7)) : createCommentVNode("", true)
+        }, null, 8, _hoisted_4$8)) : createCommentVNode("", true)
       ]);
     };
   }
 });
-const _hoisted_1$8 = { class: "lux-layer-manager-item relative" };
-const _hoisted_2$8 = { class: "w-full flex flex-nowrap items-start gap-x-2" };
-const _hoisted_3$7 = ["title"];
-const _hoisted_4$6 = ["title"];
-const _hoisted_5$6 = ["aria-expanded", "aria-controls"];
+const _hoisted_1$9 = { class: "lux-layer-manager-item relative" };
+const _hoisted_2$9 = { class: "w-full flex flex-nowrap items-start gap-x-2" };
+const _hoisted_3$8 = ["title"];
+const _hoisted_4$7 = ["title"];
+const _hoisted_5$7 = ["aria-expanded", "aria-controls", "data-cy"];
 const _hoisted_6$4 = ["aria-expanded", "aria-controls"];
 const _hoisted_7$2 = ["title"];
 const _hoisted_8$2 = ["id"];
 const _hoisted_9 = ["title"];
 const _hoisted_10 = ["id", "value", "aria-label"];
-const _sfc_main$9 = /* @__PURE__ */ defineComponent({
+const _hoisted_11 = ["aria-label"];
+const _sfc_main$b = /* @__PURE__ */ defineComponent({
   __name: "layer-item",
   props: {
     layer: null,
     draggableClassName: null,
-    isOpen: { type: Boolean }
+    isOpen: { type: Boolean },
+    isLayerComparatorOpen: { type: Boolean },
+    displayLayerComparatorOpen: { type: Boolean }
   },
   emits: [
     "clickInfo",
     "clickEdit",
     "changeOpacity",
     "clickToggle",
+    "clickToggleLayerComparator",
     "clickRemove"
   ],
   setup(__props, { emit: emit2 }) {
@@ -56156,27 +56210,31 @@ const _sfc_main$9 = /* @__PURE__ */ defineComponent({
         dispatchChangeOpacity();
       }
     }
+    function onToggleLayerComparator() {
+      emit2("clickToggleLayerComparator", props.layer);
+    }
     function dispatchChangeOpacity() {
       emit2("changeOpacity", props.layer, opacity.value);
     }
     return (_ctx, _cache) => {
-      return openBlock(), createElementBlock("div", _hoisted_1$8, [
-        createBaseVNode("div", _hoisted_2$8, [
+      return openBlock(), createElementBlock("div", _hoisted_1$9, [
+        createBaseVNode("div", _hoisted_2$9, [
           createBaseVNode("button", {
             class: normalizeClass(["fa-solid fa-bars cursor-move mt-1", __props.draggableClassName]),
             title: unref(txtDraggableLabel)
-          }, null, 10, _hoisted_3$7),
+          }, null, 10, _hoisted_3$8),
           createBaseVNode("button", {
             class: "fa-solid fa-info mt-1",
             title: unref(txtTitleLabel),
             onClick: _cache[0] || (_cache[0] = (...args) => unref(onClickInfo) && unref(onClickInfo)(...args))
-          }, null, 8, _hoisted_4$6),
+          }, null, 8, _hoisted_4$7),
           createBaseVNode("button", {
             "aria-expanded": props.isOpen,
             "aria-controls": `layer-manager-item-content-${props.layer.id}`,
+            "data-cy": `myLayerItemLabel-${props.layer.id}`,
             class: "cursor-pointer grow text-left break-words w-[70%]",
             onClick: onClickToggle
-          }, toDisplayString(unref(getLabel)()), 9, _hoisted_5$6),
+          }, toDisplayString(unref(getLabel)()), 9, _hoisted_5$7),
           createBaseVNode("button", {
             class: normalizeClass(["mt-1 w-3.5 fa-solid", props.isOpen ? "fa-xmark" : "fa-ellipsis"]),
             onClick: onClickToggle,
@@ -56210,16 +56268,24 @@ const _sfc_main$9 = /* @__PURE__ */ defineComponent({
             onChange: onChangeOpacity,
             class: "m-2.5 w-16 h-[5px] rounded-lg appearance-none cursor-pointer",
             "aria-label": unref(t)("Change opacity for {{ layerName }}", { layerName: unref(getLabel)() })
-          }, null, 40, _hoisted_10)
+          }, null, 40, _hoisted_10),
+          __props.displayLayerComparatorOpen ? (openBlock(), createElementBlock("button", {
+            key: 0,
+            class: normalizeClass(["fa ml-auto text-sm cursor-pointer", props.isLayerComparatorOpen ? "fa-adjust" : "fa-circle"]),
+            "aria-label": unref(t)("Toggle layer comparator for {{ layerName }}", {
+              layerName: unref(getLabel)()
+            }),
+            onClick: onToggleLayerComparator
+          }, null, 10, _hoisted_11)) : createCommentVNode("", true)
         ], 10, _hoisted_8$2)
       ]);
     };
   }
 });
-const _hoisted_1$7 = { id: "sortable-layers" };
-const _hoisted_2$7 = ["id"];
-const _hoisted_3$6 = { class: "flex flex-row justify-center space-x-1 my-2" };
-const _sfc_main$8 = /* @__PURE__ */ defineComponent({
+const _hoisted_1$8 = { id: "sortable-layers" };
+const _hoisted_2$8 = ["id"];
+const _hoisted_3$7 = { class: "flex flex-row justify-center space-x-1 my-2" };
+const _sfc_main$a = /* @__PURE__ */ defineComponent({
   __name: "layer-manager",
   emits: ["displayCatalog"],
   setup(__props, { emit: emit2 }) {
@@ -56227,8 +56293,10 @@ const _sfc_main$8 = /* @__PURE__ */ defineComponent({
     const { setMetadataId } = useMetadataStore();
     const mapStore = useMapStore();
     const appStore = useAppStore();
-    const { bgLayer } = storeToRefs(mapStore);
     const styles = useMvtStyles();
+    const sliderStore = useSliderComparatorStore();
+    const { bgLayer } = storeToRefs(mapStore);
+    const { sliderActive } = storeToRefs(sliderStore);
     const layers = computed(() => [...mapStore.layers].reverse());
     const isLayerOpenId = shallowRef();
     const draggableClassName = "drag-handle";
@@ -56265,32 +56333,38 @@ const _sfc_main$8 = /* @__PURE__ */ defineComponent({
     function toggleEditionLayer() {
       appStore.toggleStyleEditorPanel();
     }
+    function toggleLayerComparator() {
+      sliderStore.toggleSlider();
+    }
     return (_ctx, _cache) => {
-      return openBlock(), createElementBlock("ul", _hoisted_1$7, [
-        (openBlock(true), createElementBlock(Fragment, null, renderList(unref(layers), (layer) => {
+      return openBlock(), createElementBlock("ul", _hoisted_1$8, [
+        (openBlock(true), createElementBlock(Fragment, null, renderList(unref(layers), (layer, index2) => {
           return openBlock(), createElementBlock("li", {
             key: layer.id,
             id: layer.id
           }, [
-            createVNode(_sfc_main$9, {
+            createVNode(_sfc_main$b, {
               draggableClassName,
               layer,
               isOpen: unref(isLayerOpenId) === layer.id,
+              isLayerComparatorOpen: unref(sliderActive),
+              displayLayerComparatorOpen: index2 === 0,
               onClickRemove: removeLayer,
               onClickToggle: toggleAccordionItem,
+              onClickToggleLayerComparator: toggleLayerComparator,
               onClickInfo: ($event) => unref(setMetadataId)(layer.id),
               onChangeOpacity: changeOpacityLayer
-            }, null, 8, ["layer", "isOpen", "onClickInfo"])
-          ], 8, _hoisted_2$7);
+            }, null, 8, ["layer", "isOpen", "isLayerComparatorOpen", "displayLayerComparatorOpen", "onClickInfo"])
+          ], 8, _hoisted_2$8);
         }), 128)),
         createBaseVNode("li", null, [
-          createVNode(_sfc_main$a, {
+          createVNode(_sfc_main$c, {
             layer: unref(bgLayer) || unref(BLANK_BACKGROUNDLAYER),
             showEditButton: unref(bgLayerIsEditable),
             onClickInfo: _cache[0] || (_cache[0] = () => unref(bgLayer) && unref(setMetadataId)(unref(bgLayer).id)),
             onClickEdit: toggleEditionLayer
           }, null, 8, ["layer", "showEditButton"]),
-          createBaseVNode("div", _hoisted_3$6, [
+          createBaseVNode("div", _hoisted_3$7, [
             createBaseVNode("button", {
               class: "bg-white text-primary hover:bg-primary hover:text-white border border-slate-300 py-1.5 px-2.5",
               onClick: _cache[1] || (_cache[1] = ($event) => emit2("displayCatalog"))
@@ -56305,15 +56379,15 @@ const _sfc_main$8 = /* @__PURE__ */ defineComponent({
     };
   }
 });
-const _hoisted_1$6 = { class: "flex flex-col h-full pt-1.5" };
-const _hoisted_2$6 = { class: "h-16 shrink-0 flex justify-between lux-panel-title" };
-const _hoisted_3$5 = ["aria-label"];
-const _hoisted_4$5 = { class: "flex flex-row gap-2 h-10 text-2xl" };
-const _hoisted_5$5 = ["aria-expanded"];
+const _hoisted_1$7 = { class: "flex flex-col h-full pt-1.5" };
+const _hoisted_2$7 = { class: "h-16 shrink-0 flex justify-between lux-panel-title" };
+const _hoisted_3$6 = ["aria-label"];
+const _hoisted_4$6 = { class: "flex flex-row gap-2 h-10 text-2xl" };
+const _hoisted_5$6 = ["aria-expanded"];
 const _hoisted_6$3 = { key: 0 };
 const _hoisted_7$1 = ["aria-expanded"];
 const _hoisted_8$1 = { class: "relative grow p-2.5 bg-primary overflow-auto" };
-const _sfc_main$7 = /* @__PURE__ */ defineComponent({
+const _sfc_main$9 = /* @__PURE__ */ defineComponent({
   __name: "layer-panel",
   setup(__props) {
     const { t } = useTranslation();
@@ -56321,18 +56395,18 @@ const _sfc_main$7 = /* @__PURE__ */ defineComponent({
     const { layers } = storeToRefs(useMapStore());
     const myLayersOpen = ref(false);
     return (_ctx, _cache) => {
-      return openBlock(), createElementBlock("div", _hoisted_1$6, [
-        createBaseVNode("div", _hoisted_2$6, [
+      return openBlock(), createElementBlock("div", _hoisted_1$7, [
+        createBaseVNode("div", _hoisted_2$7, [
           createBaseVNode("div", null, toDisplayString(unref(t)("Layers", { ns: "client" })), 1),
           createBaseVNode("span", null, [
             createBaseVNode("button", {
               onClick: _cache[0] || (_cache[0] = () => unref(setLayersOpen)(false)),
               "aria-label": unref(t)("Close", { ns: "client" }),
               class: "fa-sharp fa-solid fa-close"
-            }, null, 8, _hoisted_3$5)
+            }, null, 8, _hoisted_3$6)
           ])
         ]),
-        createBaseVNode("div", _hoisted_4$5, [
+        createBaseVNode("div", _hoisted_4$6, [
           createBaseVNode("button", {
             onClick: _cache[1] || (_cache[1] = () => myLayersOpen.value = true),
             class: normalizeClass(["text-white px-4 hover:bg-primary cursor-pointer text-center uppercase", myLayersOpen.value ? "bg-primary" : "bg-tertiary"]),
@@ -56340,7 +56414,7 @@ const _sfc_main$7 = /* @__PURE__ */ defineComponent({
           }, [
             createTextVNode(toDisplayString(unref(t)("my_layers", { ns: "client" })) + " ", 1),
             unref(layers).length ? (openBlock(), createElementBlock("span", _hoisted_6$3, "(" + toDisplayString(unref(layers).length) + ")", 1)) : createCommentVNode("", true)
-          ], 10, _hoisted_5$5),
+          ], 10, _hoisted_5$6),
           createBaseVNode("button", {
             onClick: _cache[2] || (_cache[2] = ($event) => myLayersOpen.value = false),
             class: normalizeClass(["text-white px-4 hover:bg-primary cursor-pointer text-center uppercase", myLayersOpen.value ? "bg-tertiary" : "bg-primary"]),
@@ -56348,13 +56422,257 @@ const _sfc_main$7 = /* @__PURE__ */ defineComponent({
           }, toDisplayString(unref(t)("Catalog", { ns: "client" })), 11, _hoisted_7$1)
         ]),
         createBaseVNode("div", _hoisted_8$1, [
-          !myLayersOpen.value ? (openBlock(), createBlock(_sfc_main$b, { key: 0 })) : createCommentVNode("", true),
-          myLayersOpen.value ? (openBlock(), createBlock(_sfc_main$8, {
+          !myLayersOpen.value ? (openBlock(), createBlock(_sfc_main$d, { key: 0 })) : createCommentVNode("", true),
+          myLayersOpen.value ? (openBlock(), createBlock(_sfc_main$a, {
             key: 1,
             onDisplayCatalog: _cache[3] || (_cache[3] = () => myLayersOpen.value = false)
           })) : createCommentVNode("", true)
         ])
       ]);
+    };
+  }
+});
+function getRenderPixel(event, pixel) {
+  return apply(event.inversePixelTransform, pixel.slice(0));
+}
+class StatePersistorLayerComparatorService {
+  bootstrap() {
+    let stop;
+    stop = watchEffect(() => {
+      this.restore();
+      this.persist();
+      stop && stop();
+    });
+  }
+  persist() {
+    const sliderStore = useSliderComparatorStore();
+    watch(
+      [() => sliderStore.sliderActive, () => sliderStore.sliderRatio],
+      ([newSliderActive, newSliderRatio], [oldSliderActive]) => {
+        if (newSliderActive !== oldSliderActive) {
+          storageHelper.setValue(SP_KEY_LAYERCOMPARATOR, newSliderActive);
+        }
+        storageHelper.setValue(
+          SP_KEY_LAYERCOMPARATOR_SLIDERRATIO,
+          newSliderRatio
+        );
+      }
+    );
+  }
+  restore() {
+    const lc = storageHelper.getValue(SP_KEY_LAYERCOMPARATOR, stringToBoolean);
+    const sliderRatio = storageHelper.getValue(SP_KEY_LAYERCOMPARATOR_SLIDERRATIO, stringToNumber);
+    const { toggleSlider, setRatio } = useSliderComparatorStore();
+    if (typeof lc !== "undefined" && lc !== null) {
+      toggleSlider(lc);
+      if (typeof sliderRatio !== void 0 && sliderRatio !== null) {
+        setRatio(sliderRatio != null ? sliderRatio : DEFAULT_SLIDER_RATIO);
+      }
+    }
+  }
+}
+const statePersistorSliderComparatorService = new StatePersistorLayerComparatorService();
+const _hoisted_1$6 = ["onKeydown"];
+const _hoisted_2$6 = /* @__PURE__ */ createBaseVNode("span", { class: "lux-slider-line" }, null, -1);
+const _hoisted_3$5 = /* @__PURE__ */ createBaseVNode("span", { class: "lux-slider-arrows" }, [
+  /* @__PURE__ */ createBaseVNode("span"),
+  /* @__PURE__ */ createBaseVNode("span")
+], -1);
+const _hoisted_4$5 = {
+  key: 0,
+  class: "lux-slider-layer-label"
+};
+const _hoisted_5$5 = /* @__PURE__ */ createBaseVNode("i", { class: "fa fa-arrow-left mr-2" }, null, -1);
+const _sfc_main$8 = /* @__PURE__ */ defineComponent({
+  __name: "splitter-element",
+  props: {
+    sliderActive: { type: Boolean },
+    sliderRatio: null,
+    sliderTopLayer: null,
+    sliderOffset: null,
+    containerOffset: null
+  },
+  emits: ["moveSplitBar", "escSplitBar"],
+  setup(__props, { expose, emit: emit2 }) {
+    const props = __props;
+    const DEFAULT_STEP_ONKEYDOWN = 30;
+    const { t } = useTranslation();
+    const sliderElement = ref(null);
+    const styleObject = computed(() => ({ left: `${props.sliderOffset}px` }));
+    let isDragging = false;
+    expose({
+      sliderElement
+    });
+    function moveSplitBar(offsetLeft) {
+      emit2("moveSplitBar", offsetLeft + sliderElement.value.offsetWidth / 2);
+    }
+    function onMouseDown() {
+      isDragging = true;
+      document.addEventListener("mousemove", onMouseMove);
+      document.addEventListener("mouseup", onMouseUp);
+    }
+    function onMouseMove(payload) {
+      if (!isDragging) {
+        return;
+      }
+      moveSplitBar(payload.clientX - props.containerOffset);
+    }
+    function onMouseUp() {
+      isDragging = false;
+      document.removeEventListener("mousemove", onMouseMove);
+      document.removeEventListener("mouseup", onMouseUp);
+    }
+    function onKeyDownRight() {
+      moveSplitBar(sliderElement.value.offsetLeft + DEFAULT_STEP_ONKEYDOWN);
+    }
+    function onKeyDownLeft() {
+      moveSplitBar(sliderElement.value.offsetLeft - DEFAULT_STEP_ONKEYDOWN);
+    }
+    function onKeyDownEsc() {
+      emit2("escSplitBar");
+    }
+    onMounted(() => {
+      var _a;
+      (_a = sliderElement.value) == null ? void 0 : _a.focus({ focusVisible: true });
+    });
+    onUnmounted(() => {
+      document.removeEventListener("mousemove", onMouseMove);
+      document.removeEventListener("mouseup", onMouseUp);
+    });
+    return (_ctx, _cache) => {
+      return openBlock(), createElementBlock("button", {
+        ref_key: "sliderElement",
+        ref: sliderElement,
+        onMousedown: onMouseDown,
+        onMousemove: onMouseMove,
+        onMouseup: onMouseUp,
+        onKeydown: [
+          withKeys(onKeyDownRight, ["space"]),
+          withKeys(onKeyDownRight, ["right"]),
+          withKeys(onKeyDownLeft, ["left"]),
+          withKeys(onKeyDownLeft, ["delete"]),
+          withKeys(onKeyDownEsc, ["esc"])
+        ],
+        class: "left-[20px] absolute h-full w-[32px] block",
+        style: normalizeStyle(unref(styleObject)),
+        role: "seperator",
+        "aria-controls": "map-container"
+      }, [
+        _hoisted_2$6,
+        _hoisted_3$5,
+        __props.sliderTopLayer ? (openBlock(), createElementBlock("span", _hoisted_4$5, [
+          _hoisted_5$5,
+          createBaseVNode("span", null, toDisplayString(unref(t)(__props.sliderTopLayer.name)), 1)
+        ])) : createCommentVNode("", true)
+      ], 44, _hoisted_1$6);
+    };
+  }
+});
+const _sfc_main$7 = /* @__PURE__ */ defineComponent({
+  __name: "slider-comparator",
+  setup(__props) {
+    const sliderStore = useSliderComparatorStore();
+    const openLayers = useOpenLayers();
+    const olMap2 = useMap().olMap;
+    const splitterElement = ref(null);
+    const { sliderActive, sliderRatio, sliderTopLayer } = storeToRefs(sliderStore);
+    const splitterElementOffset = computed(
+      () => {
+        var _a, _b;
+        return ((_b = (_a = splitterElement.value) == null ? void 0 : _a.sliderElement) == null ? void 0 : _b.offsetWidth) || 0;
+      }
+    );
+    const sliderOffset = computed(
+      () => {
+        var _a, _b;
+        return olMap2.value && splitterElement.value ? sliderRatio.value * olMap2.value.getSize()[0] - ((_b = (_a = splitterElement.value) == null ? void 0 : _a.sliderElement) == null ? void 0 : _b.offsetWidth) / 2 + olMap2.value.getViewport().offsetLeft : 0;
+      }
+    );
+    let olLayerPrerenderEvent;
+    let olLayerPostrenderEvent;
+    let mapWrapperElement;
+    statePersistorSliderComparatorService.bootstrap();
+    watch([sliderTopLayer, sliderActive], ([topLayer, isActive], [oldTopLayer]) => {
+      var _a;
+      if (topLayer && isActive) {
+        if (topLayer !== oldTopLayer) {
+          deactivate();
+        }
+        activate();
+      } else {
+        deactivate();
+      }
+      (_a = olMap2.value) == null ? void 0 : _a.render();
+    });
+    watch(sliderOffset, () => {
+      var _a;
+      (_a = olMap2.value) == null ? void 0 : _a.render();
+    });
+    function activate() {
+      const olLayer = openLayers.getLayerFromCache(sliderTopLayer.value);
+      olLayerPrerenderEvent = olLayer.on(
+        EventType.PRERENDER,
+        function(event) {
+          var _a;
+          const ctx = event.context;
+          const mapSize = (_a = olMap2.value) == null ? void 0 : _a.getSize();
+          const width = sliderOffset.value + splitterElementOffset.value / 2;
+          const tl = getRenderPixel(event, [0, 0]);
+          const tr = getRenderPixel(event, [width, 0]);
+          const bl = getRenderPixel(event, [0, mapSize[1]]);
+          const br = getRenderPixel(event, [width, mapSize[0]]);
+          ctx.save();
+          ctx.beginPath();
+          ctx.moveTo(tl[0], tl[1]);
+          ctx.lineTo(bl[0], bl[1]);
+          ctx.lineTo(br[0], br[1]);
+          ctx.lineTo(tr[0], tr[1]);
+          ctx.closePath();
+          ctx.clip();
+        }
+      );
+      olLayerPostrenderEvent = olLayer.on(
+        EventType.POSTRENDER,
+        function(e) {
+          const event = e;
+          const ctx = event.context;
+          ctx.restore();
+        }
+      );
+    }
+    function deactivate() {
+      unByKey([olLayerPrerenderEvent, olLayerPostrenderEvent]);
+    }
+    function onMoveSplitBar(offsetLeft) {
+      var _a;
+      const mapSize = (_a = olMap2.value) == null ? void 0 : _a.getSize();
+      const newRatio = offsetLeft / mapSize[0];
+      sliderStore.setRatio(newRatio);
+    }
+    function onEscSplitBar() {
+      sliderStore.toggleSlider();
+    }
+    onMounted(() => {
+      var _a, _b;
+      mapWrapperElement = (_b = (_a = olMap2.value) == null ? void 0 : _a.getTargetElement()) == null ? void 0 : _b.closest(".map-wrapper");
+    });
+    onUnmounted(() => {
+      deactivate();
+    });
+    return (_ctx, _cache) => {
+      var _a;
+      return unref(sliderTopLayer) && unref(sliderActive) ? (openBlock(), createBlock(_sfc_main$8, {
+        key: 0,
+        ref_key: "splitterElement",
+        ref: splitterElement,
+        sliderActive: unref(sliderActive),
+        sliderRatio: unref(sliderRatio),
+        sliderTopLayer: unref(sliderTopLayer),
+        sliderOffset: unref(sliderOffset),
+        containerOffset: ((_a = unref(mapWrapperElement)) == null ? void 0 : _a.offsetLeft) || 0,
+        onMoveSplitBar,
+        onEscSplitBar
+      }, null, 8, ["sliderActive", "sliderRatio", "sliderTopLayer", "sliderOffset", "containerOffset"])) : createCommentVNode("", true);
     };
   }
 });
@@ -57843,7 +58161,7 @@ const _hoisted_4 = {
   key: 1,
   class: "w-80 bg-primary"
 };
-const _hoisted_5 = { class: "grow bg-blue-100" };
+const _hoisted_5 = { class: "map-wrapper grow bg-blue-100 relative" };
 const _hoisted_6 = { class: "absolute right-1 top-16" };
 const _sfc_main = /* @__PURE__ */ defineComponent({
   __name: "App",
@@ -57872,24 +58190,25 @@ const _sfc_main = /* @__PURE__ */ defineComponent({
     }
     return (_ctx, _cache) => {
       return openBlock(), createElementBlock("div", _hoisted_1, [
-        createVNode(_sfc_main$j),
+        createVNode(_sfc_main$l),
         createBaseVNode("main", _hoisted_2, [
           unref(layersOpen) ? (openBlock(), createElementBlock("div", _hoisted_3, [
-            createVNode(_sfc_main$7)
+            createVNode(_sfc_main$9)
           ])) : createCommentVNode("", true),
           unref(styleEditorOpen) ? (openBlock(), createElementBlock("div", _hoisted_4, [
             createVNode(_sfc_main$1)
           ])) : createCommentVNode("", true),
           createBaseVNode("div", _hoisted_5, [
-            createVNode(_sfc_main$s),
-            createVNode(_sfc_main$n),
-            createVNode(_sfc_main$l)
+            createVNode(_sfc_main$u),
+            createVNode(_sfc_main$7),
+            createVNode(_sfc_main$p),
+            createVNode(_sfc_main$n)
           ]),
           createBaseVNode("div", _hoisted_6, [
-            createVNode(_sfc_main$q)
+            createVNode(_sfc_main$s)
           ])
         ]),
-        createVNode(_sfc_main$g, { class: "fixed bottom-5 sm:relative sm:bottom-0" })
+        createVNode(_sfc_main$i, { class: "fixed bottom-5 sm:static z-20" })
       ]);
     };
   }
@@ -57926,15 +58245,16 @@ const createElementInstance = (component = {}, app2 = null) => {
 };
 export {
   _sfc_main as App,
-  _sfc_main$q as BackgroundSelector,
-  _sfc_main$y as DropdownList,
-  _sfc_main$g as FooterBar,
-  _sfc_main$j as HeaderBar,
+  _sfc_main$s as BackgroundSelector,
+  _sfc_main$A as DropdownList,
+  _sfc_main$i as FooterBar,
+  _sfc_main$l as HeaderBar,
   install as I18NextVue,
-  _sfc_main$l as LayerMetadata,
-  _sfc_main$7 as LayerPanel,
-  _sfc_main$s as MapContainer,
-  _sfc_main$n as RemoteLayers,
+  _sfc_main$n as LayerMetadata,
+  _sfc_main$9 as LayerPanel,
+  _sfc_main$u as MapContainer,
+  _sfc_main$p as RemoteLayers,
+  _sfc_main$7 as SliderComparator,
   y as VueDOMPurifyHTML,
   app,
   Backend as backend,

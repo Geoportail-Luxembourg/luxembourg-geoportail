@@ -8,12 +8,15 @@ const props = defineProps<{
   layer: Layer
   draggableClassName: string
   isOpen: boolean
+  isLayerComparatorOpen: boolean
+  displayLayerComparatorOpen: boolean
 }>()
 const emit = defineEmits([
   'clickInfo',
   'clickEdit',
   'changeOpacity',
   'clickToggle',
+  'clickToggleLayerComparator',
   'clickRemove',
 ])
 const { t, getLabel, onClickInfo } = useLayer(props.layer as Layer, { emit })
@@ -71,6 +74,10 @@ function onChangeOpacity(event: Event) {
   }
 }
 
+function onToggleLayerComparator() {
+  emit('clickToggleLayerComparator', props.layer)
+}
+
 function dispatchChangeOpacity() {
   emit('changeOpacity', props.layer, opacity.value)
 }
@@ -92,6 +99,7 @@ function dispatchChangeOpacity() {
       <button
         :aria-expanded="props.isOpen"
         :aria-controls="`layer-manager-item-content-${props.layer.id}`"
+        :data-cy="`myLayerItemLabel-${props.layer.id}`"
         class="cursor-pointer grow text-left break-words w-[70%]"
         @click="onClickToggle"
       >
@@ -138,6 +146,17 @@ function dispatchChangeOpacity() {
           t('Change opacity for {{ layerName }}', { layerName: getLabel() })
         "
       />
+      <button
+        v-if="displayLayerComparatorOpen"
+        class="fa ml-auto text-sm cursor-pointer"
+        :class="props.isLayerComparatorOpen ? 'fa-adjust' : 'fa-circle'"
+        :aria-label="
+          t('Toggle layer comparator for {{ layerName }}', {
+            layerName: getLabel(),
+          })
+        "
+        @click="onToggleLayerComparator"
+      ></button>
     </div>
   </div>
 </template>

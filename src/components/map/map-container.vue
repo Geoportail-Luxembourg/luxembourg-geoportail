@@ -34,7 +34,12 @@ provide('olMap', olMap)
 </script>
 
 <template>
-  <div data-cy="mapContainer" ref="mapContainer" class="h-full w-full bg-white">
+  <div
+    id="map-container"
+    data-cy="mapContainer"
+    ref="mapContainer"
+    class="h-full w-full bg-white absolute"
+  >
     <zoom-control />
     <zoom-to-extent-control :extent="DEFAULT_EXTENT" />
     <fullscreen-control />

@@ -2,15 +2,19 @@
 import { onMounted, onUnmounted, watch } from 'vue'
 import { storeToRefs } from 'pinia'
 import MapLibreLayer from '@geoblocks/ol-maplibre-layer'
+
 import { MapLibreLayerType } from './composables/map/map.model'
 import HeaderBar from './components/header/header-bar.vue'
 import FooterBar from './components/footer/footer-bar.vue'
-import BackgroundSelector from '@/components/background-selector/background-selector.vue'
-import LayerPanel from '@/components/layer-panel/layer-panel.vue'
-import MapContainer from '@/components/map/map-container.vue'
+
 import StyleSelector from '@/components/style-selector/style-selector.vue'
 import RemoteLayers from '@/components/remote-layers/remote-layers.vue'
 import LayerMetadata from '@/components/layer-metadata/layer-metadata.vue'
+import BackgroundSelector from '@/components/background-selector/background-selector.vue'
+import LayerPanel from '@/components/layer-panel/layer-panel.vue'
+import MapContainer from '@/components/map/map-container.vue'
+import SliderComparator from '@/components/slider/slider-comparator.vue'
+
 import { statePersistorLayersService } from '@/services/state-persistor/state-persistor-layers.service'
 import { statePersistorThemeService } from '@/services/state-persistor/state-persistor-theme.service'
 import { statePersistorLayersOpenService } from '@/services/state-persistor/state-persistor-layersopen.service'
@@ -54,24 +58,33 @@ function resizeMap() {
 
 <template>
   <div class="h-screen flex flex-col overflow-hidden">
-    <header-bar></header-bar>
+    <header-bar />
+
     <main class="flex grow">
-      <!--side bar-->
+      <!-- Layer panel -->
       <div v-if="layersOpen" class="w-full sm:w-80 bg-secondary z-10">
-        <layer-panel></layer-panel>
+        <layer-panel />
       </div>
+
+      <!-- Style editor -->
       <div v-if="styleEditorOpen" class="w-80 bg-primary">
         <style-selector />
       </div>
-      <div class="grow bg-blue-100">
-        <map-container></map-container>
-        <remote-layers></remote-layers>
-        <layer-metadata></layer-metadata>
+
+      <!-- Map container and slider comparator -->
+      <div class="map-wrapper grow bg-blue-100 relative">
+        <map-container />
+        <slider-comparator />
+        <remote-layers />
+        <layer-metadata />
       </div>
+
+      <!-- Background selector -->
       <div class="absolute right-1 top-16">
-        <background-selector></background-selector>
+        <background-selector />
       </div>
     </main>
-    <footer-bar class="fixed bottom-5 sm:relative sm:bottom-0"> </footer-bar>
+
+    <footer-bar class="fixed bottom-5 sm:static z-20" />
   </div>
 </template>

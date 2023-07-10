@@ -2,25 +2,28 @@
 import { computed, onMounted, ShallowRef, shallowRef } from 'vue'
 import { storeToRefs } from 'pinia'
 import Sortable, { SortableEvent } from 'sortablejs'
+import { useTranslation } from 'i18next-vue'
 
 import { useAppStore } from '@/stores/app.store'
 import { useMapStore } from '@/stores/map.store'
-import type { Layer, LayerId } from '@/stores/map.store.model'
 import { useMetadataStore } from '@/stores/metadata.store'
+import type { Layer, LayerId } from '@/stores/map.store.model'
 import { BLANK_BACKGROUNDLAYER } from '@/composables/background-layer/background-layer.model'
 import useMvtStyles from '@/composables/mvt-styles/mvt-styles.composable'
+import { useSliderComparatorStore } from '@/stores/slider-comparator.store'
 
 import LayerManagerItemBackground from './layer-item/layer-item-background.vue'
 import LayerManagerItem from './layer-item/layer-item.vue'
-import { useTranslation } from 'i18next-vue'
 
 const { t } = useTranslation()
 
 const { setMetadataId } = useMetadataStore()
 const mapStore = useMapStore()
 const appStore = useAppStore()
-const { bgLayer } = storeToRefs(mapStore)
 const styles = useMvtStyles()
+const sliderStore = useSliderComparatorStore()
+const { bgLayer } = storeToRefs(mapStore)
+const { sliderActive } = storeToRefs(sliderStore)
 
 const layers = computed(() => [...mapStore.layers].reverse())
 const isLayerOpenId: ShallowRef<LayerId | undefined> = shallowRef()
@@ -66,12 +69,16 @@ function toggleAccordionItem(layer: Layer) {
 function toggleEditionLayer() {
   appStore.toggleStyleEditorPanel()
 }
+
+function toggleLayerComparator() {
+  sliderStore.toggleSlider()
+}
 </script>
 
 <template>
   <ul id="sortable-layers">
     <li
-      v-for="layer in layers"
+      v-for="(layer, index) in layers"
       :key="layer.id"
       :id="(layer.id as string)"
       data-cy="myLayer"
@@ -80,8 +87,11 @@ function toggleEditionLayer() {
         :draggableClassName="draggableClassName"
         :layer="layer"
         :isOpen="isLayerOpenId === layer.id"
+        :isLayerComparatorOpen="sliderActive"
+        :displayLayerComparatorOpen="index === 0"
         @clickRemove="removeLayer"
         @clickToggle="toggleAccordionItem"
+        @clickToggleLayerComparator="toggleLayerComparator"
         @clickInfo="setMetadataId(layer.id)"
         @changeOpacity="changeOpacityLayer"
       >
