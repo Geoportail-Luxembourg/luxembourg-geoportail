@@ -11,6 +11,7 @@ export const useAppStore = defineStore(
     const layersOpen = ref(DEFAULT_LAYER_PANEL_OPENED)
     const remoteLayersOpen = ref()
     const styleEditorOpen = ref(false)
+    const trackingActive = ref(false)
 
     function setLang(language: string) {
       lang.value = language
@@ -32,16 +33,22 @@ export const useAppStore = defineStore(
       styleEditorOpen.value = false
     }
 
+    function setTracking(active: boolean) {
+      trackingActive.value = active
+    }
+
     return {
       lang,
       layersOpen,
       styleEditorOpen,
       remoteLayersOpen,
+      trackingActive,
       setLang,
       setLayersOpen,
       setRemoteLayersOpen,
       toggleStyleEditorPanel,
       closeStyleEditorPanel,
+      setTracking
     }
   },
   {}

@@ -1,11 +1,20 @@
 <script setup lang="ts">
-import { ref } from 'vue'
+import { ref, onMounted, watch, Ref } from 'vue'
+import { storeToRefs } from 'pinia'
 import { useTranslation } from 'i18next-vue'
 import { CLASS_CONTROL, CLASS_UNSELECTABLE } from 'ol/css'
-
 import Control from 'ol/control/Control'
+import Geolocation from 'ol/Geolocation'
+
 import useControl from '@/composables/control/control.composable'
-import { onMounted } from 'vue'
+import { useAppStore } from '@/stores/app.store'
+import useMap from '@/composables/map/map.composable'
+
+const DEFAULT_TRACKING_OPTIONS: PositionOptions = {
+  enableHighAccuracy: true,
+  maximumAge: 60000,
+  timeout: 7000
+}
 
 const { t } = useTranslation()
 const props = withDefaults(
@@ -20,7 +29,42 @@ const props = withDefaults(
     tipLabel: 'Location',
   }
 )
-const controlElement = ref(null)
+const controlElement: Ref<HTMLElement | null> = ref(null)
+const geolocation: Ref<Geolocation | undefined> = ref()
+const { trackingActive } = storeToRefs(useAppStore())
+const { olMap } = useMap()
+
+watch([trackingActive, olMap], ([active, olMap]) => {
+  if (!olMap || !geolocation.value) {
+    return
+  }
+
+  if(active) {
+    geolocation.value = new Geolocation({
+      projection: olMap.getView().getProjection(),
+      trackingOptions: DEFAULT_TRACKING_OPTIONS
+    })
+
+    centerToLocation()
+  } else {
+    clearFeatureOverlay()
+    geolocation.value.setTracking(false)
+  }
+})
+
+function isNotHttps() {
+  return location.protocol !== 'https:'
+}
+
+function centerToLocation() {
+  if (isNotHttps()) {
+    // showRedirect()
+  }
+}
+
+function clearFeatureOverlay() {
+
+}
 
 function handleCenterToLocation() {
   // TODO:
@@ -97,17 +141,13 @@ function handleCenterToLocation() {
 //   //     }.bind(this));
 // }
 
-// function initFeatureOverlay_() {
-//   // this.featureOverlay_.clear();
-//   // this.accuracyFeature_.setGeometry(null);
-//   // this.positionFeature_.setGeometry(null);
-//   // this.featureOverlay_.addFeature(this.accuracyFeature_);
-//   // this.featureOverlay_.addFeature(this.positionFeature_);
-// }
-
-// function clearFeatureOverlay_() {
-//   // this.featureOverlay_.clear();
-// }
+function initFeatureOverlay_() {
+  this.featureOverlay_.clear()
+  this.accuracyFeature_.setGeometry(null)
+  this.positionFeature_.setGeometry(null)
+  this.featureOverlay_.addFeature(this.accuracyFeature_)
+  this.featureOverlay_.addFeature(this.positionFeature_)
+}
 
 onMounted(() =>
   useControl(Control, { ...props, ...{ target: controlElement } })

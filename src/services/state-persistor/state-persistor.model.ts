@@ -7,6 +7,7 @@ export const SP_KEY_DEBUG = 'debug' // TODO:
 export const SP_KEY_FID = 'fid' // TODO:
 export const SP_KEY_LANG = 'lang'
 export const SP_KEY_LAYERS_OPEN = 'layersOpen'
+export const SP_KEY_LOCATION = 'tracking'
 export const SP_KEY_ADDRESS = 'address'
 export const SP_KEY_VERSION = 'version'
 export const SP_KEY_MAPID = 'map_id' // TODO:
