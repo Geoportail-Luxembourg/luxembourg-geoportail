@@ -30,6 +30,7 @@ export default defineConfig((/*{ command, mode }*/) => {
       },
     },
     optimizeDeps: {
+      exclude: ['ol'],
       force: false,
       disabled: true,
     },
@@ -41,8 +42,12 @@ export default defineConfig((/*{ command, mode }*/) => {
       name: 'luxembourg-geoportail',
       fileName: 'lux.dist',
     },
+    commonjsOptions: {
+      exclude: ['ol'],
+    },
     outDir: 'bundle', // TODO: rename /dist
     rollupOptions: {
+      external: [/^ol\/.*/],
       output: {
         globals: {
           vue: 'Vue',
