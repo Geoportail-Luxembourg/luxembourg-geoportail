@@ -5,9 +5,28 @@ var __publicField = (obj, key, value) => {
   return value;
 };
 (function(global2, factory) {
-  typeof exports === "object" && typeof module !== "undefined" ? factory(exports) : typeof define === "function" && define.amd ? define(["exports"], factory) : (global2 = typeof globalThis !== "undefined" ? globalThis : global2 || self, factory(global2["luxembourg-geoportail"] = {}));
-})(this, function(exports2) {
+  typeof exports === "object" && typeof module !== "undefined" ? factory(exports, require("ol/proj"), require("ol/proj/proj4"), require("ol/Map"), require("ol/View"), require("ol/layer/Image"), require("ol/layer/Tile"), require("ol/source"), require("ol/layer/Layer"), require("ol/math"), require("ol/tilegrid/WMTS"), require("ol/extent.js"), require("ol/events"), require("ol/ObjectEventType"), require("ol/control/Attribution"), require("ol/css"), require("ol/control/Control"), require("ol/control/FullScreen"), require("ol/control/Zoom"), require("ol/control/ZoomToExtent"), require("ol/format/WMTSCapabilities.js"), require("ol/render"), require("ol/Observable"), require("ol/render/EventType")) : typeof define === "function" && define.amd ? define(["exports", "ol/proj", "ol/proj/proj4", "ol/Map", "ol/View", "ol/layer/Image", "ol/layer/Tile", "ol/source", "ol/layer/Layer", "ol/math", "ol/tilegrid/WMTS", "ol/extent.js", "ol/events", "ol/ObjectEventType", "ol/control/Attribution", "ol/css", "ol/control/Control", "ol/control/FullScreen", "ol/control/Zoom", "ol/control/ZoomToExtent", "ol/format/WMTSCapabilities.js", "ol/render", "ol/Observable", "ol/render/EventType"], factory) : (global2 = typeof globalThis !== "undefined" ? globalThis : global2 || self, factory(global2["luxembourg-geoportail"] = {}, global2.proj, global2.proj4$1, global2.OlMap, global2.OlView, global2.ImageLayer, global2.TileLayer, global2.source, global2.Layer, global2.math, global2.WmtsTileGrid, global2.extent_js, global2.olEvents, global2.ObjectEventType, global2.Attribution, global2.css$1, global2.Control, global2.FullScreen, global2.Zoom, global2.OlControlZoomToExtent, global2.WMTSCapabilities, global2.render$1, global2.Observable, global2.EventType));
+})(this, function(exports2, proj, proj4$1, OlMap, OlView, ImageLayer, TileLayer, source, Layer, math, WmtsTileGrid, extent_js, olEvents, ObjectEventType, Attribution, css$1, Control, FullScreen, Zoom, OlControlZoomToExtent, WMTSCapabilities, render$1, Observable, EventType) {
   "use strict";
+  const _interopDefaultLegacy = (e) => e && typeof e === "object" && "default" in e ? e : { default: e };
+  function _interopNamespace(e) {
+    if (e && e.__esModule)
+      return e;
+    const n = Object.create(null, { [Symbol.toStringTag]: { value: "Module" } });
+    if (e) {
+      for (const k in e) {
+        if (k !== "default") {
+          const d = Object.getOwnPropertyDescriptor(e, k);
+          Object.defineProperty(n, k, d.get ? d : {
+            enumerable: true,
+            get: () => e[k]
+          });
+        }
+      }
+    }
+    n.default = e;
+    return Object.freeze(n);
+  }
   function _mergeNamespaces(n, m) {
     for (var i = 0; i < m.length; i++) {
       const e = m[i];
@@ -27,6 +46,21 @@ var __publicField = (obj, key, value) => {
     }
     return Object.freeze(Object.defineProperty(n, Symbol.toStringTag, { value: "Module" }));
   }
+  const OlMap__default = /* @__PURE__ */ _interopDefaultLegacy(OlMap);
+  const OlView__default = /* @__PURE__ */ _interopDefaultLegacy(OlView);
+  const ImageLayer__default = /* @__PURE__ */ _interopDefaultLegacy(ImageLayer);
+  const TileLayer__default = /* @__PURE__ */ _interopDefaultLegacy(TileLayer);
+  const Layer__default = /* @__PURE__ */ _interopDefaultLegacy(Layer);
+  const WmtsTileGrid__default = /* @__PURE__ */ _interopDefaultLegacy(WmtsTileGrid);
+  const olEvents__namespace = /* @__PURE__ */ _interopNamespace(olEvents);
+  const ObjectEventType__default = /* @__PURE__ */ _interopDefaultLegacy(ObjectEventType);
+  const Attribution__default = /* @__PURE__ */ _interopDefaultLegacy(Attribution);
+  const Control__default = /* @__PURE__ */ _interopDefaultLegacy(Control);
+  const FullScreen__default = /* @__PURE__ */ _interopDefaultLegacy(FullScreen);
+  const Zoom__default = /* @__PURE__ */ _interopDefaultLegacy(Zoom);
+  const OlControlZoomToExtent__default = /* @__PURE__ */ _interopDefaultLegacy(OlControlZoomToExtent);
+  const WMTSCapabilities__default = /* @__PURE__ */ _interopDefaultLegacy(WMTSCapabilities);
+  const EventType__default = /* @__PURE__ */ _interopDefaultLegacy(EventType);
   function makeMap(str, expectsLowerCase) {
     const map2 = /* @__PURE__ */ Object.create(null);
     const list = str.split(",");
@@ -126,7 +160,7 @@ var __publicField = (obj, key, value) => {
   const onRE = /^on[^a-z]/;
   const isOn = (key) => onRE.test(key);
   const isModelListener = (key) => key.startsWith("onUpdate:");
-  const extend$4 = Object.assign;
+  const extend$2 = Object.assign;
   const remove = (arr2, el) => {
     const i = arr2.indexOf(el);
     if (i > -1) {
@@ -157,10 +191,10 @@ var __publicField = (obj, key, value) => {
   );
   const isBuiltInDirective = /* @__PURE__ */ makeMap("bind,cloak,else-if,else,for,html,if,model,on,once,pre,show,slot,text,memo");
   const cacheStringFunction = (fn) => {
-    const cache2 = /* @__PURE__ */ Object.create(null);
+    const cache = /* @__PURE__ */ Object.create(null);
     return (str) => {
-      const hit = cache2[str];
-      return hit || (cache2[str] = fn(str));
+      const hit = cache[str];
+      return hit || (cache[str] = fn(str));
     };
   };
   const camelizeRE = /-(\w)/g;
@@ -508,7 +542,7 @@ var __publicField = (obj, key, value) => {
   function triggerEffect(effect, debuggerEventExtraInfo) {
     if (effect !== activeEffect || effect.allowRecurse) {
       if (process.env.NODE_ENV !== "production" && effect.onTrigger) {
-        effect.onTrigger(extend$4({ effect }, debuggerEventExtraInfo));
+        effect.onTrigger(extend$2({ effect }, debuggerEventExtraInfo));
       }
       if (effect.scheduler) {
         effect.scheduler();
@@ -672,16 +706,16 @@ var __publicField = (obj, key, value) => {
       return true;
     }
   };
-  const shallowReactiveHandlers = /* @__PURE__ */ extend$4({}, mutableHandlers, {
+  const shallowReactiveHandlers = /* @__PURE__ */ extend$2({}, mutableHandlers, {
     get: shallowGet,
     set: shallowSet
   });
-  const shallowReadonlyHandlers = /* @__PURE__ */ extend$4({}, readonlyHandlers, {
+  const shallowReadonlyHandlers = /* @__PURE__ */ extend$2({}, readonlyHandlers, {
     get: shallowReadonlyGet
   });
   const toShallow = (value) => value;
   const getProto = (v2) => Reflect.getPrototypeOf(v2);
-  function get$5(target, key, isReadonly2 = false, isShallow2 = false) {
+  function get$2(target, key, isReadonly2 = false, isShallow2 = false) {
     target = target["__v_raw"];
     const rawTarget = toRaw(target);
     const rawKey = toRaw(key);
@@ -718,7 +752,7 @@ var __publicField = (obj, key, value) => {
     !isReadonly2 && track(toRaw(target), "iterate", ITERATE_KEY);
     return Reflect.get(target, "size", target);
   }
-  function add$4(value) {
+  function add$1(value) {
     value = toRaw(value);
     const target = toRaw(this);
     const proto = getProto(target);
@@ -766,7 +800,7 @@ var __publicField = (obj, key, value) => {
     }
     return result;
   }
-  function clear$1() {
+  function clear() {
     const target = toRaw(this);
     const hadItems = target.size !== 0;
     const oldTarget = process.env.NODE_ENV !== "production" ? isMap(target) ? new Map(target) : new Set(target) : void 0;
@@ -777,7 +811,7 @@ var __publicField = (obj, key, value) => {
     return result;
   }
   function createForEach(isReadonly2, isShallow2) {
-    return function forEach2(callback, thisArg) {
+    return function forEach(callback, thisArg) {
       const observed = this;
       const target = observed["__v_raw"];
       const rawTarget = toRaw(target);
@@ -824,35 +858,35 @@ var __publicField = (obj, key, value) => {
   function createInstrumentations() {
     const mutableInstrumentations2 = {
       get(key) {
-        return get$5(this, key);
+        return get$2(this, key);
       },
       get size() {
         return size(this);
       },
       has,
-      add: add$4,
+      add: add$1,
       set: set$2,
       delete: deleteEntry,
-      clear: clear$1,
+      clear,
       forEach: createForEach(false, false)
     };
     const shallowInstrumentations2 = {
       get(key) {
-        return get$5(this, key, false, true);
+        return get$2(this, key, false, true);
       },
       get size() {
         return size(this);
       },
       has,
-      add: add$4,
+      add: add$1,
       set: set$2,
       delete: deleteEntry,
-      clear: clear$1,
+      clear,
       forEach: createForEach(false, true)
     };
     const readonlyInstrumentations2 = {
       get(key) {
-        return get$5(this, key, true);
+        return get$2(this, key, true);
       },
       get size() {
         return size(this, true);
@@ -868,7 +902,7 @@ var __publicField = (obj, key, value) => {
     };
     const shallowReadonlyInstrumentations2 = {
       get(key) {
-        return get$5(this, key, true, true);
+        return get$2(this, key, true, true);
       },
       get size() {
         return size(this, true);
@@ -1625,7 +1659,7 @@ var __publicField = (obj, key, value) => {
     });
   }
   function updateComponentDef(oldComp, newComp) {
-    extend$4(oldComp, newComp);
+    extend$2(oldComp, newComp);
     for (const key in oldComp) {
       if (key !== "__file" && !(key in newComp)) {
         delete oldComp[key];
@@ -1774,8 +1808,8 @@ var __publicField = (obj, key, value) => {
     }
   }
   function normalizeEmitsOptions(comp, appContext, asMixin = false) {
-    const cache2 = appContext.emitsCache;
-    const cached = cache2.get(comp);
+    const cache = appContext.emitsCache;
+    const cached = cache.get(comp);
     if (cached !== void 0) {
       return cached;
     }
@@ -1787,7 +1821,7 @@ var __publicField = (obj, key, value) => {
         const normalizedFromExtend = normalizeEmitsOptions(raw2, appContext, true);
         if (normalizedFromExtend) {
           hasExtends = true;
-          extend$4(normalized, normalizedFromExtend);
+          extend$2(normalized, normalizedFromExtend);
         }
       };
       if (!asMixin && appContext.mixins.length) {
@@ -1802,17 +1836,17 @@ var __publicField = (obj, key, value) => {
     }
     if (!raw && !hasExtends) {
       if (isObject(comp)) {
-        cache2.set(comp, null);
+        cache.set(comp, null);
       }
       return null;
     }
     if (isArray(raw)) {
       raw.forEach((key) => normalized[key] = null);
     } else {
-      extend$4(normalized, raw);
+      extend$2(normalized, raw);
     }
     if (isObject(comp)) {
-      cache2.set(comp, normalized);
+      cache.set(comp, normalized);
     }
     return normalized;
   }
@@ -2127,13 +2161,13 @@ var __publicField = (obj, key, value) => {
     return doWatch(effect, null, options);
   }
   const INITIAL_WATCHER_VALUE = {};
-  function watch(source, cb, options) {
+  function watch(source2, cb, options) {
     if (process.env.NODE_ENV !== "production" && !isFunction(cb)) {
       warn(`\`watch(fn, options?)\` signature has been moved to a separate API. Use \`watchEffect(fn, options?)\` instead. \`watch\` now only supports \`watch(source, cb, options?) signature.`);
     }
-    return doWatch(source, cb, options);
+    return doWatch(source2, cb, options);
   }
-  function doWatch(source, cb, { immediate, deep, flush, onTrack, onTrigger } = EMPTY_OBJ) {
+  function doWatch(source2, cb, { immediate, deep, flush, onTrack, onTrigger } = EMPTY_OBJ) {
     if (process.env.NODE_ENV !== "production" && !cb) {
       if (immediate !== void 0) {
         warn(`watch() "immediate" option is only respected when using the watch(source, callback, options?) signature.`);
@@ -2149,16 +2183,16 @@ var __publicField = (obj, key, value) => {
     let getter;
     let forceTrigger = false;
     let isMultiSource = false;
-    if (isRef(source)) {
-      getter = () => source.value;
-      forceTrigger = isShallow$1(source);
-    } else if (isReactive(source)) {
-      getter = () => source;
+    if (isRef(source2)) {
+      getter = () => source2.value;
+      forceTrigger = isShallow$1(source2);
+    } else if (isReactive(source2)) {
+      getter = () => source2;
       deep = true;
-    } else if (isArray(source)) {
+    } else if (isArray(source2)) {
       isMultiSource = true;
-      forceTrigger = source.some((s) => isReactive(s) || isShallow$1(s));
-      getter = () => source.map((s) => {
+      forceTrigger = source2.some((s) => isReactive(s) || isShallow$1(s));
+      getter = () => source2.map((s) => {
         if (isRef(s)) {
           return s.value;
         } else if (isReactive(s)) {
@@ -2169,9 +2203,9 @@ var __publicField = (obj, key, value) => {
           process.env.NODE_ENV !== "production" && warnInvalidSource(s);
         }
       });
-    } else if (isFunction(source)) {
+    } else if (isFunction(source2)) {
       if (cb) {
-        getter = () => callWithErrorHandling(source, instance2, 2);
+        getter = () => callWithErrorHandling(source2, instance2, 2);
       } else {
         getter = () => {
           if (instance2 && instance2.isUnmounted) {
@@ -2180,12 +2214,12 @@ var __publicField = (obj, key, value) => {
           if (cleanup) {
             cleanup();
           }
-          return callWithAsyncErrorHandling(source, instance2, 3, [onCleanup]);
+          return callWithAsyncErrorHandling(source2, instance2, 3, [onCleanup]);
         };
       }
     } else {
       getter = NOOP;
-      process.env.NODE_ENV !== "production" && warnInvalidSource(source);
+      process.env.NODE_ENV !== "production" && warnInvalidSource(source2);
     }
     if (cb && deep) {
       const baseGetter = getter;
@@ -2216,7 +2250,7 @@ var __publicField = (obj, key, value) => {
         return NOOP;
       }
     }
-    let oldValue = isMultiSource ? new Array(source.length).fill(INITIAL_WATCHER_VALUE) : INITIAL_WATCHER_VALUE;
+    let oldValue = isMultiSource ? new Array(source2.length).fill(INITIAL_WATCHER_VALUE) : INITIAL_WATCHER_VALUE;
     const job = () => {
       if (!effect.active) {
         return;
@@ -2276,9 +2310,9 @@ var __publicField = (obj, key, value) => {
       ssrCleanup.push(unwatch);
     return unwatch;
   }
-  function instanceWatch(source, value, options) {
+  function instanceWatch(source2, value, options) {
     const publicThis = this.proxy;
-    const getter = isString(source) ? source.includes(".") ? createPathGetter(publicThis, source) : () => publicThis[source] : source.bind(publicThis, publicThis);
+    const getter = isString(source2) ? source2.includes(".") ? createPathGetter(publicThis, source2) : () => publicThis[source2] : source2.bind(publicThis, publicThis);
     let cb;
     if (isFunction(value)) {
       cb = value;
@@ -2780,38 +2814,38 @@ If this is a native custom element, make sure to exclude it from component resol
   function resolve(registry, name) {
     return registry && (registry[name] || registry[camelize(name)] || registry[capitalize$1(camelize(name))]);
   }
-  function renderList(source, renderItem, cache2, index2) {
+  function renderList(source2, renderItem, cache, index2) {
     let ret;
-    const cached = cache2 && cache2[index2];
-    if (isArray(source) || isString(source)) {
-      ret = new Array(source.length);
-      for (let i = 0, l = source.length; i < l; i++) {
-        ret[i] = renderItem(source[i], i, void 0, cached && cached[i]);
+    const cached = cache && cache[index2];
+    if (isArray(source2) || isString(source2)) {
+      ret = new Array(source2.length);
+      for (let i = 0, l = source2.length; i < l; i++) {
+        ret[i] = renderItem(source2[i], i, void 0, cached && cached[i]);
       }
-    } else if (typeof source === "number") {
-      if (process.env.NODE_ENV !== "production" && !Number.isInteger(source)) {
-        warn(`The v-for range expect an integer value but got ${source}.`);
+    } else if (typeof source2 === "number") {
+      if (process.env.NODE_ENV !== "production" && !Number.isInteger(source2)) {
+        warn(`The v-for range expect an integer value but got ${source2}.`);
       }
-      ret = new Array(source);
-      for (let i = 0; i < source; i++) {
+      ret = new Array(source2);
+      for (let i = 0; i < source2; i++) {
         ret[i] = renderItem(i + 1, i, void 0, cached && cached[i]);
       }
-    } else if (isObject(source)) {
-      if (source[Symbol.iterator]) {
-        ret = Array.from(source, (item, i) => renderItem(item, i, void 0, cached && cached[i]));
+    } else if (isObject(source2)) {
+      if (source2[Symbol.iterator]) {
+        ret = Array.from(source2, (item, i) => renderItem(item, i, void 0, cached && cached[i]));
       } else {
-        const keys = Object.keys(source);
+        const keys = Object.keys(source2);
         ret = new Array(keys.length);
         for (let i = 0, l = keys.length; i < l; i++) {
           const key = keys[i];
-          ret[i] = renderItem(source[key], key, i, cached && cached[i]);
+          ret[i] = renderItem(source2[key], key, i, cached && cached[i]);
         }
       }
     } else {
       ret = [];
     }
-    if (cache2) {
-      cache2[index2] = ret;
+    if (cache) {
+      cache[index2] = ret;
     }
     return ret;
   }
@@ -2860,7 +2894,7 @@ If this is a native custom element, make sure to exclude it from component resol
       return getExposeProxy(i) || i.proxy;
     return getPublicInstance(i.parent);
   };
-  const publicPropertiesMap = /* @__PURE__ */ extend$4(/* @__PURE__ */ Object.create(null), {
+  const publicPropertiesMap = /* @__PURE__ */ extend$2(/* @__PURE__ */ Object.create(null), {
     $: (i) => i,
     $el: (i) => i.vnode.el,
     $data: (i) => i.data,
@@ -3037,12 +3071,12 @@ If this is a native custom element, make sure to exclude it from component resol
     });
   }
   function createDuplicateChecker() {
-    const cache2 = /* @__PURE__ */ Object.create(null);
+    const cache = /* @__PURE__ */ Object.create(null);
     return (type, key) => {
-      if (cache2[key]) {
-        warn(`${type} property "${key}" is already defined in ${cache2[key]}.`);
+      if (cache[key]) {
+        warn(`${type} property "${key}" is already defined in ${cache[key]}.`);
       } else {
-        cache2[key] = type;
+        cache[key] = type;
       }
     };
   }
@@ -3185,11 +3219,11 @@ If this is a native custom element, make sure to exclude it from component resol
     if (created) {
       callHook$1(created, instance2, "c");
     }
-    function registerLifecycleHook(register2, hook) {
+    function registerLifecycleHook(register, hook) {
       if (isArray(hook)) {
-        hook.forEach((_hook) => register2(_hook.bind(publicThis)));
+        hook.forEach((_hook) => register(_hook.bind(publicThis)));
       } else if (hook) {
-        register2(hook.bind(publicThis));
+        register(hook.bind(publicThis));
       }
     }
     registerLifecycleHook(onBeforeMount, beforeMount);
@@ -3298,8 +3332,8 @@ If this is a native custom element, make sure to exclude it from component resol
   function resolveMergedOptions(instance2) {
     const base = instance2.type;
     const { mixins, extends: extendsOptions } = base;
-    const { mixins: globalMixins, optionsCache: cache2, config: { optionMergeStrategies } } = instance2.appContext;
-    const cached = cache2.get(base);
+    const { mixins: globalMixins, optionsCache: cache, config: { optionMergeStrategies } } = instance2.appContext;
+    const cached = cache.get(base);
     let resolved;
     if (cached) {
       resolved = cached;
@@ -3315,7 +3349,7 @@ If this is a native custom element, make sure to exclude it from component resol
       mergeOptions(resolved, base, optionMergeStrategies);
     }
     if (isObject(base)) {
-      cache2.set(base, resolved);
+      cache.set(base, resolved);
     }
     return resolved;
   }
@@ -3371,7 +3405,7 @@ If this is a native custom element, make sure to exclude it from component resol
       return from;
     }
     return function mergedDataFn() {
-      return extend$4(isFunction(to) ? to.call(this, this) : to, isFunction(from) ? from.call(this, this) : from);
+      return extend$2(isFunction(to) ? to.call(this, this) : to, isFunction(from) ? from.call(this, this) : from);
     };
   }
   function mergeInject(to, from) {
@@ -3391,14 +3425,14 @@ If this is a native custom element, make sure to exclude it from component resol
     return to ? [...new Set([].concat(to, from))] : from;
   }
   function mergeObjectOptions(to, from) {
-    return to ? extend$4(extend$4(/* @__PURE__ */ Object.create(null), to), from) : from;
+    return to ? extend$2(extend$2(/* @__PURE__ */ Object.create(null), to), from) : from;
   }
   function mergeWatchOptions(to, from) {
     if (!to)
       return from;
     if (!from)
       return to;
-    const merged = extend$4(/* @__PURE__ */ Object.create(null), to);
+    const merged = extend$2(/* @__PURE__ */ Object.create(null), to);
     for (const key in from) {
       merged[key] = mergeAsArray(to[key], from[key]);
     }
@@ -3565,8 +3599,8 @@ If this is a native custom element, make sure to exclude it from component resol
     return value;
   }
   function normalizePropsOptions(comp, appContext, asMixin = false) {
-    const cache2 = appContext.propsCache;
-    const cached = cache2.get(comp);
+    const cache = appContext.propsCache;
+    const cached = cache.get(comp);
     if (cached) {
       return cached;
     }
@@ -3578,7 +3612,7 @@ If this is a native custom element, make sure to exclude it from component resol
       const extendProps = (raw2) => {
         hasExtends = true;
         const [props, keys] = normalizePropsOptions(raw2, appContext, true);
-        extend$4(normalized, props);
+        extend$2(normalized, props);
         if (keys)
           needCastKeys.push(...keys);
       };
@@ -3594,7 +3628,7 @@ If this is a native custom element, make sure to exclude it from component resol
     }
     if (!raw && !hasExtends) {
       if (isObject(comp)) {
-        cache2.set(comp, EMPTY_ARR);
+        cache.set(comp, EMPTY_ARR);
       }
       return EMPTY_ARR;
     }
@@ -3631,7 +3665,7 @@ If this is a native custom element, make sure to exclude it from component resol
     }
     const res = [normalized, needCastKeys];
     if (isObject(comp)) {
-      cache2.set(comp, res);
+      cache.set(comp, res);
     }
     return res;
   }
@@ -3814,11 +3848,11 @@ If this is a native custom element, make sure to exclude it from component resol
       const type = children._;
       if (type) {
         if (process.env.NODE_ENV !== "production" && isHmrUpdating) {
-          extend$4(slots, children);
+          extend$2(slots, children);
         } else if (optimized && type === 1) {
           needDeletionCheck = false;
         } else {
-          extend$4(slots, children);
+          extend$2(slots, children);
           if (!optimized && type === 1) {
             delete slots._;
           }
@@ -5417,7 +5451,7 @@ For more details, see https://link.vuejs.org/feature-flags.`);
       }
       if (isObject(style)) {
         if (isProxy(style) && !isArray(style)) {
-          style = extend$4({}, style);
+          style = extend$2({}, style);
         }
         props.style = normalizeStyle(style);
       }
@@ -5433,7 +5467,7 @@ Component that was made reactive: `, type);
   function guardReactiveProps(props) {
     if (!props)
       return null;
-    return isProxy(props) || InternalObjectKey in props ? extend$4({}, props) : props;
+    return isProxy(props) || InternalObjectKey in props ? extend$2({}, props) : props;
   }
   function cloneVNode(vnode, extraProps, mergeRef = false) {
     const { props, ref: ref2, patchFlag, children } = vnode;
@@ -5775,7 +5809,7 @@ Component that was made reactive: `, type);
           }
           const { isCustomElement, compilerOptions } = instance2.appContext.config;
           const { delimiters, compilerOptions: componentCompilerOptions } = Component;
-          const finalCompilerOptions = extend$4(extend$4({
+          const finalCompilerOptions = extend$2(extend$2({
             isCustomElement,
             delimiters
           }, compilerOptions), componentCompilerOptions);
@@ -6043,7 +6077,7 @@ Component that was made reactive: `, type);
       return blocks;
     }
     function createInstanceBlock(type, target) {
-      target = extend$4({}, target);
+      target = extend$2({}, target);
       if (!Object.keys(target).length) {
         return ["span", {}];
       }
@@ -6465,7 +6499,7 @@ Component that was made reactive: `, type);
     leaveActiveClass: String,
     leaveToClass: String
   };
-  Transition.props = /* @__PURE__ */ extend$4({}, BaseTransition.props, DOMTransitionPropsValidators);
+  Transition.props = /* @__PURE__ */ extend$2({}, BaseTransition.props, DOMTransitionPropsValidators);
   const callHook = (hook, args = []) => {
     if (isArray(hook)) {
       hook.forEach((h2) => h2(...args));
@@ -6517,7 +6551,7 @@ Component that was made reactive: `, type);
         });
       };
     };
-    return extend$4(baseProps, {
+    return extend$2(baseProps, {
       onBeforeEnter(el) {
         callHook(onBeforeEnter, [el]);
         addTransitionClass(el, enterFromClass);
@@ -6700,12 +6734,12 @@ Component that was made reactive: `, type);
       }
     };
   };
-  const rendererOptions = /* @__PURE__ */ extend$4({ patchProp }, nodeOps);
+  const rendererOptions = /* @__PURE__ */ extend$2({ patchProp }, nodeOps);
   let renderer;
   function ensureRenderer() {
     return renderer || (renderer = createRenderer(rendererOptions));
   }
-  const render$1 = (...args) => {
+  const render = (...args) => {
     ensureRenderer().render(...args);
   };
   const createApp = (...args) => {
@@ -6869,10 +6903,10 @@ Component that was made reactive: `, type);
     throw new TypeError("Invalid attempt to spread non-iterable instance.\nIn order to be iterable, non-array objects must have a [Symbol.iterator]() method.");
   }
   var hasOwnProperty = Object.hasOwnProperty, setPrototypeOf = Object.setPrototypeOf, isFrozen = Object.isFrozen, getPrototypeOf = Object.getPrototypeOf, getOwnPropertyDescriptor = Object.getOwnPropertyDescriptor;
-  var freeze = Object.freeze, seal = Object.seal, create$1 = Object.create;
-  var _ref = typeof Reflect !== "undefined" && Reflect, apply$1 = _ref.apply, construct = _ref.construct;
-  if (!apply$1) {
-    apply$1 = function apply2(fun, thisValue, args) {
+  var freeze = Object.freeze, seal = Object.seal, create = Object.create;
+  var _ref = typeof Reflect !== "undefined" && Reflect, apply = _ref.apply, construct = _ref.construct;
+  if (!apply) {
+    apply = function apply2(fun, thisValue, args) {
       return fun.apply(thisValue, args);
     };
   }
@@ -6907,7 +6941,7 @@ Component that was made reactive: `, type);
       for (var _len = arguments.length, args = new Array(_len > 1 ? _len - 1 : 0), _key = 1; _key < _len; _key++) {
         args[_key - 1] = arguments[_key];
       }
-      return apply$1(func, thisArg, args);
+      return apply(func, thisArg, args);
     };
   }
   function unconstruct(func) {
@@ -6939,11 +6973,11 @@ Component that was made reactive: `, type);
     }
     return set2;
   }
-  function clone$2(object) {
-    var newObject = create$1(null);
+  function clone$1(object) {
+    var newObject = create(null);
     var property;
     for (property in object) {
-      if (apply$1(hasOwnProperty, object, [property]) === true) {
+      if (apply(hasOwnProperty, object, [property]) === true) {
         newObject[property] = object[property];
       }
     }
@@ -7032,7 +7066,7 @@ Component that was made reactive: `, type);
     }
     var originalDocument = window2.document;
     var document2 = window2.document;
-    var DocumentFragment = window2.DocumentFragment, HTMLTemplateElement = window2.HTMLTemplateElement, Node2 = window2.Node, Element2 = window2.Element, NodeFilter = window2.NodeFilter, _window$NamedNodeMap = window2.NamedNodeMap, NamedNodeMap = _window$NamedNodeMap === void 0 ? window2.NamedNodeMap || window2.MozNamedAttrMap : _window$NamedNodeMap, HTMLFormElement = window2.HTMLFormElement, DOMParser2 = window2.DOMParser, trustedTypes = window2.trustedTypes;
+    var DocumentFragment = window2.DocumentFragment, HTMLTemplateElement = window2.HTMLTemplateElement, Node = window2.Node, Element2 = window2.Element, NodeFilter = window2.NodeFilter, _window$NamedNodeMap = window2.NamedNodeMap, NamedNodeMap = _window$NamedNodeMap === void 0 ? window2.NamedNodeMap || window2.MozNamedAttrMap : _window$NamedNodeMap, HTMLFormElement = window2.HTMLFormElement, DOMParser2 = window2.DOMParser, trustedTypes = window2.trustedTypes;
     var ElementPrototype = Element2.prototype;
     var cloneNode = lookupGetter(ElementPrototype, "cloneNode");
     var getNextSibling = lookupGetter(ElementPrototype, "nextSibling");
@@ -7050,7 +7084,7 @@ Component that was made reactive: `, type);
     var importNode = originalDocument.importNode;
     var documentMode = {};
     try {
-      documentMode = clone$2(document2).documentMode ? document2.documentMode : {};
+      documentMode = clone$1(document2).documentMode ? document2.documentMode : {};
     } catch (_) {
     }
     var hooks = {};
@@ -7129,19 +7163,19 @@ Component that was made reactive: `, type);
       if (!cfg || _typeof$5(cfg) !== "object") {
         cfg = {};
       }
-      cfg = clone$2(cfg);
+      cfg = clone$1(cfg);
       PARSER_MEDIA_TYPE = SUPPORTED_PARSER_MEDIA_TYPES.indexOf(cfg.PARSER_MEDIA_TYPE) === -1 ? PARSER_MEDIA_TYPE = DEFAULT_PARSER_MEDIA_TYPE : PARSER_MEDIA_TYPE = cfg.PARSER_MEDIA_TYPE;
       transformCaseFunc = PARSER_MEDIA_TYPE === "application/xhtml+xml" ? stringToString : stringToLowerCase;
       ALLOWED_TAGS = "ALLOWED_TAGS" in cfg ? addToSet({}, cfg.ALLOWED_TAGS, transformCaseFunc) : DEFAULT_ALLOWED_TAGS;
       ALLOWED_ATTR = "ALLOWED_ATTR" in cfg ? addToSet({}, cfg.ALLOWED_ATTR, transformCaseFunc) : DEFAULT_ALLOWED_ATTR;
       ALLOWED_NAMESPACES = "ALLOWED_NAMESPACES" in cfg ? addToSet({}, cfg.ALLOWED_NAMESPACES, stringToString) : DEFAULT_ALLOWED_NAMESPACES;
       URI_SAFE_ATTRIBUTES = "ADD_URI_SAFE_ATTR" in cfg ? addToSet(
-        clone$2(DEFAULT_URI_SAFE_ATTRIBUTES),
+        clone$1(DEFAULT_URI_SAFE_ATTRIBUTES),
         cfg.ADD_URI_SAFE_ATTR,
         transformCaseFunc
       ) : DEFAULT_URI_SAFE_ATTRIBUTES;
       DATA_URI_TAGS = "ADD_DATA_URI_TAGS" in cfg ? addToSet(
-        clone$2(DEFAULT_DATA_URI_TAGS),
+        clone$1(DEFAULT_DATA_URI_TAGS),
         cfg.ADD_DATA_URI_TAGS,
         transformCaseFunc
       ) : DEFAULT_DATA_URI_TAGS;
@@ -7206,13 +7240,13 @@ Component that was made reactive: `, type);
       }
       if (cfg.ADD_TAGS) {
         if (ALLOWED_TAGS === DEFAULT_ALLOWED_TAGS) {
-          ALLOWED_TAGS = clone$2(ALLOWED_TAGS);
+          ALLOWED_TAGS = clone$1(ALLOWED_TAGS);
         }
         addToSet(ALLOWED_TAGS, cfg.ADD_TAGS, transformCaseFunc);
       }
       if (cfg.ADD_ATTR) {
         if (ALLOWED_ATTR === DEFAULT_ALLOWED_ATTR) {
-          ALLOWED_ATTR = clone$2(ALLOWED_ATTR);
+          ALLOWED_ATTR = clone$1(ALLOWED_ATTR);
         }
         addToSet(ALLOWED_ATTR, cfg.ADD_ATTR, transformCaseFunc);
       }
@@ -7221,7 +7255,7 @@ Component that was made reactive: `, type);
       }
       if (cfg.FORBID_CONTENTS) {
         if (FORBID_CONTENTS === DEFAULT_FORBID_CONTENTS) {
-          FORBID_CONTENTS = clone$2(FORBID_CONTENTS);
+          FORBID_CONTENTS = clone$1(FORBID_CONTENTS);
         }
         addToSet(FORBID_CONTENTS, cfg.FORBID_CONTENTS, transformCaseFunc);
       }
@@ -7382,7 +7416,7 @@ Component that was made reactive: `, type);
       return elm instanceof HTMLFormElement && (typeof elm.nodeName !== "string" || typeof elm.textContent !== "string" || typeof elm.removeChild !== "function" || !(elm.attributes instanceof NamedNodeMap) || typeof elm.removeAttribute !== "function" || typeof elm.setAttribute !== "function" || typeof elm.namespaceURI !== "string" || typeof elm.insertBefore !== "function" || typeof elm.hasChildNodes !== "function");
     };
     var _isNode = function _isNode2(object) {
-      return _typeof$5(Node2) === "object" ? object instanceof Node2 : object && _typeof$5(object) === "object" && typeof object.nodeType === "number" && typeof object.nodeName === "string";
+      return _typeof$5(Node) === "object" ? object instanceof Node : object && _typeof$5(object) === "object" && typeof object.nodeType === "number" && typeof object.nodeName === "string";
     };
     var _executeHook = function _executeHook2(entryPoint, currentNode, data) {
       if (!hooks[entryPoint]) {
@@ -7631,7 +7665,7 @@ Component that was made reactive: `, type);
             throw typeErrorCreate("root node is forbidden and cannot be sanitized in-place");
           }
         }
-      } else if (dirty instanceof Node2) {
+      } else if (dirty instanceof Node) {
         body = _initDocument("<!---->");
         importedNode = body.ownerDocument.importNode(dirty, true);
         if (importedNode.nodeType === 1 && importedNode.nodeName === "BODY") {
@@ -8254,11 +8288,11 @@ Component that was made reactive: `, type);
     }
     return state;
   }
-  function formatEventData(events2) {
-    if (!events2)
+  function formatEventData(events) {
+    if (!events)
       return {};
-    if (Array.isArray(events2)) {
-      return events2.reduce((data, event) => {
+    if (Array.isArray(events)) {
+      return events.reduce((data, event) => {
         data.keys.push(event.key);
         data.operations.push(event.type);
         data.oldValue[event.key] = event.oldValue;
@@ -8272,10 +8306,10 @@ Component that was made reactive: `, type);
       });
     } else {
       return {
-        operation: formatDisplay(events2.type),
-        key: formatDisplay(events2.key),
-        oldValue: events2.oldValue,
-        newValue: events2.newValue
+        operation: formatDisplay(events.type),
+        key: formatDisplay(events.key),
+        oldValue: events.oldValue,
+        newValue: events.newValue
       };
     }
   }
@@ -8569,7 +8603,7 @@ Only state can be modified.`);
           }
         }, { deep: true });
       });
-      store.$subscribe(({ events: events2, type }, state) => {
+      store.$subscribe(({ events, type }, state) => {
         api.notifyComponentUpdate();
         api.sendInspectorState(INSPECTOR_ID);
         if (!isTimelineActive)
@@ -8577,7 +8611,7 @@ Only state can be modified.`);
         const eventData = {
           time: now2(),
           title: formatMutationType(type),
-          data: assign$1({ store: formatDisplay(store.$id) }, formatEventData(events2)),
+          data: assign$1({ store: formatDisplay(store.$id) }, formatEventData(events)),
           groupId: activeAction
         };
         activeAction = void 0;
@@ -8585,16 +8619,16 @@ Only state can be modified.`);
           eventData.subtitle = "\u2935\uFE0F";
         } else if (type === MutationType.patchObject) {
           eventData.subtitle = "\u{1F9E9}";
-        } else if (events2 && !Array.isArray(events2)) {
-          eventData.subtitle = events2.type;
+        } else if (events && !Array.isArray(events)) {
+          eventData.subtitle = events.type;
         }
-        if (events2) {
+        if (events) {
           eventData.data["rawEvent(s)"] = {
             _custom: {
               display: "DebuggerEvent",
               type: "object",
               tooltip: "raw DebuggerEvent[]",
-              value: events2
+              value: events
             }
           };
         }
@@ -8783,7 +8817,7 @@ Only state can be modified.`);
   function shouldHydrate(obj) {
     return !isPlainObject(obj) || !obj.hasOwnProperty(skipHydrateSymbol);
   }
-  const { assign: assign$2 } = Object;
+  const { assign } = Object;
   function isComputed(o) {
     return !!(isRef(o) && o.effect);
   }
@@ -8798,7 +8832,7 @@ Only state can be modified.`);
         }
       }
       const localState = process.env.NODE_ENV !== "production" && hot ? toRefs(ref(state ? state() : {}).value) : toRefs(pinia.state.value[id]);
-      return assign$2(localState, actions, Object.keys(getters || {}).reduce((computedGetters, name) => {
+      return assign(localState, actions, Object.keys(getters || {}).reduce((computedGetters, name) => {
         if (process.env.NODE_ENV !== "production" && name in localState) {
           console.warn(`[\u{1F34D}]: A getter cannot have the same name as another state property. Rename one of them. Found with "${name}" in store "${id}".`);
         }
@@ -8815,7 +8849,7 @@ Only state can be modified.`);
   }
   function createSetupStore($id, setup, options = {}, pinia, hot, isOptionsStore) {
     let scope;
-    const optionsForPlugin = assign$2({ actions: {} }, options);
+    const optionsForPlugin = assign({ actions: {} }, options);
     if (process.env.NODE_ENV !== "production" && !pinia._e.active) {
       throw new Error("Pinia destroyed");
     }
@@ -8883,7 +8917,7 @@ Only state can be modified.`);
       const { state } = options;
       const newState = state ? state() : {};
       this.$patch(($state) => {
-        assign$2($state, newState);
+        assign($state, newState);
       });
     } : process.env.NODE_ENV !== "production" ? () => {
       throw new Error(`\u{1F34D}: Store "${$id}" is built using the setup syntax and does not implement $reset().`);
@@ -8955,12 +8989,12 @@ Only state can be modified.`);
               events: debuggerEvents
             }, state);
           }
-        }, assign$2({}, $subscribeOptions, options2)));
+        }, assign({}, $subscribeOptions, options2)));
         return removeSubscription;
       },
       $dispose
     };
-    const store = reactive(process.env.NODE_ENV !== "production" || USE_DEVTOOLS ? assign$2(
+    const store = reactive(process.env.NODE_ENV !== "production" || USE_DEVTOOLS ? assign(
       {
         _hmrPayload,
         _customProperties: markRaw(/* @__PURE__ */ new Set())
@@ -9012,8 +9046,8 @@ Only state can be modified.`);
       }
     }
     {
-      assign$2(store, setupStore);
-      assign$2(toRaw(store), setupStore);
+      assign(store, setupStore);
+      assign(toRaw(store), setupStore);
     }
     Object.defineProperty(store, "$state", {
       get: () => process.env.NODE_ENV !== "production" && hot ? hotState.value : pinia.state.value[$id],
@@ -9022,7 +9056,7 @@ Only state can be modified.`);
           throw new Error("cannot set hotState");
         }
         $patch(($state) => {
-          assign$2($state, state);
+          assign($state, state);
         });
       }
     });
@@ -9087,7 +9121,7 @@ Only state can be modified.`);
         enumerable: false
       };
       ["_p", "_hmrPayload", "_getters", "_customProperties"].forEach((p2) => {
-        Object.defineProperty(store, p2, assign$2({ value: store[p2] }, nonEnumerable));
+        Object.defineProperty(store, p2, assign({ value: store[p2] }, nonEnumerable));
       });
     }
     pinia._p.forEach((extender) => {
@@ -9099,9 +9133,9 @@ Only state can be modified.`);
           options: optionsForPlugin
         }));
         Object.keys(extensions || {}).forEach((key) => store._customProperties.add(key));
-        assign$2(store, extensions);
+        assign(store, extensions);
       } else {
-        assign$2(store, scope.run(() => extender({
+        assign(store, scope.run(() => extender({
           store,
           app: pinia._a,
           pinia,
@@ -9157,15 +9191,15 @@ This will fail in production.`);
       const store = pinia._s.get(id);
       if (process.env.NODE_ENV !== "production" && hot) {
         const hotId = "__hot:" + id;
-        const newStore = isSetupStore ? createSetupStore(hotId, setup, options, pinia, true) : createOptionsStore(hotId, assign$2({}, options), pinia, true);
+        const newStore = isSetupStore ? createSetupStore(hotId, setup, options, pinia, true) : createOptionsStore(hotId, assign({}, options), pinia, true);
         hot._hotUpdate(newStore);
         delete pinia.state.value[hotId];
         pinia._s.delete(hotId);
       }
       if (process.env.NODE_ENV !== "production" && IS_CLIENT && currentInstance2 && currentInstance2.proxy && !hot) {
         const vm = currentInstance2.proxy;
-        const cache2 = "_pStores" in vm ? vm._pStores : vm._pStores = {};
-        cache2[id] = store;
+        const cache = "_pStores" in vm ? vm._pStores : vm._pStores = {};
+        cache[id] = store;
       }
       return store;
     }
@@ -9183,1134 +9217,6 @@ This will fail in production.`);
         }
       }
       return refs;
-    }
-  }
-  var Units = {
-    RADIANS: "radians",
-    DEGREES: "degrees",
-    FEET: "ft",
-    METERS: "m",
-    PIXELS: "pixels",
-    TILE_PIXELS: "tile-pixels",
-    USFEET: "us-ft"
-  };
-  var METERS_PER_UNIT$1 = {};
-  METERS_PER_UNIT$1[Units.RADIANS] = 6370997 / (2 * Math.PI);
-  METERS_PER_UNIT$1[Units.DEGREES] = 2 * Math.PI * 6370997 / 360;
-  METERS_PER_UNIT$1[Units.FEET] = 0.3048;
-  METERS_PER_UNIT$1[Units.METERS] = 1;
-  METERS_PER_UNIT$1[Units.USFEET] = 1200 / 3937;
-  const Units$1 = Units;
-  var Projection$1 = function() {
-    function Projection2(options) {
-      this.code_ = options.code;
-      this.units_ = options.units;
-      this.extent_ = options.extent !== void 0 ? options.extent : null;
-      this.worldExtent_ = options.worldExtent !== void 0 ? options.worldExtent : null;
-      this.axisOrientation_ = options.axisOrientation !== void 0 ? options.axisOrientation : "enu";
-      this.global_ = options.global !== void 0 ? options.global : false;
-      this.canWrapX_ = !!(this.global_ && this.extent_);
-      this.getPointResolutionFunc_ = options.getPointResolution;
-      this.defaultTileGrid_ = null;
-      this.metersPerUnit_ = options.metersPerUnit;
-    }
-    Projection2.prototype.canWrapX = function() {
-      return this.canWrapX_;
-    };
-    Projection2.prototype.getCode = function() {
-      return this.code_;
-    };
-    Projection2.prototype.getExtent = function() {
-      return this.extent_;
-    };
-    Projection2.prototype.getUnits = function() {
-      return this.units_;
-    };
-    Projection2.prototype.getMetersPerUnit = function() {
-      return this.metersPerUnit_ || METERS_PER_UNIT$1[this.units_];
-    };
-    Projection2.prototype.getWorldExtent = function() {
-      return this.worldExtent_;
-    };
-    Projection2.prototype.getAxisOrientation = function() {
-      return this.axisOrientation_;
-    };
-    Projection2.prototype.isGlobal = function() {
-      return this.global_;
-    };
-    Projection2.prototype.setGlobal = function(global2) {
-      this.global_ = global2;
-      this.canWrapX_ = !!(global2 && this.extent_);
-    };
-    Projection2.prototype.getDefaultTileGrid = function() {
-      return this.defaultTileGrid_;
-    };
-    Projection2.prototype.setDefaultTileGrid = function(tileGrid) {
-      this.defaultTileGrid_ = tileGrid;
-    };
-    Projection2.prototype.setExtent = function(extent) {
-      this.extent_ = extent;
-      this.canWrapX_ = !!(this.global_ && extent);
-    };
-    Projection2.prototype.setWorldExtent = function(worldExtent) {
-      this.worldExtent_ = worldExtent;
-    };
-    Projection2.prototype.setGetPointResolution = function(func) {
-      this.getPointResolutionFunc_ = func;
-    };
-    Projection2.prototype.getPointResolutionFunc = function() {
-      return this.getPointResolutionFunc_;
-    };
-    return Projection2;
-  }();
-  const Projection$2 = Projection$1;
-  function clamp(value, min, max) {
-    return Math.min(Math.max(value, min), max);
-  }
-  var cosh$1 = function() {
-    var cosh2;
-    if ("cosh" in Math) {
-      cosh2 = Math.cosh;
-    } else {
-      cosh2 = function(x) {
-        var y2 = Math.exp(x);
-        return (y2 + 1 / y2) / 2;
-      };
-    }
-    return cosh2;
-  }();
-  var log2 = function() {
-    var log22;
-    if ("log2" in Math) {
-      log22 = Math.log2;
-    } else {
-      log22 = function(x) {
-        return Math.log(x) * Math.LOG2E;
-      };
-    }
-    return log22;
-  }();
-  function squaredSegmentDistance(x, y2, x1, y1, x2, y22) {
-    var dx = x2 - x1;
-    var dy = y22 - y1;
-    if (dx !== 0 || dy !== 0) {
-      var t = ((x - x1) * dx + (y2 - y1) * dy) / (dx * dx + dy * dy);
-      if (t > 1) {
-        x1 = x2;
-        y1 = y22;
-      } else if (t > 0) {
-        x1 += dx * t;
-        y1 += dy * t;
-      }
-    }
-    return squaredDistance(x, y2, x1, y1);
-  }
-  function squaredDistance(x1, y1, x2, y2) {
-    var dx = x2 - x1;
-    var dy = y2 - y1;
-    return dx * dx + dy * dy;
-  }
-  function solveLinearSystem(mat) {
-    var n = mat.length;
-    for (var i = 0; i < n; i++) {
-      var maxRow = i;
-      var maxEl = Math.abs(mat[i][i]);
-      for (var r = i + 1; r < n; r++) {
-        var absValue = Math.abs(mat[r][i]);
-        if (absValue > maxEl) {
-          maxEl = absValue;
-          maxRow = r;
-        }
-      }
-      if (maxEl === 0) {
-        return null;
-      }
-      var tmp = mat[maxRow];
-      mat[maxRow] = mat[i];
-      mat[i] = tmp;
-      for (var j = i + 1; j < n; j++) {
-        var coef = -mat[j][i] / mat[i][i];
-        for (var k = i; k < n + 1; k++) {
-          if (i == k) {
-            mat[j][k] = 0;
-          } else {
-            mat[j][k] += coef * mat[i][k];
-          }
-        }
-      }
-    }
-    var x = new Array(n);
-    for (var l = n - 1; l >= 0; l--) {
-      x[l] = mat[l][n] / mat[l][l];
-      for (var m = l - 1; m >= 0; m--) {
-        mat[m][n] -= mat[m][l] * x[l];
-      }
-    }
-    return x;
-  }
-  function toDegrees(angleInRadians) {
-    return angleInRadians * 180 / Math.PI;
-  }
-  function toRadians(angleInDegrees) {
-    return angleInDegrees * Math.PI / 180;
-  }
-  function modulo(a, b) {
-    var r = a % b;
-    return r * b < 0 ? r + b : r;
-  }
-  function lerp(a, b, x) {
-    return a + x * (b - a);
-  }
-  function toFixed(n, decimals) {
-    var factor = Math.pow(10, decimals);
-    return Math.round(n * factor) / factor;
-  }
-  function round(n, decimals) {
-    return Math.round(toFixed(n, decimals));
-  }
-  function floor(n, decimals) {
-    return Math.floor(toFixed(n, decimals));
-  }
-  function ceil(n, decimals) {
-    return Math.ceil(toFixed(n, decimals));
-  }
-  var __extends$14 = globalThis && globalThis.__extends || function() {
-    var extendStatics = function(d, b) {
-      extendStatics = Object.setPrototypeOf || { __proto__: [] } instanceof Array && function(d2, b2) {
-        d2.__proto__ = b2;
-      } || function(d2, b2) {
-        for (var p2 in b2)
-          if (Object.prototype.hasOwnProperty.call(b2, p2))
-            d2[p2] = b2[p2];
-      };
-      return extendStatics(d, b);
-    };
-    return function(d, b) {
-      if (typeof b !== "function" && b !== null)
-        throw new TypeError("Class extends value " + String(b) + " is not a constructor or null");
-      extendStatics(d, b);
-      function __() {
-        this.constructor = d;
-      }
-      d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
-    };
-  }();
-  var RADIUS$1 = 6378137;
-  var HALF_SIZE = Math.PI * RADIUS$1;
-  var EXTENT$1 = [-HALF_SIZE, -HALF_SIZE, HALF_SIZE, HALF_SIZE];
-  var WORLD_EXTENT = [-180, -85, 180, 85];
-  var MAX_SAFE_Y = RADIUS$1 * Math.log(Math.tan(Math.PI / 2));
-  var EPSG3857Projection = function(_super) {
-    __extends$14(EPSG3857Projection2, _super);
-    function EPSG3857Projection2(code) {
-      return _super.call(this, {
-        code,
-        units: Units$1.METERS,
-        extent: EXTENT$1,
-        global: true,
-        worldExtent: WORLD_EXTENT,
-        getPointResolution: function(resolution, point) {
-          return resolution / cosh$1(point[1] / RADIUS$1);
-        }
-      }) || this;
-    }
-    return EPSG3857Projection2;
-  }(Projection$2);
-  var PROJECTIONS$1 = [
-    new EPSG3857Projection("EPSG:3857"),
-    new EPSG3857Projection("EPSG:102100"),
-    new EPSG3857Projection("EPSG:102113"),
-    new EPSG3857Projection("EPSG:900913"),
-    new EPSG3857Projection("http://www.opengis.net/def/crs/EPSG/0/3857"),
-    new EPSG3857Projection("http://www.opengis.net/gml/srs/epsg.xml#3857")
-  ];
-  function fromEPSG4326(input, opt_output, opt_dimension) {
-    var length = input.length;
-    var dimension = opt_dimension > 1 ? opt_dimension : 2;
-    var output = opt_output;
-    if (output === void 0) {
-      if (dimension > 2) {
-        output = input.slice();
-      } else {
-        output = new Array(length);
-      }
-    }
-    for (var i = 0; i < length; i += dimension) {
-      output[i] = HALF_SIZE * input[i] / 180;
-      var y2 = RADIUS$1 * Math.log(Math.tan(Math.PI * (+input[i + 1] + 90) / 360));
-      if (y2 > MAX_SAFE_Y) {
-        y2 = MAX_SAFE_Y;
-      } else if (y2 < -MAX_SAFE_Y) {
-        y2 = -MAX_SAFE_Y;
-      }
-      output[i + 1] = y2;
-    }
-    return output;
-  }
-  function toEPSG4326(input, opt_output, opt_dimension) {
-    var length = input.length;
-    var dimension = opt_dimension > 1 ? opt_dimension : 2;
-    var output = opt_output;
-    if (output === void 0) {
-      if (dimension > 2) {
-        output = input.slice();
-      } else {
-        output = new Array(length);
-      }
-    }
-    for (var i = 0; i < length; i += dimension) {
-      output[i] = 180 * input[i] / HALF_SIZE;
-      output[i + 1] = 360 * Math.atan(Math.exp(input[i + 1] / RADIUS$1)) / Math.PI - 90;
-    }
-    return output;
-  }
-  var __extends$13 = globalThis && globalThis.__extends || function() {
-    var extendStatics = function(d, b) {
-      extendStatics = Object.setPrototypeOf || { __proto__: [] } instanceof Array && function(d2, b2) {
-        d2.__proto__ = b2;
-      } || function(d2, b2) {
-        for (var p2 in b2)
-          if (Object.prototype.hasOwnProperty.call(b2, p2))
-            d2[p2] = b2[p2];
-      };
-      return extendStatics(d, b);
-    };
-    return function(d, b) {
-      if (typeof b !== "function" && b !== null)
-        throw new TypeError("Class extends value " + String(b) + " is not a constructor or null");
-      extendStatics(d, b);
-      function __() {
-        this.constructor = d;
-      }
-      d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
-    };
-  }();
-  var RADIUS = 6378137;
-  var EXTENT = [-180, -90, 180, 90];
-  var METERS_PER_UNIT = Math.PI * RADIUS / 180;
-  var EPSG4326Projection = function(_super) {
-    __extends$13(EPSG4326Projection2, _super);
-    function EPSG4326Projection2(code, opt_axisOrientation) {
-      return _super.call(this, {
-        code,
-        units: Units$1.DEGREES,
-        extent: EXTENT,
-        axisOrientation: opt_axisOrientation,
-        global: true,
-        metersPerUnit: METERS_PER_UNIT,
-        worldExtent: EXTENT
-      }) || this;
-    }
-    return EPSG4326Projection2;
-  }(Projection$2);
-  var PROJECTIONS = [
-    new EPSG4326Projection("CRS:84"),
-    new EPSG4326Projection("EPSG:4326", "neu"),
-    new EPSG4326Projection("urn:ogc:def:crs:OGC:1.3:CRS84"),
-    new EPSG4326Projection("urn:ogc:def:crs:OGC:2:84"),
-    new EPSG4326Projection("http://www.opengis.net/def/crs/OGC/1.3/CRS84"),
-    new EPSG4326Projection("http://www.opengis.net/gml/srs/epsg.xml#4326", "neu"),
-    new EPSG4326Projection("http://www.opengis.net/def/crs/EPSG/0/4326", "neu")
-  ];
-  var cache = {};
-  function get$4(code) {
-    return cache[code] || cache[code.replace(/urn:(x-)?ogc:def:crs:EPSG:(.*:)?(\w+)$/, "EPSG:$3")] || null;
-  }
-  function add$3(code, projection) {
-    cache[code] = projection;
-  }
-  var assign = typeof Object.assign === "function" ? Object.assign : function(target, var_sources) {
-    if (target === void 0 || target === null) {
-      throw new TypeError("Cannot convert undefined or null to object");
-    }
-    var output = Object(target);
-    for (var i = 1, ii = arguments.length; i < ii; ++i) {
-      var source = arguments[i];
-      if (source !== void 0 && source !== null) {
-        for (var key in source) {
-          if (source.hasOwnProperty(key)) {
-            output[key] = source[key];
-          }
-        }
-      }
-    }
-    return output;
-  };
-  function clear(object) {
-    for (var property in object) {
-      delete object[property];
-    }
-  }
-  var getValues = typeof Object.values === "function" ? Object.values : function(object) {
-    var values = [];
-    for (var property in object) {
-      values.push(object[property]);
-    }
-    return values;
-  };
-  function isEmpty$1(object) {
-    var property;
-    for (property in object) {
-      return false;
-    }
-    return !property;
-  }
-  var transforms = {};
-  function add$2(source, destination, transformFn) {
-    var sourceCode = source.getCode();
-    var destinationCode = destination.getCode();
-    if (!(sourceCode in transforms)) {
-      transforms[sourceCode] = {};
-    }
-    transforms[sourceCode][destinationCode] = transformFn;
-  }
-  function get$3(sourceCode, destinationCode) {
-    var transform2;
-    if (sourceCode in transforms && destinationCode in transforms[sourceCode]) {
-      transform2 = transforms[sourceCode][destinationCode];
-    }
-    return transform2;
-  }
-  const Relationship = {
-    UNKNOWN: 0,
-    INTERSECTING: 1,
-    ABOVE: 2,
-    RIGHT: 4,
-    BELOW: 8,
-    LEFT: 16
-  };
-  function abstract() {
-    return function() {
-      throw new Error("Unimplemented abstract method.");
-    }();
-  }
-  var uidCounter_ = 0;
-  function getUid(obj) {
-    return obj.ol_uid || (obj.ol_uid = String(++uidCounter_));
-  }
-  var VERSION = "6.15.1";
-  var __extends$12 = globalThis && globalThis.__extends || function() {
-    var extendStatics = function(d, b) {
-      extendStatics = Object.setPrototypeOf || { __proto__: [] } instanceof Array && function(d2, b2) {
-        d2.__proto__ = b2;
-      } || function(d2, b2) {
-        for (var p2 in b2)
-          if (Object.prototype.hasOwnProperty.call(b2, p2))
-            d2[p2] = b2[p2];
-      };
-      return extendStatics(d, b);
-    };
-    return function(d, b) {
-      if (typeof b !== "function" && b !== null)
-        throw new TypeError("Class extends value " + String(b) + " is not a constructor or null");
-      extendStatics(d, b);
-      function __() {
-        this.constructor = d;
-      }
-      d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
-    };
-  }();
-  var AssertionError = function(_super) {
-    __extends$12(AssertionError2, _super);
-    function AssertionError2(code) {
-      var _this = this;
-      var path = "v" + VERSION.split("-")[0];
-      var message = "Assertion failed. See https://openlayers.org/en/" + path + "/doc/errors/#" + code + " for details.";
-      _this = _super.call(this, message) || this;
-      _this.code = code;
-      _this.name = "AssertionError";
-      _this.message = message;
-      return _this;
-    }
-    return AssertionError2;
-  }(Error);
-  const AssertionError$1 = AssertionError;
-  function assert(assertion, errorCode) {
-    if (!assertion) {
-      throw new AssertionError$1(errorCode);
-    }
-  }
-  function boundingExtent(coordinates2) {
-    var extent = createEmpty();
-    for (var i = 0, ii = coordinates2.length; i < ii; ++i) {
-      extendCoordinate(extent, coordinates2[i]);
-    }
-    return extent;
-  }
-  function _boundingExtentXYs(xs, ys, opt_extent) {
-    var minX = Math.min.apply(null, xs);
-    var minY = Math.min.apply(null, ys);
-    var maxX = Math.max.apply(null, xs);
-    var maxY = Math.max.apply(null, ys);
-    return createOrUpdate$2(minX, minY, maxX, maxY, opt_extent);
-  }
-  function clone$1(extent, opt_extent) {
-    if (opt_extent) {
-      opt_extent[0] = extent[0];
-      opt_extent[1] = extent[1];
-      opt_extent[2] = extent[2];
-      opt_extent[3] = extent[3];
-      return opt_extent;
-    } else {
-      return extent.slice();
-    }
-  }
-  function closestSquaredDistanceXY(extent, x, y2) {
-    var dx, dy;
-    if (x < extent[0]) {
-      dx = extent[0] - x;
-    } else if (extent[2] < x) {
-      dx = x - extent[2];
-    } else {
-      dx = 0;
-    }
-    if (y2 < extent[1]) {
-      dy = extent[1] - y2;
-    } else if (extent[3] < y2) {
-      dy = y2 - extent[3];
-    } else {
-      dy = 0;
-    }
-    return dx * dx + dy * dy;
-  }
-  function containsCoordinate(extent, coordinate) {
-    return containsXY(extent, coordinate[0], coordinate[1]);
-  }
-  function containsExtent(extent1, extent2) {
-    return extent1[0] <= extent2[0] && extent2[2] <= extent1[2] && extent1[1] <= extent2[1] && extent2[3] <= extent1[3];
-  }
-  function containsXY(extent, x, y2) {
-    return extent[0] <= x && x <= extent[2] && extent[1] <= y2 && y2 <= extent[3];
-  }
-  function coordinateRelationship(extent, coordinate) {
-    var minX = extent[0];
-    var minY = extent[1];
-    var maxX = extent[2];
-    var maxY = extent[3];
-    var x = coordinate[0];
-    var y2 = coordinate[1];
-    var relationship = Relationship.UNKNOWN;
-    if (x < minX) {
-      relationship = relationship | Relationship.LEFT;
-    } else if (x > maxX) {
-      relationship = relationship | Relationship.RIGHT;
-    }
-    if (y2 < minY) {
-      relationship = relationship | Relationship.BELOW;
-    } else if (y2 > maxY) {
-      relationship = relationship | Relationship.ABOVE;
-    }
-    if (relationship === Relationship.UNKNOWN) {
-      relationship = Relationship.INTERSECTING;
-    }
-    return relationship;
-  }
-  function createEmpty() {
-    return [Infinity, Infinity, -Infinity, -Infinity];
-  }
-  function createOrUpdate$2(minX, minY, maxX, maxY, opt_extent) {
-    if (opt_extent) {
-      opt_extent[0] = minX;
-      opt_extent[1] = minY;
-      opt_extent[2] = maxX;
-      opt_extent[3] = maxY;
-      return opt_extent;
-    } else {
-      return [minX, minY, maxX, maxY];
-    }
-  }
-  function createOrUpdateEmpty(opt_extent) {
-    return createOrUpdate$2(Infinity, Infinity, -Infinity, -Infinity, opt_extent);
-  }
-  function createOrUpdateFromCoordinate(coordinate, opt_extent) {
-    var x = coordinate[0];
-    var y2 = coordinate[1];
-    return createOrUpdate$2(x, y2, x, y2, opt_extent);
-  }
-  function createOrUpdateFromFlatCoordinates(flatCoordinates, offset, end, stride, opt_extent) {
-    var extent = createOrUpdateEmpty(opt_extent);
-    return extendFlatCoordinates(extent, flatCoordinates, offset, end, stride);
-  }
-  function equals$2(extent1, extent2) {
-    return extent1[0] == extent2[0] && extent1[2] == extent2[2] && extent1[1] == extent2[1] && extent1[3] == extent2[3];
-  }
-  function extend$3(extent1, extent2) {
-    if (extent2[0] < extent1[0]) {
-      extent1[0] = extent2[0];
-    }
-    if (extent2[2] > extent1[2]) {
-      extent1[2] = extent2[2];
-    }
-    if (extent2[1] < extent1[1]) {
-      extent1[1] = extent2[1];
-    }
-    if (extent2[3] > extent1[3]) {
-      extent1[3] = extent2[3];
-    }
-    return extent1;
-  }
-  function extendCoordinate(extent, coordinate) {
-    if (coordinate[0] < extent[0]) {
-      extent[0] = coordinate[0];
-    }
-    if (coordinate[0] > extent[2]) {
-      extent[2] = coordinate[0];
-    }
-    if (coordinate[1] < extent[1]) {
-      extent[1] = coordinate[1];
-    }
-    if (coordinate[1] > extent[3]) {
-      extent[3] = coordinate[1];
-    }
-  }
-  function extendFlatCoordinates(extent, flatCoordinates, offset, end, stride) {
-    for (; offset < end; offset += stride) {
-      extendXY(extent, flatCoordinates[offset], flatCoordinates[offset + 1]);
-    }
-    return extent;
-  }
-  function extendXY(extent, x, y2) {
-    extent[0] = Math.min(extent[0], x);
-    extent[1] = Math.min(extent[1], y2);
-    extent[2] = Math.max(extent[2], x);
-    extent[3] = Math.max(extent[3], y2);
-  }
-  function forEachCorner(extent, callback) {
-    var val;
-    val = callback(getBottomLeft(extent));
-    if (val) {
-      return val;
-    }
-    val = callback(getBottomRight(extent));
-    if (val) {
-      return val;
-    }
-    val = callback(getTopRight(extent));
-    if (val) {
-      return val;
-    }
-    val = callback(getTopLeft(extent));
-    if (val) {
-      return val;
-    }
-    return false;
-  }
-  function getArea(extent) {
-    var area = 0;
-    if (!isEmpty(extent)) {
-      area = getWidth(extent) * getHeight(extent);
-    }
-    return area;
-  }
-  function getBottomLeft(extent) {
-    return [extent[0], extent[1]];
-  }
-  function getBottomRight(extent) {
-    return [extent[2], extent[1]];
-  }
-  function getCenter(extent) {
-    return [(extent[0] + extent[2]) / 2, (extent[1] + extent[3]) / 2];
-  }
-  function getCorner(extent, corner) {
-    var coordinate;
-    if (corner === "bottom-left") {
-      coordinate = getBottomLeft(extent);
-    } else if (corner === "bottom-right") {
-      coordinate = getBottomRight(extent);
-    } else if (corner === "top-left") {
-      coordinate = getTopLeft(extent);
-    } else if (corner === "top-right") {
-      coordinate = getTopRight(extent);
-    } else {
-      assert(false, 13);
-    }
-    return coordinate;
-  }
-  function getForViewAndSize(center, resolution, rotation, size2, opt_extent) {
-    var _a = getRotatedViewport(center, resolution, rotation, size2), x0 = _a[0], y0 = _a[1], x1 = _a[2], y1 = _a[3], x2 = _a[4], y2 = _a[5], x3 = _a[6], y3 = _a[7];
-    return createOrUpdate$2(Math.min(x0, x1, x2, x3), Math.min(y0, y1, y2, y3), Math.max(x0, x1, x2, x3), Math.max(y0, y1, y2, y3), opt_extent);
-  }
-  function getRotatedViewport(center, resolution, rotation, size2) {
-    var dx = resolution * size2[0] / 2;
-    var dy = resolution * size2[1] / 2;
-    var cosRotation = Math.cos(rotation);
-    var sinRotation = Math.sin(rotation);
-    var xCos = dx * cosRotation;
-    var xSin = dx * sinRotation;
-    var yCos = dy * cosRotation;
-    var ySin = dy * sinRotation;
-    var x = center[0];
-    var y2 = center[1];
-    return [
-      x - xCos + ySin,
-      y2 - xSin - yCos,
-      x - xCos - ySin,
-      y2 - xSin + yCos,
-      x + xCos - ySin,
-      y2 + xSin + yCos,
-      x + xCos + ySin,
-      y2 + xSin - yCos,
-      x - xCos + ySin,
-      y2 - xSin - yCos
-    ];
-  }
-  function getHeight(extent) {
-    return extent[3] - extent[1];
-  }
-  function getIntersection(extent1, extent2, opt_extent) {
-    var intersection = opt_extent ? opt_extent : createEmpty();
-    if (intersects(extent1, extent2)) {
-      if (extent1[0] > extent2[0]) {
-        intersection[0] = extent1[0];
-      } else {
-        intersection[0] = extent2[0];
-      }
-      if (extent1[1] > extent2[1]) {
-        intersection[1] = extent1[1];
-      } else {
-        intersection[1] = extent2[1];
-      }
-      if (extent1[2] < extent2[2]) {
-        intersection[2] = extent1[2];
-      } else {
-        intersection[2] = extent2[2];
-      }
-      if (extent1[3] < extent2[3]) {
-        intersection[3] = extent1[3];
-      } else {
-        intersection[3] = extent2[3];
-      }
-    } else {
-      createOrUpdateEmpty(intersection);
-    }
-    return intersection;
-  }
-  function getTopLeft(extent) {
-    return [extent[0], extent[3]];
-  }
-  function getTopRight(extent) {
-    return [extent[2], extent[3]];
-  }
-  function getWidth(extent) {
-    return extent[2] - extent[0];
-  }
-  function intersects(extent1, extent2) {
-    return extent1[0] <= extent2[2] && extent1[2] >= extent2[0] && extent1[1] <= extent2[3] && extent1[3] >= extent2[1];
-  }
-  function isEmpty(extent) {
-    return extent[2] < extent[0] || extent[3] < extent[1];
-  }
-  function returnOrUpdate(extent, opt_extent) {
-    if (opt_extent) {
-      opt_extent[0] = extent[0];
-      opt_extent[1] = extent[1];
-      opt_extent[2] = extent[2];
-      opt_extent[3] = extent[3];
-      return opt_extent;
-    } else {
-      return extent;
-    }
-  }
-  function intersectsSegment(extent, start2, end) {
-    var intersects2 = false;
-    var startRel = coordinateRelationship(extent, start2);
-    var endRel = coordinateRelationship(extent, end);
-    if (startRel === Relationship.INTERSECTING || endRel === Relationship.INTERSECTING) {
-      intersects2 = true;
-    } else {
-      var minX = extent[0];
-      var minY = extent[1];
-      var maxX = extent[2];
-      var maxY = extent[3];
-      var startX = start2[0];
-      var startY = start2[1];
-      var endX = end[0];
-      var endY = end[1];
-      var slope = (endY - startY) / (endX - startX);
-      var x = void 0, y2 = void 0;
-      if (!!(endRel & Relationship.ABOVE) && !(startRel & Relationship.ABOVE)) {
-        x = endX - (endY - maxY) / slope;
-        intersects2 = x >= minX && x <= maxX;
-      }
-      if (!intersects2 && !!(endRel & Relationship.RIGHT) && !(startRel & Relationship.RIGHT)) {
-        y2 = endY - (endX - maxX) * slope;
-        intersects2 = y2 >= minY && y2 <= maxY;
-      }
-      if (!intersects2 && !!(endRel & Relationship.BELOW) && !(startRel & Relationship.BELOW)) {
-        x = endX - (endY - minY) / slope;
-        intersects2 = x >= minX && x <= maxX;
-      }
-      if (!intersects2 && !!(endRel & Relationship.LEFT) && !(startRel & Relationship.LEFT)) {
-        y2 = endY - (endX - minX) * slope;
-        intersects2 = y2 >= minY && y2 <= maxY;
-      }
-    }
-    return intersects2;
-  }
-  function applyTransform(extent, transformFn, opt_extent, opt_stops) {
-    var coordinates2 = [];
-    if (opt_stops > 1) {
-      var width = extent[2] - extent[0];
-      var height = extent[3] - extent[1];
-      for (var i = 0; i < opt_stops; ++i) {
-        coordinates2.push(extent[0] + width * i / opt_stops, extent[1], extent[2], extent[1] + height * i / opt_stops, extent[2] - width * i / opt_stops, extent[3], extent[0], extent[3] - height * i / opt_stops);
-      }
-    } else {
-      coordinates2 = [
-        extent[0],
-        extent[1],
-        extent[2],
-        extent[1],
-        extent[2],
-        extent[3],
-        extent[0],
-        extent[3]
-      ];
-    }
-    transformFn(coordinates2, coordinates2, 2);
-    var xs = [];
-    var ys = [];
-    for (var i = 0, l = coordinates2.length; i < l; i += 2) {
-      xs.push(coordinates2[i]);
-      ys.push(coordinates2[i + 1]);
-    }
-    return _boundingExtentXYs(xs, ys, opt_extent);
-  }
-  function compareVersions(v1, v2) {
-    var s1 = ("" + v1).split(".");
-    var s2 = ("" + v2).split(".");
-    for (var i = 0; i < Math.max(s1.length, s2.length); i++) {
-      var n1 = parseInt(s1[i] || "0", 10);
-      var n2 = parseInt(s2[i] || "0", 10);
-      if (n1 > n2) {
-        return 1;
-      }
-      if (n2 > n1) {
-        return -1;
-      }
-    }
-    return 0;
-  }
-  function add$1(coordinate, delta) {
-    coordinate[0] += +delta[0];
-    coordinate[1] += +delta[1];
-    return coordinate;
-  }
-  function equals$1(coordinate1, coordinate2) {
-    var equals2 = true;
-    for (var i = coordinate1.length - 1; i >= 0; --i) {
-      if (coordinate1[i] != coordinate2[i]) {
-        equals2 = false;
-        break;
-      }
-    }
-    return equals2;
-  }
-  function rotate$1(coordinate, angle) {
-    var cosAngle = Math.cos(angle);
-    var sinAngle = Math.sin(angle);
-    var x = coordinate[0] * cosAngle - coordinate[1] * sinAngle;
-    var y2 = coordinate[1] * cosAngle + coordinate[0] * sinAngle;
-    coordinate[0] = x;
-    coordinate[1] = y2;
-    return coordinate;
-  }
-  function scale$2(coordinate, scale2) {
-    coordinate[0] *= scale2;
-    coordinate[1] *= scale2;
-    return coordinate;
-  }
-  function wrapX$1(coordinate, projection) {
-    if (projection.canWrapX()) {
-      var worldWidth = getWidth(projection.getExtent());
-      var worldsAway = getWorldsAway(coordinate, projection, worldWidth);
-      if (worldsAway) {
-        coordinate[0] -= worldsAway * worldWidth;
-      }
-    }
-    return coordinate;
-  }
-  function getWorldsAway(coordinate, projection, opt_sourceExtentWidth) {
-    var projectionExtent = projection.getExtent();
-    var worldsAway = 0;
-    if (projection.canWrapX() && (coordinate[0] < projectionExtent[0] || coordinate[0] > projectionExtent[2])) {
-      var sourceExtentWidth = opt_sourceExtentWidth || getWidth(projectionExtent);
-      worldsAway = Math.floor((coordinate[0] - projectionExtent[0]) / sourceExtentWidth);
-    }
-    return worldsAway;
-  }
-  var DEFAULT_RADIUS = 63710088e-1;
-  function getDistance(c1, c2, opt_radius) {
-    var radius = opt_radius || DEFAULT_RADIUS;
-    var lat1 = toRadians(c1[1]);
-    var lat2 = toRadians(c2[1]);
-    var deltaLatBy2 = (lat2 - lat1) / 2;
-    var deltaLonBy2 = toRadians(c2[0] - c1[0]) / 2;
-    var a = Math.sin(deltaLatBy2) * Math.sin(deltaLatBy2) + Math.sin(deltaLonBy2) * Math.sin(deltaLonBy2) * Math.cos(lat1) * Math.cos(lat2);
-    return 2 * radius * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
-  }
-  var showCoordinateWarning = true;
-  function disableCoordinateWarning(opt_disable) {
-    var hide = opt_disable === void 0 ? true : opt_disable;
-    showCoordinateWarning = !hide;
-  }
-  function cloneTransform(input, opt_output, opt_dimension) {
-    var output;
-    if (opt_output !== void 0) {
-      for (var i = 0, ii = input.length; i < ii; ++i) {
-        opt_output[i] = input[i];
-      }
-      output = opt_output;
-    } else {
-      output = input.slice();
-    }
-    return output;
-  }
-  function identityTransform(input, opt_output, opt_dimension) {
-    if (opt_output !== void 0 && input !== opt_output) {
-      for (var i = 0, ii = input.length; i < ii; ++i) {
-        opt_output[i] = input[i];
-      }
-      input = opt_output;
-    }
-    return input;
-  }
-  function addProjection(projection) {
-    add$3(projection.getCode(), projection);
-    add$2(projection, projection, cloneTransform);
-  }
-  function addProjections(projections2) {
-    projections2.forEach(addProjection);
-  }
-  function get$2(projectionLike) {
-    return typeof projectionLike === "string" ? get$4(projectionLike) : projectionLike || null;
-  }
-  function getPointResolution(projection, resolution, point, opt_units) {
-    projection = get$2(projection);
-    var pointResolution;
-    var getter = projection.getPointResolutionFunc();
-    if (getter) {
-      pointResolution = getter(resolution, point);
-      if (opt_units && opt_units !== projection.getUnits()) {
-        var metersPerUnit = projection.getMetersPerUnit();
-        if (metersPerUnit) {
-          pointResolution = pointResolution * metersPerUnit / METERS_PER_UNIT$1[opt_units];
-        }
-      }
-    } else {
-      var units2 = projection.getUnits();
-      if (units2 == Units$1.DEGREES && !opt_units || opt_units == Units$1.DEGREES) {
-        pointResolution = resolution;
-      } else {
-        var toEPSG4326_1 = getTransformFromProjections(projection, get$2("EPSG:4326"));
-        if (toEPSG4326_1 === identityTransform && units2 !== Units$1.DEGREES) {
-          pointResolution = resolution * projection.getMetersPerUnit();
-        } else {
-          var vertices = [
-            point[0] - resolution / 2,
-            point[1],
-            point[0] + resolution / 2,
-            point[1],
-            point[0],
-            point[1] - resolution / 2,
-            point[0],
-            point[1] + resolution / 2
-          ];
-          vertices = toEPSG4326_1(vertices, vertices, 2);
-          var width = getDistance(vertices.slice(0, 2), vertices.slice(2, 4));
-          var height = getDistance(vertices.slice(4, 6), vertices.slice(6, 8));
-          pointResolution = (width + height) / 2;
-        }
-        var metersPerUnit = opt_units ? METERS_PER_UNIT$1[opt_units] : projection.getMetersPerUnit();
-        if (metersPerUnit !== void 0) {
-          pointResolution /= metersPerUnit;
-        }
-      }
-    }
-    return pointResolution;
-  }
-  function addEquivalentProjections(projections2) {
-    addProjections(projections2);
-    projections2.forEach(function(source) {
-      projections2.forEach(function(destination) {
-        if (source !== destination) {
-          add$2(source, destination, cloneTransform);
-        }
-      });
-    });
-  }
-  function addEquivalentTransforms(projections1, projections2, forwardTransform, inverseTransform) {
-    projections1.forEach(function(projection1) {
-      projections2.forEach(function(projection2) {
-        add$2(projection1, projection2, forwardTransform);
-        add$2(projection2, projection1, inverseTransform);
-      });
-    });
-  }
-  function createProjection(projection, defaultCode) {
-    if (!projection) {
-      return get$2(defaultCode);
-    } else if (typeof projection === "string") {
-      return get$2(projection);
-    } else {
-      return projection;
-    }
-  }
-  function createTransformFromCoordinateTransform(coordTransform) {
-    return function(input, opt_output, opt_dimension) {
-      var length = input.length;
-      var dimension = opt_dimension !== void 0 ? opt_dimension : 2;
-      var output = opt_output !== void 0 ? opt_output : new Array(length);
-      for (var i = 0; i < length; i += dimension) {
-        var point = coordTransform(input.slice(i, i + dimension));
-        var pointLength = point.length;
-        for (var j = 0, jj = dimension; j < jj; ++j) {
-          output[i + j] = j >= pointLength ? input[i + j] : point[j];
-        }
-      }
-      return output;
-    };
-  }
-  function addCoordinateTransforms(source, destination, forward2, inverse2) {
-    var sourceProj = get$2(source);
-    var destProj = get$2(destination);
-    add$2(sourceProj, destProj, createTransformFromCoordinateTransform(forward2));
-    add$2(destProj, sourceProj, createTransformFromCoordinateTransform(inverse2));
-  }
-  function toLonLat(coordinate, opt_projection) {
-    var lonLat = transform$1(coordinate, opt_projection !== void 0 ? opt_projection : "EPSG:3857", "EPSG:4326");
-    var lon = lonLat[0];
-    if (lon < -180 || lon > 180) {
-      lonLat[0] = modulo(lon + 180, 360) - 180;
-    }
-    return lonLat;
-  }
-  function equivalent(projection1, projection2) {
-    if (projection1 === projection2) {
-      return true;
-    }
-    var equalUnits = projection1.getUnits() === projection2.getUnits();
-    if (projection1.getCode() === projection2.getCode()) {
-      return equalUnits;
-    } else {
-      var transformFunc = getTransformFromProjections(projection1, projection2);
-      return transformFunc === cloneTransform && equalUnits;
-    }
-  }
-  function getTransformFromProjections(sourceProjection, destinationProjection) {
-    var sourceCode = sourceProjection.getCode();
-    var destinationCode = destinationProjection.getCode();
-    var transformFunc = get$3(sourceCode, destinationCode);
-    if (!transformFunc) {
-      transformFunc = identityTransform;
-    }
-    return transformFunc;
-  }
-  function getTransform(source, destination) {
-    var sourceProjection = get$2(source);
-    var destinationProjection = get$2(destination);
-    return getTransformFromProjections(sourceProjection, destinationProjection);
-  }
-  function transform$1(coordinate, source, destination) {
-    var transformFunc = getTransform(source, destination);
-    return transformFunc(coordinate, void 0, coordinate.length);
-  }
-  function transformExtent(extent, source, destination, opt_stops) {
-    var transformFunc = getTransform(source, destination);
-    return applyTransform(extent, transformFunc, void 0, opt_stops);
-  }
-  var userProjection = null;
-  function getUserProjection() {
-    return userProjection;
-  }
-  function toUserCoordinate(coordinate, sourceProjection) {
-    {
-      return coordinate;
-    }
-  }
-  function fromUserCoordinate(coordinate, destProjection) {
-    {
-      if (showCoordinateWarning && !equals$1(coordinate, [0, 0]) && coordinate[0] >= -180 && coordinate[0] <= 180 && coordinate[1] >= -90 && coordinate[1] <= 90) {
-        showCoordinateWarning = false;
-        console.warn("Call useGeographic() from ol/proj once to work with [longitude, latitude] coordinates.");
-      }
-      return coordinate;
-    }
-  }
-  function toUserExtent(extent, sourceProjection) {
-    {
-      return extent;
-    }
-  }
-  function fromUserExtent(extent, destProjection) {
-    {
-      return extent;
-    }
-  }
-  function createSafeCoordinateTransform(sourceProj, destProj, transform2) {
-    return function(coord) {
-      var transformed, worldsAway;
-      if (sourceProj.canWrapX()) {
-        var sourceExtent = sourceProj.getExtent();
-        var sourceExtentWidth = getWidth(sourceExtent);
-        coord = coord.slice(0);
-        worldsAway = getWorldsAway(coord, sourceProj, sourceExtentWidth);
-        if (worldsAway) {
-          coord[0] = coord[0] - worldsAway * sourceExtentWidth;
-        }
-        coord[0] = clamp(coord[0], sourceExtent[0], sourceExtent[2]);
-        coord[1] = clamp(coord[1], sourceExtent[1], sourceExtent[3]);
-        transformed = transform2(coord);
-      } else {
-        transformed = transform2(coord);
-      }
-      if (worldsAway && destProj.canWrapX()) {
-        transformed[0] += worldsAway * getWidth(destProj.getExtent());
-      }
-      return transformed;
-    };
-  }
-  function addCommon() {
-    addEquivalentProjections(PROJECTIONS$1);
-    addEquivalentProjections(PROJECTIONS);
-    addEquivalentTransforms(PROJECTIONS, PROJECTIONS$1, fromEPSG4326, toEPSG4326);
-  }
-  addCommon();
-  function register(proj42) {
-    var projCodes = Object.keys(proj42.defs);
-    var len = projCodes.length;
-    var i, j;
-    for (i = 0; i < len; ++i) {
-      var code = projCodes[i];
-      if (!get$2(code)) {
-        var def2 = proj42.defs(code);
-        var units2 = def2.units;
-        if (!units2 && def2.projName === "longlat") {
-          units2 = Units$1.DEGREES;
-        }
-        addProjection(new Projection$2({
-          code,
-          axisOrientation: def2.axis,
-          metersPerUnit: def2.to_meter,
-          units: units2
-        }));
-      }
-    }
-    for (i = 0; i < len; ++i) {
-      var code1 = projCodes[i];
-      var proj1 = get$2(code1);
-      for (j = 0; j < len; ++j) {
-        var code2 = projCodes[j];
-        var proj2 = get$2(code2);
-        if (!get$3(code1, code2)) {
-          if (proj42.defs[code1] === proj42.defs[code2]) {
-            addEquivalentProjections([proj1, proj2]);
-          } else {
-            var transform2 = proj42(code1, code2);
-            addCoordinateTransforms(proj1, proj2, createSafeCoordinateTransform(proj1, proj2, transform2.forward), createSafeCoordinateTransform(proj2, proj1, transform2.inverse));
-          }
-        }
-      }
     }
   }
   function globals(defs2) {
@@ -11040,7 +9946,7 @@ This will fail in production.`);
   function testProj(code) {
     return code[0] === "+";
   }
-  function parse$1(code) {
+  function parse(code) {
     if (testObj(code)) {
       if (testDef(code)) {
         return defs[code];
@@ -11063,14 +9969,14 @@ This will fail in production.`);
       return code;
     }
   }
-  function extend$2(destination, source) {
+  function extend$1(destination, source2) {
     destination = destination || {};
     var value, property;
-    if (!source) {
+    if (!source2) {
       return destination;
     }
-    for (property in source) {
-      value = source[property];
+    for (property in source2) {
+      value = source2[property];
       if (value !== void 0) {
         destination[property] = value;
       }
@@ -11197,14 +10103,14 @@ This will fail in production.`);
   var projs = [merc, longlat];
   var names$u = {};
   var projStore = [];
-  function add(proj, i) {
+  function add(proj2, i) {
     var len = projStore.length;
-    if (!proj.names) {
+    if (!proj2.names) {
       console.log(i);
       return true;
     }
-    projStore[len] = proj;
-    proj.names.forEach(function(n) {
+    projStore[len] = proj2;
+    proj2.names.forEach(function(n) {
       names$u[n.toLowerCase()] = len;
     });
     return this;
@@ -11734,7 +10640,7 @@ This will fail in production.`);
         throw error;
       }
     };
-    var json = parse$1(srsCode);
+    var json = parse(srsCode);
     if (typeof json !== "object") {
       callback(srsCode);
       return;
@@ -11768,8 +10674,8 @@ This will fail in production.`);
       ecc.ep2,
       nadgrids
     );
-    extend$2(this, json);
-    extend$2(this, ourProj);
+    extend$1(this, json);
+    extend$1(this, ourProj);
     this.a = sphere_.a;
     this.b = sphere_.b;
     this.rf = sphere_.rf;
@@ -11783,15 +10689,15 @@ This will fail in production.`);
   }
   Projection.projections = projections;
   Projection.projections.start();
-  function compareDatums(source, dest) {
-    if (source.datum_type !== dest.datum_type) {
+  function compareDatums(source2, dest) {
+    if (source2.datum_type !== dest.datum_type) {
       return false;
-    } else if (source.a !== dest.a || Math.abs(source.es - dest.es) > 5e-11) {
+    } else if (source2.a !== dest.a || Math.abs(source2.es - dest.es) > 5e-11) {
       return false;
-    } else if (source.datum_type === PJD_3PARAM) {
-      return source.datum_params[0] === dest.datum_params[0] && source.datum_params[1] === dest.datum_params[1] && source.datum_params[2] === dest.datum_params[2];
-    } else if (source.datum_type === PJD_7PARAM) {
-      return source.datum_params[0] === dest.datum_params[0] && source.datum_params[1] === dest.datum_params[1] && source.datum_params[2] === dest.datum_params[2] && source.datum_params[3] === dest.datum_params[3] && source.datum_params[4] === dest.datum_params[4] && source.datum_params[5] === dest.datum_params[5] && source.datum_params[6] === dest.datum_params[6];
+    } else if (source2.datum_type === PJD_3PARAM) {
+      return source2.datum_params[0] === dest.datum_params[0] && source2.datum_params[1] === dest.datum_params[1] && source2.datum_params[2] === dest.datum_params[2];
+    } else if (source2.datum_type === PJD_7PARAM) {
+      return source2.datum_params[0] === dest.datum_params[0] && source2.datum_params[1] === dest.datum_params[1] && source2.datum_params[2] === dest.datum_params[2] && source2.datum_params[3] === dest.datum_params[3] && source2.datum_params[4] === dest.datum_params[4] && source2.datum_params[5] === dest.datum_params[5] && source2.datum_params[6] === dest.datum_params[6];
     } else {
       return true;
     }
@@ -11940,17 +10846,17 @@ This will fail in production.`);
   function checkParams(type) {
     return type === PJD_3PARAM || type === PJD_7PARAM;
   }
-  function datum_transform(source, dest, point) {
-    if (compareDatums(source, dest)) {
+  function datum_transform(source2, dest, point) {
+    if (compareDatums(source2, dest)) {
       return point;
     }
-    if (source.datum_type === PJD_NODATUM || dest.datum_type === PJD_NODATUM) {
+    if (source2.datum_type === PJD_NODATUM || dest.datum_type === PJD_NODATUM) {
       return point;
     }
-    var source_a = source.a;
-    var source_es = source.es;
-    if (source.datum_type === PJD_GRIDSHIFT) {
-      var gridShiftCode = applyGridShift(source, false, point);
+    var source_a = source2.a;
+    var source_es = source2.es;
+    if (source2.datum_type === PJD_GRIDSHIFT) {
+      var gridShiftCode = applyGridShift(source2, false, point);
       if (gridShiftCode !== 0) {
         return void 0;
       }
@@ -11965,12 +10871,12 @@ This will fail in production.`);
       dest_b = SRS_WGS84_SEMIMINOR;
       dest_es = SRS_WGS84_ESQUARED;
     }
-    if (source_es === dest_es && source_a === dest_a && !checkParams(source.datum_type) && !checkParams(dest.datum_type)) {
+    if (source_es === dest_es && source_a === dest_a && !checkParams(source2.datum_type) && !checkParams(dest.datum_type)) {
       return point;
     }
     point = geodeticToGeocentric(point, source_es, source_a);
-    if (checkParams(source.datum_type)) {
-      point = geocentricToWgs84(point, source.datum_type, source.datum_params);
+    if (checkParams(source2.datum_type)) {
+      point = geocentricToWgs84(point, source2.datum_type, source2.datum_params);
     }
     if (checkParams(dest.datum_type)) {
       point = geocentricFromWgs84(point, dest.datum_type, dest.datum_params);
@@ -11984,16 +10890,16 @@ This will fail in production.`);
     }
     return point;
   }
-  function applyGridShift(source, inverse2, point) {
-    if (source.grids === null || source.grids.length === 0) {
+  function applyGridShift(source2, inverse2, point) {
+    if (source2.grids === null || source2.grids.length === 0) {
       console.log("Grid shift grids not found");
       return -1;
     }
     var input = { x: -point.x, y: point.y };
     var output = { x: Number.NaN, y: Number.NaN };
     var attemptedGrids = [];
-    for (var i = 0; i < source.grids.length; i++) {
-      var grid = source.grids[i];
+    for (var i = 0; i < source2.grids.length; i++) {
+      var grid = source2.grids[i];
       attemptedGrids.push(grid.name);
       if (grid.isNull) {
         output = input;
@@ -12179,10 +11085,10 @@ This will fail in production.`);
       throw new TypeError("coordinates must be finite numbers");
     }
   }
-  function checkNotWGS(source, dest) {
-    return (source.datum.datum_type === PJD_3PARAM || source.datum.datum_type === PJD_7PARAM || source.datum.datum_type === PJD_GRIDSHIFT) && dest.datumCode !== "WGS84" || (dest.datum.datum_type === PJD_3PARAM || dest.datum.datum_type === PJD_7PARAM || dest.datum.datum_type === PJD_GRIDSHIFT) && source.datumCode !== "WGS84";
+  function checkNotWGS(source2, dest) {
+    return (source2.datum.datum_type === PJD_3PARAM || source2.datum.datum_type === PJD_7PARAM || source2.datum.datum_type === PJD_GRIDSHIFT) && dest.datumCode !== "WGS84" || (dest.datum.datum_type === PJD_3PARAM || dest.datum.datum_type === PJD_7PARAM || dest.datum.datum_type === PJD_GRIDSHIFT) && source2.datumCode !== "WGS84";
   }
-  function transform(source, dest, point, enforceAxis) {
+  function transform(source2, dest, point, enforceAxis) {
     var wgs842;
     if (Array.isArray(point)) {
       point = common(point);
@@ -12196,37 +11102,37 @@ This will fail in production.`);
     }
     var hasZ = point.z !== void 0;
     checkSanity(point);
-    if (source.datum && dest.datum && checkNotWGS(source, dest)) {
+    if (source2.datum && dest.datum && checkNotWGS(source2, dest)) {
       wgs842 = new Projection("WGS84");
-      point = transform(source, wgs842, point, enforceAxis);
-      source = wgs842;
+      point = transform(source2, wgs842, point, enforceAxis);
+      source2 = wgs842;
     }
-    if (enforceAxis && source.axis !== "enu") {
-      point = adjust_axis(source, false, point);
+    if (enforceAxis && source2.axis !== "enu") {
+      point = adjust_axis(source2, false, point);
     }
-    if (source.projName === "longlat") {
+    if (source2.projName === "longlat") {
       point = {
         x: point.x * D2R$1,
         y: point.y * D2R$1,
         z: point.z || 0
       };
     } else {
-      if (source.to_meter) {
+      if (source2.to_meter) {
         point = {
-          x: point.x * source.to_meter,
-          y: point.y * source.to_meter,
+          x: point.x * source2.to_meter,
+          y: point.y * source2.to_meter,
           z: point.z || 0
         };
       }
-      point = source.inverse(point);
+      point = source2.inverse(point);
       if (!point) {
         return;
       }
     }
-    if (source.from_greenwich) {
-      point.x += source.from_greenwich;
+    if (source2.from_greenwich) {
+      point.x += source2.from_greenwich;
     }
-    point = datum_transform(source.datum, dest.datum, point);
+    point = datum_transform(source2.datum, dest.datum, point);
     if (!point) {
       return;
     }
@@ -12772,9 +11678,9 @@ This will fail in production.`);
       throw "Invalid zone letter: " + zoneLetter;
     }
   }
-  function Point$2(x, y2, z) {
-    if (!(this instanceof Point$2)) {
-      return new Point$2(x, y2, z);
+  function Point(x, y2, z) {
+    if (!(this instanceof Point)) {
+      return new Point(x, y2, z);
     }
     if (Array.isArray(x)) {
       this.x = x[0];
@@ -12796,10 +11702,10 @@ This will fail in production.`);
     }
     console.warn("proj4.Point will be removed in version 3, use proj4.toPoint");
   }
-  Point$2.fromMGRS = function(mgrsStr) {
-    return new Point$2(toPoint(mgrsStr));
+  Point.fromMGRS = function(mgrsStr) {
+    return new Point(toPoint(mgrsStr));
   };
-  Point$2.prototype.toMGRS = function(accuracy) {
+  Point.prototype.toMGRS = function(accuracy) {
     return forward$t([this.x, this.y], accuracy);
   };
   var C00 = 1;
@@ -16089,7 +14995,7 @@ This will fail in production.`);
   proj4.defaultDatum = "WGS84";
   proj4.Proj = Projection;
   proj4.WGS84 = new proj4.Proj("WGS84");
-  proj4.Point = Point$2;
+  proj4.Point = Point;
   proj4.toPoint = common;
   proj4.defs = defs;
   proj4.nadgrid = nadgrid;
@@ -16105,20 +15011,20 @@ This will fail in production.`);
       "EPSG:2169",
       "+proj=tmerc +lat_0=49.83333333333334 +lon_0=6.166666666666667 +k=1 +x_0=80000 +y_0=100000 +ellps=intl +towgs84=-189.681,18.3463,-42.7695,-0.33746,-3.09264,2.53861,0.4598 +units=m +no_defs"
     );
-    register(proj4);
-    (_a = get$2("EPSG:32632")) == null ? void 0 : _a.setExtent([
+    proj4$1.register(proj4);
+    (_a = proj.get("EPSG:32632")) == null ? void 0 : _a.setExtent([
       166021.44,
       0,
       833978.55,
       932900518e-2
     ]);
-    (_b = get$2("EPSG:32631")) == null ? void 0 : _b.setExtent([
+    (_b = proj.get("EPSG:32631")) == null ? void 0 : _b.setExtent([
       166021.44,
       0,
       833978.55,
       932900518e-2
     ]);
-    (_c = get$2("EPSG:2169")) == null ? void 0 : _c.setExtent([
+    (_c = proj.get("EPSG:2169")) == null ? void 0 : _c.setExtent([
       48225.17,
       56225.6,
       105842.04,
@@ -16149,7 +15055,7 @@ This will fail in production.`);
       this._def = _def;
       this._props = _props;
       this._config = _config;
-      this._config = extend$4(
+      this._config = extend$2(
         {
           shadowRoot: true
         },
@@ -16187,7 +15093,7 @@ This will fail in production.`);
       this._connected = false;
       nextTick(() => {
         if (!this._connected) {
-          render$1(null, this._root);
+          render(null, this._root);
           this._instance = null;
         }
       });
@@ -16278,10 +15184,10 @@ This will fail in production.`);
       }
     }
     _update() {
-      render$1(this._createVNode(), this._root);
+      render(this._createVNode(), this._root);
     }
     _createVNode() {
-      const vnode = createVNode(this._def, extend$4({}, this._props));
+      const vnode = createVNode(this._def, extend$2({}, this._props));
       if (!this._instance) {
         vnode.ce = (instance2) => {
           this._instance = instance2;
@@ -16395,7918 +15301,6 @@ This will fail in production.`);
       };
     }
   });
-  var Disposable = function() {
-    function Disposable2() {
-      this.disposed = false;
-    }
-    Disposable2.prototype.dispose = function() {
-      if (!this.disposed) {
-        this.disposed = true;
-        this.disposeInternal();
-      }
-    };
-    Disposable2.prototype.disposeInternal = function() {
-    };
-    return Disposable2;
-  }();
-  const Disposable$1 = Disposable;
-  function numberSafeCompareFunction(a, b) {
-    return a > b ? 1 : a < b ? -1 : 0;
-  }
-  function linearFindNearest(arr2, target, direction) {
-    var n = arr2.length;
-    if (arr2[0] <= target) {
-      return 0;
-    } else if (target <= arr2[n - 1]) {
-      return n - 1;
-    } else {
-      var i = void 0;
-      if (direction > 0) {
-        for (i = 1; i < n; ++i) {
-          if (arr2[i] < target) {
-            return i - 1;
-          }
-        }
-      } else if (direction < 0) {
-        for (i = 1; i < n; ++i) {
-          if (arr2[i] <= target) {
-            return i;
-          }
-        }
-      } else {
-        for (i = 1; i < n; ++i) {
-          if (arr2[i] == target) {
-            return i;
-          } else if (arr2[i] < target) {
-            if (typeof direction === "function") {
-              if (direction(target, arr2[i - 1], arr2[i]) > 0) {
-                return i - 1;
-              } else {
-                return i;
-              }
-            } else if (arr2[i - 1] - target < target - arr2[i]) {
-              return i - 1;
-            } else {
-              return i;
-            }
-          }
-        }
-      }
-      return n - 1;
-    }
-  }
-  function extend$1(arr2, data) {
-    var extension = Array.isArray(data) ? data : [data];
-    var length = extension.length;
-    for (var i = 0; i < length; i++) {
-      arr2[arr2.length] = extension[i];
-    }
-  }
-  function equals(arr1, arr2) {
-    var len1 = arr1.length;
-    if (len1 !== arr2.length) {
-      return false;
-    }
-    for (var i = 0; i < len1; i++) {
-      if (arr1[i] !== arr2[i]) {
-        return false;
-      }
-    }
-    return true;
-  }
-  function isSorted(arr2, opt_func, opt_strict) {
-    var compare = opt_func || numberSafeCompareFunction;
-    return arr2.every(function(currentVal, index2) {
-      if (index2 === 0) {
-        return true;
-      }
-      var res = compare(arr2[index2 - 1], currentVal);
-      return !(res > 0 || opt_strict && res === 0);
-    });
-  }
-  function TRUE() {
-    return true;
-  }
-  function FALSE() {
-    return false;
-  }
-  function VOID() {
-  }
-  function memoizeOne(fn) {
-    var called = false;
-    var lastResult;
-    var lastArgs;
-    var lastThis;
-    return function() {
-      var nextArgs = Array.prototype.slice.call(arguments);
-      if (!called || this !== lastThis || !equals(nextArgs, lastArgs)) {
-        called = true;
-        lastThis = this;
-        lastArgs = nextArgs;
-        lastResult = fn.apply(this, arguments);
-      }
-      return lastResult;
-    };
-  }
-  var ua = typeof navigator !== "undefined" && typeof navigator.userAgent !== "undefined" ? navigator.userAgent.toLowerCase() : "";
-  var FIREFOX = ua.indexOf("firefox") !== -1;
-  var SAFARI = ua.indexOf("safari") !== -1 && ua.indexOf("chrom") == -1;
-  SAFARI && !!(ua.indexOf("version/15.4") >= 0 || ua.match(/cpu (os|iphone os) 15_4 like mac os x/));
-  var WEBKIT = ua.indexOf("webkit") !== -1 && ua.indexOf("edge") == -1;
-  var MAC = ua.indexOf("macintosh") !== -1;
-  var DEVICE_PIXEL_RATIO = typeof devicePixelRatio !== "undefined" ? devicePixelRatio : 1;
-  var WORKER_OFFSCREEN_CANVAS = typeof WorkerGlobalScope !== "undefined" && typeof OffscreenCanvas !== "undefined" && self instanceof WorkerGlobalScope;
-  var IMAGE_DECODE = typeof Image !== "undefined" && Image.prototype.decode;
-  var PASSIVE_EVENT_LISTENERS = function() {
-    var passive = false;
-    try {
-      var options = Object.defineProperty({}, "passive", {
-        get: function() {
-          passive = true;
-        }
-      });
-      window.addEventListener("_", null, options);
-      window.removeEventListener("_", null, options);
-    } catch (error) {
-    }
-    return passive;
-  }();
-  new Array(6);
-  function create() {
-    return [1, 0, 0, 1, 0, 0];
-  }
-  function apply(transform2, coordinate) {
-    var x = coordinate[0];
-    var y2 = coordinate[1];
-    coordinate[0] = transform2[0] * x + transform2[2] * y2 + transform2[4];
-    coordinate[1] = transform2[1] * x + transform2[3] * y2 + transform2[5];
-    return coordinate;
-  }
-  function compose(transform2, dx1, dy1, sx, sy, angle, dx2, dy2) {
-    var sin = Math.sin(angle);
-    var cos = Math.cos(angle);
-    transform2[0] = sx * cos;
-    transform2[1] = sy * sin;
-    transform2[2] = -sx * sin;
-    transform2[3] = sy * cos;
-    transform2[4] = dx2 * sx * cos - dy2 * sx * sin + dx1;
-    transform2[5] = dx2 * sy * sin + dy2 * sy * cos + dy1;
-    return transform2;
-  }
-  function makeInverse(target, source) {
-    var det = determinant(source);
-    assert(det !== 0, 32);
-    var a = source[0];
-    var b = source[1];
-    var c2 = source[2];
-    var d = source[3];
-    var e = source[4];
-    var f = source[5];
-    target[0] = d / det;
-    target[1] = -b / det;
-    target[2] = -c2 / det;
-    target[3] = a / det;
-    target[4] = (c2 * f - d * e) / det;
-    target[5] = -(a * f - b * e) / det;
-    return target;
-  }
-  function determinant(mat) {
-    return mat[0] * mat[3] - mat[1] * mat[2];
-  }
-  var transformStringDiv;
-  function toString$1(mat) {
-    var transformString = "matrix(" + mat.join(", ") + ")";
-    if (WORKER_OFFSCREEN_CANVAS) {
-      return transformString;
-    }
-    var node = transformStringDiv || (transformStringDiv = document.createElement("div"));
-    node.style.transform = transformString;
-    return node.style.transform;
-  }
-  var HEX_COLOR_RE_ = /^#([a-f0-9]{3}|[a-f0-9]{4}(?:[a-f0-9]{2}){0,2})$/i;
-  var NAMED_COLOR_RE_ = /^([a-z]*)$|^hsla?\(.*\)$/i;
-  function asString(color) {
-    if (typeof color === "string") {
-      return color;
-    } else {
-      return toString(color);
-    }
-  }
-  function fromNamed(color) {
-    var el = document.createElement("div");
-    el.style.color = color;
-    if (el.style.color !== "") {
-      document.body.appendChild(el);
-      var rgb = getComputedStyle(el).color;
-      document.body.removeChild(el);
-      return rgb;
-    } else {
-      return "";
-    }
-  }
-  var fromString = function() {
-    var MAX_CACHE_SIZE = 1024;
-    var cache2 = {};
-    var cacheSize = 0;
-    return function(s) {
-      var color;
-      if (cache2.hasOwnProperty(s)) {
-        color = cache2[s];
-      } else {
-        if (cacheSize >= MAX_CACHE_SIZE) {
-          var i = 0;
-          for (var key in cache2) {
-            if ((i++ & 3) === 0) {
-              delete cache2[key];
-              --cacheSize;
-            }
-          }
-        }
-        color = fromStringInternal_(s);
-        cache2[s] = color;
-        ++cacheSize;
-      }
-      return color;
-    };
-  }();
-  function asArray(color) {
-    if (Array.isArray(color)) {
-      return color;
-    } else {
-      return fromString(color);
-    }
-  }
-  function fromStringInternal_(s) {
-    var r, g, b, a, color;
-    if (NAMED_COLOR_RE_.exec(s)) {
-      s = fromNamed(s);
-    }
-    if (HEX_COLOR_RE_.exec(s)) {
-      var n = s.length - 1;
-      var d = void 0;
-      if (n <= 4) {
-        d = 1;
-      } else {
-        d = 2;
-      }
-      var hasAlpha = n === 4 || n === 8;
-      r = parseInt(s.substr(1 + 0 * d, d), 16);
-      g = parseInt(s.substr(1 + 1 * d, d), 16);
-      b = parseInt(s.substr(1 + 2 * d, d), 16);
-      if (hasAlpha) {
-        a = parseInt(s.substr(1 + 3 * d, d), 16);
-      } else {
-        a = 255;
-      }
-      if (d == 1) {
-        r = (r << 4) + r;
-        g = (g << 4) + g;
-        b = (b << 4) + b;
-        if (hasAlpha) {
-          a = (a << 4) + a;
-        }
-      }
-      color = [r, g, b, a / 255];
-    } else if (s.indexOf("rgba(") == 0) {
-      color = s.slice(5, -1).split(",").map(Number);
-      normalize(color);
-    } else if (s.indexOf("rgb(") == 0) {
-      color = s.slice(4, -1).split(",").map(Number);
-      color.push(1);
-      normalize(color);
-    } else {
-      assert(false, 14);
-    }
-    return color;
-  }
-  function normalize(color) {
-    color[0] = clamp(color[0] + 0.5 | 0, 0, 255);
-    color[1] = clamp(color[1] + 0.5 | 0, 0, 255);
-    color[2] = clamp(color[2] + 0.5 | 0, 0, 255);
-    color[3] = clamp(color[3], 0, 1);
-    return color;
-  }
-  function toString(color) {
-    var r = color[0];
-    if (r != (r | 0)) {
-      r = r + 0.5 | 0;
-    }
-    var g = color[1];
-    if (g != (g | 0)) {
-      g = g + 0.5 | 0;
-    }
-    var b = color[2];
-    if (b != (b | 0)) {
-      b = b + 0.5 | 0;
-    }
-    var a = color[3] === void 0 ? 1 : Math.round(color[3] * 100) / 100;
-    return "rgba(" + r + "," + g + "," + b + "," + a + ")";
-  }
-  var IconImageCache = function() {
-    function IconImageCache2() {
-      this.cache_ = {};
-      this.cacheSize_ = 0;
-      this.maxCacheSize_ = 32;
-    }
-    IconImageCache2.prototype.clear = function() {
-      this.cache_ = {};
-      this.cacheSize_ = 0;
-    };
-    IconImageCache2.prototype.canExpireCache = function() {
-      return this.cacheSize_ > this.maxCacheSize_;
-    };
-    IconImageCache2.prototype.expire = function() {
-      if (this.canExpireCache()) {
-        var i = 0;
-        for (var key in this.cache_) {
-          var iconImage = this.cache_[key];
-          if ((i++ & 3) === 0 && !iconImage.hasListener()) {
-            delete this.cache_[key];
-            --this.cacheSize_;
-          }
-        }
-      }
-    };
-    IconImageCache2.prototype.get = function(src2, crossOrigin, color) {
-      var key = getKey$1(src2, crossOrigin, color);
-      return key in this.cache_ ? this.cache_[key] : null;
-    };
-    IconImageCache2.prototype.set = function(src2, crossOrigin, color, iconImage) {
-      var key = getKey$1(src2, crossOrigin, color);
-      this.cache_[key] = iconImage;
-      ++this.cacheSize_;
-    };
-    IconImageCache2.prototype.setSize = function(maxCacheSize) {
-      this.maxCacheSize_ = maxCacheSize;
-      this.expire();
-    };
-    return IconImageCache2;
-  }();
-  function getKey$1(src2, crossOrigin, color) {
-    var colorString = color ? asString(color) : "null";
-    return crossOrigin + ":" + src2 + ":" + colorString;
-  }
-  var shared = new IconImageCache();
-  var BaseEvent = function() {
-    function BaseEvent2(type) {
-      this.propagationStopped;
-      this.defaultPrevented;
-      this.type = type;
-      this.target = null;
-    }
-    BaseEvent2.prototype.preventDefault = function() {
-      this.defaultPrevented = true;
-    };
-    BaseEvent2.prototype.stopPropagation = function() {
-      this.propagationStopped = true;
-    };
-    return BaseEvent2;
-  }();
-  const Event = BaseEvent;
-  const ObjectEventType = {
-    PROPERTYCHANGE: "propertychange"
-  };
-  var __extends$11 = globalThis && globalThis.__extends || function() {
-    var extendStatics = function(d, b) {
-      extendStatics = Object.setPrototypeOf || { __proto__: [] } instanceof Array && function(d2, b2) {
-        d2.__proto__ = b2;
-      } || function(d2, b2) {
-        for (var p2 in b2)
-          if (Object.prototype.hasOwnProperty.call(b2, p2))
-            d2[p2] = b2[p2];
-      };
-      return extendStatics(d, b);
-    };
-    return function(d, b) {
-      if (typeof b !== "function" && b !== null)
-        throw new TypeError("Class extends value " + String(b) + " is not a constructor or null");
-      extendStatics(d, b);
-      function __() {
-        this.constructor = d;
-      }
-      d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
-    };
-  }();
-  var Target = function(_super) {
-    __extends$11(Target2, _super);
-    function Target2(opt_target) {
-      var _this = _super.call(this) || this;
-      _this.eventTarget_ = opt_target;
-      _this.pendingRemovals_ = null;
-      _this.dispatching_ = null;
-      _this.listeners_ = null;
-      return _this;
-    }
-    Target2.prototype.addEventListener = function(type, listener) {
-      if (!type || !listener) {
-        return;
-      }
-      var listeners = this.listeners_ || (this.listeners_ = {});
-      var listenersForType = listeners[type] || (listeners[type] = []);
-      if (listenersForType.indexOf(listener) === -1) {
-        listenersForType.push(listener);
-      }
-    };
-    Target2.prototype.dispatchEvent = function(event) {
-      var isString2 = typeof event === "string";
-      var type = isString2 ? event : event.type;
-      var listeners = this.listeners_ && this.listeners_[type];
-      if (!listeners) {
-        return;
-      }
-      var evt = isString2 ? new Event(event) : event;
-      if (!evt.target) {
-        evt.target = this.eventTarget_ || this;
-      }
-      var dispatching = this.dispatching_ || (this.dispatching_ = {});
-      var pendingRemovals = this.pendingRemovals_ || (this.pendingRemovals_ = {});
-      if (!(type in dispatching)) {
-        dispatching[type] = 0;
-        pendingRemovals[type] = 0;
-      }
-      ++dispatching[type];
-      var propagate;
-      for (var i = 0, ii = listeners.length; i < ii; ++i) {
-        if ("handleEvent" in listeners[i]) {
-          propagate = listeners[i].handleEvent(evt);
-        } else {
-          propagate = listeners[i].call(this, evt);
-        }
-        if (propagate === false || evt.propagationStopped) {
-          propagate = false;
-          break;
-        }
-      }
-      if (--dispatching[type] === 0) {
-        var pr = pendingRemovals[type];
-        delete pendingRemovals[type];
-        while (pr--) {
-          this.removeEventListener(type, VOID);
-        }
-        delete dispatching[type];
-      }
-      return propagate;
-    };
-    Target2.prototype.disposeInternal = function() {
-      this.listeners_ && clear(this.listeners_);
-    };
-    Target2.prototype.getListeners = function(type) {
-      return this.listeners_ && this.listeners_[type] || void 0;
-    };
-    Target2.prototype.hasListener = function(opt_type) {
-      if (!this.listeners_) {
-        return false;
-      }
-      return opt_type ? opt_type in this.listeners_ : Object.keys(this.listeners_).length > 0;
-    };
-    Target2.prototype.removeEventListener = function(type, listener) {
-      var listeners = this.listeners_ && this.listeners_[type];
-      if (listeners) {
-        var index2 = listeners.indexOf(listener);
-        if (index2 !== -1) {
-          if (this.pendingRemovals_ && type in this.pendingRemovals_) {
-            listeners[index2] = VOID;
-            ++this.pendingRemovals_[type];
-          } else {
-            listeners.splice(index2, 1);
-            if (listeners.length === 0) {
-              delete this.listeners_[type];
-            }
-          }
-        }
-      }
-    };
-    return Target2;
-  }(Disposable$1);
-  const EventTarget = Target;
-  const EventType$1 = {
-    CHANGE: "change",
-    ERROR: "error",
-    BLUR: "blur",
-    CLEAR: "clear",
-    CONTEXTMENU: "contextmenu",
-    CLICK: "click",
-    DBLCLICK: "dblclick",
-    DRAGENTER: "dragenter",
-    DRAGOVER: "dragover",
-    DROP: "drop",
-    FOCUS: "focus",
-    KEYDOWN: "keydown",
-    KEYPRESS: "keypress",
-    LOAD: "load",
-    RESIZE: "resize",
-    TOUCHMOVE: "touchmove",
-    WHEEL: "wheel"
-  };
-  function listen(target, type, listener, opt_this, opt_once) {
-    if (opt_this && opt_this !== target) {
-      listener = listener.bind(opt_this);
-    }
-    if (opt_once) {
-      var originalListener_1 = listener;
-      listener = function() {
-        target.removeEventListener(type, listener);
-        originalListener_1.apply(this, arguments);
-      };
-    }
-    var eventsKey = {
-      target,
-      type,
-      listener
-    };
-    target.addEventListener(type, listener);
-    return eventsKey;
-  }
-  function listenOnce(target, type, listener, opt_this) {
-    return listen(target, type, listener, opt_this, true);
-  }
-  function unlistenByKey(key) {
-    if (key && key.target) {
-      key.target.removeEventListener(key.type, key.listener);
-      clear(key);
-    }
-  }
-  var __extends$10 = globalThis && globalThis.__extends || function() {
-    var extendStatics = function(d, b) {
-      extendStatics = Object.setPrototypeOf || { __proto__: [] } instanceof Array && function(d2, b2) {
-        d2.__proto__ = b2;
-      } || function(d2, b2) {
-        for (var p2 in b2)
-          if (Object.prototype.hasOwnProperty.call(b2, p2))
-            d2[p2] = b2[p2];
-      };
-      return extendStatics(d, b);
-    };
-    return function(d, b) {
-      if (typeof b !== "function" && b !== null)
-        throw new TypeError("Class extends value " + String(b) + " is not a constructor or null");
-      extendStatics(d, b);
-      function __() {
-        this.constructor = d;
-      }
-      d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
-    };
-  }();
-  var Observable = function(_super) {
-    __extends$10(Observable2, _super);
-    function Observable2() {
-      var _this = _super.call(this) || this;
-      _this.on = _this.onInternal;
-      _this.once = _this.onceInternal;
-      _this.un = _this.unInternal;
-      _this.revision_ = 0;
-      return _this;
-    }
-    Observable2.prototype.changed = function() {
-      ++this.revision_;
-      this.dispatchEvent(EventType$1.CHANGE);
-    };
-    Observable2.prototype.getRevision = function() {
-      return this.revision_;
-    };
-    Observable2.prototype.onInternal = function(type, listener) {
-      if (Array.isArray(type)) {
-        var len = type.length;
-        var keys = new Array(len);
-        for (var i = 0; i < len; ++i) {
-          keys[i] = listen(this, type[i], listener);
-        }
-        return keys;
-      } else {
-        return listen(this, type, listener);
-      }
-    };
-    Observable2.prototype.onceInternal = function(type, listener) {
-      var key;
-      if (Array.isArray(type)) {
-        var len = type.length;
-        key = new Array(len);
-        for (var i = 0; i < len; ++i) {
-          key[i] = listenOnce(this, type[i], listener);
-        }
-      } else {
-        key = listenOnce(this, type, listener);
-      }
-      listener.ol_key = key;
-      return key;
-    };
-    Observable2.prototype.unInternal = function(type, listener) {
-      var key = listener.ol_key;
-      if (key) {
-        unByKey(key);
-      } else if (Array.isArray(type)) {
-        for (var i = 0, ii = type.length; i < ii; ++i) {
-          this.removeEventListener(type[i], listener);
-        }
-      } else {
-        this.removeEventListener(type, listener);
-      }
-    };
-    return Observable2;
-  }(EventTarget);
-  Observable.prototype.on;
-  Observable.prototype.once;
-  Observable.prototype.un;
-  function unByKey(key) {
-    if (Array.isArray(key)) {
-      for (var i = 0, ii = key.length; i < ii; ++i) {
-        unlistenByKey(key[i]);
-      }
-    } else {
-      unlistenByKey(key);
-    }
-  }
-  var __extends$$ = globalThis && globalThis.__extends || function() {
-    var extendStatics = function(d, b) {
-      extendStatics = Object.setPrototypeOf || { __proto__: [] } instanceof Array && function(d2, b2) {
-        d2.__proto__ = b2;
-      } || function(d2, b2) {
-        for (var p2 in b2)
-          if (Object.prototype.hasOwnProperty.call(b2, p2))
-            d2[p2] = b2[p2];
-      };
-      return extendStatics(d, b);
-    };
-    return function(d, b) {
-      if (typeof b !== "function" && b !== null)
-        throw new TypeError("Class extends value " + String(b) + " is not a constructor or null");
-      extendStatics(d, b);
-      function __() {
-        this.constructor = d;
-      }
-      d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
-    };
-  }();
-  var ObjectEvent = function(_super) {
-    __extends$$(ObjectEvent2, _super);
-    function ObjectEvent2(type, key, oldValue) {
-      var _this = _super.call(this, type) || this;
-      _this.key = key;
-      _this.oldValue = oldValue;
-      return _this;
-    }
-    return ObjectEvent2;
-  }(Event);
-  var BaseObject = function(_super) {
-    __extends$$(BaseObject2, _super);
-    function BaseObject2(opt_values) {
-      var _this = _super.call(this) || this;
-      _this.on;
-      _this.once;
-      _this.un;
-      getUid(_this);
-      _this.values_ = null;
-      if (opt_values !== void 0) {
-        _this.setProperties(opt_values);
-      }
-      return _this;
-    }
-    BaseObject2.prototype.get = function(key) {
-      var value;
-      if (this.values_ && this.values_.hasOwnProperty(key)) {
-        value = this.values_[key];
-      }
-      return value;
-    };
-    BaseObject2.prototype.getKeys = function() {
-      return this.values_ && Object.keys(this.values_) || [];
-    };
-    BaseObject2.prototype.getProperties = function() {
-      return this.values_ && assign({}, this.values_) || {};
-    };
-    BaseObject2.prototype.hasProperties = function() {
-      return !!this.values_;
-    };
-    BaseObject2.prototype.notify = function(key, oldValue) {
-      var eventType;
-      eventType = "change:".concat(key);
-      if (this.hasListener(eventType)) {
-        this.dispatchEvent(new ObjectEvent(eventType, key, oldValue));
-      }
-      eventType = ObjectEventType.PROPERTYCHANGE;
-      if (this.hasListener(eventType)) {
-        this.dispatchEvent(new ObjectEvent(eventType, key, oldValue));
-      }
-    };
-    BaseObject2.prototype.addChangeListener = function(key, listener) {
-      this.addEventListener("change:".concat(key), listener);
-    };
-    BaseObject2.prototype.removeChangeListener = function(key, listener) {
-      this.removeEventListener("change:".concat(key), listener);
-    };
-    BaseObject2.prototype.set = function(key, value, opt_silent) {
-      var values = this.values_ || (this.values_ = {});
-      if (opt_silent) {
-        values[key] = value;
-      } else {
-        var oldValue = values[key];
-        values[key] = value;
-        if (oldValue !== value) {
-          this.notify(key, oldValue);
-        }
-      }
-    };
-    BaseObject2.prototype.setProperties = function(values, opt_silent) {
-      for (var key in values) {
-        this.set(key, values[key], opt_silent);
-      }
-    };
-    BaseObject2.prototype.applyProperties = function(source) {
-      if (!source.values_) {
-        return;
-      }
-      assign(this.values_ || (this.values_ = {}), source.values_);
-    };
-    BaseObject2.prototype.unset = function(key, opt_silent) {
-      if (this.values_ && key in this.values_) {
-        var oldValue = this.values_[key];
-        delete this.values_[key];
-        if (isEmpty$1(this.values_)) {
-          this.values_ = null;
-        }
-        if (!opt_silent) {
-          this.notify(key, oldValue);
-        }
-      }
-    };
-    return BaseObject2;
-  }(Observable);
-  const BaseObject$1 = BaseObject;
-  const LayerProperty = {
-    OPACITY: "opacity",
-    VISIBLE: "visible",
-    EXTENT: "extent",
-    Z_INDEX: "zIndex",
-    MAX_RESOLUTION: "maxResolution",
-    MIN_RESOLUTION: "minResolution",
-    MAX_ZOOM: "maxZoom",
-    MIN_ZOOM: "minZoom",
-    SOURCE: "source",
-    MAP: "map"
-  };
-  var __extends$_ = globalThis && globalThis.__extends || function() {
-    var extendStatics = function(d, b) {
-      extendStatics = Object.setPrototypeOf || { __proto__: [] } instanceof Array && function(d2, b2) {
-        d2.__proto__ = b2;
-      } || function(d2, b2) {
-        for (var p2 in b2)
-          if (Object.prototype.hasOwnProperty.call(b2, p2))
-            d2[p2] = b2[p2];
-      };
-      return extendStatics(d, b);
-    };
-    return function(d, b) {
-      if (typeof b !== "function" && b !== null)
-        throw new TypeError("Class extends value " + String(b) + " is not a constructor or null");
-      extendStatics(d, b);
-      function __() {
-        this.constructor = d;
-      }
-      d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
-    };
-  }();
-  var BaseLayer = function(_super) {
-    __extends$_(BaseLayer2, _super);
-    function BaseLayer2(options) {
-      var _this = _super.call(this) || this;
-      _this.on;
-      _this.once;
-      _this.un;
-      _this.background_ = options.background;
-      var properties = assign({}, options);
-      if (typeof options.properties === "object") {
-        delete properties.properties;
-        assign(properties, options.properties);
-      }
-      properties[LayerProperty.OPACITY] = options.opacity !== void 0 ? options.opacity : 1;
-      assert(typeof properties[LayerProperty.OPACITY] === "number", 64);
-      properties[LayerProperty.VISIBLE] = options.visible !== void 0 ? options.visible : true;
-      properties[LayerProperty.Z_INDEX] = options.zIndex;
-      properties[LayerProperty.MAX_RESOLUTION] = options.maxResolution !== void 0 ? options.maxResolution : Infinity;
-      properties[LayerProperty.MIN_RESOLUTION] = options.minResolution !== void 0 ? options.minResolution : 0;
-      properties[LayerProperty.MIN_ZOOM] = options.minZoom !== void 0 ? options.minZoom : -Infinity;
-      properties[LayerProperty.MAX_ZOOM] = options.maxZoom !== void 0 ? options.maxZoom : Infinity;
-      _this.className_ = properties.className !== void 0 ? properties.className : "ol-layer";
-      delete properties.className;
-      _this.setProperties(properties);
-      _this.state_ = null;
-      return _this;
-    }
-    BaseLayer2.prototype.getBackground = function() {
-      return this.background_;
-    };
-    BaseLayer2.prototype.getClassName = function() {
-      return this.className_;
-    };
-    BaseLayer2.prototype.getLayerState = function(opt_managed) {
-      var state = this.state_ || {
-        layer: this,
-        managed: opt_managed === void 0 ? true : opt_managed
-      };
-      var zIndex = this.getZIndex();
-      state.opacity = clamp(Math.round(this.getOpacity() * 100) / 100, 0, 1);
-      state.visible = this.getVisible();
-      state.extent = this.getExtent();
-      state.zIndex = zIndex === void 0 && !state.managed ? Infinity : zIndex;
-      state.maxResolution = this.getMaxResolution();
-      state.minResolution = Math.max(this.getMinResolution(), 0);
-      state.minZoom = this.getMinZoom();
-      state.maxZoom = this.getMaxZoom();
-      this.state_ = state;
-      return state;
-    };
-    BaseLayer2.prototype.getLayersArray = function(opt_array) {
-      return abstract();
-    };
-    BaseLayer2.prototype.getLayerStatesArray = function(opt_states) {
-      return abstract();
-    };
-    BaseLayer2.prototype.getExtent = function() {
-      return this.get(LayerProperty.EXTENT);
-    };
-    BaseLayer2.prototype.getMaxResolution = function() {
-      return this.get(LayerProperty.MAX_RESOLUTION);
-    };
-    BaseLayer2.prototype.getMinResolution = function() {
-      return this.get(LayerProperty.MIN_RESOLUTION);
-    };
-    BaseLayer2.prototype.getMinZoom = function() {
-      return this.get(LayerProperty.MIN_ZOOM);
-    };
-    BaseLayer2.prototype.getMaxZoom = function() {
-      return this.get(LayerProperty.MAX_ZOOM);
-    };
-    BaseLayer2.prototype.getOpacity = function() {
-      return this.get(LayerProperty.OPACITY);
-    };
-    BaseLayer2.prototype.getSourceState = function() {
-      return abstract();
-    };
-    BaseLayer2.prototype.getVisible = function() {
-      return this.get(LayerProperty.VISIBLE);
-    };
-    BaseLayer2.prototype.getZIndex = function() {
-      return this.get(LayerProperty.Z_INDEX);
-    };
-    BaseLayer2.prototype.setBackground = function(opt_background) {
-      this.background_ = opt_background;
-      this.changed();
-    };
-    BaseLayer2.prototype.setExtent = function(extent) {
-      this.set(LayerProperty.EXTENT, extent);
-    };
-    BaseLayer2.prototype.setMaxResolution = function(maxResolution) {
-      this.set(LayerProperty.MAX_RESOLUTION, maxResolution);
-    };
-    BaseLayer2.prototype.setMinResolution = function(minResolution) {
-      this.set(LayerProperty.MIN_RESOLUTION, minResolution);
-    };
-    BaseLayer2.prototype.setMaxZoom = function(maxZoom) {
-      this.set(LayerProperty.MAX_ZOOM, maxZoom);
-    };
-    BaseLayer2.prototype.setMinZoom = function(minZoom) {
-      this.set(LayerProperty.MIN_ZOOM, minZoom);
-    };
-    BaseLayer2.prototype.setOpacity = function(opacity) {
-      assert(typeof opacity === "number", 64);
-      this.set(LayerProperty.OPACITY, opacity);
-    };
-    BaseLayer2.prototype.setVisible = function(visible) {
-      this.set(LayerProperty.VISIBLE, visible);
-    };
-    BaseLayer2.prototype.setZIndex = function(zindex) {
-      this.set(LayerProperty.Z_INDEX, zindex);
-    };
-    BaseLayer2.prototype.disposeInternal = function() {
-      if (this.state_) {
-        this.state_.layer = null;
-        this.state_ = null;
-      }
-      _super.prototype.disposeInternal.call(this);
-    };
-    return BaseLayer2;
-  }(BaseObject$1);
-  const BaseLayer$1 = BaseLayer;
-  const EventType = {
-    PRERENDER: "prerender",
-    POSTRENDER: "postrender",
-    PRECOMPOSE: "precompose",
-    POSTCOMPOSE: "postcompose",
-    RENDERCOMPLETE: "rendercomplete"
-  };
-  var __extends$Z = globalThis && globalThis.__extends || function() {
-    var extendStatics = function(d, b) {
-      extendStatics = Object.setPrototypeOf || { __proto__: [] } instanceof Array && function(d2, b2) {
-        d2.__proto__ = b2;
-      } || function(d2, b2) {
-        for (var p2 in b2)
-          if (Object.prototype.hasOwnProperty.call(b2, p2))
-            d2[p2] = b2[p2];
-      };
-      return extendStatics(d, b);
-    };
-    return function(d, b) {
-      if (typeof b !== "function" && b !== null)
-        throw new TypeError("Class extends value " + String(b) + " is not a constructor or null");
-      extendStatics(d, b);
-      function __() {
-        this.constructor = d;
-      }
-      d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
-    };
-  }();
-  var Layer = function(_super) {
-    __extends$Z(Layer2, _super);
-    function Layer2(options) {
-      var _this = this;
-      var baseOptions = assign({}, options);
-      delete baseOptions.source;
-      _this = _super.call(this, baseOptions) || this;
-      _this.on;
-      _this.once;
-      _this.un;
-      _this.mapPrecomposeKey_ = null;
-      _this.mapRenderKey_ = null;
-      _this.sourceChangeKey_ = null;
-      _this.renderer_ = null;
-      _this.rendered = false;
-      if (options.render) {
-        _this.render = options.render;
-      }
-      if (options.map) {
-        _this.setMap(options.map);
-      }
-      _this.addChangeListener(LayerProperty.SOURCE, _this.handleSourcePropertyChange_);
-      var source = options.source ? options.source : null;
-      _this.setSource(source);
-      return _this;
-    }
-    Layer2.prototype.getLayersArray = function(opt_array) {
-      var array = opt_array ? opt_array : [];
-      array.push(this);
-      return array;
-    };
-    Layer2.prototype.getLayerStatesArray = function(opt_states) {
-      var states = opt_states ? opt_states : [];
-      states.push(this.getLayerState());
-      return states;
-    };
-    Layer2.prototype.getSource = function() {
-      return this.get(LayerProperty.SOURCE) || null;
-    };
-    Layer2.prototype.getRenderSource = function() {
-      return this.getSource();
-    };
-    Layer2.prototype.getSourceState = function() {
-      var source = this.getSource();
-      return !source ? "undefined" : source.getState();
-    };
-    Layer2.prototype.handleSourceChange_ = function() {
-      this.changed();
-    };
-    Layer2.prototype.handleSourcePropertyChange_ = function() {
-      if (this.sourceChangeKey_) {
-        unlistenByKey(this.sourceChangeKey_);
-        this.sourceChangeKey_ = null;
-      }
-      var source = this.getSource();
-      if (source) {
-        this.sourceChangeKey_ = listen(source, EventType$1.CHANGE, this.handleSourceChange_, this);
-      }
-      this.changed();
-    };
-    Layer2.prototype.getFeatures = function(pixel) {
-      if (!this.renderer_) {
-        return new Promise(function(resolve2) {
-          return resolve2([]);
-        });
-      }
-      return this.renderer_.getFeatures(pixel);
-    };
-    Layer2.prototype.getData = function(pixel) {
-      if (!this.renderer_ || !this.rendered) {
-        return null;
-      }
-      return this.renderer_.getData(pixel);
-    };
-    Layer2.prototype.render = function(frameState, target) {
-      var layerRenderer = this.getRenderer();
-      if (layerRenderer.prepareFrame(frameState)) {
-        this.rendered = true;
-        return layerRenderer.renderFrame(frameState, target);
-      }
-    };
-    Layer2.prototype.unrender = function() {
-      this.rendered = false;
-    };
-    Layer2.prototype.setMapInternal = function(map2) {
-      if (!map2) {
-        this.unrender();
-      }
-      this.set(LayerProperty.MAP, map2);
-    };
-    Layer2.prototype.getMapInternal = function() {
-      return this.get(LayerProperty.MAP);
-    };
-    Layer2.prototype.setMap = function(map2) {
-      if (this.mapPrecomposeKey_) {
-        unlistenByKey(this.mapPrecomposeKey_);
-        this.mapPrecomposeKey_ = null;
-      }
-      if (!map2) {
-        this.changed();
-      }
-      if (this.mapRenderKey_) {
-        unlistenByKey(this.mapRenderKey_);
-        this.mapRenderKey_ = null;
-      }
-      if (map2) {
-        this.mapPrecomposeKey_ = listen(map2, EventType.PRECOMPOSE, function(evt) {
-          var renderEvent = evt;
-          var layerStatesArray = renderEvent.frameState.layerStatesArray;
-          var layerState = this.getLayerState(false);
-          assert(!layerStatesArray.some(function(arrayLayerState) {
-            return arrayLayerState.layer === layerState.layer;
-          }), 67);
-          layerStatesArray.push(layerState);
-        }, this);
-        this.mapRenderKey_ = listen(this, EventType$1.CHANGE, map2.render, map2);
-        this.changed();
-      }
-    };
-    Layer2.prototype.setSource = function(source) {
-      this.set(LayerProperty.SOURCE, source);
-    };
-    Layer2.prototype.getRenderer = function() {
-      if (!this.renderer_) {
-        this.renderer_ = this.createRenderer();
-      }
-      return this.renderer_;
-    };
-    Layer2.prototype.hasRenderer = function() {
-      return !!this.renderer_;
-    };
-    Layer2.prototype.createRenderer = function() {
-      return null;
-    };
-    Layer2.prototype.disposeInternal = function() {
-      if (this.renderer_) {
-        this.renderer_.dispose();
-        delete this.renderer_;
-      }
-      this.setSource(null);
-      _super.prototype.disposeInternal.call(this);
-    };
-    return Layer2;
-  }(BaseLayer$1);
-  function inView(layerState, viewState) {
-    if (!layerState.visible) {
-      return false;
-    }
-    var resolution = viewState.resolution;
-    if (resolution < layerState.minResolution || resolution >= layerState.maxResolution) {
-      return false;
-    }
-    var zoom = viewState.zoom;
-    return zoom > layerState.minZoom && zoom <= layerState.maxZoom;
-  }
-  const Layer$1 = Layer;
-  var __extends$Y = globalThis && globalThis.__extends || function() {
-    var extendStatics = function(d, b) {
-      extendStatics = Object.setPrototypeOf || { __proto__: [] } instanceof Array && function(d2, b2) {
-        d2.__proto__ = b2;
-      } || function(d2, b2) {
-        for (var p2 in b2)
-          if (Object.prototype.hasOwnProperty.call(b2, p2))
-            d2[p2] = b2[p2];
-      };
-      return extendStatics(d, b);
-    };
-    return function(d, b) {
-      if (typeof b !== "function" && b !== null)
-        throw new TypeError("Class extends value " + String(b) + " is not a constructor or null");
-      extendStatics(d, b);
-      function __() {
-        this.constructor = d;
-      }
-      d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
-    };
-  }();
-  var MapRenderer = function(_super) {
-    __extends$Y(MapRenderer2, _super);
-    function MapRenderer2(map2) {
-      var _this = _super.call(this) || this;
-      _this.map_ = map2;
-      return _this;
-    }
-    MapRenderer2.prototype.dispatchRenderEvent = function(type, frameState) {
-      abstract();
-    };
-    MapRenderer2.prototype.calculateMatrices2D = function(frameState) {
-      var viewState = frameState.viewState;
-      var coordinateToPixelTransform = frameState.coordinateToPixelTransform;
-      var pixelToCoordinateTransform = frameState.pixelToCoordinateTransform;
-      compose(coordinateToPixelTransform, frameState.size[0] / 2, frameState.size[1] / 2, 1 / viewState.resolution, -1 / viewState.resolution, -viewState.rotation, -viewState.center[0], -viewState.center[1]);
-      makeInverse(pixelToCoordinateTransform, coordinateToPixelTransform);
-    };
-    MapRenderer2.prototype.forEachFeatureAtCoordinate = function(coordinate, frameState, hitTolerance, checkWrapped, callback, thisArg, layerFilter, thisArg2) {
-      var result;
-      var viewState = frameState.viewState;
-      function forEachFeatureAtCoordinate(managed, feature, layer2, geometry) {
-        return callback.call(thisArg, feature, managed ? layer2 : null, geometry);
-      }
-      var projection = viewState.projection;
-      var translatedCoordinate = wrapX$1(coordinate.slice(), projection);
-      var offsets = [[0, 0]];
-      if (projection.canWrapX() && checkWrapped) {
-        var projectionExtent = projection.getExtent();
-        var worldWidth = getWidth(projectionExtent);
-        offsets.push([-worldWidth, 0], [worldWidth, 0]);
-      }
-      var layerStates = frameState.layerStatesArray;
-      var numLayers = layerStates.length;
-      var matches2 = [];
-      var tmpCoord = [];
-      for (var i = 0; i < offsets.length; i++) {
-        for (var j = numLayers - 1; j >= 0; --j) {
-          var layerState = layerStates[j];
-          var layer = layerState.layer;
-          if (layer.hasRenderer() && inView(layerState, viewState) && layerFilter.call(thisArg2, layer)) {
-            var layerRenderer = layer.getRenderer();
-            var source = layer.getSource();
-            if (layerRenderer && source) {
-              var coordinates2 = source.getWrapX() ? translatedCoordinate : coordinate;
-              var callback_1 = forEachFeatureAtCoordinate.bind(null, layerState.managed);
-              tmpCoord[0] = coordinates2[0] + offsets[i][0];
-              tmpCoord[1] = coordinates2[1] + offsets[i][1];
-              result = layerRenderer.forEachFeatureAtCoordinate(tmpCoord, frameState, hitTolerance, callback_1, matches2);
-            }
-            if (result) {
-              return result;
-            }
-          }
-        }
-      }
-      if (matches2.length === 0) {
-        return void 0;
-      }
-      var order = 1 / matches2.length;
-      matches2.forEach(function(m, i2) {
-        return m.distanceSq += i2 * order;
-      });
-      matches2.sort(function(a, b) {
-        return a.distanceSq - b.distanceSq;
-      });
-      matches2.some(function(m) {
-        return result = m.callback(m.feature, m.layer, m.geometry);
-      });
-      return result;
-    };
-    MapRenderer2.prototype.forEachLayerAtPixel = function(pixel, frameState, hitTolerance, callback, layerFilter) {
-      return abstract();
-    };
-    MapRenderer2.prototype.hasFeatureAtCoordinate = function(coordinate, frameState, hitTolerance, checkWrapped, layerFilter, thisArg) {
-      var hasFeature = this.forEachFeatureAtCoordinate(coordinate, frameState, hitTolerance, checkWrapped, TRUE, this, layerFilter, thisArg);
-      return hasFeature !== void 0;
-    };
-    MapRenderer2.prototype.getMap = function() {
-      return this.map_;
-    };
-    MapRenderer2.prototype.renderFrame = function(frameState) {
-      abstract();
-    };
-    MapRenderer2.prototype.scheduleExpireIconCache = function(frameState) {
-      if (shared.canExpireCache()) {
-        frameState.postRenderFunctions.push(expireIconCache);
-      }
-    };
-    return MapRenderer2;
-  }(Disposable$1);
-  function expireIconCache(map2, frameState) {
-    shared.expire();
-  }
-  const MapRenderer$1 = MapRenderer;
-  var __extends$X = globalThis && globalThis.__extends || function() {
-    var extendStatics = function(d, b) {
-      extendStatics = Object.setPrototypeOf || { __proto__: [] } instanceof Array && function(d2, b2) {
-        d2.__proto__ = b2;
-      } || function(d2, b2) {
-        for (var p2 in b2)
-          if (Object.prototype.hasOwnProperty.call(b2, p2))
-            d2[p2] = b2[p2];
-      };
-      return extendStatics(d, b);
-    };
-    return function(d, b) {
-      if (typeof b !== "function" && b !== null)
-        throw new TypeError("Class extends value " + String(b) + " is not a constructor or null");
-      extendStatics(d, b);
-      function __() {
-        this.constructor = d;
-      }
-      d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
-    };
-  }();
-  var RenderEvent = function(_super) {
-    __extends$X(RenderEvent2, _super);
-    function RenderEvent2(type, opt_inversePixelTransform, opt_frameState, opt_context) {
-      var _this = _super.call(this, type) || this;
-      _this.inversePixelTransform = opt_inversePixelTransform;
-      _this.frameState = opt_frameState;
-      _this.context = opt_context;
-      return _this;
-    }
-    return RenderEvent2;
-  }(Event);
-  const RenderEvent$1 = RenderEvent;
-  var CLASS_HIDDEN = "ol-hidden";
-  var CLASS_UNSELECTABLE = "ol-unselectable";
-  var CLASS_UNSUPPORTED = "ol-unsupported";
-  var CLASS_CONTROL = "ol-control";
-  var CLASS_COLLAPSED = "ol-collapsed";
-  function createCanvasContext2D(opt_width, opt_height, opt_canvasPool, opt_Context2DSettings) {
-    var canvas;
-    if (opt_canvasPool && opt_canvasPool.length) {
-      canvas = opt_canvasPool.shift();
-    } else if (WORKER_OFFSCREEN_CANVAS) {
-      canvas = new OffscreenCanvas(opt_width || 300, opt_height || 300);
-    } else {
-      canvas = document.createElement("canvas");
-    }
-    if (opt_width) {
-      canvas.width = opt_width;
-    }
-    if (opt_height) {
-      canvas.height = opt_height;
-    }
-    return canvas.getContext("2d", opt_Context2DSettings);
-  }
-  function releaseCanvas(context) {
-    var canvas = context.canvas;
-    canvas.width = 1;
-    canvas.height = 1;
-    context.clearRect(0, 0, 1, 1);
-  }
-  function replaceNode(newNode, oldNode) {
-    var parent = oldNode.parentNode;
-    if (parent) {
-      parent.replaceChild(newNode, oldNode);
-    }
-  }
-  function removeNode(node) {
-    return node && node.parentNode ? node.parentNode.removeChild(node) : null;
-  }
-  function removeChildren(node) {
-    while (node.lastChild) {
-      node.removeChild(node.lastChild);
-    }
-  }
-  function replaceChildren(node, children) {
-    var oldChildren = node.childNodes;
-    for (var i = 0; true; ++i) {
-      var oldChild = oldChildren[i];
-      var newChild = children[i];
-      if (!oldChild && !newChild) {
-        break;
-      }
-      if (oldChild === newChild) {
-        continue;
-      }
-      if (!oldChild) {
-        node.appendChild(newChild);
-        continue;
-      }
-      if (!newChild) {
-        node.removeChild(oldChild);
-        --i;
-        continue;
-      }
-      node.insertBefore(newChild, oldChild);
-    }
-  }
-  var checkedFonts = new BaseObject$1();
-  var labelCache = new EventTarget();
-  labelCache.setSize = function() {
-    console.warn("labelCache is deprecated.");
-  };
-  var __extends$W = globalThis && globalThis.__extends || function() {
-    var extendStatics = function(d, b) {
-      extendStatics = Object.setPrototypeOf || { __proto__: [] } instanceof Array && function(d2, b2) {
-        d2.__proto__ = b2;
-      } || function(d2, b2) {
-        for (var p2 in b2)
-          if (Object.prototype.hasOwnProperty.call(b2, p2))
-            d2[p2] = b2[p2];
-      };
-      return extendStatics(d, b);
-    };
-    return function(d, b) {
-      if (typeof b !== "function" && b !== null)
-        throw new TypeError("Class extends value " + String(b) + " is not a constructor or null");
-      extendStatics(d, b);
-      function __() {
-        this.constructor = d;
-      }
-      d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
-    };
-  }();
-  var CompositeMapRenderer = function(_super) {
-    __extends$W(CompositeMapRenderer2, _super);
-    function CompositeMapRenderer2(map2) {
-      var _this = _super.call(this, map2) || this;
-      _this.fontChangeListenerKey_ = listen(checkedFonts, ObjectEventType.PROPERTYCHANGE, map2.redrawText.bind(map2));
-      _this.element_ = document.createElement("div");
-      var style = _this.element_.style;
-      style.position = "absolute";
-      style.width = "100%";
-      style.height = "100%";
-      style.zIndex = "0";
-      _this.element_.className = CLASS_UNSELECTABLE + " ol-layers";
-      var container = map2.getViewport();
-      container.insertBefore(_this.element_, container.firstChild || null);
-      _this.children_ = [];
-      _this.renderedVisible_ = true;
-      return _this;
-    }
-    CompositeMapRenderer2.prototype.dispatchRenderEvent = function(type, frameState) {
-      var map2 = this.getMap();
-      if (map2.hasListener(type)) {
-        var event_1 = new RenderEvent$1(type, void 0, frameState);
-        map2.dispatchEvent(event_1);
-      }
-    };
-    CompositeMapRenderer2.prototype.disposeInternal = function() {
-      unlistenByKey(this.fontChangeListenerKey_);
-      this.element_.parentNode.removeChild(this.element_);
-      _super.prototype.disposeInternal.call(this);
-    };
-    CompositeMapRenderer2.prototype.renderFrame = function(frameState) {
-      if (!frameState) {
-        if (this.renderedVisible_) {
-          this.element_.style.display = "none";
-          this.renderedVisible_ = false;
-        }
-        return;
-      }
-      this.calculateMatrices2D(frameState);
-      this.dispatchRenderEvent(EventType.PRECOMPOSE, frameState);
-      var layerStatesArray = frameState.layerStatesArray.sort(function(a, b) {
-        return a.zIndex - b.zIndex;
-      });
-      var viewState = frameState.viewState;
-      this.children_.length = 0;
-      var declutterLayers = [];
-      var previousElement = null;
-      for (var i = 0, ii = layerStatesArray.length; i < ii; ++i) {
-        var layerState = layerStatesArray[i];
-        frameState.layerIndex = i;
-        var layer = layerState.layer;
-        var sourceState = layer.getSourceState();
-        if (!inView(layerState, viewState) || sourceState != "ready" && sourceState != "undefined") {
-          layer.unrender();
-          continue;
-        }
-        var element = layer.render(frameState, previousElement);
-        if (!element) {
-          continue;
-        }
-        if (element !== previousElement) {
-          this.children_.push(element);
-          previousElement = element;
-        }
-        if ("getDeclutter" in layer) {
-          declutterLayers.push(
-            layer
-          );
-        }
-      }
-      for (var i = declutterLayers.length - 1; i >= 0; --i) {
-        declutterLayers[i].renderDeclutter(frameState);
-      }
-      replaceChildren(this.element_, this.children_);
-      this.dispatchRenderEvent(EventType.POSTCOMPOSE, frameState);
-      if (!this.renderedVisible_) {
-        this.element_.style.display = "";
-        this.renderedVisible_ = true;
-      }
-      this.scheduleExpireIconCache(frameState);
-    };
-    CompositeMapRenderer2.prototype.forEachLayerAtPixel = function(pixel, frameState, hitTolerance, callback, layerFilter) {
-      var viewState = frameState.viewState;
-      var layerStates = frameState.layerStatesArray;
-      var numLayers = layerStates.length;
-      for (var i = numLayers - 1; i >= 0; --i) {
-        var layerState = layerStates[i];
-        var layer = layerState.layer;
-        if (layer.hasRenderer() && inView(layerState, viewState) && layerFilter(layer)) {
-          var layerRenderer = layer.getRenderer();
-          var data = layerRenderer.getDataAtPixel(pixel, frameState, hitTolerance);
-          if (data) {
-            var result = callback(layer, data);
-            if (result) {
-              return result;
-            }
-          }
-        }
-      }
-      return void 0;
-    };
-    return CompositeMapRenderer2;
-  }(MapRenderer$1);
-  const CompositeMapRenderer$1 = CompositeMapRenderer;
-  const CollectionEventType = {
-    ADD: "add",
-    REMOVE: "remove"
-  };
-  var __extends$V = globalThis && globalThis.__extends || function() {
-    var extendStatics = function(d, b) {
-      extendStatics = Object.setPrototypeOf || { __proto__: [] } instanceof Array && function(d2, b2) {
-        d2.__proto__ = b2;
-      } || function(d2, b2) {
-        for (var p2 in b2)
-          if (Object.prototype.hasOwnProperty.call(b2, p2))
-            d2[p2] = b2[p2];
-      };
-      return extendStatics(d, b);
-    };
-    return function(d, b) {
-      if (typeof b !== "function" && b !== null)
-        throw new TypeError("Class extends value " + String(b) + " is not a constructor or null");
-      extendStatics(d, b);
-      function __() {
-        this.constructor = d;
-      }
-      d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
-    };
-  }();
-  var Property$1 = {
-    LENGTH: "length"
-  };
-  var CollectionEvent = function(_super) {
-    __extends$V(CollectionEvent2, _super);
-    function CollectionEvent2(type, opt_element, opt_index) {
-      var _this = _super.call(this, type) || this;
-      _this.element = opt_element;
-      _this.index = opt_index;
-      return _this;
-    }
-    return CollectionEvent2;
-  }(Event);
-  var Collection = function(_super) {
-    __extends$V(Collection2, _super);
-    function Collection2(opt_array, opt_options) {
-      var _this = _super.call(this) || this;
-      _this.on;
-      _this.once;
-      _this.un;
-      var options = opt_options || {};
-      _this.unique_ = !!options.unique;
-      _this.array_ = opt_array ? opt_array : [];
-      if (_this.unique_) {
-        for (var i = 0, ii = _this.array_.length; i < ii; ++i) {
-          _this.assertUnique_(_this.array_[i], i);
-        }
-      }
-      _this.updateLength_();
-      return _this;
-    }
-    Collection2.prototype.clear = function() {
-      while (this.getLength() > 0) {
-        this.pop();
-      }
-    };
-    Collection2.prototype.extend = function(arr2) {
-      for (var i = 0, ii = arr2.length; i < ii; ++i) {
-        this.push(arr2[i]);
-      }
-      return this;
-    };
-    Collection2.prototype.forEach = function(f) {
-      var array = this.array_;
-      for (var i = 0, ii = array.length; i < ii; ++i) {
-        f(array[i], i, array);
-      }
-    };
-    Collection2.prototype.getArray = function() {
-      return this.array_;
-    };
-    Collection2.prototype.item = function(index2) {
-      return this.array_[index2];
-    };
-    Collection2.prototype.getLength = function() {
-      return this.get(Property$1.LENGTH);
-    };
-    Collection2.prototype.insertAt = function(index2, elem) {
-      if (this.unique_) {
-        this.assertUnique_(elem);
-      }
-      this.array_.splice(index2, 0, elem);
-      this.updateLength_();
-      this.dispatchEvent(new CollectionEvent(CollectionEventType.ADD, elem, index2));
-    };
-    Collection2.prototype.pop = function() {
-      return this.removeAt(this.getLength() - 1);
-    };
-    Collection2.prototype.push = function(elem) {
-      if (this.unique_) {
-        this.assertUnique_(elem);
-      }
-      var n = this.getLength();
-      this.insertAt(n, elem);
-      return this.getLength();
-    };
-    Collection2.prototype.remove = function(elem) {
-      var arr2 = this.array_;
-      for (var i = 0, ii = arr2.length; i < ii; ++i) {
-        if (arr2[i] === elem) {
-          return this.removeAt(i);
-        }
-      }
-      return void 0;
-    };
-    Collection2.prototype.removeAt = function(index2) {
-      var prev = this.array_[index2];
-      this.array_.splice(index2, 1);
-      this.updateLength_();
-      this.dispatchEvent(new CollectionEvent(CollectionEventType.REMOVE, prev, index2));
-      return prev;
-    };
-    Collection2.prototype.setAt = function(index2, elem) {
-      var n = this.getLength();
-      if (index2 < n) {
-        if (this.unique_) {
-          this.assertUnique_(elem, index2);
-        }
-        var prev = this.array_[index2];
-        this.array_[index2] = elem;
-        this.dispatchEvent(new CollectionEvent(CollectionEventType.REMOVE, prev, index2));
-        this.dispatchEvent(new CollectionEvent(CollectionEventType.ADD, elem, index2));
-      } else {
-        for (var j = n; j < index2; ++j) {
-          this.insertAt(j, void 0);
-        }
-        this.insertAt(index2, elem);
-      }
-    };
-    Collection2.prototype.updateLength_ = function() {
-      this.set(Property$1.LENGTH, this.array_.length);
-    };
-    Collection2.prototype.assertUnique_ = function(elem, opt_except) {
-      for (var i = 0, ii = this.array_.length; i < ii; ++i) {
-        if (this.array_[i] === elem && i !== opt_except) {
-          throw new AssertionError$1(58);
-        }
-      }
-    };
-    return Collection2;
-  }(BaseObject$1);
-  const Collection$1 = Collection;
-  var __extends$U = globalThis && globalThis.__extends || function() {
-    var extendStatics = function(d, b) {
-      extendStatics = Object.setPrototypeOf || { __proto__: [] } instanceof Array && function(d2, b2) {
-        d2.__proto__ = b2;
-      } || function(d2, b2) {
-        for (var p2 in b2)
-          if (Object.prototype.hasOwnProperty.call(b2, p2))
-            d2[p2] = b2[p2];
-      };
-      return extendStatics(d, b);
-    };
-    return function(d, b) {
-      if (typeof b !== "function" && b !== null)
-        throw new TypeError("Class extends value " + String(b) + " is not a constructor or null");
-      extendStatics(d, b);
-      function __() {
-        this.constructor = d;
-      }
-      d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
-    };
-  }();
-  var GroupEvent = function(_super) {
-    __extends$U(GroupEvent2, _super);
-    function GroupEvent2(type, layer) {
-      var _this = _super.call(this, type) || this;
-      _this.layer = layer;
-      return _this;
-    }
-    return GroupEvent2;
-  }(Event);
-  var Property = {
-    LAYERS: "layers"
-  };
-  var LayerGroup = function(_super) {
-    __extends$U(LayerGroup2, _super);
-    function LayerGroup2(opt_options) {
-      var _this = this;
-      var options = opt_options || {};
-      var baseOptions = assign({}, options);
-      delete baseOptions.layers;
-      var layers = options.layers;
-      _this = _super.call(this, baseOptions) || this;
-      _this.on;
-      _this.once;
-      _this.un;
-      _this.layersListenerKeys_ = [];
-      _this.listenerKeys_ = {};
-      _this.addChangeListener(Property.LAYERS, _this.handleLayersChanged_);
-      if (layers) {
-        if (Array.isArray(layers)) {
-          layers = new Collection$1(layers.slice(), { unique: true });
-        } else {
-          assert(typeof layers.getArray === "function", 43);
-        }
-      } else {
-        layers = new Collection$1(void 0, { unique: true });
-      }
-      _this.setLayers(layers);
-      return _this;
-    }
-    LayerGroup2.prototype.handleLayerChange_ = function() {
-      this.changed();
-    };
-    LayerGroup2.prototype.handleLayersChanged_ = function() {
-      this.layersListenerKeys_.forEach(unlistenByKey);
-      this.layersListenerKeys_.length = 0;
-      var layers = this.getLayers();
-      this.layersListenerKeys_.push(listen(layers, CollectionEventType.ADD, this.handleLayersAdd_, this), listen(layers, CollectionEventType.REMOVE, this.handleLayersRemove_, this));
-      for (var id in this.listenerKeys_) {
-        this.listenerKeys_[id].forEach(unlistenByKey);
-      }
-      clear(this.listenerKeys_);
-      var layersArray = layers.getArray();
-      for (var i = 0, ii = layersArray.length; i < ii; i++) {
-        var layer = layersArray[i];
-        this.registerLayerListeners_(layer);
-        this.dispatchEvent(new GroupEvent("addlayer", layer));
-      }
-      this.changed();
-    };
-    LayerGroup2.prototype.registerLayerListeners_ = function(layer) {
-      var listenerKeys = [
-        listen(layer, ObjectEventType.PROPERTYCHANGE, this.handleLayerChange_, this),
-        listen(layer, EventType$1.CHANGE, this.handleLayerChange_, this)
-      ];
-      if (layer instanceof LayerGroup2) {
-        listenerKeys.push(listen(layer, "addlayer", this.handleLayerGroupAdd_, this), listen(layer, "removelayer", this.handleLayerGroupRemove_, this));
-      }
-      this.listenerKeys_[getUid(layer)] = listenerKeys;
-    };
-    LayerGroup2.prototype.handleLayerGroupAdd_ = function(event) {
-      this.dispatchEvent(new GroupEvent("addlayer", event.layer));
-    };
-    LayerGroup2.prototype.handleLayerGroupRemove_ = function(event) {
-      this.dispatchEvent(new GroupEvent("removelayer", event.layer));
-    };
-    LayerGroup2.prototype.handleLayersAdd_ = function(collectionEvent) {
-      var layer = collectionEvent.element;
-      this.registerLayerListeners_(layer);
-      this.dispatchEvent(new GroupEvent("addlayer", layer));
-      this.changed();
-    };
-    LayerGroup2.prototype.handleLayersRemove_ = function(collectionEvent) {
-      var layer = collectionEvent.element;
-      var key = getUid(layer);
-      this.listenerKeys_[key].forEach(unlistenByKey);
-      delete this.listenerKeys_[key];
-      this.dispatchEvent(new GroupEvent("removelayer", layer));
-      this.changed();
-    };
-    LayerGroup2.prototype.getLayers = function() {
-      return this.get(Property.LAYERS);
-    };
-    LayerGroup2.prototype.setLayers = function(layers) {
-      var collection = this.getLayers();
-      if (collection) {
-        var currentLayers = collection.getArray();
-        for (var i = 0, ii = currentLayers.length; i < ii; ++i) {
-          this.dispatchEvent(new GroupEvent("removelayer", currentLayers[i]));
-        }
-      }
-      this.set(Property.LAYERS, layers);
-    };
-    LayerGroup2.prototype.getLayersArray = function(opt_array) {
-      var array = opt_array !== void 0 ? opt_array : [];
-      this.getLayers().forEach(function(layer) {
-        layer.getLayersArray(array);
-      });
-      return array;
-    };
-    LayerGroup2.prototype.getLayerStatesArray = function(opt_states) {
-      var states = opt_states !== void 0 ? opt_states : [];
-      var pos = states.length;
-      this.getLayers().forEach(function(layer) {
-        layer.getLayerStatesArray(states);
-      });
-      var ownLayerState = this.getLayerState();
-      var defaultZIndex = ownLayerState.zIndex;
-      if (!opt_states && ownLayerState.zIndex === void 0) {
-        defaultZIndex = 0;
-      }
-      for (var i = pos, ii = states.length; i < ii; i++) {
-        var layerState = states[i];
-        layerState.opacity *= ownLayerState.opacity;
-        layerState.visible = layerState.visible && ownLayerState.visible;
-        layerState.maxResolution = Math.min(layerState.maxResolution, ownLayerState.maxResolution);
-        layerState.minResolution = Math.max(layerState.minResolution, ownLayerState.minResolution);
-        layerState.minZoom = Math.max(layerState.minZoom, ownLayerState.minZoom);
-        layerState.maxZoom = Math.min(layerState.maxZoom, ownLayerState.maxZoom);
-        if (ownLayerState.extent !== void 0) {
-          if (layerState.extent !== void 0) {
-            layerState.extent = getIntersection(layerState.extent, ownLayerState.extent);
-          } else {
-            layerState.extent = ownLayerState.extent;
-          }
-        }
-        if (layerState.zIndex === void 0) {
-          layerState.zIndex = defaultZIndex;
-        }
-      }
-      return states;
-    };
-    LayerGroup2.prototype.getSourceState = function() {
-      return "ready";
-    };
-    return LayerGroup2;
-  }(BaseLayer$1);
-  const LayerGroup$1 = LayerGroup;
-  var __extends$T = globalThis && globalThis.__extends || function() {
-    var extendStatics = function(d, b) {
-      extendStatics = Object.setPrototypeOf || { __proto__: [] } instanceof Array && function(d2, b2) {
-        d2.__proto__ = b2;
-      } || function(d2, b2) {
-        for (var p2 in b2)
-          if (Object.prototype.hasOwnProperty.call(b2, p2))
-            d2[p2] = b2[p2];
-      };
-      return extendStatics(d, b);
-    };
-    return function(d, b) {
-      if (typeof b !== "function" && b !== null)
-        throw new TypeError("Class extends value " + String(b) + " is not a constructor or null");
-      extendStatics(d, b);
-      function __() {
-        this.constructor = d;
-      }
-      d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
-    };
-  }();
-  var MapEvent = function(_super) {
-    __extends$T(MapEvent2, _super);
-    function MapEvent2(type, map2, opt_frameState) {
-      var _this = _super.call(this, type) || this;
-      _this.map = map2;
-      _this.frameState = opt_frameState !== void 0 ? opt_frameState : null;
-      return _this;
-    }
-    return MapEvent2;
-  }(Event);
-  const MapEvent$1 = MapEvent;
-  var __extends$S = globalThis && globalThis.__extends || function() {
-    var extendStatics = function(d, b) {
-      extendStatics = Object.setPrototypeOf || { __proto__: [] } instanceof Array && function(d2, b2) {
-        d2.__proto__ = b2;
-      } || function(d2, b2) {
-        for (var p2 in b2)
-          if (Object.prototype.hasOwnProperty.call(b2, p2))
-            d2[p2] = b2[p2];
-      };
-      return extendStatics(d, b);
-    };
-    return function(d, b) {
-      if (typeof b !== "function" && b !== null)
-        throw new TypeError("Class extends value " + String(b) + " is not a constructor or null");
-      extendStatics(d, b);
-      function __() {
-        this.constructor = d;
-      }
-      d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
-    };
-  }();
-  var MapBrowserEvent = function(_super) {
-    __extends$S(MapBrowserEvent2, _super);
-    function MapBrowserEvent2(type, map2, originalEvent, opt_dragging, opt_frameState, opt_activePointers) {
-      var _this = _super.call(this, type, map2, opt_frameState) || this;
-      _this.originalEvent = originalEvent;
-      _this.pixel_ = null;
-      _this.coordinate_ = null;
-      _this.dragging = opt_dragging !== void 0 ? opt_dragging : false;
-      _this.activePointers = opt_activePointers;
-      return _this;
-    }
-    Object.defineProperty(MapBrowserEvent2.prototype, "pixel", {
-      get: function() {
-        if (!this.pixel_) {
-          this.pixel_ = this.map.getEventPixel(this.originalEvent);
-        }
-        return this.pixel_;
-      },
-      set: function(pixel) {
-        this.pixel_ = pixel;
-      },
-      enumerable: false,
-      configurable: true
-    });
-    Object.defineProperty(MapBrowserEvent2.prototype, "coordinate", {
-      get: function() {
-        if (!this.coordinate_) {
-          this.coordinate_ = this.map.getCoordinateFromPixel(this.pixel);
-        }
-        return this.coordinate_;
-      },
-      set: function(coordinate) {
-        this.coordinate_ = coordinate;
-      },
-      enumerable: false,
-      configurable: true
-    });
-    MapBrowserEvent2.prototype.preventDefault = function() {
-      _super.prototype.preventDefault.call(this);
-      if ("preventDefault" in this.originalEvent) {
-        this.originalEvent.preventDefault();
-      }
-    };
-    MapBrowserEvent2.prototype.stopPropagation = function() {
-      _super.prototype.stopPropagation.call(this);
-      if ("stopPropagation" in this.originalEvent) {
-        this.originalEvent.stopPropagation();
-      }
-    };
-    return MapBrowserEvent2;
-  }(MapEvent$1);
-  const MapBrowserEvent$1 = MapBrowserEvent;
-  const MapBrowserEventType = {
-    SINGLECLICK: "singleclick",
-    CLICK: EventType$1.CLICK,
-    DBLCLICK: EventType$1.DBLCLICK,
-    POINTERDRAG: "pointerdrag",
-    POINTERMOVE: "pointermove",
-    POINTERDOWN: "pointerdown",
-    POINTERUP: "pointerup",
-    POINTEROVER: "pointerover",
-    POINTEROUT: "pointerout",
-    POINTERENTER: "pointerenter",
-    POINTERLEAVE: "pointerleave",
-    POINTERCANCEL: "pointercancel"
-  };
-  const PointerEventType = {
-    POINTERMOVE: "pointermove",
-    POINTERDOWN: "pointerdown",
-    POINTERUP: "pointerup",
-    POINTEROVER: "pointerover",
-    POINTEROUT: "pointerout",
-    POINTERENTER: "pointerenter",
-    POINTERLEAVE: "pointerleave",
-    POINTERCANCEL: "pointercancel"
-  };
-  var __extends$R = globalThis && globalThis.__extends || function() {
-    var extendStatics = function(d, b) {
-      extendStatics = Object.setPrototypeOf || { __proto__: [] } instanceof Array && function(d2, b2) {
-        d2.__proto__ = b2;
-      } || function(d2, b2) {
-        for (var p2 in b2)
-          if (Object.prototype.hasOwnProperty.call(b2, p2))
-            d2[p2] = b2[p2];
-      };
-      return extendStatics(d, b);
-    };
-    return function(d, b) {
-      if (typeof b !== "function" && b !== null)
-        throw new TypeError("Class extends value " + String(b) + " is not a constructor or null");
-      extendStatics(d, b);
-      function __() {
-        this.constructor = d;
-      }
-      d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
-    };
-  }();
-  var MapBrowserEventHandler = function(_super) {
-    __extends$R(MapBrowserEventHandler2, _super);
-    function MapBrowserEventHandler2(map2, moveTolerance) {
-      var _this = _super.call(this, map2) || this;
-      _this.map_ = map2;
-      _this.clickTimeoutId_;
-      _this.emulateClicks_ = false;
-      _this.dragging_ = false;
-      _this.dragListenerKeys_ = [];
-      _this.moveTolerance_ = moveTolerance === void 0 ? 1 : moveTolerance;
-      _this.down_ = null;
-      var element = _this.map_.getViewport();
-      _this.activePointers_ = [];
-      _this.trackedTouches_ = {};
-      _this.element_ = element;
-      _this.pointerdownListenerKey_ = listen(element, PointerEventType.POINTERDOWN, _this.handlePointerDown_, _this);
-      _this.originalPointerMoveEvent_;
-      _this.relayedListenerKey_ = listen(element, PointerEventType.POINTERMOVE, _this.relayMoveEvent_, _this);
-      _this.boundHandleTouchMove_ = _this.handleTouchMove_.bind(_this);
-      _this.element_.addEventListener(EventType$1.TOUCHMOVE, _this.boundHandleTouchMove_, PASSIVE_EVENT_LISTENERS ? { passive: false } : false);
-      return _this;
-    }
-    MapBrowserEventHandler2.prototype.emulateClick_ = function(pointerEvent) {
-      var newEvent = new MapBrowserEvent$1(MapBrowserEventType.CLICK, this.map_, pointerEvent);
-      this.dispatchEvent(newEvent);
-      if (this.clickTimeoutId_ !== void 0) {
-        clearTimeout(this.clickTimeoutId_);
-        this.clickTimeoutId_ = void 0;
-        newEvent = new MapBrowserEvent$1(MapBrowserEventType.DBLCLICK, this.map_, pointerEvent);
-        this.dispatchEvent(newEvent);
-      } else {
-        this.clickTimeoutId_ = setTimeout(
-          function() {
-            this.clickTimeoutId_ = void 0;
-            var newEvent2 = new MapBrowserEvent$1(MapBrowserEventType.SINGLECLICK, this.map_, pointerEvent);
-            this.dispatchEvent(newEvent2);
-          }.bind(this),
-          250
-        );
-      }
-    };
-    MapBrowserEventHandler2.prototype.updateActivePointers_ = function(pointerEvent) {
-      var event = pointerEvent;
-      var id = event.pointerId;
-      if (event.type == MapBrowserEventType.POINTERUP || event.type == MapBrowserEventType.POINTERCANCEL) {
-        delete this.trackedTouches_[id];
-        for (var pointerId in this.trackedTouches_) {
-          if (this.trackedTouches_[pointerId].target !== event.target) {
-            delete this.trackedTouches_[pointerId];
-            break;
-          }
-        }
-      } else if (event.type == MapBrowserEventType.POINTERDOWN || event.type == MapBrowserEventType.POINTERMOVE) {
-        this.trackedTouches_[id] = event;
-      }
-      this.activePointers_ = getValues(this.trackedTouches_);
-    };
-    MapBrowserEventHandler2.prototype.handlePointerUp_ = function(pointerEvent) {
-      this.updateActivePointers_(pointerEvent);
-      var newEvent = new MapBrowserEvent$1(MapBrowserEventType.POINTERUP, this.map_, pointerEvent, void 0, void 0, this.activePointers_);
-      this.dispatchEvent(newEvent);
-      if (this.emulateClicks_ && !newEvent.defaultPrevented && !this.dragging_ && this.isMouseActionButton_(pointerEvent)) {
-        this.emulateClick_(this.down_);
-      }
-      if (this.activePointers_.length === 0) {
-        this.dragListenerKeys_.forEach(unlistenByKey);
-        this.dragListenerKeys_.length = 0;
-        this.dragging_ = false;
-        this.down_ = null;
-      }
-    };
-    MapBrowserEventHandler2.prototype.isMouseActionButton_ = function(pointerEvent) {
-      return pointerEvent.button === 0;
-    };
-    MapBrowserEventHandler2.prototype.handlePointerDown_ = function(pointerEvent) {
-      this.emulateClicks_ = this.activePointers_.length === 0;
-      this.updateActivePointers_(pointerEvent);
-      var newEvent = new MapBrowserEvent$1(MapBrowserEventType.POINTERDOWN, this.map_, pointerEvent, void 0, void 0, this.activePointers_);
-      this.dispatchEvent(newEvent);
-      this.down_ = {};
-      for (var property in pointerEvent) {
-        var value = pointerEvent[property];
-        this.down_[property] = typeof value === "function" ? VOID : value;
-      }
-      if (this.dragListenerKeys_.length === 0) {
-        var doc2 = this.map_.getOwnerDocument();
-        this.dragListenerKeys_.push(
-          listen(doc2, MapBrowserEventType.POINTERMOVE, this.handlePointerMove_, this),
-          listen(doc2, MapBrowserEventType.POINTERUP, this.handlePointerUp_, this),
-          listen(this.element_, MapBrowserEventType.POINTERCANCEL, this.handlePointerUp_, this)
-        );
-        if (this.element_.getRootNode && this.element_.getRootNode() !== doc2) {
-          this.dragListenerKeys_.push(listen(this.element_.getRootNode(), MapBrowserEventType.POINTERUP, this.handlePointerUp_, this));
-        }
-      }
-    };
-    MapBrowserEventHandler2.prototype.handlePointerMove_ = function(pointerEvent) {
-      if (this.isMoving_(pointerEvent)) {
-        this.updateActivePointers_(pointerEvent);
-        this.dragging_ = true;
-        var newEvent = new MapBrowserEvent$1(MapBrowserEventType.POINTERDRAG, this.map_, pointerEvent, this.dragging_, void 0, this.activePointers_);
-        this.dispatchEvent(newEvent);
-      }
-    };
-    MapBrowserEventHandler2.prototype.relayMoveEvent_ = function(pointerEvent) {
-      this.originalPointerMoveEvent_ = pointerEvent;
-      var dragging = !!(this.down_ && this.isMoving_(pointerEvent));
-      this.dispatchEvent(new MapBrowserEvent$1(MapBrowserEventType.POINTERMOVE, this.map_, pointerEvent, dragging));
-    };
-    MapBrowserEventHandler2.prototype.handleTouchMove_ = function(event) {
-      var originalEvent = this.originalPointerMoveEvent_;
-      if ((!originalEvent || originalEvent.defaultPrevented) && (typeof event.cancelable !== "boolean" || event.cancelable === true)) {
-        event.preventDefault();
-      }
-    };
-    MapBrowserEventHandler2.prototype.isMoving_ = function(pointerEvent) {
-      return this.dragging_ || Math.abs(pointerEvent.clientX - this.down_.clientX) > this.moveTolerance_ || Math.abs(pointerEvent.clientY - this.down_.clientY) > this.moveTolerance_;
-    };
-    MapBrowserEventHandler2.prototype.disposeInternal = function() {
-      if (this.relayedListenerKey_) {
-        unlistenByKey(this.relayedListenerKey_);
-        this.relayedListenerKey_ = null;
-      }
-      this.element_.removeEventListener(EventType$1.TOUCHMOVE, this.boundHandleTouchMove_);
-      if (this.pointerdownListenerKey_) {
-        unlistenByKey(this.pointerdownListenerKey_);
-        this.pointerdownListenerKey_ = null;
-      }
-      this.dragListenerKeys_.forEach(unlistenByKey);
-      this.dragListenerKeys_.length = 0;
-      this.element_ = null;
-      _super.prototype.disposeInternal.call(this);
-    };
-    return MapBrowserEventHandler2;
-  }(EventTarget);
-  const MapBrowserEventHandler$1 = MapBrowserEventHandler;
-  const MapEventType = {
-    POSTRENDER: "postrender",
-    MOVESTART: "movestart",
-    MOVEEND: "moveend",
-    LOADSTART: "loadstart",
-    LOADEND: "loadend"
-  };
-  const MapProperty = {
-    LAYERGROUP: "layergroup",
-    SIZE: "size",
-    TARGET: "target",
-    VIEW: "view"
-  };
-  var DROP = Infinity;
-  var PriorityQueue = function() {
-    function PriorityQueue2(priorityFunction, keyFunction) {
-      this.priorityFunction_ = priorityFunction;
-      this.keyFunction_ = keyFunction;
-      this.elements_ = [];
-      this.priorities_ = [];
-      this.queuedElements_ = {};
-    }
-    PriorityQueue2.prototype.clear = function() {
-      this.elements_.length = 0;
-      this.priorities_.length = 0;
-      clear(this.queuedElements_);
-    };
-    PriorityQueue2.prototype.dequeue = function() {
-      var elements = this.elements_;
-      var priorities = this.priorities_;
-      var element = elements[0];
-      if (elements.length == 1) {
-        elements.length = 0;
-        priorities.length = 0;
-      } else {
-        elements[0] = elements.pop();
-        priorities[0] = priorities.pop();
-        this.siftUp_(0);
-      }
-      var elementKey = this.keyFunction_(element);
-      delete this.queuedElements_[elementKey];
-      return element;
-    };
-    PriorityQueue2.prototype.enqueue = function(element) {
-      assert(!(this.keyFunction_(element) in this.queuedElements_), 31);
-      var priority = this.priorityFunction_(element);
-      if (priority != DROP) {
-        this.elements_.push(element);
-        this.priorities_.push(priority);
-        this.queuedElements_[this.keyFunction_(element)] = true;
-        this.siftDown_(0, this.elements_.length - 1);
-        return true;
-      }
-      return false;
-    };
-    PriorityQueue2.prototype.getCount = function() {
-      return this.elements_.length;
-    };
-    PriorityQueue2.prototype.getLeftChildIndex_ = function(index2) {
-      return index2 * 2 + 1;
-    };
-    PriorityQueue2.prototype.getRightChildIndex_ = function(index2) {
-      return index2 * 2 + 2;
-    };
-    PriorityQueue2.prototype.getParentIndex_ = function(index2) {
-      return index2 - 1 >> 1;
-    };
-    PriorityQueue2.prototype.heapify_ = function() {
-      var i;
-      for (i = (this.elements_.length >> 1) - 1; i >= 0; i--) {
-        this.siftUp_(i);
-      }
-    };
-    PriorityQueue2.prototype.isEmpty = function() {
-      return this.elements_.length === 0;
-    };
-    PriorityQueue2.prototype.isKeyQueued = function(key) {
-      return key in this.queuedElements_;
-    };
-    PriorityQueue2.prototype.isQueued = function(element) {
-      return this.isKeyQueued(this.keyFunction_(element));
-    };
-    PriorityQueue2.prototype.siftUp_ = function(index2) {
-      var elements = this.elements_;
-      var priorities = this.priorities_;
-      var count = elements.length;
-      var element = elements[index2];
-      var priority = priorities[index2];
-      var startIndex = index2;
-      while (index2 < count >> 1) {
-        var lIndex = this.getLeftChildIndex_(index2);
-        var rIndex = this.getRightChildIndex_(index2);
-        var smallerChildIndex = rIndex < count && priorities[rIndex] < priorities[lIndex] ? rIndex : lIndex;
-        elements[index2] = elements[smallerChildIndex];
-        priorities[index2] = priorities[smallerChildIndex];
-        index2 = smallerChildIndex;
-      }
-      elements[index2] = element;
-      priorities[index2] = priority;
-      this.siftDown_(startIndex, index2);
-    };
-    PriorityQueue2.prototype.siftDown_ = function(startIndex, index2) {
-      var elements = this.elements_;
-      var priorities = this.priorities_;
-      var element = elements[index2];
-      var priority = priorities[index2];
-      while (index2 > startIndex) {
-        var parentIndex = this.getParentIndex_(index2);
-        if (priorities[parentIndex] > priority) {
-          elements[index2] = elements[parentIndex];
-          priorities[index2] = priorities[parentIndex];
-          index2 = parentIndex;
-        } else {
-          break;
-        }
-      }
-      elements[index2] = element;
-      priorities[index2] = priority;
-    };
-    PriorityQueue2.prototype.reprioritize = function() {
-      var priorityFunction = this.priorityFunction_;
-      var elements = this.elements_;
-      var priorities = this.priorities_;
-      var index2 = 0;
-      var n = elements.length;
-      var element, i, priority;
-      for (i = 0; i < n; ++i) {
-        element = elements[i];
-        priority = priorityFunction(element);
-        if (priority == DROP) {
-          delete this.queuedElements_[this.keyFunction_(element)];
-        } else {
-          priorities[index2] = priority;
-          elements[index2++] = element;
-        }
-      }
-      elements.length = index2;
-      priorities.length = index2;
-      this.heapify_();
-    };
-    return PriorityQueue2;
-  }();
-  const PriorityQueue$1 = PriorityQueue;
-  const TileState = {
-    IDLE: 0,
-    LOADING: 1,
-    LOADED: 2,
-    ERROR: 3,
-    EMPTY: 4
-  };
-  var __extends$Q = globalThis && globalThis.__extends || function() {
-    var extendStatics = function(d, b) {
-      extendStatics = Object.setPrototypeOf || { __proto__: [] } instanceof Array && function(d2, b2) {
-        d2.__proto__ = b2;
-      } || function(d2, b2) {
-        for (var p2 in b2)
-          if (Object.prototype.hasOwnProperty.call(b2, p2))
-            d2[p2] = b2[p2];
-      };
-      return extendStatics(d, b);
-    };
-    return function(d, b) {
-      if (typeof b !== "function" && b !== null)
-        throw new TypeError("Class extends value " + String(b) + " is not a constructor or null");
-      extendStatics(d, b);
-      function __() {
-        this.constructor = d;
-      }
-      d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
-    };
-  }();
-  var TileQueue = function(_super) {
-    __extends$Q(TileQueue2, _super);
-    function TileQueue2(tilePriorityFunction, tileChangeCallback) {
-      var _this = _super.call(
-        this,
-        function(element) {
-          return tilePriorityFunction.apply(null, element);
-        },
-        function(element) {
-          return element[0].getKey();
-        }
-      ) || this;
-      _this.boundHandleTileChange_ = _this.handleTileChange.bind(_this);
-      _this.tileChangeCallback_ = tileChangeCallback;
-      _this.tilesLoading_ = 0;
-      _this.tilesLoadingKeys_ = {};
-      return _this;
-    }
-    TileQueue2.prototype.enqueue = function(element) {
-      var added = _super.prototype.enqueue.call(this, element);
-      if (added) {
-        var tile = element[0];
-        tile.addEventListener(EventType$1.CHANGE, this.boundHandleTileChange_);
-      }
-      return added;
-    };
-    TileQueue2.prototype.getTilesLoading = function() {
-      return this.tilesLoading_;
-    };
-    TileQueue2.prototype.handleTileChange = function(event) {
-      var tile = event.target;
-      var state = tile.getState();
-      if (state === TileState.LOADED || state === TileState.ERROR || state === TileState.EMPTY) {
-        tile.removeEventListener(EventType$1.CHANGE, this.boundHandleTileChange_);
-        var tileKey = tile.getKey();
-        if (tileKey in this.tilesLoadingKeys_) {
-          delete this.tilesLoadingKeys_[tileKey];
-          --this.tilesLoading_;
-        }
-        this.tileChangeCallback_();
-      }
-    };
-    TileQueue2.prototype.loadMoreTiles = function(maxTotalLoading, maxNewLoads) {
-      var newLoads = 0;
-      var state, tile, tileKey;
-      while (this.tilesLoading_ < maxTotalLoading && newLoads < maxNewLoads && this.getCount() > 0) {
-        tile = this.dequeue()[0];
-        tileKey = tile.getKey();
-        state = tile.getState();
-        if (state === TileState.IDLE && !(tileKey in this.tilesLoadingKeys_)) {
-          this.tilesLoadingKeys_[tileKey] = true;
-          ++this.tilesLoading_;
-          ++newLoads;
-          tile.load();
-        }
-      }
-    };
-    return TileQueue2;
-  }(PriorityQueue$1);
-  const TileQueue$1 = TileQueue;
-  function getTilePriority(frameState, tile, tileSourceKey, tileCenter, tileResolution) {
-    if (!frameState || !(tileSourceKey in frameState.wantedTiles)) {
-      return DROP;
-    }
-    if (!frameState.wantedTiles[tileSourceKey][tile.getKey()]) {
-      return DROP;
-    }
-    var center = frameState.viewState.center;
-    var deltaX = tileCenter[0] - center[0];
-    var deltaY = tileCenter[1] - center[1];
-    return 65536 * Math.log(tileResolution) + Math.sqrt(deltaX * deltaX + deltaY * deltaY) / tileResolution;
-  }
-  const ViewHint = {
-    ANIMATING: 0,
-    INTERACTING: 1
-  };
-  const ViewProperty = {
-    CENTER: "center",
-    RESOLUTION: "resolution",
-    ROTATION: "rotation"
-  };
-  var DEFAULT_MAX_ZOOM = 42;
-  var DEFAULT_TILE_SIZE = 256;
-  function createExtent(extent, onlyCenter, smooth) {
-    return function(center, resolution, size2, opt_isMoving, opt_centerShift) {
-      if (!center) {
-        return void 0;
-      }
-      if (!resolution && !onlyCenter) {
-        return center;
-      }
-      var viewWidth = onlyCenter ? 0 : size2[0] * resolution;
-      var viewHeight = onlyCenter ? 0 : size2[1] * resolution;
-      var shiftX = opt_centerShift ? opt_centerShift[0] : 0;
-      var shiftY = opt_centerShift ? opt_centerShift[1] : 0;
-      var minX = extent[0] + viewWidth / 2 + shiftX;
-      var maxX = extent[2] - viewWidth / 2 + shiftX;
-      var minY = extent[1] + viewHeight / 2 + shiftY;
-      var maxY = extent[3] - viewHeight / 2 + shiftY;
-      if (minX > maxX) {
-        minX = (maxX + minX) / 2;
-        maxX = minX;
-      }
-      if (minY > maxY) {
-        minY = (maxY + minY) / 2;
-        maxY = minY;
-      }
-      var x = clamp(center[0], minX, maxX);
-      var y2 = clamp(center[1], minY, maxY);
-      if (opt_isMoving && smooth && resolution) {
-        var ratio = 30 * resolution;
-        x += -ratio * Math.log(1 + Math.max(0, minX - center[0]) / ratio) + ratio * Math.log(1 + Math.max(0, center[0] - maxX) / ratio);
-        y2 += -ratio * Math.log(1 + Math.max(0, minY - center[1]) / ratio) + ratio * Math.log(1 + Math.max(0, center[1] - maxY) / ratio);
-      }
-      return [x, y2];
-    };
-  }
-  function none$1(center) {
-    return center;
-  }
-  function getViewportClampedResolution(resolution, maxExtent, viewportSize, showFullExtent) {
-    var xResolution = getWidth(maxExtent) / viewportSize[0];
-    var yResolution = getHeight(maxExtent) / viewportSize[1];
-    if (showFullExtent) {
-      return Math.min(resolution, Math.max(xResolution, yResolution));
-    }
-    return Math.min(resolution, Math.min(xResolution, yResolution));
-  }
-  function getSmoothClampedResolution(resolution, maxResolution, minResolution) {
-    var result = Math.min(resolution, maxResolution);
-    var ratio = 50;
-    result *= Math.log(1 + ratio * Math.max(0, resolution / maxResolution - 1)) / ratio + 1;
-    if (minResolution) {
-      result = Math.max(result, minResolution);
-      result /= Math.log(1 + ratio * Math.max(0, minResolution / resolution - 1)) / ratio + 1;
-    }
-    return clamp(result, minResolution / 2, maxResolution * 2);
-  }
-  function createSnapToResolutions(resolutions, opt_smooth, opt_maxExtent, opt_showFullExtent) {
-    return function(resolution, direction, size2, opt_isMoving) {
-      if (resolution !== void 0) {
-        var maxResolution = resolutions[0];
-        var minResolution = resolutions[resolutions.length - 1];
-        var cappedMaxRes = opt_maxExtent ? getViewportClampedResolution(maxResolution, opt_maxExtent, size2, opt_showFullExtent) : maxResolution;
-        if (opt_isMoving) {
-          var smooth = opt_smooth !== void 0 ? opt_smooth : true;
-          if (!smooth) {
-            return clamp(resolution, minResolution, cappedMaxRes);
-          }
-          return getSmoothClampedResolution(resolution, cappedMaxRes, minResolution);
-        }
-        var capped = Math.min(cappedMaxRes, resolution);
-        var z = Math.floor(linearFindNearest(resolutions, capped, direction));
-        if (resolutions[z] > cappedMaxRes && z < resolutions.length - 1) {
-          return resolutions[z + 1];
-        }
-        return resolutions[z];
-      } else {
-        return void 0;
-      }
-    };
-  }
-  function createSnapToPower(power, maxResolution, opt_minResolution, opt_smooth, opt_maxExtent, opt_showFullExtent) {
-    return function(resolution, direction, size2, opt_isMoving) {
-      if (resolution !== void 0) {
-        var cappedMaxRes = opt_maxExtent ? getViewportClampedResolution(maxResolution, opt_maxExtent, size2, opt_showFullExtent) : maxResolution;
-        var minResolution = opt_minResolution !== void 0 ? opt_minResolution : 0;
-        if (opt_isMoving) {
-          var smooth = opt_smooth !== void 0 ? opt_smooth : true;
-          if (!smooth) {
-            return clamp(resolution, minResolution, cappedMaxRes);
-          }
-          return getSmoothClampedResolution(resolution, cappedMaxRes, minResolution);
-        }
-        var tolerance = 1e-9;
-        var minZoomLevel = Math.ceil(Math.log(maxResolution / cappedMaxRes) / Math.log(power) - tolerance);
-        var offset = -direction * (0.5 - tolerance) + 0.5;
-        var capped = Math.min(cappedMaxRes, resolution);
-        var cappedZoomLevel = Math.floor(Math.log(maxResolution / capped) / Math.log(power) + offset);
-        var zoomLevel = Math.max(minZoomLevel, cappedZoomLevel);
-        var newResolution = maxResolution / Math.pow(power, zoomLevel);
-        return clamp(newResolution, minResolution, cappedMaxRes);
-      } else {
-        return void 0;
-      }
-    };
-  }
-  function createMinMaxResolution(maxResolution, minResolution, opt_smooth, opt_maxExtent, opt_showFullExtent) {
-    return function(resolution, direction, size2, opt_isMoving) {
-      if (resolution !== void 0) {
-        var cappedMaxRes = opt_maxExtent ? getViewportClampedResolution(maxResolution, opt_maxExtent, size2, opt_showFullExtent) : maxResolution;
-        var smooth = opt_smooth !== void 0 ? opt_smooth : true;
-        if (!smooth || !opt_isMoving) {
-          return clamp(resolution, minResolution, cappedMaxRes);
-        }
-        return getSmoothClampedResolution(resolution, cappedMaxRes, minResolution);
-      } else {
-        return void 0;
-      }
-    };
-  }
-  function disable(rotation) {
-    if (rotation !== void 0) {
-      return 0;
-    } else {
-      return void 0;
-    }
-  }
-  function none(rotation) {
-    if (rotation !== void 0) {
-      return rotation;
-    } else {
-      return void 0;
-    }
-  }
-  function createSnapToN(n) {
-    var theta = 2 * Math.PI / n;
-    return function(rotation, opt_isMoving) {
-      if (opt_isMoving) {
-        return rotation;
-      }
-      if (rotation !== void 0) {
-        rotation = Math.floor(rotation / theta + 0.5) * theta;
-        return rotation;
-      } else {
-        return void 0;
-      }
-    };
-  }
-  function createSnapToZero(opt_tolerance) {
-    var tolerance = opt_tolerance || toRadians(5);
-    return function(rotation, opt_isMoving) {
-      if (opt_isMoving) {
-        return rotation;
-      }
-      if (rotation !== void 0) {
-        if (Math.abs(rotation) <= tolerance) {
-          return 0;
-        } else {
-          return rotation;
-        }
-      } else {
-        return void 0;
-      }
-    };
-  }
-  function easeIn(t) {
-    return Math.pow(t, 3);
-  }
-  function easeOut(t) {
-    return 1 - easeIn(1 - t);
-  }
-  function inAndOut(t) {
-    return 3 * t * t - 2 * t * t * t;
-  }
-  function linear(t) {
-    return t;
-  }
-  const GeometryLayout = {
-    XY: "XY",
-    XYZ: "XYZ",
-    XYM: "XYM",
-    XYZM: "XYZM"
-  };
-  function transform2D(flatCoordinates, offset, end, stride, transform2, opt_dest) {
-    var dest = opt_dest ? opt_dest : [];
-    var i = 0;
-    for (var j = offset; j < end; j += stride) {
-      var x = flatCoordinates[j];
-      var y2 = flatCoordinates[j + 1];
-      dest[i++] = transform2[0] * x + transform2[2] * y2 + transform2[4];
-      dest[i++] = transform2[1] * x + transform2[3] * y2 + transform2[5];
-    }
-    if (opt_dest && dest.length != i) {
-      dest.length = i;
-    }
-    return dest;
-  }
-  function rotate(flatCoordinates, offset, end, stride, angle, anchor, opt_dest) {
-    var dest = opt_dest ? opt_dest : [];
-    var cos = Math.cos(angle);
-    var sin = Math.sin(angle);
-    var anchorX = anchor[0];
-    var anchorY = anchor[1];
-    var i = 0;
-    for (var j = offset; j < end; j += stride) {
-      var deltaX = flatCoordinates[j] - anchorX;
-      var deltaY = flatCoordinates[j + 1] - anchorY;
-      dest[i++] = anchorX + deltaX * cos - deltaY * sin;
-      dest[i++] = anchorY + deltaX * sin + deltaY * cos;
-      for (var k = j + 2; k < j + stride; ++k) {
-        dest[i++] = flatCoordinates[k];
-      }
-    }
-    if (opt_dest && dest.length != i) {
-      dest.length = i;
-    }
-    return dest;
-  }
-  function scale$1(flatCoordinates, offset, end, stride, sx, sy, anchor, opt_dest) {
-    var dest = opt_dest ? opt_dest : [];
-    var anchorX = anchor[0];
-    var anchorY = anchor[1];
-    var i = 0;
-    for (var j = offset; j < end; j += stride) {
-      var deltaX = flatCoordinates[j] - anchorX;
-      var deltaY = flatCoordinates[j + 1] - anchorY;
-      dest[i++] = anchorX + sx * deltaX;
-      dest[i++] = anchorY + sy * deltaY;
-      for (var k = j + 2; k < j + stride; ++k) {
-        dest[i++] = flatCoordinates[k];
-      }
-    }
-    if (opt_dest && dest.length != i) {
-      dest.length = i;
-    }
-    return dest;
-  }
-  function translate(flatCoordinates, offset, end, stride, deltaX, deltaY, opt_dest) {
-    var dest = opt_dest ? opt_dest : [];
-    var i = 0;
-    for (var j = offset; j < end; j += stride) {
-      dest[i++] = flatCoordinates[j] + deltaX;
-      dest[i++] = flatCoordinates[j + 1] + deltaY;
-      for (var k = j + 2; k < j + stride; ++k) {
-        dest[i++] = flatCoordinates[k];
-      }
-    }
-    if (opt_dest && dest.length != i) {
-      dest.length = i;
-    }
-    return dest;
-  }
-  var __extends$P = globalThis && globalThis.__extends || function() {
-    var extendStatics = function(d, b) {
-      extendStatics = Object.setPrototypeOf || { __proto__: [] } instanceof Array && function(d2, b2) {
-        d2.__proto__ = b2;
-      } || function(d2, b2) {
-        for (var p2 in b2)
-          if (Object.prototype.hasOwnProperty.call(b2, p2))
-            d2[p2] = b2[p2];
-      };
-      return extendStatics(d, b);
-    };
-    return function(d, b) {
-      if (typeof b !== "function" && b !== null)
-        throw new TypeError("Class extends value " + String(b) + " is not a constructor or null");
-      extendStatics(d, b);
-      function __() {
-        this.constructor = d;
-      }
-      d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
-    };
-  }();
-  var tmpTransform = create();
-  var Geometry = function(_super) {
-    __extends$P(Geometry2, _super);
-    function Geometry2() {
-      var _this = _super.call(this) || this;
-      _this.extent_ = createEmpty();
-      _this.extentRevision_ = -1;
-      _this.simplifiedGeometryMaxMinSquaredTolerance = 0;
-      _this.simplifiedGeometryRevision = 0;
-      _this.simplifyTransformedInternal = memoizeOne(function(revision, squaredTolerance, opt_transform) {
-        if (!opt_transform) {
-          return this.getSimplifiedGeometry(squaredTolerance);
-        }
-        var clone2 = this.clone();
-        clone2.applyTransform(opt_transform);
-        return clone2.getSimplifiedGeometry(squaredTolerance);
-      });
-      return _this;
-    }
-    Geometry2.prototype.simplifyTransformed = function(squaredTolerance, opt_transform) {
-      return this.simplifyTransformedInternal(this.getRevision(), squaredTolerance, opt_transform);
-    };
-    Geometry2.prototype.clone = function() {
-      return abstract();
-    };
-    Geometry2.prototype.closestPointXY = function(x, y2, closestPoint, minSquaredDistance) {
-      return abstract();
-    };
-    Geometry2.prototype.containsXY = function(x, y2) {
-      var coord = this.getClosestPoint([x, y2]);
-      return coord[0] === x && coord[1] === y2;
-    };
-    Geometry2.prototype.getClosestPoint = function(point, opt_closestPoint) {
-      var closestPoint = opt_closestPoint ? opt_closestPoint : [NaN, NaN];
-      this.closestPointXY(point[0], point[1], closestPoint, Infinity);
-      return closestPoint;
-    };
-    Geometry2.prototype.intersectsCoordinate = function(coordinate) {
-      return this.containsXY(coordinate[0], coordinate[1]);
-    };
-    Geometry2.prototype.computeExtent = function(extent) {
-      return abstract();
-    };
-    Geometry2.prototype.getExtent = function(opt_extent) {
-      if (this.extentRevision_ != this.getRevision()) {
-        var extent = this.computeExtent(this.extent_);
-        if (isNaN(extent[0]) || isNaN(extent[1])) {
-          createOrUpdateEmpty(extent);
-        }
-        this.extentRevision_ = this.getRevision();
-      }
-      return returnOrUpdate(this.extent_, opt_extent);
-    };
-    Geometry2.prototype.rotate = function(angle, anchor) {
-      abstract();
-    };
-    Geometry2.prototype.scale = function(sx, opt_sy, opt_anchor) {
-      abstract();
-    };
-    Geometry2.prototype.simplify = function(tolerance) {
-      return this.getSimplifiedGeometry(tolerance * tolerance);
-    };
-    Geometry2.prototype.getSimplifiedGeometry = function(squaredTolerance) {
-      return abstract();
-    };
-    Geometry2.prototype.getType = function() {
-      return abstract();
-    };
-    Geometry2.prototype.applyTransform = function(transformFn) {
-      abstract();
-    };
-    Geometry2.prototype.intersectsExtent = function(extent) {
-      return abstract();
-    };
-    Geometry2.prototype.translate = function(deltaX, deltaY) {
-      abstract();
-    };
-    Geometry2.prototype.transform = function(source, destination) {
-      var sourceProj = get$2(source);
-      var transformFn = sourceProj.getUnits() == Units$1.TILE_PIXELS ? function(inCoordinates, outCoordinates, stride) {
-        var pixelExtent = sourceProj.getExtent();
-        var projectedExtent = sourceProj.getWorldExtent();
-        var scale2 = getHeight(projectedExtent) / getHeight(pixelExtent);
-        compose(tmpTransform, projectedExtent[0], projectedExtent[3], scale2, -scale2, 0, 0, 0);
-        transform2D(inCoordinates, 0, inCoordinates.length, stride, tmpTransform, outCoordinates);
-        return getTransform(sourceProj, destination)(inCoordinates, outCoordinates, stride);
-      } : getTransform(sourceProj, destination);
-      this.applyTransform(transformFn);
-      return this;
-    };
-    return Geometry2;
-  }(BaseObject$1);
-  const Geometry$1 = Geometry;
-  var __extends$O = globalThis && globalThis.__extends || function() {
-    var extendStatics = function(d, b) {
-      extendStatics = Object.setPrototypeOf || { __proto__: [] } instanceof Array && function(d2, b2) {
-        d2.__proto__ = b2;
-      } || function(d2, b2) {
-        for (var p2 in b2)
-          if (Object.prototype.hasOwnProperty.call(b2, p2))
-            d2[p2] = b2[p2];
-      };
-      return extendStatics(d, b);
-    };
-    return function(d, b) {
-      if (typeof b !== "function" && b !== null)
-        throw new TypeError("Class extends value " + String(b) + " is not a constructor or null");
-      extendStatics(d, b);
-      function __() {
-        this.constructor = d;
-      }
-      d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
-    };
-  }();
-  var SimpleGeometry = function(_super) {
-    __extends$O(SimpleGeometry2, _super);
-    function SimpleGeometry2() {
-      var _this = _super.call(this) || this;
-      _this.layout = GeometryLayout.XY;
-      _this.stride = 2;
-      _this.flatCoordinates = null;
-      return _this;
-    }
-    SimpleGeometry2.prototype.computeExtent = function(extent) {
-      return createOrUpdateFromFlatCoordinates(this.flatCoordinates, 0, this.flatCoordinates.length, this.stride, extent);
-    };
-    SimpleGeometry2.prototype.getCoordinates = function() {
-      return abstract();
-    };
-    SimpleGeometry2.prototype.getFirstCoordinate = function() {
-      return this.flatCoordinates.slice(0, this.stride);
-    };
-    SimpleGeometry2.prototype.getFlatCoordinates = function() {
-      return this.flatCoordinates;
-    };
-    SimpleGeometry2.prototype.getLastCoordinate = function() {
-      return this.flatCoordinates.slice(this.flatCoordinates.length - this.stride);
-    };
-    SimpleGeometry2.prototype.getLayout = function() {
-      return this.layout;
-    };
-    SimpleGeometry2.prototype.getSimplifiedGeometry = function(squaredTolerance) {
-      if (this.simplifiedGeometryRevision !== this.getRevision()) {
-        this.simplifiedGeometryMaxMinSquaredTolerance = 0;
-        this.simplifiedGeometryRevision = this.getRevision();
-      }
-      if (squaredTolerance < 0 || this.simplifiedGeometryMaxMinSquaredTolerance !== 0 && squaredTolerance <= this.simplifiedGeometryMaxMinSquaredTolerance) {
-        return this;
-      }
-      var simplifiedGeometry = this.getSimplifiedGeometryInternal(squaredTolerance);
-      var simplifiedFlatCoordinates = simplifiedGeometry.getFlatCoordinates();
-      if (simplifiedFlatCoordinates.length < this.flatCoordinates.length) {
-        return simplifiedGeometry;
-      } else {
-        this.simplifiedGeometryMaxMinSquaredTolerance = squaredTolerance;
-        return this;
-      }
-    };
-    SimpleGeometry2.prototype.getSimplifiedGeometryInternal = function(squaredTolerance) {
-      return this;
-    };
-    SimpleGeometry2.prototype.getStride = function() {
-      return this.stride;
-    };
-    SimpleGeometry2.prototype.setFlatCoordinates = function(layout, flatCoordinates) {
-      this.stride = getStrideForLayout(layout);
-      this.layout = layout;
-      this.flatCoordinates = flatCoordinates;
-    };
-    SimpleGeometry2.prototype.setCoordinates = function(coordinates2, opt_layout) {
-      abstract();
-    };
-    SimpleGeometry2.prototype.setLayout = function(layout, coordinates2, nesting) {
-      var stride;
-      if (layout) {
-        stride = getStrideForLayout(layout);
-      } else {
-        for (var i = 0; i < nesting; ++i) {
-          if (coordinates2.length === 0) {
-            this.layout = GeometryLayout.XY;
-            this.stride = 2;
-            return;
-          } else {
-            coordinates2 = coordinates2[0];
-          }
-        }
-        stride = coordinates2.length;
-        layout = getLayoutForStride(stride);
-      }
-      this.layout = layout;
-      this.stride = stride;
-    };
-    SimpleGeometry2.prototype.applyTransform = function(transformFn) {
-      if (this.flatCoordinates) {
-        transformFn(this.flatCoordinates, this.flatCoordinates, this.stride);
-        this.changed();
-      }
-    };
-    SimpleGeometry2.prototype.rotate = function(angle, anchor) {
-      var flatCoordinates = this.getFlatCoordinates();
-      if (flatCoordinates) {
-        var stride = this.getStride();
-        rotate(flatCoordinates, 0, flatCoordinates.length, stride, angle, anchor, flatCoordinates);
-        this.changed();
-      }
-    };
-    SimpleGeometry2.prototype.scale = function(sx, opt_sy, opt_anchor) {
-      var sy = opt_sy;
-      if (sy === void 0) {
-        sy = sx;
-      }
-      var anchor = opt_anchor;
-      if (!anchor) {
-        anchor = getCenter(this.getExtent());
-      }
-      var flatCoordinates = this.getFlatCoordinates();
-      if (flatCoordinates) {
-        var stride = this.getStride();
-        scale$1(flatCoordinates, 0, flatCoordinates.length, stride, sx, sy, anchor, flatCoordinates);
-        this.changed();
-      }
-    };
-    SimpleGeometry2.prototype.translate = function(deltaX, deltaY) {
-      var flatCoordinates = this.getFlatCoordinates();
-      if (flatCoordinates) {
-        var stride = this.getStride();
-        translate(flatCoordinates, 0, flatCoordinates.length, stride, deltaX, deltaY, flatCoordinates);
-        this.changed();
-      }
-    };
-    return SimpleGeometry2;
-  }(Geometry$1);
-  function getLayoutForStride(stride) {
-    var layout;
-    if (stride == 2) {
-      layout = GeometryLayout.XY;
-    } else if (stride == 3) {
-      layout = GeometryLayout.XYZ;
-    } else if (stride == 4) {
-      layout = GeometryLayout.XYZM;
-    }
-    return layout;
-  }
-  function getStrideForLayout(layout) {
-    var stride;
-    if (layout == GeometryLayout.XY) {
-      stride = 2;
-    } else if (layout == GeometryLayout.XYZ || layout == GeometryLayout.XYM) {
-      stride = 3;
-    } else if (layout == GeometryLayout.XYZM) {
-      stride = 4;
-    }
-    return stride;
-  }
-  const SimpleGeometry$1 = SimpleGeometry;
-  function assignClosest(flatCoordinates, offset1, offset2, stride, x, y2, closestPoint) {
-    var x1 = flatCoordinates[offset1];
-    var y1 = flatCoordinates[offset1 + 1];
-    var dx = flatCoordinates[offset2] - x1;
-    var dy = flatCoordinates[offset2 + 1] - y1;
-    var offset;
-    if (dx === 0 && dy === 0) {
-      offset = offset1;
-    } else {
-      var t = ((x - x1) * dx + (y2 - y1) * dy) / (dx * dx + dy * dy);
-      if (t > 1) {
-        offset = offset2;
-      } else if (t > 0) {
-        for (var i = 0; i < stride; ++i) {
-          closestPoint[i] = lerp(flatCoordinates[offset1 + i], flatCoordinates[offset2 + i], t);
-        }
-        closestPoint.length = stride;
-        return;
-      } else {
-        offset = offset1;
-      }
-    }
-    for (var i = 0; i < stride; ++i) {
-      closestPoint[i] = flatCoordinates[offset + i];
-    }
-    closestPoint.length = stride;
-  }
-  function maxSquaredDelta(flatCoordinates, offset, end, stride, max) {
-    var x1 = flatCoordinates[offset];
-    var y1 = flatCoordinates[offset + 1];
-    for (offset += stride; offset < end; offset += stride) {
-      var x2 = flatCoordinates[offset];
-      var y2 = flatCoordinates[offset + 1];
-      var squaredDelta = squaredDistance(x1, y1, x2, y2);
-      if (squaredDelta > max) {
-        max = squaredDelta;
-      }
-      x1 = x2;
-      y1 = y2;
-    }
-    return max;
-  }
-  function arrayMaxSquaredDelta(flatCoordinates, offset, ends, stride, max) {
-    for (var i = 0, ii = ends.length; i < ii; ++i) {
-      var end = ends[i];
-      max = maxSquaredDelta(flatCoordinates, offset, end, stride, max);
-      offset = end;
-    }
-    return max;
-  }
-  function assignClosestPoint(flatCoordinates, offset, end, stride, maxDelta, isRing, x, y2, closestPoint, minSquaredDistance, opt_tmpPoint) {
-    if (offset == end) {
-      return minSquaredDistance;
-    }
-    var i, squaredDistance$1;
-    if (maxDelta === 0) {
-      squaredDistance$1 = squaredDistance(x, y2, flatCoordinates[offset], flatCoordinates[offset + 1]);
-      if (squaredDistance$1 < minSquaredDistance) {
-        for (i = 0; i < stride; ++i) {
-          closestPoint[i] = flatCoordinates[offset + i];
-        }
-        closestPoint.length = stride;
-        return squaredDistance$1;
-      } else {
-        return minSquaredDistance;
-      }
-    }
-    var tmpPoint = opt_tmpPoint ? opt_tmpPoint : [NaN, NaN];
-    var index2 = offset + stride;
-    while (index2 < end) {
-      assignClosest(flatCoordinates, index2 - stride, index2, stride, x, y2, tmpPoint);
-      squaredDistance$1 = squaredDistance(x, y2, tmpPoint[0], tmpPoint[1]);
-      if (squaredDistance$1 < minSquaredDistance) {
-        minSquaredDistance = squaredDistance$1;
-        for (i = 0; i < stride; ++i) {
-          closestPoint[i] = tmpPoint[i];
-        }
-        closestPoint.length = stride;
-        index2 += stride;
-      } else {
-        index2 += stride * Math.max((Math.sqrt(squaredDistance$1) - Math.sqrt(minSquaredDistance)) / maxDelta | 0, 1);
-      }
-    }
-    if (isRing) {
-      assignClosest(flatCoordinates, end - stride, offset, stride, x, y2, tmpPoint);
-      squaredDistance$1 = squaredDistance(x, y2, tmpPoint[0], tmpPoint[1]);
-      if (squaredDistance$1 < minSquaredDistance) {
-        minSquaredDistance = squaredDistance$1;
-        for (i = 0; i < stride; ++i) {
-          closestPoint[i] = tmpPoint[i];
-        }
-        closestPoint.length = stride;
-      }
-    }
-    return minSquaredDistance;
-  }
-  function assignClosestArrayPoint(flatCoordinates, offset, ends, stride, maxDelta, isRing, x, y2, closestPoint, minSquaredDistance, opt_tmpPoint) {
-    var tmpPoint = opt_tmpPoint ? opt_tmpPoint : [NaN, NaN];
-    for (var i = 0, ii = ends.length; i < ii; ++i) {
-      var end = ends[i];
-      minSquaredDistance = assignClosestPoint(flatCoordinates, offset, end, stride, maxDelta, isRing, x, y2, closestPoint, minSquaredDistance, tmpPoint);
-      offset = end;
-    }
-    return minSquaredDistance;
-  }
-  function deflateCoordinate(flatCoordinates, offset, coordinate, stride) {
-    for (var i = 0, ii = coordinate.length; i < ii; ++i) {
-      flatCoordinates[offset++] = coordinate[i];
-    }
-    return offset;
-  }
-  function deflateCoordinates(flatCoordinates, offset, coordinates2, stride) {
-    for (var i = 0, ii = coordinates2.length; i < ii; ++i) {
-      var coordinate = coordinates2[i];
-      for (var j = 0; j < stride; ++j) {
-        flatCoordinates[offset++] = coordinate[j];
-      }
-    }
-    return offset;
-  }
-  function deflateCoordinatesArray(flatCoordinates, offset, coordinatess, stride, opt_ends) {
-    var ends = opt_ends ? opt_ends : [];
-    var i = 0;
-    for (var j = 0, jj = coordinatess.length; j < jj; ++j) {
-      var end = deflateCoordinates(flatCoordinates, offset, coordinatess[j], stride);
-      ends[i++] = end;
-      offset = end;
-    }
-    ends.length = i;
-    return ends;
-  }
-  function douglasPeucker(flatCoordinates, offset, end, stride, squaredTolerance, simplifiedFlatCoordinates, simplifiedOffset) {
-    var n = (end - offset) / stride;
-    if (n < 3) {
-      for (; offset < end; offset += stride) {
-        simplifiedFlatCoordinates[simplifiedOffset++] = flatCoordinates[offset];
-        simplifiedFlatCoordinates[simplifiedOffset++] = flatCoordinates[offset + 1];
-      }
-      return simplifiedOffset;
-    }
-    var markers = new Array(n);
-    markers[0] = 1;
-    markers[n - 1] = 1;
-    var stack2 = [offset, end - stride];
-    var index2 = 0;
-    while (stack2.length > 0) {
-      var last = stack2.pop();
-      var first = stack2.pop();
-      var maxSquaredDistance = 0;
-      var x1 = flatCoordinates[first];
-      var y1 = flatCoordinates[first + 1];
-      var x2 = flatCoordinates[last];
-      var y2 = flatCoordinates[last + 1];
-      for (var i = first + stride; i < last; i += stride) {
-        var x = flatCoordinates[i];
-        var y3 = flatCoordinates[i + 1];
-        var squaredDistance_1 = squaredSegmentDistance(x, y3, x1, y1, x2, y2);
-        if (squaredDistance_1 > maxSquaredDistance) {
-          index2 = i;
-          maxSquaredDistance = squaredDistance_1;
-        }
-      }
-      if (maxSquaredDistance > squaredTolerance) {
-        markers[(index2 - offset) / stride] = 1;
-        if (first + stride < index2) {
-          stack2.push(first, index2);
-        }
-        if (index2 + stride < last) {
-          stack2.push(index2, last);
-        }
-      }
-    }
-    for (var i = 0; i < n; ++i) {
-      if (markers[i]) {
-        simplifiedFlatCoordinates[simplifiedOffset++] = flatCoordinates[offset + i * stride];
-        simplifiedFlatCoordinates[simplifiedOffset++] = flatCoordinates[offset + i * stride + 1];
-      }
-    }
-    return simplifiedOffset;
-  }
-  function snap(value, tolerance) {
-    return tolerance * Math.round(value / tolerance);
-  }
-  function quantize(flatCoordinates, offset, end, stride, tolerance, simplifiedFlatCoordinates, simplifiedOffset) {
-    if (offset == end) {
-      return simplifiedOffset;
-    }
-    var x1 = snap(flatCoordinates[offset], tolerance);
-    var y1 = snap(flatCoordinates[offset + 1], tolerance);
-    offset += stride;
-    simplifiedFlatCoordinates[simplifiedOffset++] = x1;
-    simplifiedFlatCoordinates[simplifiedOffset++] = y1;
-    var x2, y2;
-    do {
-      x2 = snap(flatCoordinates[offset], tolerance);
-      y2 = snap(flatCoordinates[offset + 1], tolerance);
-      offset += stride;
-      if (offset == end) {
-        simplifiedFlatCoordinates[simplifiedOffset++] = x2;
-        simplifiedFlatCoordinates[simplifiedOffset++] = y2;
-        return simplifiedOffset;
-      }
-    } while (x2 == x1 && y2 == y1);
-    while (offset < end) {
-      var x3 = snap(flatCoordinates[offset], tolerance);
-      var y3 = snap(flatCoordinates[offset + 1], tolerance);
-      offset += stride;
-      if (x3 == x2 && y3 == y2) {
-        continue;
-      }
-      var dx1 = x2 - x1;
-      var dy1 = y2 - y1;
-      var dx2 = x3 - x1;
-      var dy2 = y3 - y1;
-      if (dx1 * dy2 == dy1 * dx2 && (dx1 < 0 && dx2 < dx1 || dx1 == dx2 || dx1 > 0 && dx2 > dx1) && (dy1 < 0 && dy2 < dy1 || dy1 == dy2 || dy1 > 0 && dy2 > dy1)) {
-        x2 = x3;
-        y2 = y3;
-        continue;
-      }
-      simplifiedFlatCoordinates[simplifiedOffset++] = x2;
-      simplifiedFlatCoordinates[simplifiedOffset++] = y2;
-      x1 = x2;
-      y1 = y2;
-      x2 = x3;
-      y2 = y3;
-    }
-    simplifiedFlatCoordinates[simplifiedOffset++] = x2;
-    simplifiedFlatCoordinates[simplifiedOffset++] = y2;
-    return simplifiedOffset;
-  }
-  function quantizeArray(flatCoordinates, offset, ends, stride, tolerance, simplifiedFlatCoordinates, simplifiedOffset, simplifiedEnds) {
-    for (var i = 0, ii = ends.length; i < ii; ++i) {
-      var end = ends[i];
-      simplifiedOffset = quantize(flatCoordinates, offset, end, stride, tolerance, simplifiedFlatCoordinates, simplifiedOffset);
-      simplifiedEnds.push(simplifiedOffset);
-      offset = end;
-    }
-    return simplifiedOffset;
-  }
-  function inflateCoordinates(flatCoordinates, offset, end, stride, opt_coordinates) {
-    var coordinates2 = opt_coordinates !== void 0 ? opt_coordinates : [];
-    var i = 0;
-    for (var j = offset; j < end; j += stride) {
-      coordinates2[i++] = flatCoordinates.slice(j, j + stride);
-    }
-    coordinates2.length = i;
-    return coordinates2;
-  }
-  function inflateCoordinatesArray(flatCoordinates, offset, ends, stride, opt_coordinatess) {
-    var coordinatess = opt_coordinatess !== void 0 ? opt_coordinatess : [];
-    var i = 0;
-    for (var j = 0, jj = ends.length; j < jj; ++j) {
-      var end = ends[j];
-      coordinatess[i++] = inflateCoordinates(flatCoordinates, offset, end, stride, coordinatess[i]);
-      offset = end;
-    }
-    coordinatess.length = i;
-    return coordinatess;
-  }
-  function linearRing(flatCoordinates, offset, end, stride) {
-    var twiceArea = 0;
-    var x1 = flatCoordinates[end - stride];
-    var y1 = flatCoordinates[end - stride + 1];
-    for (; offset < end; offset += stride) {
-      var x2 = flatCoordinates[offset];
-      var y2 = flatCoordinates[offset + 1];
-      twiceArea += y1 * x2 - x1 * y2;
-      x1 = x2;
-      y1 = y2;
-    }
-    return twiceArea / 2;
-  }
-  function linearRings(flatCoordinates, offset, ends, stride) {
-    var area = 0;
-    for (var i = 0, ii = ends.length; i < ii; ++i) {
-      var end = ends[i];
-      area += linearRing(flatCoordinates, offset, end, stride);
-      offset = end;
-    }
-    return area;
-  }
-  var __extends$N = globalThis && globalThis.__extends || function() {
-    var extendStatics = function(d, b) {
-      extendStatics = Object.setPrototypeOf || { __proto__: [] } instanceof Array && function(d2, b2) {
-        d2.__proto__ = b2;
-      } || function(d2, b2) {
-        for (var p2 in b2)
-          if (Object.prototype.hasOwnProperty.call(b2, p2))
-            d2[p2] = b2[p2];
-      };
-      return extendStatics(d, b);
-    };
-    return function(d, b) {
-      if (typeof b !== "function" && b !== null)
-        throw new TypeError("Class extends value " + String(b) + " is not a constructor or null");
-      extendStatics(d, b);
-      function __() {
-        this.constructor = d;
-      }
-      d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
-    };
-  }();
-  var LinearRing = function(_super) {
-    __extends$N(LinearRing2, _super);
-    function LinearRing2(coordinates2, opt_layout) {
-      var _this = _super.call(this) || this;
-      _this.maxDelta_ = -1;
-      _this.maxDeltaRevision_ = -1;
-      if (opt_layout !== void 0 && !Array.isArray(coordinates2[0])) {
-        _this.setFlatCoordinates(
-          opt_layout,
-          coordinates2
-        );
-      } else {
-        _this.setCoordinates(
-          coordinates2,
-          opt_layout
-        );
-      }
-      return _this;
-    }
-    LinearRing2.prototype.clone = function() {
-      return new LinearRing2(this.flatCoordinates.slice(), this.layout);
-    };
-    LinearRing2.prototype.closestPointXY = function(x, y2, closestPoint, minSquaredDistance) {
-      if (minSquaredDistance < closestSquaredDistanceXY(this.getExtent(), x, y2)) {
-        return minSquaredDistance;
-      }
-      if (this.maxDeltaRevision_ != this.getRevision()) {
-        this.maxDelta_ = Math.sqrt(maxSquaredDelta(this.flatCoordinates, 0, this.flatCoordinates.length, this.stride, 0));
-        this.maxDeltaRevision_ = this.getRevision();
-      }
-      return assignClosestPoint(this.flatCoordinates, 0, this.flatCoordinates.length, this.stride, this.maxDelta_, true, x, y2, closestPoint, minSquaredDistance);
-    };
-    LinearRing2.prototype.getArea = function() {
-      return linearRing(this.flatCoordinates, 0, this.flatCoordinates.length, this.stride);
-    };
-    LinearRing2.prototype.getCoordinates = function() {
-      return inflateCoordinates(this.flatCoordinates, 0, this.flatCoordinates.length, this.stride);
-    };
-    LinearRing2.prototype.getSimplifiedGeometryInternal = function(squaredTolerance) {
-      var simplifiedFlatCoordinates = [];
-      simplifiedFlatCoordinates.length = douglasPeucker(this.flatCoordinates, 0, this.flatCoordinates.length, this.stride, squaredTolerance, simplifiedFlatCoordinates, 0);
-      return new LinearRing2(simplifiedFlatCoordinates, GeometryLayout.XY);
-    };
-    LinearRing2.prototype.getType = function() {
-      return "LinearRing";
-    };
-    LinearRing2.prototype.intersectsExtent = function(extent) {
-      return false;
-    };
-    LinearRing2.prototype.setCoordinates = function(coordinates2, opt_layout) {
-      this.setLayout(opt_layout, coordinates2, 1);
-      if (!this.flatCoordinates) {
-        this.flatCoordinates = [];
-      }
-      this.flatCoordinates.length = deflateCoordinates(this.flatCoordinates, 0, coordinates2, this.stride);
-      this.changed();
-    };
-    return LinearRing2;
-  }(SimpleGeometry$1);
-  const LinearRing$1 = LinearRing;
-  var __extends$M = globalThis && globalThis.__extends || function() {
-    var extendStatics = function(d, b) {
-      extendStatics = Object.setPrototypeOf || { __proto__: [] } instanceof Array && function(d2, b2) {
-        d2.__proto__ = b2;
-      } || function(d2, b2) {
-        for (var p2 in b2)
-          if (Object.prototype.hasOwnProperty.call(b2, p2))
-            d2[p2] = b2[p2];
-      };
-      return extendStatics(d, b);
-    };
-    return function(d, b) {
-      if (typeof b !== "function" && b !== null)
-        throw new TypeError("Class extends value " + String(b) + " is not a constructor or null");
-      extendStatics(d, b);
-      function __() {
-        this.constructor = d;
-      }
-      d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
-    };
-  }();
-  var Point = function(_super) {
-    __extends$M(Point2, _super);
-    function Point2(coordinates2, opt_layout) {
-      var _this = _super.call(this) || this;
-      _this.setCoordinates(coordinates2, opt_layout);
-      return _this;
-    }
-    Point2.prototype.clone = function() {
-      var point = new Point2(this.flatCoordinates.slice(), this.layout);
-      point.applyProperties(this);
-      return point;
-    };
-    Point2.prototype.closestPointXY = function(x, y2, closestPoint, minSquaredDistance) {
-      var flatCoordinates = this.flatCoordinates;
-      var squaredDistance$1 = squaredDistance(x, y2, flatCoordinates[0], flatCoordinates[1]);
-      if (squaredDistance$1 < minSquaredDistance) {
-        var stride = this.stride;
-        for (var i = 0; i < stride; ++i) {
-          closestPoint[i] = flatCoordinates[i];
-        }
-        closestPoint.length = stride;
-        return squaredDistance$1;
-      } else {
-        return minSquaredDistance;
-      }
-    };
-    Point2.prototype.getCoordinates = function() {
-      return !this.flatCoordinates ? [] : this.flatCoordinates.slice();
-    };
-    Point2.prototype.computeExtent = function(extent) {
-      return createOrUpdateFromCoordinate(this.flatCoordinates, extent);
-    };
-    Point2.prototype.getType = function() {
-      return "Point";
-    };
-    Point2.prototype.intersectsExtent = function(extent) {
-      return containsXY(extent, this.flatCoordinates[0], this.flatCoordinates[1]);
-    };
-    Point2.prototype.setCoordinates = function(coordinates2, opt_layout) {
-      this.setLayout(opt_layout, coordinates2, 0);
-      if (!this.flatCoordinates) {
-        this.flatCoordinates = [];
-      }
-      this.flatCoordinates.length = deflateCoordinate(this.flatCoordinates, 0, coordinates2, this.stride);
-      this.changed();
-    };
-    return Point2;
-  }(SimpleGeometry$1);
-  const Point$1 = Point;
-  function linearRingContainsExtent(flatCoordinates, offset, end, stride, extent) {
-    var outside = forEachCorner(
-      extent,
-      function(coordinate) {
-        return !linearRingContainsXY(flatCoordinates, offset, end, stride, coordinate[0], coordinate[1]);
-      }
-    );
-    return !outside;
-  }
-  function linearRingContainsXY(flatCoordinates, offset, end, stride, x, y2) {
-    var wn = 0;
-    var x1 = flatCoordinates[end - stride];
-    var y1 = flatCoordinates[end - stride + 1];
-    for (; offset < end; offset += stride) {
-      var x2 = flatCoordinates[offset];
-      var y22 = flatCoordinates[offset + 1];
-      if (y1 <= y2) {
-        if (y22 > y2 && (x2 - x1) * (y2 - y1) - (x - x1) * (y22 - y1) > 0) {
-          wn++;
-        }
-      } else if (y22 <= y2 && (x2 - x1) * (y2 - y1) - (x - x1) * (y22 - y1) < 0) {
-        wn--;
-      }
-      x1 = x2;
-      y1 = y22;
-    }
-    return wn !== 0;
-  }
-  function linearRingsContainsXY(flatCoordinates, offset, ends, stride, x, y2) {
-    if (ends.length === 0) {
-      return false;
-    }
-    if (!linearRingContainsXY(flatCoordinates, offset, ends[0], stride, x, y2)) {
-      return false;
-    }
-    for (var i = 1, ii = ends.length; i < ii; ++i) {
-      if (linearRingContainsXY(flatCoordinates, ends[i - 1], ends[i], stride, x, y2)) {
-        return false;
-      }
-    }
-    return true;
-  }
-  function getInteriorPointOfArray(flatCoordinates, offset, ends, stride, flatCenters, flatCentersOffset, opt_dest) {
-    var i, ii, x, x1, x2, y1, y2;
-    var y3 = flatCenters[flatCentersOffset + 1];
-    var intersections = [];
-    for (var r = 0, rr = ends.length; r < rr; ++r) {
-      var end = ends[r];
-      x1 = flatCoordinates[end - stride];
-      y1 = flatCoordinates[end - stride + 1];
-      for (i = offset; i < end; i += stride) {
-        x2 = flatCoordinates[i];
-        y2 = flatCoordinates[i + 1];
-        if (y3 <= y1 && y2 <= y3 || y1 <= y3 && y3 <= y2) {
-          x = (y3 - y1) / (y2 - y1) * (x2 - x1) + x1;
-          intersections.push(x);
-        }
-        x1 = x2;
-        y1 = y2;
-      }
-    }
-    var pointX = NaN;
-    var maxSegmentLength = -Infinity;
-    intersections.sort(numberSafeCompareFunction);
-    x1 = intersections[0];
-    for (i = 1, ii = intersections.length; i < ii; ++i) {
-      x2 = intersections[i];
-      var segmentLength = Math.abs(x2 - x1);
-      if (segmentLength > maxSegmentLength) {
-        x = (x1 + x2) / 2;
-        if (linearRingsContainsXY(flatCoordinates, offset, ends, stride, x, y3)) {
-          pointX = x;
-          maxSegmentLength = segmentLength;
-        }
-      }
-      x1 = x2;
-    }
-    if (isNaN(pointX)) {
-      pointX = flatCenters[flatCentersOffset];
-    }
-    if (opt_dest) {
-      opt_dest.push(pointX, y3, maxSegmentLength);
-      return opt_dest;
-    } else {
-      return [pointX, y3, maxSegmentLength];
-    }
-  }
-  function forEach(flatCoordinates, offset, end, stride, callback) {
-    var ret;
-    offset += stride;
-    for (; offset < end; offset += stride) {
-      ret = callback(flatCoordinates.slice(offset - stride, offset), flatCoordinates.slice(offset, offset + stride));
-      if (ret) {
-        return ret;
-      }
-    }
-    return false;
-  }
-  function intersectsLineString(flatCoordinates, offset, end, stride, extent) {
-    var coordinatesExtent = extendFlatCoordinates(createEmpty(), flatCoordinates, offset, end, stride);
-    if (!intersects(extent, coordinatesExtent)) {
-      return false;
-    }
-    if (containsExtent(extent, coordinatesExtent)) {
-      return true;
-    }
-    if (coordinatesExtent[0] >= extent[0] && coordinatesExtent[2] <= extent[2]) {
-      return true;
-    }
-    if (coordinatesExtent[1] >= extent[1] && coordinatesExtent[3] <= extent[3]) {
-      return true;
-    }
-    return forEach(
-      flatCoordinates,
-      offset,
-      end,
-      stride,
-      function(point1, point2) {
-        return intersectsSegment(extent, point1, point2);
-      }
-    );
-  }
-  function intersectsLinearRing(flatCoordinates, offset, end, stride, extent) {
-    if (intersectsLineString(flatCoordinates, offset, end, stride, extent)) {
-      return true;
-    }
-    if (linearRingContainsXY(flatCoordinates, offset, end, stride, extent[0], extent[1])) {
-      return true;
-    }
-    if (linearRingContainsXY(flatCoordinates, offset, end, stride, extent[0], extent[3])) {
-      return true;
-    }
-    if (linearRingContainsXY(flatCoordinates, offset, end, stride, extent[2], extent[1])) {
-      return true;
-    }
-    if (linearRingContainsXY(flatCoordinates, offset, end, stride, extent[2], extent[3])) {
-      return true;
-    }
-    return false;
-  }
-  function intersectsLinearRingArray(flatCoordinates, offset, ends, stride, extent) {
-    if (!intersectsLinearRing(flatCoordinates, offset, ends[0], stride, extent)) {
-      return false;
-    }
-    if (ends.length === 1) {
-      return true;
-    }
-    for (var i = 1, ii = ends.length; i < ii; ++i) {
-      if (linearRingContainsExtent(flatCoordinates, ends[i - 1], ends[i], stride, extent)) {
-        if (!intersectsLineString(flatCoordinates, ends[i - 1], ends[i], stride, extent)) {
-          return false;
-        }
-      }
-    }
-    return true;
-  }
-  function coordinates(flatCoordinates, offset, end, stride) {
-    while (offset < end - stride) {
-      for (var i = 0; i < stride; ++i) {
-        var tmp = flatCoordinates[offset + i];
-        flatCoordinates[offset + i] = flatCoordinates[end - stride + i];
-        flatCoordinates[end - stride + i] = tmp;
-      }
-      offset += stride;
-      end -= stride;
-    }
-  }
-  function linearRingIsClockwise(flatCoordinates, offset, end, stride) {
-    var edge = 0;
-    var x1 = flatCoordinates[end - stride];
-    var y1 = flatCoordinates[end - stride + 1];
-    for (; offset < end; offset += stride) {
-      var x2 = flatCoordinates[offset];
-      var y2 = flatCoordinates[offset + 1];
-      edge += (x2 - x1) * (y2 + y1);
-      x1 = x2;
-      y1 = y2;
-    }
-    return edge === 0 ? void 0 : edge > 0;
-  }
-  function linearRingsAreOriented(flatCoordinates, offset, ends, stride, opt_right) {
-    var right = opt_right !== void 0 ? opt_right : false;
-    for (var i = 0, ii = ends.length; i < ii; ++i) {
-      var end = ends[i];
-      var isClockwise = linearRingIsClockwise(flatCoordinates, offset, end, stride);
-      if (i === 0) {
-        if (right && isClockwise || !right && !isClockwise) {
-          return false;
-        }
-      } else {
-        if (right && !isClockwise || !right && isClockwise) {
-          return false;
-        }
-      }
-      offset = end;
-    }
-    return true;
-  }
-  function orientLinearRings(flatCoordinates, offset, ends, stride, opt_right) {
-    var right = opt_right !== void 0 ? opt_right : false;
-    for (var i = 0, ii = ends.length; i < ii; ++i) {
-      var end = ends[i];
-      var isClockwise = linearRingIsClockwise(flatCoordinates, offset, end, stride);
-      var reverse = i === 0 ? right && isClockwise || !right && !isClockwise : right && !isClockwise || !right && isClockwise;
-      if (reverse) {
-        coordinates(flatCoordinates, offset, end, stride);
-      }
-      offset = end;
-    }
-    return offset;
-  }
-  var __extends$L = globalThis && globalThis.__extends || function() {
-    var extendStatics = function(d, b) {
-      extendStatics = Object.setPrototypeOf || { __proto__: [] } instanceof Array && function(d2, b2) {
-        d2.__proto__ = b2;
-      } || function(d2, b2) {
-        for (var p2 in b2)
-          if (Object.prototype.hasOwnProperty.call(b2, p2))
-            d2[p2] = b2[p2];
-      };
-      return extendStatics(d, b);
-    };
-    return function(d, b) {
-      if (typeof b !== "function" && b !== null)
-        throw new TypeError("Class extends value " + String(b) + " is not a constructor or null");
-      extendStatics(d, b);
-      function __() {
-        this.constructor = d;
-      }
-      d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
-    };
-  }();
-  var Polygon = function(_super) {
-    __extends$L(Polygon2, _super);
-    function Polygon2(coordinates2, opt_layout, opt_ends) {
-      var _this = _super.call(this) || this;
-      _this.ends_ = [];
-      _this.flatInteriorPointRevision_ = -1;
-      _this.flatInteriorPoint_ = null;
-      _this.maxDelta_ = -1;
-      _this.maxDeltaRevision_ = -1;
-      _this.orientedRevision_ = -1;
-      _this.orientedFlatCoordinates_ = null;
-      if (opt_layout !== void 0 && opt_ends) {
-        _this.setFlatCoordinates(
-          opt_layout,
-          coordinates2
-        );
-        _this.ends_ = opt_ends;
-      } else {
-        _this.setCoordinates(
-          coordinates2,
-          opt_layout
-        );
-      }
-      return _this;
-    }
-    Polygon2.prototype.appendLinearRing = function(linearRing2) {
-      if (!this.flatCoordinates) {
-        this.flatCoordinates = linearRing2.getFlatCoordinates().slice();
-      } else {
-        extend$1(this.flatCoordinates, linearRing2.getFlatCoordinates());
-      }
-      this.ends_.push(this.flatCoordinates.length);
-      this.changed();
-    };
-    Polygon2.prototype.clone = function() {
-      var polygon = new Polygon2(this.flatCoordinates.slice(), this.layout, this.ends_.slice());
-      polygon.applyProperties(this);
-      return polygon;
-    };
-    Polygon2.prototype.closestPointXY = function(x, y2, closestPoint, minSquaredDistance) {
-      if (minSquaredDistance < closestSquaredDistanceXY(this.getExtent(), x, y2)) {
-        return minSquaredDistance;
-      }
-      if (this.maxDeltaRevision_ != this.getRevision()) {
-        this.maxDelta_ = Math.sqrt(arrayMaxSquaredDelta(this.flatCoordinates, 0, this.ends_, this.stride, 0));
-        this.maxDeltaRevision_ = this.getRevision();
-      }
-      return assignClosestArrayPoint(this.flatCoordinates, 0, this.ends_, this.stride, this.maxDelta_, true, x, y2, closestPoint, minSquaredDistance);
-    };
-    Polygon2.prototype.containsXY = function(x, y2) {
-      return linearRingsContainsXY(this.getOrientedFlatCoordinates(), 0, this.ends_, this.stride, x, y2);
-    };
-    Polygon2.prototype.getArea = function() {
-      return linearRings(this.getOrientedFlatCoordinates(), 0, this.ends_, this.stride);
-    };
-    Polygon2.prototype.getCoordinates = function(opt_right) {
-      var flatCoordinates;
-      if (opt_right !== void 0) {
-        flatCoordinates = this.getOrientedFlatCoordinates().slice();
-        orientLinearRings(flatCoordinates, 0, this.ends_, this.stride, opt_right);
-      } else {
-        flatCoordinates = this.flatCoordinates;
-      }
-      return inflateCoordinatesArray(flatCoordinates, 0, this.ends_, this.stride);
-    };
-    Polygon2.prototype.getEnds = function() {
-      return this.ends_;
-    };
-    Polygon2.prototype.getFlatInteriorPoint = function() {
-      if (this.flatInteriorPointRevision_ != this.getRevision()) {
-        var flatCenter = getCenter(this.getExtent());
-        this.flatInteriorPoint_ = getInteriorPointOfArray(this.getOrientedFlatCoordinates(), 0, this.ends_, this.stride, flatCenter, 0);
-        this.flatInteriorPointRevision_ = this.getRevision();
-      }
-      return this.flatInteriorPoint_;
-    };
-    Polygon2.prototype.getInteriorPoint = function() {
-      return new Point$1(this.getFlatInteriorPoint(), GeometryLayout.XYM);
-    };
-    Polygon2.prototype.getLinearRingCount = function() {
-      return this.ends_.length;
-    };
-    Polygon2.prototype.getLinearRing = function(index2) {
-      if (index2 < 0 || this.ends_.length <= index2) {
-        return null;
-      }
-      return new LinearRing$1(this.flatCoordinates.slice(index2 === 0 ? 0 : this.ends_[index2 - 1], this.ends_[index2]), this.layout);
-    };
-    Polygon2.prototype.getLinearRings = function() {
-      var layout = this.layout;
-      var flatCoordinates = this.flatCoordinates;
-      var ends = this.ends_;
-      var linearRings2 = [];
-      var offset = 0;
-      for (var i = 0, ii = ends.length; i < ii; ++i) {
-        var end = ends[i];
-        var linearRing2 = new LinearRing$1(flatCoordinates.slice(offset, end), layout);
-        linearRings2.push(linearRing2);
-        offset = end;
-      }
-      return linearRings2;
-    };
-    Polygon2.prototype.getOrientedFlatCoordinates = function() {
-      if (this.orientedRevision_ != this.getRevision()) {
-        var flatCoordinates = this.flatCoordinates;
-        if (linearRingsAreOriented(flatCoordinates, 0, this.ends_, this.stride)) {
-          this.orientedFlatCoordinates_ = flatCoordinates;
-        } else {
-          this.orientedFlatCoordinates_ = flatCoordinates.slice();
-          this.orientedFlatCoordinates_.length = orientLinearRings(this.orientedFlatCoordinates_, 0, this.ends_, this.stride);
-        }
-        this.orientedRevision_ = this.getRevision();
-      }
-      return this.orientedFlatCoordinates_;
-    };
-    Polygon2.prototype.getSimplifiedGeometryInternal = function(squaredTolerance) {
-      var simplifiedFlatCoordinates = [];
-      var simplifiedEnds = [];
-      simplifiedFlatCoordinates.length = quantizeArray(this.flatCoordinates, 0, this.ends_, this.stride, Math.sqrt(squaredTolerance), simplifiedFlatCoordinates, 0, simplifiedEnds);
-      return new Polygon2(simplifiedFlatCoordinates, GeometryLayout.XY, simplifiedEnds);
-    };
-    Polygon2.prototype.getType = function() {
-      return "Polygon";
-    };
-    Polygon2.prototype.intersectsExtent = function(extent) {
-      return intersectsLinearRingArray(this.getOrientedFlatCoordinates(), 0, this.ends_, this.stride, extent);
-    };
-    Polygon2.prototype.setCoordinates = function(coordinates2, opt_layout) {
-      this.setLayout(opt_layout, coordinates2, 2);
-      if (!this.flatCoordinates) {
-        this.flatCoordinates = [];
-      }
-      var ends = deflateCoordinatesArray(this.flatCoordinates, 0, coordinates2, this.stride, this.ends_);
-      this.flatCoordinates.length = ends.length === 0 ? 0 : ends[ends.length - 1];
-      this.changed();
-    };
-    return Polygon2;
-  }(SimpleGeometry$1);
-  function fromExtent(extent) {
-    var minX = extent[0];
-    var minY = extent[1];
-    var maxX = extent[2];
-    var maxY = extent[3];
-    var flatCoordinates = [
-      minX,
-      minY,
-      minX,
-      maxY,
-      maxX,
-      maxY,
-      maxX,
-      minY,
-      minX,
-      minY
-    ];
-    return new Polygon(flatCoordinates, GeometryLayout.XY, [
-      flatCoordinates.length
-    ]);
-  }
-  var __extends$K = globalThis && globalThis.__extends || function() {
-    var extendStatics = function(d, b) {
-      extendStatics = Object.setPrototypeOf || { __proto__: [] } instanceof Array && function(d2, b2) {
-        d2.__proto__ = b2;
-      } || function(d2, b2) {
-        for (var p2 in b2)
-          if (Object.prototype.hasOwnProperty.call(b2, p2))
-            d2[p2] = b2[p2];
-      };
-      return extendStatics(d, b);
-    };
-    return function(d, b) {
-      if (typeof b !== "function" && b !== null)
-        throw new TypeError("Class extends value " + String(b) + " is not a constructor or null");
-      extendStatics(d, b);
-      function __() {
-        this.constructor = d;
-      }
-      d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
-    };
-  }();
-  var DEFAULT_MIN_ZOOM = 0;
-  var View = function(_super) {
-    __extends$K(View2, _super);
-    function View2(opt_options) {
-      var _this = _super.call(this) || this;
-      _this.on;
-      _this.once;
-      _this.un;
-      var options = assign({}, opt_options);
-      _this.hints_ = [0, 0];
-      _this.animations_ = [];
-      _this.updateAnimationKey_;
-      _this.projection_ = createProjection(options.projection, "EPSG:3857");
-      _this.viewportSize_ = [100, 100];
-      _this.targetCenter_ = null;
-      _this.targetResolution_;
-      _this.targetRotation_;
-      _this.nextCenter_ = null;
-      _this.nextResolution_;
-      _this.nextRotation_;
-      _this.cancelAnchor_ = void 0;
-      if (options.projection) {
-        disableCoordinateWarning();
-      }
-      if (options.center) {
-        options.center = fromUserCoordinate(options.center, _this.projection_);
-      }
-      if (options.extent) {
-        options.extent = fromUserExtent(options.extent, _this.projection_);
-      }
-      _this.applyOptions_(options);
-      return _this;
-    }
-    View2.prototype.applyOptions_ = function(options) {
-      var properties = assign({}, options);
-      for (var key in ViewProperty) {
-        delete properties[key];
-      }
-      this.setProperties(properties, true);
-      var resolutionConstraintInfo = createResolutionConstraint(options);
-      this.maxResolution_ = resolutionConstraintInfo.maxResolution;
-      this.minResolution_ = resolutionConstraintInfo.minResolution;
-      this.zoomFactor_ = resolutionConstraintInfo.zoomFactor;
-      this.resolutions_ = options.resolutions;
-      this.padding_ = options.padding;
-      this.minZoom_ = resolutionConstraintInfo.minZoom;
-      var centerConstraint = createCenterConstraint(options);
-      var resolutionConstraint = resolutionConstraintInfo.constraint;
-      var rotationConstraint = createRotationConstraint(options);
-      this.constraints_ = {
-        center: centerConstraint,
-        resolution: resolutionConstraint,
-        rotation: rotationConstraint
-      };
-      this.setRotation(options.rotation !== void 0 ? options.rotation : 0);
-      this.setCenterInternal(options.center !== void 0 ? options.center : null);
-      if (options.resolution !== void 0) {
-        this.setResolution(options.resolution);
-      } else if (options.zoom !== void 0) {
-        this.setZoom(options.zoom);
-      }
-    };
-    Object.defineProperty(View2.prototype, "padding", {
-      get: function() {
-        return this.padding_;
-      },
-      set: function(padding) {
-        var oldPadding = this.padding_;
-        this.padding_ = padding;
-        var center = this.getCenter();
-        if (center) {
-          var newPadding = padding || [0, 0, 0, 0];
-          oldPadding = oldPadding || [0, 0, 0, 0];
-          var resolution = this.getResolution();
-          var offsetX = resolution / 2 * (newPadding[3] - oldPadding[3] + oldPadding[1] - newPadding[1]);
-          var offsetY = resolution / 2 * (newPadding[0] - oldPadding[0] + oldPadding[2] - newPadding[2]);
-          this.setCenterInternal([center[0] + offsetX, center[1] - offsetY]);
-        }
-      },
-      enumerable: false,
-      configurable: true
-    });
-    View2.prototype.getUpdatedOptions_ = function(newOptions) {
-      var options = this.getProperties();
-      if (options.resolution !== void 0) {
-        options.resolution = this.getResolution();
-      } else {
-        options.zoom = this.getZoom();
-      }
-      options.center = this.getCenterInternal();
-      options.rotation = this.getRotation();
-      return assign({}, options, newOptions);
-    };
-    View2.prototype.animate = function(var_args) {
-      if (this.isDef() && !this.getAnimating()) {
-        this.resolveConstraints(0);
-      }
-      var args = new Array(arguments.length);
-      for (var i = 0; i < args.length; ++i) {
-        var options = arguments[i];
-        if (options.center) {
-          options = assign({}, options);
-          options.center = fromUserCoordinate(options.center, this.getProjection());
-        }
-        if (options.anchor) {
-          options = assign({}, options);
-          options.anchor = fromUserCoordinate(options.anchor, this.getProjection());
-        }
-        args[i] = options;
-      }
-      this.animateInternal.apply(this, args);
-    };
-    View2.prototype.animateInternal = function(var_args) {
-      var animationCount = arguments.length;
-      var callback;
-      if (animationCount > 1 && typeof arguments[animationCount - 1] === "function") {
-        callback = arguments[animationCount - 1];
-        --animationCount;
-      }
-      var i = 0;
-      for (; i < animationCount && !this.isDef(); ++i) {
-        var state = arguments[i];
-        if (state.center) {
-          this.setCenterInternal(state.center);
-        }
-        if (state.zoom !== void 0) {
-          this.setZoom(state.zoom);
-        } else if (state.resolution) {
-          this.setResolution(state.resolution);
-        }
-        if (state.rotation !== void 0) {
-          this.setRotation(state.rotation);
-        }
-      }
-      if (i === animationCount) {
-        if (callback) {
-          animationCallback(callback, true);
-        }
-        return;
-      }
-      var start2 = Date.now();
-      var center = this.targetCenter_.slice();
-      var resolution = this.targetResolution_;
-      var rotation = this.targetRotation_;
-      var series = [];
-      for (; i < animationCount; ++i) {
-        var options = arguments[i];
-        var animation = {
-          start: start2,
-          complete: false,
-          anchor: options.anchor,
-          duration: options.duration !== void 0 ? options.duration : 1e3,
-          easing: options.easing || inAndOut,
-          callback
-        };
-        if (options.center) {
-          animation.sourceCenter = center;
-          animation.targetCenter = options.center.slice();
-          center = animation.targetCenter;
-        }
-        if (options.zoom !== void 0) {
-          animation.sourceResolution = resolution;
-          animation.targetResolution = this.getResolutionForZoom(options.zoom);
-          resolution = animation.targetResolution;
-        } else if (options.resolution) {
-          animation.sourceResolution = resolution;
-          animation.targetResolution = options.resolution;
-          resolution = animation.targetResolution;
-        }
-        if (options.rotation !== void 0) {
-          animation.sourceRotation = rotation;
-          var delta = modulo(options.rotation - rotation + Math.PI, 2 * Math.PI) - Math.PI;
-          animation.targetRotation = rotation + delta;
-          rotation = animation.targetRotation;
-        }
-        if (isNoopAnimation(animation)) {
-          animation.complete = true;
-        } else {
-          start2 += animation.duration;
-        }
-        series.push(animation);
-      }
-      this.animations_.push(series);
-      this.setHint(ViewHint.ANIMATING, 1);
-      this.updateAnimations_();
-    };
-    View2.prototype.getAnimating = function() {
-      return this.hints_[ViewHint.ANIMATING] > 0;
-    };
-    View2.prototype.getInteracting = function() {
-      return this.hints_[ViewHint.INTERACTING] > 0;
-    };
-    View2.prototype.cancelAnimations = function() {
-      this.setHint(ViewHint.ANIMATING, -this.hints_[ViewHint.ANIMATING]);
-      var anchor;
-      for (var i = 0, ii = this.animations_.length; i < ii; ++i) {
-        var series = this.animations_[i];
-        if (series[0].callback) {
-          animationCallback(series[0].callback, false);
-        }
-        if (!anchor) {
-          for (var j = 0, jj = series.length; j < jj; ++j) {
-            var animation = series[j];
-            if (!animation.complete) {
-              anchor = animation.anchor;
-              break;
-            }
-          }
-        }
-      }
-      this.animations_.length = 0;
-      this.cancelAnchor_ = anchor;
-      this.nextCenter_ = null;
-      this.nextResolution_ = NaN;
-      this.nextRotation_ = NaN;
-    };
-    View2.prototype.updateAnimations_ = function() {
-      if (this.updateAnimationKey_ !== void 0) {
-        cancelAnimationFrame(this.updateAnimationKey_);
-        this.updateAnimationKey_ = void 0;
-      }
-      if (!this.getAnimating()) {
-        return;
-      }
-      var now2 = Date.now();
-      var more = false;
-      for (var i = this.animations_.length - 1; i >= 0; --i) {
-        var series = this.animations_[i];
-        var seriesComplete = true;
-        for (var j = 0, jj = series.length; j < jj; ++j) {
-          var animation = series[j];
-          if (animation.complete) {
-            continue;
-          }
-          var elapsed = now2 - animation.start;
-          var fraction = animation.duration > 0 ? elapsed / animation.duration : 1;
-          if (fraction >= 1) {
-            animation.complete = true;
-            fraction = 1;
-          } else {
-            seriesComplete = false;
-          }
-          var progress = animation.easing(fraction);
-          if (animation.sourceCenter) {
-            var x0 = animation.sourceCenter[0];
-            var y0 = animation.sourceCenter[1];
-            var x1 = animation.targetCenter[0];
-            var y1 = animation.targetCenter[1];
-            this.nextCenter_ = animation.targetCenter;
-            var x = x0 + progress * (x1 - x0);
-            var y2 = y0 + progress * (y1 - y0);
-            this.targetCenter_ = [x, y2];
-          }
-          if (animation.sourceResolution && animation.targetResolution) {
-            var resolution = progress === 1 ? animation.targetResolution : animation.sourceResolution + progress * (animation.targetResolution - animation.sourceResolution);
-            if (animation.anchor) {
-              var size2 = this.getViewportSize_(this.getRotation());
-              var constrainedResolution = this.constraints_.resolution(resolution, 0, size2, true);
-              this.targetCenter_ = this.calculateCenterZoom(constrainedResolution, animation.anchor);
-            }
-            this.nextResolution_ = animation.targetResolution;
-            this.targetResolution_ = resolution;
-            this.applyTargetState_(true);
-          }
-          if (animation.sourceRotation !== void 0 && animation.targetRotation !== void 0) {
-            var rotation = progress === 1 ? modulo(animation.targetRotation + Math.PI, 2 * Math.PI) - Math.PI : animation.sourceRotation + progress * (animation.targetRotation - animation.sourceRotation);
-            if (animation.anchor) {
-              var constrainedRotation = this.constraints_.rotation(rotation, true);
-              this.targetCenter_ = this.calculateCenterRotate(constrainedRotation, animation.anchor);
-            }
-            this.nextRotation_ = animation.targetRotation;
-            this.targetRotation_ = rotation;
-          }
-          this.applyTargetState_(true);
-          more = true;
-          if (!animation.complete) {
-            break;
-          }
-        }
-        if (seriesComplete) {
-          this.animations_[i] = null;
-          this.setHint(ViewHint.ANIMATING, -1);
-          this.nextCenter_ = null;
-          this.nextResolution_ = NaN;
-          this.nextRotation_ = NaN;
-          var callback = series[0].callback;
-          if (callback) {
-            animationCallback(callback, true);
-          }
-        }
-      }
-      this.animations_ = this.animations_.filter(Boolean);
-      if (more && this.updateAnimationKey_ === void 0) {
-        this.updateAnimationKey_ = requestAnimationFrame(this.updateAnimations_.bind(this));
-      }
-    };
-    View2.prototype.calculateCenterRotate = function(rotation, anchor) {
-      var center;
-      var currentCenter = this.getCenterInternal();
-      if (currentCenter !== void 0) {
-        center = [currentCenter[0] - anchor[0], currentCenter[1] - anchor[1]];
-        rotate$1(center, rotation - this.getRotation());
-        add$1(center, anchor);
-      }
-      return center;
-    };
-    View2.prototype.calculateCenterZoom = function(resolution, anchor) {
-      var center;
-      var currentCenter = this.getCenterInternal();
-      var currentResolution = this.getResolution();
-      if (currentCenter !== void 0 && currentResolution !== void 0) {
-        var x = anchor[0] - resolution * (anchor[0] - currentCenter[0]) / currentResolution;
-        var y2 = anchor[1] - resolution * (anchor[1] - currentCenter[1]) / currentResolution;
-        center = [x, y2];
-      }
-      return center;
-    };
-    View2.prototype.getViewportSize_ = function(opt_rotation) {
-      var size2 = this.viewportSize_;
-      if (opt_rotation) {
-        var w = size2[0];
-        var h2 = size2[1];
-        return [
-          Math.abs(w * Math.cos(opt_rotation)) + Math.abs(h2 * Math.sin(opt_rotation)),
-          Math.abs(w * Math.sin(opt_rotation)) + Math.abs(h2 * Math.cos(opt_rotation))
-        ];
-      } else {
-        return size2;
-      }
-    };
-    View2.prototype.setViewportSize = function(opt_size) {
-      this.viewportSize_ = Array.isArray(opt_size) ? opt_size.slice() : [100, 100];
-      if (!this.getAnimating()) {
-        this.resolveConstraints(0);
-      }
-    };
-    View2.prototype.getCenter = function() {
-      var center = this.getCenterInternal();
-      if (!center) {
-        return center;
-      }
-      return toUserCoordinate(center, this.getProjection());
-    };
-    View2.prototype.getCenterInternal = function() {
-      return this.get(ViewProperty.CENTER);
-    };
-    View2.prototype.getConstraints = function() {
-      return this.constraints_;
-    };
-    View2.prototype.getConstrainResolution = function() {
-      return this.get("constrainResolution");
-    };
-    View2.prototype.getHints = function(opt_hints) {
-      if (opt_hints !== void 0) {
-        opt_hints[0] = this.hints_[0];
-        opt_hints[1] = this.hints_[1];
-        return opt_hints;
-      } else {
-        return this.hints_.slice();
-      }
-    };
-    View2.prototype.calculateExtent = function(opt_size) {
-      var extent = this.calculateExtentInternal(opt_size);
-      return toUserExtent(extent, this.getProjection());
-    };
-    View2.prototype.calculateExtentInternal = function(opt_size) {
-      var size2 = opt_size || this.getViewportSizeMinusPadding_();
-      var center = this.getCenterInternal();
-      assert(center, 1);
-      var resolution = this.getResolution();
-      assert(resolution !== void 0, 2);
-      var rotation = this.getRotation();
-      assert(rotation !== void 0, 3);
-      return getForViewAndSize(center, resolution, rotation, size2);
-    };
-    View2.prototype.getMaxResolution = function() {
-      return this.maxResolution_;
-    };
-    View2.prototype.getMinResolution = function() {
-      return this.minResolution_;
-    };
-    View2.prototype.getMaxZoom = function() {
-      return this.getZoomForResolution(this.minResolution_);
-    };
-    View2.prototype.setMaxZoom = function(zoom) {
-      this.applyOptions_(this.getUpdatedOptions_({ maxZoom: zoom }));
-    };
-    View2.prototype.getMinZoom = function() {
-      return this.getZoomForResolution(this.maxResolution_);
-    };
-    View2.prototype.setMinZoom = function(zoom) {
-      this.applyOptions_(this.getUpdatedOptions_({ minZoom: zoom }));
-    };
-    View2.prototype.setConstrainResolution = function(enabled) {
-      this.applyOptions_(this.getUpdatedOptions_({ constrainResolution: enabled }));
-    };
-    View2.prototype.getProjection = function() {
-      return this.projection_;
-    };
-    View2.prototype.getResolution = function() {
-      return this.get(ViewProperty.RESOLUTION);
-    };
-    View2.prototype.getResolutions = function() {
-      return this.resolutions_;
-    };
-    View2.prototype.getResolutionForExtent = function(extent, opt_size) {
-      return this.getResolutionForExtentInternal(fromUserExtent(extent, this.getProjection()), opt_size);
-    };
-    View2.prototype.getResolutionForExtentInternal = function(extent, opt_size) {
-      var size2 = opt_size || this.getViewportSizeMinusPadding_();
-      var xResolution = getWidth(extent) / size2[0];
-      var yResolution = getHeight(extent) / size2[1];
-      return Math.max(xResolution, yResolution);
-    };
-    View2.prototype.getResolutionForValueFunction = function(opt_power) {
-      var power = opt_power || 2;
-      var maxResolution = this.getConstrainedResolution(this.maxResolution_);
-      var minResolution = this.minResolution_;
-      var max = Math.log(maxResolution / minResolution) / Math.log(power);
-      return function(value) {
-        var resolution = maxResolution / Math.pow(power, value * max);
-        return resolution;
-      };
-    };
-    View2.prototype.getRotation = function() {
-      return this.get(ViewProperty.ROTATION);
-    };
-    View2.prototype.getValueForResolutionFunction = function(opt_power) {
-      var logPower = Math.log(opt_power || 2);
-      var maxResolution = this.getConstrainedResolution(this.maxResolution_);
-      var minResolution = this.minResolution_;
-      var max = Math.log(maxResolution / minResolution) / logPower;
-      return function(resolution) {
-        var value = Math.log(maxResolution / resolution) / logPower / max;
-        return value;
-      };
-    };
-    View2.prototype.getViewportSizeMinusPadding_ = function(opt_rotation) {
-      var size2 = this.getViewportSize_(opt_rotation);
-      var padding = this.padding_;
-      if (padding) {
-        size2 = [
-          size2[0] - padding[1] - padding[3],
-          size2[1] - padding[0] - padding[2]
-        ];
-      }
-      return size2;
-    };
-    View2.prototype.getState = function() {
-      var projection = this.getProjection();
-      var resolution = this.getResolution();
-      var rotation = this.getRotation();
-      var center = this.getCenterInternal();
-      var padding = this.padding_;
-      if (padding) {
-        var reducedSize = this.getViewportSizeMinusPadding_();
-        center = calculateCenterOn(center, this.getViewportSize_(), [reducedSize[0] / 2 + padding[3], reducedSize[1] / 2 + padding[0]], resolution, rotation);
-      }
-      return {
-        center: center.slice(0),
-        projection: projection !== void 0 ? projection : null,
-        resolution,
-        nextCenter: this.nextCenter_,
-        nextResolution: this.nextResolution_,
-        nextRotation: this.nextRotation_,
-        rotation,
-        zoom: this.getZoom()
-      };
-    };
-    View2.prototype.getZoom = function() {
-      var zoom;
-      var resolution = this.getResolution();
-      if (resolution !== void 0) {
-        zoom = this.getZoomForResolution(resolution);
-      }
-      return zoom;
-    };
-    View2.prototype.getZoomForResolution = function(resolution) {
-      var offset = this.minZoom_ || 0;
-      var max, zoomFactor;
-      if (this.resolutions_) {
-        var nearest = linearFindNearest(this.resolutions_, resolution, 1);
-        offset = nearest;
-        max = this.resolutions_[nearest];
-        if (nearest == this.resolutions_.length - 1) {
-          zoomFactor = 2;
-        } else {
-          zoomFactor = max / this.resolutions_[nearest + 1];
-        }
-      } else {
-        max = this.maxResolution_;
-        zoomFactor = this.zoomFactor_;
-      }
-      return offset + Math.log(max / resolution) / Math.log(zoomFactor);
-    };
-    View2.prototype.getResolutionForZoom = function(zoom) {
-      if (this.resolutions_) {
-        if (this.resolutions_.length <= 1) {
-          return 0;
-        }
-        var baseLevel = clamp(Math.floor(zoom), 0, this.resolutions_.length - 2);
-        var zoomFactor = this.resolutions_[baseLevel] / this.resolutions_[baseLevel + 1];
-        return this.resolutions_[baseLevel] / Math.pow(zoomFactor, clamp(zoom - baseLevel, 0, 1));
-      } else {
-        return this.maxResolution_ / Math.pow(this.zoomFactor_, zoom - this.minZoom_);
-      }
-    };
-    View2.prototype.fit = function(geometryOrExtent, opt_options) {
-      var geometry;
-      assert(Array.isArray(geometryOrExtent) || typeof geometryOrExtent.getSimplifiedGeometry === "function", 24);
-      if (Array.isArray(geometryOrExtent)) {
-        assert(!isEmpty(geometryOrExtent), 25);
-        var extent = fromUserExtent(geometryOrExtent, this.getProjection());
-        geometry = fromExtent(extent);
-      } else if (geometryOrExtent.getType() === "Circle") {
-        var extent = fromUserExtent(geometryOrExtent.getExtent(), this.getProjection());
-        geometry = fromExtent(extent);
-        geometry.rotate(this.getRotation(), getCenter(extent));
-      } else {
-        var userProjection2 = getUserProjection();
-        if (userProjection2) {
-          geometry = geometryOrExtent.clone().transform(userProjection2, this.getProjection());
-        } else {
-          geometry = geometryOrExtent;
-        }
-      }
-      this.fitInternal(geometry, opt_options);
-    };
-    View2.prototype.rotatedExtentForGeometry = function(geometry) {
-      var rotation = this.getRotation();
-      var cosAngle = Math.cos(rotation);
-      var sinAngle = Math.sin(-rotation);
-      var coords = geometry.getFlatCoordinates();
-      var stride = geometry.getStride();
-      var minRotX = Infinity;
-      var minRotY = Infinity;
-      var maxRotX = -Infinity;
-      var maxRotY = -Infinity;
-      for (var i = 0, ii = coords.length; i < ii; i += stride) {
-        var rotX = coords[i] * cosAngle - coords[i + 1] * sinAngle;
-        var rotY = coords[i] * sinAngle + coords[i + 1] * cosAngle;
-        minRotX = Math.min(minRotX, rotX);
-        minRotY = Math.min(minRotY, rotY);
-        maxRotX = Math.max(maxRotX, rotX);
-        maxRotY = Math.max(maxRotY, rotY);
-      }
-      return [minRotX, minRotY, maxRotX, maxRotY];
-    };
-    View2.prototype.fitInternal = function(geometry, opt_options) {
-      var options = opt_options || {};
-      var size2 = options.size;
-      if (!size2) {
-        size2 = this.getViewportSizeMinusPadding_();
-      }
-      var padding = options.padding !== void 0 ? options.padding : [0, 0, 0, 0];
-      var nearest = options.nearest !== void 0 ? options.nearest : false;
-      var minResolution;
-      if (options.minResolution !== void 0) {
-        minResolution = options.minResolution;
-      } else if (options.maxZoom !== void 0) {
-        minResolution = this.getResolutionForZoom(options.maxZoom);
-      } else {
-        minResolution = 0;
-      }
-      var rotatedExtent = this.rotatedExtentForGeometry(geometry);
-      var resolution = this.getResolutionForExtentInternal(rotatedExtent, [
-        size2[0] - padding[1] - padding[3],
-        size2[1] - padding[0] - padding[2]
-      ]);
-      resolution = isNaN(resolution) ? minResolution : Math.max(resolution, minResolution);
-      resolution = this.getConstrainedResolution(resolution, nearest ? 0 : 1);
-      var rotation = this.getRotation();
-      var sinAngle = Math.sin(rotation);
-      var cosAngle = Math.cos(rotation);
-      var centerRot = getCenter(rotatedExtent);
-      centerRot[0] += (padding[1] - padding[3]) / 2 * resolution;
-      centerRot[1] += (padding[0] - padding[2]) / 2 * resolution;
-      var centerX = centerRot[0] * cosAngle - centerRot[1] * sinAngle;
-      var centerY = centerRot[1] * cosAngle + centerRot[0] * sinAngle;
-      var center = this.getConstrainedCenter([centerX, centerY], resolution);
-      var callback = options.callback ? options.callback : VOID;
-      if (options.duration !== void 0) {
-        this.animateInternal({
-          resolution,
-          center,
-          duration: options.duration,
-          easing: options.easing
-        }, callback);
-      } else {
-        this.targetResolution_ = resolution;
-        this.targetCenter_ = center;
-        this.applyTargetState_(false, true);
-        animationCallback(callback, true);
-      }
-    };
-    View2.prototype.centerOn = function(coordinate, size2, position) {
-      this.centerOnInternal(fromUserCoordinate(coordinate, this.getProjection()), size2, position);
-    };
-    View2.prototype.centerOnInternal = function(coordinate, size2, position) {
-      this.setCenterInternal(calculateCenterOn(coordinate, size2, position, this.getResolution(), this.getRotation()));
-    };
-    View2.prototype.calculateCenterShift = function(center, resolution, rotation, size2) {
-      var centerShift;
-      var padding = this.padding_;
-      if (padding && center) {
-        var reducedSize = this.getViewportSizeMinusPadding_(-rotation);
-        var shiftedCenter = calculateCenterOn(center, size2, [reducedSize[0] / 2 + padding[3], reducedSize[1] / 2 + padding[0]], resolution, rotation);
-        centerShift = [
-          center[0] - shiftedCenter[0],
-          center[1] - shiftedCenter[1]
-        ];
-      }
-      return centerShift;
-    };
-    View2.prototype.isDef = function() {
-      return !!this.getCenterInternal() && this.getResolution() !== void 0;
-    };
-    View2.prototype.adjustCenter = function(deltaCoordinates) {
-      var center = toUserCoordinate(this.targetCenter_, this.getProjection());
-      this.setCenter([
-        center[0] + deltaCoordinates[0],
-        center[1] + deltaCoordinates[1]
-      ]);
-    };
-    View2.prototype.adjustCenterInternal = function(deltaCoordinates) {
-      var center = this.targetCenter_;
-      this.setCenterInternal([
-        center[0] + deltaCoordinates[0],
-        center[1] + deltaCoordinates[1]
-      ]);
-    };
-    View2.prototype.adjustResolution = function(ratio, opt_anchor) {
-      var anchor = opt_anchor && fromUserCoordinate(opt_anchor, this.getProjection());
-      this.adjustResolutionInternal(ratio, anchor);
-    };
-    View2.prototype.adjustResolutionInternal = function(ratio, opt_anchor) {
-      var isMoving = this.getAnimating() || this.getInteracting();
-      var size2 = this.getViewportSize_(this.getRotation());
-      var newResolution = this.constraints_.resolution(this.targetResolution_ * ratio, 0, size2, isMoving);
-      if (opt_anchor) {
-        this.targetCenter_ = this.calculateCenterZoom(newResolution, opt_anchor);
-      }
-      this.targetResolution_ *= ratio;
-      this.applyTargetState_();
-    };
-    View2.prototype.adjustZoom = function(delta, opt_anchor) {
-      this.adjustResolution(Math.pow(this.zoomFactor_, -delta), opt_anchor);
-    };
-    View2.prototype.adjustRotation = function(delta, opt_anchor) {
-      if (opt_anchor) {
-        opt_anchor = fromUserCoordinate(opt_anchor, this.getProjection());
-      }
-      this.adjustRotationInternal(delta, opt_anchor);
-    };
-    View2.prototype.adjustRotationInternal = function(delta, opt_anchor) {
-      var isMoving = this.getAnimating() || this.getInteracting();
-      var newRotation = this.constraints_.rotation(this.targetRotation_ + delta, isMoving);
-      if (opt_anchor) {
-        this.targetCenter_ = this.calculateCenterRotate(newRotation, opt_anchor);
-      }
-      this.targetRotation_ += delta;
-      this.applyTargetState_();
-    };
-    View2.prototype.setCenter = function(center) {
-      this.setCenterInternal(center ? fromUserCoordinate(center, this.getProjection()) : center);
-    };
-    View2.prototype.setCenterInternal = function(center) {
-      this.targetCenter_ = center;
-      this.applyTargetState_();
-    };
-    View2.prototype.setHint = function(hint, delta) {
-      this.hints_[hint] += delta;
-      this.changed();
-      return this.hints_[hint];
-    };
-    View2.prototype.setResolution = function(resolution) {
-      this.targetResolution_ = resolution;
-      this.applyTargetState_();
-    };
-    View2.prototype.setRotation = function(rotation) {
-      this.targetRotation_ = rotation;
-      this.applyTargetState_();
-    };
-    View2.prototype.setZoom = function(zoom) {
-      this.setResolution(this.getResolutionForZoom(zoom));
-    };
-    View2.prototype.applyTargetState_ = function(opt_doNotCancelAnims, opt_forceMoving) {
-      var isMoving = this.getAnimating() || this.getInteracting() || opt_forceMoving;
-      var newRotation = this.constraints_.rotation(this.targetRotation_, isMoving);
-      var size2 = this.getViewportSize_(newRotation);
-      var newResolution = this.constraints_.resolution(this.targetResolution_, 0, size2, isMoving);
-      var newCenter = this.constraints_.center(this.targetCenter_, newResolution, size2, isMoving, this.calculateCenterShift(this.targetCenter_, newResolution, newRotation, size2));
-      if (this.get(ViewProperty.ROTATION) !== newRotation) {
-        this.set(ViewProperty.ROTATION, newRotation);
-      }
-      if (this.get(ViewProperty.RESOLUTION) !== newResolution) {
-        this.set(ViewProperty.RESOLUTION, newResolution);
-        this.set("zoom", this.getZoom(), true);
-      }
-      if (!newCenter || !this.get(ViewProperty.CENTER) || !equals$1(this.get(ViewProperty.CENTER), newCenter)) {
-        this.set(ViewProperty.CENTER, newCenter);
-      }
-      if (this.getAnimating() && !opt_doNotCancelAnims) {
-        this.cancelAnimations();
-      }
-      this.cancelAnchor_ = void 0;
-    };
-    View2.prototype.resolveConstraints = function(opt_duration, opt_resolutionDirection, opt_anchor) {
-      var duration = opt_duration !== void 0 ? opt_duration : 200;
-      var direction = opt_resolutionDirection || 0;
-      var newRotation = this.constraints_.rotation(this.targetRotation_);
-      var size2 = this.getViewportSize_(newRotation);
-      var newResolution = this.constraints_.resolution(this.targetResolution_, direction, size2);
-      var newCenter = this.constraints_.center(this.targetCenter_, newResolution, size2, false, this.calculateCenterShift(this.targetCenter_, newResolution, newRotation, size2));
-      if (duration === 0 && !this.cancelAnchor_) {
-        this.targetResolution_ = newResolution;
-        this.targetRotation_ = newRotation;
-        this.targetCenter_ = newCenter;
-        this.applyTargetState_();
-        return;
-      }
-      var anchor = opt_anchor || (duration === 0 ? this.cancelAnchor_ : void 0);
-      this.cancelAnchor_ = void 0;
-      if (this.getResolution() !== newResolution || this.getRotation() !== newRotation || !this.getCenterInternal() || !equals$1(this.getCenterInternal(), newCenter)) {
-        if (this.getAnimating()) {
-          this.cancelAnimations();
-        }
-        this.animateInternal({
-          rotation: newRotation,
-          center: newCenter,
-          resolution: newResolution,
-          duration,
-          easing: easeOut,
-          anchor
-        });
-      }
-    };
-    View2.prototype.beginInteraction = function() {
-      this.resolveConstraints(0);
-      this.setHint(ViewHint.INTERACTING, 1);
-    };
-    View2.prototype.endInteraction = function(opt_duration, opt_resolutionDirection, opt_anchor) {
-      var anchor = opt_anchor && fromUserCoordinate(opt_anchor, this.getProjection());
-      this.endInteractionInternal(opt_duration, opt_resolutionDirection, anchor);
-    };
-    View2.prototype.endInteractionInternal = function(opt_duration, opt_resolutionDirection, opt_anchor) {
-      this.setHint(ViewHint.INTERACTING, -1);
-      this.resolveConstraints(opt_duration, opt_resolutionDirection, opt_anchor);
-    };
-    View2.prototype.getConstrainedCenter = function(targetCenter, opt_targetResolution) {
-      var size2 = this.getViewportSize_(this.getRotation());
-      return this.constraints_.center(targetCenter, opt_targetResolution || this.getResolution(), size2);
-    };
-    View2.prototype.getConstrainedZoom = function(targetZoom, opt_direction) {
-      var targetRes = this.getResolutionForZoom(targetZoom);
-      return this.getZoomForResolution(this.getConstrainedResolution(targetRes, opt_direction));
-    };
-    View2.prototype.getConstrainedResolution = function(targetResolution, opt_direction) {
-      var direction = opt_direction || 0;
-      var size2 = this.getViewportSize_(this.getRotation());
-      return this.constraints_.resolution(targetResolution, direction, size2);
-    };
-    return View2;
-  }(BaseObject$1);
-  function animationCallback(callback, returnValue) {
-    setTimeout(function() {
-      callback(returnValue);
-    }, 0);
-  }
-  function createCenterConstraint(options) {
-    if (options.extent !== void 0) {
-      var smooth = options.smoothExtentConstraint !== void 0 ? options.smoothExtentConstraint : true;
-      return createExtent(options.extent, options.constrainOnlyCenter, smooth);
-    }
-    var projection = createProjection(options.projection, "EPSG:3857");
-    if (options.multiWorld !== true && projection.isGlobal()) {
-      var extent = projection.getExtent().slice();
-      extent[0] = -Infinity;
-      extent[2] = Infinity;
-      return createExtent(extent, false, false);
-    }
-    return none$1;
-  }
-  function createResolutionConstraint(options) {
-    var resolutionConstraint;
-    var maxResolution;
-    var minResolution;
-    var defaultMaxZoom = 28;
-    var defaultZoomFactor = 2;
-    var minZoom = options.minZoom !== void 0 ? options.minZoom : DEFAULT_MIN_ZOOM;
-    var maxZoom = options.maxZoom !== void 0 ? options.maxZoom : defaultMaxZoom;
-    var zoomFactor = options.zoomFactor !== void 0 ? options.zoomFactor : defaultZoomFactor;
-    var multiWorld = options.multiWorld !== void 0 ? options.multiWorld : false;
-    var smooth = options.smoothResolutionConstraint !== void 0 ? options.smoothResolutionConstraint : true;
-    var showFullExtent = options.showFullExtent !== void 0 ? options.showFullExtent : false;
-    var projection = createProjection(options.projection, "EPSG:3857");
-    var projExtent = projection.getExtent();
-    var constrainOnlyCenter = options.constrainOnlyCenter;
-    var extent = options.extent;
-    if (!multiWorld && !extent && projection.isGlobal()) {
-      constrainOnlyCenter = false;
-      extent = projExtent;
-    }
-    if (options.resolutions !== void 0) {
-      var resolutions = options.resolutions;
-      maxResolution = resolutions[minZoom];
-      minResolution = resolutions[maxZoom] !== void 0 ? resolutions[maxZoom] : resolutions[resolutions.length - 1];
-      if (options.constrainResolution) {
-        resolutionConstraint = createSnapToResolutions(resolutions, smooth, !constrainOnlyCenter && extent, showFullExtent);
-      } else {
-        resolutionConstraint = createMinMaxResolution(maxResolution, minResolution, smooth, !constrainOnlyCenter && extent, showFullExtent);
-      }
-    } else {
-      var size2 = !projExtent ? 360 * METERS_PER_UNIT$1[Units$1.DEGREES] / projection.getMetersPerUnit() : Math.max(getWidth(projExtent), getHeight(projExtent));
-      var defaultMaxResolution = size2 / DEFAULT_TILE_SIZE / Math.pow(defaultZoomFactor, DEFAULT_MIN_ZOOM);
-      var defaultMinResolution = defaultMaxResolution / Math.pow(defaultZoomFactor, defaultMaxZoom - DEFAULT_MIN_ZOOM);
-      maxResolution = options.maxResolution;
-      if (maxResolution !== void 0) {
-        minZoom = 0;
-      } else {
-        maxResolution = defaultMaxResolution / Math.pow(zoomFactor, minZoom);
-      }
-      minResolution = options.minResolution;
-      if (minResolution === void 0) {
-        if (options.maxZoom !== void 0) {
-          if (options.maxResolution !== void 0) {
-            minResolution = maxResolution / Math.pow(zoomFactor, maxZoom);
-          } else {
-            minResolution = defaultMaxResolution / Math.pow(zoomFactor, maxZoom);
-          }
-        } else {
-          minResolution = defaultMinResolution;
-        }
-      }
-      maxZoom = minZoom + Math.floor(Math.log(maxResolution / minResolution) / Math.log(zoomFactor));
-      minResolution = maxResolution / Math.pow(zoomFactor, maxZoom - minZoom);
-      if (options.constrainResolution) {
-        resolutionConstraint = createSnapToPower(zoomFactor, maxResolution, minResolution, smooth, !constrainOnlyCenter && extent, showFullExtent);
-      } else {
-        resolutionConstraint = createMinMaxResolution(maxResolution, minResolution, smooth, !constrainOnlyCenter && extent, showFullExtent);
-      }
-    }
-    return {
-      constraint: resolutionConstraint,
-      maxResolution,
-      minResolution,
-      minZoom,
-      zoomFactor
-    };
-  }
-  function createRotationConstraint(options) {
-    var enableRotation = options.enableRotation !== void 0 ? options.enableRotation : true;
-    if (enableRotation) {
-      var constrainRotation = options.constrainRotation;
-      if (constrainRotation === void 0 || constrainRotation === true) {
-        return createSnapToZero();
-      } else if (constrainRotation === false) {
-        return none;
-      } else if (typeof constrainRotation === "number") {
-        return createSnapToN(constrainRotation);
-      } else {
-        return none;
-      }
-    } else {
-      return disable;
-    }
-  }
-  function isNoopAnimation(animation) {
-    if (animation.sourceCenter && animation.targetCenter) {
-      if (!equals$1(animation.sourceCenter, animation.targetCenter)) {
-        return false;
-      }
-    }
-    if (animation.sourceResolution !== animation.targetResolution) {
-      return false;
-    }
-    if (animation.sourceRotation !== animation.targetRotation) {
-      return false;
-    }
-    return true;
-  }
-  function calculateCenterOn(coordinate, size2, position, resolution, rotation) {
-    var cosAngle = Math.cos(-rotation);
-    var sinAngle = Math.sin(-rotation);
-    var rotX = coordinate[0] * cosAngle - coordinate[1] * sinAngle;
-    var rotY = coordinate[1] * cosAngle + coordinate[0] * sinAngle;
-    rotX += (size2[0] / 2 - position[0]) * resolution;
-    rotY += (position[1] - size2[1] / 2) * resolution;
-    sinAngle = -sinAngle;
-    var centerX = rotX * cosAngle - rotY * sinAngle;
-    var centerY = rotY * cosAngle + rotX * sinAngle;
-    return [centerX, centerY];
-  }
-  const OlView = View;
-  function hasArea(size2) {
-    return size2[0] > 0 && size2[1] > 0;
-  }
-  function scale(size2, ratio, opt_size) {
-    if (opt_size === void 0) {
-      opt_size = [0, 0];
-    }
-    opt_size[0] = size2[0] * ratio + 0.5 | 0;
-    opt_size[1] = size2[1] * ratio + 0.5 | 0;
-    return opt_size;
-  }
-  function toSize(size2, opt_size) {
-    if (Array.isArray(size2)) {
-      return size2;
-    } else {
-      if (opt_size === void 0) {
-        opt_size = [size2, size2];
-      } else {
-        opt_size[0] = size2;
-        opt_size[1] = size2;
-      }
-      return opt_size;
-    }
-  }
-  var __extends$J = globalThis && globalThis.__extends || function() {
-    var extendStatics = function(d, b) {
-      extendStatics = Object.setPrototypeOf || { __proto__: [] } instanceof Array && function(d2, b2) {
-        d2.__proto__ = b2;
-      } || function(d2, b2) {
-        for (var p2 in b2)
-          if (Object.prototype.hasOwnProperty.call(b2, p2))
-            d2[p2] = b2[p2];
-      };
-      return extendStatics(d, b);
-    };
-    return function(d, b) {
-      if (typeof b !== "function" && b !== null)
-        throw new TypeError("Class extends value " + String(b) + " is not a constructor or null");
-      extendStatics(d, b);
-      function __() {
-        this.constructor = d;
-      }
-      d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
-    };
-  }();
-  function removeLayerMapProperty(layer) {
-    if (layer instanceof Layer$1) {
-      layer.setMapInternal(null);
-      return;
-    }
-    if (layer instanceof LayerGroup$1) {
-      layer.getLayers().forEach(removeLayerMapProperty);
-    }
-  }
-  function setLayerMapProperty(layer, map2) {
-    if (layer instanceof Layer$1) {
-      layer.setMapInternal(map2);
-      return;
-    }
-    if (layer instanceof LayerGroup$1) {
-      var layers = layer.getLayers().getArray();
-      for (var i = 0, ii = layers.length; i < ii; ++i) {
-        setLayerMapProperty(layers[i], map2);
-      }
-    }
-  }
-  var PluggableMap = function(_super) {
-    __extends$J(PluggableMap2, _super);
-    function PluggableMap2(options) {
-      var _this = _super.call(this) || this;
-      _this.on;
-      _this.once;
-      _this.un;
-      var optionsInternal = createOptionsInternal(options);
-      _this.renderComplete_;
-      _this.loaded_ = true;
-      _this.boundHandleBrowserEvent_ = _this.handleBrowserEvent.bind(_this);
-      _this.maxTilesLoading_ = options.maxTilesLoading !== void 0 ? options.maxTilesLoading : 16;
-      _this.pixelRatio_ = options.pixelRatio !== void 0 ? options.pixelRatio : DEVICE_PIXEL_RATIO;
-      _this.postRenderTimeoutHandle_;
-      _this.animationDelayKey_;
-      _this.animationDelay_ = function() {
-        this.animationDelayKey_ = void 0;
-        this.renderFrame_(Date.now());
-      }.bind(_this);
-      _this.coordinateToPixelTransform_ = create();
-      _this.pixelToCoordinateTransform_ = create();
-      _this.frameIndex_ = 0;
-      _this.frameState_ = null;
-      _this.previousExtent_ = null;
-      _this.viewPropertyListenerKey_ = null;
-      _this.viewChangeListenerKey_ = null;
-      _this.layerGroupPropertyListenerKeys_ = null;
-      _this.viewport_ = document.createElement("div");
-      _this.viewport_.className = "ol-viewport" + ("ontouchstart" in window ? " ol-touch" : "");
-      _this.viewport_.style.position = "relative";
-      _this.viewport_.style.overflow = "hidden";
-      _this.viewport_.style.width = "100%";
-      _this.viewport_.style.height = "100%";
-      _this.overlayContainer_ = document.createElement("div");
-      _this.overlayContainer_.style.position = "absolute";
-      _this.overlayContainer_.style.zIndex = "0";
-      _this.overlayContainer_.style.width = "100%";
-      _this.overlayContainer_.style.height = "100%";
-      _this.overlayContainer_.style.pointerEvents = "none";
-      _this.overlayContainer_.className = "ol-overlaycontainer";
-      _this.viewport_.appendChild(_this.overlayContainer_);
-      _this.overlayContainerStopEvent_ = document.createElement("div");
-      _this.overlayContainerStopEvent_.style.position = "absolute";
-      _this.overlayContainerStopEvent_.style.zIndex = "0";
-      _this.overlayContainerStopEvent_.style.width = "100%";
-      _this.overlayContainerStopEvent_.style.height = "100%";
-      _this.overlayContainerStopEvent_.style.pointerEvents = "none";
-      _this.overlayContainerStopEvent_.className = "ol-overlaycontainer-stopevent";
-      _this.viewport_.appendChild(_this.overlayContainerStopEvent_);
-      _this.mapBrowserEventHandler_ = null;
-      _this.moveTolerance_ = options.moveTolerance;
-      _this.keyboardEventTarget_ = optionsInternal.keyboardEventTarget;
-      _this.targetChangeHandlerKeys_ = null;
-      _this.controls = optionsInternal.controls || new Collection$1();
-      _this.interactions = optionsInternal.interactions || new Collection$1();
-      _this.overlays_ = optionsInternal.overlays;
-      _this.overlayIdIndex_ = {};
-      _this.renderer_ = null;
-      _this.postRenderFunctions_ = [];
-      _this.tileQueue_ = new TileQueue$1(_this.getTilePriority.bind(_this), _this.handleTileChange_.bind(_this));
-      _this.addChangeListener(MapProperty.LAYERGROUP, _this.handleLayerGroupChanged_);
-      _this.addChangeListener(MapProperty.VIEW, _this.handleViewChanged_);
-      _this.addChangeListener(MapProperty.SIZE, _this.handleSizeChanged_);
-      _this.addChangeListener(MapProperty.TARGET, _this.handleTargetChanged_);
-      _this.setProperties(optionsInternal.values);
-      var map2 = _this;
-      if (options.view && !(options.view instanceof OlView)) {
-        options.view.then(function(viewOptions) {
-          map2.setView(new OlView(viewOptions));
-        });
-      }
-      _this.controls.addEventListener(
-        CollectionEventType.ADD,
-        function(event) {
-          event.element.setMap(this);
-        }.bind(_this)
-      );
-      _this.controls.addEventListener(
-        CollectionEventType.REMOVE,
-        function(event) {
-          event.element.setMap(null);
-        }.bind(_this)
-      );
-      _this.interactions.addEventListener(
-        CollectionEventType.ADD,
-        function(event) {
-          event.element.setMap(this);
-        }.bind(_this)
-      );
-      _this.interactions.addEventListener(
-        CollectionEventType.REMOVE,
-        function(event) {
-          event.element.setMap(null);
-        }.bind(_this)
-      );
-      _this.overlays_.addEventListener(
-        CollectionEventType.ADD,
-        function(event) {
-          this.addOverlayInternal_(
-            event.element
-          );
-        }.bind(_this)
-      );
-      _this.overlays_.addEventListener(
-        CollectionEventType.REMOVE,
-        function(event) {
-          var overlay = event.element;
-          var id = overlay.getId();
-          if (id !== void 0) {
-            delete this.overlayIdIndex_[id.toString()];
-          }
-          event.element.setMap(null);
-        }.bind(_this)
-      );
-      _this.controls.forEach(
-        function(control) {
-          control.setMap(this);
-        }.bind(_this)
-      );
-      _this.interactions.forEach(
-        function(interaction) {
-          interaction.setMap(this);
-        }.bind(_this)
-      );
-      _this.overlays_.forEach(_this.addOverlayInternal_.bind(_this));
-      return _this;
-    }
-    PluggableMap2.prototype.createRenderer = function() {
-      throw new Error("Use a map type that has a createRenderer method");
-    };
-    PluggableMap2.prototype.addControl = function(control) {
-      this.getControls().push(control);
-    };
-    PluggableMap2.prototype.addInteraction = function(interaction) {
-      this.getInteractions().push(interaction);
-    };
-    PluggableMap2.prototype.addLayer = function(layer) {
-      var layers = this.getLayerGroup().getLayers();
-      layers.push(layer);
-    };
-    PluggableMap2.prototype.handleLayerAdd_ = function(event) {
-      setLayerMapProperty(event.layer, this);
-    };
-    PluggableMap2.prototype.addOverlay = function(overlay) {
-      this.getOverlays().push(overlay);
-    };
-    PluggableMap2.prototype.addOverlayInternal_ = function(overlay) {
-      var id = overlay.getId();
-      if (id !== void 0) {
-        this.overlayIdIndex_[id.toString()] = overlay;
-      }
-      overlay.setMap(this);
-    };
-    PluggableMap2.prototype.disposeInternal = function() {
-      this.controls.clear();
-      this.interactions.clear();
-      this.overlays_.clear();
-      this.setTarget(null);
-      _super.prototype.disposeInternal.call(this);
-    };
-    PluggableMap2.prototype.forEachFeatureAtPixel = function(pixel, callback, opt_options) {
-      if (!this.frameState_ || !this.renderer_) {
-        return;
-      }
-      var coordinate = this.getCoordinateFromPixelInternal(pixel);
-      opt_options = opt_options !== void 0 ? opt_options : {};
-      var hitTolerance = opt_options.hitTolerance !== void 0 ? opt_options.hitTolerance : 0;
-      var layerFilter = opt_options.layerFilter !== void 0 ? opt_options.layerFilter : TRUE;
-      var checkWrapped = opt_options.checkWrapped !== false;
-      return this.renderer_.forEachFeatureAtCoordinate(coordinate, this.frameState_, hitTolerance, checkWrapped, callback, null, layerFilter, null);
-    };
-    PluggableMap2.prototype.getFeaturesAtPixel = function(pixel, opt_options) {
-      var features = [];
-      this.forEachFeatureAtPixel(pixel, function(feature) {
-        features.push(feature);
-      }, opt_options);
-      return features;
-    };
-    PluggableMap2.prototype.getAllLayers = function() {
-      var layers = [];
-      function addLayersFrom(layerGroup) {
-        layerGroup.forEach(function(layer) {
-          if (layer instanceof LayerGroup$1) {
-            addLayersFrom(layer.getLayers());
-          } else {
-            layers.push(layer);
-          }
-        });
-      }
-      addLayersFrom(this.getLayers());
-      return layers;
-    };
-    PluggableMap2.prototype.forEachLayerAtPixel = function(pixel, callback, opt_options) {
-      if (!this.frameState_ || !this.renderer_) {
-        return;
-      }
-      var options = opt_options || {};
-      var hitTolerance = options.hitTolerance !== void 0 ? options.hitTolerance : 0;
-      var layerFilter = options.layerFilter || TRUE;
-      return this.renderer_.forEachLayerAtPixel(pixel, this.frameState_, hitTolerance, callback, layerFilter);
-    };
-    PluggableMap2.prototype.hasFeatureAtPixel = function(pixel, opt_options) {
-      if (!this.frameState_ || !this.renderer_) {
-        return false;
-      }
-      var coordinate = this.getCoordinateFromPixelInternal(pixel);
-      opt_options = opt_options !== void 0 ? opt_options : {};
-      var layerFilter = opt_options.layerFilter !== void 0 ? opt_options.layerFilter : TRUE;
-      var hitTolerance = opt_options.hitTolerance !== void 0 ? opt_options.hitTolerance : 0;
-      var checkWrapped = opt_options.checkWrapped !== false;
-      return this.renderer_.hasFeatureAtCoordinate(coordinate, this.frameState_, hitTolerance, checkWrapped, layerFilter, null);
-    };
-    PluggableMap2.prototype.getEventCoordinate = function(event) {
-      return this.getCoordinateFromPixel(this.getEventPixel(event));
-    };
-    PluggableMap2.prototype.getEventCoordinateInternal = function(event) {
-      return this.getCoordinateFromPixelInternal(this.getEventPixel(event));
-    };
-    PluggableMap2.prototype.getEventPixel = function(event) {
-      var viewportPosition = this.viewport_.getBoundingClientRect();
-      var eventPosition = "changedTouches" in event ? event.changedTouches[0] : event;
-      return [
-        eventPosition.clientX - viewportPosition.left,
-        eventPosition.clientY - viewportPosition.top
-      ];
-    };
-    PluggableMap2.prototype.getTarget = function() {
-      return this.get(MapProperty.TARGET);
-    };
-    PluggableMap2.prototype.getTargetElement = function() {
-      var target = this.getTarget();
-      if (target !== void 0) {
-        return typeof target === "string" ? document.getElementById(target) : target;
-      } else {
-        return null;
-      }
-    };
-    PluggableMap2.prototype.getCoordinateFromPixel = function(pixel) {
-      return toUserCoordinate(this.getCoordinateFromPixelInternal(pixel), this.getView().getProjection());
-    };
-    PluggableMap2.prototype.getCoordinateFromPixelInternal = function(pixel) {
-      var frameState = this.frameState_;
-      if (!frameState) {
-        return null;
-      } else {
-        return apply(frameState.pixelToCoordinateTransform, pixel.slice());
-      }
-    };
-    PluggableMap2.prototype.getControls = function() {
-      return this.controls;
-    };
-    PluggableMap2.prototype.getOverlays = function() {
-      return this.overlays_;
-    };
-    PluggableMap2.prototype.getOverlayById = function(id) {
-      var overlay = this.overlayIdIndex_[id.toString()];
-      return overlay !== void 0 ? overlay : null;
-    };
-    PluggableMap2.prototype.getInteractions = function() {
-      return this.interactions;
-    };
-    PluggableMap2.prototype.getLayerGroup = function() {
-      return this.get(MapProperty.LAYERGROUP);
-    };
-    PluggableMap2.prototype.setLayers = function(layers) {
-      var group = this.getLayerGroup();
-      if (layers instanceof Collection$1) {
-        group.setLayers(layers);
-        return;
-      }
-      var collection = group.getLayers();
-      collection.clear();
-      collection.extend(layers);
-    };
-    PluggableMap2.prototype.getLayers = function() {
-      var layers = this.getLayerGroup().getLayers();
-      return layers;
-    };
-    PluggableMap2.prototype.getLoadingOrNotReady = function() {
-      var layerStatesArray = this.getLayerGroup().getLayerStatesArray();
-      for (var i = 0, ii = layerStatesArray.length; i < ii; ++i) {
-        var state = layerStatesArray[i];
-        if (!state.visible) {
-          continue;
-        }
-        var renderer2 = state.layer.getRenderer();
-        if (renderer2 && !renderer2.ready) {
-          return true;
-        }
-        var source = state.layer.getSource();
-        if (source && source.loading) {
-          return true;
-        }
-      }
-      return false;
-    };
-    PluggableMap2.prototype.getPixelFromCoordinate = function(coordinate) {
-      var viewCoordinate = fromUserCoordinate(coordinate, this.getView().getProjection());
-      return this.getPixelFromCoordinateInternal(viewCoordinate);
-    };
-    PluggableMap2.prototype.getPixelFromCoordinateInternal = function(coordinate) {
-      var frameState = this.frameState_;
-      if (!frameState) {
-        return null;
-      } else {
-        return apply(frameState.coordinateToPixelTransform, coordinate.slice(0, 2));
-      }
-    };
-    PluggableMap2.prototype.getRenderer = function() {
-      return this.renderer_;
-    };
-    PluggableMap2.prototype.getSize = function() {
-      return this.get(MapProperty.SIZE);
-    };
-    PluggableMap2.prototype.getView = function() {
-      return this.get(MapProperty.VIEW);
-    };
-    PluggableMap2.prototype.getViewport = function() {
-      return this.viewport_;
-    };
-    PluggableMap2.prototype.getOverlayContainer = function() {
-      return this.overlayContainer_;
-    };
-    PluggableMap2.prototype.getOverlayContainerStopEvent = function() {
-      return this.overlayContainerStopEvent_;
-    };
-    PluggableMap2.prototype.getOwnerDocument = function() {
-      var targetElement = this.getTargetElement();
-      return targetElement ? targetElement.ownerDocument : document;
-    };
-    PluggableMap2.prototype.getTilePriority = function(tile, tileSourceKey, tileCenter, tileResolution) {
-      return getTilePriority(this.frameState_, tile, tileSourceKey, tileCenter, tileResolution);
-    };
-    PluggableMap2.prototype.handleBrowserEvent = function(browserEvent, opt_type) {
-      var type = opt_type || browserEvent.type;
-      var mapBrowserEvent = new MapBrowserEvent$1(type, this, browserEvent);
-      this.handleMapBrowserEvent(mapBrowserEvent);
-    };
-    PluggableMap2.prototype.handleMapBrowserEvent = function(mapBrowserEvent) {
-      if (!this.frameState_) {
-        return;
-      }
-      var originalEvent = mapBrowserEvent.originalEvent;
-      var eventType = originalEvent.type;
-      if (eventType === PointerEventType.POINTERDOWN || eventType === EventType$1.WHEEL || eventType === EventType$1.KEYDOWN) {
-        var doc2 = this.getOwnerDocument();
-        var rootNode = this.viewport_.getRootNode ? this.viewport_.getRootNode() : doc2;
-        var target = originalEvent.target;
-        if (this.overlayContainerStopEvent_.contains(target) || !(rootNode === doc2 ? doc2.documentElement : rootNode).contains(target)) {
-          return;
-        }
-      }
-      mapBrowserEvent.frameState = this.frameState_;
-      if (this.dispatchEvent(mapBrowserEvent) !== false) {
-        var interactionsArray = this.getInteractions().getArray().slice();
-        for (var i = interactionsArray.length - 1; i >= 0; i--) {
-          var interaction = interactionsArray[i];
-          if (interaction.getMap() !== this || !interaction.getActive() || !this.getTargetElement()) {
-            continue;
-          }
-          var cont = interaction.handleEvent(mapBrowserEvent);
-          if (!cont || mapBrowserEvent.propagationStopped) {
-            break;
-          }
-        }
-      }
-    };
-    PluggableMap2.prototype.handlePostRender = function() {
-      var frameState = this.frameState_;
-      var tileQueue = this.tileQueue_;
-      if (!tileQueue.isEmpty()) {
-        var maxTotalLoading = this.maxTilesLoading_;
-        var maxNewLoads = maxTotalLoading;
-        if (frameState) {
-          var hints = frameState.viewHints;
-          if (hints[ViewHint.ANIMATING] || hints[ViewHint.INTERACTING]) {
-            var lowOnFrameBudget = Date.now() - frameState.time > 8;
-            maxTotalLoading = lowOnFrameBudget ? 0 : 8;
-            maxNewLoads = lowOnFrameBudget ? 0 : 2;
-          }
-        }
-        if (tileQueue.getTilesLoading() < maxTotalLoading) {
-          tileQueue.reprioritize();
-          tileQueue.loadMoreTiles(maxTotalLoading, maxNewLoads);
-        }
-      }
-      if (frameState && this.renderer_ && !frameState.animate) {
-        if (this.renderComplete_ === true) {
-          if (this.hasListener(EventType.RENDERCOMPLETE)) {
-            this.renderer_.dispatchRenderEvent(EventType.RENDERCOMPLETE, frameState);
-          }
-          if (this.loaded_ === false) {
-            this.loaded_ = true;
-            this.dispatchEvent(new MapEvent$1(MapEventType.LOADEND, this, frameState));
-          }
-        } else if (this.loaded_ === true) {
-          this.loaded_ = false;
-          this.dispatchEvent(new MapEvent$1(MapEventType.LOADSTART, this, frameState));
-        }
-      }
-      var postRenderFunctions = this.postRenderFunctions_;
-      for (var i = 0, ii = postRenderFunctions.length; i < ii; ++i) {
-        postRenderFunctions[i](this, frameState);
-      }
-      postRenderFunctions.length = 0;
-    };
-    PluggableMap2.prototype.handleSizeChanged_ = function() {
-      if (this.getView() && !this.getView().getAnimating()) {
-        this.getView().resolveConstraints(0);
-      }
-      this.render();
-    };
-    PluggableMap2.prototype.handleTargetChanged_ = function() {
-      if (this.mapBrowserEventHandler_) {
-        for (var i = 0, ii = this.targetChangeHandlerKeys_.length; i < ii; ++i) {
-          unlistenByKey(this.targetChangeHandlerKeys_[i]);
-        }
-        this.targetChangeHandlerKeys_ = null;
-        this.viewport_.removeEventListener(EventType$1.CONTEXTMENU, this.boundHandleBrowserEvent_);
-        this.viewport_.removeEventListener(EventType$1.WHEEL, this.boundHandleBrowserEvent_);
-        this.mapBrowserEventHandler_.dispose();
-        this.mapBrowserEventHandler_ = null;
-        removeNode(this.viewport_);
-      }
-      var targetElement = this.getTargetElement();
-      if (!targetElement) {
-        if (this.renderer_) {
-          clearTimeout(this.postRenderTimeoutHandle_);
-          this.postRenderTimeoutHandle_ = void 0;
-          this.postRenderFunctions_.length = 0;
-          this.renderer_.dispose();
-          this.renderer_ = null;
-        }
-        if (this.animationDelayKey_) {
-          cancelAnimationFrame(this.animationDelayKey_);
-          this.animationDelayKey_ = void 0;
-        }
-      } else {
-        targetElement.appendChild(this.viewport_);
-        if (!this.renderer_) {
-          this.renderer_ = this.createRenderer();
-        }
-        this.mapBrowserEventHandler_ = new MapBrowserEventHandler$1(this, this.moveTolerance_);
-        for (var key in MapBrowserEventType) {
-          this.mapBrowserEventHandler_.addEventListener(MapBrowserEventType[key], this.handleMapBrowserEvent.bind(this));
-        }
-        this.viewport_.addEventListener(EventType$1.CONTEXTMENU, this.boundHandleBrowserEvent_, false);
-        this.viewport_.addEventListener(EventType$1.WHEEL, this.boundHandleBrowserEvent_, PASSIVE_EVENT_LISTENERS ? { passive: false } : false);
-        var defaultView = this.getOwnerDocument().defaultView;
-        var keyboardEventTarget = !this.keyboardEventTarget_ ? targetElement : this.keyboardEventTarget_;
-        this.targetChangeHandlerKeys_ = [
-          listen(keyboardEventTarget, EventType$1.KEYDOWN, this.handleBrowserEvent, this),
-          listen(keyboardEventTarget, EventType$1.KEYPRESS, this.handleBrowserEvent, this),
-          listen(defaultView, EventType$1.RESIZE, this.updateSize, this)
-        ];
-      }
-      this.updateSize();
-    };
-    PluggableMap2.prototype.handleTileChange_ = function() {
-      this.render();
-    };
-    PluggableMap2.prototype.handleViewPropertyChanged_ = function() {
-      this.render();
-    };
-    PluggableMap2.prototype.handleViewChanged_ = function() {
-      if (this.viewPropertyListenerKey_) {
-        unlistenByKey(this.viewPropertyListenerKey_);
-        this.viewPropertyListenerKey_ = null;
-      }
-      if (this.viewChangeListenerKey_) {
-        unlistenByKey(this.viewChangeListenerKey_);
-        this.viewChangeListenerKey_ = null;
-      }
-      var view = this.getView();
-      if (view) {
-        this.updateViewportSize_();
-        this.viewPropertyListenerKey_ = listen(view, ObjectEventType.PROPERTYCHANGE, this.handleViewPropertyChanged_, this);
-        this.viewChangeListenerKey_ = listen(view, EventType$1.CHANGE, this.handleViewPropertyChanged_, this);
-        view.resolveConstraints(0);
-      }
-      this.render();
-    };
-    PluggableMap2.prototype.handleLayerGroupChanged_ = function() {
-      if (this.layerGroupPropertyListenerKeys_) {
-        this.layerGroupPropertyListenerKeys_.forEach(unlistenByKey);
-        this.layerGroupPropertyListenerKeys_ = null;
-      }
-      var layerGroup = this.getLayerGroup();
-      if (layerGroup) {
-        this.handleLayerAdd_(new GroupEvent("addlayer", layerGroup));
-        this.layerGroupPropertyListenerKeys_ = [
-          listen(layerGroup, ObjectEventType.PROPERTYCHANGE, this.render, this),
-          listen(layerGroup, EventType$1.CHANGE, this.render, this),
-          listen(layerGroup, "addlayer", this.handleLayerAdd_, this),
-          listen(layerGroup, "removelayer", this.handleLayerRemove_, this)
-        ];
-      }
-      this.render();
-    };
-    PluggableMap2.prototype.isRendered = function() {
-      return !!this.frameState_;
-    };
-    PluggableMap2.prototype.renderSync = function() {
-      if (this.animationDelayKey_) {
-        cancelAnimationFrame(this.animationDelayKey_);
-      }
-      this.animationDelay_();
-    };
-    PluggableMap2.prototype.redrawText = function() {
-      var layerStates = this.getLayerGroup().getLayerStatesArray();
-      for (var i = 0, ii = layerStates.length; i < ii; ++i) {
-        var layer = layerStates[i].layer;
-        if (layer.hasRenderer()) {
-          layer.getRenderer().handleFontsChanged();
-        }
-      }
-    };
-    PluggableMap2.prototype.render = function() {
-      if (this.renderer_ && this.animationDelayKey_ === void 0) {
-        this.animationDelayKey_ = requestAnimationFrame(this.animationDelay_);
-      }
-    };
-    PluggableMap2.prototype.removeControl = function(control) {
-      return this.getControls().remove(control);
-    };
-    PluggableMap2.prototype.removeInteraction = function(interaction) {
-      return this.getInteractions().remove(interaction);
-    };
-    PluggableMap2.prototype.removeLayer = function(layer) {
-      var layers = this.getLayerGroup().getLayers();
-      return layers.remove(layer);
-    };
-    PluggableMap2.prototype.handleLayerRemove_ = function(event) {
-      removeLayerMapProperty(event.layer);
-    };
-    PluggableMap2.prototype.removeOverlay = function(overlay) {
-      return this.getOverlays().remove(overlay);
-    };
-    PluggableMap2.prototype.renderFrame_ = function(time) {
-      var _this = this;
-      var size2 = this.getSize();
-      var view = this.getView();
-      var previousFrameState = this.frameState_;
-      var frameState = null;
-      if (size2 !== void 0 && hasArea(size2) && view && view.isDef()) {
-        var viewHints = view.getHints(this.frameState_ ? this.frameState_.viewHints : void 0);
-        var viewState = view.getState();
-        frameState = {
-          animate: false,
-          coordinateToPixelTransform: this.coordinateToPixelTransform_,
-          declutterTree: null,
-          extent: getForViewAndSize(viewState.center, viewState.resolution, viewState.rotation, size2),
-          index: this.frameIndex_++,
-          layerIndex: 0,
-          layerStatesArray: this.getLayerGroup().getLayerStatesArray(),
-          pixelRatio: this.pixelRatio_,
-          pixelToCoordinateTransform: this.pixelToCoordinateTransform_,
-          postRenderFunctions: [],
-          size: size2,
-          tileQueue: this.tileQueue_,
-          time,
-          usedTiles: {},
-          viewState,
-          viewHints,
-          wantedTiles: {},
-          mapId: getUid(this),
-          renderTargets: {}
-        };
-        if (viewState.nextCenter && viewState.nextResolution) {
-          var rotation = isNaN(viewState.nextRotation) ? viewState.rotation : viewState.nextRotation;
-          frameState.nextExtent = getForViewAndSize(viewState.nextCenter, viewState.nextResolution, rotation, size2);
-        }
-      }
-      this.frameState_ = frameState;
-      this.renderer_.renderFrame(frameState);
-      if (frameState) {
-        if (frameState.animate) {
-          this.render();
-        }
-        Array.prototype.push.apply(this.postRenderFunctions_, frameState.postRenderFunctions);
-        if (previousFrameState) {
-          var moveStart = !this.previousExtent_ || !isEmpty(this.previousExtent_) && !equals$2(frameState.extent, this.previousExtent_);
-          if (moveStart) {
-            this.dispatchEvent(new MapEvent$1(MapEventType.MOVESTART, this, previousFrameState));
-            this.previousExtent_ = createOrUpdateEmpty(this.previousExtent_);
-          }
-        }
-        var idle = this.previousExtent_ && !frameState.viewHints[ViewHint.ANIMATING] && !frameState.viewHints[ViewHint.INTERACTING] && !equals$2(frameState.extent, this.previousExtent_);
-        if (idle) {
-          this.dispatchEvent(new MapEvent$1(MapEventType.MOVEEND, this, frameState));
-          clone$1(frameState.extent, this.previousExtent_);
-        }
-      }
-      this.dispatchEvent(new MapEvent$1(MapEventType.POSTRENDER, this, frameState));
-      this.renderComplete_ = this.hasListener(MapEventType.LOADSTART) || this.hasListener(MapEventType.LOADEND) || this.hasListener(EventType.RENDERCOMPLETE) ? !this.tileQueue_.getTilesLoading() && !this.tileQueue_.getCount() && !this.getLoadingOrNotReady() : void 0;
-      if (!this.postRenderTimeoutHandle_) {
-        this.postRenderTimeoutHandle_ = setTimeout(function() {
-          _this.postRenderTimeoutHandle_ = void 0;
-          _this.handlePostRender();
-        }, 0);
-      }
-    };
-    PluggableMap2.prototype.setLayerGroup = function(layerGroup) {
-      var oldLayerGroup = this.getLayerGroup();
-      if (oldLayerGroup) {
-        this.handleLayerRemove_(new GroupEvent("removelayer", oldLayerGroup));
-      }
-      this.set(MapProperty.LAYERGROUP, layerGroup);
-    };
-    PluggableMap2.prototype.setSize = function(size2) {
-      this.set(MapProperty.SIZE, size2);
-    };
-    PluggableMap2.prototype.setTarget = function(target) {
-      this.set(MapProperty.TARGET, target);
-    };
-    PluggableMap2.prototype.setView = function(view) {
-      if (!view || view instanceof OlView) {
-        this.set(MapProperty.VIEW, view);
-        return;
-      }
-      this.set(MapProperty.VIEW, new OlView());
-      var map2 = this;
-      view.then(function(viewOptions) {
-        map2.setView(new OlView(viewOptions));
-      });
-    };
-    PluggableMap2.prototype.updateSize = function() {
-      var targetElement = this.getTargetElement();
-      var size2 = void 0;
-      if (targetElement) {
-        var computedStyle = getComputedStyle(targetElement);
-        var width = targetElement.offsetWidth - parseFloat(computedStyle["borderLeftWidth"]) - parseFloat(computedStyle["paddingLeft"]) - parseFloat(computedStyle["paddingRight"]) - parseFloat(computedStyle["borderRightWidth"]);
-        var height = targetElement.offsetHeight - parseFloat(computedStyle["borderTopWidth"]) - parseFloat(computedStyle["paddingTop"]) - parseFloat(computedStyle["paddingBottom"]) - parseFloat(computedStyle["borderBottomWidth"]);
-        if (!isNaN(width) && !isNaN(height)) {
-          size2 = [width, height];
-          if (!hasArea(size2) && !!(targetElement.offsetWidth || targetElement.offsetHeight || targetElement.getClientRects().length)) {
-            console.warn("No map visible because the map container's width or height are 0.");
-          }
-        }
-      }
-      this.setSize(size2);
-      this.updateViewportSize_();
-    };
-    PluggableMap2.prototype.updateViewportSize_ = function() {
-      var view = this.getView();
-      if (view) {
-        var size2 = void 0;
-        var computedStyle = getComputedStyle(this.viewport_);
-        if (computedStyle.width && computedStyle.height) {
-          size2 = [
-            parseInt(computedStyle.width, 10),
-            parseInt(computedStyle.height, 10)
-          ];
-        }
-        view.setViewportSize(size2);
-      }
-    };
-    return PluggableMap2;
-  }(BaseObject$1);
-  function createOptionsInternal(options) {
-    var keyboardEventTarget = null;
-    if (options.keyboardEventTarget !== void 0) {
-      keyboardEventTarget = typeof options.keyboardEventTarget === "string" ? document.getElementById(options.keyboardEventTarget) : options.keyboardEventTarget;
-    }
-    var values = {};
-    var layerGroup = options.layers && typeof options.layers.getLayers === "function" ? options.layers : new LayerGroup$1({ layers: options.layers });
-    values[MapProperty.LAYERGROUP] = layerGroup;
-    values[MapProperty.TARGET] = options.target;
-    values[MapProperty.VIEW] = options.view instanceof OlView ? options.view : new OlView();
-    var controls;
-    if (options.controls !== void 0) {
-      if (Array.isArray(options.controls)) {
-        controls = new Collection$1(options.controls.slice());
-      } else {
-        assert(typeof options.controls.getArray === "function", 47);
-        controls = options.controls;
-      }
-    }
-    var interactions;
-    if (options.interactions !== void 0) {
-      if (Array.isArray(options.interactions)) {
-        interactions = new Collection$1(options.interactions.slice());
-      } else {
-        assert(typeof options.interactions.getArray === "function", 48);
-        interactions = options.interactions;
-      }
-    }
-    var overlays;
-    if (options.overlays !== void 0) {
-      if (Array.isArray(options.overlays)) {
-        overlays = new Collection$1(options.overlays.slice());
-      } else {
-        assert(typeof options.overlays.getArray === "function", 49);
-        overlays = options.overlays;
-      }
-    } else {
-      overlays = new Collection$1();
-    }
-    return {
-      controls,
-      interactions,
-      keyboardEventTarget,
-      overlays,
-      values
-    };
-  }
-  const PluggableMap$1 = PluggableMap;
-  var __extends$I = globalThis && globalThis.__extends || function() {
-    var extendStatics = function(d, b) {
-      extendStatics = Object.setPrototypeOf || { __proto__: [] } instanceof Array && function(d2, b2) {
-        d2.__proto__ = b2;
-      } || function(d2, b2) {
-        for (var p2 in b2)
-          if (Object.prototype.hasOwnProperty.call(b2, p2))
-            d2[p2] = b2[p2];
-      };
-      return extendStatics(d, b);
-    };
-    return function(d, b) {
-      if (typeof b !== "function" && b !== null)
-        throw new TypeError("Class extends value " + String(b) + " is not a constructor or null");
-      extendStatics(d, b);
-      function __() {
-        this.constructor = d;
-      }
-      d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
-    };
-  }();
-  var Control = function(_super) {
-    __extends$I(Control2, _super);
-    function Control2(options) {
-      var _this = _super.call(this) || this;
-      var element = options.element;
-      if (element && !options.target && !element.style.pointerEvents) {
-        element.style.pointerEvents = "auto";
-      }
-      _this.element = element ? element : null;
-      _this.target_ = null;
-      _this.map_ = null;
-      _this.listenerKeys = [];
-      if (options.render) {
-        _this.render = options.render;
-      }
-      if (options.target) {
-        _this.setTarget(options.target);
-      }
-      return _this;
-    }
-    Control2.prototype.disposeInternal = function() {
-      removeNode(this.element);
-      _super.prototype.disposeInternal.call(this);
-    };
-    Control2.prototype.getMap = function() {
-      return this.map_;
-    };
-    Control2.prototype.setMap = function(map2) {
-      if (this.map_) {
-        removeNode(this.element);
-      }
-      for (var i = 0, ii = this.listenerKeys.length; i < ii; ++i) {
-        unlistenByKey(this.listenerKeys[i]);
-      }
-      this.listenerKeys.length = 0;
-      this.map_ = map2;
-      if (map2) {
-        var target = this.target_ ? this.target_ : map2.getOverlayContainerStopEvent();
-        target.appendChild(this.element);
-        if (this.render !== VOID) {
-          this.listenerKeys.push(listen(map2, MapEventType.POSTRENDER, this.render, this));
-        }
-        map2.render();
-      }
-    };
-    Control2.prototype.render = function(mapEvent) {
-    };
-    Control2.prototype.setTarget = function(target) {
-      this.target_ = typeof target === "string" ? document.getElementById(target) : target;
-    };
-    return Control2;
-  }(BaseObject$1);
-  const Control$1 = Control;
-  var __extends$H = globalThis && globalThis.__extends || function() {
-    var extendStatics = function(d, b) {
-      extendStatics = Object.setPrototypeOf || { __proto__: [] } instanceof Array && function(d2, b2) {
-        d2.__proto__ = b2;
-      } || function(d2, b2) {
-        for (var p2 in b2)
-          if (Object.prototype.hasOwnProperty.call(b2, p2))
-            d2[p2] = b2[p2];
-      };
-      return extendStatics(d, b);
-    };
-    return function(d, b) {
-      if (typeof b !== "function" && b !== null)
-        throw new TypeError("Class extends value " + String(b) + " is not a constructor or null");
-      extendStatics(d, b);
-      function __() {
-        this.constructor = d;
-      }
-      d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
-    };
-  }();
-  var Attribution = function(_super) {
-    __extends$H(Attribution2, _super);
-    function Attribution2(opt_options) {
-      var _this = this;
-      var options = opt_options ? opt_options : {};
-      _this = _super.call(this, {
-        element: document.createElement("div"),
-        render: options.render,
-        target: options.target
-      }) || this;
-      _this.ulElement_ = document.createElement("ul");
-      _this.collapsed_ = options.collapsed !== void 0 ? options.collapsed : true;
-      _this.userCollapsed_ = _this.collapsed_;
-      _this.overrideCollapsible_ = options.collapsible !== void 0;
-      _this.collapsible_ = options.collapsible !== void 0 ? options.collapsible : true;
-      if (!_this.collapsible_) {
-        _this.collapsed_ = false;
-      }
-      var className = options.className !== void 0 ? options.className : "ol-attribution";
-      var tipLabel = options.tipLabel !== void 0 ? options.tipLabel : "Attributions";
-      var expandClassName = options.expandClassName !== void 0 ? options.expandClassName : className + "-expand";
-      var collapseLabel = options.collapseLabel !== void 0 ? options.collapseLabel : "\u203A";
-      var collapseClassName = options.collapseClassName !== void 0 ? options.collapseClassName : className + "-collapse";
-      if (typeof collapseLabel === "string") {
-        _this.collapseLabel_ = document.createElement("span");
-        _this.collapseLabel_.textContent = collapseLabel;
-        _this.collapseLabel_.className = collapseClassName;
-      } else {
-        _this.collapseLabel_ = collapseLabel;
-      }
-      var label = options.label !== void 0 ? options.label : "i";
-      if (typeof label === "string") {
-        _this.label_ = document.createElement("span");
-        _this.label_.textContent = label;
-        _this.label_.className = expandClassName;
-      } else {
-        _this.label_ = label;
-      }
-      var activeLabel = _this.collapsible_ && !_this.collapsed_ ? _this.collapseLabel_ : _this.label_;
-      _this.toggleButton_ = document.createElement("button");
-      _this.toggleButton_.setAttribute("type", "button");
-      _this.toggleButton_.setAttribute("aria-expanded", String(!_this.collapsed_));
-      _this.toggleButton_.title = tipLabel;
-      _this.toggleButton_.appendChild(activeLabel);
-      _this.toggleButton_.addEventListener(EventType$1.CLICK, _this.handleClick_.bind(_this), false);
-      var cssClasses = className + " " + CLASS_UNSELECTABLE + " " + CLASS_CONTROL + (_this.collapsed_ && _this.collapsible_ ? " " + CLASS_COLLAPSED : "") + (_this.collapsible_ ? "" : " ol-uncollapsible");
-      var element = _this.element;
-      element.className = cssClasses;
-      element.appendChild(_this.toggleButton_);
-      element.appendChild(_this.ulElement_);
-      _this.renderedAttributions_ = [];
-      _this.renderedVisible_ = true;
-      return _this;
-    }
-    Attribution2.prototype.collectSourceAttributions_ = function(frameState) {
-      var lookup = {};
-      var visibleAttributions = [];
-      var collapsible = true;
-      var layerStatesArray = frameState.layerStatesArray;
-      for (var i = 0, ii = layerStatesArray.length; i < ii; ++i) {
-        var layerState = layerStatesArray[i];
-        if (!inView(layerState, frameState.viewState)) {
-          continue;
-        }
-        var source = layerState.layer.getSource();
-        if (!source) {
-          continue;
-        }
-        var attributionGetter = source.getAttributions();
-        if (!attributionGetter) {
-          continue;
-        }
-        var attributions = attributionGetter(frameState);
-        if (!attributions) {
-          continue;
-        }
-        collapsible = collapsible && source.getAttributionsCollapsible() !== false;
-        if (Array.isArray(attributions)) {
-          for (var j = 0, jj = attributions.length; j < jj; ++j) {
-            if (!(attributions[j] in lookup)) {
-              visibleAttributions.push(attributions[j]);
-              lookup[attributions[j]] = true;
-            }
-          }
-        } else {
-          if (!(attributions in lookup)) {
-            visibleAttributions.push(attributions);
-            lookup[attributions] = true;
-          }
-        }
-      }
-      if (!this.overrideCollapsible_) {
-        this.setCollapsible(collapsible);
-      }
-      return visibleAttributions;
-    };
-    Attribution2.prototype.updateElement_ = function(frameState) {
-      if (!frameState) {
-        if (this.renderedVisible_) {
-          this.element.style.display = "none";
-          this.renderedVisible_ = false;
-        }
-        return;
-      }
-      var attributions = this.collectSourceAttributions_(frameState);
-      var visible = attributions.length > 0;
-      if (this.renderedVisible_ != visible) {
-        this.element.style.display = visible ? "" : "none";
-        this.renderedVisible_ = visible;
-      }
-      if (equals(attributions, this.renderedAttributions_)) {
-        return;
-      }
-      removeChildren(this.ulElement_);
-      for (var i = 0, ii = attributions.length; i < ii; ++i) {
-        var element = document.createElement("li");
-        element.innerHTML = attributions[i];
-        this.ulElement_.appendChild(element);
-      }
-      this.renderedAttributions_ = attributions;
-    };
-    Attribution2.prototype.handleClick_ = function(event) {
-      event.preventDefault();
-      this.handleToggle_();
-      this.userCollapsed_ = this.collapsed_;
-    };
-    Attribution2.prototype.handleToggle_ = function() {
-      this.element.classList.toggle(CLASS_COLLAPSED);
-      if (this.collapsed_) {
-        replaceNode(this.collapseLabel_, this.label_);
-      } else {
-        replaceNode(this.label_, this.collapseLabel_);
-      }
-      this.collapsed_ = !this.collapsed_;
-      this.toggleButton_.setAttribute("aria-expanded", String(!this.collapsed_));
-    };
-    Attribution2.prototype.getCollapsible = function() {
-      return this.collapsible_;
-    };
-    Attribution2.prototype.setCollapsible = function(collapsible) {
-      if (this.collapsible_ === collapsible) {
-        return;
-      }
-      this.collapsible_ = collapsible;
-      this.element.classList.toggle("ol-uncollapsible");
-      if (this.userCollapsed_) {
-        this.handleToggle_();
-      }
-    };
-    Attribution2.prototype.setCollapsed = function(collapsed) {
-      this.userCollapsed_ = collapsed;
-      if (!this.collapsible_ || this.collapsed_ === collapsed) {
-        return;
-      }
-      this.handleToggle_();
-    };
-    Attribution2.prototype.getCollapsed = function() {
-      return this.collapsed_;
-    };
-    Attribution2.prototype.render = function(mapEvent) {
-      this.updateElement_(mapEvent.frameState);
-    };
-    return Attribution2;
-  }(Control$1);
-  const Attribution$1 = Attribution;
-  var __extends$G = globalThis && globalThis.__extends || function() {
-    var extendStatics = function(d, b) {
-      extendStatics = Object.setPrototypeOf || { __proto__: [] } instanceof Array && function(d2, b2) {
-        d2.__proto__ = b2;
-      } || function(d2, b2) {
-        for (var p2 in b2)
-          if (Object.prototype.hasOwnProperty.call(b2, p2))
-            d2[p2] = b2[p2];
-      };
-      return extendStatics(d, b);
-    };
-    return function(d, b) {
-      if (typeof b !== "function" && b !== null)
-        throw new TypeError("Class extends value " + String(b) + " is not a constructor or null");
-      extendStatics(d, b);
-      function __() {
-        this.constructor = d;
-      }
-      d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
-    };
-  }();
-  var Rotate = function(_super) {
-    __extends$G(Rotate2, _super);
-    function Rotate2(opt_options) {
-      var _this = this;
-      var options = opt_options ? opt_options : {};
-      _this = _super.call(this, {
-        element: document.createElement("div"),
-        render: options.render,
-        target: options.target
-      }) || this;
-      var className = options.className !== void 0 ? options.className : "ol-rotate";
-      var label = options.label !== void 0 ? options.label : "\u21E7";
-      var compassClassName = options.compassClassName !== void 0 ? options.compassClassName : "ol-compass";
-      _this.label_ = null;
-      if (typeof label === "string") {
-        _this.label_ = document.createElement("span");
-        _this.label_.className = compassClassName;
-        _this.label_.textContent = label;
-      } else {
-        _this.label_ = label;
-        _this.label_.classList.add(compassClassName);
-      }
-      var tipLabel = options.tipLabel ? options.tipLabel : "Reset rotation";
-      var button = document.createElement("button");
-      button.className = className + "-reset";
-      button.setAttribute("type", "button");
-      button.title = tipLabel;
-      button.appendChild(_this.label_);
-      button.addEventListener(EventType$1.CLICK, _this.handleClick_.bind(_this), false);
-      var cssClasses = className + " " + CLASS_UNSELECTABLE + " " + CLASS_CONTROL;
-      var element = _this.element;
-      element.className = cssClasses;
-      element.appendChild(button);
-      _this.callResetNorth_ = options.resetNorth ? options.resetNorth : void 0;
-      _this.duration_ = options.duration !== void 0 ? options.duration : 250;
-      _this.autoHide_ = options.autoHide !== void 0 ? options.autoHide : true;
-      _this.rotation_ = void 0;
-      if (_this.autoHide_) {
-        _this.element.classList.add(CLASS_HIDDEN);
-      }
-      return _this;
-    }
-    Rotate2.prototype.handleClick_ = function(event) {
-      event.preventDefault();
-      if (this.callResetNorth_ !== void 0) {
-        this.callResetNorth_();
-      } else {
-        this.resetNorth_();
-      }
-    };
-    Rotate2.prototype.resetNorth_ = function() {
-      var map2 = this.getMap();
-      var view = map2.getView();
-      if (!view) {
-        return;
-      }
-      var rotation = view.getRotation();
-      if (rotation !== void 0) {
-        if (this.duration_ > 0 && rotation % (2 * Math.PI) !== 0) {
-          view.animate({
-            rotation: 0,
-            duration: this.duration_,
-            easing: easeOut
-          });
-        } else {
-          view.setRotation(0);
-        }
-      }
-    };
-    Rotate2.prototype.render = function(mapEvent) {
-      var frameState = mapEvent.frameState;
-      if (!frameState) {
-        return;
-      }
-      var rotation = frameState.viewState.rotation;
-      if (rotation != this.rotation_) {
-        var transform2 = "rotate(" + rotation + "rad)";
-        if (this.autoHide_) {
-          var contains = this.element.classList.contains(CLASS_HIDDEN);
-          if (!contains && rotation === 0) {
-            this.element.classList.add(CLASS_HIDDEN);
-          } else if (contains && rotation !== 0) {
-            this.element.classList.remove(CLASS_HIDDEN);
-          }
-        }
-        this.label_.style.transform = transform2;
-      }
-      this.rotation_ = rotation;
-    };
-    return Rotate2;
-  }(Control$1);
-  const Rotate$1 = Rotate;
-  var __extends$F = globalThis && globalThis.__extends || function() {
-    var extendStatics = function(d, b) {
-      extendStatics = Object.setPrototypeOf || { __proto__: [] } instanceof Array && function(d2, b2) {
-        d2.__proto__ = b2;
-      } || function(d2, b2) {
-        for (var p2 in b2)
-          if (Object.prototype.hasOwnProperty.call(b2, p2))
-            d2[p2] = b2[p2];
-      };
-      return extendStatics(d, b);
-    };
-    return function(d, b) {
-      if (typeof b !== "function" && b !== null)
-        throw new TypeError("Class extends value " + String(b) + " is not a constructor or null");
-      extendStatics(d, b);
-      function __() {
-        this.constructor = d;
-      }
-      d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
-    };
-  }();
-  var Zoom = function(_super) {
-    __extends$F(Zoom2, _super);
-    function Zoom2(opt_options) {
-      var _this = this;
-      var options = opt_options ? opt_options : {};
-      _this = _super.call(this, {
-        element: document.createElement("div"),
-        target: options.target
-      }) || this;
-      var className = options.className !== void 0 ? options.className : "ol-zoom";
-      var delta = options.delta !== void 0 ? options.delta : 1;
-      var zoomInClassName = options.zoomInClassName !== void 0 ? options.zoomInClassName : className + "-in";
-      var zoomOutClassName = options.zoomOutClassName !== void 0 ? options.zoomOutClassName : className + "-out";
-      var zoomInLabel = options.zoomInLabel !== void 0 ? options.zoomInLabel : "+";
-      var zoomOutLabel = options.zoomOutLabel !== void 0 ? options.zoomOutLabel : "\u2013";
-      var zoomInTipLabel = options.zoomInTipLabel !== void 0 ? options.zoomInTipLabel : "Zoom in";
-      var zoomOutTipLabel = options.zoomOutTipLabel !== void 0 ? options.zoomOutTipLabel : "Zoom out";
-      var inElement = document.createElement("button");
-      inElement.className = zoomInClassName;
-      inElement.setAttribute("type", "button");
-      inElement.title = zoomInTipLabel;
-      inElement.appendChild(typeof zoomInLabel === "string" ? document.createTextNode(zoomInLabel) : zoomInLabel);
-      inElement.addEventListener(EventType$1.CLICK, _this.handleClick_.bind(_this, delta), false);
-      var outElement = document.createElement("button");
-      outElement.className = zoomOutClassName;
-      outElement.setAttribute("type", "button");
-      outElement.title = zoomOutTipLabel;
-      outElement.appendChild(typeof zoomOutLabel === "string" ? document.createTextNode(zoomOutLabel) : zoomOutLabel);
-      outElement.addEventListener(EventType$1.CLICK, _this.handleClick_.bind(_this, -delta), false);
-      var cssClasses = className + " " + CLASS_UNSELECTABLE + " " + CLASS_CONTROL;
-      var element = _this.element;
-      element.className = cssClasses;
-      element.appendChild(inElement);
-      element.appendChild(outElement);
-      _this.duration_ = options.duration !== void 0 ? options.duration : 250;
-      return _this;
-    }
-    Zoom2.prototype.handleClick_ = function(delta, event) {
-      event.preventDefault();
-      this.zoomByDelta_(delta);
-    };
-    Zoom2.prototype.zoomByDelta_ = function(delta) {
-      var map2 = this.getMap();
-      var view = map2.getView();
-      if (!view) {
-        return;
-      }
-      var currentZoom = view.getZoom();
-      if (currentZoom !== void 0) {
-        var newZoom = view.getConstrainedZoom(currentZoom + delta);
-        if (this.duration_ > 0) {
-          if (view.getAnimating()) {
-            view.cancelAnimations();
-          }
-          view.animate({
-            zoom: newZoom,
-            duration: this.duration_,
-            easing: easeOut
-          });
-        } else {
-          view.setZoom(newZoom);
-        }
-      }
-    };
-    return Zoom2;
-  }(Control$1);
-  const Zoom$1 = Zoom;
-  var __extends$E = globalThis && globalThis.__extends || function() {
-    var extendStatics = function(d, b) {
-      extendStatics = Object.setPrototypeOf || { __proto__: [] } instanceof Array && function(d2, b2) {
-        d2.__proto__ = b2;
-      } || function(d2, b2) {
-        for (var p2 in b2)
-          if (Object.prototype.hasOwnProperty.call(b2, p2))
-            d2[p2] = b2[p2];
-      };
-      return extendStatics(d, b);
-    };
-    return function(d, b) {
-      if (typeof b !== "function" && b !== null)
-        throw new TypeError("Class extends value " + String(b) + " is not a constructor or null");
-      extendStatics(d, b);
-      function __() {
-        this.constructor = d;
-      }
-      d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
-    };
-  }();
-  var events = [
-    "fullscreenchange",
-    "webkitfullscreenchange",
-    "MSFullscreenChange"
-  ];
-  var FullScreenEventType = {
-    ENTERFULLSCREEN: "enterfullscreen",
-    LEAVEFULLSCREEN: "leavefullscreen"
-  };
-  var FullScreen = function(_super) {
-    __extends$E(FullScreen2, _super);
-    function FullScreen2(opt_options) {
-      var _this = this;
-      var options = opt_options ? opt_options : {};
-      _this = _super.call(this, {
-        element: document.createElement("div"),
-        target: options.target
-      }) || this;
-      _this.on;
-      _this.once;
-      _this.un;
-      _this.keys_ = options.keys !== void 0 ? options.keys : false;
-      _this.source_ = options.source;
-      _this.isInFullscreen_ = false;
-      _this.boundHandleMapTargetChange_ = _this.handleMapTargetChange_.bind(_this);
-      _this.cssClassName_ = options.className !== void 0 ? options.className : "ol-full-screen";
-      _this.documentListeners_ = [];
-      _this.activeClassName_ = options.activeClassName !== void 0 ? options.activeClassName.split(" ") : [_this.cssClassName_ + "-true"];
-      _this.inactiveClassName_ = options.inactiveClassName !== void 0 ? options.inactiveClassName.split(" ") : [_this.cssClassName_ + "-false"];
-      var label = options.label !== void 0 ? options.label : "\u2922";
-      _this.labelNode_ = typeof label === "string" ? document.createTextNode(label) : label;
-      var labelActive = options.labelActive !== void 0 ? options.labelActive : "\xD7";
-      _this.labelActiveNode_ = typeof labelActive === "string" ? document.createTextNode(labelActive) : labelActive;
-      var tipLabel = options.tipLabel ? options.tipLabel : "Toggle full-screen";
-      _this.button_ = document.createElement("button");
-      _this.button_.title = tipLabel;
-      _this.button_.setAttribute("type", "button");
-      _this.button_.appendChild(_this.labelNode_);
-      _this.button_.addEventListener(EventType$1.CLICK, _this.handleClick_.bind(_this), false);
-      _this.setClassName_(_this.button_, _this.isInFullscreen_);
-      _this.element.className = "".concat(_this.cssClassName_, " ").concat(CLASS_UNSELECTABLE, " ").concat(CLASS_CONTROL);
-      _this.element.appendChild(_this.button_);
-      return _this;
-    }
-    FullScreen2.prototype.handleClick_ = function(event) {
-      event.preventDefault();
-      this.handleFullScreen_();
-    };
-    FullScreen2.prototype.handleFullScreen_ = function() {
-      var map2 = this.getMap();
-      if (!map2) {
-        return;
-      }
-      var doc2 = map2.getOwnerDocument();
-      if (!isFullScreenSupported(doc2)) {
-        return;
-      }
-      if (isFullScreen(doc2)) {
-        exitFullScreen(doc2);
-      } else {
-        var element = void 0;
-        if (this.source_) {
-          element = typeof this.source_ === "string" ? doc2.getElementById(this.source_) : this.source_;
-        } else {
-          element = map2.getTargetElement();
-        }
-        if (this.keys_) {
-          requestFullScreenWithKeys(element);
-        } else {
-          requestFullScreen(element);
-        }
-      }
-    };
-    FullScreen2.prototype.handleFullScreenChange_ = function() {
-      var map2 = this.getMap();
-      if (!map2) {
-        return;
-      }
-      var wasInFullscreen = this.isInFullscreen_;
-      this.isInFullscreen_ = isFullScreen(map2.getOwnerDocument());
-      if (wasInFullscreen !== this.isInFullscreen_) {
-        this.setClassName_(this.button_, this.isInFullscreen_);
-        if (this.isInFullscreen_) {
-          replaceNode(this.labelActiveNode_, this.labelNode_);
-          this.dispatchEvent(FullScreenEventType.ENTERFULLSCREEN);
-        } else {
-          replaceNode(this.labelNode_, this.labelActiveNode_);
-          this.dispatchEvent(FullScreenEventType.LEAVEFULLSCREEN);
-        }
-        map2.updateSize();
-      }
-    };
-    FullScreen2.prototype.setClassName_ = function(element, fullscreen) {
-      var _a, _b, _c, _d;
-      if (fullscreen) {
-        (_a = element.classList).remove.apply(_a, this.inactiveClassName_);
-        (_b = element.classList).add.apply(_b, this.activeClassName_);
-      } else {
-        (_c = element.classList).remove.apply(_c, this.activeClassName_);
-        (_d = element.classList).add.apply(_d, this.inactiveClassName_);
-      }
-    };
-    FullScreen2.prototype.setMap = function(map2) {
-      var oldMap = this.getMap();
-      if (oldMap) {
-        oldMap.removeChangeListener(MapProperty.TARGET, this.boundHandleMapTargetChange_);
-      }
-      _super.prototype.setMap.call(this, map2);
-      this.handleMapTargetChange_();
-      if (map2) {
-        map2.addChangeListener(MapProperty.TARGET, this.boundHandleMapTargetChange_);
-      }
-    };
-    FullScreen2.prototype.handleMapTargetChange_ = function() {
-      var listeners = this.documentListeners_;
-      for (var i = 0, ii = listeners.length; i < ii; ++i) {
-        unlistenByKey(listeners[i]);
-      }
-      listeners.length = 0;
-      var map2 = this.getMap();
-      if (map2) {
-        var doc2 = map2.getOwnerDocument();
-        if (isFullScreenSupported(doc2)) {
-          this.element.classList.remove(CLASS_UNSUPPORTED);
-        } else {
-          this.element.classList.add(CLASS_UNSUPPORTED);
-        }
-        for (var i = 0, ii = events.length; i < ii; ++i) {
-          listeners.push(listen(doc2, events[i], this.handleFullScreenChange_, this));
-        }
-        this.handleFullScreenChange_();
-      }
-    };
-    return FullScreen2;
-  }(Control$1);
-  function isFullScreenSupported(doc2) {
-    var body = doc2.body;
-    return !!(body["webkitRequestFullscreen"] || body["msRequestFullscreen"] && doc2["msFullscreenEnabled"] || body.requestFullscreen && doc2.fullscreenEnabled);
-  }
-  function isFullScreen(doc2) {
-    return !!(doc2["webkitIsFullScreen"] || doc2["msFullscreenElement"] || doc2.fullscreenElement);
-  }
-  function requestFullScreen(element) {
-    if (element.requestFullscreen) {
-      element.requestFullscreen();
-    } else if (element["msRequestFullscreen"]) {
-      element["msRequestFullscreen"]();
-    } else if (element["webkitRequestFullscreen"]) {
-      element["webkitRequestFullscreen"]();
-    }
-  }
-  function requestFullScreenWithKeys(element) {
-    if (element["webkitRequestFullscreen"]) {
-      element["webkitRequestFullscreen"]();
-    } else {
-      requestFullScreen(element);
-    }
-  }
-  function exitFullScreen(doc2) {
-    if (doc2.exitFullscreen) {
-      doc2.exitFullscreen();
-    } else if (doc2["msExitFullscreen"]) {
-      doc2["msExitFullscreen"]();
-    } else if (doc2["webkitExitFullscreen"]) {
-      doc2["webkitExitFullscreen"]();
-    }
-  }
-  const FullScreen$1 = FullScreen;
-  var __extends$D = globalThis && globalThis.__extends || function() {
-    var extendStatics = function(d, b) {
-      extendStatics = Object.setPrototypeOf || { __proto__: [] } instanceof Array && function(d2, b2) {
-        d2.__proto__ = b2;
-      } || function(d2, b2) {
-        for (var p2 in b2)
-          if (Object.prototype.hasOwnProperty.call(b2, p2))
-            d2[p2] = b2[p2];
-      };
-      return extendStatics(d, b);
-    };
-    return function(d, b) {
-      if (typeof b !== "function" && b !== null)
-        throw new TypeError("Class extends value " + String(b) + " is not a constructor or null");
-      extendStatics(d, b);
-      function __() {
-        this.constructor = d;
-      }
-      d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
-    };
-  }();
-  var ZoomToExtent$1 = function(_super) {
-    __extends$D(ZoomToExtent2, _super);
-    function ZoomToExtent2(opt_options) {
-      var _this = this;
-      var options = opt_options ? opt_options : {};
-      _this = _super.call(this, {
-        element: document.createElement("div"),
-        target: options.target
-      }) || this;
-      _this.extent = options.extent ? options.extent : null;
-      var className = options.className !== void 0 ? options.className : "ol-zoom-extent";
-      var label = options.label !== void 0 ? options.label : "E";
-      var tipLabel = options.tipLabel !== void 0 ? options.tipLabel : "Fit to extent";
-      var button = document.createElement("button");
-      button.setAttribute("type", "button");
-      button.title = tipLabel;
-      button.appendChild(typeof label === "string" ? document.createTextNode(label) : label);
-      button.addEventListener(EventType$1.CLICK, _this.handleClick_.bind(_this), false);
-      var cssClasses = className + " " + CLASS_UNSELECTABLE + " " + CLASS_CONTROL;
-      var element = _this.element;
-      element.className = cssClasses;
-      element.appendChild(button);
-      return _this;
-    }
-    ZoomToExtent2.prototype.handleClick_ = function(event) {
-      event.preventDefault();
-      this.handleZoomToExtent();
-    };
-    ZoomToExtent2.prototype.handleZoomToExtent = function() {
-      var map2 = this.getMap();
-      var view = map2.getView();
-      var extent = !this.extent ? view.getProjection().getExtent() : this.extent;
-      view.fitInternal(fromExtent(extent));
-    };
-    return ZoomToExtent2;
-  }(Control$1);
-  const OlControlZoomToExtent = ZoomToExtent$1;
-  function defaults$3(opt_options) {
-    var options = opt_options ? opt_options : {};
-    var controls = new Collection$1();
-    var zoomControl = options.zoom !== void 0 ? options.zoom : true;
-    if (zoomControl) {
-      controls.push(new Zoom$1(options.zoomOptions));
-    }
-    var rotateControl = options.rotate !== void 0 ? options.rotate : true;
-    if (rotateControl) {
-      controls.push(new Rotate$1(options.rotateOptions));
-    }
-    var attributionControl = options.attribution !== void 0 ? options.attribution : true;
-    if (attributionControl) {
-      controls.push(new Attribution$1(options.attributionOptions));
-    }
-    return controls;
-  }
-  const InteractionProperty = {
-    ACTIVE: "active"
-  };
-  var __extends$C = globalThis && globalThis.__extends || function() {
-    var extendStatics = function(d, b) {
-      extendStatics = Object.setPrototypeOf || { __proto__: [] } instanceof Array && function(d2, b2) {
-        d2.__proto__ = b2;
-      } || function(d2, b2) {
-        for (var p2 in b2)
-          if (Object.prototype.hasOwnProperty.call(b2, p2))
-            d2[p2] = b2[p2];
-      };
-      return extendStatics(d, b);
-    };
-    return function(d, b) {
-      if (typeof b !== "function" && b !== null)
-        throw new TypeError("Class extends value " + String(b) + " is not a constructor or null");
-      extendStatics(d, b);
-      function __() {
-        this.constructor = d;
-      }
-      d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
-    };
-  }();
-  var Interaction = function(_super) {
-    __extends$C(Interaction2, _super);
-    function Interaction2(opt_options) {
-      var _this = _super.call(this) || this;
-      _this.on;
-      _this.once;
-      _this.un;
-      if (opt_options && opt_options.handleEvent) {
-        _this.handleEvent = opt_options.handleEvent;
-      }
-      _this.map_ = null;
-      _this.setActive(true);
-      return _this;
-    }
-    Interaction2.prototype.getActive = function() {
-      return this.get(InteractionProperty.ACTIVE);
-    };
-    Interaction2.prototype.getMap = function() {
-      return this.map_;
-    };
-    Interaction2.prototype.handleEvent = function(mapBrowserEvent) {
-      return true;
-    };
-    Interaction2.prototype.setActive = function(active) {
-      this.set(InteractionProperty.ACTIVE, active);
-    };
-    Interaction2.prototype.setMap = function(map2) {
-      this.map_ = map2;
-    };
-    return Interaction2;
-  }(BaseObject$1);
-  function pan(view, delta, opt_duration) {
-    var currentCenter = view.getCenterInternal();
-    if (currentCenter) {
-      var center = [currentCenter[0] + delta[0], currentCenter[1] + delta[1]];
-      view.animateInternal({
-        duration: opt_duration !== void 0 ? opt_duration : 250,
-        easing: linear,
-        center: view.getConstrainedCenter(center)
-      });
-    }
-  }
-  function zoomByDelta(view, delta, opt_anchor, opt_duration) {
-    var currentZoom = view.getZoom();
-    if (currentZoom === void 0) {
-      return;
-    }
-    var newZoom = view.getConstrainedZoom(currentZoom + delta);
-    var newResolution = view.getResolutionForZoom(newZoom);
-    if (view.getAnimating()) {
-      view.cancelAnimations();
-    }
-    view.animate({
-      resolution: newResolution,
-      anchor: opt_anchor,
-      duration: opt_duration !== void 0 ? opt_duration : 250,
-      easing: easeOut
-    });
-  }
-  const Interaction$1 = Interaction;
-  var __extends$B = globalThis && globalThis.__extends || function() {
-    var extendStatics = function(d, b) {
-      extendStatics = Object.setPrototypeOf || { __proto__: [] } instanceof Array && function(d2, b2) {
-        d2.__proto__ = b2;
-      } || function(d2, b2) {
-        for (var p2 in b2)
-          if (Object.prototype.hasOwnProperty.call(b2, p2))
-            d2[p2] = b2[p2];
-      };
-      return extendStatics(d, b);
-    };
-    return function(d, b) {
-      if (typeof b !== "function" && b !== null)
-        throw new TypeError("Class extends value " + String(b) + " is not a constructor or null");
-      extendStatics(d, b);
-      function __() {
-        this.constructor = d;
-      }
-      d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
-    };
-  }();
-  var DoubleClickZoom = function(_super) {
-    __extends$B(DoubleClickZoom2, _super);
-    function DoubleClickZoom2(opt_options) {
-      var _this = _super.call(this) || this;
-      var options = opt_options ? opt_options : {};
-      _this.delta_ = options.delta ? options.delta : 1;
-      _this.duration_ = options.duration !== void 0 ? options.duration : 250;
-      return _this;
-    }
-    DoubleClickZoom2.prototype.handleEvent = function(mapBrowserEvent) {
-      var stopEvent = false;
-      if (mapBrowserEvent.type == MapBrowserEventType.DBLCLICK) {
-        var browserEvent = mapBrowserEvent.originalEvent;
-        var map2 = mapBrowserEvent.map;
-        var anchor = mapBrowserEvent.coordinate;
-        var delta = browserEvent.shiftKey ? -this.delta_ : this.delta_;
-        var view = map2.getView();
-        zoomByDelta(view, delta, anchor, this.duration_);
-        browserEvent.preventDefault();
-        stopEvent = true;
-      }
-      return !stopEvent;
-    };
-    return DoubleClickZoom2;
-  }(Interaction$1);
-  const DoubleClickZoom$1 = DoubleClickZoom;
-  var __extends$A = globalThis && globalThis.__extends || function() {
-    var extendStatics = function(d, b) {
-      extendStatics = Object.setPrototypeOf || { __proto__: [] } instanceof Array && function(d2, b2) {
-        d2.__proto__ = b2;
-      } || function(d2, b2) {
-        for (var p2 in b2)
-          if (Object.prototype.hasOwnProperty.call(b2, p2))
-            d2[p2] = b2[p2];
-      };
-      return extendStatics(d, b);
-    };
-    return function(d, b) {
-      if (typeof b !== "function" && b !== null)
-        throw new TypeError("Class extends value " + String(b) + " is not a constructor or null");
-      extendStatics(d, b);
-      function __() {
-        this.constructor = d;
-      }
-      d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
-    };
-  }();
-  var PointerInteraction = function(_super) {
-    __extends$A(PointerInteraction2, _super);
-    function PointerInteraction2(opt_options) {
-      var _this = this;
-      var options = opt_options ? opt_options : {};
-      _this = _super.call(
-        this,
-        options
-      ) || this;
-      if (options.handleDownEvent) {
-        _this.handleDownEvent = options.handleDownEvent;
-      }
-      if (options.handleDragEvent) {
-        _this.handleDragEvent = options.handleDragEvent;
-      }
-      if (options.handleMoveEvent) {
-        _this.handleMoveEvent = options.handleMoveEvent;
-      }
-      if (options.handleUpEvent) {
-        _this.handleUpEvent = options.handleUpEvent;
-      }
-      if (options.stopDown) {
-        _this.stopDown = options.stopDown;
-      }
-      _this.handlingDownUpSequence = false;
-      _this.targetPointers = [];
-      return _this;
-    }
-    PointerInteraction2.prototype.getPointerCount = function() {
-      return this.targetPointers.length;
-    };
-    PointerInteraction2.prototype.handleDownEvent = function(mapBrowserEvent) {
-      return false;
-    };
-    PointerInteraction2.prototype.handleDragEvent = function(mapBrowserEvent) {
-    };
-    PointerInteraction2.prototype.handleEvent = function(mapBrowserEvent) {
-      if (!mapBrowserEvent.originalEvent) {
-        return true;
-      }
-      var stopEvent = false;
-      this.updateTrackedPointers_(mapBrowserEvent);
-      if (this.handlingDownUpSequence) {
-        if (mapBrowserEvent.type == MapBrowserEventType.POINTERDRAG) {
-          this.handleDragEvent(mapBrowserEvent);
-          mapBrowserEvent.originalEvent.preventDefault();
-        } else if (mapBrowserEvent.type == MapBrowserEventType.POINTERUP) {
-          var handledUp = this.handleUpEvent(mapBrowserEvent);
-          this.handlingDownUpSequence = handledUp && this.targetPointers.length > 0;
-        }
-      } else {
-        if (mapBrowserEvent.type == MapBrowserEventType.POINTERDOWN) {
-          var handled = this.handleDownEvent(mapBrowserEvent);
-          this.handlingDownUpSequence = handled;
-          stopEvent = this.stopDown(handled);
-        } else if (mapBrowserEvent.type == MapBrowserEventType.POINTERMOVE) {
-          this.handleMoveEvent(mapBrowserEvent);
-        }
-      }
-      return !stopEvent;
-    };
-    PointerInteraction2.prototype.handleMoveEvent = function(mapBrowserEvent) {
-    };
-    PointerInteraction2.prototype.handleUpEvent = function(mapBrowserEvent) {
-      return false;
-    };
-    PointerInteraction2.prototype.stopDown = function(handled) {
-      return handled;
-    };
-    PointerInteraction2.prototype.updateTrackedPointers_ = function(mapBrowserEvent) {
-      if (mapBrowserEvent.activePointers) {
-        this.targetPointers = mapBrowserEvent.activePointers;
-      }
-    };
-    return PointerInteraction2;
-  }(Interaction$1);
-  function centroid(pointerEvents) {
-    var length = pointerEvents.length;
-    var clientX = 0;
-    var clientY = 0;
-    for (var i = 0; i < length; i++) {
-      clientX += pointerEvents[i].clientX;
-      clientY += pointerEvents[i].clientY;
-    }
-    return [clientX / length, clientY / length];
-  }
-  const PointerInteraction$1 = PointerInteraction;
-  function all(var_args) {
-    var conditions = arguments;
-    return function(event) {
-      var pass = true;
-      for (var i = 0, ii = conditions.length; i < ii; ++i) {
-        pass = pass && conditions[i](event);
-        if (!pass) {
-          break;
-        }
-      }
-      return pass;
-    };
-  }
-  var altShiftKeysOnly = function(mapBrowserEvent) {
-    var originalEvent = mapBrowserEvent.originalEvent;
-    return originalEvent.altKey && !(originalEvent.metaKey || originalEvent.ctrlKey) && originalEvent.shiftKey;
-  };
-  var focus = function(event) {
-    var targetElement = event.map.getTargetElement();
-    var activeElement = event.map.getOwnerDocument().activeElement;
-    return targetElement.contains(activeElement);
-  };
-  var focusWithTabindex = function(event) {
-    return event.map.getTargetElement().hasAttribute("tabindex") ? focus(event) : true;
-  };
-  var always = TRUE;
-  var mouseActionButton = function(mapBrowserEvent) {
-    var originalEvent = mapBrowserEvent.originalEvent;
-    return originalEvent.button == 0 && !(WEBKIT && MAC && originalEvent.ctrlKey);
-  };
-  var noModifierKeys = function(mapBrowserEvent) {
-    var originalEvent = mapBrowserEvent.originalEvent;
-    return !originalEvent.altKey && !(originalEvent.metaKey || originalEvent.ctrlKey) && !originalEvent.shiftKey;
-  };
-  var shiftKeyOnly = function(mapBrowserEvent) {
-    var originalEvent = mapBrowserEvent.originalEvent;
-    return !originalEvent.altKey && !(originalEvent.metaKey || originalEvent.ctrlKey) && originalEvent.shiftKey;
-  };
-  var targetNotEditable = function(mapBrowserEvent) {
-    var originalEvent = mapBrowserEvent.originalEvent;
-    var tagName = originalEvent.target.tagName;
-    return tagName !== "INPUT" && tagName !== "SELECT" && tagName !== "TEXTAREA" && !originalEvent.target.isContentEditable;
-  };
-  var mouseOnly = function(mapBrowserEvent) {
-    var pointerEvent = mapBrowserEvent.originalEvent;
-    assert(pointerEvent !== void 0, 56);
-    return pointerEvent.pointerType == "mouse";
-  };
-  var primaryAction = function(mapBrowserEvent) {
-    var pointerEvent = mapBrowserEvent.originalEvent;
-    assert(pointerEvent !== void 0, 56);
-    return pointerEvent.isPrimary && pointerEvent.button === 0;
-  };
-  var __extends$z = globalThis && globalThis.__extends || function() {
-    var extendStatics = function(d, b) {
-      extendStatics = Object.setPrototypeOf || { __proto__: [] } instanceof Array && function(d2, b2) {
-        d2.__proto__ = b2;
-      } || function(d2, b2) {
-        for (var p2 in b2)
-          if (Object.prototype.hasOwnProperty.call(b2, p2))
-            d2[p2] = b2[p2];
-      };
-      return extendStatics(d, b);
-    };
-    return function(d, b) {
-      if (typeof b !== "function" && b !== null)
-        throw new TypeError("Class extends value " + String(b) + " is not a constructor or null");
-      extendStatics(d, b);
-      function __() {
-        this.constructor = d;
-      }
-      d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
-    };
-  }();
-  var DragPan = function(_super) {
-    __extends$z(DragPan2, _super);
-    function DragPan2(opt_options) {
-      var _this = _super.call(this, {
-        stopDown: FALSE
-      }) || this;
-      var options = opt_options ? opt_options : {};
-      _this.kinetic_ = options.kinetic;
-      _this.lastCentroid = null;
-      _this.lastPointersCount_;
-      _this.panning_ = false;
-      var condition = options.condition ? options.condition : all(noModifierKeys, primaryAction);
-      _this.condition_ = options.onFocusOnly ? all(focusWithTabindex, condition) : condition;
-      _this.noKinetic_ = false;
-      return _this;
-    }
-    DragPan2.prototype.handleDragEvent = function(mapBrowserEvent) {
-      if (!this.panning_) {
-        this.panning_ = true;
-        this.getMap().getView().beginInteraction();
-      }
-      var targetPointers = this.targetPointers;
-      var centroid$1 = centroid(targetPointers);
-      if (targetPointers.length == this.lastPointersCount_) {
-        if (this.kinetic_) {
-          this.kinetic_.update(centroid$1[0], centroid$1[1]);
-        }
-        if (this.lastCentroid) {
-          var delta = [
-            this.lastCentroid[0] - centroid$1[0],
-            centroid$1[1] - this.lastCentroid[1]
-          ];
-          var map2 = mapBrowserEvent.map;
-          var view = map2.getView();
-          scale$2(delta, view.getResolution());
-          rotate$1(delta, view.getRotation());
-          view.adjustCenterInternal(delta);
-        }
-      } else if (this.kinetic_) {
-        this.kinetic_.begin();
-      }
-      this.lastCentroid = centroid$1;
-      this.lastPointersCount_ = targetPointers.length;
-      mapBrowserEvent.originalEvent.preventDefault();
-    };
-    DragPan2.prototype.handleUpEvent = function(mapBrowserEvent) {
-      var map2 = mapBrowserEvent.map;
-      var view = map2.getView();
-      if (this.targetPointers.length === 0) {
-        if (!this.noKinetic_ && this.kinetic_ && this.kinetic_.end()) {
-          var distance = this.kinetic_.getDistance();
-          var angle = this.kinetic_.getAngle();
-          var center = view.getCenterInternal();
-          var centerpx = map2.getPixelFromCoordinateInternal(center);
-          var dest = map2.getCoordinateFromPixelInternal([
-            centerpx[0] - distance * Math.cos(angle),
-            centerpx[1] - distance * Math.sin(angle)
-          ]);
-          view.animateInternal({
-            center: view.getConstrainedCenter(dest),
-            duration: 500,
-            easing: easeOut
-          });
-        }
-        if (this.panning_) {
-          this.panning_ = false;
-          view.endInteraction();
-        }
-        return false;
-      } else {
-        if (this.kinetic_) {
-          this.kinetic_.begin();
-        }
-        this.lastCentroid = null;
-        return true;
-      }
-    };
-    DragPan2.prototype.handleDownEvent = function(mapBrowserEvent) {
-      if (this.targetPointers.length > 0 && this.condition_(mapBrowserEvent)) {
-        var map2 = mapBrowserEvent.map;
-        var view = map2.getView();
-        this.lastCentroid = null;
-        if (view.getAnimating()) {
-          view.cancelAnimations();
-        }
-        if (this.kinetic_) {
-          this.kinetic_.begin();
-        }
-        this.noKinetic_ = this.targetPointers.length > 1;
-        return true;
-      } else {
-        return false;
-      }
-    };
-    return DragPan2;
-  }(PointerInteraction$1);
-  const DragPan$1 = DragPan;
-  var __extends$y = globalThis && globalThis.__extends || function() {
-    var extendStatics = function(d, b) {
-      extendStatics = Object.setPrototypeOf || { __proto__: [] } instanceof Array && function(d2, b2) {
-        d2.__proto__ = b2;
-      } || function(d2, b2) {
-        for (var p2 in b2)
-          if (Object.prototype.hasOwnProperty.call(b2, p2))
-            d2[p2] = b2[p2];
-      };
-      return extendStatics(d, b);
-    };
-    return function(d, b) {
-      if (typeof b !== "function" && b !== null)
-        throw new TypeError("Class extends value " + String(b) + " is not a constructor or null");
-      extendStatics(d, b);
-      function __() {
-        this.constructor = d;
-      }
-      d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
-    };
-  }();
-  var DragRotate = function(_super) {
-    __extends$y(DragRotate2, _super);
-    function DragRotate2(opt_options) {
-      var _this = this;
-      var options = opt_options ? opt_options : {};
-      _this = _super.call(this, {
-        stopDown: FALSE
-      }) || this;
-      _this.condition_ = options.condition ? options.condition : altShiftKeysOnly;
-      _this.lastAngle_ = void 0;
-      _this.duration_ = options.duration !== void 0 ? options.duration : 250;
-      return _this;
-    }
-    DragRotate2.prototype.handleDragEvent = function(mapBrowserEvent) {
-      if (!mouseOnly(mapBrowserEvent)) {
-        return;
-      }
-      var map2 = mapBrowserEvent.map;
-      var view = map2.getView();
-      if (view.getConstraints().rotation === disable) {
-        return;
-      }
-      var size2 = map2.getSize();
-      var offset = mapBrowserEvent.pixel;
-      var theta = Math.atan2(size2[1] / 2 - offset[1], offset[0] - size2[0] / 2);
-      if (this.lastAngle_ !== void 0) {
-        var delta = theta - this.lastAngle_;
-        view.adjustRotationInternal(-delta);
-      }
-      this.lastAngle_ = theta;
-    };
-    DragRotate2.prototype.handleUpEvent = function(mapBrowserEvent) {
-      if (!mouseOnly(mapBrowserEvent)) {
-        return true;
-      }
-      var map2 = mapBrowserEvent.map;
-      var view = map2.getView();
-      view.endInteraction(this.duration_);
-      return false;
-    };
-    DragRotate2.prototype.handleDownEvent = function(mapBrowserEvent) {
-      if (!mouseOnly(mapBrowserEvent)) {
-        return false;
-      }
-      if (mouseActionButton(mapBrowserEvent) && this.condition_(mapBrowserEvent)) {
-        var map2 = mapBrowserEvent.map;
-        map2.getView().beginInteraction();
-        this.lastAngle_ = void 0;
-        return true;
-      } else {
-        return false;
-      }
-    };
-    return DragRotate2;
-  }(PointerInteraction$1);
-  const DragRotate$1 = DragRotate;
-  var __extends$x = globalThis && globalThis.__extends || function() {
-    var extendStatics = function(d, b) {
-      extendStatics = Object.setPrototypeOf || { __proto__: [] } instanceof Array && function(d2, b2) {
-        d2.__proto__ = b2;
-      } || function(d2, b2) {
-        for (var p2 in b2)
-          if (Object.prototype.hasOwnProperty.call(b2, p2))
-            d2[p2] = b2[p2];
-      };
-      return extendStatics(d, b);
-    };
-    return function(d, b) {
-      if (typeof b !== "function" && b !== null)
-        throw new TypeError("Class extends value " + String(b) + " is not a constructor or null");
-      extendStatics(d, b);
-      function __() {
-        this.constructor = d;
-      }
-      d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
-    };
-  }();
-  var RenderBox = function(_super) {
-    __extends$x(RenderBox2, _super);
-    function RenderBox2(className) {
-      var _this = _super.call(this) || this;
-      _this.geometry_ = null;
-      _this.element_ = document.createElement("div");
-      _this.element_.style.position = "absolute";
-      _this.element_.style.pointerEvents = "auto";
-      _this.element_.className = "ol-box " + className;
-      _this.map_ = null;
-      _this.startPixel_ = null;
-      _this.endPixel_ = null;
-      return _this;
-    }
-    RenderBox2.prototype.disposeInternal = function() {
-      this.setMap(null);
-    };
-    RenderBox2.prototype.render_ = function() {
-      var startPixel = this.startPixel_;
-      var endPixel = this.endPixel_;
-      var px = "px";
-      var style = this.element_.style;
-      style.left = Math.min(startPixel[0], endPixel[0]) + px;
-      style.top = Math.min(startPixel[1], endPixel[1]) + px;
-      style.width = Math.abs(endPixel[0] - startPixel[0]) + px;
-      style.height = Math.abs(endPixel[1] - startPixel[1]) + px;
-    };
-    RenderBox2.prototype.setMap = function(map2) {
-      if (this.map_) {
-        this.map_.getOverlayContainer().removeChild(this.element_);
-        var style = this.element_.style;
-        style.left = "inherit";
-        style.top = "inherit";
-        style.width = "inherit";
-        style.height = "inherit";
-      }
-      this.map_ = map2;
-      if (this.map_) {
-        this.map_.getOverlayContainer().appendChild(this.element_);
-      }
-    };
-    RenderBox2.prototype.setPixels = function(startPixel, endPixel) {
-      this.startPixel_ = startPixel;
-      this.endPixel_ = endPixel;
-      this.createOrUpdateGeometry();
-      this.render_();
-    };
-    RenderBox2.prototype.createOrUpdateGeometry = function() {
-      var startPixel = this.startPixel_;
-      var endPixel = this.endPixel_;
-      var pixels = [
-        startPixel,
-        [startPixel[0], endPixel[1]],
-        endPixel,
-        [endPixel[0], startPixel[1]]
-      ];
-      var coordinates2 = pixels.map(this.map_.getCoordinateFromPixelInternal, this.map_);
-      coordinates2[4] = coordinates2[0].slice();
-      if (!this.geometry_) {
-        this.geometry_ = new Polygon([coordinates2]);
-      } else {
-        this.geometry_.setCoordinates([coordinates2]);
-      }
-    };
-    RenderBox2.prototype.getGeometry = function() {
-      return this.geometry_;
-    };
-    return RenderBox2;
-  }(Disposable$1);
-  const RenderBox$1 = RenderBox;
-  var __extends$w = globalThis && globalThis.__extends || function() {
-    var extendStatics = function(d, b) {
-      extendStatics = Object.setPrototypeOf || { __proto__: [] } instanceof Array && function(d2, b2) {
-        d2.__proto__ = b2;
-      } || function(d2, b2) {
-        for (var p2 in b2)
-          if (Object.prototype.hasOwnProperty.call(b2, p2))
-            d2[p2] = b2[p2];
-      };
-      return extendStatics(d, b);
-    };
-    return function(d, b) {
-      if (typeof b !== "function" && b !== null)
-        throw new TypeError("Class extends value " + String(b) + " is not a constructor or null");
-      extendStatics(d, b);
-      function __() {
-        this.constructor = d;
-      }
-      d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
-    };
-  }();
-  var DragBoxEventType = {
-    BOXSTART: "boxstart",
-    BOXDRAG: "boxdrag",
-    BOXEND: "boxend",
-    BOXCANCEL: "boxcancel"
-  };
-  var DragBoxEvent = function(_super) {
-    __extends$w(DragBoxEvent2, _super);
-    function DragBoxEvent2(type, coordinate, mapBrowserEvent) {
-      var _this = _super.call(this, type) || this;
-      _this.coordinate = coordinate;
-      _this.mapBrowserEvent = mapBrowserEvent;
-      return _this;
-    }
-    return DragBoxEvent2;
-  }(Event);
-  var DragBox = function(_super) {
-    __extends$w(DragBox2, _super);
-    function DragBox2(opt_options) {
-      var _this = _super.call(this) || this;
-      _this.on;
-      _this.once;
-      _this.un;
-      var options = opt_options ? opt_options : {};
-      _this.box_ = new RenderBox$1(options.className || "ol-dragbox");
-      _this.minArea_ = options.minArea !== void 0 ? options.minArea : 64;
-      if (options.onBoxEnd) {
-        _this.onBoxEnd = options.onBoxEnd;
-      }
-      _this.startPixel_ = null;
-      _this.condition_ = options.condition ? options.condition : mouseActionButton;
-      _this.boxEndCondition_ = options.boxEndCondition ? options.boxEndCondition : _this.defaultBoxEndCondition;
-      return _this;
-    }
-    DragBox2.prototype.defaultBoxEndCondition = function(mapBrowserEvent, startPixel, endPixel) {
-      var width = endPixel[0] - startPixel[0];
-      var height = endPixel[1] - startPixel[1];
-      return width * width + height * height >= this.minArea_;
-    };
-    DragBox2.prototype.getGeometry = function() {
-      return this.box_.getGeometry();
-    };
-    DragBox2.prototype.handleDragEvent = function(mapBrowserEvent) {
-      this.box_.setPixels(this.startPixel_, mapBrowserEvent.pixel);
-      this.dispatchEvent(new DragBoxEvent(DragBoxEventType.BOXDRAG, mapBrowserEvent.coordinate, mapBrowserEvent));
-    };
-    DragBox2.prototype.handleUpEvent = function(mapBrowserEvent) {
-      this.box_.setMap(null);
-      var completeBox = this.boxEndCondition_(mapBrowserEvent, this.startPixel_, mapBrowserEvent.pixel);
-      if (completeBox) {
-        this.onBoxEnd(mapBrowserEvent);
-      }
-      this.dispatchEvent(new DragBoxEvent(completeBox ? DragBoxEventType.BOXEND : DragBoxEventType.BOXCANCEL, mapBrowserEvent.coordinate, mapBrowserEvent));
-      return false;
-    };
-    DragBox2.prototype.handleDownEvent = function(mapBrowserEvent) {
-      if (this.condition_(mapBrowserEvent)) {
-        this.startPixel_ = mapBrowserEvent.pixel;
-        this.box_.setMap(mapBrowserEvent.map);
-        this.box_.setPixels(this.startPixel_, this.startPixel_);
-        this.dispatchEvent(new DragBoxEvent(DragBoxEventType.BOXSTART, mapBrowserEvent.coordinate, mapBrowserEvent));
-        return true;
-      } else {
-        return false;
-      }
-    };
-    DragBox2.prototype.onBoxEnd = function(event) {
-    };
-    return DragBox2;
-  }(PointerInteraction$1);
-  const DragBox$1 = DragBox;
-  var __extends$v = globalThis && globalThis.__extends || function() {
-    var extendStatics = function(d, b) {
-      extendStatics = Object.setPrototypeOf || { __proto__: [] } instanceof Array && function(d2, b2) {
-        d2.__proto__ = b2;
-      } || function(d2, b2) {
-        for (var p2 in b2)
-          if (Object.prototype.hasOwnProperty.call(b2, p2))
-            d2[p2] = b2[p2];
-      };
-      return extendStatics(d, b);
-    };
-    return function(d, b) {
-      if (typeof b !== "function" && b !== null)
-        throw new TypeError("Class extends value " + String(b) + " is not a constructor or null");
-      extendStatics(d, b);
-      function __() {
-        this.constructor = d;
-      }
-      d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
-    };
-  }();
-  var DragZoom = function(_super) {
-    __extends$v(DragZoom2, _super);
-    function DragZoom2(opt_options) {
-      var _this = this;
-      var options = opt_options ? opt_options : {};
-      var condition = options.condition ? options.condition : shiftKeyOnly;
-      _this = _super.call(this, {
-        condition,
-        className: options.className || "ol-dragzoom",
-        minArea: options.minArea
-      }) || this;
-      _this.duration_ = options.duration !== void 0 ? options.duration : 200;
-      _this.out_ = options.out !== void 0 ? options.out : false;
-      return _this;
-    }
-    DragZoom2.prototype.onBoxEnd = function(event) {
-      var map2 = this.getMap();
-      var view = map2.getView();
-      var geometry = this.getGeometry();
-      if (this.out_) {
-        var rotatedExtent = view.rotatedExtentForGeometry(geometry);
-        var resolution = view.getResolutionForExtentInternal(rotatedExtent);
-        var factor = view.getResolution() / resolution;
-        geometry = geometry.clone();
-        geometry.scale(factor * factor);
-      }
-      view.fitInternal(geometry, {
-        duration: this.duration_,
-        easing: easeOut
-      });
-    };
-    return DragZoom2;
-  }(DragBox$1);
-  const DragZoom$1 = DragZoom;
-  const KeyCode = {
-    LEFT: 37,
-    UP: 38,
-    RIGHT: 39,
-    DOWN: 40
-  };
-  var __extends$u = globalThis && globalThis.__extends || function() {
-    var extendStatics = function(d, b) {
-      extendStatics = Object.setPrototypeOf || { __proto__: [] } instanceof Array && function(d2, b2) {
-        d2.__proto__ = b2;
-      } || function(d2, b2) {
-        for (var p2 in b2)
-          if (Object.prototype.hasOwnProperty.call(b2, p2))
-            d2[p2] = b2[p2];
-      };
-      return extendStatics(d, b);
-    };
-    return function(d, b) {
-      if (typeof b !== "function" && b !== null)
-        throw new TypeError("Class extends value " + String(b) + " is not a constructor or null");
-      extendStatics(d, b);
-      function __() {
-        this.constructor = d;
-      }
-      d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
-    };
-  }();
-  var KeyboardPan = function(_super) {
-    __extends$u(KeyboardPan2, _super);
-    function KeyboardPan2(opt_options) {
-      var _this = _super.call(this) || this;
-      var options = opt_options || {};
-      _this.defaultCondition_ = function(mapBrowserEvent) {
-        return noModifierKeys(mapBrowserEvent) && targetNotEditable(mapBrowserEvent);
-      };
-      _this.condition_ = options.condition !== void 0 ? options.condition : _this.defaultCondition_;
-      _this.duration_ = options.duration !== void 0 ? options.duration : 100;
-      _this.pixelDelta_ = options.pixelDelta !== void 0 ? options.pixelDelta : 128;
-      return _this;
-    }
-    KeyboardPan2.prototype.handleEvent = function(mapBrowserEvent) {
-      var stopEvent = false;
-      if (mapBrowserEvent.type == EventType$1.KEYDOWN) {
-        var keyEvent = mapBrowserEvent.originalEvent;
-        var keyCode = keyEvent.keyCode;
-        if (this.condition_(mapBrowserEvent) && (keyCode == KeyCode.DOWN || keyCode == KeyCode.LEFT || keyCode == KeyCode.RIGHT || keyCode == KeyCode.UP)) {
-          var map2 = mapBrowserEvent.map;
-          var view = map2.getView();
-          var mapUnitsDelta = view.getResolution() * this.pixelDelta_;
-          var deltaX = 0, deltaY = 0;
-          if (keyCode == KeyCode.DOWN) {
-            deltaY = -mapUnitsDelta;
-          } else if (keyCode == KeyCode.LEFT) {
-            deltaX = -mapUnitsDelta;
-          } else if (keyCode == KeyCode.RIGHT) {
-            deltaX = mapUnitsDelta;
-          } else {
-            deltaY = mapUnitsDelta;
-          }
-          var delta = [deltaX, deltaY];
-          rotate$1(delta, view.getRotation());
-          pan(view, delta, this.duration_);
-          keyEvent.preventDefault();
-          stopEvent = true;
-        }
-      }
-      return !stopEvent;
-    };
-    return KeyboardPan2;
-  }(Interaction$1);
-  const KeyboardPan$1 = KeyboardPan;
-  var __extends$t = globalThis && globalThis.__extends || function() {
-    var extendStatics = function(d, b) {
-      extendStatics = Object.setPrototypeOf || { __proto__: [] } instanceof Array && function(d2, b2) {
-        d2.__proto__ = b2;
-      } || function(d2, b2) {
-        for (var p2 in b2)
-          if (Object.prototype.hasOwnProperty.call(b2, p2))
-            d2[p2] = b2[p2];
-      };
-      return extendStatics(d, b);
-    };
-    return function(d, b) {
-      if (typeof b !== "function" && b !== null)
-        throw new TypeError("Class extends value " + String(b) + " is not a constructor or null");
-      extendStatics(d, b);
-      function __() {
-        this.constructor = d;
-      }
-      d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
-    };
-  }();
-  var KeyboardZoom = function(_super) {
-    __extends$t(KeyboardZoom2, _super);
-    function KeyboardZoom2(opt_options) {
-      var _this = _super.call(this) || this;
-      var options = opt_options ? opt_options : {};
-      _this.condition_ = options.condition ? options.condition : targetNotEditable;
-      _this.delta_ = options.delta ? options.delta : 1;
-      _this.duration_ = options.duration !== void 0 ? options.duration : 100;
-      return _this;
-    }
-    KeyboardZoom2.prototype.handleEvent = function(mapBrowserEvent) {
-      var stopEvent = false;
-      if (mapBrowserEvent.type == EventType$1.KEYDOWN || mapBrowserEvent.type == EventType$1.KEYPRESS) {
-        var keyEvent = mapBrowserEvent.originalEvent;
-        var charCode = keyEvent.charCode;
-        if (this.condition_(mapBrowserEvent) && (charCode == "+".charCodeAt(0) || charCode == "-".charCodeAt(0))) {
-          var map2 = mapBrowserEvent.map;
-          var delta = charCode == "+".charCodeAt(0) ? this.delta_ : -this.delta_;
-          var view = map2.getView();
-          zoomByDelta(view, delta, void 0, this.duration_);
-          keyEvent.preventDefault();
-          stopEvent = true;
-        }
-      }
-      return !stopEvent;
-    };
-    return KeyboardZoom2;
-  }(Interaction$1);
-  const KeyboardZoom$1 = KeyboardZoom;
-  var Kinetic = function() {
-    function Kinetic2(decay, minVelocity, delay) {
-      this.decay_ = decay;
-      this.minVelocity_ = minVelocity;
-      this.delay_ = delay;
-      this.points_ = [];
-      this.angle_ = 0;
-      this.initialVelocity_ = 0;
-    }
-    Kinetic2.prototype.begin = function() {
-      this.points_.length = 0;
-      this.angle_ = 0;
-      this.initialVelocity_ = 0;
-    };
-    Kinetic2.prototype.update = function(x, y2) {
-      this.points_.push(x, y2, Date.now());
-    };
-    Kinetic2.prototype.end = function() {
-      if (this.points_.length < 6) {
-        return false;
-      }
-      var delay = Date.now() - this.delay_;
-      var lastIndex = this.points_.length - 3;
-      if (this.points_[lastIndex + 2] < delay) {
-        return false;
-      }
-      var firstIndex = lastIndex - 3;
-      while (firstIndex > 0 && this.points_[firstIndex + 2] > delay) {
-        firstIndex -= 3;
-      }
-      var duration = this.points_[lastIndex + 2] - this.points_[firstIndex + 2];
-      if (duration < 1e3 / 60) {
-        return false;
-      }
-      var dx = this.points_[lastIndex] - this.points_[firstIndex];
-      var dy = this.points_[lastIndex + 1] - this.points_[firstIndex + 1];
-      this.angle_ = Math.atan2(dy, dx);
-      this.initialVelocity_ = Math.sqrt(dx * dx + dy * dy) / duration;
-      return this.initialVelocity_ > this.minVelocity_;
-    };
-    Kinetic2.prototype.getDistance = function() {
-      return (this.minVelocity_ - this.initialVelocity_) / this.decay_;
-    };
-    Kinetic2.prototype.getAngle = function() {
-      return this.angle_;
-    };
-    return Kinetic2;
-  }();
-  const Kinetic$1 = Kinetic;
-  var __extends$s = globalThis && globalThis.__extends || function() {
-    var extendStatics = function(d, b) {
-      extendStatics = Object.setPrototypeOf || { __proto__: [] } instanceof Array && function(d2, b2) {
-        d2.__proto__ = b2;
-      } || function(d2, b2) {
-        for (var p2 in b2)
-          if (Object.prototype.hasOwnProperty.call(b2, p2))
-            d2[p2] = b2[p2];
-      };
-      return extendStatics(d, b);
-    };
-    return function(d, b) {
-      if (typeof b !== "function" && b !== null)
-        throw new TypeError("Class extends value " + String(b) + " is not a constructor or null");
-      extendStatics(d, b);
-      function __() {
-        this.constructor = d;
-      }
-      d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
-    };
-  }();
-  var Mode = {
-    TRACKPAD: "trackpad",
-    WHEEL: "wheel"
-  };
-  var MouseWheelZoom = function(_super) {
-    __extends$s(MouseWheelZoom2, _super);
-    function MouseWheelZoom2(opt_options) {
-      var _this = this;
-      var options = opt_options ? opt_options : {};
-      _this = _super.call(
-        this,
-        options
-      ) || this;
-      _this.totalDelta_ = 0;
-      _this.lastDelta_ = 0;
-      _this.maxDelta_ = options.maxDelta !== void 0 ? options.maxDelta : 1;
-      _this.duration_ = options.duration !== void 0 ? options.duration : 250;
-      _this.timeout_ = options.timeout !== void 0 ? options.timeout : 80;
-      _this.useAnchor_ = options.useAnchor !== void 0 ? options.useAnchor : true;
-      _this.constrainResolution_ = options.constrainResolution !== void 0 ? options.constrainResolution : false;
-      var condition = options.condition ? options.condition : always;
-      _this.condition_ = options.onFocusOnly ? all(focusWithTabindex, condition) : condition;
-      _this.lastAnchor_ = null;
-      _this.startTime_ = void 0;
-      _this.timeoutId_;
-      _this.mode_ = void 0;
-      _this.trackpadEventGap_ = 400;
-      _this.trackpadTimeoutId_;
-      _this.deltaPerZoom_ = 300;
-      return _this;
-    }
-    MouseWheelZoom2.prototype.endInteraction_ = function() {
-      this.trackpadTimeoutId_ = void 0;
-      var map2 = this.getMap();
-      if (!map2) {
-        return;
-      }
-      var view = map2.getView();
-      view.endInteraction(void 0, this.lastDelta_ ? this.lastDelta_ > 0 ? 1 : -1 : 0, this.lastAnchor_);
-    };
-    MouseWheelZoom2.prototype.handleEvent = function(mapBrowserEvent) {
-      if (!this.condition_(mapBrowserEvent)) {
-        return true;
-      }
-      var type = mapBrowserEvent.type;
-      if (type !== EventType$1.WHEEL) {
-        return true;
-      }
-      var map2 = mapBrowserEvent.map;
-      var wheelEvent = mapBrowserEvent.originalEvent;
-      wheelEvent.preventDefault();
-      if (this.useAnchor_) {
-        this.lastAnchor_ = mapBrowserEvent.coordinate;
-      }
-      var delta;
-      if (mapBrowserEvent.type == EventType$1.WHEEL) {
-        delta = wheelEvent.deltaY;
-        if (FIREFOX && wheelEvent.deltaMode === WheelEvent.DOM_DELTA_PIXEL) {
-          delta /= DEVICE_PIXEL_RATIO;
-        }
-        if (wheelEvent.deltaMode === WheelEvent.DOM_DELTA_LINE) {
-          delta *= 40;
-        }
-      }
-      if (delta === 0) {
-        return false;
-      } else {
-        this.lastDelta_ = delta;
-      }
-      var now2 = Date.now();
-      if (this.startTime_ === void 0) {
-        this.startTime_ = now2;
-      }
-      if (!this.mode_ || now2 - this.startTime_ > this.trackpadEventGap_) {
-        this.mode_ = Math.abs(delta) < 4 ? Mode.TRACKPAD : Mode.WHEEL;
-      }
-      var view = map2.getView();
-      if (this.mode_ === Mode.TRACKPAD && !(view.getConstrainResolution() || this.constrainResolution_)) {
-        if (this.trackpadTimeoutId_) {
-          clearTimeout(this.trackpadTimeoutId_);
-        } else {
-          if (view.getAnimating()) {
-            view.cancelAnimations();
-          }
-          view.beginInteraction();
-        }
-        this.trackpadTimeoutId_ = setTimeout(this.endInteraction_.bind(this), this.timeout_);
-        view.adjustZoom(-delta / this.deltaPerZoom_, this.lastAnchor_);
-        this.startTime_ = now2;
-        return false;
-      }
-      this.totalDelta_ += delta;
-      var timeLeft = Math.max(this.timeout_ - (now2 - this.startTime_), 0);
-      clearTimeout(this.timeoutId_);
-      this.timeoutId_ = setTimeout(this.handleWheelZoom_.bind(this, map2), timeLeft);
-      return false;
-    };
-    MouseWheelZoom2.prototype.handleWheelZoom_ = function(map2) {
-      var view = map2.getView();
-      if (view.getAnimating()) {
-        view.cancelAnimations();
-      }
-      var delta = -clamp(this.totalDelta_, -this.maxDelta_ * this.deltaPerZoom_, this.maxDelta_ * this.deltaPerZoom_) / this.deltaPerZoom_;
-      if (view.getConstrainResolution() || this.constrainResolution_) {
-        delta = delta ? delta > 0 ? 1 : -1 : 0;
-      }
-      zoomByDelta(view, delta, this.lastAnchor_, this.duration_);
-      this.mode_ = void 0;
-      this.totalDelta_ = 0;
-      this.lastAnchor_ = null;
-      this.startTime_ = void 0;
-      this.timeoutId_ = void 0;
-    };
-    MouseWheelZoom2.prototype.setMouseAnchor = function(useAnchor) {
-      this.useAnchor_ = useAnchor;
-      if (!useAnchor) {
-        this.lastAnchor_ = null;
-      }
-    };
-    return MouseWheelZoom2;
-  }(Interaction$1);
-  const MouseWheelZoom$1 = MouseWheelZoom;
-  var __extends$r = globalThis && globalThis.__extends || function() {
-    var extendStatics = function(d, b) {
-      extendStatics = Object.setPrototypeOf || { __proto__: [] } instanceof Array && function(d2, b2) {
-        d2.__proto__ = b2;
-      } || function(d2, b2) {
-        for (var p2 in b2)
-          if (Object.prototype.hasOwnProperty.call(b2, p2))
-            d2[p2] = b2[p2];
-      };
-      return extendStatics(d, b);
-    };
-    return function(d, b) {
-      if (typeof b !== "function" && b !== null)
-        throw new TypeError("Class extends value " + String(b) + " is not a constructor or null");
-      extendStatics(d, b);
-      function __() {
-        this.constructor = d;
-      }
-      d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
-    };
-  }();
-  var PinchRotate = function(_super) {
-    __extends$r(PinchRotate2, _super);
-    function PinchRotate2(opt_options) {
-      var _this = this;
-      var options = opt_options ? opt_options : {};
-      var pointerOptions = options;
-      if (!pointerOptions.stopDown) {
-        pointerOptions.stopDown = FALSE;
-      }
-      _this = _super.call(this, pointerOptions) || this;
-      _this.anchor_ = null;
-      _this.lastAngle_ = void 0;
-      _this.rotating_ = false;
-      _this.rotationDelta_ = 0;
-      _this.threshold_ = options.threshold !== void 0 ? options.threshold : 0.3;
-      _this.duration_ = options.duration !== void 0 ? options.duration : 250;
-      return _this;
-    }
-    PinchRotate2.prototype.handleDragEvent = function(mapBrowserEvent) {
-      var rotationDelta = 0;
-      var touch0 = this.targetPointers[0];
-      var touch1 = this.targetPointers[1];
-      var angle = Math.atan2(touch1.clientY - touch0.clientY, touch1.clientX - touch0.clientX);
-      if (this.lastAngle_ !== void 0) {
-        var delta = angle - this.lastAngle_;
-        this.rotationDelta_ += delta;
-        if (!this.rotating_ && Math.abs(this.rotationDelta_) > this.threshold_) {
-          this.rotating_ = true;
-        }
-        rotationDelta = delta;
-      }
-      this.lastAngle_ = angle;
-      var map2 = mapBrowserEvent.map;
-      var view = map2.getView();
-      if (view.getConstraints().rotation === disable) {
-        return;
-      }
-      var viewportPosition = map2.getViewport().getBoundingClientRect();
-      var centroid$1 = centroid(this.targetPointers);
-      centroid$1[0] -= viewportPosition.left;
-      centroid$1[1] -= viewportPosition.top;
-      this.anchor_ = map2.getCoordinateFromPixelInternal(centroid$1);
-      if (this.rotating_) {
-        map2.render();
-        view.adjustRotationInternal(rotationDelta, this.anchor_);
-      }
-    };
-    PinchRotate2.prototype.handleUpEvent = function(mapBrowserEvent) {
-      if (this.targetPointers.length < 2) {
-        var map2 = mapBrowserEvent.map;
-        var view = map2.getView();
-        view.endInteraction(this.duration_);
-        return false;
-      } else {
-        return true;
-      }
-    };
-    PinchRotate2.prototype.handleDownEvent = function(mapBrowserEvent) {
-      if (this.targetPointers.length >= 2) {
-        var map2 = mapBrowserEvent.map;
-        this.anchor_ = null;
-        this.lastAngle_ = void 0;
-        this.rotating_ = false;
-        this.rotationDelta_ = 0;
-        if (!this.handlingDownUpSequence) {
-          map2.getView().beginInteraction();
-        }
-        return true;
-      } else {
-        return false;
-      }
-    };
-    return PinchRotate2;
-  }(PointerInteraction$1);
-  const PinchRotate$1 = PinchRotate;
-  var __extends$q = globalThis && globalThis.__extends || function() {
-    var extendStatics = function(d, b) {
-      extendStatics = Object.setPrototypeOf || { __proto__: [] } instanceof Array && function(d2, b2) {
-        d2.__proto__ = b2;
-      } || function(d2, b2) {
-        for (var p2 in b2)
-          if (Object.prototype.hasOwnProperty.call(b2, p2))
-            d2[p2] = b2[p2];
-      };
-      return extendStatics(d, b);
-    };
-    return function(d, b) {
-      if (typeof b !== "function" && b !== null)
-        throw new TypeError("Class extends value " + String(b) + " is not a constructor or null");
-      extendStatics(d, b);
-      function __() {
-        this.constructor = d;
-      }
-      d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
-    };
-  }();
-  var PinchZoom = function(_super) {
-    __extends$q(PinchZoom2, _super);
-    function PinchZoom2(opt_options) {
-      var _this = this;
-      var options = opt_options ? opt_options : {};
-      var pointerOptions = options;
-      if (!pointerOptions.stopDown) {
-        pointerOptions.stopDown = FALSE;
-      }
-      _this = _super.call(this, pointerOptions) || this;
-      _this.anchor_ = null;
-      _this.duration_ = options.duration !== void 0 ? options.duration : 400;
-      _this.lastDistance_ = void 0;
-      _this.lastScaleDelta_ = 1;
-      return _this;
-    }
-    PinchZoom2.prototype.handleDragEvent = function(mapBrowserEvent) {
-      var scaleDelta = 1;
-      var touch0 = this.targetPointers[0];
-      var touch1 = this.targetPointers[1];
-      var dx = touch0.clientX - touch1.clientX;
-      var dy = touch0.clientY - touch1.clientY;
-      var distance = Math.sqrt(dx * dx + dy * dy);
-      if (this.lastDistance_ !== void 0) {
-        scaleDelta = this.lastDistance_ / distance;
-      }
-      this.lastDistance_ = distance;
-      var map2 = mapBrowserEvent.map;
-      var view = map2.getView();
-      if (scaleDelta != 1) {
-        this.lastScaleDelta_ = scaleDelta;
-      }
-      var viewportPosition = map2.getViewport().getBoundingClientRect();
-      var centroid$1 = centroid(this.targetPointers);
-      centroid$1[0] -= viewportPosition.left;
-      centroid$1[1] -= viewportPosition.top;
-      this.anchor_ = map2.getCoordinateFromPixelInternal(centroid$1);
-      map2.render();
-      view.adjustResolutionInternal(scaleDelta, this.anchor_);
-    };
-    PinchZoom2.prototype.handleUpEvent = function(mapBrowserEvent) {
-      if (this.targetPointers.length < 2) {
-        var map2 = mapBrowserEvent.map;
-        var view = map2.getView();
-        var direction = this.lastScaleDelta_ > 1 ? 1 : -1;
-        view.endInteraction(this.duration_, direction);
-        return false;
-      } else {
-        return true;
-      }
-    };
-    PinchZoom2.prototype.handleDownEvent = function(mapBrowserEvent) {
-      if (this.targetPointers.length >= 2) {
-        var map2 = mapBrowserEvent.map;
-        this.anchor_ = null;
-        this.lastDistance_ = void 0;
-        this.lastScaleDelta_ = 1;
-        if (!this.handlingDownUpSequence) {
-          map2.getView().beginInteraction();
-        }
-        return true;
-      } else {
-        return false;
-      }
-    };
-    return PinchZoom2;
-  }(PointerInteraction$1);
-  const PinchZoom$1 = PinchZoom;
-  const ImageState = {
-    IDLE: 0,
-    LOADING: 1,
-    LOADED: 2,
-    ERROR: 3,
-    EMPTY: 4
-  };
-  var __extends$p = globalThis && globalThis.__extends || function() {
-    var extendStatics = function(d, b) {
-      extendStatics = Object.setPrototypeOf || { __proto__: [] } instanceof Array && function(d2, b2) {
-        d2.__proto__ = b2;
-      } || function(d2, b2) {
-        for (var p2 in b2)
-          if (Object.prototype.hasOwnProperty.call(b2, p2))
-            d2[p2] = b2[p2];
-      };
-      return extendStatics(d, b);
-    };
-    return function(d, b) {
-      if (typeof b !== "function" && b !== null)
-        throw new TypeError("Class extends value " + String(b) + " is not a constructor or null");
-      extendStatics(d, b);
-      function __() {
-        this.constructor = d;
-      }
-      d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
-    };
-  }();
-  var LayerRenderer = function(_super) {
-    __extends$p(LayerRenderer2, _super);
-    function LayerRenderer2(layer) {
-      var _this = _super.call(this) || this;
-      _this.ready = true;
-      _this.boundHandleImageChange_ = _this.handleImageChange_.bind(_this);
-      _this.layer_ = layer;
-      _this.declutterExecutorGroup = null;
-      return _this;
-    }
-    LayerRenderer2.prototype.getFeatures = function(pixel) {
-      return abstract();
-    };
-    LayerRenderer2.prototype.getData = function(pixel) {
-      return null;
-    };
-    LayerRenderer2.prototype.prepareFrame = function(frameState) {
-      return abstract();
-    };
-    LayerRenderer2.prototype.renderFrame = function(frameState, target) {
-      return abstract();
-    };
-    LayerRenderer2.prototype.loadedTileCallback = function(tiles, zoom, tile) {
-      if (!tiles[zoom]) {
-        tiles[zoom] = {};
-      }
-      tiles[zoom][tile.tileCoord.toString()] = tile;
-      return void 0;
-    };
-    LayerRenderer2.prototype.createLoadedTileFinder = function(source, projection, tiles) {
-      return function(zoom, tileRange) {
-        var callback = this.loadedTileCallback.bind(this, tiles, zoom);
-        return source.forEachLoadedTile(projection, zoom, tileRange, callback);
-      }.bind(this);
-    };
-    LayerRenderer2.prototype.forEachFeatureAtCoordinate = function(coordinate, frameState, hitTolerance, callback, matches2) {
-      return void 0;
-    };
-    LayerRenderer2.prototype.getDataAtPixel = function(pixel, frameState, hitTolerance) {
-      return null;
-    };
-    LayerRenderer2.prototype.getLayer = function() {
-      return this.layer_;
-    };
-    LayerRenderer2.prototype.handleFontsChanged = function() {
-    };
-    LayerRenderer2.prototype.handleImageChange_ = function(event) {
-      var image = event.target;
-      if (image.getState() === ImageState.LOADED) {
-        this.renderIfReadyAndVisible();
-      }
-    };
-    LayerRenderer2.prototype.loadImage = function(image) {
-      var imageState = image.getState();
-      if (imageState != ImageState.LOADED && imageState != ImageState.ERROR) {
-        image.addEventListener(EventType$1.CHANGE, this.boundHandleImageChange_);
-      }
-      if (imageState == ImageState.IDLE) {
-        image.load();
-        imageState = image.getState();
-      }
-      return imageState == ImageState.LOADED;
-    };
-    LayerRenderer2.prototype.renderIfReadyAndVisible = function() {
-      var layer = this.getLayer();
-      if (layer && layer.getVisible() && layer.getSourceState() === "ready") {
-        layer.changed();
-      }
-    };
-    LayerRenderer2.prototype.disposeInternal = function() {
-      delete this.layer_;
-      _super.prototype.disposeInternal.call(this);
-    };
-    return LayerRenderer2;
-  }(Observable);
-  const LayerRenderer$1 = LayerRenderer;
-  var __extends$o = globalThis && globalThis.__extends || function() {
-    var extendStatics = function(d, b) {
-      extendStatics = Object.setPrototypeOf || { __proto__: [] } instanceof Array && function(d2, b2) {
-        d2.__proto__ = b2;
-      } || function(d2, b2) {
-        for (var p2 in b2)
-          if (Object.prototype.hasOwnProperty.call(b2, p2))
-            d2[p2] = b2[p2];
-      };
-      return extendStatics(d, b);
-    };
-    return function(d, b) {
-      if (typeof b !== "function" && b !== null)
-        throw new TypeError("Class extends value " + String(b) + " is not a constructor or null");
-      extendStatics(d, b);
-      function __() {
-        this.constructor = d;
-      }
-      d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
-    };
-  }();
-  var pixelContext = null;
-  function createPixelContext() {
-    var canvas = document.createElement("canvas");
-    canvas.width = 1;
-    canvas.height = 1;
-    pixelContext = canvas.getContext("2d");
-  }
-  var CanvasLayerRenderer = function(_super) {
-    __extends$o(CanvasLayerRenderer2, _super);
-    function CanvasLayerRenderer2(layer) {
-      var _this = _super.call(this, layer) || this;
-      _this.container = null;
-      _this.renderedResolution;
-      _this.tempTransform = create();
-      _this.pixelTransform = create();
-      _this.inversePixelTransform = create();
-      _this.context = null;
-      _this.containerReused = false;
-      _this.pixelContext_ = null;
-      _this.frameState = null;
-      return _this;
-    }
-    CanvasLayerRenderer2.prototype.getImageData = function(image, col, row) {
-      if (!pixelContext) {
-        createPixelContext();
-      }
-      pixelContext.clearRect(0, 0, 1, 1);
-      var data;
-      try {
-        pixelContext.drawImage(image, col, row, 1, 1, 0, 0, 1, 1);
-        data = pixelContext.getImageData(0, 0, 1, 1).data;
-      } catch (err) {
-        pixelContext = null;
-        return null;
-      }
-      return data;
-    };
-    CanvasLayerRenderer2.prototype.getBackground = function(frameState) {
-      var layer = this.getLayer();
-      var background = layer.getBackground();
-      if (typeof background === "function") {
-        background = background(frameState.viewState.resolution);
-      }
-      return background || void 0;
-    };
-    CanvasLayerRenderer2.prototype.useContainer = function(target, transform2, opt_backgroundColor) {
-      var layerClassName = this.getLayer().getClassName();
-      var container, context;
-      if (target && target.className === layerClassName && (!opt_backgroundColor || target && target.style.backgroundColor && equals(asArray(target.style.backgroundColor), asArray(opt_backgroundColor)))) {
-        var canvas = target.firstElementChild;
-        if (canvas instanceof HTMLCanvasElement) {
-          context = canvas.getContext("2d");
-        }
-      }
-      if (context && context.canvas.style.transform === transform2) {
-        this.container = target;
-        this.context = context;
-        this.containerReused = true;
-      } else if (this.containerReused) {
-        this.container = null;
-        this.context = null;
-        this.containerReused = false;
-      }
-      if (!this.container) {
-        container = document.createElement("div");
-        container.className = layerClassName;
-        var style = container.style;
-        style.position = "absolute";
-        style.width = "100%";
-        style.height = "100%";
-        context = createCanvasContext2D();
-        var canvas = context.canvas;
-        container.appendChild(canvas);
-        style = canvas.style;
-        style.position = "absolute";
-        style.left = "0";
-        style.transformOrigin = "top left";
-        this.container = container;
-        this.context = context;
-      }
-      if (!this.containerReused && opt_backgroundColor && !this.container.style.backgroundColor) {
-        this.container.style.backgroundColor = opt_backgroundColor;
-      }
-    };
-    CanvasLayerRenderer2.prototype.clipUnrotated = function(context, frameState, extent) {
-      var topLeft = getTopLeft(extent);
-      var topRight = getTopRight(extent);
-      var bottomRight = getBottomRight(extent);
-      var bottomLeft = getBottomLeft(extent);
-      apply(frameState.coordinateToPixelTransform, topLeft);
-      apply(frameState.coordinateToPixelTransform, topRight);
-      apply(frameState.coordinateToPixelTransform, bottomRight);
-      apply(frameState.coordinateToPixelTransform, bottomLeft);
-      var inverted = this.inversePixelTransform;
-      apply(inverted, topLeft);
-      apply(inverted, topRight);
-      apply(inverted, bottomRight);
-      apply(inverted, bottomLeft);
-      context.save();
-      context.beginPath();
-      context.moveTo(Math.round(topLeft[0]), Math.round(topLeft[1]));
-      context.lineTo(Math.round(topRight[0]), Math.round(topRight[1]));
-      context.lineTo(Math.round(bottomRight[0]), Math.round(bottomRight[1]));
-      context.lineTo(Math.round(bottomLeft[0]), Math.round(bottomLeft[1]));
-      context.clip();
-    };
-    CanvasLayerRenderer2.prototype.dispatchRenderEvent_ = function(type, context, frameState) {
-      var layer = this.getLayer();
-      if (layer.hasListener(type)) {
-        var event_1 = new RenderEvent$1(type, this.inversePixelTransform, frameState, context);
-        layer.dispatchEvent(event_1);
-      }
-    };
-    CanvasLayerRenderer2.prototype.preRender = function(context, frameState) {
-      this.frameState = frameState;
-      this.dispatchRenderEvent_(EventType.PRERENDER, context, frameState);
-    };
-    CanvasLayerRenderer2.prototype.postRender = function(context, frameState) {
-      this.dispatchRenderEvent_(EventType.POSTRENDER, context, frameState);
-    };
-    CanvasLayerRenderer2.prototype.getRenderTransform = function(center, resolution, rotation, pixelRatio, width, height, offsetX) {
-      var dx1 = width / 2;
-      var dy1 = height / 2;
-      var sx = pixelRatio / resolution;
-      var sy = -sx;
-      var dx2 = -center[0] + offsetX;
-      var dy2 = -center[1];
-      return compose(this.tempTransform, dx1, dy1, sx, sy, -rotation, dx2, dy2);
-    };
-    CanvasLayerRenderer2.prototype.getDataAtPixel = function(pixel, frameState, hitTolerance) {
-      var renderPixel = apply(this.inversePixelTransform, pixel.slice());
-      var context = this.context;
-      var layer = this.getLayer();
-      var layerExtent = layer.getExtent();
-      if (layerExtent) {
-        var renderCoordinate = apply(frameState.pixelToCoordinateTransform, pixel.slice());
-        if (!containsCoordinate(layerExtent, renderCoordinate)) {
-          return null;
-        }
-      }
-      var x = Math.round(renderPixel[0]);
-      var y2 = Math.round(renderPixel[1]);
-      var pixelContext2 = this.pixelContext_;
-      if (!pixelContext2) {
-        var pixelCanvas = document.createElement("canvas");
-        pixelCanvas.width = 1;
-        pixelCanvas.height = 1;
-        pixelContext2 = pixelCanvas.getContext("2d");
-        this.pixelContext_ = pixelContext2;
-      }
-      pixelContext2.clearRect(0, 0, 1, 1);
-      var data;
-      try {
-        pixelContext2.drawImage(context.canvas, x, y2, 1, 1, 0, 0, 1, 1);
-        data = pixelContext2.getImageData(0, 0, 1, 1).data;
-      } catch (err) {
-        if (err.name === "SecurityError") {
-          this.pixelContext_ = null;
-          return new Uint8Array();
-        }
-        return data;
-      }
-      if (data[3] === 0) {
-        return null;
-      }
-      return data;
-    };
-    CanvasLayerRenderer2.prototype.disposeInternal = function() {
-      delete this.frameState;
-      _super.prototype.disposeInternal.call(this);
-    };
-    return CanvasLayerRenderer2;
-  }(LayerRenderer$1);
-  const CanvasLayerRenderer$1 = CanvasLayerRenderer;
-  var __extends$n = globalThis && globalThis.__extends || function() {
-    var extendStatics = function(d, b) {
-      extendStatics = Object.setPrototypeOf || { __proto__: [] } instanceof Array && function(d2, b2) {
-        d2.__proto__ = b2;
-      } || function(d2, b2) {
-        for (var p2 in b2)
-          if (Object.prototype.hasOwnProperty.call(b2, p2))
-            d2[p2] = b2[p2];
-      };
-      return extendStatics(d, b);
-    };
-    return function(d, b) {
-      if (typeof b !== "function" && b !== null)
-        throw new TypeError("Class extends value " + String(b) + " is not a constructor or null");
-      extendStatics(d, b);
-      function __() {
-        this.constructor = d;
-      }
-      d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
-    };
-  }();
-  var ImageBase = function(_super) {
-    __extends$n(ImageBase2, _super);
-    function ImageBase2(extent, resolution, pixelRatio, state) {
-      var _this = _super.call(this) || this;
-      _this.extent = extent;
-      _this.pixelRatio_ = pixelRatio;
-      _this.resolution = resolution;
-      _this.state = state;
-      return _this;
-    }
-    ImageBase2.prototype.changed = function() {
-      this.dispatchEvent(EventType$1.CHANGE);
-    };
-    ImageBase2.prototype.getExtent = function() {
-      return this.extent;
-    };
-    ImageBase2.prototype.getImage = function() {
-      return abstract();
-    };
-    ImageBase2.prototype.getPixelRatio = function() {
-      return this.pixelRatio_;
-    };
-    ImageBase2.prototype.getResolution = function() {
-      return this.resolution;
-    };
-    ImageBase2.prototype.getState = function() {
-      return this.state;
-    };
-    ImageBase2.prototype.load = function() {
-      abstract();
-    };
-    return ImageBase2;
-  }(EventTarget);
-  const ImageBase$1 = ImageBase;
-  var __extends$m = globalThis && globalThis.__extends || function() {
-    var extendStatics = function(d, b) {
-      extendStatics = Object.setPrototypeOf || { __proto__: [] } instanceof Array && function(d2, b2) {
-        d2.__proto__ = b2;
-      } || function(d2, b2) {
-        for (var p2 in b2)
-          if (Object.prototype.hasOwnProperty.call(b2, p2))
-            d2[p2] = b2[p2];
-      };
-      return extendStatics(d, b);
-    };
-    return function(d, b) {
-      if (typeof b !== "function" && b !== null)
-        throw new TypeError("Class extends value " + String(b) + " is not a constructor or null");
-      extendStatics(d, b);
-      function __() {
-        this.constructor = d;
-      }
-      d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
-    };
-  }();
-  var ImageWrapper = function(_super) {
-    __extends$m(ImageWrapper2, _super);
-    function ImageWrapper2(extent, resolution, pixelRatio, src2, crossOrigin, imageLoadFunction) {
-      var _this = _super.call(this, extent, resolution, pixelRatio, ImageState.IDLE) || this;
-      _this.src_ = src2;
-      _this.image_ = new Image();
-      if (crossOrigin !== null) {
-        _this.image_.crossOrigin = crossOrigin;
-      }
-      _this.unlisten_ = null;
-      _this.state = ImageState.IDLE;
-      _this.imageLoadFunction_ = imageLoadFunction;
-      return _this;
-    }
-    ImageWrapper2.prototype.getImage = function() {
-      return this.image_;
-    };
-    ImageWrapper2.prototype.handleImageError_ = function() {
-      this.state = ImageState.ERROR;
-      this.unlistenImage_();
-      this.changed();
-    };
-    ImageWrapper2.prototype.handleImageLoad_ = function() {
-      if (this.resolution === void 0) {
-        this.resolution = getHeight(this.extent) / this.image_.height;
-      }
-      this.state = ImageState.LOADED;
-      this.unlistenImage_();
-      this.changed();
-    };
-    ImageWrapper2.prototype.load = function() {
-      if (this.state == ImageState.IDLE || this.state == ImageState.ERROR) {
-        this.state = ImageState.LOADING;
-        this.changed();
-        this.imageLoadFunction_(this, this.src_);
-        this.unlisten_ = listenImage(this.image_, this.handleImageLoad_.bind(this), this.handleImageError_.bind(this));
-      }
-    };
-    ImageWrapper2.prototype.setImage = function(image) {
-      this.image_ = image;
-      this.resolution = getHeight(this.extent) / this.image_.height;
-    };
-    ImageWrapper2.prototype.unlistenImage_ = function() {
-      if (this.unlisten_) {
-        this.unlisten_();
-        this.unlisten_ = null;
-      }
-    };
-    return ImageWrapper2;
-  }(ImageBase$1);
-  function listenImage(image, loadHandler, errorHandler) {
-    var img = image;
-    var listening = true;
-    var decoding = false;
-    var loaded = false;
-    var listenerKeys = [
-      listenOnce(img, EventType$1.LOAD, function() {
-        loaded = true;
-        if (!decoding) {
-          loadHandler();
-        }
-      })
-    ];
-    if (img.src && IMAGE_DECODE) {
-      decoding = true;
-      img.decode().then(function() {
-        if (listening) {
-          loadHandler();
-        }
-      }).catch(function(error) {
-        if (listening) {
-          if (loaded) {
-            loadHandler();
-          } else {
-            errorHandler();
-          }
-        }
-      });
-    } else {
-      listenerKeys.push(listenOnce(img, EventType$1.ERROR, errorHandler));
-    }
-    return function unlisten() {
-      listening = false;
-      listenerKeys.forEach(unlistenByKey);
-    };
-  }
-  const ImageWrapper$1 = ImageWrapper;
-  var __extends$l = globalThis && globalThis.__extends || function() {
-    var extendStatics = function(d, b) {
-      extendStatics = Object.setPrototypeOf || { __proto__: [] } instanceof Array && function(d2, b2) {
-        d2.__proto__ = b2;
-      } || function(d2, b2) {
-        for (var p2 in b2)
-          if (Object.prototype.hasOwnProperty.call(b2, p2))
-            d2[p2] = b2[p2];
-      };
-      return extendStatics(d, b);
-    };
-    return function(d, b) {
-      if (typeof b !== "function" && b !== null)
-        throw new TypeError("Class extends value " + String(b) + " is not a constructor or null");
-      extendStatics(d, b);
-      function __() {
-        this.constructor = d;
-      }
-      d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
-    };
-  }();
-  var Source = function(_super) {
-    __extends$l(Source2, _super);
-    function Source2(options) {
-      var _this = _super.call(this) || this;
-      _this.projection = get$2(options.projection);
-      _this.attributions_ = adaptAttributions(options.attributions);
-      _this.attributionsCollapsible_ = options.attributionsCollapsible !== void 0 ? options.attributionsCollapsible : true;
-      _this.loading = false;
-      _this.state_ = options.state !== void 0 ? options.state : "ready";
-      _this.wrapX_ = options.wrapX !== void 0 ? options.wrapX : false;
-      _this.interpolate_ = !!options.interpolate;
-      _this.viewResolver = null;
-      _this.viewRejector = null;
-      var self2 = _this;
-      _this.viewPromise_ = new Promise(function(resolve2, reject) {
-        self2.viewResolver = resolve2;
-        self2.viewRejector = reject;
-      });
-      return _this;
-    }
-    Source2.prototype.getAttributions = function() {
-      return this.attributions_;
-    };
-    Source2.prototype.getAttributionsCollapsible = function() {
-      return this.attributionsCollapsible_;
-    };
-    Source2.prototype.getProjection = function() {
-      return this.projection;
-    };
-    Source2.prototype.getResolutions = function() {
-      return abstract();
-    };
-    Source2.prototype.getView = function() {
-      return this.viewPromise_;
-    };
-    Source2.prototype.getState = function() {
-      return this.state_;
-    };
-    Source2.prototype.getWrapX = function() {
-      return this.wrapX_;
-    };
-    Source2.prototype.getInterpolate = function() {
-      return this.interpolate_;
-    };
-    Source2.prototype.refresh = function() {
-      this.changed();
-    };
-    Source2.prototype.setAttributions = function(attributions) {
-      this.attributions_ = adaptAttributions(attributions);
-      this.changed();
-    };
-    Source2.prototype.setState = function(state) {
-      this.state_ = state;
-      this.changed();
-    };
-    return Source2;
-  }(BaseObject$1);
-  function adaptAttributions(attributionLike) {
-    if (!attributionLike) {
-      return null;
-    }
-    if (Array.isArray(attributionLike)) {
-      return function(frameState) {
-        return attributionLike;
-      };
-    }
-    if (typeof attributionLike === "function") {
-      return attributionLike;
-    }
-    return function(frameState) {
-      return [attributionLike];
-    };
-  }
-  const Source$1 = Source;
-  function defaults$2(opt_options) {
-    var options = opt_options ? opt_options : {};
-    var interactions = new Collection$1();
-    var kinetic = new Kinetic$1(-5e-3, 0.05, 100);
-    var altShiftDragRotate = options.altShiftDragRotate !== void 0 ? options.altShiftDragRotate : true;
-    if (altShiftDragRotate) {
-      interactions.push(new DragRotate$1());
-    }
-    var doubleClickZoom = options.doubleClickZoom !== void 0 ? options.doubleClickZoom : true;
-    if (doubleClickZoom) {
-      interactions.push(new DoubleClickZoom$1({
-        delta: options.zoomDelta,
-        duration: options.zoomDuration
-      }));
-    }
-    var dragPan = options.dragPan !== void 0 ? options.dragPan : true;
-    if (dragPan) {
-      interactions.push(new DragPan$1({
-        onFocusOnly: options.onFocusOnly,
-        kinetic
-      }));
-    }
-    var pinchRotate = options.pinchRotate !== void 0 ? options.pinchRotate : true;
-    if (pinchRotate) {
-      interactions.push(new PinchRotate$1());
-    }
-    var pinchZoom = options.pinchZoom !== void 0 ? options.pinchZoom : true;
-    if (pinchZoom) {
-      interactions.push(new PinchZoom$1({
-        duration: options.zoomDuration
-      }));
-    }
-    var keyboard = options.keyboard !== void 0 ? options.keyboard : true;
-    if (keyboard) {
-      interactions.push(new KeyboardPan$1());
-      interactions.push(new KeyboardZoom$1({
-        delta: options.zoomDelta,
-        duration: options.zoomDuration
-      }));
-    }
-    var mouseWheelZoom = options.mouseWheelZoom !== void 0 ? options.mouseWheelZoom : true;
-    if (mouseWheelZoom) {
-      interactions.push(new MouseWheelZoom$1({
-        onFocusOnly: options.onFocusOnly,
-        duration: options.zoomDuration
-      }));
-    }
-    var shiftDragZoom = options.shiftDragZoom !== void 0 ? options.shiftDragZoom : true;
-    if (shiftDragZoom) {
-      interactions.push(new DragZoom$1({
-        duration: options.zoomDuration
-      }));
-    }
-    return interactions;
-  }
-  var __extends$k = globalThis && globalThis.__extends || function() {
-    var extendStatics = function(d, b) {
-      extendStatics = Object.setPrototypeOf || { __proto__: [] } instanceof Array && function(d2, b2) {
-        d2.__proto__ = b2;
-      } || function(d2, b2) {
-        for (var p2 in b2)
-          if (Object.prototype.hasOwnProperty.call(b2, p2))
-            d2[p2] = b2[p2];
-      };
-      return extendStatics(d, b);
-    };
-    return function(d, b) {
-      if (typeof b !== "function" && b !== null)
-        throw new TypeError("Class extends value " + String(b) + " is not a constructor or null");
-      extendStatics(d, b);
-      function __() {
-        this.constructor = d;
-      }
-      d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
-    };
-  }();
-  var Map$1 = function(_super) {
-    __extends$k(Map2, _super);
-    function Map2(options) {
-      options = assign({}, options);
-      if (!options.controls) {
-        options.controls = defaults$3();
-      }
-      if (!options.interactions) {
-        options.interactions = defaults$2({
-          onFocusOnly: true
-        });
-      }
-      return _super.call(this, options) || this;
-    }
-    Map2.prototype.createRenderer = function() {
-      return new CompositeMapRenderer$1(this);
-    };
-    return Map2;
-  }(PluggableMap$1);
-  const OlMap = Map$1;
   const PROJECTION_WEBMERCATOR = "EPSG:3857";
   const PROJECTION_WGS84 = "EPSG:4326";
   const PROJECTION_LUX = "EPSG:2169";
@@ -24317,8 +15311,8 @@ This will fail in production.`);
       return map;
     }
     function createMap() {
-      olMap.value = map = new OlMap({
-        view: new OlView({
+      olMap.value = map = new OlMap__default.default({
+        view: new OlView__default.default({
           zoom: 10,
           center: [682439, 6379152],
           multiWorld: true
@@ -24392,3344 +15386,22 @@ This will fail in production.`);
       getMutatedLayers
     };
   }
-  var __extends$j = globalThis && globalThis.__extends || function() {
-    var extendStatics = function(d, b) {
-      extendStatics = Object.setPrototypeOf || { __proto__: [] } instanceof Array && function(d2, b2) {
-        d2.__proto__ = b2;
-      } || function(d2, b2) {
-        for (var p2 in b2)
-          if (Object.prototype.hasOwnProperty.call(b2, p2))
-            d2[p2] = b2[p2];
-      };
-      return extendStatics(d, b);
-    };
-    return function(d, b) {
-      if (typeof b !== "function" && b !== null)
-        throw new TypeError("Class extends value " + String(b) + " is not a constructor or null");
-      extendStatics(d, b);
-      function __() {
-        this.constructor = d;
-      }
-      d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
-    };
-  }();
-  var BaseImageLayer = function(_super) {
-    __extends$j(BaseImageLayer2, _super);
-    function BaseImageLayer2(opt_options) {
-      var options = opt_options ? opt_options : {};
-      return _super.call(this, options) || this;
-    }
-    return BaseImageLayer2;
-  }(Layer$1);
-  const BaseImageLayer$1 = BaseImageLayer;
-  var ERROR_THRESHOLD = 0.5;
-  var ENABLE_RASTER_REPROJECTION = true;
-  var IMAGE_SMOOTHING_DISABLED = {
-    imageSmoothingEnabled: false,
-    msImageSmoothingEnabled: false
-  };
-  var IMAGE_SMOOTHING_ENABLED = {
-    imageSmoothingEnabled: true,
-    msImageSmoothingEnabled: true
-  };
-  var __extends$i = globalThis && globalThis.__extends || function() {
-    var extendStatics = function(d, b) {
-      extendStatics = Object.setPrototypeOf || { __proto__: [] } instanceof Array && function(d2, b2) {
-        d2.__proto__ = b2;
-      } || function(d2, b2) {
-        for (var p2 in b2)
-          if (Object.prototype.hasOwnProperty.call(b2, p2))
-            d2[p2] = b2[p2];
-      };
-      return extendStatics(d, b);
-    };
-    return function(d, b) {
-      if (typeof b !== "function" && b !== null)
-        throw new TypeError("Class extends value " + String(b) + " is not a constructor or null");
-      extendStatics(d, b);
-      function __() {
-        this.constructor = d;
-      }
-      d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
-    };
-  }();
-  var CanvasImageLayerRenderer = function(_super) {
-    __extends$i(CanvasImageLayerRenderer2, _super);
-    function CanvasImageLayerRenderer2(imageLayer) {
-      var _this = _super.call(this, imageLayer) || this;
-      _this.image_ = null;
-      return _this;
-    }
-    CanvasImageLayerRenderer2.prototype.getImage = function() {
-      return !this.image_ ? null : this.image_.getImage();
-    };
-    CanvasImageLayerRenderer2.prototype.prepareFrame = function(frameState) {
-      var layerState = frameState.layerStatesArray[frameState.layerIndex];
-      var pixelRatio = frameState.pixelRatio;
-      var viewState = frameState.viewState;
-      var viewResolution = viewState.resolution;
-      var imageSource = this.getLayer().getSource();
-      var hints = frameState.viewHints;
-      var renderedExtent = frameState.extent;
-      if (layerState.extent !== void 0) {
-        renderedExtent = getIntersection(renderedExtent, fromUserExtent(layerState.extent, viewState.projection));
-      }
-      if (!hints[ViewHint.ANIMATING] && !hints[ViewHint.INTERACTING] && !isEmpty(renderedExtent)) {
-        if (imageSource) {
-          var projection = viewState.projection;
-          if (!ENABLE_RASTER_REPROJECTION) {
-            var sourceProjection = imageSource.getProjection();
-            if (sourceProjection) {
-              projection = sourceProjection;
-            }
-          }
-          var image = imageSource.getImage(renderedExtent, viewResolution, pixelRatio, projection);
-          if (image) {
-            if (this.loadImage(image)) {
-              this.image_ = image;
-            } else if (image.getState() === ImageState.EMPTY) {
-              this.image_ = null;
-            }
-          }
-        } else {
-          this.image_ = null;
-        }
-      }
-      return !!this.image_;
-    };
-    CanvasImageLayerRenderer2.prototype.getData = function(pixel) {
-      var frameState = this.frameState;
-      if (!frameState) {
-        return null;
-      }
-      var layer = this.getLayer();
-      var coordinate = apply(frameState.pixelToCoordinateTransform, pixel.slice());
-      var layerExtent = layer.getExtent();
-      if (layerExtent) {
-        if (!containsCoordinate(layerExtent, coordinate)) {
-          return null;
-        }
-      }
-      var imageExtent = this.image_.getExtent();
-      var img = this.image_.getImage();
-      var imageMapWidth = getWidth(imageExtent);
-      var col = Math.floor(img.width * ((coordinate[0] - imageExtent[0]) / imageMapWidth));
-      if (col < 0 || col >= img.width) {
-        return null;
-      }
-      var imageMapHeight = getHeight(imageExtent);
-      var row = Math.floor(img.height * ((imageExtent[3] - coordinate[1]) / imageMapHeight));
-      if (row < 0 || row >= img.height) {
-        return null;
-      }
-      return this.getImageData(img, col, row);
-    };
-    CanvasImageLayerRenderer2.prototype.renderFrame = function(frameState, target) {
-      var image = this.image_;
-      var imageExtent = image.getExtent();
-      var imageResolution = image.getResolution();
-      var imagePixelRatio = image.getPixelRatio();
-      var layerState = frameState.layerStatesArray[frameState.layerIndex];
-      var pixelRatio = frameState.pixelRatio;
-      var viewState = frameState.viewState;
-      var viewCenter = viewState.center;
-      var viewResolution = viewState.resolution;
-      var scale2 = pixelRatio * imageResolution / (viewResolution * imagePixelRatio);
-      var extent = frameState.extent;
-      var resolution = viewState.resolution;
-      var rotation = viewState.rotation;
-      var width = Math.round(getWidth(extent) / resolution * pixelRatio);
-      var height = Math.round(getHeight(extent) / resolution * pixelRatio);
-      compose(this.pixelTransform, frameState.size[0] / 2, frameState.size[1] / 2, 1 / pixelRatio, 1 / pixelRatio, rotation, -width / 2, -height / 2);
-      makeInverse(this.inversePixelTransform, this.pixelTransform);
-      var canvasTransform = toString$1(this.pixelTransform);
-      this.useContainer(target, canvasTransform, this.getBackground(frameState));
-      var context = this.context;
-      var canvas = context.canvas;
-      if (canvas.width != width || canvas.height != height) {
-        canvas.width = width;
-        canvas.height = height;
-      } else if (!this.containerReused) {
-        context.clearRect(0, 0, width, height);
-      }
-      var clipped = false;
-      var render2 = true;
-      if (layerState.extent) {
-        var layerExtent = fromUserExtent(layerState.extent, viewState.projection);
-        render2 = intersects(layerExtent, frameState.extent);
-        clipped = render2 && !containsExtent(layerExtent, frameState.extent);
-        if (clipped) {
-          this.clipUnrotated(context, frameState, layerExtent);
-        }
-      }
-      var img = image.getImage();
-      var transform2 = compose(this.tempTransform, width / 2, height / 2, scale2, scale2, 0, imagePixelRatio * (imageExtent[0] - viewCenter[0]) / imageResolution, imagePixelRatio * (viewCenter[1] - imageExtent[3]) / imageResolution);
-      this.renderedResolution = imageResolution * pixelRatio / imagePixelRatio;
-      var dw = img.width * transform2[0];
-      var dh = img.height * transform2[3];
-      if (!this.getLayer().getSource().getInterpolate()) {
-        assign(context, IMAGE_SMOOTHING_DISABLED);
-      }
-      this.preRender(context, frameState);
-      if (render2 && dw >= 0.5 && dh >= 0.5) {
-        var dx = transform2[4];
-        var dy = transform2[5];
-        var opacity = layerState.opacity;
-        var previousAlpha = void 0;
-        if (opacity !== 1) {
-          previousAlpha = context.globalAlpha;
-          context.globalAlpha = opacity;
-        }
-        context.drawImage(img, 0, 0, +img.width, +img.height, dx, dy, dw, dh);
-        if (opacity !== 1) {
-          context.globalAlpha = previousAlpha;
-        }
-      }
-      this.postRender(context, frameState);
-      if (clipped) {
-        context.restore();
-      }
-      assign(context, IMAGE_SMOOTHING_ENABLED);
-      if (canvasTransform !== canvas.style.transform) {
-        canvas.style.transform = canvasTransform;
-      }
-      return this.container;
-    };
-    return CanvasImageLayerRenderer2;
-  }(CanvasLayerRenderer$1);
-  const CanvasImageLayerRenderer$1 = CanvasImageLayerRenderer;
-  var __extends$h = globalThis && globalThis.__extends || function() {
-    var extendStatics = function(d, b) {
-      extendStatics = Object.setPrototypeOf || { __proto__: [] } instanceof Array && function(d2, b2) {
-        d2.__proto__ = b2;
-      } || function(d2, b2) {
-        for (var p2 in b2)
-          if (Object.prototype.hasOwnProperty.call(b2, p2))
-            d2[p2] = b2[p2];
-      };
-      return extendStatics(d, b);
-    };
-    return function(d, b) {
-      if (typeof b !== "function" && b !== null)
-        throw new TypeError("Class extends value " + String(b) + " is not a constructor or null");
-      extendStatics(d, b);
-      function __() {
-        this.constructor = d;
-      }
-      d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
-    };
-  }();
-  var ImageLayer = function(_super) {
-    __extends$h(ImageLayer2, _super);
-    function ImageLayer2(opt_options) {
-      return _super.call(this, opt_options) || this;
-    }
-    ImageLayer2.prototype.createRenderer = function() {
-      return new CanvasImageLayerRenderer$1(this);
-    };
-    ImageLayer2.prototype.getData = function(pixel) {
-      return _super.prototype.getData.call(this, pixel);
-    };
-    return ImageLayer2;
-  }(BaseImageLayer$1);
-  const ImageLayer$1 = ImageLayer;
-  const TileProperty = {
-    PRELOAD: "preload",
-    USE_INTERIM_TILES_ON_ERROR: "useInterimTilesOnError"
-  };
-  var __extends$g = globalThis && globalThis.__extends || function() {
-    var extendStatics = function(d, b) {
-      extendStatics = Object.setPrototypeOf || { __proto__: [] } instanceof Array && function(d2, b2) {
-        d2.__proto__ = b2;
-      } || function(d2, b2) {
-        for (var p2 in b2)
-          if (Object.prototype.hasOwnProperty.call(b2, p2))
-            d2[p2] = b2[p2];
-      };
-      return extendStatics(d, b);
-    };
-    return function(d, b) {
-      if (typeof b !== "function" && b !== null)
-        throw new TypeError("Class extends value " + String(b) + " is not a constructor or null");
-      extendStatics(d, b);
-      function __() {
-        this.constructor = d;
-      }
-      d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
-    };
-  }();
-  var BaseTileLayer = function(_super) {
-    __extends$g(BaseTileLayer2, _super);
-    function BaseTileLayer2(opt_options) {
-      var _this = this;
-      var options = opt_options ? opt_options : {};
-      var baseOptions = assign({}, options);
-      delete baseOptions.preload;
-      delete baseOptions.useInterimTilesOnError;
-      _this = _super.call(this, baseOptions) || this;
-      _this.on;
-      _this.once;
-      _this.un;
-      _this.setPreload(options.preload !== void 0 ? options.preload : 0);
-      _this.setUseInterimTilesOnError(options.useInterimTilesOnError !== void 0 ? options.useInterimTilesOnError : true);
-      return _this;
-    }
-    BaseTileLayer2.prototype.getPreload = function() {
-      return this.get(TileProperty.PRELOAD);
-    };
-    BaseTileLayer2.prototype.setPreload = function(preload) {
-      this.set(TileProperty.PRELOAD, preload);
-    };
-    BaseTileLayer2.prototype.getUseInterimTilesOnError = function() {
-      return this.get(TileProperty.USE_INTERIM_TILES_ON_ERROR);
-    };
-    BaseTileLayer2.prototype.setUseInterimTilesOnError = function(useInterimTilesOnError) {
-      this.set(TileProperty.USE_INTERIM_TILES_ON_ERROR, useInterimTilesOnError);
-    };
-    BaseTileLayer2.prototype.getData = function(pixel) {
-      return _super.prototype.getData.call(this, pixel);
-    };
-    return BaseTileLayer2;
-  }(Layer$1);
-  const BaseTileLayer$1 = BaseTileLayer;
-  var __extends$f = globalThis && globalThis.__extends || function() {
-    var extendStatics = function(d, b) {
-      extendStatics = Object.setPrototypeOf || { __proto__: [] } instanceof Array && function(d2, b2) {
-        d2.__proto__ = b2;
-      } || function(d2, b2) {
-        for (var p2 in b2)
-          if (Object.prototype.hasOwnProperty.call(b2, p2))
-            d2[p2] = b2[p2];
-      };
-      return extendStatics(d, b);
-    };
-    return function(d, b) {
-      if (typeof b !== "function" && b !== null)
-        throw new TypeError("Class extends value " + String(b) + " is not a constructor or null");
-      extendStatics(d, b);
-      function __() {
-        this.constructor = d;
-      }
-      d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
-    };
-  }();
-  var Tile = function(_super) {
-    __extends$f(Tile2, _super);
-    function Tile2(tileCoord, state, opt_options) {
-      var _this = _super.call(this) || this;
-      var options = opt_options ? opt_options : {};
-      _this.tileCoord = tileCoord;
-      _this.state = state;
-      _this.interimTile = null;
-      _this.key = "";
-      _this.transition_ = options.transition === void 0 ? 250 : options.transition;
-      _this.transitionStarts_ = {};
-      _this.interpolate = !!options.interpolate;
-      return _this;
-    }
-    Tile2.prototype.changed = function() {
-      this.dispatchEvent(EventType$1.CHANGE);
-    };
-    Tile2.prototype.release = function() {
-    };
-    Tile2.prototype.getKey = function() {
-      return this.key + "/" + this.tileCoord;
-    };
-    Tile2.prototype.getInterimTile = function() {
-      if (!this.interimTile) {
-        return this;
-      }
-      var tile = this.interimTile;
-      do {
-        if (tile.getState() == TileState.LOADED) {
-          this.transition_ = 0;
-          return tile;
-        }
-        tile = tile.interimTile;
-      } while (tile);
-      return this;
-    };
-    Tile2.prototype.refreshInterimChain = function() {
-      if (!this.interimTile) {
-        return;
-      }
-      var tile = this.interimTile;
-      var prev = this;
-      do {
-        if (tile.getState() == TileState.LOADED) {
-          tile.interimTile = null;
-          break;
-        } else if (tile.getState() == TileState.LOADING) {
-          prev = tile;
-        } else if (tile.getState() == TileState.IDLE) {
-          prev.interimTile = tile.interimTile;
-        } else {
-          prev = tile;
-        }
-        tile = prev.interimTile;
-      } while (tile);
-    };
-    Tile2.prototype.getTileCoord = function() {
-      return this.tileCoord;
-    };
-    Tile2.prototype.getState = function() {
-      return this.state;
-    };
-    Tile2.prototype.setState = function(state) {
-      if (this.state !== TileState.ERROR && this.state > state) {
-        throw new Error("Tile load sequence violation");
-      }
-      this.state = state;
-      this.changed();
-    };
-    Tile2.prototype.load = function() {
-      abstract();
-    };
-    Tile2.prototype.getAlpha = function(id, time) {
-      if (!this.transition_) {
-        return 1;
-      }
-      var start2 = this.transitionStarts_[id];
-      if (!start2) {
-        start2 = time;
-        this.transitionStarts_[id] = start2;
-      } else if (start2 === -1) {
-        return 1;
-      }
-      var delta = time - start2 + 1e3 / 60;
-      if (delta >= this.transition_) {
-        return 1;
-      }
-      return easeIn(delta / this.transition_);
-    };
-    Tile2.prototype.inTransition = function(id) {
-      if (!this.transition_) {
-        return false;
-      }
-      return this.transitionStarts_[id] !== -1;
-    };
-    Tile2.prototype.endTransition = function(id) {
-      if (this.transition_) {
-        this.transitionStarts_[id] = -1;
-      }
-    };
-    return Tile2;
-  }(EventTarget);
-  const Tile$1 = Tile;
-  var __extends$e = globalThis && globalThis.__extends || function() {
-    var extendStatics = function(d, b) {
-      extendStatics = Object.setPrototypeOf || { __proto__: [] } instanceof Array && function(d2, b2) {
-        d2.__proto__ = b2;
-      } || function(d2, b2) {
-        for (var p2 in b2)
-          if (Object.prototype.hasOwnProperty.call(b2, p2))
-            d2[p2] = b2[p2];
-      };
-      return extendStatics(d, b);
-    };
-    return function(d, b) {
-      if (typeof b !== "function" && b !== null)
-        throw new TypeError("Class extends value " + String(b) + " is not a constructor or null");
-      extendStatics(d, b);
-      function __() {
-        this.constructor = d;
-      }
-      d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
-    };
-  }();
-  var ImageTile = function(_super) {
-    __extends$e(ImageTile2, _super);
-    function ImageTile2(tileCoord, state, src2, crossOrigin, tileLoadFunction, opt_options) {
-      var _this = _super.call(this, tileCoord, state, opt_options) || this;
-      _this.crossOrigin_ = crossOrigin;
-      _this.src_ = src2;
-      _this.key = src2;
-      _this.image_ = new Image();
-      if (crossOrigin !== null) {
-        _this.image_.crossOrigin = crossOrigin;
-      }
-      _this.unlisten_ = null;
-      _this.tileLoadFunction_ = tileLoadFunction;
-      return _this;
-    }
-    ImageTile2.prototype.getImage = function() {
-      return this.image_;
-    };
-    ImageTile2.prototype.setImage = function(element) {
-      this.image_ = element;
-      this.state = TileState.LOADED;
-      this.unlistenImage_();
-      this.changed();
-    };
-    ImageTile2.prototype.handleImageError_ = function() {
-      this.state = TileState.ERROR;
-      this.unlistenImage_();
-      this.image_ = getBlankImage();
-      this.changed();
-    };
-    ImageTile2.prototype.handleImageLoad_ = function() {
-      var image = this.image_;
-      if (image.naturalWidth && image.naturalHeight) {
-        this.state = TileState.LOADED;
-      } else {
-        this.state = TileState.EMPTY;
-      }
-      this.unlistenImage_();
-      this.changed();
-    };
-    ImageTile2.prototype.load = function() {
-      if (this.state == TileState.ERROR) {
-        this.state = TileState.IDLE;
-        this.image_ = new Image();
-        if (this.crossOrigin_ !== null) {
-          this.image_.crossOrigin = this.crossOrigin_;
-        }
-      }
-      if (this.state == TileState.IDLE) {
-        this.state = TileState.LOADING;
-        this.changed();
-        this.tileLoadFunction_(this, this.src_);
-        this.unlisten_ = listenImage(this.image_, this.handleImageLoad_.bind(this), this.handleImageError_.bind(this));
-      }
-    };
-    ImageTile2.prototype.unlistenImage_ = function() {
-      if (this.unlisten_) {
-        this.unlisten_();
-        this.unlisten_ = null;
-      }
-    };
-    return ImageTile2;
-  }(Tile$1);
-  function getBlankImage() {
-    var ctx = createCanvasContext2D(1, 1);
-    ctx.fillStyle = "rgba(0,0,0,0)";
-    ctx.fillRect(0, 0, 1, 1);
-    return ctx.canvas;
-  }
-  const ImageTile$1 = ImageTile;
-  var MAX_SUBDIVISION = 10;
-  var MAX_TRIANGLE_WIDTH = 0.25;
-  var Triangulation = function() {
-    function Triangulation2(sourceProj, targetProj, targetExtent, maxSourceExtent, errorThreshold, opt_destinationResolution) {
-      this.sourceProj_ = sourceProj;
-      this.targetProj_ = targetProj;
-      var transformInvCache = {};
-      var transformInv = getTransform(this.targetProj_, this.sourceProj_);
-      this.transformInv_ = function(c2) {
-        var key = c2[0] + "/" + c2[1];
-        if (!transformInvCache[key]) {
-          transformInvCache[key] = transformInv(c2);
-        }
-        return transformInvCache[key];
-      };
-      this.maxSourceExtent_ = maxSourceExtent;
-      this.errorThresholdSquared_ = errorThreshold * errorThreshold;
-      this.triangles_ = [];
-      this.wrapsXInSource_ = false;
-      this.canWrapXInSource_ = this.sourceProj_.canWrapX() && !!maxSourceExtent && !!this.sourceProj_.getExtent() && getWidth(maxSourceExtent) == getWidth(this.sourceProj_.getExtent());
-      this.sourceWorldWidth_ = this.sourceProj_.getExtent() ? getWidth(this.sourceProj_.getExtent()) : null;
-      this.targetWorldWidth_ = this.targetProj_.getExtent() ? getWidth(this.targetProj_.getExtent()) : null;
-      var destinationTopLeft = getTopLeft(targetExtent);
-      var destinationTopRight = getTopRight(targetExtent);
-      var destinationBottomRight = getBottomRight(targetExtent);
-      var destinationBottomLeft = getBottomLeft(targetExtent);
-      var sourceTopLeft = this.transformInv_(destinationTopLeft);
-      var sourceTopRight = this.transformInv_(destinationTopRight);
-      var sourceBottomRight = this.transformInv_(destinationBottomRight);
-      var sourceBottomLeft = this.transformInv_(destinationBottomLeft);
-      var maxSubdivision = MAX_SUBDIVISION + (opt_destinationResolution ? Math.max(0, Math.ceil(log2(getArea(targetExtent) / (opt_destinationResolution * opt_destinationResolution * 256 * 256)))) : 0);
-      this.addQuad_(destinationTopLeft, destinationTopRight, destinationBottomRight, destinationBottomLeft, sourceTopLeft, sourceTopRight, sourceBottomRight, sourceBottomLeft, maxSubdivision);
-      if (this.wrapsXInSource_) {
-        var leftBound_1 = Infinity;
-        this.triangles_.forEach(function(triangle, i, arr2) {
-          leftBound_1 = Math.min(leftBound_1, triangle.source[0][0], triangle.source[1][0], triangle.source[2][0]);
-        });
-        this.triangles_.forEach(function(triangle) {
-          if (Math.max(triangle.source[0][0], triangle.source[1][0], triangle.source[2][0]) - leftBound_1 > this.sourceWorldWidth_ / 2) {
-            var newTriangle = [
-              [triangle.source[0][0], triangle.source[0][1]],
-              [triangle.source[1][0], triangle.source[1][1]],
-              [triangle.source[2][0], triangle.source[2][1]]
-            ];
-            if (newTriangle[0][0] - leftBound_1 > this.sourceWorldWidth_ / 2) {
-              newTriangle[0][0] -= this.sourceWorldWidth_;
-            }
-            if (newTriangle[1][0] - leftBound_1 > this.sourceWorldWidth_ / 2) {
-              newTriangle[1][0] -= this.sourceWorldWidth_;
-            }
-            if (newTriangle[2][0] - leftBound_1 > this.sourceWorldWidth_ / 2) {
-              newTriangle[2][0] -= this.sourceWorldWidth_;
-            }
-            var minX = Math.min(newTriangle[0][0], newTriangle[1][0], newTriangle[2][0]);
-            var maxX = Math.max(newTriangle[0][0], newTriangle[1][0], newTriangle[2][0]);
-            if (maxX - minX < this.sourceWorldWidth_ / 2) {
-              triangle.source = newTriangle;
-            }
-          }
-        }.bind(this));
-      }
-      transformInvCache = {};
-    }
-    Triangulation2.prototype.addTriangle_ = function(a, b, c2, aSrc, bSrc, cSrc) {
-      this.triangles_.push({
-        source: [aSrc, bSrc, cSrc],
-        target: [a, b, c2]
-      });
-    };
-    Triangulation2.prototype.addQuad_ = function(a, b, c2, d, aSrc, bSrc, cSrc, dSrc, maxSubdivision) {
-      var sourceQuadExtent = boundingExtent([aSrc, bSrc, cSrc, dSrc]);
-      var sourceCoverageX = this.sourceWorldWidth_ ? getWidth(sourceQuadExtent) / this.sourceWorldWidth_ : null;
-      var sourceWorldWidth = this.sourceWorldWidth_;
-      var wrapsX = this.sourceProj_.canWrapX() && sourceCoverageX > 0.5 && sourceCoverageX < 1;
-      var needsSubdivision = false;
-      if (maxSubdivision > 0) {
-        if (this.targetProj_.isGlobal() && this.targetWorldWidth_) {
-          var targetQuadExtent = boundingExtent([a, b, c2, d]);
-          var targetCoverageX = getWidth(targetQuadExtent) / this.targetWorldWidth_;
-          needsSubdivision = targetCoverageX > MAX_TRIANGLE_WIDTH || needsSubdivision;
-        }
-        if (!wrapsX && this.sourceProj_.isGlobal() && sourceCoverageX) {
-          needsSubdivision = sourceCoverageX > MAX_TRIANGLE_WIDTH || needsSubdivision;
-        }
-      }
-      if (!needsSubdivision && this.maxSourceExtent_) {
-        if (isFinite(sourceQuadExtent[0]) && isFinite(sourceQuadExtent[1]) && isFinite(sourceQuadExtent[2]) && isFinite(sourceQuadExtent[3])) {
-          if (!intersects(sourceQuadExtent, this.maxSourceExtent_)) {
-            return;
-          }
-        }
-      }
-      var isNotFinite = 0;
-      if (!needsSubdivision) {
-        if (!isFinite(aSrc[0]) || !isFinite(aSrc[1]) || !isFinite(bSrc[0]) || !isFinite(bSrc[1]) || !isFinite(cSrc[0]) || !isFinite(cSrc[1]) || !isFinite(dSrc[0]) || !isFinite(dSrc[1])) {
-          if (maxSubdivision > 0) {
-            needsSubdivision = true;
-          } else {
-            isNotFinite = (!isFinite(aSrc[0]) || !isFinite(aSrc[1]) ? 8 : 0) + (!isFinite(bSrc[0]) || !isFinite(bSrc[1]) ? 4 : 0) + (!isFinite(cSrc[0]) || !isFinite(cSrc[1]) ? 2 : 0) + (!isFinite(dSrc[0]) || !isFinite(dSrc[1]) ? 1 : 0);
-            if (isNotFinite != 1 && isNotFinite != 2 && isNotFinite != 4 && isNotFinite != 8) {
-              return;
-            }
-          }
-        }
-      }
-      if (maxSubdivision > 0) {
-        if (!needsSubdivision) {
-          var center = [(a[0] + c2[0]) / 2, (a[1] + c2[1]) / 2];
-          var centerSrc = this.transformInv_(center);
-          var dx = void 0;
-          if (wrapsX) {
-            var centerSrcEstimX = (modulo(aSrc[0], sourceWorldWidth) + modulo(cSrc[0], sourceWorldWidth)) / 2;
-            dx = centerSrcEstimX - modulo(centerSrc[0], sourceWorldWidth);
-          } else {
-            dx = (aSrc[0] + cSrc[0]) / 2 - centerSrc[0];
-          }
-          var dy = (aSrc[1] + cSrc[1]) / 2 - centerSrc[1];
-          var centerSrcErrorSquared = dx * dx + dy * dy;
-          needsSubdivision = centerSrcErrorSquared > this.errorThresholdSquared_;
-        }
-        if (needsSubdivision) {
-          if (Math.abs(a[0] - c2[0]) <= Math.abs(a[1] - c2[1])) {
-            var bc = [(b[0] + c2[0]) / 2, (b[1] + c2[1]) / 2];
-            var bcSrc = this.transformInv_(bc);
-            var da = [(d[0] + a[0]) / 2, (d[1] + a[1]) / 2];
-            var daSrc = this.transformInv_(da);
-            this.addQuad_(a, b, bc, da, aSrc, bSrc, bcSrc, daSrc, maxSubdivision - 1);
-            this.addQuad_(da, bc, c2, d, daSrc, bcSrc, cSrc, dSrc, maxSubdivision - 1);
-          } else {
-            var ab = [(a[0] + b[0]) / 2, (a[1] + b[1]) / 2];
-            var abSrc = this.transformInv_(ab);
-            var cd = [(c2[0] + d[0]) / 2, (c2[1] + d[1]) / 2];
-            var cdSrc = this.transformInv_(cd);
-            this.addQuad_(a, ab, cd, d, aSrc, abSrc, cdSrc, dSrc, maxSubdivision - 1);
-            this.addQuad_(ab, b, c2, cd, abSrc, bSrc, cSrc, cdSrc, maxSubdivision - 1);
-          }
-          return;
-        }
-      }
-      if (wrapsX) {
-        if (!this.canWrapXInSource_) {
-          return;
-        }
-        this.wrapsXInSource_ = true;
-      }
-      if ((isNotFinite & 11) == 0) {
-        this.addTriangle_(a, c2, d, aSrc, cSrc, dSrc);
-      }
-      if ((isNotFinite & 14) == 0) {
-        this.addTriangle_(a, c2, b, aSrc, cSrc, bSrc);
-      }
-      if (isNotFinite) {
-        if ((isNotFinite & 13) == 0) {
-          this.addTriangle_(b, d, a, bSrc, dSrc, aSrc);
-        }
-        if ((isNotFinite & 7) == 0) {
-          this.addTriangle_(b, d, c2, bSrc, dSrc, cSrc);
-        }
-      }
-    };
-    Triangulation2.prototype.calculateSourceExtent = function() {
-      var extent = createEmpty();
-      this.triangles_.forEach(function(triangle, i, arr2) {
-        var src2 = triangle.source;
-        extendCoordinate(extent, src2[0]);
-        extendCoordinate(extent, src2[1]);
-        extendCoordinate(extent, src2[2]);
-      });
-      return extent;
-    };
-    Triangulation2.prototype.getTriangles = function() {
-      return this.triangles_;
-    };
-    return Triangulation2;
-  }();
-  const Triangulation$1 = Triangulation;
-  var brokenDiagonalRendering_;
-  var canvasPool = [];
-  function drawTestTriangle(ctx, u1, v1, u2, v2) {
-    ctx.beginPath();
-    ctx.moveTo(0, 0);
-    ctx.lineTo(u1, v1);
-    ctx.lineTo(u2, v2);
-    ctx.closePath();
-    ctx.save();
-    ctx.clip();
-    ctx.fillRect(0, 0, Math.max(u1, u2) + 1, Math.max(v1, v2));
-    ctx.restore();
-  }
-  function verifyBrokenDiagonalRendering(data, offset) {
-    return Math.abs(data[offset * 4] - 210) > 2 || Math.abs(data[offset * 4 + 3] - 0.75 * 255) > 2;
-  }
-  function isBrokenDiagonalRendering() {
-    if (brokenDiagonalRendering_ === void 0) {
-      var ctx = document.createElement("canvas").getContext("2d");
-      ctx.globalCompositeOperation = "lighter";
-      ctx.fillStyle = "rgba(210, 0, 0, 0.75)";
-      drawTestTriangle(ctx, 4, 5, 4, 0);
-      drawTestTriangle(ctx, 4, 5, 0, 5);
-      var data = ctx.getImageData(0, 0, 3, 3).data;
-      brokenDiagonalRendering_ = verifyBrokenDiagonalRendering(data, 0) || verifyBrokenDiagonalRendering(data, 4) || verifyBrokenDiagonalRendering(data, 8);
-    }
-    return brokenDiagonalRendering_;
-  }
-  function calculateSourceResolution(sourceProj, targetProj, targetCenter, targetResolution) {
-    var sourceCenter = transform$1(targetCenter, targetProj, sourceProj);
-    var sourceResolution = getPointResolution(targetProj, targetResolution, targetCenter);
-    var targetMetersPerUnit = targetProj.getMetersPerUnit();
-    if (targetMetersPerUnit !== void 0) {
-      sourceResolution *= targetMetersPerUnit;
-    }
-    var sourceMetersPerUnit = sourceProj.getMetersPerUnit();
-    if (sourceMetersPerUnit !== void 0) {
-      sourceResolution /= sourceMetersPerUnit;
-    }
-    var sourceExtent = sourceProj.getExtent();
-    if (!sourceExtent || containsCoordinate(sourceExtent, sourceCenter)) {
-      var compensationFactor = getPointResolution(sourceProj, sourceResolution, sourceCenter) / sourceResolution;
-      if (isFinite(compensationFactor) && compensationFactor > 0) {
-        sourceResolution /= compensationFactor;
-      }
-    }
-    return sourceResolution;
-  }
-  function calculateSourceExtentResolution(sourceProj, targetProj, targetExtent, targetResolution) {
-    var targetCenter = getCenter(targetExtent);
-    var sourceResolution = calculateSourceResolution(sourceProj, targetProj, targetCenter, targetResolution);
-    if (!isFinite(sourceResolution) || sourceResolution <= 0) {
-      forEachCorner(targetExtent, function(corner) {
-        sourceResolution = calculateSourceResolution(sourceProj, targetProj, corner, targetResolution);
-        return isFinite(sourceResolution) && sourceResolution > 0;
-      });
-    }
-    return sourceResolution;
-  }
-  function render(width, height, pixelRatio, sourceResolution, sourceExtent, targetResolution, targetExtent, triangulation, sources, gutter, opt_renderEdges, opt_interpolate) {
-    var context = createCanvasContext2D(Math.round(pixelRatio * width), Math.round(pixelRatio * height), canvasPool);
-    if (!opt_interpolate) {
-      assign(context, IMAGE_SMOOTHING_DISABLED);
-    }
-    if (sources.length === 0) {
-      return context.canvas;
-    }
-    context.scale(pixelRatio, pixelRatio);
-    function pixelRound(value) {
-      return Math.round(value * pixelRatio) / pixelRatio;
-    }
-    context.globalCompositeOperation = "lighter";
-    var sourceDataExtent = createEmpty();
-    sources.forEach(function(src2, i, arr2) {
-      extend$3(sourceDataExtent, src2.extent);
-    });
-    var canvasWidthInUnits = getWidth(sourceDataExtent);
-    var canvasHeightInUnits = getHeight(sourceDataExtent);
-    var stitchContext = createCanvasContext2D(Math.round(pixelRatio * canvasWidthInUnits / sourceResolution), Math.round(pixelRatio * canvasHeightInUnits / sourceResolution));
-    if (!opt_interpolate) {
-      assign(stitchContext, IMAGE_SMOOTHING_DISABLED);
-    }
-    var stitchScale = pixelRatio / sourceResolution;
-    sources.forEach(function(src2, i, arr2) {
-      var xPos = src2.extent[0] - sourceDataExtent[0];
-      var yPos = -(src2.extent[3] - sourceDataExtent[3]);
-      var srcWidth = getWidth(src2.extent);
-      var srcHeight = getHeight(src2.extent);
-      if (src2.image.width > 0 && src2.image.height > 0) {
-        stitchContext.drawImage(src2.image, gutter, gutter, src2.image.width - 2 * gutter, src2.image.height - 2 * gutter, xPos * stitchScale, yPos * stitchScale, srcWidth * stitchScale, srcHeight * stitchScale);
-      }
-    });
-    var targetTopLeft = getTopLeft(targetExtent);
-    triangulation.getTriangles().forEach(function(triangle, i, arr2) {
-      var source = triangle.source;
-      var target = triangle.target;
-      var x0 = source[0][0], y0 = source[0][1];
-      var x1 = source[1][0], y1 = source[1][1];
-      var x2 = source[2][0], y2 = source[2][1];
-      var u0 = pixelRound((target[0][0] - targetTopLeft[0]) / targetResolution);
-      var v0 = pixelRound(-(target[0][1] - targetTopLeft[1]) / targetResolution);
-      var u1 = pixelRound((target[1][0] - targetTopLeft[0]) / targetResolution);
-      var v1 = pixelRound(-(target[1][1] - targetTopLeft[1]) / targetResolution);
-      var u2 = pixelRound((target[2][0] - targetTopLeft[0]) / targetResolution);
-      var v2 = pixelRound(-(target[2][1] - targetTopLeft[1]) / targetResolution);
-      var sourceNumericalShiftX = x0;
-      var sourceNumericalShiftY = y0;
-      x0 = 0;
-      y0 = 0;
-      x1 -= sourceNumericalShiftX;
-      y1 -= sourceNumericalShiftY;
-      x2 -= sourceNumericalShiftX;
-      y2 -= sourceNumericalShiftY;
-      var augmentedMatrix = [
-        [x1, y1, 0, 0, u1 - u0],
-        [x2, y2, 0, 0, u2 - u0],
-        [0, 0, x1, y1, v1 - v0],
-        [0, 0, x2, y2, v2 - v0]
-      ];
-      var affineCoefs = solveLinearSystem(augmentedMatrix);
-      if (!affineCoefs) {
-        return;
-      }
-      context.save();
-      context.beginPath();
-      if (isBrokenDiagonalRendering() || !opt_interpolate) {
-        context.moveTo(u1, v1);
-        var steps = 4;
-        var ud = u0 - u1;
-        var vd = v0 - v1;
-        for (var step = 0; step < steps; step++) {
-          context.lineTo(u1 + pixelRound((step + 1) * ud / steps), v1 + pixelRound(step * vd / (steps - 1)));
-          if (step != steps - 1) {
-            context.lineTo(u1 + pixelRound((step + 1) * ud / steps), v1 + pixelRound((step + 1) * vd / (steps - 1)));
-          }
-        }
-        context.lineTo(u2, v2);
-      } else {
-        context.moveTo(u1, v1);
-        context.lineTo(u0, v0);
-        context.lineTo(u2, v2);
-      }
-      context.clip();
-      context.transform(affineCoefs[0], affineCoefs[2], affineCoefs[1], affineCoefs[3], u0, v0);
-      context.translate(sourceDataExtent[0] - sourceNumericalShiftX, sourceDataExtent[3] - sourceNumericalShiftY);
-      context.scale(sourceResolution / pixelRatio, -sourceResolution / pixelRatio);
-      context.drawImage(stitchContext.canvas, 0, 0);
-      context.restore();
-    });
-    if (opt_renderEdges) {
-      context.save();
-      context.globalCompositeOperation = "source-over";
-      context.strokeStyle = "black";
-      context.lineWidth = 1;
-      triangulation.getTriangles().forEach(function(triangle, i, arr2) {
-        var target = triangle.target;
-        var u0 = (target[0][0] - targetTopLeft[0]) / targetResolution;
-        var v0 = -(target[0][1] - targetTopLeft[1]) / targetResolution;
-        var u1 = (target[1][0] - targetTopLeft[0]) / targetResolution;
-        var v1 = -(target[1][1] - targetTopLeft[1]) / targetResolution;
-        var u2 = (target[2][0] - targetTopLeft[0]) / targetResolution;
-        var v2 = -(target[2][1] - targetTopLeft[1]) / targetResolution;
-        context.beginPath();
-        context.moveTo(u1, v1);
-        context.lineTo(u0, v0);
-        context.lineTo(u2, v2);
-        context.closePath();
-        context.stroke();
-      });
-      context.restore();
-    }
-    return context.canvas;
-  }
-  var __extends$d = globalThis && globalThis.__extends || function() {
-    var extendStatics = function(d, b) {
-      extendStatics = Object.setPrototypeOf || { __proto__: [] } instanceof Array && function(d2, b2) {
-        d2.__proto__ = b2;
-      } || function(d2, b2) {
-        for (var p2 in b2)
-          if (Object.prototype.hasOwnProperty.call(b2, p2))
-            d2[p2] = b2[p2];
-      };
-      return extendStatics(d, b);
-    };
-    return function(d, b) {
-      if (typeof b !== "function" && b !== null)
-        throw new TypeError("Class extends value " + String(b) + " is not a constructor or null");
-      extendStatics(d, b);
-      function __() {
-        this.constructor = d;
-      }
-      d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
-    };
-  }();
-  var ReprojTile = function(_super) {
-    __extends$d(ReprojTile2, _super);
-    function ReprojTile2(sourceProj, sourceTileGrid, targetProj, targetTileGrid, tileCoord, wrappedTileCoord, pixelRatio, gutter, getTileFunction, opt_errorThreshold, opt_renderEdges, opt_interpolate) {
-      var _this = _super.call(this, tileCoord, TileState.IDLE, { interpolate: !!opt_interpolate }) || this;
-      _this.renderEdges_ = opt_renderEdges !== void 0 ? opt_renderEdges : false;
-      _this.pixelRatio_ = pixelRatio;
-      _this.gutter_ = gutter;
-      _this.canvas_ = null;
-      _this.sourceTileGrid_ = sourceTileGrid;
-      _this.targetTileGrid_ = targetTileGrid;
-      _this.wrappedTileCoord_ = wrappedTileCoord ? wrappedTileCoord : tileCoord;
-      _this.sourceTiles_ = [];
-      _this.sourcesListenerKeys_ = null;
-      _this.sourceZ_ = 0;
-      var targetExtent = targetTileGrid.getTileCoordExtent(_this.wrappedTileCoord_);
-      var maxTargetExtent = _this.targetTileGrid_.getExtent();
-      var maxSourceExtent = _this.sourceTileGrid_.getExtent();
-      var limitedTargetExtent = maxTargetExtent ? getIntersection(targetExtent, maxTargetExtent) : targetExtent;
-      if (getArea(limitedTargetExtent) === 0) {
-        _this.state = TileState.EMPTY;
-        return _this;
-      }
-      var sourceProjExtent = sourceProj.getExtent();
-      if (sourceProjExtent) {
-        if (!maxSourceExtent) {
-          maxSourceExtent = sourceProjExtent;
-        } else {
-          maxSourceExtent = getIntersection(maxSourceExtent, sourceProjExtent);
-        }
-      }
-      var targetResolution = targetTileGrid.getResolution(_this.wrappedTileCoord_[0]);
-      var sourceResolution = calculateSourceExtentResolution(sourceProj, targetProj, limitedTargetExtent, targetResolution);
-      if (!isFinite(sourceResolution) || sourceResolution <= 0) {
-        _this.state = TileState.EMPTY;
-        return _this;
-      }
-      var errorThresholdInPixels = opt_errorThreshold !== void 0 ? opt_errorThreshold : ERROR_THRESHOLD;
-      _this.triangulation_ = new Triangulation$1(sourceProj, targetProj, limitedTargetExtent, maxSourceExtent, sourceResolution * errorThresholdInPixels, targetResolution);
-      if (_this.triangulation_.getTriangles().length === 0) {
-        _this.state = TileState.EMPTY;
-        return _this;
-      }
-      _this.sourceZ_ = sourceTileGrid.getZForResolution(sourceResolution);
-      var sourceExtent = _this.triangulation_.calculateSourceExtent();
-      if (maxSourceExtent) {
-        if (sourceProj.canWrapX()) {
-          sourceExtent[1] = clamp(sourceExtent[1], maxSourceExtent[1], maxSourceExtent[3]);
-          sourceExtent[3] = clamp(sourceExtent[3], maxSourceExtent[1], maxSourceExtent[3]);
-        } else {
-          sourceExtent = getIntersection(sourceExtent, maxSourceExtent);
-        }
-      }
-      if (!getArea(sourceExtent)) {
-        _this.state = TileState.EMPTY;
-      } else {
-        var sourceRange = sourceTileGrid.getTileRangeForExtentAndZ(sourceExtent, _this.sourceZ_);
-        for (var srcX = sourceRange.minX; srcX <= sourceRange.maxX; srcX++) {
-          for (var srcY = sourceRange.minY; srcY <= sourceRange.maxY; srcY++) {
-            var tile = getTileFunction(_this.sourceZ_, srcX, srcY, pixelRatio);
-            if (tile) {
-              _this.sourceTiles_.push(tile);
-            }
-          }
-        }
-        if (_this.sourceTiles_.length === 0) {
-          _this.state = TileState.EMPTY;
-        }
-      }
-      return _this;
-    }
-    ReprojTile2.prototype.getImage = function() {
-      return this.canvas_;
-    };
-    ReprojTile2.prototype.reproject_ = function() {
-      var sources = [];
-      this.sourceTiles_.forEach(function(tile, i, arr2) {
-        if (tile && tile.getState() == TileState.LOADED) {
-          sources.push({
-            extent: this.sourceTileGrid_.getTileCoordExtent(tile.tileCoord),
-            image: tile.getImage()
-          });
-        }
-      }.bind(this));
-      this.sourceTiles_.length = 0;
-      if (sources.length === 0) {
-        this.state = TileState.ERROR;
-      } else {
-        var z = this.wrappedTileCoord_[0];
-        var size2 = this.targetTileGrid_.getTileSize(z);
-        var width = typeof size2 === "number" ? size2 : size2[0];
-        var height = typeof size2 === "number" ? size2 : size2[1];
-        var targetResolution = this.targetTileGrid_.getResolution(z);
-        var sourceResolution = this.sourceTileGrid_.getResolution(this.sourceZ_);
-        var targetExtent = this.targetTileGrid_.getTileCoordExtent(this.wrappedTileCoord_);
-        this.canvas_ = render(width, height, this.pixelRatio_, sourceResolution, this.sourceTileGrid_.getExtent(), targetResolution, targetExtent, this.triangulation_, sources, this.gutter_, this.renderEdges_, this.interpolate);
-        this.state = TileState.LOADED;
-      }
-      this.changed();
-    };
-    ReprojTile2.prototype.load = function() {
-      if (this.state == TileState.IDLE) {
-        this.state = TileState.LOADING;
-        this.changed();
-        var leftToLoad_1 = 0;
-        this.sourcesListenerKeys_ = [];
-        this.sourceTiles_.forEach(function(tile, i, arr2) {
-          var state = tile.getState();
-          if (state == TileState.IDLE || state == TileState.LOADING) {
-            leftToLoad_1++;
-            var sourceListenKey_1 = listen(tile, EventType$1.CHANGE, function(e) {
-              var state2 = tile.getState();
-              if (state2 == TileState.LOADED || state2 == TileState.ERROR || state2 == TileState.EMPTY) {
-                unlistenByKey(sourceListenKey_1);
-                leftToLoad_1--;
-                if (leftToLoad_1 === 0) {
-                  this.unlistenSources_();
-                  this.reproject_();
-                }
-              }
-            }, this);
-            this.sourcesListenerKeys_.push(sourceListenKey_1);
-          }
-        }.bind(this));
-        if (leftToLoad_1 === 0) {
-          setTimeout(this.reproject_.bind(this), 0);
-        } else {
-          this.sourceTiles_.forEach(function(tile, i, arr2) {
-            var state = tile.getState();
-            if (state == TileState.IDLE) {
-              tile.load();
-            }
-          });
-        }
-      }
-    };
-    ReprojTile2.prototype.unlistenSources_ = function() {
-      this.sourcesListenerKeys_.forEach(unlistenByKey);
-      this.sourcesListenerKeys_ = null;
-    };
-    ReprojTile2.prototype.release = function() {
-      if (this.canvas_) {
-        releaseCanvas(this.canvas_.getContext("2d"));
-        canvasPool.push(this.canvas_);
-        this.canvas_ = null;
-      }
-      _super.prototype.release.call(this);
-    };
-    return ReprojTile2;
-  }(Tile$1);
-  const ReprojTile$1 = ReprojTile;
-  var TileRange = function() {
-    function TileRange2(minX, maxX, minY, maxY) {
-      this.minX = minX;
-      this.maxX = maxX;
-      this.minY = minY;
-      this.maxY = maxY;
-    }
-    TileRange2.prototype.contains = function(tileCoord) {
-      return this.containsXY(tileCoord[1], tileCoord[2]);
-    };
-    TileRange2.prototype.containsTileRange = function(tileRange) {
-      return this.minX <= tileRange.minX && tileRange.maxX <= this.maxX && this.minY <= tileRange.minY && tileRange.maxY <= this.maxY;
-    };
-    TileRange2.prototype.containsXY = function(x, y2) {
-      return this.minX <= x && x <= this.maxX && this.minY <= y2 && y2 <= this.maxY;
-    };
-    TileRange2.prototype.equals = function(tileRange) {
-      return this.minX == tileRange.minX && this.minY == tileRange.minY && this.maxX == tileRange.maxX && this.maxY == tileRange.maxY;
-    };
-    TileRange2.prototype.extend = function(tileRange) {
-      if (tileRange.minX < this.minX) {
-        this.minX = tileRange.minX;
-      }
-      if (tileRange.maxX > this.maxX) {
-        this.maxX = tileRange.maxX;
-      }
-      if (tileRange.minY < this.minY) {
-        this.minY = tileRange.minY;
-      }
-      if (tileRange.maxY > this.maxY) {
-        this.maxY = tileRange.maxY;
-      }
-    };
-    TileRange2.prototype.getHeight = function() {
-      return this.maxY - this.minY + 1;
-    };
-    TileRange2.prototype.getSize = function() {
-      return [this.getWidth(), this.getHeight()];
-    };
-    TileRange2.prototype.getWidth = function() {
-      return this.maxX - this.minX + 1;
-    };
-    TileRange2.prototype.intersects = function(tileRange) {
-      return this.minX <= tileRange.maxX && this.maxX >= tileRange.minX && this.minY <= tileRange.maxY && this.maxY >= tileRange.minY;
-    };
-    return TileRange2;
-  }();
-  function createOrUpdate$1(minX, maxX, minY, maxY, tileRange) {
-    if (tileRange !== void 0) {
-      tileRange.minX = minX;
-      tileRange.maxX = maxX;
-      tileRange.minY = minY;
-      tileRange.maxY = maxY;
-      return tileRange;
-    } else {
-      return new TileRange(minX, maxX, minY, maxY);
-    }
-  }
-  const TileRange$1 = TileRange;
-  var __extends$c = globalThis && globalThis.__extends || function() {
-    var extendStatics = function(d, b) {
-      extendStatics = Object.setPrototypeOf || { __proto__: [] } instanceof Array && function(d2, b2) {
-        d2.__proto__ = b2;
-      } || function(d2, b2) {
-        for (var p2 in b2)
-          if (Object.prototype.hasOwnProperty.call(b2, p2))
-            d2[p2] = b2[p2];
-      };
-      return extendStatics(d, b);
-    };
-    return function(d, b) {
-      if (typeof b !== "function" && b !== null)
-        throw new TypeError("Class extends value " + String(b) + " is not a constructor or null");
-      extendStatics(d, b);
-      function __() {
-        this.constructor = d;
-      }
-      d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
-    };
-  }();
-  var CanvasTileLayerRenderer = function(_super) {
-    __extends$c(CanvasTileLayerRenderer2, _super);
-    function CanvasTileLayerRenderer2(tileLayer) {
-      var _this = _super.call(this, tileLayer) || this;
-      _this.extentChanged = true;
-      _this.renderedExtent_ = null;
-      _this.renderedPixelRatio;
-      _this.renderedProjection = null;
-      _this.renderedRevision;
-      _this.renderedTiles = [];
-      _this.newTiles_ = false;
-      _this.tmpExtent = createEmpty();
-      _this.tmpTileRange_ = new TileRange$1(0, 0, 0, 0);
-      return _this;
-    }
-    CanvasTileLayerRenderer2.prototype.isDrawableTile = function(tile) {
-      var tileLayer = this.getLayer();
-      var tileState = tile.getState();
-      var useInterimTilesOnError = tileLayer.getUseInterimTilesOnError();
-      return tileState == TileState.LOADED || tileState == TileState.EMPTY || tileState == TileState.ERROR && !useInterimTilesOnError;
-    };
-    CanvasTileLayerRenderer2.prototype.getTile = function(z, x, y2, frameState) {
-      var pixelRatio = frameState.pixelRatio;
-      var projection = frameState.viewState.projection;
-      var tileLayer = this.getLayer();
-      var tileSource = tileLayer.getSource();
-      var tile = tileSource.getTile(z, x, y2, pixelRatio, projection);
-      if (tile.getState() == TileState.ERROR) {
-        if (!tileLayer.getUseInterimTilesOnError()) {
-          tile.setState(TileState.LOADED);
-        } else if (tileLayer.getPreload() > 0) {
-          this.newTiles_ = true;
-        }
-      }
-      if (!this.isDrawableTile(tile)) {
-        tile = tile.getInterimTile();
-      }
-      return tile;
-    };
-    CanvasTileLayerRenderer2.prototype.getData = function(pixel) {
-      var frameState = this.frameState;
-      if (!frameState) {
-        return null;
-      }
-      var layer = this.getLayer();
-      var coordinate = apply(frameState.pixelToCoordinateTransform, pixel.slice());
-      var layerExtent = layer.getExtent();
-      if (layerExtent) {
-        if (!containsCoordinate(layerExtent, coordinate)) {
-          return null;
-        }
-      }
-      var pixelRatio = frameState.pixelRatio;
-      var projection = frameState.viewState.projection;
-      var viewState = frameState.viewState;
-      var source = layer.getRenderSource();
-      var tileGrid = source.getTileGridForProjection(viewState.projection);
-      var tilePixelRatio = source.getTilePixelRatio(frameState.pixelRatio);
-      for (var z = tileGrid.getZForResolution(viewState.resolution); z >= tileGrid.getMinZoom(); --z) {
-        var tileCoord = tileGrid.getTileCoordForCoordAndZ(coordinate, z);
-        var tile = source.getTile(z, tileCoord[1], tileCoord[2], pixelRatio, projection);
-        if (!(tile instanceof ImageTile$1 || tile instanceof ReprojTile$1)) {
-          return null;
-        }
-        if (tile.getState() !== TileState.LOADED) {
-          continue;
-        }
-        var tileOrigin = tileGrid.getOrigin(z);
-        var tileSize = toSize(tileGrid.getTileSize(z));
-        var tileResolution = tileGrid.getResolution(z);
-        var col = Math.floor(tilePixelRatio * ((coordinate[0] - tileOrigin[0]) / tileResolution - tileCoord[1] * tileSize[0]));
-        var row = Math.floor(tilePixelRatio * ((tileOrigin[1] - coordinate[1]) / tileResolution - tileCoord[2] * tileSize[1]));
-        var gutter = Math.round(tilePixelRatio * source.getGutterForProjection(viewState.projection));
-        return this.getImageData(tile.getImage(), col + gutter, row + gutter);
-      }
-      return null;
-    };
-    CanvasTileLayerRenderer2.prototype.loadedTileCallback = function(tiles, zoom, tile) {
-      if (this.isDrawableTile(tile)) {
-        return _super.prototype.loadedTileCallback.call(this, tiles, zoom, tile);
-      }
-      return false;
-    };
-    CanvasTileLayerRenderer2.prototype.prepareFrame = function(frameState) {
-      return !!this.getLayer().getSource();
-    };
-    CanvasTileLayerRenderer2.prototype.renderFrame = function(frameState, target) {
-      var layerState = frameState.layerStatesArray[frameState.layerIndex];
-      var viewState = frameState.viewState;
-      var projection = viewState.projection;
-      var viewResolution = viewState.resolution;
-      var viewCenter = viewState.center;
-      var rotation = viewState.rotation;
-      var pixelRatio = frameState.pixelRatio;
-      var tileLayer = this.getLayer();
-      var tileSource = tileLayer.getSource();
-      var sourceRevision = tileSource.getRevision();
-      var tileGrid = tileSource.getTileGridForProjection(projection);
-      var z = tileGrid.getZForResolution(viewResolution, tileSource.zDirection);
-      var tileResolution = tileGrid.getResolution(z);
-      var extent = frameState.extent;
-      var resolution = frameState.viewState.resolution;
-      var tilePixelRatio = tileSource.getTilePixelRatio(pixelRatio);
-      var width = Math.round(getWidth(extent) / resolution * pixelRatio);
-      var height = Math.round(getHeight(extent) / resolution * pixelRatio);
-      var layerExtent = layerState.extent && fromUserExtent(layerState.extent);
-      if (layerExtent) {
-        extent = getIntersection(extent, fromUserExtent(layerState.extent));
-      }
-      var dx = tileResolution * width / 2 / tilePixelRatio;
-      var dy = tileResolution * height / 2 / tilePixelRatio;
-      var canvasExtent = [
-        viewCenter[0] - dx,
-        viewCenter[1] - dy,
-        viewCenter[0] + dx,
-        viewCenter[1] + dy
-      ];
-      var tileRange = tileGrid.getTileRangeForExtentAndZ(extent, z);
-      var tilesToDrawByZ = {};
-      tilesToDrawByZ[z] = {};
-      var findLoadedTiles = this.createLoadedTileFinder(tileSource, projection, tilesToDrawByZ);
-      var tmpExtent = this.tmpExtent;
-      var tmpTileRange = this.tmpTileRange_;
-      this.newTiles_ = false;
-      var viewport = rotation ? getRotatedViewport(viewState.center, resolution, rotation, frameState.size) : void 0;
-      for (var x = tileRange.minX; x <= tileRange.maxX; ++x) {
-        for (var y2 = tileRange.minY; y2 <= tileRange.maxY; ++y2) {
-          if (rotation && !tileGrid.tileCoordIntersectsViewport([z, x, y2], viewport)) {
-            continue;
-          }
-          var tile = this.getTile(z, x, y2, frameState);
-          if (this.isDrawableTile(tile)) {
-            var uid2 = getUid(this);
-            if (tile.getState() == TileState.LOADED) {
-              tilesToDrawByZ[z][tile.tileCoord.toString()] = tile;
-              var inTransition = tile.inTransition(uid2);
-              if (inTransition && layerState.opacity !== 1) {
-                tile.endTransition(uid2);
-                inTransition = false;
-              }
-              if (!this.newTiles_ && (inTransition || this.renderedTiles.indexOf(tile) === -1)) {
-                this.newTiles_ = true;
-              }
-            }
-            if (tile.getAlpha(uid2, frameState.time) === 1) {
-              continue;
-            }
-          }
-          var childTileRange = tileGrid.getTileCoordChildTileRange(tile.tileCoord, tmpTileRange, tmpExtent);
-          var covered = false;
-          if (childTileRange) {
-            covered = findLoadedTiles(z + 1, childTileRange);
-          }
-          if (!covered) {
-            tileGrid.forEachTileCoordParentTileRange(tile.tileCoord, findLoadedTiles, tmpTileRange, tmpExtent);
-          }
-        }
-      }
-      var canvasScale = tileResolution / viewResolution * pixelRatio / tilePixelRatio;
-      compose(this.pixelTransform, frameState.size[0] / 2, frameState.size[1] / 2, 1 / pixelRatio, 1 / pixelRatio, rotation, -width / 2, -height / 2);
-      var canvasTransform = toString$1(this.pixelTransform);
-      this.useContainer(target, canvasTransform, this.getBackground(frameState));
-      var context = this.context;
-      var canvas = context.canvas;
-      makeInverse(this.inversePixelTransform, this.pixelTransform);
-      compose(this.tempTransform, width / 2, height / 2, canvasScale, canvasScale, 0, -width / 2, -height / 2);
-      if (canvas.width != width || canvas.height != height) {
-        canvas.width = width;
-        canvas.height = height;
-      } else if (!this.containerReused) {
-        context.clearRect(0, 0, width, height);
-      }
-      if (layerExtent) {
-        this.clipUnrotated(context, frameState, layerExtent);
-      }
-      if (!tileSource.getInterpolate()) {
-        assign(context, IMAGE_SMOOTHING_DISABLED);
-      }
-      this.preRender(context, frameState);
-      this.renderedTiles.length = 0;
-      var zs = Object.keys(tilesToDrawByZ).map(Number);
-      zs.sort(numberSafeCompareFunction);
-      var clips, clipZs, currentClip;
-      if (layerState.opacity === 1 && (!this.containerReused || tileSource.getOpaque(frameState.viewState.projection))) {
-        zs = zs.reverse();
-      } else {
-        clips = [];
-        clipZs = [];
-      }
-      for (var i = zs.length - 1; i >= 0; --i) {
-        var currentZ = zs[i];
-        var currentTilePixelSize = tileSource.getTilePixelSize(currentZ, pixelRatio, projection);
-        var currentResolution = tileGrid.getResolution(currentZ);
-        var currentScale = currentResolution / tileResolution;
-        var dx_1 = currentTilePixelSize[0] * currentScale * canvasScale;
-        var dy_1 = currentTilePixelSize[1] * currentScale * canvasScale;
-        var originTileCoord = tileGrid.getTileCoordForCoordAndZ(getTopLeft(canvasExtent), currentZ);
-        var originTileExtent = tileGrid.getTileCoordExtent(originTileCoord);
-        var origin_1 = apply(this.tempTransform, [
-          tilePixelRatio * (originTileExtent[0] - canvasExtent[0]) / tileResolution,
-          tilePixelRatio * (canvasExtent[3] - originTileExtent[3]) / tileResolution
-        ]);
-        var tileGutter = tilePixelRatio * tileSource.getGutterForProjection(projection);
-        var tilesToDraw = tilesToDrawByZ[currentZ];
-        for (var tileCoordKey in tilesToDraw) {
-          var tile = tilesToDraw[tileCoordKey];
-          var tileCoord = tile.tileCoord;
-          var xIndex = originTileCoord[1] - tileCoord[1];
-          var nextX = Math.round(origin_1[0] - (xIndex - 1) * dx_1);
-          var yIndex = originTileCoord[2] - tileCoord[2];
-          var nextY = Math.round(origin_1[1] - (yIndex - 1) * dy_1);
-          var x = Math.round(origin_1[0] - xIndex * dx_1);
-          var y2 = Math.round(origin_1[1] - yIndex * dy_1);
-          var w = nextX - x;
-          var h2 = nextY - y2;
-          var transition = z === currentZ;
-          var inTransition = transition && tile.getAlpha(getUid(this), frameState.time) !== 1;
-          var contextSaved = false;
-          if (!inTransition) {
-            if (clips) {
-              currentClip = [x, y2, x + w, y2, x + w, y2 + h2, x, y2 + h2];
-              for (var i_1 = 0, ii = clips.length; i_1 < ii; ++i_1) {
-                if (z !== currentZ && currentZ < clipZs[i_1]) {
-                  var clip = clips[i_1];
-                  if (intersects([x, y2, x + w, y2 + h2], [clip[0], clip[3], clip[4], clip[7]])) {
-                    if (!contextSaved) {
-                      context.save();
-                      contextSaved = true;
-                    }
-                    context.beginPath();
-                    context.moveTo(currentClip[0], currentClip[1]);
-                    context.lineTo(currentClip[2], currentClip[3]);
-                    context.lineTo(currentClip[4], currentClip[5]);
-                    context.lineTo(currentClip[6], currentClip[7]);
-                    context.moveTo(clip[6], clip[7]);
-                    context.lineTo(clip[4], clip[5]);
-                    context.lineTo(clip[2], clip[3]);
-                    context.lineTo(clip[0], clip[1]);
-                    context.clip();
-                  }
-                }
-              }
-              clips.push(currentClip);
-              clipZs.push(currentZ);
-            } else {
-              context.clearRect(x, y2, w, h2);
-            }
-          }
-          this.drawTileImage(tile, frameState, x, y2, w, h2, tileGutter, transition);
-          if (clips && !inTransition) {
-            if (contextSaved) {
-              context.restore();
-            }
-            this.renderedTiles.unshift(tile);
-          } else {
-            this.renderedTiles.push(tile);
-          }
-          this.updateUsedTiles(frameState.usedTiles, tileSource, tile);
-        }
-      }
-      this.renderedRevision = sourceRevision;
-      this.renderedResolution = tileResolution;
-      this.extentChanged = !this.renderedExtent_ || !equals$2(this.renderedExtent_, canvasExtent);
-      this.renderedExtent_ = canvasExtent;
-      this.renderedPixelRatio = pixelRatio;
-      this.renderedProjection = projection;
-      this.manageTilePyramid(frameState, tileSource, tileGrid, pixelRatio, projection, extent, z, tileLayer.getPreload());
-      this.scheduleExpireCache(frameState, tileSource);
-      this.postRender(context, frameState);
-      if (layerState.extent) {
-        context.restore();
-      }
-      assign(context, IMAGE_SMOOTHING_ENABLED);
-      if (canvasTransform !== canvas.style.transform) {
-        canvas.style.transform = canvasTransform;
-      }
-      return this.container;
-    };
-    CanvasTileLayerRenderer2.prototype.drawTileImage = function(tile, frameState, x, y2, w, h2, gutter, transition) {
-      var image = this.getTileImage(tile);
-      if (!image) {
-        return;
-      }
-      var uid2 = getUid(this);
-      var layerState = frameState.layerStatesArray[frameState.layerIndex];
-      var alpha = layerState.opacity * (transition ? tile.getAlpha(uid2, frameState.time) : 1);
-      var alphaChanged = alpha !== this.context.globalAlpha;
-      if (alphaChanged) {
-        this.context.save();
-        this.context.globalAlpha = alpha;
-      }
-      this.context.drawImage(image, gutter, gutter, image.width - 2 * gutter, image.height - 2 * gutter, x, y2, w, h2);
-      if (alphaChanged) {
-        this.context.restore();
-      }
-      if (alpha !== layerState.opacity) {
-        frameState.animate = true;
-      } else if (transition) {
-        tile.endTransition(uid2);
-      }
-    };
-    CanvasTileLayerRenderer2.prototype.getImage = function() {
-      var context = this.context;
-      return context ? context.canvas : null;
-    };
-    CanvasTileLayerRenderer2.prototype.getTileImage = function(tile) {
-      return tile.getImage();
-    };
-    CanvasTileLayerRenderer2.prototype.scheduleExpireCache = function(frameState, tileSource) {
-      if (tileSource.canExpireCache()) {
-        var postRenderFunction = function(tileSource2, map2, frameState2) {
-          var tileSourceKey = getUid(tileSource2);
-          if (tileSourceKey in frameState2.usedTiles) {
-            tileSource2.expireCache(frameState2.viewState.projection, frameState2.usedTiles[tileSourceKey]);
-          }
-        }.bind(null, tileSource);
-        frameState.postRenderFunctions.push(
-          postRenderFunction
-        );
-      }
-    };
-    CanvasTileLayerRenderer2.prototype.updateUsedTiles = function(usedTiles, tileSource, tile) {
-      var tileSourceKey = getUid(tileSource);
-      if (!(tileSourceKey in usedTiles)) {
-        usedTiles[tileSourceKey] = {};
-      }
-      usedTiles[tileSourceKey][tile.getKey()] = true;
-    };
-    CanvasTileLayerRenderer2.prototype.manageTilePyramid = function(frameState, tileSource, tileGrid, pixelRatio, projection, extent, currentZ, preload, opt_tileCallback) {
-      var tileSourceKey = getUid(tileSource);
-      if (!(tileSourceKey in frameState.wantedTiles)) {
-        frameState.wantedTiles[tileSourceKey] = {};
-      }
-      var wantedTiles = frameState.wantedTiles[tileSourceKey];
-      var tileQueue = frameState.tileQueue;
-      var minZoom = tileGrid.getMinZoom();
-      var rotation = frameState.viewState.rotation;
-      var viewport = rotation ? getRotatedViewport(frameState.viewState.center, frameState.viewState.resolution, rotation, frameState.size) : void 0;
-      var tileCount = 0;
-      var tile, tileRange, tileResolution, x, y2, z;
-      for (z = minZoom; z <= currentZ; ++z) {
-        tileRange = tileGrid.getTileRangeForExtentAndZ(extent, z, tileRange);
-        tileResolution = tileGrid.getResolution(z);
-        for (x = tileRange.minX; x <= tileRange.maxX; ++x) {
-          for (y2 = tileRange.minY; y2 <= tileRange.maxY; ++y2) {
-            if (rotation && !tileGrid.tileCoordIntersectsViewport([z, x, y2], viewport)) {
-              continue;
-            }
-            if (currentZ - z <= preload) {
-              ++tileCount;
-              tile = tileSource.getTile(z, x, y2, pixelRatio, projection);
-              if (tile.getState() == TileState.IDLE) {
-                wantedTiles[tile.getKey()] = true;
-                if (!tileQueue.isKeyQueued(tile.getKey())) {
-                  tileQueue.enqueue([
-                    tile,
-                    tileSourceKey,
-                    tileGrid.getTileCoordCenter(tile.tileCoord),
-                    tileResolution
-                  ]);
-                }
-              }
-              if (opt_tileCallback !== void 0) {
-                opt_tileCallback(tile);
-              }
-            } else {
-              tileSource.useTile(z, x, y2, projection);
-            }
-          }
-        }
-      }
-      tileSource.updateCacheSize(tileCount, projection);
-    };
-    return CanvasTileLayerRenderer2;
-  }(CanvasLayerRenderer$1);
-  const CanvasTileLayerRenderer$1 = CanvasTileLayerRenderer;
-  var __extends$b = globalThis && globalThis.__extends || function() {
-    var extendStatics = function(d, b) {
-      extendStatics = Object.setPrototypeOf || { __proto__: [] } instanceof Array && function(d2, b2) {
-        d2.__proto__ = b2;
-      } || function(d2, b2) {
-        for (var p2 in b2)
-          if (Object.prototype.hasOwnProperty.call(b2, p2))
-            d2[p2] = b2[p2];
-      };
-      return extendStatics(d, b);
-    };
-    return function(d, b) {
-      if (typeof b !== "function" && b !== null)
-        throw new TypeError("Class extends value " + String(b) + " is not a constructor or null");
-      extendStatics(d, b);
-      function __() {
-        this.constructor = d;
-      }
-      d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
-    };
-  }();
-  var TileLayer = function(_super) {
-    __extends$b(TileLayer2, _super);
-    function TileLayer2(opt_options) {
-      return _super.call(this, opt_options) || this;
-    }
-    TileLayer2.prototype.createRenderer = function() {
-      return new CanvasTileLayerRenderer$1(this);
-    };
-    return TileLayer2;
-  }(BaseTileLayer$1);
-  const TileLayer$1 = TileLayer;
-  var LRUCache = function() {
-    function LRUCache2(opt_highWaterMark) {
-      this.highWaterMark = opt_highWaterMark !== void 0 ? opt_highWaterMark : 2048;
-      this.count_ = 0;
-      this.entries_ = {};
-      this.oldest_ = null;
-      this.newest_ = null;
-    }
-    LRUCache2.prototype.canExpireCache = function() {
-      return this.highWaterMark > 0 && this.getCount() > this.highWaterMark;
-    };
-    LRUCache2.prototype.expireCache = function(keep) {
-      while (this.canExpireCache()) {
-        this.pop();
-      }
-    };
-    LRUCache2.prototype.clear = function() {
-      this.count_ = 0;
-      this.entries_ = {};
-      this.oldest_ = null;
-      this.newest_ = null;
-    };
-    LRUCache2.prototype.containsKey = function(key) {
-      return this.entries_.hasOwnProperty(key);
-    };
-    LRUCache2.prototype.forEach = function(f) {
-      var entry = this.oldest_;
-      while (entry) {
-        f(entry.value_, entry.key_, this);
-        entry = entry.newer;
-      }
-    };
-    LRUCache2.prototype.get = function(key, opt_options) {
-      var entry = this.entries_[key];
-      assert(entry !== void 0, 15);
-      if (entry === this.newest_) {
-        return entry.value_;
-      } else if (entry === this.oldest_) {
-        this.oldest_ = this.oldest_.newer;
-        this.oldest_.older = null;
-      } else {
-        entry.newer.older = entry.older;
-        entry.older.newer = entry.newer;
-      }
-      entry.newer = null;
-      entry.older = this.newest_;
-      this.newest_.newer = entry;
-      this.newest_ = entry;
-      return entry.value_;
-    };
-    LRUCache2.prototype.remove = function(key) {
-      var entry = this.entries_[key];
-      assert(entry !== void 0, 15);
-      if (entry === this.newest_) {
-        this.newest_ = entry.older;
-        if (this.newest_) {
-          this.newest_.newer = null;
-        }
-      } else if (entry === this.oldest_) {
-        this.oldest_ = entry.newer;
-        if (this.oldest_) {
-          this.oldest_.older = null;
-        }
-      } else {
-        entry.newer.older = entry.older;
-        entry.older.newer = entry.newer;
-      }
-      delete this.entries_[key];
-      --this.count_;
-      return entry.value_;
-    };
-    LRUCache2.prototype.getCount = function() {
-      return this.count_;
-    };
-    LRUCache2.prototype.getKeys = function() {
-      var keys = new Array(this.count_);
-      var i = 0;
-      var entry;
-      for (entry = this.newest_; entry; entry = entry.older) {
-        keys[i++] = entry.key_;
-      }
-      return keys;
-    };
-    LRUCache2.prototype.getValues = function() {
-      var values = new Array(this.count_);
-      var i = 0;
-      var entry;
-      for (entry = this.newest_; entry; entry = entry.older) {
-        values[i++] = entry.value_;
-      }
-      return values;
-    };
-    LRUCache2.prototype.peekLast = function() {
-      return this.oldest_.value_;
-    };
-    LRUCache2.prototype.peekLastKey = function() {
-      return this.oldest_.key_;
-    };
-    LRUCache2.prototype.peekFirstKey = function() {
-      return this.newest_.key_;
-    };
-    LRUCache2.prototype.peek = function(key) {
-      if (!this.containsKey(key)) {
-        return void 0;
-      }
-      return this.entries_[key].value_;
-    };
-    LRUCache2.prototype.pop = function() {
-      var entry = this.oldest_;
-      delete this.entries_[entry.key_];
-      if (entry.newer) {
-        entry.newer.older = null;
-      }
-      this.oldest_ = entry.newer;
-      if (!this.oldest_) {
-        this.newest_ = null;
-      }
-      --this.count_;
-      return entry.value_;
-    };
-    LRUCache2.prototype.replace = function(key, value) {
-      this.get(key);
-      this.entries_[key].value_ = value;
-    };
-    LRUCache2.prototype.set = function(key, value) {
-      assert(!(key in this.entries_), 16);
-      var entry = {
-        key_: key,
-        newer: null,
-        older: this.newest_,
-        value_: value
-      };
-      if (!this.newest_) {
-        this.oldest_ = entry;
-      } else {
-        this.newest_.newer = entry;
-      }
-      this.newest_ = entry;
-      this.entries_[key] = entry;
-      ++this.count_;
-    };
-    LRUCache2.prototype.setSize = function(size2) {
-      this.highWaterMark = size2;
-    };
-    return LRUCache2;
-  }();
-  const LRUCache$1 = LRUCache;
-  function createOrUpdate(z, x, y2, opt_tileCoord) {
-    if (opt_tileCoord !== void 0) {
-      opt_tileCoord[0] = z;
-      opt_tileCoord[1] = x;
-      opt_tileCoord[2] = y2;
-      return opt_tileCoord;
-    } else {
-      return [z, x, y2];
-    }
-  }
-  function getKeyZXY(z, x, y2) {
-    return z + "/" + x + "/" + y2;
-  }
-  function getKey(tileCoord) {
-    return getKeyZXY(tileCoord[0], tileCoord[1], tileCoord[2]);
-  }
-  function fromKey(key) {
-    return key.split("/").map(Number);
-  }
-  function hash(tileCoord) {
-    return (tileCoord[1] << tileCoord[0]) + tileCoord[2];
-  }
-  function withinExtentAndZ(tileCoord, tileGrid) {
-    var z = tileCoord[0];
-    var x = tileCoord[1];
-    var y2 = tileCoord[2];
-    if (tileGrid.getMinZoom() > z || z > tileGrid.getMaxZoom()) {
-      return false;
-    }
-    var tileRange = tileGrid.getFullTileRange(z);
-    if (!tileRange) {
-      return true;
-    } else {
-      return tileRange.containsXY(x, y2);
-    }
-  }
-  var __extends$a = globalThis && globalThis.__extends || function() {
-    var extendStatics = function(d, b) {
-      extendStatics = Object.setPrototypeOf || { __proto__: [] } instanceof Array && function(d2, b2) {
-        d2.__proto__ = b2;
-      } || function(d2, b2) {
-        for (var p2 in b2)
-          if (Object.prototype.hasOwnProperty.call(b2, p2))
-            d2[p2] = b2[p2];
-      };
-      return extendStatics(d, b);
-    };
-    return function(d, b) {
-      if (typeof b !== "function" && b !== null)
-        throw new TypeError("Class extends value " + String(b) + " is not a constructor or null");
-      extendStatics(d, b);
-      function __() {
-        this.constructor = d;
-      }
-      d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
-    };
-  }();
-  var TileCache = function(_super) {
-    __extends$a(TileCache2, _super);
-    function TileCache2() {
-      return _super !== null && _super.apply(this, arguments) || this;
-    }
-    TileCache2.prototype.expireCache = function(usedTiles) {
-      while (this.canExpireCache()) {
-        var tile = this.peekLast();
-        if (tile.getKey() in usedTiles) {
-          break;
-        } else {
-          this.pop().release();
-        }
-      }
-    };
-    TileCache2.prototype.pruneExceptNewestZ = function() {
-      if (this.getCount() === 0) {
-        return;
-      }
-      var key = this.peekFirstKey();
-      var tileCoord = fromKey(key);
-      var z = tileCoord[0];
-      this.forEach(function(tile) {
-        if (tile.tileCoord[0] !== z) {
-          this.remove(getKey(tile.tileCoord));
-          tile.release();
-        }
-      }.bind(this));
-    };
-    return TileCache2;
-  }(LRUCache$1);
-  const TileCache$1 = TileCache;
-  const TileEventType = {
-    TILELOADSTART: "tileloadstart",
-    TILELOADEND: "tileloadend",
-    TILELOADERROR: "tileloaderror"
-  };
-  var tmpTileCoord = [0, 0, 0];
-  var DECIMALS$1 = 5;
-  var TileGrid = function() {
-    function TileGrid2(options) {
-      this.minZoom = options.minZoom !== void 0 ? options.minZoom : 0;
-      this.resolutions_ = options.resolutions;
-      assert(isSorted(this.resolutions_, function(a, b) {
-        return b - a;
-      }, true), 17);
-      var zoomFactor;
-      if (!options.origins) {
-        for (var i = 0, ii = this.resolutions_.length - 1; i < ii; ++i) {
-          if (!zoomFactor) {
-            zoomFactor = this.resolutions_[i] / this.resolutions_[i + 1];
-          } else {
-            if (this.resolutions_[i] / this.resolutions_[i + 1] !== zoomFactor) {
-              zoomFactor = void 0;
-              break;
-            }
-          }
-        }
-      }
-      this.zoomFactor_ = zoomFactor;
-      this.maxZoom = this.resolutions_.length - 1;
-      this.origin_ = options.origin !== void 0 ? options.origin : null;
-      this.origins_ = null;
-      if (options.origins !== void 0) {
-        this.origins_ = options.origins;
-        assert(this.origins_.length == this.resolutions_.length, 20);
-      }
-      var extent = options.extent;
-      if (extent !== void 0 && !this.origin_ && !this.origins_) {
-        this.origin_ = getTopLeft(extent);
-      }
-      assert(!this.origin_ && this.origins_ || this.origin_ && !this.origins_, 18);
-      this.tileSizes_ = null;
-      if (options.tileSizes !== void 0) {
-        this.tileSizes_ = options.tileSizes;
-        assert(this.tileSizes_.length == this.resolutions_.length, 19);
-      }
-      this.tileSize_ = options.tileSize !== void 0 ? options.tileSize : !this.tileSizes_ ? DEFAULT_TILE_SIZE : null;
-      assert(!this.tileSize_ && this.tileSizes_ || this.tileSize_ && !this.tileSizes_, 22);
-      this.extent_ = extent !== void 0 ? extent : null;
-      this.fullTileRanges_ = null;
-      this.tmpSize_ = [0, 0];
-      this.tmpExtent_ = [0, 0, 0, 0];
-      if (options.sizes !== void 0) {
-        this.fullTileRanges_ = options.sizes.map(function(size2, z) {
-          var tileRange = new TileRange$1(Math.min(0, size2[0]), Math.max(size2[0] - 1, -1), Math.min(0, size2[1]), Math.max(size2[1] - 1, -1));
-          if (extent) {
-            var restrictedTileRange = this.getTileRangeForExtentAndZ(extent, z);
-            tileRange.minX = Math.max(restrictedTileRange.minX, tileRange.minX);
-            tileRange.maxX = Math.min(restrictedTileRange.maxX, tileRange.maxX);
-            tileRange.minY = Math.max(restrictedTileRange.minY, tileRange.minY);
-            tileRange.maxY = Math.min(restrictedTileRange.maxY, tileRange.maxY);
-          }
-          return tileRange;
-        }, this);
-      } else if (extent) {
-        this.calculateTileRanges_(extent);
-      }
-    }
-    TileGrid2.prototype.forEachTileCoord = function(extent, zoom, callback) {
-      var tileRange = this.getTileRangeForExtentAndZ(extent, zoom);
-      for (var i = tileRange.minX, ii = tileRange.maxX; i <= ii; ++i) {
-        for (var j = tileRange.minY, jj = tileRange.maxY; j <= jj; ++j) {
-          callback([zoom, i, j]);
-        }
-      }
-    };
-    TileGrid2.prototype.forEachTileCoordParentTileRange = function(tileCoord, callback, opt_tileRange, opt_extent) {
-      var tileRange, x, y2;
-      var tileCoordExtent = null;
-      var z = tileCoord[0] - 1;
-      if (this.zoomFactor_ === 2) {
-        x = tileCoord[1];
-        y2 = tileCoord[2];
-      } else {
-        tileCoordExtent = this.getTileCoordExtent(tileCoord, opt_extent);
-      }
-      while (z >= this.minZoom) {
-        if (this.zoomFactor_ === 2) {
-          x = Math.floor(x / 2);
-          y2 = Math.floor(y2 / 2);
-          tileRange = createOrUpdate$1(x, x, y2, y2, opt_tileRange);
-        } else {
-          tileRange = this.getTileRangeForExtentAndZ(tileCoordExtent, z, opt_tileRange);
-        }
-        if (callback(z, tileRange)) {
-          return true;
-        }
-        --z;
-      }
-      return false;
-    };
-    TileGrid2.prototype.getExtent = function() {
-      return this.extent_;
-    };
-    TileGrid2.prototype.getMaxZoom = function() {
-      return this.maxZoom;
-    };
-    TileGrid2.prototype.getMinZoom = function() {
-      return this.minZoom;
-    };
-    TileGrid2.prototype.getOrigin = function(z) {
-      if (this.origin_) {
-        return this.origin_;
-      } else {
-        return this.origins_[z];
-      }
-    };
-    TileGrid2.prototype.getResolution = function(z) {
-      return this.resolutions_[z];
-    };
-    TileGrid2.prototype.getResolutions = function() {
-      return this.resolutions_;
-    };
-    TileGrid2.prototype.getTileCoordChildTileRange = function(tileCoord, opt_tileRange, opt_extent) {
-      if (tileCoord[0] < this.maxZoom) {
-        if (this.zoomFactor_ === 2) {
-          var minX = tileCoord[1] * 2;
-          var minY = tileCoord[2] * 2;
-          return createOrUpdate$1(minX, minX + 1, minY, minY + 1, opt_tileRange);
-        }
-        var tileCoordExtent = this.getTileCoordExtent(tileCoord, opt_extent || this.tmpExtent_);
-        return this.getTileRangeForExtentAndZ(tileCoordExtent, tileCoord[0] + 1, opt_tileRange);
-      }
-      return null;
-    };
-    TileGrid2.prototype.getTileRangeForTileCoordAndZ = function(tileCoord, z, opt_tileRange) {
-      if (z > this.maxZoom || z < this.minZoom) {
-        return null;
-      }
-      var tileCoordZ = tileCoord[0];
-      var tileCoordX = tileCoord[1];
-      var tileCoordY = tileCoord[2];
-      if (z === tileCoordZ) {
-        return createOrUpdate$1(tileCoordX, tileCoordY, tileCoordX, tileCoordY, opt_tileRange);
-      }
-      if (this.zoomFactor_) {
-        var factor = Math.pow(this.zoomFactor_, z - tileCoordZ);
-        var minX = Math.floor(tileCoordX * factor);
-        var minY = Math.floor(tileCoordY * factor);
-        if (z < tileCoordZ) {
-          return createOrUpdate$1(minX, minX, minY, minY, opt_tileRange);
-        }
-        var maxX = Math.floor(factor * (tileCoordX + 1)) - 1;
-        var maxY = Math.floor(factor * (tileCoordY + 1)) - 1;
-        return createOrUpdate$1(minX, maxX, minY, maxY, opt_tileRange);
-      }
-      var tileCoordExtent = this.getTileCoordExtent(tileCoord, this.tmpExtent_);
-      return this.getTileRangeForExtentAndZ(tileCoordExtent, z, opt_tileRange);
-    };
-    TileGrid2.prototype.getTileRangeExtent = function(z, tileRange, opt_extent) {
-      var origin = this.getOrigin(z);
-      var resolution = this.getResolution(z);
-      var tileSize = toSize(this.getTileSize(z), this.tmpSize_);
-      var minX = origin[0] + tileRange.minX * tileSize[0] * resolution;
-      var maxX = origin[0] + (tileRange.maxX + 1) * tileSize[0] * resolution;
-      var minY = origin[1] + tileRange.minY * tileSize[1] * resolution;
-      var maxY = origin[1] + (tileRange.maxY + 1) * tileSize[1] * resolution;
-      return createOrUpdate$2(minX, minY, maxX, maxY, opt_extent);
-    };
-    TileGrid2.prototype.getTileRangeForExtentAndZ = function(extent, z, opt_tileRange) {
-      var tileCoord = tmpTileCoord;
-      this.getTileCoordForXYAndZ_(extent[0], extent[3], z, false, tileCoord);
-      var minX = tileCoord[1];
-      var minY = tileCoord[2];
-      this.getTileCoordForXYAndZ_(extent[2], extent[1], z, true, tileCoord);
-      return createOrUpdate$1(minX, tileCoord[1], minY, tileCoord[2], opt_tileRange);
-    };
-    TileGrid2.prototype.getTileCoordCenter = function(tileCoord) {
-      var origin = this.getOrigin(tileCoord[0]);
-      var resolution = this.getResolution(tileCoord[0]);
-      var tileSize = toSize(this.getTileSize(tileCoord[0]), this.tmpSize_);
-      return [
-        origin[0] + (tileCoord[1] + 0.5) * tileSize[0] * resolution,
-        origin[1] - (tileCoord[2] + 0.5) * tileSize[1] * resolution
-      ];
-    };
-    TileGrid2.prototype.getTileCoordExtent = function(tileCoord, opt_extent) {
-      var origin = this.getOrigin(tileCoord[0]);
-      var resolution = this.getResolution(tileCoord[0]);
-      var tileSize = toSize(this.getTileSize(tileCoord[0]), this.tmpSize_);
-      var minX = origin[0] + tileCoord[1] * tileSize[0] * resolution;
-      var minY = origin[1] - (tileCoord[2] + 1) * tileSize[1] * resolution;
-      var maxX = minX + tileSize[0] * resolution;
-      var maxY = minY + tileSize[1] * resolution;
-      return createOrUpdate$2(minX, minY, maxX, maxY, opt_extent);
-    };
-    TileGrid2.prototype.getTileCoordForCoordAndResolution = function(coordinate, resolution, opt_tileCoord) {
-      return this.getTileCoordForXYAndResolution_(coordinate[0], coordinate[1], resolution, false, opt_tileCoord);
-    };
-    TileGrid2.prototype.getTileCoordForXYAndResolution_ = function(x, y2, resolution, reverseIntersectionPolicy, opt_tileCoord) {
-      var z = this.getZForResolution(resolution);
-      var scale2 = resolution / this.getResolution(z);
-      var origin = this.getOrigin(z);
-      var tileSize = toSize(this.getTileSize(z), this.tmpSize_);
-      var tileCoordX = scale2 * (x - origin[0]) / resolution / tileSize[0];
-      var tileCoordY = scale2 * (origin[1] - y2) / resolution / tileSize[1];
-      if (reverseIntersectionPolicy) {
-        tileCoordX = ceil(tileCoordX, DECIMALS$1) - 1;
-        tileCoordY = ceil(tileCoordY, DECIMALS$1) - 1;
-      } else {
-        tileCoordX = floor(tileCoordX, DECIMALS$1);
-        tileCoordY = floor(tileCoordY, DECIMALS$1);
-      }
-      return createOrUpdate(z, tileCoordX, tileCoordY, opt_tileCoord);
-    };
-    TileGrid2.prototype.getTileCoordForXYAndZ_ = function(x, y2, z, reverseIntersectionPolicy, opt_tileCoord) {
-      var origin = this.getOrigin(z);
-      var resolution = this.getResolution(z);
-      var tileSize = toSize(this.getTileSize(z), this.tmpSize_);
-      var tileCoordX = (x - origin[0]) / resolution / tileSize[0];
-      var tileCoordY = (origin[1] - y2) / resolution / tileSize[1];
-      if (reverseIntersectionPolicy) {
-        tileCoordX = ceil(tileCoordX, DECIMALS$1) - 1;
-        tileCoordY = ceil(tileCoordY, DECIMALS$1) - 1;
-      } else {
-        tileCoordX = floor(tileCoordX, DECIMALS$1);
-        tileCoordY = floor(tileCoordY, DECIMALS$1);
-      }
-      return createOrUpdate(z, tileCoordX, tileCoordY, opt_tileCoord);
-    };
-    TileGrid2.prototype.getTileCoordForCoordAndZ = function(coordinate, z, opt_tileCoord) {
-      return this.getTileCoordForXYAndZ_(coordinate[0], coordinate[1], z, false, opt_tileCoord);
-    };
-    TileGrid2.prototype.getTileCoordResolution = function(tileCoord) {
-      return this.resolutions_[tileCoord[0]];
-    };
-    TileGrid2.prototype.getTileSize = function(z) {
-      if (this.tileSize_) {
-        return this.tileSize_;
-      } else {
-        return this.tileSizes_[z];
-      }
-    };
-    TileGrid2.prototype.getFullTileRange = function(z) {
-      if (!this.fullTileRanges_) {
-        return this.extent_ ? this.getTileRangeForExtentAndZ(this.extent_, z) : null;
-      } else {
-        return this.fullTileRanges_[z];
-      }
-    };
-    TileGrid2.prototype.getZForResolution = function(resolution, opt_direction) {
-      var z = linearFindNearest(this.resolutions_, resolution, opt_direction || 0);
-      return clamp(z, this.minZoom, this.maxZoom);
-    };
-    TileGrid2.prototype.tileCoordIntersectsViewport = function(tileCoord, viewport) {
-      return intersectsLinearRing(viewport, 0, viewport.length, 2, this.getTileCoordExtent(tileCoord));
-    };
-    TileGrid2.prototype.calculateTileRanges_ = function(extent) {
-      var length = this.resolutions_.length;
-      var fullTileRanges = new Array(length);
-      for (var z = this.minZoom; z < length; ++z) {
-        fullTileRanges[z] = this.getTileRangeForExtentAndZ(extent, z);
-      }
-      this.fullTileRanges_ = fullTileRanges;
-    };
-    return TileGrid2;
-  }();
-  const TileGrid$1 = TileGrid;
-  function getForProjection(projection) {
-    var tileGrid = projection.getDefaultTileGrid();
-    if (!tileGrid) {
-      tileGrid = createForProjection(projection);
-      projection.setDefaultTileGrid(tileGrid);
-    }
-    return tileGrid;
-  }
-  function wrapX(tileGrid, tileCoord, projection) {
-    var z = tileCoord[0];
-    var center = tileGrid.getTileCoordCenter(tileCoord);
-    var projectionExtent = extentFromProjection(projection);
-    if (!containsCoordinate(projectionExtent, center)) {
-      var worldWidth = getWidth(projectionExtent);
-      var worldsAway = Math.ceil((projectionExtent[0] - center[0]) / worldWidth);
-      center[0] += worldWidth * worldsAway;
-      return tileGrid.getTileCoordForCoordAndZ(center, z);
-    } else {
-      return tileCoord;
-    }
-  }
-  function createForExtent(extent, opt_maxZoom, opt_tileSize, opt_corner) {
-    var corner = opt_corner !== void 0 ? opt_corner : "top-left";
-    var resolutions = resolutionsFromExtent(extent, opt_maxZoom, opt_tileSize);
-    return new TileGrid$1({
-      extent,
-      origin: getCorner(extent, corner),
-      resolutions,
-      tileSize: opt_tileSize
-    });
-  }
-  function resolutionsFromExtent(extent, opt_maxZoom, opt_tileSize, opt_maxResolution) {
-    var maxZoom = opt_maxZoom !== void 0 ? opt_maxZoom : DEFAULT_MAX_ZOOM;
-    var height = getHeight(extent);
-    var width = getWidth(extent);
-    var tileSize = toSize(opt_tileSize !== void 0 ? opt_tileSize : DEFAULT_TILE_SIZE);
-    var maxResolution = opt_maxResolution > 0 ? opt_maxResolution : Math.max(width / tileSize[0], height / tileSize[1]);
-    var length = maxZoom + 1;
-    var resolutions = new Array(length);
-    for (var z = 0; z < length; ++z) {
-      resolutions[z] = maxResolution / Math.pow(2, z);
-    }
-    return resolutions;
-  }
-  function createForProjection(projection, opt_maxZoom, opt_tileSize, opt_corner) {
-    var extent = extentFromProjection(projection);
-    return createForExtent(extent, opt_maxZoom, opt_tileSize, opt_corner);
-  }
-  function extentFromProjection(projection) {
-    projection = get$2(projection);
-    var extent = projection.getExtent();
-    if (!extent) {
-      var half = 180 * METERS_PER_UNIT$1[Units$1.DEGREES] / projection.getMetersPerUnit();
-      extent = createOrUpdate$2(-half, -half, half, half);
-    }
-    return extent;
-  }
-  var __extends$9 = globalThis && globalThis.__extends || function() {
-    var extendStatics = function(d, b) {
-      extendStatics = Object.setPrototypeOf || { __proto__: [] } instanceof Array && function(d2, b2) {
-        d2.__proto__ = b2;
-      } || function(d2, b2) {
-        for (var p2 in b2)
-          if (Object.prototype.hasOwnProperty.call(b2, p2))
-            d2[p2] = b2[p2];
-      };
-      return extendStatics(d, b);
-    };
-    return function(d, b) {
-      if (typeof b !== "function" && b !== null)
-        throw new TypeError("Class extends value " + String(b) + " is not a constructor or null");
-      extendStatics(d, b);
-      function __() {
-        this.constructor = d;
-      }
-      d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
-    };
-  }();
-  var TileSource = function(_super) {
-    __extends$9(TileSource2, _super);
-    function TileSource2(options) {
-      var _this = _super.call(this, {
-        attributions: options.attributions,
-        attributionsCollapsible: options.attributionsCollapsible,
-        projection: options.projection,
-        state: options.state,
-        wrapX: options.wrapX,
-        interpolate: options.interpolate
-      }) || this;
-      _this.on;
-      _this.once;
-      _this.un;
-      _this.opaque_ = options.opaque !== void 0 ? options.opaque : false;
-      _this.tilePixelRatio_ = options.tilePixelRatio !== void 0 ? options.tilePixelRatio : 1;
-      _this.tileGrid = options.tileGrid !== void 0 ? options.tileGrid : null;
-      var tileSize = [256, 256];
-      if (_this.tileGrid) {
-        toSize(_this.tileGrid.getTileSize(_this.tileGrid.getMinZoom()), tileSize);
-      }
-      _this.tileCache = new TileCache$1(options.cacheSize || 0);
-      _this.tmpSize = [0, 0];
-      _this.key_ = options.key || "";
-      _this.tileOptions = {
-        transition: options.transition,
-        interpolate: options.interpolate
-      };
-      _this.zDirection = options.zDirection ? options.zDirection : 0;
-      return _this;
-    }
-    TileSource2.prototype.canExpireCache = function() {
-      return this.tileCache.canExpireCache();
-    };
-    TileSource2.prototype.expireCache = function(projection, usedTiles) {
-      var tileCache = this.getTileCacheForProjection(projection);
-      if (tileCache) {
-        tileCache.expireCache(usedTiles);
-      }
-    };
-    TileSource2.prototype.forEachLoadedTile = function(projection, z, tileRange, callback) {
-      var tileCache = this.getTileCacheForProjection(projection);
-      if (!tileCache) {
-        return false;
-      }
-      var covered = true;
-      var tile, tileCoordKey, loaded;
-      for (var x = tileRange.minX; x <= tileRange.maxX; ++x) {
-        for (var y2 = tileRange.minY; y2 <= tileRange.maxY; ++y2) {
-          tileCoordKey = getKeyZXY(z, x, y2);
-          loaded = false;
-          if (tileCache.containsKey(tileCoordKey)) {
-            tile = tileCache.get(tileCoordKey);
-            loaded = tile.getState() === TileState.LOADED;
-            if (loaded) {
-              loaded = callback(tile) !== false;
-            }
-          }
-          if (!loaded) {
-            covered = false;
-          }
-        }
-      }
-      return covered;
-    };
-    TileSource2.prototype.getGutterForProjection = function(projection) {
-      return 0;
-    };
-    TileSource2.prototype.getKey = function() {
-      return this.key_;
-    };
-    TileSource2.prototype.setKey = function(key) {
-      if (this.key_ !== key) {
-        this.key_ = key;
-        this.changed();
-      }
-    };
-    TileSource2.prototype.getOpaque = function(projection) {
-      return this.opaque_;
-    };
-    TileSource2.prototype.getResolutions = function() {
-      if (!this.tileGrid) {
-        return null;
-      }
-      return this.tileGrid.getResolutions();
-    };
-    TileSource2.prototype.getTile = function(z, x, y2, pixelRatio, projection) {
-      return abstract();
-    };
-    TileSource2.prototype.getTileGrid = function() {
-      return this.tileGrid;
-    };
-    TileSource2.prototype.getTileGridForProjection = function(projection) {
-      if (!this.tileGrid) {
-        return getForProjection(projection);
-      } else {
-        return this.tileGrid;
-      }
-    };
-    TileSource2.prototype.getTileCacheForProjection = function(projection) {
-      var sourceProjection = this.getProjection();
-      assert(
-        sourceProjection === null || equivalent(sourceProjection, projection),
-        68
-      );
-      return this.tileCache;
-    };
-    TileSource2.prototype.getTilePixelRatio = function(pixelRatio) {
-      return this.tilePixelRatio_;
-    };
-    TileSource2.prototype.getTilePixelSize = function(z, pixelRatio, projection) {
-      var tileGrid = this.getTileGridForProjection(projection);
-      var tilePixelRatio = this.getTilePixelRatio(pixelRatio);
-      var tileSize = toSize(tileGrid.getTileSize(z), this.tmpSize);
-      if (tilePixelRatio == 1) {
-        return tileSize;
-      } else {
-        return scale(tileSize, tilePixelRatio, this.tmpSize);
-      }
-    };
-    TileSource2.prototype.getTileCoordForTileUrlFunction = function(tileCoord, opt_projection) {
-      var projection = opt_projection !== void 0 ? opt_projection : this.getProjection();
-      var tileGrid = this.getTileGridForProjection(projection);
-      if (this.getWrapX() && projection.isGlobal()) {
-        tileCoord = wrapX(tileGrid, tileCoord, projection);
-      }
-      return withinExtentAndZ(tileCoord, tileGrid) ? tileCoord : null;
-    };
-    TileSource2.prototype.clear = function() {
-      this.tileCache.clear();
-    };
-    TileSource2.prototype.refresh = function() {
-      this.clear();
-      _super.prototype.refresh.call(this);
-    };
-    TileSource2.prototype.updateCacheSize = function(tileCount, projection) {
-      var tileCache = this.getTileCacheForProjection(projection);
-      if (tileCount > tileCache.highWaterMark) {
-        tileCache.highWaterMark = tileCount;
-      }
-    };
-    TileSource2.prototype.useTile = function(z, x, y2, projection) {
-    };
-    return TileSource2;
-  }(Source$1);
-  var TileSourceEvent = function(_super) {
-    __extends$9(TileSourceEvent2, _super);
-    function TileSourceEvent2(type, tile) {
-      var _this = _super.call(this, type) || this;
-      _this.tile = tile;
-      return _this;
-    }
-    return TileSourceEvent2;
-  }(Event);
-  const TileSource$1 = TileSource;
-  function createFromTemplate(template, tileGrid) {
-    var zRegEx = /\{z\}/g;
-    var xRegEx = /\{x\}/g;
-    var yRegEx = /\{y\}/g;
-    var dashYRegEx = /\{-y\}/g;
-    return function(tileCoord, pixelRatio, projection) {
-      if (!tileCoord) {
-        return void 0;
-      } else {
-        return template.replace(zRegEx, tileCoord[0].toString()).replace(xRegEx, tileCoord[1].toString()).replace(yRegEx, tileCoord[2].toString()).replace(dashYRegEx, function() {
-          var z = tileCoord[0];
-          var range = tileGrid.getFullTileRange(z);
-          assert(range, 55);
-          var y2 = range.getHeight() - tileCoord[2] - 1;
-          return y2.toString();
-        });
-      }
-    };
-  }
-  function createFromTemplates(templates, tileGrid) {
-    var len = templates.length;
-    var tileUrlFunctions = new Array(len);
-    for (var i = 0; i < len; ++i) {
-      tileUrlFunctions[i] = createFromTemplate(templates[i], tileGrid);
-    }
-    return createFromTileUrlFunctions(tileUrlFunctions);
-  }
-  function createFromTileUrlFunctions(tileUrlFunctions) {
-    if (tileUrlFunctions.length === 1) {
-      return tileUrlFunctions[0];
-    }
-    return function(tileCoord, pixelRatio, projection) {
-      if (!tileCoord) {
-        return void 0;
-      } else {
-        var h2 = hash(tileCoord);
-        var index2 = modulo(h2, tileUrlFunctions.length);
-        return tileUrlFunctions[index2](tileCoord, pixelRatio, projection);
-      }
-    };
-  }
-  function expandUrl(url) {
-    var urls = [];
-    var match2 = /\{([a-z])-([a-z])\}/.exec(url);
-    if (match2) {
-      var startCharCode = match2[1].charCodeAt(0);
-      var stopCharCode = match2[2].charCodeAt(0);
-      var charCode = void 0;
-      for (charCode = startCharCode; charCode <= stopCharCode; ++charCode) {
-        urls.push(url.replace(match2[0], String.fromCharCode(charCode)));
-      }
-      return urls;
-    }
-    match2 = /\{(\d+)-(\d+)\}/.exec(url);
-    if (match2) {
-      var stop_1 = parseInt(match2[2], 10);
-      for (var i = parseInt(match2[1], 10); i <= stop_1; i++) {
-        urls.push(url.replace(match2[0], i.toString()));
-      }
-      return urls;
-    }
-    urls.push(url);
-    return urls;
-  }
-  var __extends$8 = globalThis && globalThis.__extends || function() {
-    var extendStatics = function(d, b) {
-      extendStatics = Object.setPrototypeOf || { __proto__: [] } instanceof Array && function(d2, b2) {
-        d2.__proto__ = b2;
-      } || function(d2, b2) {
-        for (var p2 in b2)
-          if (Object.prototype.hasOwnProperty.call(b2, p2))
-            d2[p2] = b2[p2];
-      };
-      return extendStatics(d, b);
-    };
-    return function(d, b) {
-      if (typeof b !== "function" && b !== null)
-        throw new TypeError("Class extends value " + String(b) + " is not a constructor or null");
-      extendStatics(d, b);
-      function __() {
-        this.constructor = d;
-      }
-      d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
-    };
-  }();
-  var UrlTile = function(_super) {
-    __extends$8(UrlTile2, _super);
-    function UrlTile2(options) {
-      var _this = _super.call(this, {
-        attributions: options.attributions,
-        cacheSize: options.cacheSize,
-        opaque: options.opaque,
-        projection: options.projection,
-        state: options.state,
-        tileGrid: options.tileGrid,
-        tilePixelRatio: options.tilePixelRatio,
-        wrapX: options.wrapX,
-        transition: options.transition,
-        interpolate: options.interpolate,
-        key: options.key,
-        attributionsCollapsible: options.attributionsCollapsible,
-        zDirection: options.zDirection
-      }) || this;
-      _this.generateTileUrlFunction_ = _this.tileUrlFunction === UrlTile2.prototype.tileUrlFunction;
-      _this.tileLoadFunction = options.tileLoadFunction;
-      if (options.tileUrlFunction) {
-        _this.tileUrlFunction = options.tileUrlFunction;
-      }
-      _this.urls = null;
-      if (options.urls) {
-        _this.setUrls(options.urls);
-      } else if (options.url) {
-        _this.setUrl(options.url);
-      }
-      _this.tileLoadingKeys_ = {};
-      return _this;
-    }
-    UrlTile2.prototype.getTileLoadFunction = function() {
-      return this.tileLoadFunction;
-    };
-    UrlTile2.prototype.getTileUrlFunction = function() {
-      return Object.getPrototypeOf(this).tileUrlFunction === this.tileUrlFunction ? this.tileUrlFunction.bind(this) : this.tileUrlFunction;
-    };
-    UrlTile2.prototype.getUrls = function() {
-      return this.urls;
-    };
-    UrlTile2.prototype.handleTileChange = function(event) {
-      var tile = event.target;
-      var uid2 = getUid(tile);
-      var tileState = tile.getState();
-      var type;
-      if (tileState == TileState.LOADING) {
-        this.tileLoadingKeys_[uid2] = true;
-        type = TileEventType.TILELOADSTART;
-      } else if (uid2 in this.tileLoadingKeys_) {
-        delete this.tileLoadingKeys_[uid2];
-        type = tileState == TileState.ERROR ? TileEventType.TILELOADERROR : tileState == TileState.LOADED ? TileEventType.TILELOADEND : void 0;
-      }
-      if (type != void 0) {
-        this.dispatchEvent(new TileSourceEvent(type, tile));
-      }
-    };
-    UrlTile2.prototype.setTileLoadFunction = function(tileLoadFunction) {
-      this.tileCache.clear();
-      this.tileLoadFunction = tileLoadFunction;
-      this.changed();
-    };
-    UrlTile2.prototype.setTileUrlFunction = function(tileUrlFunction, key) {
-      this.tileUrlFunction = tileUrlFunction;
-      this.tileCache.pruneExceptNewestZ();
-      if (typeof key !== "undefined") {
-        this.setKey(key);
-      } else {
-        this.changed();
-      }
-    };
-    UrlTile2.prototype.setUrl = function(url) {
-      var urls = expandUrl(url);
-      this.urls = urls;
-      this.setUrls(urls);
-    };
-    UrlTile2.prototype.setUrls = function(urls) {
-      this.urls = urls;
-      var key = urls.join("\n");
-      if (this.generateTileUrlFunction_) {
-        this.setTileUrlFunction(createFromTemplates(urls, this.tileGrid), key);
-      } else {
-        this.setKey(key);
-      }
-    };
-    UrlTile2.prototype.tileUrlFunction = function(tileCoord, pixelRatio, projection) {
-      return void 0;
-    };
-    UrlTile2.prototype.useTile = function(z, x, y2) {
-      var tileCoordKey = getKeyZXY(z, x, y2);
-      if (this.tileCache.containsKey(tileCoordKey)) {
-        this.tileCache.get(tileCoordKey);
-      }
-    };
-    return UrlTile2;
-  }(TileSource$1);
-  const UrlTile$1 = UrlTile;
-  var __extends$7 = globalThis && globalThis.__extends || function() {
-    var extendStatics = function(d, b) {
-      extendStatics = Object.setPrototypeOf || { __proto__: [] } instanceof Array && function(d2, b2) {
-        d2.__proto__ = b2;
-      } || function(d2, b2) {
-        for (var p2 in b2)
-          if (Object.prototype.hasOwnProperty.call(b2, p2))
-            d2[p2] = b2[p2];
-      };
-      return extendStatics(d, b);
-    };
-    return function(d, b) {
-      if (typeof b !== "function" && b !== null)
-        throw new TypeError("Class extends value " + String(b) + " is not a constructor or null");
-      extendStatics(d, b);
-      function __() {
-        this.constructor = d;
-      }
-      d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
-    };
-  }();
-  var TileImage = function(_super) {
-    __extends$7(TileImage2, _super);
-    function TileImage2(options) {
-      var _this = this;
-      var interpolate = options.imageSmoothing !== void 0 ? options.imageSmoothing : true;
-      if (options.interpolate !== void 0) {
-        interpolate = options.interpolate;
-      }
-      _this = _super.call(this, {
-        attributions: options.attributions,
-        cacheSize: options.cacheSize,
-        opaque: options.opaque,
-        projection: options.projection,
-        state: options.state,
-        tileGrid: options.tileGrid,
-        tileLoadFunction: options.tileLoadFunction ? options.tileLoadFunction : defaultTileLoadFunction,
-        tilePixelRatio: options.tilePixelRatio,
-        tileUrlFunction: options.tileUrlFunction,
-        url: options.url,
-        urls: options.urls,
-        wrapX: options.wrapX,
-        transition: options.transition,
-        interpolate,
-        key: options.key,
-        attributionsCollapsible: options.attributionsCollapsible,
-        zDirection: options.zDirection
-      }) || this;
-      _this.crossOrigin = options.crossOrigin !== void 0 ? options.crossOrigin : null;
-      _this.tileClass = options.tileClass !== void 0 ? options.tileClass : ImageTile$1;
-      _this.tileCacheForProjection = {};
-      _this.tileGridForProjection = {};
-      _this.reprojectionErrorThreshold_ = options.reprojectionErrorThreshold;
-      _this.renderReprojectionEdges_ = false;
-      return _this;
-    }
-    TileImage2.prototype.canExpireCache = function() {
-      if (!ENABLE_RASTER_REPROJECTION) {
-        return _super.prototype.canExpireCache.call(this);
-      }
-      if (this.tileCache.canExpireCache()) {
-        return true;
-      } else {
-        for (var key in this.tileCacheForProjection) {
-          if (this.tileCacheForProjection[key].canExpireCache()) {
-            return true;
-          }
-        }
-      }
-      return false;
-    };
-    TileImage2.prototype.expireCache = function(projection, usedTiles) {
-      if (!ENABLE_RASTER_REPROJECTION) {
-        _super.prototype.expireCache.call(this, projection, usedTiles);
-        return;
-      }
-      var usedTileCache = this.getTileCacheForProjection(projection);
-      this.tileCache.expireCache(this.tileCache == usedTileCache ? usedTiles : {});
-      for (var id in this.tileCacheForProjection) {
-        var tileCache = this.tileCacheForProjection[id];
-        tileCache.expireCache(tileCache == usedTileCache ? usedTiles : {});
-      }
-    };
-    TileImage2.prototype.getGutterForProjection = function(projection) {
-      if (ENABLE_RASTER_REPROJECTION && this.getProjection() && projection && !equivalent(this.getProjection(), projection)) {
-        return 0;
-      } else {
-        return this.getGutter();
-      }
-    };
-    TileImage2.prototype.getGutter = function() {
-      return 0;
-    };
-    TileImage2.prototype.getKey = function() {
-      var key = _super.prototype.getKey.call(this);
-      if (!this.getInterpolate()) {
-        key += ":disable-interpolation";
-      }
-      return key;
-    };
-    TileImage2.prototype.getOpaque = function(projection) {
-      if (ENABLE_RASTER_REPROJECTION && this.getProjection() && projection && !equivalent(this.getProjection(), projection)) {
-        return false;
-      } else {
-        return _super.prototype.getOpaque.call(this, projection);
-      }
-    };
-    TileImage2.prototype.getTileGridForProjection = function(projection) {
-      if (!ENABLE_RASTER_REPROJECTION) {
-        return _super.prototype.getTileGridForProjection.call(this, projection);
-      }
-      var thisProj = this.getProjection();
-      if (this.tileGrid && (!thisProj || equivalent(thisProj, projection))) {
-        return this.tileGrid;
-      } else {
-        var projKey = getUid(projection);
-        if (!(projKey in this.tileGridForProjection)) {
-          this.tileGridForProjection[projKey] = getForProjection(projection);
-        }
-        return this.tileGridForProjection[projKey];
-      }
-    };
-    TileImage2.prototype.getTileCacheForProjection = function(projection) {
-      if (!ENABLE_RASTER_REPROJECTION) {
-        return _super.prototype.getTileCacheForProjection.call(this, projection);
-      }
-      var thisProj = this.getProjection();
-      if (!thisProj || equivalent(thisProj, projection)) {
-        return this.tileCache;
-      } else {
-        var projKey = getUid(projection);
-        if (!(projKey in this.tileCacheForProjection)) {
-          this.tileCacheForProjection[projKey] = new TileCache$1(this.tileCache.highWaterMark);
-        }
-        return this.tileCacheForProjection[projKey];
-      }
-    };
-    TileImage2.prototype.createTile_ = function(z, x, y2, pixelRatio, projection, key) {
-      var tileCoord = [z, x, y2];
-      var urlTileCoord = this.getTileCoordForTileUrlFunction(tileCoord, projection);
-      var tileUrl = urlTileCoord ? this.tileUrlFunction(urlTileCoord, pixelRatio, projection) : void 0;
-      var tile = new this.tileClass(tileCoord, tileUrl !== void 0 ? TileState.IDLE : TileState.EMPTY, tileUrl !== void 0 ? tileUrl : "", this.crossOrigin, this.tileLoadFunction, this.tileOptions);
-      tile.key = key;
-      tile.addEventListener(EventType$1.CHANGE, this.handleTileChange.bind(this));
-      return tile;
-    };
-    TileImage2.prototype.getTile = function(z, x, y2, pixelRatio, projection) {
-      var sourceProjection = this.getProjection();
-      if (!ENABLE_RASTER_REPROJECTION || !sourceProjection || !projection || equivalent(sourceProjection, projection)) {
-        return this.getTileInternal(z, x, y2, pixelRatio, sourceProjection || projection);
-      } else {
-        var cache2 = this.getTileCacheForProjection(projection);
-        var tileCoord = [z, x, y2];
-        var tile = void 0;
-        var tileCoordKey = getKey(tileCoord);
-        if (cache2.containsKey(tileCoordKey)) {
-          tile = cache2.get(tileCoordKey);
-        }
-        var key = this.getKey();
-        if (tile && tile.key == key) {
-          return tile;
-        } else {
-          var sourceTileGrid = this.getTileGridForProjection(sourceProjection);
-          var targetTileGrid = this.getTileGridForProjection(projection);
-          var wrappedTileCoord = this.getTileCoordForTileUrlFunction(tileCoord, projection);
-          var newTile = new ReprojTile$1(sourceProjection, sourceTileGrid, projection, targetTileGrid, tileCoord, wrappedTileCoord, this.getTilePixelRatio(pixelRatio), this.getGutter(), function(z2, x2, y3, pixelRatio2) {
-            return this.getTileInternal(z2, x2, y3, pixelRatio2, sourceProjection);
-          }.bind(this), this.reprojectionErrorThreshold_, this.renderReprojectionEdges_, this.getInterpolate());
-          newTile.key = key;
-          if (tile) {
-            newTile.interimTile = tile;
-            newTile.refreshInterimChain();
-            cache2.replace(tileCoordKey, newTile);
-          } else {
-            cache2.set(tileCoordKey, newTile);
-          }
-          return newTile;
-        }
-      }
-    };
-    TileImage2.prototype.getTileInternal = function(z, x, y2, pixelRatio, projection) {
-      var tile = null;
-      var tileCoordKey = getKeyZXY(z, x, y2);
-      var key = this.getKey();
-      if (!this.tileCache.containsKey(tileCoordKey)) {
-        tile = this.createTile_(z, x, y2, pixelRatio, projection, key);
-        this.tileCache.set(tileCoordKey, tile);
-      } else {
-        tile = this.tileCache.get(tileCoordKey);
-        if (tile.key != key) {
-          var interimTile = tile;
-          tile = this.createTile_(z, x, y2, pixelRatio, projection, key);
-          if (interimTile.getState() == TileState.IDLE) {
-            tile.interimTile = interimTile.interimTile;
-          } else {
-            tile.interimTile = interimTile;
-          }
-          tile.refreshInterimChain();
-          this.tileCache.replace(tileCoordKey, tile);
-        }
-      }
-      return tile;
-    };
-    TileImage2.prototype.setRenderReprojectionEdges = function(render2) {
-      if (!ENABLE_RASTER_REPROJECTION || this.renderReprojectionEdges_ == render2) {
-        return;
-      }
-      this.renderReprojectionEdges_ = render2;
-      for (var id in this.tileCacheForProjection) {
-        this.tileCacheForProjection[id].clear();
-      }
-      this.changed();
-    };
-    TileImage2.prototype.setTileGridForProjection = function(projection, tilegrid) {
-      if (ENABLE_RASTER_REPROJECTION) {
-        var proj = get$2(projection);
-        if (proj) {
-          var projKey = getUid(proj);
-          if (!(projKey in this.tileGridForProjection)) {
-            this.tileGridForProjection[projKey] = tilegrid;
-          }
-        }
-      }
-    };
-    return TileImage2;
-  }(UrlTile$1);
-  function defaultTileLoadFunction(imageTile, src2) {
-    imageTile.getImage().src = src2;
-  }
-  const TileImage$1 = TileImage;
   var commonjsGlobal = typeof globalThis !== "undefined" ? globalThis : typeof window !== "undefined" ? window : typeof global !== "undefined" ? global : typeof self !== "undefined" ? self : {};
-  var __extends$6 = globalThis && globalThis.__extends || function() {
-    var extendStatics = function(d, b) {
-      extendStatics = Object.setPrototypeOf || { __proto__: [] } instanceof Array && function(d2, b2) {
-        d2.__proto__ = b2;
-      } || function(d2, b2) {
-        for (var p2 in b2)
-          if (Object.prototype.hasOwnProperty.call(b2, p2))
-            d2[p2] = b2[p2];
-      };
-      return extendStatics(d, b);
-    };
-    return function(d, b) {
-      if (typeof b !== "function" && b !== null)
-        throw new TypeError("Class extends value " + String(b) + " is not a constructor or null");
-      extendStatics(d, b);
-      function __() {
-        this.constructor = d;
-      }
-      d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
-    };
-  }();
-  var ReprojImage = function(_super) {
-    __extends$6(ReprojImage2, _super);
-    function ReprojImage2(sourceProj, targetProj, targetExtent, targetResolution, pixelRatio, getImageFunction, interpolate) {
-      var _this = this;
-      var maxSourceExtent = sourceProj.getExtent();
-      var maxTargetExtent = targetProj.getExtent();
-      var limitedTargetExtent = maxTargetExtent ? getIntersection(targetExtent, maxTargetExtent) : targetExtent;
-      var targetCenter = getCenter(limitedTargetExtent);
-      var sourceResolution = calculateSourceResolution(sourceProj, targetProj, targetCenter, targetResolution);
-      var errorThresholdInPixels = ERROR_THRESHOLD;
-      var triangulation = new Triangulation$1(sourceProj, targetProj, limitedTargetExtent, maxSourceExtent, sourceResolution * errorThresholdInPixels, targetResolution);
-      var sourceExtent = triangulation.calculateSourceExtent();
-      var sourceImage = getImageFunction(sourceExtent, sourceResolution, pixelRatio);
-      var state = sourceImage ? ImageState.IDLE : ImageState.EMPTY;
-      var sourcePixelRatio = sourceImage ? sourceImage.getPixelRatio() : 1;
-      _this = _super.call(this, targetExtent, targetResolution, sourcePixelRatio, state) || this;
-      _this.targetProj_ = targetProj;
-      _this.maxSourceExtent_ = maxSourceExtent;
-      _this.triangulation_ = triangulation;
-      _this.targetResolution_ = targetResolution;
-      _this.targetExtent_ = targetExtent;
-      _this.sourceImage_ = sourceImage;
-      _this.sourcePixelRatio_ = sourcePixelRatio;
-      _this.interpolate_ = interpolate;
-      _this.canvas_ = null;
-      _this.sourceListenerKey_ = null;
-      return _this;
-    }
-    ReprojImage2.prototype.disposeInternal = function() {
-      if (this.state == ImageState.LOADING) {
-        this.unlistenSource_();
-      }
-      _super.prototype.disposeInternal.call(this);
-    };
-    ReprojImage2.prototype.getImage = function() {
-      return this.canvas_;
-    };
-    ReprojImage2.prototype.getProjection = function() {
-      return this.targetProj_;
-    };
-    ReprojImage2.prototype.reproject_ = function() {
-      var sourceState = this.sourceImage_.getState();
-      if (sourceState == ImageState.LOADED) {
-        var width = getWidth(this.targetExtent_) / this.targetResolution_;
-        var height = getHeight(this.targetExtent_) / this.targetResolution_;
-        this.canvas_ = render(width, height, this.sourcePixelRatio_, this.sourceImage_.getResolution(), this.maxSourceExtent_, this.targetResolution_, this.targetExtent_, this.triangulation_, [
-          {
-            extent: this.sourceImage_.getExtent(),
-            image: this.sourceImage_.getImage()
-          }
-        ], 0, void 0, this.interpolate_);
-      }
-      this.state = sourceState;
-      this.changed();
-    };
-    ReprojImage2.prototype.load = function() {
-      if (this.state == ImageState.IDLE) {
-        this.state = ImageState.LOADING;
-        this.changed();
-        var sourceState = this.sourceImage_.getState();
-        if (sourceState == ImageState.LOADED || sourceState == ImageState.ERROR) {
-          this.reproject_();
-        } else {
-          this.sourceListenerKey_ = listen(this.sourceImage_, EventType$1.CHANGE, function(e) {
-            var sourceState2 = this.sourceImage_.getState();
-            if (sourceState2 == ImageState.LOADED || sourceState2 == ImageState.ERROR) {
-              this.unlistenSource_();
-              this.reproject_();
-            }
-          }, this);
-          this.sourceImage_.load();
-        }
-      }
-    };
-    ReprojImage2.prototype.unlistenSource_ = function() {
-      unlistenByKey(
-        this.sourceListenerKey_
-      );
-      this.sourceListenerKey_ = null;
-    };
-    return ReprojImage2;
-  }(ImageBase$1);
-  const ReprojImage$1 = ReprojImage;
-  var __extends$5 = globalThis && globalThis.__extends || function() {
-    var extendStatics = function(d, b) {
-      extendStatics = Object.setPrototypeOf || { __proto__: [] } instanceof Array && function(d2, b2) {
-        d2.__proto__ = b2;
-      } || function(d2, b2) {
-        for (var p2 in b2)
-          if (Object.prototype.hasOwnProperty.call(b2, p2))
-            d2[p2] = b2[p2];
-      };
-      return extendStatics(d, b);
-    };
-    return function(d, b) {
-      if (typeof b !== "function" && b !== null)
-        throw new TypeError("Class extends value " + String(b) + " is not a constructor or null");
-      extendStatics(d, b);
-      function __() {
-        this.constructor = d;
-      }
-      d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
-    };
-  }();
-  var ImageSourceEventType = {
-    IMAGELOADSTART: "imageloadstart",
-    IMAGELOADEND: "imageloadend",
-    IMAGELOADERROR: "imageloaderror"
-  };
-  var ImageSourceEvent = function(_super) {
-    __extends$5(ImageSourceEvent2, _super);
-    function ImageSourceEvent2(type, image) {
-      var _this = _super.call(this, type) || this;
-      _this.image = image;
-      return _this;
-    }
-    return ImageSourceEvent2;
-  }(Event);
-  var ImageSource = function(_super) {
-    __extends$5(ImageSource2, _super);
-    function ImageSource2(options) {
-      var _this = this;
-      var interpolate = options.imageSmoothing !== void 0 ? options.imageSmoothing : true;
-      if (options.interpolate !== void 0) {
-        interpolate = options.interpolate;
-      }
-      _this = _super.call(this, {
-        attributions: options.attributions,
-        projection: options.projection,
-        state: options.state,
-        interpolate
-      }) || this;
-      _this.on;
-      _this.once;
-      _this.un;
-      _this.resolutions_ = options.resolutions !== void 0 ? options.resolutions : null;
-      _this.reprojectedImage_ = null;
-      _this.reprojectedRevision_ = 0;
-      return _this;
-    }
-    ImageSource2.prototype.getResolutions = function() {
-      return this.resolutions_;
-    };
-    ImageSource2.prototype.findNearestResolution = function(resolution) {
-      if (this.resolutions_) {
-        var idx = linearFindNearest(this.resolutions_, resolution, 0);
-        resolution = this.resolutions_[idx];
-      }
-      return resolution;
-    };
-    ImageSource2.prototype.getImage = function(extent, resolution, pixelRatio, projection) {
-      var sourceProjection = this.getProjection();
-      if (!ENABLE_RASTER_REPROJECTION || !sourceProjection || !projection || equivalent(sourceProjection, projection)) {
-        if (sourceProjection) {
-          projection = sourceProjection;
-        }
-        return this.getImageInternal(extent, resolution, pixelRatio, projection);
-      } else {
-        if (this.reprojectedImage_) {
-          if (this.reprojectedRevision_ == this.getRevision() && equivalent(this.reprojectedImage_.getProjection(), projection) && this.reprojectedImage_.getResolution() == resolution && equals$2(this.reprojectedImage_.getExtent(), extent)) {
-            return this.reprojectedImage_;
-          }
-          this.reprojectedImage_.dispose();
-          this.reprojectedImage_ = null;
-        }
-        this.reprojectedImage_ = new ReprojImage$1(sourceProjection, projection, extent, resolution, pixelRatio, function(extent2, resolution2, pixelRatio2) {
-          return this.getImageInternal(extent2, resolution2, pixelRatio2, sourceProjection);
-        }.bind(this), this.getInterpolate());
-        this.reprojectedRevision_ = this.getRevision();
-        return this.reprojectedImage_;
-      }
-    };
-    ImageSource2.prototype.getImageInternal = function(extent, resolution, pixelRatio, projection) {
-      return abstract();
-    };
-    ImageSource2.prototype.handleImageChange = function(event) {
-      var image = event.target;
-      var type;
-      switch (image.getState()) {
-        case ImageState.LOADING:
-          this.loading = true;
-          type = ImageSourceEventType.IMAGELOADSTART;
-          break;
-        case ImageState.LOADED:
-          this.loading = false;
-          type = ImageSourceEventType.IMAGELOADEND;
-          break;
-        case ImageState.ERROR:
-          this.loading = false;
-          type = ImageSourceEventType.IMAGELOADERROR;
-          break;
-        default:
-          return;
-      }
-      if (this.hasListener(type)) {
-        this.dispatchEvent(new ImageSourceEvent(type, image));
-      }
-    };
-    return ImageSource2;
-  }(Source$1);
-  function defaultImageLoadFunction(image, src2) {
-    image.getImage().src = src2;
-  }
-  const ImageSource$1 = ImageSource;
-  function appendParams(uri, params2) {
-    var keyParams = [];
-    Object.keys(params2).forEach(function(k) {
-      if (params2[k] !== null && params2[k] !== void 0) {
-        keyParams.push(k + "=" + encodeURIComponent(params2[k]));
-      }
-    });
-    var qs = keyParams.join("&");
-    uri = uri.replace(/[?&]$/, "");
-    uri = uri.indexOf("?") === -1 ? uri + "?" : uri + "&";
-    return uri + qs;
-  }
-  var DEFAULT_VERSION = "1.3.0";
-  var __extends$4 = globalThis && globalThis.__extends || function() {
-    var extendStatics = function(d, b) {
-      extendStatics = Object.setPrototypeOf || { __proto__: [] } instanceof Array && function(d2, b2) {
-        d2.__proto__ = b2;
-      } || function(d2, b2) {
-        for (var p2 in b2)
-          if (Object.prototype.hasOwnProperty.call(b2, p2))
-            d2[p2] = b2[p2];
-      };
-      return extendStatics(d, b);
-    };
-    return function(d, b) {
-      if (typeof b !== "function" && b !== null)
-        throw new TypeError("Class extends value " + String(b) + " is not a constructor or null");
-      extendStatics(d, b);
-      function __() {
-        this.constructor = d;
-      }
-      d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
-    };
-  }();
-  var DECIMALS = 4;
-  var GETFEATUREINFO_IMAGE_SIZE = [101, 101];
-  var ImageWMS = function(_super) {
-    __extends$4(ImageWMS2, _super);
-    function ImageWMS2(opt_options) {
-      var _this = this;
-      var options = opt_options ? opt_options : {};
-      var interpolate = options.imageSmoothing !== void 0 ? options.imageSmoothing : true;
-      if (options.interpolate !== void 0) {
-        interpolate = options.interpolate;
-      }
-      _this = _super.call(this, {
-        attributions: options.attributions,
-        interpolate,
-        projection: options.projection,
-        resolutions: options.resolutions
-      }) || this;
-      _this.crossOrigin_ = options.crossOrigin !== void 0 ? options.crossOrigin : null;
-      _this.url_ = options.url;
-      _this.imageLoadFunction_ = options.imageLoadFunction !== void 0 ? options.imageLoadFunction : defaultImageLoadFunction;
-      _this.params_ = options.params || {};
-      _this.v13_ = true;
-      _this.updateV13_();
-      _this.serverType_ = options.serverType;
-      _this.hidpi_ = options.hidpi !== void 0 ? options.hidpi : true;
-      _this.image_ = null;
-      _this.imageSize_ = [0, 0];
-      _this.renderedRevision_ = 0;
-      _this.ratio_ = options.ratio !== void 0 ? options.ratio : 1.5;
-      return _this;
-    }
-    ImageWMS2.prototype.getFeatureInfoUrl = function(coordinate, resolution, projection, params2) {
-      if (this.url_ === void 0) {
-        return void 0;
-      }
-      var projectionObj = get$2(projection);
-      var sourceProjectionObj = this.getProjection();
-      if (sourceProjectionObj && sourceProjectionObj !== projectionObj) {
-        resolution = calculateSourceResolution(sourceProjectionObj, projectionObj, coordinate, resolution);
-        coordinate = transform$1(coordinate, projectionObj, sourceProjectionObj);
-      }
-      var extent = getForViewAndSize(coordinate, resolution, 0, GETFEATUREINFO_IMAGE_SIZE);
-      var baseParams = {
-        "SERVICE": "WMS",
-        "VERSION": DEFAULT_VERSION,
-        "REQUEST": "GetFeatureInfo",
-        "FORMAT": "image/png",
-        "TRANSPARENT": true,
-        "QUERY_LAYERS": this.params_["LAYERS"]
-      };
-      assign(baseParams, this.params_, params2);
-      var x = floor((coordinate[0] - extent[0]) / resolution, DECIMALS);
-      var y2 = floor((extent[3] - coordinate[1]) / resolution, DECIMALS);
-      baseParams[this.v13_ ? "I" : "X"] = x;
-      baseParams[this.v13_ ? "J" : "Y"] = y2;
-      return this.getRequestUrl_(extent, GETFEATUREINFO_IMAGE_SIZE, 1, sourceProjectionObj || projectionObj, baseParams);
-    };
-    ImageWMS2.prototype.getLegendUrl = function(resolution, params2) {
-      if (this.url_ === void 0) {
-        return void 0;
-      }
-      var baseParams = {
-        "SERVICE": "WMS",
-        "VERSION": DEFAULT_VERSION,
-        "REQUEST": "GetLegendGraphic",
-        "FORMAT": "image/png"
-      };
-      if (params2 === void 0 || params2["LAYER"] === void 0) {
-        var layers = this.params_.LAYERS;
-        var isSingleLayer = !Array.isArray(layers) || layers.length === 1;
-        if (!isSingleLayer) {
-          return void 0;
-        }
-        baseParams["LAYER"] = layers;
-      }
-      if (resolution !== void 0) {
-        var mpu = this.getProjection() ? this.getProjection().getMetersPerUnit() : 1;
-        var pixelSize = 28e-5;
-        baseParams["SCALE"] = resolution * mpu / pixelSize;
-      }
-      assign(baseParams, params2);
-      return appendParams(this.url_, baseParams);
-    };
-    ImageWMS2.prototype.getParams = function() {
-      return this.params_;
-    };
-    ImageWMS2.prototype.getImageInternal = function(extent, resolution, pixelRatio, projection) {
-      if (this.url_ === void 0) {
-        return null;
-      }
-      resolution = this.findNearestResolution(resolution);
-      if (pixelRatio != 1 && (!this.hidpi_ || this.serverType_ === void 0)) {
-        pixelRatio = 1;
-      }
-      var imageResolution = resolution / pixelRatio;
-      var center = getCenter(extent);
-      var viewWidth = ceil(getWidth(extent) / imageResolution, DECIMALS);
-      var viewHeight = ceil(getHeight(extent) / imageResolution, DECIMALS);
-      var viewExtent = getForViewAndSize(center, imageResolution, 0, [
-        viewWidth,
-        viewHeight
-      ]);
-      var requestWidth = ceil(this.ratio_ * getWidth(extent) / imageResolution, DECIMALS);
-      var requestHeight = ceil(this.ratio_ * getHeight(extent) / imageResolution, DECIMALS);
-      var requestExtent = getForViewAndSize(center, imageResolution, 0, [
-        requestWidth,
-        requestHeight
-      ]);
-      var image = this.image_;
-      if (image && this.renderedRevision_ == this.getRevision() && image.getResolution() == resolution && image.getPixelRatio() == pixelRatio && containsExtent(image.getExtent(), viewExtent)) {
-        return image;
-      }
-      var params2 = {
-        "SERVICE": "WMS",
-        "VERSION": DEFAULT_VERSION,
-        "REQUEST": "GetMap",
-        "FORMAT": "image/png",
-        "TRANSPARENT": true
-      };
-      assign(params2, this.params_);
-      this.imageSize_[0] = round(getWidth(requestExtent) / imageResolution, DECIMALS);
-      this.imageSize_[1] = round(getHeight(requestExtent) / imageResolution, DECIMALS);
-      var url = this.getRequestUrl_(requestExtent, this.imageSize_, pixelRatio, projection, params2);
-      this.image_ = new ImageWrapper$1(requestExtent, resolution, pixelRatio, url, this.crossOrigin_, this.imageLoadFunction_);
-      this.renderedRevision_ = this.getRevision();
-      this.image_.addEventListener(EventType$1.CHANGE, this.handleImageChange.bind(this));
-      return this.image_;
-    };
-    ImageWMS2.prototype.getImageLoadFunction = function() {
-      return this.imageLoadFunction_;
-    };
-    ImageWMS2.prototype.getRequestUrl_ = function(extent, size2, pixelRatio, projection, params2) {
-      assert(this.url_ !== void 0, 9);
-      params2[this.v13_ ? "CRS" : "SRS"] = projection.getCode();
-      if (!("STYLES" in this.params_)) {
-        params2["STYLES"] = "";
-      }
-      if (pixelRatio != 1) {
-        switch (this.serverType_) {
-          case "geoserver":
-            var dpi = 90 * pixelRatio + 0.5 | 0;
-            if ("FORMAT_OPTIONS" in params2) {
-              params2["FORMAT_OPTIONS"] += ";dpi:" + dpi;
-            } else {
-              params2["FORMAT_OPTIONS"] = "dpi:" + dpi;
-            }
-            break;
-          case "mapserver":
-            params2["MAP_RESOLUTION"] = 90 * pixelRatio;
-            break;
-          case "carmentaserver":
-          case "qgis":
-            params2["DPI"] = 90 * pixelRatio;
-            break;
-          default:
-            assert(false, 8);
-            break;
-        }
-      }
-      params2["WIDTH"] = size2[0];
-      params2["HEIGHT"] = size2[1];
-      var axisOrientation = projection.getAxisOrientation();
-      var bbox;
-      if (this.v13_ && axisOrientation.substr(0, 2) == "ne") {
-        bbox = [extent[1], extent[0], extent[3], extent[2]];
-      } else {
-        bbox = extent;
-      }
-      params2["BBOX"] = bbox.join(",");
-      return appendParams(this.url_, params2);
-    };
-    ImageWMS2.prototype.getUrl = function() {
-      return this.url_;
-    };
-    ImageWMS2.prototype.setImageLoadFunction = function(imageLoadFunction) {
-      this.image_ = null;
-      this.imageLoadFunction_ = imageLoadFunction;
-      this.changed();
-    };
-    ImageWMS2.prototype.setUrl = function(url) {
-      if (url != this.url_) {
-        this.url_ = url;
-        this.image_ = null;
-        this.changed();
-      }
-    };
-    ImageWMS2.prototype.updateParams = function(params2) {
-      assign(this.params_, params2);
-      this.updateV13_();
-      this.image_ = null;
-      this.changed();
-    };
-    ImageWMS2.prototype.updateV13_ = function() {
-      var version2 = this.params_["VERSION"] || DEFAULT_VERSION;
-      this.v13_ = compareVersions(version2, "1.3") >= 0;
-    };
-    return ImageWMS2;
-  }(ImageSource$1);
-  const ImageWMS$1 = ImageWMS;
-  var __extends$3 = globalThis && globalThis.__extends || function() {
-    var extendStatics = function(d, b) {
-      extendStatics = Object.setPrototypeOf || { __proto__: [] } instanceof Array && function(d2, b2) {
-        d2.__proto__ = b2;
-      } || function(d2, b2) {
-        for (var p2 in b2)
-          if (Object.prototype.hasOwnProperty.call(b2, p2))
-            d2[p2] = b2[p2];
-      };
-      return extendStatics(d, b);
-    };
-    return function(d, b) {
-      if (typeof b !== "function" && b !== null)
-        throw new TypeError("Class extends value " + String(b) + " is not a constructor or null");
-      extendStatics(d, b);
-      function __() {
-        this.constructor = d;
-      }
-      d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
-    };
-  }();
-  var WMTSTileGrid = function(_super) {
-    __extends$3(WMTSTileGrid2, _super);
-    function WMTSTileGrid2(options) {
-      var _this = _super.call(this, {
-        extent: options.extent,
-        origin: options.origin,
-        origins: options.origins,
-        resolutions: options.resolutions,
-        tileSize: options.tileSize,
-        tileSizes: options.tileSizes,
-        sizes: options.sizes
-      }) || this;
-      _this.matrixIds_ = options.matrixIds;
-      return _this;
-    }
-    WMTSTileGrid2.prototype.getMatrixId = function(z) {
-      return this.matrixIds_[z];
-    };
-    WMTSTileGrid2.prototype.getMatrixIds = function() {
-      return this.matrixIds_;
-    };
-    return WMTSTileGrid2;
-  }(TileGrid$1);
-  const WmtsTileGrid = WMTSTileGrid;
-  var __extends$2 = globalThis && globalThis.__extends || function() {
-    var extendStatics = function(d, b) {
-      extendStatics = Object.setPrototypeOf || { __proto__: [] } instanceof Array && function(d2, b2) {
-        d2.__proto__ = b2;
-      } || function(d2, b2) {
-        for (var p2 in b2)
-          if (Object.prototype.hasOwnProperty.call(b2, p2))
-            d2[p2] = b2[p2];
-      };
-      return extendStatics(d, b);
-    };
-    return function(d, b) {
-      if (typeof b !== "function" && b !== null)
-        throw new TypeError("Class extends value " + String(b) + " is not a constructor or null");
-      extendStatics(d, b);
-      function __() {
-        this.constructor = d;
-      }
-      d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
-    };
-  }();
-  var WMTS = function(_super) {
-    __extends$2(WMTS2, _super);
-    function WMTS2(options) {
-      var _this = this;
-      var interpolate = options.imageSmoothing !== void 0 ? options.imageSmoothing : true;
-      if (options.interpolate !== void 0) {
-        interpolate = options.interpolate;
-      }
-      var requestEncoding = options.requestEncoding !== void 0 ? options.requestEncoding : "KVP";
-      var tileGrid = options.tileGrid;
-      var urls = options.urls;
-      if (urls === void 0 && options.url !== void 0) {
-        urls = expandUrl(options.url);
-      }
-      _this = _super.call(this, {
-        attributions: options.attributions,
-        attributionsCollapsible: options.attributionsCollapsible,
-        cacheSize: options.cacheSize,
-        crossOrigin: options.crossOrigin,
-        interpolate,
-        projection: options.projection,
-        reprojectionErrorThreshold: options.reprojectionErrorThreshold,
-        tileClass: options.tileClass,
-        tileGrid,
-        tileLoadFunction: options.tileLoadFunction,
-        tilePixelRatio: options.tilePixelRatio,
-        urls,
-        wrapX: options.wrapX !== void 0 ? options.wrapX : false,
-        transition: options.transition,
-        zDirection: options.zDirection
-      }) || this;
-      _this.version_ = options.version !== void 0 ? options.version : "1.0.0";
-      _this.format_ = options.format !== void 0 ? options.format : "image/jpeg";
-      _this.dimensions_ = options.dimensions !== void 0 ? options.dimensions : {};
-      _this.layer_ = options.layer;
-      _this.matrixSet_ = options.matrixSet;
-      _this.style_ = options.style;
-      _this.requestEncoding_ = requestEncoding;
-      _this.setKey(_this.getKeyForDimensions_());
-      if (urls && urls.length > 0) {
-        _this.tileUrlFunction = createFromTileUrlFunctions(urls.map(_this.createFromWMTSTemplate.bind(_this)));
-      }
-      return _this;
-    }
-    WMTS2.prototype.setUrls = function(urls) {
-      this.urls = urls;
-      var key = urls.join("\n");
-      this.setTileUrlFunction(createFromTileUrlFunctions(urls.map(this.createFromWMTSTemplate.bind(this))), key);
-    };
-    WMTS2.prototype.getDimensions = function() {
-      return this.dimensions_;
-    };
-    WMTS2.prototype.getFormat = function() {
-      return this.format_;
-    };
-    WMTS2.prototype.getLayer = function() {
-      return this.layer_;
-    };
-    WMTS2.prototype.getMatrixSet = function() {
-      return this.matrixSet_;
-    };
-    WMTS2.prototype.getRequestEncoding = function() {
-      return this.requestEncoding_;
-    };
-    WMTS2.prototype.getStyle = function() {
-      return this.style_;
-    };
-    WMTS2.prototype.getVersion = function() {
-      return this.version_;
-    };
-    WMTS2.prototype.getKeyForDimensions_ = function() {
-      var i = 0;
-      var res = [];
-      for (var key in this.dimensions_) {
-        res[i++] = key + "-" + this.dimensions_[key];
-      }
-      return res.join("/");
-    };
-    WMTS2.prototype.updateDimensions = function(dimensions) {
-      assign(this.dimensions_, dimensions);
-      this.setKey(this.getKeyForDimensions_());
-    };
-    WMTS2.prototype.createFromWMTSTemplate = function(template) {
-      var requestEncoding = this.requestEncoding_;
-      var context = {
-        "layer": this.layer_,
-        "style": this.style_,
-        "tilematrixset": this.matrixSet_
-      };
-      if (requestEncoding == "KVP") {
-        assign(context, {
-          "Service": "WMTS",
-          "Request": "GetTile",
-          "Version": this.version_,
-          "Format": this.format_
-        });
-      }
-      template = requestEncoding == "KVP" ? appendParams(template, context) : template.replace(/\{(\w+?)\}/g, function(m, p2) {
-        return p2.toLowerCase() in context ? context[p2.toLowerCase()] : m;
-      });
-      var tileGrid = this.tileGrid;
-      var dimensions = this.dimensions_;
-      return function(tileCoord, pixelRatio, projection) {
-        if (!tileCoord) {
-          return void 0;
-        } else {
-          var localContext_1 = {
-            "TileMatrix": tileGrid.getMatrixId(tileCoord[0]),
-            "TileCol": tileCoord[1],
-            "TileRow": tileCoord[2]
-          };
-          assign(localContext_1, dimensions);
-          var url = template;
-          if (requestEncoding == "KVP") {
-            url = appendParams(url, localContext_1);
-          } else {
-            url = url.replace(/\{(\w+?)\}/g, function(m, p2) {
-              return localContext_1[p2];
-            });
-          }
-          return url;
-        }
-      };
-    };
-    return WMTS2;
-  }(TileImage$1);
-  const WMTS$1 = WMTS;
   var maplibreGl = { exports: {} };
   (function(module2, exports3) {
     (function(global2, factory) {
       module2.exports = factory();
     })(commonjsGlobal, function() {
-      var shared2, worker, maplibregl2;
+      var shared, worker, maplibregl2;
       function define2(_, chunk) {
-        if (!shared2) {
-          shared2 = chunk;
+        if (!shared) {
+          shared = chunk;
         } else if (!worker) {
           worker = chunk;
         } else {
-          var workerBundleString = "var sharedChunk = {}; (" + shared2 + ")(sharedChunk); (" + worker + ")(sharedChunk);";
+          var workerBundleString = "var sharedChunk = {}; (" + shared + ")(sharedChunk); (" + worker + ")(sharedChunk);";
           var sharedChunk = {};
-          shared2(sharedChunk);
+          shared(sharedChunk);
           maplibregl2 = chunk(sharedChunk);
           if (typeof window !== "undefined") {
             maplibregl2.workerUrl = window.URL.createObjectURL(new Blob([workerBundleString], { type: "text/javascript" }));
@@ -31752,7 +19424,7 @@ Use an identity property function instead: \`{ "type": "identity", "property": $
         }
         class la extends Bi {
         }
-        class ua2 extends Pi {
+        class ua extends Pi {
         }
         class ca extends Ei {
         }
@@ -34699,7 +22371,7 @@ Use an identity property function instead: \`{ "type": "identity", "property": $
             }
           }
           generateCollisionDebugBuffers() {
-            this.hasDebugData() && this.destroyDebugData(), this.textCollisionBox = new Lu(ua2, il.members, pa), this.iconCollisionBox = new Lu(ua2, il.members, pa);
+            this.hasDebugData() && this.destroyDebugData(), this.textCollisionBox = new Lu(ua, il.members, pa), this.iconCollisionBox = new Lu(ua, il.members, pa);
             for (let t2 = 0; t2 < this.symbolInstances.length; t2++) {
               const e2 = this.symbolInstances.get(t2);
               this.addDebugCollisionBoxes(e2.textBoxStartIndex, e2.textBoxEndIndex, e2, true), this.addDebugCollisionBoxes(e2.verticalTextBoxStartIndex, e2.verticalTextBoxEndIndex, e2, true), this.addDebugCollisionBoxes(e2.iconBoxStartIndex, e2.iconBoxEndIndex, e2, false), this.addDebugCollisionBoxes(e2.verticalIconBoxStartIndex, e2.verticalIconBoxEndIndex, e2, false);
@@ -43991,7 +31663,7 @@ uniform ${i3} ${o3} u_${a3};
             return this._pitchAlignment;
           }
         }
-        const ua2 = { positionOptions: { enableHighAccuracy: false, maximumAge: 0, timeout: 6e3 }, fitBoundsOptions: { maxZoom: 15 }, trackUserLocation: false, showAccuracyCircle: true, showUserLocation: true };
+        const ua = { positionOptions: { enableHighAccuracy: false, maximumAge: 0, timeout: 6e3 }, fitBoundsOptions: { maxZoom: 15 }, trackUserLocation: false, showAccuracyCircle: true, showUserLocation: true };
         let da, ma = 0, _a = false;
         const pa = { maxWidth: 100, unit: "metric" };
         function fa(t2, e2, i2) {
@@ -44596,7 +32268,7 @@ uniform ${i3} ${o3} u_${a3};
           }
         }, GeolocateControl: class extends t.Evented {
           constructor(e2) {
-            super(), this.options = t.extend({}, ua2, e2), t.bindAll(["_onSuccess", "_onError", "_onZoom", "_finish", "_setupUI", "_updateCamera", "_updateMarker"], this);
+            super(), this.options = t.extend({}, ua, e2), t.bindAll(["_onSuccess", "_onError", "_onZoom", "_finish", "_setupUI", "_updateCamera", "_updateMarker"], this);
           }
           onAdd(t2) {
             var e2;
@@ -44939,7 +32611,7 @@ uniform ${i3} ${o3} u_${a3};
     });
   })(maplibreGl);
   const maplibregl = maplibreGl.exports;
-  class MapLibreLayer extends Layer$1 {
+  class MapLibreLayer extends Layer__default.default {
     constructor(options) {
       const baseOptions = Object.assign({}, options);
       delete baseOptions.maplibreOptions;
@@ -44972,9 +32644,9 @@ uniform ${i3} ${o3} u_${a3};
     render(frameState) {
       const viewState = frameState.viewState;
       this.maplibreMap.jumpTo({
-        center: toLonLat(viewState.center),
+        center: proj.toLonLat(viewState.center),
         zoom: viewState.zoom - 1,
-        bearing: toDegrees(-viewState.rotation),
+        bearing: math.toDegrees(-viewState.rotation),
         animate: false
       });
       const maplibreCanvas = this.maplibreMap.getCanvas();
@@ -45228,7 +32900,7 @@ uniform ${i3} ${o3} u_${a3};
     }
     setItem(key, value) {
       const queryParams = new URL(window.location.toString()).search;
-      const url = `${"/"}${key}/${value}${queryParams}`;
+      const url = `${"/dev/main.html/"}${key}/${value}${queryParams}`;
       try {
         window.history.replaceState(null, "", url);
       } catch (error) {
@@ -46230,7 +33902,7 @@ uniform ${i3} ${o3} u_${a3};
   const proxyWmsUrl = "https://map.geoportail.lu/ogcproxywms";
   const remoteProxyWms = "https://map.geoportail.lu/httpsproxy";
   function getOlcsExtent() {
-    return transformExtent(
+    return proj.transformExtent(
       [5.31, 49.38, 6.64, 50.21],
       PROJECTION_WGS84,
       PROJECTION_WEBMERCATOR
@@ -46238,13 +33910,13 @@ uniform ${i3} ${o3} u_${a3};
   }
   function createWmsLayer(layer) {
     const { name, layers, imageType, url, id } = layer;
-    const olLayer = new ImageLayer$1({
+    const olLayer = new ImageLayer__default.default({
       properties: {
         "olcs.extent": getOlcsExtent(),
         label: name,
         id
       },
-      source: new ImageWMS$1({
+      source: new source.ImageWMS({
         url: url || proxyWmsUrl,
         hidpi: isHiDpi(),
         serverType: "mapserver",
@@ -46260,10 +33932,10 @@ uniform ${i3} ${o3} u_${a3};
   function createWmtsLayer(layer) {
     const { name, imageType, id } = layer;
     const hasRetina = getLayerHasRetina(layer);
-    const projection = get$2(PROJECTION_WEBMERCATOR);
+    const projection = proj.get(PROJECTION_WEBMERCATOR);
     const extent = projection.getExtent();
-    const olLayer = new TileLayer$1({
-      source: new WMTS$1({
+    const olLayer = new TileLayer__default.default({
+      source: new source.WMTS({
         url: getLayerWmtsUrl(layer),
         tilePixelRatio: hasRetina ? 2 : 1,
         layer: name,
@@ -46271,8 +33943,8 @@ uniform ${i3} ${o3} u_${a3};
         format: imageType,
         requestEncoding: "REST",
         projection,
-        tileGrid: new WmtsTileGrid({
-          origin: getTopLeft(extent),
+        tileGrid: new WmtsTileGrid__default.default({
+          origin: extent_js.getTopLeft(extent),
           extent,
           resolutions: TILE_GRID_RESOLUTION,
           matrixIds: TILE_MATRIX_IDS
@@ -46352,8 +34024,8 @@ uniform ${i3} ${o3} u_${a3};
       layer.set("queryable_id", spec.id);
       layer.setOpacity(spec.opacity);
       if ((_a = spec.metadata) == null ? void 0 : _a.hasOwnProperty("attribution")) {
-        const source = layer.getSource();
-        source == null ? void 0 : source.setAttributions(spec.metadata.attribution);
+        const source2 = layer.getSource();
+        source2 == null ? void 0 : source2.setAttributions(spec.metadata.attribution);
       }
       return layer;
     }
@@ -46566,7 +34238,7 @@ uniform ${i3} ${o3} u_${a3};
         storageHelper.setValue(SP_KEY_ZOOM, zoom ? Math.ceil(zoom) : null);
       };
       fnStorageSetValueZoom();
-      listen(
+      olEvents__namespace.listen(
         view,
         "change:resolution",
         debounce(fnStorageSetValueZoom, 300)
@@ -46580,9 +34252,9 @@ uniform ${i3} ${o3} u_${a3};
         storageHelper.setValue(SP_KEY_Y, center ? Math.round(center[1]) : null);
       };
       fnStorageSetValueXY();
-      listen(
+      olEvents__namespace.listen(
         view,
-        ObjectEventType.PROPERTYCHANGE,
+        ObjectEventType__default.default.PROPERTYCHANGE,
         debounce(fnStorageSetValueXY, 300)
       );
     }
@@ -46597,7 +34269,7 @@ uniform ${i3} ${o3} u_${a3};
       const x = storageHelper.getValue(SP_KEY_X, stringToNumber);
       const y2 = storageHelper.getValue(SP_KEY_Y, stringToNumber);
       const srs = storageHelper.getValue(SP_KEY_SRS);
-      const lurefToWebMercatorFn = getTransform(
+      const lurefToWebMercatorFn = proj.getTransform(
         PROJECTION_LUX,
         PROJECTION_WEBMERCATOR
       );
@@ -46610,12 +34282,12 @@ uniform ${i3} ${o3} u_${a3};
       }
       if (x != null && y2 != null) {
         if (version2 === 3 && srs != null) {
-          viewCenter = transform$1([x, y2], srs, PROJECTION_WEBMERCATOR);
+          viewCenter = proj.transform([x, y2], srs, PROJECTION_WEBMERCATOR);
         } else {
           viewCenter = version2 === 3 ? [x, y2] : lurefToWebMercatorFn([y2, x], void 0, 2);
         }
       } else {
-        viewCenter = transform$1(
+        viewCenter = proj.transform(
           [6, 49.7],
           PROJECTION_WGS84,
           PROJECTION_WEBMERCATOR
@@ -46652,7 +34324,7 @@ uniform ${i3} ${o3} u_${a3};
     },
     setup(__props) {
       const props = __props;
-      useControl(Attribution$1, props);
+      useControl(Attribution__default.default, props);
       return (_ctx, _cache) => {
         return createCommentVNode("", true);
       };
@@ -46825,13 +34497,13 @@ uniform ${i3} ${o3} u_${a3};
       function handleCenterToLocation() {
       }
       onMounted(
-        () => useControl(Control$1, { ...props, ...{ target: controlElement } })
+        () => useControl(Control__default.default, { ...props, ...{ target: controlElement } })
       );
       return (_ctx, _cache) => {
         return openBlock(), createElementBlock("div", {
           ref_key: "controlElement",
           ref: controlElement,
-          class: normalizeClass(`tracker-off ${props.className} ${unref(CLASS_UNSELECTABLE)} ${unref(CLASS_CONTROL)}`)
+          class: normalizeClass(`tracker-off ${props.className} ${unref(css$1.CLASS_UNSELECTABLE)} ${unref(css$1.CLASS_CONTROL)}`)
         }, [
           createBaseVNode("button", {
             title: unref(t)(props.tipLabel),
@@ -46850,7 +34522,7 @@ uniform ${i3} ${o3} u_${a3};
     },
     setup(__props) {
       const props = __props;
-      useControl(FullScreen$1, props);
+      useControl(FullScreen__default.default, props);
       return (_ctx, _cache) => {
         return createCommentVNode("", true);
       };
@@ -46865,13 +34537,13 @@ uniform ${i3} ${o3} u_${a3};
     },
     setup(__props) {
       const props = __props;
-      useControl(Zoom$1, props);
+      useControl(Zoom__default.default, props);
       return (_ctx, _cache) => {
         return createCommentVNode("", true);
       };
     }
   });
-  class ZoomToExtent extends OlControlZoomToExtent {
+  class ZoomToExtent extends OlControlZoomToExtent__default.default {
     constructor(optOptions) {
       super(optOptions);
       __publicField(this, "ol3dm");
@@ -47090,11 +34762,11 @@ uniform ${i3} ${o3} u_${a3};
   }
   function _objectSpread$6(target) {
     for (var i = 1; i < arguments.length; i++) {
-      var source = null != arguments[i] ? arguments[i] : {};
-      i % 2 ? ownKeys$6(Object(source), true).forEach(function(key) {
-        _defineProperty$2(target, key, source[key]);
-      }) : Object.getOwnPropertyDescriptors ? Object.defineProperties(target, Object.getOwnPropertyDescriptors(source)) : ownKeys$6(Object(source)).forEach(function(key) {
-        Object.defineProperty(target, key, Object.getOwnPropertyDescriptor(source, key));
+      var source2 = null != arguments[i] ? arguments[i] : {};
+      i % 2 ? ownKeys$6(Object(source2), true).forEach(function(key) {
+        _defineProperty$2(target, key, source2[key]);
+      }) : Object.getOwnPropertyDescriptors ? Object.defineProperties(target, Object.getOwnPropertyDescriptors(source2)) : ownKeys$6(Object(source2)).forEach(function(key) {
+        Object.defineProperty(target, key, Object.getOwnPropertyDescriptor(source2, key));
       });
     }
     return target;
@@ -47201,9 +34873,9 @@ uniform ${i3} ${o3} u_${a3};
     }
     _createClass$1(EventEmitter2, [{
       key: "on",
-      value: function on2(events2, listener) {
+      value: function on2(events, listener) {
         var _this = this;
-        events2.split(" ").forEach(function(event) {
+        events.split(" ").forEach(function(event) {
           _this.observers[event] = _this.observers[event] || [];
           _this.observers[event].push(listener);
         });
@@ -47318,18 +34990,18 @@ uniform ${i3} ${o3} u_${a3};
     }
     return getPath(defaultData, key);
   }
-  function deepExtend(target, source, overwrite) {
-    for (var prop in source) {
+  function deepExtend(target, source2, overwrite) {
+    for (var prop in source2) {
       if (prop !== "__proto__" && prop !== "constructor") {
         if (prop in target) {
-          if (typeof target[prop] === "string" || target[prop] instanceof String || typeof source[prop] === "string" || source[prop] instanceof String) {
+          if (typeof target[prop] === "string" || target[prop] instanceof String || typeof source2[prop] === "string" || source2[prop] instanceof String) {
             if (overwrite)
-              target[prop] = source[prop];
+              target[prop] = source2[prop];
           } else {
-            deepExtend(target[prop], source[prop], overwrite);
+            deepExtend(target[prop], source2[prop], overwrite);
           }
         } else {
-          target[prop] = source[prop];
+          target[prop] = source2[prop];
         }
       }
     }
@@ -47388,11 +35060,11 @@ uniform ${i3} ${o3} u_${a3};
   }
   function _objectSpread$5(target) {
     for (var i = 1; i < arguments.length; i++) {
-      var source = null != arguments[i] ? arguments[i] : {};
-      i % 2 ? ownKeys$5(Object(source), true).forEach(function(key) {
-        _defineProperty$2(target, key, source[key]);
-      }) : Object.getOwnPropertyDescriptors ? Object.defineProperties(target, Object.getOwnPropertyDescriptors(source)) : ownKeys$5(Object(source)).forEach(function(key) {
-        Object.defineProperty(target, key, Object.getOwnPropertyDescriptor(source, key));
+      var source2 = null != arguments[i] ? arguments[i] : {};
+      i % 2 ? ownKeys$5(Object(source2), true).forEach(function(key) {
+        _defineProperty$2(target, key, source2[key]);
+      }) : Object.getOwnPropertyDescriptors ? Object.defineProperties(target, Object.getOwnPropertyDescriptors(source2)) : ownKeys$5(Object(source2)).forEach(function(key) {
+        Object.defineProperty(target, key, Object.getOwnPropertyDescriptor(source2, key));
       });
     }
     return target;
@@ -47657,11 +35329,11 @@ uniform ${i3} ${o3} u_${a3};
   }
   function _objectSpread$4(target) {
     for (var i = 1; i < arguments.length; i++) {
-      var source = null != arguments[i] ? arguments[i] : {};
-      i % 2 ? ownKeys$4(Object(source), true).forEach(function(key) {
-        _defineProperty$2(target, key, source[key]);
-      }) : Object.getOwnPropertyDescriptors ? Object.defineProperties(target, Object.getOwnPropertyDescriptors(source)) : ownKeys$4(Object(source)).forEach(function(key) {
-        Object.defineProperty(target, key, Object.getOwnPropertyDescriptor(source, key));
+      var source2 = null != arguments[i] ? arguments[i] : {};
+      i % 2 ? ownKeys$4(Object(source2), true).forEach(function(key) {
+        _defineProperty$2(target, key, source2[key]);
+      }) : Object.getOwnPropertyDescriptors ? Object.defineProperties(target, Object.getOwnPropertyDescriptors(source2)) : ownKeys$4(Object(source2)).forEach(function(key) {
+        Object.defineProperty(target, key, Object.getOwnPropertyDescriptor(source2, key));
       });
     }
     return target;
@@ -47764,7 +35436,7 @@ uniform ${i3} ${o3} u_${a3};
       }
     }, {
       key: "translate",
-      value: function translate2(keys, options, lastKey) {
+      value: function translate(keys, options, lastKey) {
         var _this2 = this;
         if (_typeof$4(options) !== "object" && this.options.overloadTranslationOptionHandler) {
           options = this.options.overloadTranslationOptionHandler(arguments);
@@ -48559,11 +36231,11 @@ uniform ${i3} ${o3} u_${a3};
   }
   function _objectSpread$3(target) {
     for (var i = 1; i < arguments.length; i++) {
-      var source = null != arguments[i] ? arguments[i] : {};
-      i % 2 ? ownKeys$3(Object(source), true).forEach(function(key) {
-        _defineProperty$2(target, key, source[key]);
-      }) : Object.getOwnPropertyDescriptors ? Object.defineProperties(target, Object.getOwnPropertyDescriptors(source)) : ownKeys$3(Object(source)).forEach(function(key) {
-        Object.defineProperty(target, key, Object.getOwnPropertyDescriptor(source, key));
+      var source2 = null != arguments[i] ? arguments[i] : {};
+      i % 2 ? ownKeys$3(Object(source2), true).forEach(function(key) {
+        _defineProperty$2(target, key, source2[key]);
+      }) : Object.getOwnPropertyDescriptors ? Object.defineProperties(target, Object.getOwnPropertyDescriptors(source2)) : ownKeys$3(Object(source2)).forEach(function(key) {
+        Object.defineProperty(target, key, Object.getOwnPropertyDescriptor(source2, key));
       });
     }
     return target;
@@ -48778,11 +36450,11 @@ uniform ${i3} ${o3} u_${a3};
   }
   function _objectSpread$2(target) {
     for (var i = 1; i < arguments.length; i++) {
-      var source = null != arguments[i] ? arguments[i] : {};
-      i % 2 ? ownKeys$2(Object(source), true).forEach(function(key) {
-        _defineProperty$2(target, key, source[key]);
-      }) : Object.getOwnPropertyDescriptors ? Object.defineProperties(target, Object.getOwnPropertyDescriptors(source)) : ownKeys$2(Object(source)).forEach(function(key) {
-        Object.defineProperty(target, key, Object.getOwnPropertyDescriptor(source, key));
+      var source2 = null != arguments[i] ? arguments[i] : {};
+      i % 2 ? ownKeys$2(Object(source2), true).forEach(function(key) {
+        _defineProperty$2(target, key, source2[key]);
+      }) : Object.getOwnPropertyDescriptors ? Object.defineProperties(target, Object.getOwnPropertyDescriptors(source2)) : ownKeys$2(Object(source2)).forEach(function(key) {
+        Object.defineProperty(target, key, Object.getOwnPropertyDescriptor(source2, key));
       });
     }
     return target;
@@ -48824,13 +36496,13 @@ uniform ${i3} ${o3} u_${a3};
     };
   }
   function createCachedFormatter(fn) {
-    var cache2 = {};
+    var cache = {};
     return function invokeFormatter(val, lng, options) {
       var key = lng + JSON.stringify(options);
-      var formatter = cache2[key];
+      var formatter = cache[key];
       if (!formatter) {
         formatter = fn(lng, options);
-        cache2[key] = formatter;
+        cache[key] = formatter;
       }
       return formatter(val);
     };
@@ -48936,11 +36608,11 @@ uniform ${i3} ${o3} u_${a3};
   }
   function _objectSpread$1(target) {
     for (var i = 1; i < arguments.length; i++) {
-      var source = null != arguments[i] ? arguments[i] : {};
-      i % 2 ? ownKeys$1(Object(source), true).forEach(function(key) {
-        _defineProperty$2(target, key, source[key]);
-      }) : Object.getOwnPropertyDescriptors ? Object.defineProperties(target, Object.getOwnPropertyDescriptors(source)) : ownKeys$1(Object(source)).forEach(function(key) {
-        Object.defineProperty(target, key, Object.getOwnPropertyDescriptor(source, key));
+      var source2 = null != arguments[i] ? arguments[i] : {};
+      i % 2 ? ownKeys$1(Object(source2), true).forEach(function(key) {
+        _defineProperty$2(target, key, source2[key]);
+      }) : Object.getOwnPropertyDescriptors ? Object.defineProperties(target, Object.getOwnPropertyDescriptors(source2)) : ownKeys$1(Object(source2)).forEach(function(key) {
+        Object.defineProperty(target, key, Object.getOwnPropertyDescriptor(source2, key));
       });
     }
     return target;
@@ -49342,11 +37014,11 @@ uniform ${i3} ${o3} u_${a3};
   }
   function _objectSpread(target) {
     for (var i = 1; i < arguments.length; i++) {
-      var source = null != arguments[i] ? arguments[i] : {};
-      i % 2 ? ownKeys$7(Object(source), true).forEach(function(key) {
-        _defineProperty$2(target, key, source[key]);
-      }) : Object.getOwnPropertyDescriptors ? Object.defineProperties(target, Object.getOwnPropertyDescriptors(source)) : ownKeys$7(Object(source)).forEach(function(key) {
-        Object.defineProperty(target, key, Object.getOwnPropertyDescriptor(source, key));
+      var source2 = null != arguments[i] ? arguments[i] : {};
+      i % 2 ? ownKeys$7(Object(source2), true).forEach(function(key) {
+        _defineProperty$2(target, key, source2[key]);
+      }) : Object.getOwnPropertyDescriptors ? Object.defineProperties(target, Object.getOwnPropertyDescriptors(source2)) : ownKeys$7(Object(source2)).forEach(function(key) {
+        Object.defineProperty(target, key, Object.getOwnPropertyDescriptor(source2, key));
       });
     }
     return target;
@@ -50786,10 +38458,10 @@ uniform ${i3} ${o3} u_${a3};
         }
         attributes = sortedAttributes;
       }
-      let isEmpty2 = Boolean(scanner.consumeStringFast("/>"));
+      let isEmpty = Boolean(scanner.consumeStringFast("/>"));
       let element = new XmlElement$1(name, attributes);
       element.parent = this.currentNode;
-      if (!isEmpty2) {
+      if (!isEmpty) {
         if (!scanner.consumeStringFast(">")) {
           this.error(`Unclosed start tag for element \`${name}\``);
         }
@@ -51183,8 +38855,8 @@ uniform ${i3} ${o3} u_${a3};
     if (!cachePromise)
       return;
     const entryUrl = "https://cache/" + keys.join("/");
-    const cache2 = await cachePromise;
-    await cache2.put(
+    const cache = await cachePromise;
+    await cache.put(
       entryUrl,
       new Response(JSON.stringify(object), {
         headers: {
@@ -51197,15 +38869,15 @@ uniform ${i3} ${o3} u_${a3};
     if (!cachePromise)
       return false;
     const entryUrl = "https://cache/" + keys.join("/");
-    const cache2 = await cachePromise;
-    return cache2.match(entryUrl).then((req) => !!req && parseInt(req.headers.get("x-expiry")) > Date.now());
+    const cache = await cachePromise;
+    return cache.match(entryUrl).then((req) => !!req && parseInt(req.headers.get("x-expiry")) > Date.now());
   }
   async function readCacheEntry(...keys) {
     if (!cachePromise)
       return null;
     const entryUrl = "https://cache/" + keys.join("/");
-    const cache2 = await cachePromise;
-    const response = await cache2.match(entryUrl);
+    const cache = await cachePromise;
+    const response = await cache.match(entryUrl);
     return response ? response.clone().json() : null;
   }
   const tasksMap = /* @__PURE__ */ new Map();
@@ -51230,12 +38902,12 @@ uniform ${i3} ${o3} u_${a3};
   async function purgeEntries() {
     if (!cachePromise)
       return;
-    const cache2 = await cachePromise;
-    const keys = await cache2.keys();
+    const cache = await cachePromise;
+    const keys = await cache.keys();
     for (let key of keys) {
-      const resp = await cache2.match(key);
+      const resp = await cache.match(key);
       if (parseInt(resp.headers.get("x-expiry")) <= Date.now())
-        await cache2.delete(key);
+        await cache.delete(key);
     }
   }
   function generateGetFeatureUrl(serviceUrl, version2, featureType, outputFormat, maxFeatures, attributes, hitsOnly, outputCrs, extent, extentCrs) {
@@ -51707,494 +39379,12 @@ uniform ${i3} ${o3} u_${a3};
       }
     ];
   };
-  function getAllTextContent(node, normalizeWhitespace) {
-    return getAllTextContent_(node, normalizeWhitespace, []).join("");
-  }
-  function getAllTextContent_(node, normalizeWhitespace, accumulator) {
-    if (node.nodeType == Node.CDATA_SECTION_NODE || node.nodeType == Node.TEXT_NODE) {
-      if (normalizeWhitespace) {
-        accumulator.push(String(node.nodeValue).replace(/(\r\n|\r|\n)/g, ""));
-      } else {
-        accumulator.push(node.nodeValue);
-      }
-    } else {
-      var n = void 0;
-      for (n = node.firstChild; n; n = n.nextSibling) {
-        getAllTextContent_(n, normalizeWhitespace, accumulator);
-      }
-    }
-    return accumulator;
-  }
-  function isDocument(object) {
-    return "documentElement" in object;
-  }
-  function parse(xml2) {
-    return new DOMParser().parseFromString(xml2, "application/xml");
-  }
-  function makeArrayPusher(valueReader, opt_this) {
-    return function(node, objectStack) {
-      var value = valueReader.call(opt_this !== void 0 ? opt_this : this, node, objectStack);
-      if (value !== void 0) {
-        var array = objectStack[objectStack.length - 1];
-        array.push(value);
-      }
-    };
-  }
-  function makeObjectPropertyPusher(valueReader, opt_property, opt_this) {
-    return function(node, objectStack) {
-      var value = valueReader.call(opt_this !== void 0 ? opt_this : this, node, objectStack);
-      if (value !== void 0) {
-        var object = objectStack[objectStack.length - 1];
-        var property = opt_property !== void 0 ? opt_property : node.localName;
-        var array = void 0;
-        if (property in object) {
-          array = object[property];
-        } else {
-          array = [];
-          object[property] = array;
-        }
-        array.push(value);
-      }
-    };
-  }
-  function makeObjectPropertySetter(valueReader, opt_property, opt_this) {
-    return function(node, objectStack) {
-      var value = valueReader.call(opt_this !== void 0 ? opt_this : this, node, objectStack);
-      if (value !== void 0) {
-        var object = objectStack[objectStack.length - 1];
-        var property = opt_property !== void 0 ? opt_property : node.localName;
-        object[property] = value;
-      }
-    };
-  }
-  function makeStructureNS(namespaceURIs, structure, opt_structureNS) {
-    var structureNS = opt_structureNS !== void 0 ? opt_structureNS : {};
-    var i, ii;
-    for (i = 0, ii = namespaceURIs.length; i < ii; ++i) {
-      structureNS[namespaceURIs[i]] = structure;
-    }
-    return structureNS;
-  }
-  function parseNode(parsersNS, node, objectStack, opt_this) {
-    var n;
-    for (n = node.firstElementChild; n; n = n.nextElementSibling) {
-      var parsers = parsersNS[n.namespaceURI];
-      if (parsers !== void 0) {
-        var parser = parsers[n.localName];
-        if (parser !== void 0) {
-          parser.call(opt_this, n, objectStack);
-        }
-      }
-    }
-  }
-  function pushParseAndPop(object, parsersNS, node, objectStack, opt_this) {
-    objectStack.push(object);
-    parseNode(parsersNS, node, objectStack, opt_this);
-    return objectStack.pop();
-  }
-  var XML = function() {
-    function XML2() {
-    }
-    XML2.prototype.read = function(source) {
-      if (!source) {
-        return null;
-      } else if (typeof source === "string") {
-        var doc2 = parse(source);
-        return this.readFromDocument(doc2);
-      } else if (isDocument(source)) {
-        return this.readFromDocument(source);
-      } else {
-        return this.readFromNode(source);
-      }
-    };
-    XML2.prototype.readFromDocument = function(doc2) {
-      for (var n = doc2.firstChild; n; n = n.nextSibling) {
-        if (n.nodeType == Node.ELEMENT_NODE) {
-          return this.readFromNode(n);
-        }
-      }
-      return null;
-    };
-    XML2.prototype.readFromNode = function(node) {
-    };
-    return XML2;
-  }();
-  const XML$1 = XML;
-  var NAMESPACE_URI = "http://www.w3.org/1999/xlink";
-  function readHref(node) {
-    return node.getAttributeNS(NAMESPACE_URI, "href");
-  }
-  function readDecimal(node) {
-    var s = getAllTextContent(node, false);
-    return readDecimalString(s);
-  }
-  function readDecimalString(string) {
-    var m = /^\s*([+\-]?\d*\.?\d+(?:e[+\-]?\d+)?)\s*$/i.exec(string);
-    if (m) {
-      return parseFloat(m[1]);
-    } else {
-      return void 0;
-    }
-  }
-  function readPositiveInteger(node) {
-    var s = getAllTextContent(node, false);
-    return readNonNegativeIntegerString(s);
-  }
-  function readNonNegativeIntegerString(string) {
-    var m = /^\s*(\d+)\s*$/.exec(string);
-    if (m) {
-      return parseInt(m[1], 10);
-    } else {
-      return void 0;
-    }
-  }
-  function readString(node) {
-    return getAllTextContent(node, false).trim();
-  }
-  var __extends$1 = globalThis && globalThis.__extends || function() {
-    var extendStatics = function(d, b) {
-      extendStatics = Object.setPrototypeOf || { __proto__: [] } instanceof Array && function(d2, b2) {
-        d2.__proto__ = b2;
-      } || function(d2, b2) {
-        for (var p2 in b2)
-          if (Object.prototype.hasOwnProperty.call(b2, p2))
-            d2[p2] = b2[p2];
-      };
-      return extendStatics(d, b);
-    };
-    return function(d, b) {
-      if (typeof b !== "function" && b !== null)
-        throw new TypeError("Class extends value " + String(b) + " is not a constructor or null");
-      extendStatics(d, b);
-      function __() {
-        this.constructor = d;
-      }
-      d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
-    };
-  }();
-  var NAMESPACE_URIS$1 = [null, "http://www.opengis.net/ows/1.1"];
-  var PARSERS$1 = makeStructureNS(NAMESPACE_URIS$1, {
-    "ServiceIdentification": makeObjectPropertySetter(readServiceIdentification),
-    "ServiceProvider": makeObjectPropertySetter(readServiceProvider),
-    "OperationsMetadata": makeObjectPropertySetter(readOperationsMetadata)
-  });
-  var OWS = function(_super) {
-    __extends$1(OWS2, _super);
-    function OWS2() {
-      return _super.call(this) || this;
-    }
-    OWS2.prototype.readFromNode = function(node) {
-      var owsObject = pushParseAndPop({}, PARSERS$1, node, []);
-      return owsObject ? owsObject : null;
-    };
-    return OWS2;
-  }(XML$1);
-  var ADDRESS_PARSERS = makeStructureNS(NAMESPACE_URIS$1, {
-    "DeliveryPoint": makeObjectPropertySetter(readString),
-    "City": makeObjectPropertySetter(readString),
-    "AdministrativeArea": makeObjectPropertySetter(readString),
-    "PostalCode": makeObjectPropertySetter(readString),
-    "Country": makeObjectPropertySetter(readString),
-    "ElectronicMailAddress": makeObjectPropertySetter(readString)
-  });
-  var ALLOWED_VALUES_PARSERS = makeStructureNS(NAMESPACE_URIS$1, {
-    "Value": makeObjectPropertyPusher(readValue)
-  });
-  var CONSTRAINT_PARSERS = makeStructureNS(NAMESPACE_URIS$1, {
-    "AllowedValues": makeObjectPropertySetter(readAllowedValues)
-  });
-  var CONTACT_INFO_PARSERS = makeStructureNS(NAMESPACE_URIS$1, {
-    "Phone": makeObjectPropertySetter(readPhone),
-    "Address": makeObjectPropertySetter(readAddress)
-  });
-  var DCP_PARSERS = makeStructureNS(NAMESPACE_URIS$1, {
-    "HTTP": makeObjectPropertySetter(readHttp)
-  });
-  var HTTP_PARSERS = makeStructureNS(NAMESPACE_URIS$1, {
-    "Get": makeObjectPropertyPusher(readGet),
-    "Post": void 0
-  });
-  var OPERATION_PARSERS = makeStructureNS(NAMESPACE_URIS$1, {
-    "DCP": makeObjectPropertySetter(readDcp)
-  });
-  var OPERATIONS_METADATA_PARSERS = makeStructureNS(NAMESPACE_URIS$1, {
-    "Operation": readOperation
-  });
-  var PHONE_PARSERS = makeStructureNS(NAMESPACE_URIS$1, {
-    "Voice": makeObjectPropertySetter(readString),
-    "Facsimile": makeObjectPropertySetter(readString)
-  });
-  var REQUEST_METHOD_PARSERS = makeStructureNS(NAMESPACE_URIS$1, {
-    "Constraint": makeObjectPropertyPusher(readConstraint)
-  });
-  var SERVICE_CONTACT_PARSERS = makeStructureNS(NAMESPACE_URIS$1, {
-    "IndividualName": makeObjectPropertySetter(readString),
-    "PositionName": makeObjectPropertySetter(readString),
-    "ContactInfo": makeObjectPropertySetter(readContactInfo)
-  });
-  var SERVICE_IDENTIFICATION_PARSERS = makeStructureNS(NAMESPACE_URIS$1, {
-    "Abstract": makeObjectPropertySetter(readString),
-    "AccessConstraints": makeObjectPropertySetter(readString),
-    "Fees": makeObjectPropertySetter(readString),
-    "Title": makeObjectPropertySetter(readString),
-    "ServiceTypeVersion": makeObjectPropertySetter(readString),
-    "ServiceType": makeObjectPropertySetter(readString)
-  });
-  var SERVICE_PROVIDER_PARSERS = makeStructureNS(NAMESPACE_URIS$1, {
-    "ProviderName": makeObjectPropertySetter(readString),
-    "ProviderSite": makeObjectPropertySetter(readHref),
-    "ServiceContact": makeObjectPropertySetter(readServiceContact)
-  });
-  function readAddress(node, objectStack) {
-    return pushParseAndPop({}, ADDRESS_PARSERS, node, objectStack);
-  }
-  function readAllowedValues(node, objectStack) {
-    return pushParseAndPop({}, ALLOWED_VALUES_PARSERS, node, objectStack);
-  }
-  function readConstraint(node, objectStack) {
-    var name = node.getAttribute("name");
-    if (!name) {
-      return void 0;
-    }
-    return pushParseAndPop({ "name": name }, CONSTRAINT_PARSERS, node, objectStack);
-  }
-  function readContactInfo(node, objectStack) {
-    return pushParseAndPop({}, CONTACT_INFO_PARSERS, node, objectStack);
-  }
-  function readDcp(node, objectStack) {
-    return pushParseAndPop({}, DCP_PARSERS, node, objectStack);
-  }
-  function readGet(node, objectStack) {
-    var href = readHref(node);
-    if (!href) {
-      return void 0;
-    }
-    return pushParseAndPop({ "href": href }, REQUEST_METHOD_PARSERS, node, objectStack);
-  }
-  function readHttp(node, objectStack) {
-    return pushParseAndPop({}, HTTP_PARSERS, node, objectStack);
-  }
-  function readOperation(node, objectStack) {
-    var name = node.getAttribute("name");
-    var value = pushParseAndPop({}, OPERATION_PARSERS, node, objectStack);
-    if (!value) {
-      return void 0;
-    }
-    var object = objectStack[objectStack.length - 1];
-    object[name] = value;
-  }
-  function readOperationsMetadata(node, objectStack) {
-    return pushParseAndPop({}, OPERATIONS_METADATA_PARSERS, node, objectStack);
-  }
-  function readPhone(node, objectStack) {
-    return pushParseAndPop({}, PHONE_PARSERS, node, objectStack);
-  }
-  function readServiceIdentification(node, objectStack) {
-    return pushParseAndPop({}, SERVICE_IDENTIFICATION_PARSERS, node, objectStack);
-  }
-  function readServiceContact(node, objectStack) {
-    return pushParseAndPop({}, SERVICE_CONTACT_PARSERS, node, objectStack);
-  }
-  function readServiceProvider(node, objectStack) {
-    return pushParseAndPop({}, SERVICE_PROVIDER_PARSERS, node, objectStack);
-  }
-  function readValue(node, objectStack) {
-    return readString(node);
-  }
-  const OWS$1 = OWS;
-  var __extends = globalThis && globalThis.__extends || function() {
-    var extendStatics = function(d, b) {
-      extendStatics = Object.setPrototypeOf || { __proto__: [] } instanceof Array && function(d2, b2) {
-        d2.__proto__ = b2;
-      } || function(d2, b2) {
-        for (var p2 in b2)
-          if (Object.prototype.hasOwnProperty.call(b2, p2))
-            d2[p2] = b2[p2];
-      };
-      return extendStatics(d, b);
-    };
-    return function(d, b) {
-      if (typeof b !== "function" && b !== null)
-        throw new TypeError("Class extends value " + String(b) + " is not a constructor or null");
-      extendStatics(d, b);
-      function __() {
-        this.constructor = d;
-      }
-      d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
-    };
-  }();
-  var NAMESPACE_URIS = [null, "http://www.opengis.net/wmts/1.0"];
-  var OWS_NAMESPACE_URIS = [null, "http://www.opengis.net/ows/1.1"];
-  var PARSERS = makeStructureNS(NAMESPACE_URIS, {
-    "Contents": makeObjectPropertySetter(readContents)
-  });
-  var WMTSCapabilities = function(_super) {
-    __extends(WMTSCapabilities2, _super);
-    function WMTSCapabilities2() {
-      var _this = _super.call(this) || this;
-      _this.owsParser_ = new OWS$1();
-      return _this;
-    }
-    WMTSCapabilities2.prototype.readFromNode = function(node) {
-      var version2 = node.getAttribute("version");
-      if (version2) {
-        version2 = version2.trim();
-      }
-      var WMTSCapabilityObject = this.owsParser_.readFromNode(node);
-      if (!WMTSCapabilityObject) {
-        return null;
-      }
-      WMTSCapabilityObject["version"] = version2;
-      WMTSCapabilityObject = pushParseAndPop(WMTSCapabilityObject, PARSERS, node, []);
-      return WMTSCapabilityObject ? WMTSCapabilityObject : null;
-    };
-    return WMTSCapabilities2;
-  }(XML$1);
-  var CONTENTS_PARSERS = makeStructureNS(NAMESPACE_URIS, {
-    "Layer": makeObjectPropertyPusher(readLayer),
-    "TileMatrixSet": makeObjectPropertyPusher(readTileMatrixSet)
-  });
-  var LAYER_PARSERS = makeStructureNS(NAMESPACE_URIS, {
-    "Style": makeObjectPropertyPusher(readStyle),
-    "Format": makeObjectPropertyPusher(readString),
-    "TileMatrixSetLink": makeObjectPropertyPusher(readTileMatrixSetLink),
-    "Dimension": makeObjectPropertyPusher(readDimensions),
-    "ResourceURL": makeObjectPropertyPusher(readResourceUrl)
-  }, makeStructureNS(OWS_NAMESPACE_URIS, {
-    "Title": makeObjectPropertySetter(readString),
-    "Abstract": makeObjectPropertySetter(readString),
-    "WGS84BoundingBox": makeObjectPropertySetter(readBoundingBox),
-    "Identifier": makeObjectPropertySetter(readString)
-  }));
-  var STYLE_PARSERS = makeStructureNS(NAMESPACE_URIS, {
-    "LegendURL": makeObjectPropertyPusher(readLegendUrl)
-  }, makeStructureNS(OWS_NAMESPACE_URIS, {
-    "Title": makeObjectPropertySetter(readString),
-    "Identifier": makeObjectPropertySetter(readString)
-  }));
-  var TMS_LINKS_PARSERS = makeStructureNS(NAMESPACE_URIS, {
-    "TileMatrixSet": makeObjectPropertySetter(readString),
-    "TileMatrixSetLimits": makeObjectPropertySetter(readTileMatrixLimitsList)
-  });
-  var TMS_LIMITS_LIST_PARSERS = makeStructureNS(NAMESPACE_URIS, {
-    "TileMatrixLimits": makeArrayPusher(readTileMatrixLimits)
-  });
-  var TMS_LIMITS_PARSERS = makeStructureNS(NAMESPACE_URIS, {
-    "TileMatrix": makeObjectPropertySetter(readString),
-    "MinTileRow": makeObjectPropertySetter(readPositiveInteger),
-    "MaxTileRow": makeObjectPropertySetter(readPositiveInteger),
-    "MinTileCol": makeObjectPropertySetter(readPositiveInteger),
-    "MaxTileCol": makeObjectPropertySetter(readPositiveInteger)
-  });
-  var DIMENSION_PARSERS = makeStructureNS(NAMESPACE_URIS, {
-    "Default": makeObjectPropertySetter(readString),
-    "Value": makeObjectPropertyPusher(readString)
-  }, makeStructureNS(OWS_NAMESPACE_URIS, {
-    "Identifier": makeObjectPropertySetter(readString)
-  }));
-  var WGS84_BBOX_READERS = makeStructureNS(OWS_NAMESPACE_URIS, {
-    "LowerCorner": makeArrayPusher(readCoordinates),
-    "UpperCorner": makeArrayPusher(readCoordinates)
-  });
-  var TMS_PARSERS = makeStructureNS(NAMESPACE_URIS, {
-    "WellKnownScaleSet": makeObjectPropertySetter(readString),
-    "TileMatrix": makeObjectPropertyPusher(readTileMatrix)
-  }, makeStructureNS(OWS_NAMESPACE_URIS, {
-    "SupportedCRS": makeObjectPropertySetter(readString),
-    "Identifier": makeObjectPropertySetter(readString),
-    "BoundingBox": makeObjectPropertySetter(readBoundingBox)
-  }));
-  var TM_PARSERS = makeStructureNS(NAMESPACE_URIS, {
-    "TopLeftCorner": makeObjectPropertySetter(readCoordinates),
-    "ScaleDenominator": makeObjectPropertySetter(readDecimal),
-    "TileWidth": makeObjectPropertySetter(readPositiveInteger),
-    "TileHeight": makeObjectPropertySetter(readPositiveInteger),
-    "MatrixWidth": makeObjectPropertySetter(readPositiveInteger),
-    "MatrixHeight": makeObjectPropertySetter(readPositiveInteger)
-  }, makeStructureNS(OWS_NAMESPACE_URIS, {
-    "Identifier": makeObjectPropertySetter(readString)
-  }));
-  function readContents(node, objectStack) {
-    return pushParseAndPop({}, CONTENTS_PARSERS, node, objectStack);
-  }
-  function readLayer(node, objectStack) {
-    return pushParseAndPop({}, LAYER_PARSERS, node, objectStack);
-  }
-  function readTileMatrixSet(node, objectStack) {
-    return pushParseAndPop({}, TMS_PARSERS, node, objectStack);
-  }
-  function readStyle(node, objectStack) {
-    var style = pushParseAndPop({}, STYLE_PARSERS, node, objectStack);
-    if (!style) {
-      return void 0;
-    }
-    var isDefault = node.getAttribute("isDefault") === "true";
-    style["isDefault"] = isDefault;
-    return style;
-  }
-  function readTileMatrixSetLink(node, objectStack) {
-    return pushParseAndPop({}, TMS_LINKS_PARSERS, node, objectStack);
-  }
-  function readDimensions(node, objectStack) {
-    return pushParseAndPop({}, DIMENSION_PARSERS, node, objectStack);
-  }
-  function readResourceUrl(node, objectStack) {
-    var format = node.getAttribute("format");
-    var template = node.getAttribute("template");
-    var resourceType = node.getAttribute("resourceType");
-    var resource = {};
-    if (format) {
-      resource["format"] = format;
-    }
-    if (template) {
-      resource["template"] = template;
-    }
-    if (resourceType) {
-      resource["resourceType"] = resourceType;
-    }
-    return resource;
-  }
-  function readBoundingBox(node, objectStack) {
-    var coordinates2 = pushParseAndPop([], WGS84_BBOX_READERS, node, objectStack);
-    if (coordinates2.length != 2) {
-      return void 0;
-    }
-    return boundingExtent(coordinates2);
-  }
-  function readLegendUrl(node, objectStack) {
-    var legend = {};
-    legend["format"] = node.getAttribute("format");
-    legend["href"] = readHref(node);
-    return legend;
-  }
-  function readCoordinates(node, objectStack) {
-    var coordinates2 = readString(node).split(/\s+/);
-    if (!coordinates2 || coordinates2.length != 2) {
-      return void 0;
-    }
-    var x = +coordinates2[0];
-    var y2 = +coordinates2[1];
-    if (isNaN(x) || isNaN(y2)) {
-      return void 0;
-    }
-    return [x, y2];
-  }
-  function readTileMatrix(node, objectStack) {
-    return pushParseAndPop({}, TM_PARSERS, node, objectStack);
-  }
-  function readTileMatrixLimitsList(node, objectStack) {
-    return pushParseAndPop([], TMS_LIMITS_LIST_PARSERS, node, objectStack);
-  }
-  function readTileMatrixLimits(node, objectStack) {
-    return pushParseAndPop({}, TMS_LIMITS_PARSERS, node, objectStack);
-  }
-  const WMTSCapabilities$1 = WMTSCapabilities;
   class WmtsEndpoint {
     constructor(url) {
       __publicField(this, "capabilitiesPromise");
       __publicField(this, "serviceInfo");
       __publicField(this, "layers");
-      const parser = new WMTSCapabilities$1();
+      const parser = new WMTSCapabilities__default.default();
       let separator = "&";
       if (url.indexOf("?") === -1) {
         separator = "?";
@@ -53937,16 +41127,16 @@ uniform ${i3} ${o3} u_${a3};
   }
   function _objectSpread2(target) {
     for (var i = 1; i < arguments.length; i++) {
-      var source = arguments[i] != null ? arguments[i] : {};
+      var source2 = arguments[i] != null ? arguments[i] : {};
       if (i % 2) {
-        ownKeys(Object(source), true).forEach(function(key) {
-          _defineProperty$1(target, key, source[key]);
+        ownKeys(Object(source2), true).forEach(function(key) {
+          _defineProperty$1(target, key, source2[key]);
         });
       } else if (Object.getOwnPropertyDescriptors) {
-        Object.defineProperties(target, Object.getOwnPropertyDescriptors(source));
+        Object.defineProperties(target, Object.getOwnPropertyDescriptors(source2));
       } else {
-        ownKeys(Object(source)).forEach(function(key) {
-          Object.defineProperty(target, key, Object.getOwnPropertyDescriptor(source, key));
+        ownKeys(Object(source2)).forEach(function(key) {
+          Object.defineProperty(target, key, Object.getOwnPropertyDescriptor(source2, key));
         });
       }
     }
@@ -53981,10 +41171,10 @@ uniform ${i3} ${o3} u_${a3};
   function _extends() {
     _extends = Object.assign || function(target) {
       for (var i = 1; i < arguments.length; i++) {
-        var source = arguments[i];
-        for (var key in source) {
-          if (Object.prototype.hasOwnProperty.call(source, key)) {
-            target[key] = source[key];
+        var source2 = arguments[i];
+        for (var key in source2) {
+          if (Object.prototype.hasOwnProperty.call(source2, key)) {
+            target[key] = source2[key];
           }
         }
       }
@@ -53992,34 +41182,34 @@ uniform ${i3} ${o3} u_${a3};
     };
     return _extends.apply(this, arguments);
   }
-  function _objectWithoutPropertiesLoose(source, excluded) {
-    if (source == null)
+  function _objectWithoutPropertiesLoose(source2, excluded) {
+    if (source2 == null)
       return {};
     var target = {};
-    var sourceKeys = Object.keys(source);
+    var sourceKeys = Object.keys(source2);
     var key, i;
     for (i = 0; i < sourceKeys.length; i++) {
       key = sourceKeys[i];
       if (excluded.indexOf(key) >= 0)
         continue;
-      target[key] = source[key];
+      target[key] = source2[key];
     }
     return target;
   }
-  function _objectWithoutProperties(source, excluded) {
-    if (source == null)
+  function _objectWithoutProperties(source2, excluded) {
+    if (source2 == null)
       return {};
-    var target = _objectWithoutPropertiesLoose(source, excluded);
+    var target = _objectWithoutPropertiesLoose(source2, excluded);
     var key, i;
     if (Object.getOwnPropertySymbols) {
-      var sourceSymbolKeys = Object.getOwnPropertySymbols(source);
+      var sourceSymbolKeys = Object.getOwnPropertySymbols(source2);
       for (i = 0; i < sourceSymbolKeys.length; i++) {
         key = sourceSymbolKeys[i];
         if (excluded.indexOf(key) >= 0)
           continue;
-        if (!Object.prototype.propertyIsEnumerable.call(source, key))
+        if (!Object.prototype.propertyIsEnumerable.call(source2, key))
           continue;
-        target[key] = source[key];
+        target[key] = source2[key];
       }
     }
     return target;
@@ -56436,9 +43626,6 @@ uniform ${i3} ${o3} u_${a3};
       };
     }
   });
-  function getRenderPixel(event, pixel) {
-    return apply(event.inversePixelTransform, pixel.slice(0));
-  }
   class StatePersistorLayerComparatorService {
     bootstrap() {
       let stop;
@@ -56615,16 +43802,16 @@ uniform ${i3} ${o3} u_${a3};
       function activate() {
         const olLayer = openLayers.getLayerFromCache(sliderTopLayer.value);
         olLayerPrerenderEvent = olLayer.on(
-          EventType.PRERENDER,
+          EventType__default.default.PRERENDER,
           function(event) {
             var _a;
             const ctx = event.context;
             const mapSize = (_a = olMap2.value) == null ? void 0 : _a.getSize();
             const width = sliderOffset.value + splitterElementOffset.value / 2;
-            const tl = getRenderPixel(event, [0, 0]);
-            const tr = getRenderPixel(event, [width, 0]);
-            const bl = getRenderPixel(event, [0, mapSize[1]]);
-            const br = getRenderPixel(event, [width, mapSize[0]]);
+            const tl = render$1.getRenderPixel(event, [0, 0]);
+            const tr = render$1.getRenderPixel(event, [width, 0]);
+            const bl = render$1.getRenderPixel(event, [0, mapSize[1]]);
+            const br = render$1.getRenderPixel(event, [width, mapSize[0]]);
             ctx.save();
             ctx.beginPath();
             ctx.moveTo(tl[0], tl[1]);
@@ -56636,7 +43823,7 @@ uniform ${i3} ${o3} u_${a3};
           }
         );
         olLayerPostrenderEvent = olLayer.on(
-          EventType.POSTRENDER,
+          EventType__default.default.POSTRENDER,
           function(e) {
             const event = e;
             const ctx = event.context;
@@ -56645,7 +43832,7 @@ uniform ${i3} ${o3} u_${a3};
         );
       }
       function deactivate() {
-        unByKey([olLayerPrerenderEvent, olLayerPostrenderEvent]);
+        Observable.unByKey([olLayerPrerenderEvent, olLayerPostrenderEvent]);
       }
       function onMoveSplitBar(offsetLeft) {
         var _a;
@@ -56809,11 +43996,11 @@ uniform ${i3} ${o3} u_${a3};
   var each = arr.forEach;
   var slice = arr.slice;
   function defaults(obj) {
-    each.call(slice.call(arguments, 1), function(source) {
-      if (source) {
-        for (var prop in source) {
+    each.call(slice.call(arguments, 1), function(source2) {
+      if (source2) {
+        for (var prop in source2) {
           if (obj[prop] === void 0)
-            obj[prop] = source[prop];
+            obj[prop] = source2[prop];
         }
       }
     });
