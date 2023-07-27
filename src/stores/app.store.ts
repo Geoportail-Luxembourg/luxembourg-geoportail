@@ -24,8 +24,8 @@ export const useAppStore = defineStore(
       remoteLayersOpen.value = open
     }
 
-    function toggleStyleEditorPanel() {
-      styleEditorOpen.value = !styleEditorOpen.value
+    function openStyleEditorPanel() {
+      styleEditorOpen.value = true
     }
 
     function closeStyleEditorPanel() {
@@ -40,7 +40,7 @@ export const useAppStore = defineStore(
       setLang,
       setLayersOpen,
       setRemoteLayersOpen,
-      toggleStyleEditorPanel,
+      openStyleEditorPanel,
       closeStyleEditorPanel,
     }
   },

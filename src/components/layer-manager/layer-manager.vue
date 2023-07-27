@@ -66,8 +66,8 @@ function toggleAccordionItem(layer: Layer) {
   isLayerOpenId.value = isLayerOpenId.value !== layer.id ? layer.id : undefined
 }
 
-function toggleEditionLayer() {
-  appStore.toggleStyleEditorPanel()
+function openEditionLayer() {
+  appStore.openStyleEditorPanel()
 }
 
 function toggleLayerComparator() {
@@ -102,7 +102,7 @@ function toggleLayerComparator() {
         :layer="bgLayer || BLANK_BACKGROUNDLAYER"
         :showEditButton="bgLayerIsEditable"
         @clickInfo="() => bgLayer && setMetadataId(bgLayer.id)"
-        @clickEdit="toggleEditionLayer"
+        @clickEdit="openEditionLayer"
       >
       </layer-manager-item-background>
       <div class="flex flex-row justify-center space-x-1 my-2">

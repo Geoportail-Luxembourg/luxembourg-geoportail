@@ -52851,8 +52851,8 @@ const useAppStore = defineStore(
     function setRemoteLayersOpen(open2) {
       remoteLayersOpen.value = open2;
     }
-    function toggleStyleEditorPanel() {
-      styleEditorOpen.value = !styleEditorOpen.value;
+    function openStyleEditorPanel() {
+      styleEditorOpen.value = true;
     }
     function closeStyleEditorPanel() {
       styleEditorOpen.value = false;
@@ -52865,7 +52865,7 @@ const useAppStore = defineStore(
       setLang,
       setLayersOpen,
       setRemoteLayersOpen,
-      toggleStyleEditorPanel,
+      openStyleEditorPanel,
       closeStyleEditorPanel
     };
   },
@@ -56330,8 +56330,8 @@ const _sfc_main$a = /* @__PURE__ */ defineComponent({
     function toggleAccordionItem(layer) {
       isLayerOpenId.value = isLayerOpenId.value !== layer.id ? layer.id : void 0;
     }
-    function toggleEditionLayer() {
-      appStore.toggleStyleEditorPanel();
+    function openEditionLayer() {
+      appStore.openStyleEditorPanel();
     }
     function toggleLayerComparator() {
       sliderStore.toggleSlider();
@@ -56362,7 +56362,7 @@ const _sfc_main$a = /* @__PURE__ */ defineComponent({
             layer: unref(bgLayer) || unref(BLANK_BACKGROUNDLAYER),
             showEditButton: unref(bgLayerIsEditable),
             onClickInfo: _cache[0] || (_cache[0] = () => unref(bgLayer) && unref(setMetadataId)(unref(bgLayer).id)),
-            onClickEdit: toggleEditionLayer
+            onClickEdit: openEditionLayer
           }, null, 8, ["layer", "showEditButton"]),
           createBaseVNode("div", _hoisted_3$7, [
             createBaseVNode("button", {
