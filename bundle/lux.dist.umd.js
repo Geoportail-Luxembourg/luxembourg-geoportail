@@ -45893,9 +45893,9 @@ uniform ${i3} ${o3} u_${a3};
       }
       return baseStyle;
     }
-    const getvtstyleUrl_ = "http://localhost:8080/getvtstyle";
-    const uploadvtstyleUrl_ = "http://localhost:8080/uploadvtstyle";
-    const deletevtstyleUrl_ = "http://localhost:8080/deletevtstyle";
+    const getvtstyleUrl_ = "/getvtstyle";
+    const uploadvtstyleUrl_ = "/uploadvtstyle";
+    const deletevtstyleUrl_ = "/deletevtstyle";
     function unregisterStyle(styleId) {
       if (styleId === null) {
         return Promise.resolve();
