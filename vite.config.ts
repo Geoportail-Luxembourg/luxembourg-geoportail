@@ -15,10 +15,7 @@ function removeDataTestAttrs(node: RootNode | TemplateChildNode) {
 
 // https://vitejs.dev/config/
 export default defineConfig(({ command, mode }) => {
-  const backendHost = // host and proxy not used by lib that uses relative paths
-    mode == 'production'
-      ? 'https://migration.geoportail.lu/' // used for gh pages
-      : 'http://localhost:8080' // used for local dev
+  const backendHost = 'http://localhost:8080' // used for local dev
   const base: UserConfig = {
     plugins: [
       vue({
