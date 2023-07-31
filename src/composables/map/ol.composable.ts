@@ -23,6 +23,7 @@ import {
 } from '@/__fixtures__/wmts.fixture'
 import { useStyleStore } from '@/stores/style.store'
 
+const DEFAULT_BGZINDEX = -200 // Value comming  from legacy
 const proxyWmsUrl = 'https://map.geoportail.lu/ogcproxywms'
 export const remoteProxyWms = 'https://map.geoportail.lu/httpsproxy'
 
@@ -245,7 +246,9 @@ export default function useOpenLayers() {
     callbackFunction: (bgLayer: BaseLayer) => void
   ) {
     const mapLayers = olMap.getLayers()
-    const bgLayer = mapLayers.getArray().find(layer => layer.getZIndex() === -1)
+    const bgLayer = mapLayers
+      .getArray()
+      .find(layer => layer.getZIndex() === DEFAULT_BGZINDEX)
     if (bgLayer) callbackFunction(bgLayer)
   }
 
@@ -257,7 +260,7 @@ export default function useOpenLayers() {
     const mapLayers = olMap.getLayers()
     const currentBgLayerPos = mapLayers
       .getArray()
-      .findIndex(layer => layer.getZIndex() === -1)
+      .findIndex(layer => layer.getZIndex() === DEFAULT_BGZINDEX)
 
     let bgBaseLayer: BaseLayer | undefined = undefined
     if (bgLayer) {
@@ -279,14 +282,14 @@ export default function useOpenLayers() {
 
     if (currentBgLayerPos >= 0) {
       if (bgBaseLayer) {
-        bgBaseLayer.setZIndex(-1)
+        bgBaseLayer.setZIndex(DEFAULT_BGZINDEX)
         mapLayers.setAt(currentBgLayerPos, bgBaseLayer)
       } else {
         mapLayers.removeAt(currentBgLayerPos)
       }
     } else {
       if (bgBaseLayer) {
-        bgBaseLayer.setZIndex(-1)
+        bgBaseLayer.setZIndex(DEFAULT_BGZINDEX)
         olMap.addLayer(bgBaseLayer)
       }
     }
