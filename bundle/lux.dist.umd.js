@@ -32900,7 +32900,7 @@ uniform ${i3} ${o3} u_${a3};
     }
     setItem(key, value) {
       const queryParams = new URL(window.location.toString()).search;
-      const url = `${"/dev/main.html/"}${key}/${value}${queryParams}`;
+      const url = `${"/"}${key}/${value}${queryParams}`;
       try {
         window.history.replaceState(null, "", url);
       } catch (error) {

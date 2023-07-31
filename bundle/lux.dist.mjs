@@ -32885,7 +32885,7 @@ class UrlStorageAsPath extends UrlStorage {
   }
   setItem(key, value) {
     const queryParams = new URL(window.location.toString()).search;
-    const url = `${"/dev/main.html/"}${key}/${value}${queryParams}`;
+    const url = `${"/"}${key}/${value}${queryParams}`;
     try {
       window.history.replaceState(null, "", url);
     } catch (error2) {
