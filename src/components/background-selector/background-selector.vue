@@ -5,9 +5,13 @@ import { storeToRefs } from 'pinia'
 
 import { IBackgroundLayer } from '@/composables/background-layer/background-layer.model'
 import useBackgroundLayer from '@/composables/background-layer/background-layer.composable'
+
+import { useAlertNotificationsStore } from '@/stores/alert-notifications.store'
 import { useThemeStore } from '@/stores/config.store'
 import { useMapStore } from '@/stores/map.store'
+
 import { statePersistorBgLayerService } from '@/services/state-persistor/state-persistor-layer-background.service'
+
 import BackgroundSelectorItem from './background-selector-item.vue'
 import { bgConfigFixture } from '@/__fixtures__/background.config.fixture'
 import { ThemeNodeModel } from '@/composables/themes/themes.model'
@@ -66,8 +70,7 @@ watch(
       backgroundLayer.setBgLayer(backgroundLayer.defaultSelectedBgId.value)
 
       if (bgLayerContext === null) {
-        // TODO: implement alert message
-        console.log(
+        useAlertNotificationsStore().addNotification(
           t(
             "Aucune couche n'étant définie pour cette carte, une couche de fond a automatiquement été ajoutée.",
             { ns: 'client' }

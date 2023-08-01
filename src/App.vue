@@ -7,6 +7,7 @@ import { MapLibreLayerType } from './composables/map/map.model'
 import HeaderBar from './components/header/header-bar.vue'
 import FooterBar from './components/footer/footer-bar.vue'
 
+import AlertNotifications from '@/components/alert-notifications/alert-notifications.vue'
 import StyleSelector from '@/components/style-selector/style-selector.vue'
 import RemoteLayers from '@/components/remote-layers/remote-layers.vue'
 import LayerMetadata from '@/components/layer-metadata/layer-metadata.vue'
@@ -86,5 +87,6 @@ function resizeMap() {
     </main>
 
     <footer-bar class="fixed bottom-5 sm:static z-20" />
+    <alert-notifications />
   </div>
 </template>

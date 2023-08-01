@@ -160,6 +160,9 @@ module.exports = {
     },
   },
   safelist: [
+    'lux-alert-info',
+    'lux-alert-danger',
+    'lux-alert-warning',
     'md:bg-route',
     'md:bg-topo_bw',
     'md:bg-topo',

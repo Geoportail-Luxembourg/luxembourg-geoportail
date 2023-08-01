@@ -8,6 +8,7 @@ import { defineCustomElement } from '@/bundle/runtime-dom/apiCustomElement'
 initProjections()
 
 import '../assets/main.css' // Tell Vite to build the css
+import AlertNotifications from '@/components/alert-notifications/alert-notifications.vue'
 import DropdownList from '@/components/common/dropdown-list.vue'
 import MapContainer from '@/components/map/map-container.vue'
 import BackgroundSelector from '@/components/background-selector/background-selector.vue'
@@ -77,6 +78,7 @@ export {
   backend,
   VueDOMPurifyHTML,
   I18NextVue,
+  AlertNotifications,
   DropdownList,
   MapContainer,
   BackgroundSelector,

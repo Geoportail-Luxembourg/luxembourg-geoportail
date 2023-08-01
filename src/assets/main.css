@@ -190,6 +190,28 @@
   .lux-slider-layer-label {
     @apply w-32 bg-white hover:cursor-default absolute bottom-14 p-2 right-7 font-bold;
   }
+
+  .lux-alert {
+    @apply p-4 mb-5 border;
+  }
+
+  .lux-alert-info {
+    background-color: var(--alert-info-primary);
+    border-color: var(--alert-info-secondary);
+    color: var(--alert-info-tertiary);
+  }
+
+  .lux-alert-danger {
+    background-color: var(--alert-danger-primary);
+    border-color: var(--alert-danger-secondary);
+    color: var(--alert-danger-tertiary);
+  }
+
+  .lux-alert-warning {
+    background-color: var(--alert-warning-primary);
+    border-color: var(--alert-warning-secondary);
+    color: var(--alert-warning-tertiary);
+  }
 }
 
 .fa-solid {
@@ -198,6 +220,15 @@
 
 @layer base {
   :root {
+    --alert-info-primary: #d9edf7;
+    --alert-info-secondary: #bce8f1;
+    --alert-info-tertiary: #31708f;
+    --alert-danger-primary: #f2dede;
+    --alert-danger-secondary: #ebccd1;
+    --alert-danger-tertiary: #a94442;
+    --alert-warning-primary: #fcf850;
+    --alert-warning-secondary: #faebcc;
+    --alert-warning-tertiary: #8a6d3b;
     --color-default: #333;
     --color-primary: #2980b9;
     --color-secondary: #97bbd3;
