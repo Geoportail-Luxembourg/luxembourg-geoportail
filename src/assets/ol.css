@@ -1,14 +1,22 @@
-@import 'main.css';
-
 @tailwind components;
 
 @layer components {
+  .ol-outlined {
+    outline: 5px auto -webkit-focus-ring-color;
+    outline-offset: -2px;
+  }
+
+  .ol-btn {
+    @apply bg-white border text-primary py-[6px] px-[12px] hover:bg-primary hover:text-white leading-snug focus:bg-[#e6e6e6] focus:border-[#8c8c8c] focus:[color:var(--color-primary)] focus:ol-outlined;
+    border: 1px solid var(--button-bg-color);
+  }
+
   .ol-control {
     @apply absolute rounded p-1;
   }
 
   .ol-control button {
-    @apply w-10 h-10 text-xl text-center font-normal indent-0 block lux-btn m-[-1px] p-0 border-[1px] border-[color:var(--color-btn-ol)];
+    @apply w-10 h-10 text-xl text-center font-normal indent-0 block ol-btn m-[-1px] p-0 border-[1px] border-[color:var(--color-btn-ol)];
     font-family: 'geoportail-icons-wc';
   }
 
