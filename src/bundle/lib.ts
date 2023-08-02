@@ -22,6 +22,7 @@ import useMap from '@/composables/map/map.composable'
 import { useAppStore } from '@/stores/app.store'
 import { useMapStore } from '@/stores/map.store'
 import { useThemeStore } from '@/stores/config.store'
+import { statePersistorBgLayerService } from '@/services/state-persistor/state-persistor-layer-background.service'
 import { statePersistorLayersService } from '@/services/state-persistor/state-persistor-layers.service'
 import { statePersistorThemeService } from '@/services/state-persistor/state-persistor-theme.service'
 import { themeSelectorService } from '@/components/theme-selector/theme-selector.service'
@@ -92,6 +93,7 @@ export {
   useAppStore,
   useMapStore,
   useThemeStore,
+  statePersistorBgLayerService,
   statePersistorLayersService,
   statePersistorThemeService,
   themeSelectorService,

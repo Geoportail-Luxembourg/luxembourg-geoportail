@@ -16,6 +16,7 @@ import LayerPanel from '@/components/layer-panel/layer-panel.vue'
 import MapContainer from '@/components/map/map-container.vue'
 import SliderComparator from '@/components/slider/slider-comparator.vue'
 
+import { statePersistorBgLayerService } from '@/services/state-persistor/state-persistor-layer-background.service'
 import { statePersistorLayersService } from '@/services/state-persistor/state-persistor-layers.service'
 import { statePersistorThemeService } from '@/services/state-persistor/state-persistor-theme.service'
 import { statePersistorLayersOpenService } from '@/services/state-persistor/state-persistor-layersopen.service'
@@ -23,10 +24,12 @@ import { statePersistorStyleService } from '@/services/state-persistor/state-per
 import { useAppStore } from '@/stores/app.store'
 import useMap from './composables/map/map.composable'
 
+// Important, keep order!
 statePersistorLayersService.bootstrap()
 statePersistorThemeService.bootstrap()
 statePersistorLayersOpenService.bootstrapLayersOpen()
 statePersistorStyleService.bootstrapStyle()
+statePersistorBgLayerService.bootstrap()
 
 const { layersOpen, styleEditorOpen } = storeToRefs(useAppStore())
 

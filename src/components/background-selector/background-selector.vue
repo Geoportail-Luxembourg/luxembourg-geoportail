@@ -10,8 +10,6 @@ import { useAlertNotificationsStore } from '@/stores/alert-notifications.store'
 import { useThemeStore } from '@/stores/config.store'
 import { useMapStore } from '@/stores/map.store'
 
-import { statePersistorBgLayerService } from '@/services/state-persistor/state-persistor-layer-background.service'
-
 import BackgroundSelectorItem from './background-selector-item.vue'
 import { bgConfigFixture } from '@/__fixtures__/background.config.fixture'
 import { ThemeNodeModel } from '@/composables/themes/themes.model'
@@ -21,8 +19,6 @@ const backgroundLayer = useBackgroundLayer()
 const mapStore = useMapStore()
 const themeStore = useThemeStore()
 const { bgLayer: bgLayerContext } = storeToRefs(mapStore)
-
-statePersistorBgLayerService.bootstrap()
 
 const props = defineProps({
   isOpen: {
