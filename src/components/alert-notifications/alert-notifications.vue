@@ -17,6 +17,7 @@ function onClose(index: number) {
     <div
       v-if="notifications.length"
       class="fixed w-[500px] top-10 left-1/2 ml-[-250px] z-50"
+      data-cy="alertNotifications"
     >
       <Notification
         v-for="(notification, index) in notifications"
