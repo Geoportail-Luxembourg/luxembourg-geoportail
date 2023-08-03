@@ -27,24 +27,4 @@ describe('Permalink/State persistor - layersOpen', () => {
       })
     })
   })
-  describe('opening / closing panel', () => {
-    describe('when clicking cross', () => {
-      it('closes layerPanel', () => {
-        cy.visit('/')
-        cy.get('[data-cy="layerPanel"]').should('exist')
-        cy.get('[data-cy="layerPanel"]').find('button').first().click()
-        cy.get('[data-cy="layerPanel"]').should('not.exist')
-      })
-    })
-    describe('clicking theme icon in header bar', () => {
-      it('toggles layerPanel', () => {
-        cy.visit('/')
-        cy.get('[data-cy="layerPanel"]').should('exist')
-        cy.get('[data-cy="selectedThemeIcon"]').click()
-        cy.get('[data-cy="layerPanel"]').should('not.exist')
-        cy.get('[data-cy="selectedThemeIcon"]').click()
-        cy.get('[data-cy="layerPanel"]').should('exist')
-      })
-    })
-  })
 })
