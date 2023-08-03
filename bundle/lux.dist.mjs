@@ -52835,11 +52835,15 @@ class LayerTreeService {
 const layerTreeService = new LayerTreeService();
 const DEFAULT_LANG = "fr";
 const DEFAULT_LAYER_PANEL_OPENED = true;
+const DEFAULT_MY_LAYERS_TAB_OPENED = false;
+const DEFAULT_THEME_GRID_OPENED = false;
 const useAppStore = defineStore(
   "app",
   () => {
     const lang = ref(DEFAULT_LANG);
     const layersOpen = ref(DEFAULT_LAYER_PANEL_OPENED);
+    const myLayersTabOpen = ref(DEFAULT_MY_LAYERS_TAB_OPENED);
+    const themeGridOpen = ref(DEFAULT_THEME_GRID_OPENED);
     const remoteLayersOpen = ref();
     const styleEditorOpen = ref(false);
     function setLang(language) {
@@ -52847,6 +52851,19 @@ const useAppStore = defineStore(
     }
     function setLayersOpen(open2) {
       layersOpen.value = open2;
+      if (!open2) {
+        themeGridOpen.value = false;
+        myLayersTabOpen.value = false;
+      }
+    }
+    function setMyLayersTabOpen(open2) {
+      myLayersTabOpen.value = open2;
+      if (open2) {
+        themeGridOpen.value = false;
+      }
+    }
+    function setThemeGridOpen(open2) {
+      themeGridOpen.value = open2;
     }
     function setRemoteLayersOpen(open2) {
       remoteLayersOpen.value = open2;
@@ -52860,10 +52877,14 @@ const useAppStore = defineStore(
     return {
       lang,
       layersOpen,
+      myLayersTabOpen,
+      themeGridOpen,
       styleEditorOpen,
       remoteLayersOpen,
       setLang,
       setLayersOpen,
+      setMyLayersTabOpen,
+      setThemeGridOpen,
       setRemoteLayersOpen,
       openStyleEditorPanel,
       closeStyleEditorPanel
@@ -53534,8 +53555,8 @@ const _sfc_main$l = /* @__PURE__ */ defineComponent({
   setup(__props) {
     const { t } = useTranslation();
     const appStore = useAppStore();
-    const { layersOpen } = storeToRefs(appStore);
-    const { setLayersOpen } = appStore;
+    const { layersOpen, myLayersTabOpen, themeGridOpen } = storeToRefs(appStore);
+    const { setLayersOpen, setMyLayersTabOpen, setThemeGridOpen } = appStore;
     const themeStore = useThemeStore();
     const { theme } = storeToRefs(themeStore);
     watch(
@@ -53547,6 +53568,20 @@ const _sfc_main$l = /* @__PURE__ */ defineComponent({
       },
       { immediate: true }
     );
+    function onClick() {
+      if (!layersOpen.value) {
+        setLayersOpen(true);
+        myLayersTabOpen.value && setMyLayersTabOpen(false);
+        setThemeGridOpen(true);
+      } else if (layersOpen.value) {
+        if (themeGridOpen.value) {
+          setLayersOpen(false);
+        } else {
+          myLayersTabOpen.value && setMyLayersTabOpen(false);
+          setThemeGridOpen(true);
+        }
+      }
+    }
     return (_ctx, _cache) => {
       var _a, _b;
       return openBlock(), createElementBlock("header", _hoisted_1$h, [
@@ -53557,7 +53592,7 @@ const _sfc_main$l = /* @__PURE__ */ defineComponent({
             createBaseVNode("li", null, [
               createBaseVNode("button", {
                 class: normalizeClass(["flex items-center before:font-icons before:text-3xl before:w-16 text-primary uppercase h-full mr-3", `before:content-${(_a = unref(theme)) == null ? void 0 : _a.name}`]),
-                onClick: _cache[0] || (_cache[0] = () => unref(setLayersOpen)(!unref(layersOpen)))
+                onClick
               }, [
                 createBaseVNode("span", _hoisted_5$9, toDisplayString(unref(t)(`${(_b = unref(theme)) == null ? void 0 : _b.name}`)), 1)
               ], 2)
@@ -53727,59 +53762,10 @@ const _sfc_main$i = /* @__PURE__ */ defineComponent({
     };
   }
 });
-function themesToLayerTree(node, depth = 0) {
-  const { name, id, children, metadata } = node;
-  return {
-    name,
-    id,
-    depth,
-    children: children == null ? void 0 : children.map((child) => themesToLayerTree(child, depth + 1)),
-    checked: false,
-    expanded: (metadata == null ? void 0 : metadata.is_expanded) || false
-  };
-}
-const _sfc_main$h = /* @__PURE__ */ defineComponent({
-  __name: "catalog-tree",
-  setup(__props) {
-    const mapStore = useMapStore();
-    const themeStore = useThemeStore();
-    const layers = useLayers();
-    const layerTree = shallowRef();
-    watchEffect(updateLayerTree);
-    function updateLayerTree() {
-      var _a;
-      if (themeStore.theme && mapStore.layers) {
-        const treeModel = layerTree.value && layerTree.value.id === ((_a = themeStore.theme) == null ? void 0 : _a.id) ? layerTree.value : themesToLayerTree(themeStore.theme);
-        layerTree.value = layerTreeService.updateLayers(
-          treeModel,
-          mapStore.layers
-        );
-      }
-    }
-    function toggleParent(node) {
-      layerTree.value = layerTreeService.toggleNode(
-        node.id,
-        layerTree.value,
-        "expanded"
-      );
-    }
-    function toggleLayer(node) {
-      layers.toggleLayer(+node.id, !node.checked);
-    }
-    return (_ctx, _cache) => {
-      return unref(layerTree) ? (openBlock(), createBlock(_sfc_main$q, {
-        node: unref(layerTree),
-        key: unref(layerTree).id,
-        onToggleParent: toggleParent,
-        onToggleLayer: toggleLayer
-      }, null, 8, ["node"])) : createCommentVNode("", true);
-    };
-  }
-});
 const _hoisted_1$d = { class: "flex flex-row flex-wrap pl-2.5" };
 const _hoisted_2$c = ["onClick"];
 const _hoisted_3$b = { class: "text-2xl absolute top-5" };
-const _sfc_main$g = /* @__PURE__ */ defineComponent({
+const _sfc_main$h = /* @__PURE__ */ defineComponent({
   __name: "theme-grid",
   props: {
     themes: null
@@ -53810,7 +53796,7 @@ const _hoisted_2$b = { class: "py-0.5" };
 const _hoisted_3$a = { class: "px-1 py-0.5 shrink-0 flex flex-row text-[12px] bg-secondary text-white" };
 const _hoisted_4$9 = { class: "py-[3px]" };
 const _hoisted_5$8 = { class: "flex flex-row flex-wrap ml-1 w-12" };
-const _sfc_main$f = /* @__PURE__ */ defineComponent({
+const _sfc_main$g = /* @__PURE__ */ defineComponent({
   __name: "theme-selector-button",
   props: {
     themes: null,
@@ -53850,10 +53836,12 @@ const _hoisted_1$b = {
   key: 0,
   class: "absolute inset-x-0 top-14 bottom-0 mt-1 bg-primary overflow-y-auto overflow-x-hidden"
 };
-const _sfc_main$e = /* @__PURE__ */ defineComponent({
+const _sfc_main$f = /* @__PURE__ */ defineComponent({
   __name: "theme-selector",
-  emits: ["toggleThemesGrid"],
-  setup(__props, { emit: emit2 }) {
+  setup(__props) {
+    const appStore = useAppStore();
+    const { setThemeGridOpen } = appStore;
+    const { themeGridOpen } = storeToRefs(appStore);
     const themeStore = useThemeStore();
     const themesService = useThemes();
     const { theme, themes: themesFromStore } = storeToRefs(themeStore);
@@ -53868,9 +53856,8 @@ const _sfc_main$e = /* @__PURE__ */ defineComponent({
         )) || [];
       }
     );
-    const isOpen = shallowRef(false);
     function toggleThemesGrid() {
-      emit2("toggleThemesGrid", isOpen.value = !isOpen.value);
+      setThemeGridOpen(!themeGridOpen.value);
     }
     function setTheme(themeName) {
       themesService.setTheme(themeName);
@@ -53878,14 +53865,14 @@ const _sfc_main$e = /* @__PURE__ */ defineComponent({
     }
     return (_ctx, _cache) => {
       return openBlock(), createElementBlock(Fragment, null, [
-        createVNode(_sfc_main$f, {
+        createVNode(_sfc_main$g, {
           onClick: toggleThemesGrid,
           themes: unref(themes2),
           currentTheme: unref(theme),
-          isOpen: unref(isOpen)
+          isOpen: unref(themeGridOpen)
         }, null, 8, ["themes", "currentTheme", "isOpen"]),
-        unref(isOpen) ? (openBlock(), createElementBlock("div", _hoisted_1$b, [
-          createVNode(_sfc_main$g, {
+        unref(themeGridOpen) ? (openBlock(), createElementBlock("div", _hoisted_1$b, [
+          createVNode(_sfc_main$h, {
             onSetTheme: setTheme,
             themes: unref(themes2)
           }, null, 8, ["themes"])
@@ -53894,17 +53881,63 @@ const _sfc_main$e = /* @__PURE__ */ defineComponent({
     };
   }
 });
+function themesToLayerTree(node, depth = 0) {
+  const { name, id, children, metadata } = node;
+  return {
+    name,
+    id,
+    depth,
+    children: children == null ? void 0 : children.map((child) => themesToLayerTree(child, depth + 1)),
+    checked: false,
+    expanded: (metadata == null ? void 0 : metadata.is_expanded) || false
+  };
+}
+const _sfc_main$e = /* @__PURE__ */ defineComponent({
+  __name: "catalog-tree",
+  setup(__props) {
+    const mapStore = useMapStore();
+    const themeStore = useThemeStore();
+    const layers = useLayers();
+    const layerTree = shallowRef();
+    watchEffect(updateLayerTree);
+    function updateLayerTree() {
+      var _a;
+      if (themeStore.theme && mapStore.layers) {
+        const treeModel = layerTree.value && layerTree.value.id === ((_a = themeStore.theme) == null ? void 0 : _a.id) ? layerTree.value : themesToLayerTree(themeStore.theme);
+        layerTree.value = layerTreeService.updateLayers(
+          treeModel,
+          mapStore.layers
+        );
+      }
+    }
+    function toggleParent(node) {
+      layerTree.value = layerTreeService.toggleNode(
+        node.id,
+        layerTree.value,
+        "expanded"
+      );
+    }
+    function toggleLayer(node) {
+      layers.toggleLayer(+node.id, !node.checked);
+    }
+    return (_ctx, _cache) => {
+      return unref(layerTree) ? (openBlock(), createBlock(_sfc_main$q, {
+        node: unref(layerTree),
+        key: unref(layerTree).id,
+        onToggleParent: toggleParent,
+        onToggleLayer: toggleLayer
+      }, null, 8, ["node"])) : createCommentVNode("", true);
+    };
+  }
+});
 const _sfc_main$d = /* @__PURE__ */ defineComponent({
   __name: "catalog-tab",
   setup(__props) {
-    const themeGridIsOpen = shallowRef(false);
-    function toggleThemesGrid(isOpen) {
-      themeGridIsOpen.value = isOpen;
-    }
+    const { themeGridOpen } = storeToRefs(useAppStore());
     return (_ctx, _cache) => {
       return openBlock(), createElementBlock(Fragment, null, [
-        createVNode(_sfc_main$e, { onToggleThemesGrid: toggleThemesGrid }),
-        unref(themeGridIsOpen) === false ? (openBlock(), createBlock(_sfc_main$h, {
+        createVNode(_sfc_main$f),
+        unref(themeGridOpen) === false ? (openBlock(), createBlock(_sfc_main$e, {
           key: 0,
           class: "pt-5 absolute inset-x-2.5 bg-primary overflow-y-auto overflow-x-hidden"
         })) : createCommentVNode("", true)
@@ -56391,9 +56424,16 @@ const _sfc_main$9 = /* @__PURE__ */ defineComponent({
   __name: "layer-panel",
   setup(__props) {
     const { t } = useTranslation();
-    const { setLayersOpen } = useAppStore();
+    const appStore = useAppStore();
+    const { setLayersOpen } = appStore;
+    const { myLayersTabOpen } = storeToRefs(appStore);
     const { layers } = storeToRefs(useMapStore());
-    const myLayersOpen = ref(false);
+    function onClickMyLayers() {
+      appStore.setMyLayersTabOpen(true);
+    }
+    function onDisplayCatalog() {
+      appStore.setMyLayersTabOpen(false);
+    }
     return (_ctx, _cache) => {
       return openBlock(), createElementBlock("div", _hoisted_1$7, [
         createBaseVNode("div", _hoisted_2$7, [
@@ -56408,25 +56448,25 @@ const _sfc_main$9 = /* @__PURE__ */ defineComponent({
         ]),
         createBaseVNode("div", _hoisted_4$6, [
           createBaseVNode("button", {
-            onClick: _cache[1] || (_cache[1] = () => myLayersOpen.value = true),
-            class: normalizeClass(["text-white px-4 hover:bg-primary cursor-pointer text-center uppercase", myLayersOpen.value ? "bg-primary" : "bg-tertiary"]),
-            "aria-expanded": myLayersOpen.value
+            onClick: onClickMyLayers,
+            class: normalizeClass(["text-white px-4 hover:bg-primary cursor-pointer text-center uppercase", unref(myLayersTabOpen) ? "bg-primary" : "bg-tertiary"]),
+            "aria-expanded": unref(myLayersTabOpen)
           }, [
             createTextVNode(toDisplayString(unref(t)("my_layers", { ns: "client" })) + " ", 1),
             unref(layers).length ? (openBlock(), createElementBlock("span", _hoisted_6$3, "(" + toDisplayString(unref(layers).length) + ")", 1)) : createCommentVNode("", true)
           ], 10, _hoisted_5$6),
           createBaseVNode("button", {
-            onClick: _cache[2] || (_cache[2] = ($event) => myLayersOpen.value = false),
-            class: normalizeClass(["text-white px-4 hover:bg-primary cursor-pointer text-center uppercase", myLayersOpen.value ? "bg-tertiary" : "bg-primary"]),
-            "aria-expanded": !myLayersOpen.value
+            onClick: onDisplayCatalog,
+            class: normalizeClass(["text-white px-4 hover:bg-primary cursor-pointer text-center uppercase", unref(myLayersTabOpen) ? "bg-tertiary" : "bg-primary"]),
+            "aria-expanded": !unref(myLayersTabOpen)
           }, toDisplayString(unref(t)("Catalog", { ns: "client" })), 11, _hoisted_7$1)
         ]),
         createBaseVNode("div", _hoisted_8$1, [
-          !myLayersOpen.value ? (openBlock(), createBlock(_sfc_main$d, { key: 0 })) : createCommentVNode("", true),
-          myLayersOpen.value ? (openBlock(), createBlock(_sfc_main$a, {
-            key: 1,
-            onDisplayCatalog: _cache[3] || (_cache[3] = () => myLayersOpen.value = false)
-          })) : createCommentVNode("", true)
+          unref(myLayersTabOpen) ? (openBlock(), createBlock(_sfc_main$a, {
+            key: 0,
+            onDisplayCatalog
+          })) : createCommentVNode("", true),
+          !unref(myLayersTabOpen) ? (openBlock(), createBlock(_sfc_main$d, { key: 1 })) : createCommentVNode("", true)
         ])
       ]);
     };
