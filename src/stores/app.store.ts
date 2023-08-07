@@ -1,4 +1,4 @@
-import { ref } from 'vue'
+import { Ref, ref } from 'vue'
 import { acceptHMRUpdate, defineStore } from 'pinia'
 
 export const DEFAULT_LANG = 'fr'
@@ -13,6 +13,7 @@ export const useAppStore = defineStore(
     const layersOpen = ref(DEFAULT_LAYER_PANEL_OPENED)
     const myLayersTabOpen = ref(DEFAULT_MY_LAYERS_TAB_OPENED)
     const themeGridOpen = ref(DEFAULT_THEME_GRID_OPENED)
+    const mapId: Ref<string | undefined> = ref()
     const remoteLayersOpen = ref()
     const styleEditorOpen = ref(false)
 
@@ -45,6 +46,10 @@ export const useAppStore = defineStore(
       remoteLayersOpen.value = open
     }
 
+    function setMapId(id: string | undefined) {
+      mapId.value = id
+    }
+
     function openStyleEditorPanel() {
       styleEditorOpen.value = true
     }
@@ -58,6 +63,7 @@ export const useAppStore = defineStore(
       layersOpen,
       myLayersTabOpen,
       themeGridOpen,
+      mapId,
       styleEditorOpen,
       remoteLayersOpen,
       setLang,
@@ -65,6 +71,7 @@ export const useAppStore = defineStore(
       setMyLayersTabOpen,
       setThemeGridOpen,
       setRemoteLayersOpen,
+      setMapId,
       openStyleEditorPanel,
       closeStyleEditorPanel,
     }

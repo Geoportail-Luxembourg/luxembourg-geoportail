@@ -21,10 +21,12 @@ import { statePersistorLayersService } from '@/services/state-persistor/state-pe
 import { statePersistorThemeService } from '@/services/state-persistor/state-persistor-theme.service'
 import { statePersistorLayersOpenService } from '@/services/state-persistor/state-persistor-layersopen.service'
 import { statePersistorStyleService } from '@/services/state-persistor/state-persistor-bgstyle.service'
+import { statePersistorMyMapService } from '@/services/state-persistor/state-persistor-mymap.service'
 import { useAppStore } from '@/stores/app.store'
-import useMap from './composables/map/map.composable'
+import useMap from '@/composables/map/map.composable'
 
 // Important, keep order!
+statePersistorMyMapService.bootstrap()
 statePersistorLayersService.bootstrap()
 statePersistorThemeService.bootstrap()
 statePersistorLayersOpenService.bootstrapLayersOpen()

@@ -7,7 +7,6 @@ import { useStyleStore } from '@/stores/style.store'
 import { useMapStore } from '@/stores/map.store'
 import { SP_KEY_SERIAL } from './state-persistor.model'
 import { StyleItem } from '@/composables/mvt-styles/mvt-styles.model'
-// import { bgConfigFixture } from '@/__fixtures__/background.config.fixture'
 
 class StatePersistorStyleService {
   styleWatcher: WatchStopHandle

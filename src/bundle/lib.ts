@@ -25,6 +25,9 @@ import { useThemeStore } from '@/stores/config.store'
 import { statePersistorBgLayerService } from '@/services/state-persistor/state-persistor-layer-background.service'
 import { statePersistorLayersService } from '@/services/state-persistor/state-persistor-layers.service'
 import { statePersistorThemeService } from '@/services/state-persistor/state-persistor-theme.service'
+import { statePersistorLayersOpenService } from '@/services/state-persistor/state-persistor-layersopen.service'
+import { statePersistorStyleService } from '@/services/state-persistor/state-persistor-bgstyle.service'
+import { statePersistorMyMapService } from '@/services/state-persistor/state-persistor-mymap.service'
 import { themeSelectorService } from '@/components/theme-selector/theme-selector.service'
 
 import i18next from 'i18next'
@@ -96,5 +99,8 @@ export {
   statePersistorBgLayerService,
   statePersistorLayersService,
   statePersistorThemeService,
+  statePersistorLayersOpenService,
+  statePersistorStyleService,
+  statePersistorMyMapService,
   themeSelectorService,
 }

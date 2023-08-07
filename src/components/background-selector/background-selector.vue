@@ -43,7 +43,7 @@ watch(
         {
           id: bgl.id,
         },
-        bgLayersContext.find((l: ThemeNodeModel) => bgl.id == l.id),
+        bgLayersContext.find((l: ThemeNodeModel) => bgl.id === l.id),
         {
           name: bgl.icon_id,
         }

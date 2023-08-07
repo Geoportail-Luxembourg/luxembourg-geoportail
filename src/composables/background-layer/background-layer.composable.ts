@@ -1,7 +1,10 @@
 import { computed } from 'vue'
+import { storeToRefs } from 'pinia'
+
 import { bgConfigFixture } from '@/__fixtures__/background.config.fixture'
 
 import useLayers from '@/composables/layers/layers.composable'
+import { useAppStore } from '@/stores/app.store'
 import type { Layer } from '@/stores/map.store.model'
 import { useMapStore } from '@/stores/map.store'
 import { useThemeStore } from '@/stores/config.store'
@@ -12,16 +15,23 @@ import {
 import useThemes from '@/composables/themes/themes.composable'
 
 export default function useBackgroundLayer() {
+  const appStore = useAppStore()
+  const { mapId } = storeToRefs(appStore)
   const theme = useThemes()
   const mapStore = useMapStore()
   const layers = useLayers()
   const defaultSelectedBgId = computed(() => {
-    const theme_name = useThemeStore().theme?.name
-    if (theme_name) {
-      const defaultBgLayers = bgConfigFixture()
-        .bg_layer_theme_defaults as BgLayerDefaultsType
-      return defaultBgLayers[theme_name] || getDefaultSelectedId()
+    if (!mapId.value) {
+      const themeName = useThemeStore().theme?.name
+
+      if (themeName) {
+        const defaultBgLayers = bgConfigFixture()
+          .bg_layer_theme_defaults as BgLayerDefaultsType
+
+        return defaultBgLayers[themeName] || getDefaultSelectedId()
+      }
     }
+
     return getDefaultSelectedId()
   })
 
