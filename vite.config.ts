@@ -15,6 +15,7 @@ function removeDataTestAttrs(node: RootNode | TemplateChildNode) {
 
 // https://vitejs.dev/config/
 export default defineConfig(({ command, mode }) => {
+  const backendHost = 'http://localhost:8080' // used for local dev
   const base: UserConfig = {
     plugins: [
       vue({
@@ -33,6 +34,13 @@ export default defineConfig(({ command, mode }) => {
     test: {
       globals: true,
       setupFiles: 'vitest.setup.ts',
+    },
+    server: {
+      proxy: {
+        '/getvtstyle': backendHost,
+        '/uploadvtstyle': backendHost,
+        '/deletevtstyle': backendHost,
+      },
     },
   }
 
