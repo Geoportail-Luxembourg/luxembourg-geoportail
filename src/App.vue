@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { onMounted, onUnmounted, watch } from 'vue'
 import { storeToRefs } from 'pinia'
-import MapLibreLayer from '@geoblocks/ol-maplibre-layer'
+import MapLibreLayer from '@/lib/ol-maplibre-layer'
 
 import { MapLibreLayerType } from './composables/map/map.model'
 import HeaderBar from './components/header/header-bar.vue'

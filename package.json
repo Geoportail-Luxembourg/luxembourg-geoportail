@@ -29,6 +29,7 @@
     "@camptocamp/ogc-client": "^0.3.4",
     "file-saver": "^2.0.5",
     "luxon": "^3.4.1",
+    "maplibre-gl": "^3.2.2",
     "ol": "^6.5.0",
     "pinia": "^2.0.26",
     "sortablejs": "^1.15.0",
@@ -38,7 +39,6 @@
   },
   "devDependencies": {
     "@cypress/code-coverage": "^3.10.0",
-    "@geoblocks/ol-maplibre-layer": "^0.0.5",
     "@istanbuljs/nyc-config-typescript": "^1.0.2",
     "@pinia/testing": "^0.0.14",
     "@rushstack/eslint-patch": "^1.1.4",
