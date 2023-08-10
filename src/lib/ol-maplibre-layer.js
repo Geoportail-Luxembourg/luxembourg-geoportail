@@ -17,10 +17,19 @@ export default class MapLibreLayer extends Layer {
     const baseOptions = Object.assign({}, options)
 
     delete baseOptions.maplibreOptions
+    baseOptions.xyz = options.maplibreOptions.xyz
+    baseOptions.xyz_custom = options.maplibreOptions.xyz_custom
 
     super(baseOptions)
 
-    const container = options.maplibreOptions.container
+    // const container = options.maplibreOptions.container
+    this.map_ = options.maplibreOptions.map;
+
+    const container = document.createElement('div');
+    container.style.width = '100%';
+    container.style.height = '100%';
+    container.style.position = 'absolute';
+    this.map_.getTarget().appendChild(container);
 
     this.maplibreMap = new maplibregl.Map(
       Object.assign({}, options.maplibreOptions, {
@@ -31,6 +40,7 @@ export default class MapLibreLayer extends Layer {
       })
     )
 
+    this.maplibreMap.getCanvas().style.position = 'absolute';
     this.applyOpacity_()
   }
 
@@ -66,36 +76,42 @@ export default class MapLibreLayer extends Layer {
       animate: false,
     })
 
-    // const maplibreCanvas = this.maplibreMap.getCanvas();
-    // if (!maplibreCanvas.isConnected) {
-    //   // The canvas is not connected to the DOM, request a map rendering at the next animation frame
-    //   // to set the canvas size.
-    //   this.getMapInternal().render();
-    // } else if (!sameSize(maplibreCanvas, frameState)) {
-    //   this.maplibreMap.resize();
-    // }
+    const maplibreCanvas = this.maplibreMap.getCanvas();
+    if (!maplibreCanvas.isConnected) {
+      // The canvas is not connected to the DOM, request a map rendering at the next animation frame
+      // to set the canvas size.
+      this.map_.render();
+      // this.getMapInternal().render();
+    } else if (!sameSize(maplibreCanvas, frameState)) {
+      this.maplibreMap._container.style.width = `${frameState.size[0]}px`
+      this.maplibreMap._container.style.height = `${frameState.size[1]}px`
+      this.maplibreMap._container.style.position = 'absolute'
+      this.maplibreMap.resize();
+      this.maplibreMap._container.style.position = 'absolute'
+      // this.maplibreMap._container.style.display = 'none'
+    }
 
     // this.maplibreMap.redraw();
-    if (this.maplibreMap._frame) {
-      this.maplibreMap._frame.cancel()
-      this.maplibreMap._frame = null
-    }
-    this.maplibreMap._render()
+    // if (this.maplibreMap._frame) {
+    //   this.maplibreMap._frame.cancel()
+    //   this.maplibreMap._frame = null
+    // }
+    // this.maplibreMap._render()
 
-    //return this.maplibreMap.getContainer();
+    // return this.maplibreMap.getContainer();
     return canvas
   }
 }
 
-// /**
-//  *
-//  * @param {HTMLCanvasElement} canvas
-//  * @param {import('ol/Map').FrameState} frameState
-//  * @return boolean
-//  */
-// function sameSize(canvas, frameState) {
-//   return (
-//     canvas.width === Math.floor(frameState.size[0] * frameState.pixelRatio) ||
-//     canvas.height === Math.floor(frameState.size[1] * frameState.pixelRatio)
-//   )
-// }
+/**
+ *
+ * @param {HTMLCanvasElement} canvas
+ * @param {import('ol/Map').FrameState} frameState
+ * @return boolean
+ */
+function sameSize(canvas, frameState) {
+  return (
+    canvas.width === Math.floor(frameState.size[0] * frameState.pixelRatio) ||
+    canvas.height === Math.floor(frameState.size[1] * frameState.pixelRatio)
+  )
+}
