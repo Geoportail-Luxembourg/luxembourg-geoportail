@@ -37,24 +37,32 @@ function getOlcsExtent() {
 
 function createWmsLayer(layer: Layer): ImageLayer<ImageWMS> {
   const { name, layers, imageType, url, id } = layer
+  const olSource = new ImageWMS({
+    url: url || proxyWmsUrl,
+    hidpi: isHiDpi(),
+    serverType: 'mapserver',
+    params: {
+      FORMAT: imageType,
+      LAYERS: layers,
+    },
+    ...((url !== undefined && url !== null) || remoteProxyWms
+      ? { crossOrigin: 'anonymous' }
+      : {}),
+  })
+
+  if (layer.currentTime) {
+    const sourceParams = olSource.getParams()
+    sourceParams['TIME'] = layer.currentTime
+    olSource.updateParams(sourceParams)
+  }
+
   const olLayer = new ImageLayer({
     properties: {
       'olcs.extent': getOlcsExtent(),
       label: name,
       id,
     },
-    source: new ImageWMS({
-      url: url || proxyWmsUrl,
-      hidpi: isHiDpi(),
-      serverType: 'mapserver',
-      params: {
-        FORMAT: imageType,
-        LAYERS: layers,
-      },
-      ...((url !== undefined && url !== null) || remoteProxyWms
-        ? { crossOrigin: 'anonymous' }
-        : {}),
-    }),
+    source: olSource,
   })
 
   return olLayer
@@ -65,25 +73,25 @@ function createWmtsLayer(layer: Layer): TileLayer<WMTS> {
   const hasRetina = getLayerHasRetina(layer)
   const projection = getProjection(PROJECTION_WEBMERCATOR)!
   const extent = projection!.getExtent()
-
-  const olLayer = new TileLayer({
-    source: new WMTS({
-      url: getLayerWmtsUrl(layer),
-      tilePixelRatio: hasRetina ? 2 : 1,
-      layer: name,
-      matrixSet: `GLOBAL_WEBMERCATOR_4_V3${hasRetina ? '_HD' : ''}`,
-      format: imageType,
-      requestEncoding: 'REST',
-      projection,
-      tileGrid: new WmtsTileGrid({
-        origin: getTopLeft(extent),
-        extent,
-        resolutions: TILE_GRID_RESOLUTION,
-        matrixIds: TILE_MATRIX_IDS,
-      }),
-      style: 'default',
-      crossOrigin: 'anonymous',
+  const olSource = new WMTS({
+    url: getLayerWmtsUrl(layer),
+    tilePixelRatio: hasRetina ? 2 : 1,
+    layer: name,
+    matrixSet: `GLOBAL_WEBMERCATOR_4_V3${hasRetina ? '_HD' : ''}`,
+    format: imageType,
+    requestEncoding: 'REST',
+    projection,
+    tileGrid: new WmtsTileGrid({
+      origin: getTopLeft(extent),
+      extent,
+      resolutions: TILE_GRID_RESOLUTION,
+      matrixIds: TILE_MATRIX_IDS,
     }),
+    style: 'default',
+    crossOrigin: 'anonymous',
+  })
+  const olLayer = new TileLayer({
+    source: olSource,
     properties: {
       // check that olcs.extent is still available for legacy app
       'olcs.extent': getOlcsExtent(),
@@ -91,6 +99,22 @@ function createWmtsLayer(layer: Layer): TileLayer<WMTS> {
       id,
     },
   })
+
+  if (layer.currentTime) {
+    const newLayer = layer.metadata?.['time_layers']?.[layer.currentTime]
+    const oldUrls = olSource.getUrls()
+
+    if (newLayer && oldUrls) {
+      const newUrls = oldUrls.map(url =>
+        url.replace(
+          /\/[^/]*\/{TileMatrixSet}/,
+          '/' + newLayer + '/{TileMatrixSet}'
+        )
+      )
+      olSource.setUrls(newUrls)
+      olLayer.set('label', newLayer)
+    }
+  }
 
   return olLayer
 }
@@ -155,6 +179,7 @@ function getLayerHasRetina(layer: Layer) {
 export default function useOpenLayers() {
   function createLayer(spec: Layer): ImageLayer<ImageWMS> | TileLayer<WMTS> {
     let layer
+
     switch (spec.type) {
       case 'WMS': {
         layer = createWmsLayer(spec)
@@ -168,14 +193,18 @@ export default function useOpenLayers() {
       default:
         throw new Error(`Unrecognized layer type: ${spec.type}`)
     }
+
     layer.set('metadata', spec.metadata)
     layer.set('queryable_id', spec.id)
+    layer.set('current_time', spec.currentTime) // TODO: legacy, check if still used?
+    layer.set('time', spec.time) // TODO: legacy, check if still used?
     layer.setOpacity(spec.opacity as number)
 
     if (spec.metadata?.hasOwnProperty('attribution')) {
       const source = layer.getSource()
       source?.setAttributions(spec.metadata.attribution)
     }
+
     return layer
   }
 

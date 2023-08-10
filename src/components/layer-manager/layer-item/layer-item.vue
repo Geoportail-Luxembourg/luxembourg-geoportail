@@ -2,7 +2,10 @@
 import { computed, ShallowRef, shallowRef } from 'vue'
 
 import { useLayer } from '@/composables/layer'
-import { Layer } from '@/stores/map.store.model'
+import { Layer, LayerTimeWidget } from '@/stores/map.store.model'
+
+import LayerTimeDatepicker from '../layer-time/layer-time-datepicker.vue'
+import LayerTimeSlider from '../layer-time/layer-time-slider.vue'
 
 const props = defineProps<{
   layer: Layer
@@ -158,5 +161,18 @@ function dispatchChangeOpacity() {
         @click="onToggleLayerComparator"
       ></button>
     </div>
+
+    <!-- Layer time: slider widget -->
+    <layer-time-slider
+      v-if="layer.time && layer.time?.widget === LayerTimeWidget.SLIDER"
+      :layer="layer"
+    ></layer-time-slider>
+
+    <!-- Layer time: datepicker widget -->
+    <layer-time-datepicker
+      v-if="layer.time && layer.time?.widget === LayerTimeWidget.DATEPICKER"
+      :layer="layer"
+      class="mb-1"
+    ></layer-time-datepicker>
   </div>
 </template>

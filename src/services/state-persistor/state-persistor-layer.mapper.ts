@@ -8,8 +8,13 @@ import { stringToBooleans, stringToNumbers } from '../utils'
 
 const STORAGE_SEPARATOR = '-'
 const STORAGE_SEPARATOR_V2 = ','
+const STORAGE_TIME_SEPARATOR = '--'
 
 class StorageLayerMapper {
+  layerTimesToStrings(layerTimesText: string | null) {
+    return layerTimesText ? layerTimesText.split(STORAGE_TIME_SEPARATOR) : []
+  }
+
   layerIdsToLayers(layerIdsText: string | null) {
     const themes = useThemes()
     const layers = useLayers()
@@ -68,6 +73,10 @@ class StorageLayerMapper {
     return (
       layers?.map(layer => layer.opacity ?? 1).join(STORAGE_SEPARATOR) || ''
     )
+  }
+
+  layersToLayerTimes(layers: Layer[] | null): string {
+    return layers?.map(layer => layer.time ?? 1).join(STORAGE_SEPARATOR) || ''
   }
 
   bgLayerNameToBgLayer(bgLayerName: string | null): Layer | null {

@@ -24,6 +24,7 @@ export default function useLayers() {
 
   function initLayer(layer: Layer) {
     layer.opacity = layer.previousOpacity = layer.metadata?.start_opacity ?? 1
+
     return layer
   }
 

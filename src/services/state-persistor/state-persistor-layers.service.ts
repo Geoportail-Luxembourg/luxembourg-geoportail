@@ -7,6 +7,7 @@ import { useThemeStore } from '@/stores/config.store'
 
 import {
   SP_KEY_LAYERS,
+  SP_KEY_TIME_SELECTIONS,
   SP_KEY_OPACITIES,
   SP_KEY_V2_BGLAYEROPACITY,
   SP_KEY_V2_LAYERSINDICIES,
@@ -65,18 +66,9 @@ class StatePersistorLayersService implements StatePersistorService {
         ? storageLayerMapper.layerNamesToLayersV2
         : storageLayerMapper.layerIdsToLayers
     )
-    const opacities =
-      version === 2
-        ? this.getOpacitiesFromStorageV2()
-        : this.getOpacitiesFromStorage()
 
-    if (opacities) {
-      layers?.forEach((layer, index) => {
-        if (layer) {
-          layer.opacity = opacities[index] ?? 1
-        }
-      })
-    }
+    this.restoreLayersOpacities(layers, version)
+    this.restoreLayersTimes(layers)
 
     if (version === 2) {
       storageHelper.removeItem(SP_KEY_V2_BGLAYEROPACITY)
@@ -86,6 +78,43 @@ class StatePersistorLayersService implements StatePersistorService {
     }
 
     mapStore.addLayers(...((layers?.filter(layer => layer) as Layer[]) || []))
+  }
+
+  restoreLayersOpacities(layers: (Layer | undefined)[], version: number) {
+    const opacities =
+      version === 2
+        ? this.getOpacitiesFromStorageV2()
+        : this.getOpacitiesFromStorage()
+
+    if (opacities.length) {
+      layers?.forEach(
+        (layer, index) => layer && (layer.opacity = opacities[index] ?? 1)
+      )
+    }
+  }
+
+  restoreLayersTimes(layers: (Layer | undefined)[]) {
+    const times = storageHelper.getValue(
+      SP_KEY_TIME_SELECTIONS,
+      storageLayerMapper.layerTimesToStrings
+    )
+
+    if (times.length) {
+      layers?.forEach(
+        (layer, index) => layer && this.restoreLayerTime(layer, times[index])
+      )
+    }
+  }
+
+  restoreLayerTime(layer: Layer, time: string) {
+    const defaultTimes = time.split('/')
+
+    // Use min and max default values to restore previous state
+    layer.currentTime = time
+    layer.currentTimeMinDefValue = defaultTimes[0]
+    if (defaultTimes.length > 1) {
+      layer.currentTimeMaxDefValue = defaultTimes[1]
+    }
   }
 
   getOpacitiesFromStorage() {
