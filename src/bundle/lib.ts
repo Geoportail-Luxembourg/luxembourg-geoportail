@@ -8,6 +8,7 @@ import { defineCustomElement } from '@/bundle/runtime-dom/apiCustomElement'
 initProjections()
 
 import '../assets/main.css' // Tell Vite to build the css
+import AlertNotifications from '@/components/alert-notifications/alert-notifications.vue'
 import DropdownList from '@/components/common/dropdown-list.vue'
 import MapContainer from '@/components/map/map-container.vue'
 import BackgroundSelector from '@/components/background-selector/background-selector.vue'
@@ -21,8 +22,12 @@ import useMap from '@/composables/map/map.composable'
 import { useAppStore } from '@/stores/app.store'
 import { useMapStore } from '@/stores/map.store'
 import { useThemeStore } from '@/stores/config.store'
+import { statePersistorBgLayerService } from '@/services/state-persistor/state-persistor-layer-background.service'
 import { statePersistorLayersService } from '@/services/state-persistor/state-persistor-layers.service'
 import { statePersistorThemeService } from '@/services/state-persistor/state-persistor-theme.service'
+import { statePersistorLayersOpenService } from '@/services/state-persistor/state-persistor-layersopen.service'
+import { statePersistorStyleService } from '@/services/state-persistor/state-persistor-bgstyle.service'
+import { statePersistorMyMapService } from '@/services/state-persistor/state-persistor-mymap.service'
 import { themeSelectorService } from '@/components/theme-selector/theme-selector.service'
 
 import i18next from 'i18next'
@@ -77,6 +82,7 @@ export {
   backend,
   VueDOMPurifyHTML,
   I18NextVue,
+  AlertNotifications,
   DropdownList,
   MapContainer,
   BackgroundSelector,
@@ -90,7 +96,11 @@ export {
   useAppStore,
   useMapStore,
   useThemeStore,
+  statePersistorBgLayerService,
   statePersistorLayersService,
   statePersistorThemeService,
+  statePersistorLayersOpenService,
+  statePersistorStyleService,
+  statePersistorMyMapService,
   themeSelectorService,
 }

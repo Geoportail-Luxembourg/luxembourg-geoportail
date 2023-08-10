@@ -7,6 +7,7 @@ import { MapLibreLayerType } from './composables/map/map.model'
 import HeaderBar from './components/header/header-bar.vue'
 import FooterBar from './components/footer/footer-bar.vue'
 
+import AlertNotifications from '@/components/alert-notifications/alert-notifications.vue'
 import StyleSelector from '@/components/style-selector/style-selector.vue'
 import RemoteLayers from '@/components/remote-layers/remote-layers.vue'
 import LayerMetadata from '@/components/layer-metadata/layer-metadata.vue'
@@ -15,17 +16,22 @@ import LayerPanel from '@/components/layer-panel/layer-panel.vue'
 import MapContainer from '@/components/map/map-container.vue'
 import SliderComparator from '@/components/slider/slider-comparator.vue'
 
+import { statePersistorBgLayerService } from '@/services/state-persistor/state-persistor-layer-background.service'
 import { statePersistorLayersService } from '@/services/state-persistor/state-persistor-layers.service'
 import { statePersistorThemeService } from '@/services/state-persistor/state-persistor-theme.service'
 import { statePersistorLayersOpenService } from '@/services/state-persistor/state-persistor-layersopen.service'
 import { statePersistorStyleService } from '@/services/state-persistor/state-persistor-bgstyle.service'
+import { statePersistorMyMapService } from '@/services/state-persistor/state-persistor-mymap.service'
 import { useAppStore } from '@/stores/app.store'
-import useMap from './composables/map/map.composable'
+import useMap from '@/composables/map/map.composable'
 
+// Important, keep order!
+statePersistorMyMapService.bootstrap()
 statePersistorLayersService.bootstrap()
 statePersistorThemeService.bootstrap()
 statePersistorLayersOpenService.bootstrapLayersOpen()
 statePersistorStyleService.bootstrapStyle()
+statePersistorBgLayerService.bootstrap()
 
 const { layersOpen, styleEditorOpen } = storeToRefs(useAppStore())
 
@@ -86,5 +92,6 @@ function resizeMap() {
     </main>
 
     <footer-bar class="fixed bottom-5 sm:static z-20" />
+    <alert-notifications />
   </div>
 </template>

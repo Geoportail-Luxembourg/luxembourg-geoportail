@@ -36,7 +36,6 @@ export default defineConfig((/*{ command, mode }*/) => {
   }
 
   base.build = {
-    minify: false,
     lib: {
       entry: resolve(__dirname, 'src/bundle/lib.ts'),
       name: 'luxembourg-geoportail',

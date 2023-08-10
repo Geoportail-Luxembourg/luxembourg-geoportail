@@ -38,4 +38,49 @@ describe('Background selector', () => {
       expect(layers[0].get('id')).to.eq(502)
     })
   })
+
+  describe('When background is blank in permalink', () => {
+    describe('When there is no layer in permalink', () => {
+      beforeEach(() => {
+        cy.visit(
+          '/theme/main?version=3&lang=fr&layers=&opacities=&bgLayer=blank'
+        )
+      })
+
+      it('shows a notification message when in permalink there is no layer', () => {
+        cy.visit(
+          '/theme/main?version=3&lang=fr&layers=&opacities=&bgLayer=blank'
+        )
+        cy.get('[data-cy="alertNotifications"]')
+          .find('.lux-alert')
+          .should('have.class', 'lux-alert-info')
+          .contains(
+            "Aucune couche n'étant définie pour cette carte, une couche de fond a automatiquement été ajoutée."
+          )
+      })
+
+      it('replaces the bg in permalink by the default bg', () => {
+        cy.visit(
+          '/theme/main?version=3&lang=fr&layers=&opacities=&bgLayer=blank'
+        )
+        cy.url().should('contain', 'bgLayer=basemap_2015_global')
+      })
+    })
+
+    describe('When there is a layer in permalink', () => {
+      beforeEach(() => {
+        cy.visit(
+          '/theme/main?version=3&lang=fr&layers=269&opacities=1&bgLayer=blank'
+        )
+      })
+
+      it('does NOT show a notification message', () => {
+        cy.get('[data-cy="alertNotifications"]').should('not.exist')
+      })
+
+      it('keeps the bg blank', () => {
+        cy.url().should('contain', 'bgLayer=blank')
+      })
+    })
+  })
 })
