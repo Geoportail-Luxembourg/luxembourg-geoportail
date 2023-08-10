@@ -29,6 +29,7 @@ import { statePersistorLayersOpenService } from '@/services/state-persistor/stat
 import { statePersistorStyleService } from '@/services/state-persistor/state-persistor-bgstyle.service'
 import { statePersistorMyMapService } from '@/services/state-persistor/state-persistor-mymap.service'
 import { themeSelectorService } from '@/components/theme-selector/theme-selector.service'
+import MapLibreLayer from '@/lib/ol-maplibre-layer'
 
 import i18next from 'i18next'
 import backend from 'i18next-http-backend'
@@ -103,4 +104,5 @@ export {
   statePersistorStyleService,
   statePersistorMyMapService,
   themeSelectorService,
+  MapLibreLayer,
 }
