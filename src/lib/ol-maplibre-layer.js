@@ -23,13 +23,13 @@ export default class MapLibreLayer extends Layer {
     super(baseOptions)
 
     // const container = options.maplibreOptions.container
-    this.map_ = options.maplibreOptions.map;
+    this.map_ = options.maplibreOptions.map
 
-    const container = document.createElement('div');
-    container.style.width = '100%';
-    container.style.height = '100%';
-    container.style.position = 'absolute';
-    this.map_.getTarget().appendChild(container);
+    const container = document.createElement('div')
+    container.style.width = '100%'
+    container.style.height = '100%'
+    container.style.position = 'absolute'
+    this.map_.getTarget().appendChild(container)
 
     this.maplibreMap = new maplibregl.Map(
       Object.assign({}, options.maplibreOptions, {
@@ -40,7 +40,7 @@ export default class MapLibreLayer extends Layer {
       })
     )
 
-    this.maplibreMap.getCanvas().style.position = 'absolute';
+    this.maplibreMap.getCanvas().style.position = 'absolute'
     this.applyOpacity_()
   }
 
@@ -76,17 +76,17 @@ export default class MapLibreLayer extends Layer {
       animate: false,
     })
 
-    const maplibreCanvas = this.maplibreMap.getCanvas();
+    const maplibreCanvas = this.maplibreMap.getCanvas()
     if (!maplibreCanvas.isConnected) {
       // The canvas is not connected to the DOM, request a map rendering at the next animation frame
       // to set the canvas size.
-      this.map_.render();
+      this.map_.render()
       // this.getMapInternal().render();
     } else if (!sameSize(maplibreCanvas, frameState)) {
       this.maplibreMap._container.style.width = `${frameState.size[0]}px`
       this.maplibreMap._container.style.height = `${frameState.size[1]}px`
       this.maplibreMap._container.style.position = 'absolute'
-      this.maplibreMap.resize();
+      this.maplibreMap.resize()
       this.maplibreMap._container.style.position = 'absolute'
       // this.maplibreMap._container.style.display = 'none'
     }

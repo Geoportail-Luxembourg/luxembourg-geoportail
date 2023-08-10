@@ -74,6 +74,16 @@ export function createBgWmtsLayer(layer: Layer): TileLayer<WMTS> {
       id,
     },
   })
+  tileLayer.set(
+    'olcs.extent',
+    transformExtent(
+      bgConfig.olcs_extent,
+      bgConfig.olcs_extent_projection,
+      bgConfig.bg_layer_projection
+    )
+  )
+  tileLayer.set('label', name)
+  tileLayer.set('id', id)
 
   // tileLayer.type = 'TILE'
   // ngeoMiscDecorate.layer(layer);

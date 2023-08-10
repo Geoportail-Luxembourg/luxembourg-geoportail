@@ -68,6 +68,9 @@ function createWmsLayer(layer: Layer): ImageLayer<ImageWMS> {
     },
     source: olSource,
   })
+  olLayer.set('olcs.extent', getOlcsExtent())
+  olLayer.set('label', name)
+  olLayer.set('id', id)
 
   return olLayer
 }
@@ -103,6 +106,9 @@ function createWmtsLayer(layer: Layer): TileLayer<WMTS> {
       id,
     },
   })
+  olLayer.set('olcs.extent', getOlcsExtent())
+  olLayer.set('label', name)
+  olLayer.set('id', id)
 
   if (layer.currentTimeMinValue) {
     const newLayer =
@@ -137,6 +143,7 @@ function createVectorLayer(
   const options = Object.assign(
     {
       container: mapService.getOlMap().getTarget(),
+      map: mapService.getOlMap(),
     },
     styleSource
   )
