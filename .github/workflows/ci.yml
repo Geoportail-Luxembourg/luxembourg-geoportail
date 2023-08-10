@@ -27,11 +27,11 @@ jobs:
         shell: bash
         run: |
           npm run build:lib:prod
-          npm version patch
           git config user.name github-actions
           git config user.email github-actions@github.com
           git add .
           git commit -m "chore(lib): npm run build:lib:prod"
+          npm version patch
           git push
           git push --tags
 
