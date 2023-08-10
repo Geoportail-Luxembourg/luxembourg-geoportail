@@ -22,18 +22,18 @@ jobs:
           cache: 'npm'
       - run: npm ci
 
-      - name: Build library and increment version tag (only on merge)
-        if: github.event_name != 'pull_request'
-        shell: bash
-        run: |
-          npm run build:lib:prod
-          git config user.name github-actions
-          git config user.email github-actions@github.com
-          git add .
-          git commit -m "chore(lib): npm run build:lib:prod"
-          npm version patch
-          git push
-          git push --tags
+      # - name: Build library and increment version tag (only on merge)
+      #   if: github.event_name != 'pull_request'
+      #   shell: bash
+      #   run: |
+      #     npm run build:lib:prod
+      #     git config user.name github-actions
+      #     git config user.email github-actions@github.com
+      #     git add .
+      #     git commit -m "chore(lib): npm run build:lib:prod"
+      #     npm version patch
+      #     git push
+      #     git push --tags
 
       - name: Get branch name (merge)
         if: github.event_name != 'pull_request'
