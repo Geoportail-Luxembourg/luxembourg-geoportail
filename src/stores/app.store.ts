@@ -3,12 +3,16 @@ import { acceptHMRUpdate, defineStore } from 'pinia'
 
 export const DEFAULT_LANG = 'fr'
 export const DEFAULT_LAYER_PANEL_OPENED = true
+export const DEFAULT_MY_LAYERS_TAB_OPENED = false
+export const DEFAULT_THEME_GRID_OPENED = false
 
 export const useAppStore = defineStore(
   'app',
   () => {
     const lang = ref(DEFAULT_LANG)
     const layersOpen = ref(DEFAULT_LAYER_PANEL_OPENED)
+    const myLayersTabOpen = ref(DEFAULT_MY_LAYERS_TAB_OPENED)
+    const themeGridOpen = ref(DEFAULT_THEME_GRID_OPENED)
     const remoteLayersOpen = ref()
     const styleEditorOpen = ref(false)
 
@@ -18,6 +22,23 @@ export const useAppStore = defineStore(
 
     function setLayersOpen(open: boolean) {
       layersOpen.value = open
+
+      if (!open) {
+        themeGridOpen.value = false
+        myLayersTabOpen.value = false
+      }
+    }
+
+    function setMyLayersTabOpen(open: boolean) {
+      myLayersTabOpen.value = open
+
+      if (open) {
+        themeGridOpen.value = false
+      }
+    }
+
+    function setThemeGridOpen(open: boolean) {
+      themeGridOpen.value = open
     }
 
     function setRemoteLayersOpen(open: boolean) {
@@ -35,10 +56,14 @@ export const useAppStore = defineStore(
     return {
       lang,
       layersOpen,
+      myLayersTabOpen,
+      themeGridOpen,
       styleEditorOpen,
       remoteLayersOpen,
       setLang,
       setLayersOpen,
+      setMyLayersTabOpen,
+      setThemeGridOpen,
       setRemoteLayersOpen,
       openStyleEditorPanel,
       closeStyleEditorPanel,

@@ -10,7 +10,7 @@ const props = defineProps<{
 </script>
 
 <template>
-  <div class="flex flex-row flex-wrap pl-2.5">
+  <div class="flex flex-row flex-wrap pl-2.5" data-cy="themeGrid">
     <button
       class="relative shrink-0 h-[150px] w-1/2 px-2.5 text-start text-gray-100/40 uppercase hover:bg-[#ccc]"
       v-for="theme in props.themes"

@@ -10,8 +10,8 @@ import { themeSelectorService } from '../theme-selector/theme-selector.service'
 
 const { t } = useTranslation()
 const appStore = useAppStore()
-const { layersOpen } = storeToRefs(appStore)
-const { setLayersOpen } = appStore
+const { layersOpen, myLayersTabOpen, themeGridOpen } = storeToRefs(appStore)
+const { setLayersOpen, setMyLayersTabOpen, setThemeGridOpen } = appStore
 const themeStore = useThemeStore()
 const { theme } = storeToRefs(themeStore)
 
@@ -24,6 +24,21 @@ watch(
   },
   { immediate: true }
 )
+
+function onClick() {
+  if (!layersOpen.value) {
+    setLayersOpen(true)
+    myLayersTabOpen.value && setMyLayersTabOpen(false)
+    setThemeGridOpen(true)
+  } else if (layersOpen.value) {
+    if (themeGridOpen.value) {
+      setLayersOpen(false)
+    } else {
+      myLayersTabOpen.value && setMyLayersTabOpen(false)
+      setThemeGridOpen(true)
+    }
+  }
+}
 </script>
 
 <template>
@@ -39,7 +54,7 @@ watch(
             class="flex items-center before:font-icons before:text-3xl before:w-16 text-primary uppercase h-full mr-3"
             :class="`before:content-${theme?.name}`"
             data-cy="selectedThemeIcon"
-            @click="() => setLayersOpen(!layersOpen)"
+            @click="onClick"
           >
             <span class="hidden lg:inline-block">{{
               t(`${theme?.name}`)

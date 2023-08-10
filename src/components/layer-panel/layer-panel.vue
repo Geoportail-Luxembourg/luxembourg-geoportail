@@ -1,7 +1,6 @@
 <script setup lang="ts">
 import { useTranslation } from 'i18next-vue'
 import { storeToRefs } from 'pinia'
-import { ref } from 'vue'
 
 import CatalogTab from '@/components/catalog/catalog-tab.vue'
 import LayerManager from '@/components/layer-manager/layer-manager.vue'
@@ -9,9 +8,18 @@ import { useAppStore } from '@/stores/app.store'
 import { useMapStore } from '@/stores/map.store'
 
 const { t } = useTranslation()
-const { setLayersOpen } = useAppStore()
+const appStore = useAppStore()
+const { setLayersOpen } = appStore
+const { myLayersTabOpen } = storeToRefs(appStore)
 const { layers } = storeToRefs(useMapStore())
-const myLayersOpen = ref(false)
+
+function onClickMyLayers() {
+  appStore.setMyLayersTabOpen(true)
+}
+
+function onDisplayCatalog() {
+  appStore.setMyLayersTabOpen(false)
+}
 </script>
 
 <template>
@@ -34,20 +42,20 @@ const myLayersOpen = ref(false)
     <div class="flex flex-row gap-2 h-10 text-2xl">
       <button
         data-cy="myLayersButton"
-        @click="() => (myLayersOpen = true)"
+        @click="onClickMyLayers"
         class="text-white px-4 hover:bg-primary cursor-pointer text-center uppercase"
-        :class="myLayersOpen ? 'bg-primary' : 'bg-tertiary'"
-        :aria-expanded="myLayersOpen"
+        :class="myLayersTabOpen ? 'bg-primary' : 'bg-tertiary'"
+        :aria-expanded="myLayersTabOpen"
       >
         {{ t('my_layers', { ns: 'client' }) }}
         <span v-if="layers.length">({{ layers.length }})</span>
       </button>
       <button
         data-cy="catalogButton"
-        @click="myLayersOpen = false"
+        @click="onDisplayCatalog"
         class="text-white px-4 hover:bg-primary cursor-pointer text-center uppercase"
-        :class="myLayersOpen ? 'bg-tertiary' : 'bg-primary'"
-        :aria-expanded="!myLayersOpen"
+        :class="myLayersTabOpen ? 'bg-tertiary' : 'bg-primary'"
+        :aria-expanded="!myLayersTabOpen"
       >
         {{ t('Catalog', { ns: 'client' }) }}
       </button>
@@ -55,12 +63,12 @@ const myLayersOpen = ref(false)
 
     <!-- Panel content (MyLayers and Catalog) -->
     <div class="relative grow p-2.5 bg-primary overflow-auto">
-      <catalog-tab v-if="!myLayersOpen"></catalog-tab>
       <layer-manager
         data-cy="myLayers"
-        v-if="myLayersOpen"
-        @display-catalog="() => (myLayersOpen = false)"
+        v-if="myLayersTabOpen"
+        @display-catalog="onDisplayCatalog"
       ></layer-manager>
+      <catalog-tab v-if="!myLayersTabOpen"></catalog-tab>
     </div>
   </div>
 </template>
