@@ -29,7 +29,8 @@ export default class MapLibreLayer extends Layer {
     container.style.width = '100%'
     container.style.height = '100%'
     container.style.position = 'absolute'
-    this.map_.getTarget().appendChild(container)
+    container.style.zIndex = -50
+    this.map_.getTarget().parentElement.appendChild(container)
 
     this.maplibreMap = new maplibregl.Map(
       Object.assign({}, options.maplibreOptions, {
