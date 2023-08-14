@@ -26,9 +26,9 @@ function onDisplayCatalog() {
   <div data-cy="layerPanel" class="flex flex-col h-full pt-1.5">
     <!-- Panel title and close button -->
     <div class="h-16 shrink-0 flex justify-between lux-panel-title">
-      <div>
-        {{ t('Layers', { ns: 'client' }) }}
-      </div>
+      <h1>
+        {{ t('layers', { ns: 'client' }) }}
+      </h1>
       <span
         ><button
           @click="() => setLayersOpen(false)"
