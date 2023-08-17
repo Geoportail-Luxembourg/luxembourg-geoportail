@@ -17,10 +17,14 @@ export default class MapLibreLayer extends Layer {
     const baseOptions = Object.assign({}, options)
 
     delete baseOptions.maplibreOptions
-    baseOptions.xyz = options.maplibreOptions.xyz
-    baseOptions.xyz_custom = options.maplibreOptions.xyz_custom
+    // baseOptions.xyz = options.maplibreOptions.xyz
+    // baseOptions.xyz_custom = options.maplibreOptions.xyz_custom
 
     super(baseOptions)
+
+    // write directly to properties
+    this.set('xyz', options.maplibreOptions.xyz)
+    this.set('xyz_custom', options.maplibreOptions.xyz_custom)
 
     // const container = options.maplibreOptions.container
     this.map_ = options.maplibreOptions.map
@@ -41,7 +45,6 @@ export default class MapLibreLayer extends Layer {
       })
     )
 
-    this.maplibreMap.getCanvas().style.position = 'absolute'
     this.applyOpacity_()
   }
 
@@ -101,6 +104,9 @@ export default class MapLibreLayer extends Layer {
 
     // return this.maplibreMap.getContainer();
     return canvas
+  }
+  getXYZ() {
+    return this.get('xyz')
   }
 }
 
