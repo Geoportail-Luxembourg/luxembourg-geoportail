@@ -41275,7 +41275,7 @@ const v9 = { class: "lux-layer-manager-item mt-2.5" }, x9 = ["title"], b9 = { cl
     return (m, v) => (tt(), vt("div", j9, [
       Tt(" Panel title and close button "),
       $e("div", G9, [
-        $e("div", null, Vt(_e(e)("Layers", { ns: "client" })), 1),
+        $e("h1", null, Vt(_e(e)("layers", { ns: "client" })), 1),
         $e("span", null, [
           $e("button", {
             onClick: v[0] || (v[0] = () => _e(n)(!1)),
