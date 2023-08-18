@@ -19,9 +19,11 @@ import FooterBar from '@/components/footer/footer-bar.vue'
 import LayerPanel from '@/components/layer-panel/layer-panel.vue'
 import SliderComparator from '@/components/slider/slider-comparator.vue'
 import useMap from '@/composables/map/map.composable'
+import useMvtStyles from '@/composables/mvt-styles/mvt-styles.composable'
 import useOpenLayers from '@/composables/map/ol.composable'
 import { useAppStore } from '@/stores/app.store'
 import { useMapStore } from '@/stores/map.store'
+import { useStyleStore } from '@/stores/style.store'
 import { useThemeStore } from '@/stores/config.store'
 import { statePersistorBgLayerService } from '@/services/state-persistor/state-persistor-layer-background.service'
 import { statePersistorLayersService } from '@/services/state-persistor/state-persistor-layers.service'
@@ -95,9 +97,11 @@ export {
   LayerPanel,
   SliderComparator,
   useMap,
+  useMvtStyles,
   useOpenLayers,
   useAppStore,
   useMapStore,
+  useStyleStore,
   useThemeStore,
   statePersistorBgLayerService,
   statePersistorLayersService,

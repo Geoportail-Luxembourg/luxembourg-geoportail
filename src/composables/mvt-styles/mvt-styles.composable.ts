@@ -4,9 +4,11 @@ import {
   stylePropertyTypeList,
   StyleCapabilities,
   BgLayerDef,
+  VectorSourceDict,
   VectorStyleDict,
   StyleSpecification,
 } from '@/composables/mvt-styles/mvt-styles.model'
+import { useStyleStore } from '@/stores/style.store'
 import type { Layer } from '@/stores/map.store.model'
 import { bgConfigFixture } from '@/__fixtures__/background.config.fixture'
 import BaseLayer from 'ol/layer/Base'
@@ -30,6 +32,26 @@ export default function useMvtStyles() {
     const isValidUUIDv4Regex =
       /^[0-9A-F]{8}-[0-9A-F]{4}-4[0-9A-F]{3}-[89AB][0-9A-F]{3}-[0-9A-F]{12}$/gi
     return isValidUUIDv4Regex.test(serial)
+  }
+
+  const styleStore = useStyleStore()
+  function setCustomStyleSerial(
+    bgLayer: Layer | undefined | null,
+    serial: string
+  ) {
+    if (bgLayer === null || bgLayer === undefined) return
+    const newVectorSources: VectorSourceDict = new Map()
+    styleStore.bgVectorSources.forEach((vectorSource, key) => {
+      if (key === bgLayer.id) {
+        const newVectorSource = Object.assign({}, vectorSource, {
+          xyz_custom: serial,
+        })
+        newVectorSources.set(key, newVectorSource)
+      } else {
+        newVectorSources.set(key, vectorSource)
+      }
+    })
+    styleStore.setBgVectorSources(newVectorSources)
   }
 
   function setConfigForLayer(
@@ -199,21 +221,24 @@ export default function useMvtStyles() {
     return baseStyle
   }
 
-  const getvtstyleUrl_ = '/getvtstyle'
-  const uploadvtstyleUrl_ = '/uploadvtstyle'
-  const deletevtstyleUrl_ = '/deletevtstyle'
-
-  function unregisterStyle(styleId: String | null) {
+  function unregisterStyle(
+    styleId: String | null,
+    registerUrls: Map<string, string>
+  ) {
     if (styleId === null) {
       return Promise.resolve()
     } else {
-      const url = `${deletevtstyleUrl_}?id=${styleId}`
+      const url = `${registerUrls.get('delete')}?id=${styleId}`
       return fetch(url).catch(() => '')
     }
   }
 
-  function registerStyle(style: StyleSpecification, oldStyleId: String | null) {
-    return unregisterStyle(oldStyleId).then(() => {
+  function registerStyle(
+    style: StyleSpecification,
+    oldStyleId: String | null,
+    registerUrls: Map<string, string>
+  ) {
+    return unregisterStyle(oldStyleId, registerUrls).then(() => {
       const formData = new FormData()
       const data = JSON.stringify(style)
       const blob = new Blob([data], { type: 'application/json' })
@@ -222,7 +247,7 @@ export default function useMvtStyles() {
         method: 'POST',
         body: formData,
       }
-      return fetch(uploadvtstyleUrl_, options)
+      return fetch(registerUrls.get('upload') || '', options)
         .then(response => response.json())
         .then(result => {
           return result.id
@@ -289,16 +314,17 @@ export default function useMvtStyles() {
 
   return {
     getDefaultMapBoxStyleUrl,
+    getDefaultMapBoxStyleXYZ,
     setConfigForLayer,
     getRoadStyleFromSimpleStyle,
     applyDefaultStyle,
     applyConsolidatedStyle,
     getVectorId,
+    setCustomStyleSerial,
     unregisterStyle,
     registerStyle,
     checkSelection,
     isLayerStyleEditable,
     getStyleCapabilitiesFromLayer,
-    getvtstyleUrl_,
   }
 }

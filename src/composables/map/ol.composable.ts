@@ -268,7 +268,10 @@ export default function useOpenLayers() {
     layersCache.set(id, layer)
   }
 
-  function getLayerFromCache(layer: Layer): BaseLayer {
+  function getLayerFromCache(
+    layer: Layer | undefined | null
+  ): BaseLayer | null {
+    if (layer === null || layer === undefined) return null
     const id = layer.id
 
     const cachedLayer = layersCache.get(id)
@@ -302,6 +305,7 @@ export default function useOpenLayers() {
       .getArray()
       .findIndex(layer => layer.getZIndex() === DEFAULT_BGZINDEX)
 
+    const oldBgLayerId = mapLayers.getArray()[currentBgLayerPos]?.get('id')
     let bgBaseLayer: BaseLayer | undefined = undefined
     if (bgLayer) {
       if (isLayerCached(bgLayer)) {
@@ -333,7 +337,9 @@ export default function useOpenLayers() {
         olMap.addLayer(bgBaseLayer)
       }
     }
-    statePersistorStyleService.restoreStyle(true)
+    if (oldBgLayerId !== bgLayer?.id) {
+      statePersistorStyleService.restoreStyle(true)
+    }
   }
 
   return {

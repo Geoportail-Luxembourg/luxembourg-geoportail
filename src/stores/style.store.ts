@@ -22,9 +22,16 @@ export const useStyleStore = defineStore(
       new Map()
     )
     const isExpertStyleActive: ShallowRef<boolean> = shallowRef(false)
-    const styleId: ShallowRef<String | null> = shallowRef(null)
+    const styleSerial: ShallowRef<String | null> = shallowRef(null)
     const appliedStyle: ShallowRef<StyleSpecification | undefined> =
       shallowRef()
+    const registerUrls: ShallowRef<Map<string, string>> = shallowRef(
+      new Map([
+        ['get', '/getvtstyle'],
+        ['upload', '/uploadvtstyle'],
+        ['delete', '/deletevtstyle'],
+      ])
+    )
 
     const promises: Promise<{ id: LayerId; config: IMvtConfig }>[] = []
     bgConfigFixture().bg_layers.forEach(bgLayer => {
@@ -45,6 +52,14 @@ export const useStyleStore = defineStore(
       styleConfigs.forEach(c => vectorDict.set(c.id, c.config))
       bgVectorSources.value = vectorDict
     })
+
+    function setRegisterUrl(key: string, url: string) {
+      registerUrls.value.set(key, url)
+    }
+
+    function setBgVectorSources(vectorDict: VectorSourceDict) {
+      bgVectorSources.value = vectorDict
+    }
 
     function removeBaseStyle(id: LayerId) {
       const styleDict: VectorStyleDict = new Map()
@@ -89,11 +104,14 @@ export const useStyleStore = defineStore(
       appliedStyle,
       removeBaseStyle,
       setBaseStyle,
+      setBgVectorSources,
+      setRegisterUrl,
       setSimpleStyle,
       setStyle,
       disableExpertStyle,
       enableExpertStyle,
-      styleId,
+      styleSerial,
+      registerUrls,
     }
   },
   {}
