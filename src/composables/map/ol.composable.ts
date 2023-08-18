@@ -143,7 +143,6 @@ function createVectorLayer(
   const options = Object.assign(
     {
       container: mapService.getOlMap().getTarget(),
-      map: mapService.getOlMap(),
     },
     styleSource
   )

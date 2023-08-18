@@ -19,6 +19,7 @@ import FooterBar from '@/components/footer/footer-bar.vue'
 import LayerPanel from '@/components/layer-panel/layer-panel.vue'
 import SliderComparator from '@/components/slider/slider-comparator.vue'
 import useMap from '@/composables/map/map.composable'
+import useOpenLayers from '@/composables/map/ol.composable'
 import { useAppStore } from '@/stores/app.store'
 import { useMapStore } from '@/stores/map.store'
 import { useThemeStore } from '@/stores/config.store'
@@ -94,6 +95,7 @@ export {
   LayerPanel,
   SliderComparator,
   useMap,
+  useOpenLayers,
   useAppStore,
   useMapStore,
   useThemeStore,

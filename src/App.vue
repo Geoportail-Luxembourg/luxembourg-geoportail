@@ -2,6 +2,7 @@
 import { onMounted, onUnmounted, watch } from 'vue'
 import { storeToRefs } from 'pinia'
 import MapLibreLayer from '@/lib/ol-maplibre-layer'
+import olLayerGroup from 'ol/layer/Group.js'
 
 import { MapLibreLayerType } from './composables/map/map.model'
 import HeaderBar from './components/header/header-bar.vue'
@@ -44,6 +45,15 @@ watch(layersOpen, () =>
 onMounted(() => window.addEventListener('resize', resizeMap))
 onUnmounted(() => window.removeEventListener('resize', resizeMap))
 
+function traverseLayer(layer, ancestors, visitor) {
+  const descend = visitor(layer, ancestors)
+  if (descend && layer instanceof olLayerGroup) {
+    layer.getLayers().forEach(childLayer => {
+      traverseLayer(childLayer, [...ancestors, layer], visitor)
+    })
+  }
+}
+
 function resizeMap() {
   // Update all canvas size when layer panel is opened/closed
   const map = useMap().getOlMap()
@@ -52,10 +62,12 @@ function resizeMap() {
   map.updateSize()
 
   // And trigger update MapLibre layers' canvas size
-  map.getAllLayers().forEach(layer => {
+  // map.getAllLayers().forEach(layer => {
+  traverseLayer(map.getLayerGroup(), [], layer => {
     if (layer instanceof MapLibreLayer) {
       ;(layer as MapLibreLayerType).maplibreMap.resize()
     }
+    return true
   })
 
   // TODO: Add slide effect and do this update after slide animation ends

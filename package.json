@@ -29,7 +29,7 @@
     "@camptocamp/ogc-client": "^0.3.4",
     "file-saver": "^2.0.5",
     "luxon": "^3.4.1",
-    "maplibre-gl": "^3.2.2",
+    "mapbox-gl": "^1.7.0",
     "ol": "^6.5.0",
     "pinia": "^2.0.26",
     "sortablejs": "^1.15.0",
