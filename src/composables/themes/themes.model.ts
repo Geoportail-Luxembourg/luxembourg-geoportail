@@ -39,6 +39,8 @@ export type Metadata = Partial<{
   start_x: number
   start_y: number
   start_zoom: number
+  time_config: string
+  time_layers: { [key: string]: string }
   ol3d_defaultlayer: boolean
   ol3d_options: {
     heightOffset: number
@@ -73,4 +75,5 @@ export interface ThemeNodeModel {
     name: string
   }[]
   functionalities?: {}
+  time?: { [key: string]: string | string[] | null }
 }
