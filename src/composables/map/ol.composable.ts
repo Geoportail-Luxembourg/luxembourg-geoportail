@@ -220,7 +220,7 @@ export default function useOpenLayers() {
   }
 
   function addLayer(olMap: OlMap, layer: Layer) {
-    const baseLayer = getLayerFromCache(layer)
+    const baseLayer = getOrCreateLayer(layer)
     olMap.addLayer(baseLayer)
   }
 
@@ -268,9 +268,7 @@ export default function useOpenLayers() {
     layersCache.set(id, layer)
   }
 
-  function getLayerFromCache(
-    layer: Layer | undefined | null
-  ): BaseLayer | null {
+  function getOrCreateLayer(layer: Layer | undefined | null): BaseLayer | null {
     if (layer === null || layer === undefined) return null
     const id = layer.id
 
@@ -282,6 +280,15 @@ export default function useOpenLayers() {
       addLayerToCache(id, newLayer)
       return newLayer
     }
+  }
+
+  function getLayerFromCache(
+    layer: Layer | undefined | null
+  ): BaseLayer | null {
+    if (layer === null || layer === undefined) return null
+    const id = layer.id
+
+    return layersCache.get(id)
   }
 
   function applyOnBgLayer(
