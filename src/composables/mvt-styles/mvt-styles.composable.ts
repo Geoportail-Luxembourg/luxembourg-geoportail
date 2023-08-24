@@ -43,9 +43,7 @@ export default function useMvtStyles() {
     const newVectorSources: VectorSourceDict = new Map()
     styleStore.bgVectorSources.forEach((vectorSource, key) => {
       if (key === bgLayer.id) {
-        const newVectorSource = Object.assign({}, vectorSource, {
-          xyz_custom: serial,
-        })
+        const newVectorSource = { ...vectorSource, xyz_custom: serial }
         newVectorSources.set(key, newVectorSource)
       } else {
         newVectorSources.set(key, vectorSource)

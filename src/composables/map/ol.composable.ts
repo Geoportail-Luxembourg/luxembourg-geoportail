@@ -285,10 +285,7 @@ export default function useOpenLayers() {
   function getLayerFromCache(
     layer: Layer | undefined | null
   ): BaseLayer | null {
-    if (layer === null || layer === undefined) return null
-    const id = layer.id
-
-    return layersCache.get(id)
+    return layer ? layersCache.get(layer.id) : null
   }
 
   function applyOnBgLayer(

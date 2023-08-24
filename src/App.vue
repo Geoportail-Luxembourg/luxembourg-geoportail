@@ -2,7 +2,6 @@
 import { onMounted, onUnmounted, watch } from 'vue'
 import { storeToRefs } from 'pinia'
 import MapLibreLayer from '@/lib/ol-maplibre-layer'
-import olLayerGroup from 'ol/layer/Group.js'
 
 import { MapLibreLayerType } from './composables/map/map.model'
 import HeaderBar from './components/header/header-bar.vue'
@@ -25,6 +24,7 @@ import { statePersistorStyleService } from '@/services/state-persistor/state-per
 import { statePersistorMyMapService } from '@/services/state-persistor/state-persistor-mymap.service'
 import { useAppStore } from '@/stores/app.store'
 import useMap from '@/composables/map/map.composable'
+import traverseLayer from '@/lib/tools.js'
 
 // Important, keep order!
 statePersistorMyMapService.bootstrap()
@@ -45,15 +45,6 @@ watch(layersOpen, () =>
 onMounted(() => window.addEventListener('resize', resizeMap))
 onUnmounted(() => window.removeEventListener('resize', resizeMap))
 
-function traverseLayer(layer, ancestors, visitor) {
-  const descend = visitor(layer, ancestors)
-  if (descend && layer instanceof olLayerGroup) {
-    layer.getLayers().forEach(childLayer => {
-      traverseLayer(childLayer, [...ancestors, layer], visitor)
-    })
-  }
-}
-
 function resizeMap() {
   // Update all canvas size when layer panel is opened/closed
   const map = useMap().getOlMap()
@@ -62,6 +53,8 @@ function resizeMap() {
   map.updateSize()
 
   // And trigger update MapLibre layers' canvas size
+  // the utility function traverseLayer is used as a workaround until OL is updated to 6.15
+  // then the function getAllLayers below (added in OL v.6.10.0) can be used
   // map.getAllLayers().forEach(layer => {
   traverseLayer(map.getLayerGroup(), [], layer => {
     if (layer instanceof MapLibreLayer) {
