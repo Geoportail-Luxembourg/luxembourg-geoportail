@@ -76,7 +76,11 @@ class StorageLayerMapper {
   }
 
   layersToLayerTimes(layers: Layer[] | null): string {
-    return layers?.map(layer => layer.time ?? 1).join(STORAGE_SEPARATOR) || ''
+    return (
+      layers
+        ?.map(layer => useLayers().getLayerCurrentTime(layer) ?? '')
+        .join(STORAGE_TIME_SEPARATOR) || ''
+    )
   }
 
   bgLayerNameToBgLayer(bgLayerName: string | null): Layer | null {

@@ -1,7 +1,8 @@
+import { dateToISOString } from '@/services/time.utils'
 import { defineStore, acceptHMRUpdate } from 'pinia'
 import { ref, Ref, ShallowRef, shallowRef } from 'vue'
 
-import type { LayerId, Layer, MapContext } from './map.store.model'
+import { LayerId, Layer, MapContext } from './map.store.model'
 
 export const useMapStore = defineStore('map', () => {
   const map: Ref<MapContext> = ref({})
@@ -43,6 +44,27 @@ export const useMapStore = defineStore('map', () => {
     })
   }
 
+  function setLayerTime(
+    layerId: LayerId,
+    dateStart?: string,
+    dateEnd?: string
+  ) {
+    layers.value = layers.value.map(elt => {
+      if (elt.id === layerId) {
+        return {
+          ...elt,
+          ...{
+            currentTimeMinValue: dateStart
+              ? dateToISOString(dateStart)
+              : undefined,
+            currentTimeMaxValue: dateEnd ? dateToISOString(dateEnd) : undefined,
+          },
+        }
+      }
+      return elt
+    })
+  }
+
   return {
     map,
     layers,
@@ -51,6 +73,7 @@ export const useMapStore = defineStore('map', () => {
     removeLayers,
     reorderLayers,
     setLayerOpacity,
+    setLayerTime,
     setBgLayer,
     hasLayer,
   }

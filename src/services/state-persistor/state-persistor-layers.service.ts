@@ -51,6 +51,12 @@ class StatePersistorLayersService implements StatePersistorService {
             value,
             storageLayerMapper.layersToLayerOpacities
           )
+
+          storageHelper.setValue(
+            SP_KEY_TIME_SELECTIONS,
+            value,
+            storageLayerMapper.layersToLayerTimes
+          )
         }
       },
       { immediate: true }
@@ -101,7 +107,8 @@ class StatePersistorLayersService implements StatePersistorService {
 
     if (times.length) {
       layers?.forEach(
-        (layer, index) => layer && this.restoreLayerTime(layer, times[index])
+        (layer, index) =>
+          layer && times[index] && this.restoreLayerTime(layer, times[index])
       )
     }
   }
@@ -110,11 +117,8 @@ class StatePersistorLayersService implements StatePersistorService {
     const defaultTimes = time.split('/')
 
     // Use min and max default values to restore previous state
-    layer.currentTime = time
-    layer.currentTimeMinDefValue = defaultTimes[0]
-    if (defaultTimes.length > 1) {
-      layer.currentTimeMaxDefValue = defaultTimes[1]
-    }
+    layer.currentTimeMinValue = defaultTimes[0]
+    layer.currentTimeMaxValue = defaultTimes[1]
   }
 
   getOpacitiesFromStorage() {

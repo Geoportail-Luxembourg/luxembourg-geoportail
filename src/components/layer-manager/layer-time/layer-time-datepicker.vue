@@ -1,55 +1,38 @@
 <script setup lang="ts">
-import { ShallowRef, shallowRef } from 'vue'
-import { useTranslation } from 'i18next-vue'
+import { computed } from 'vue'
+import { formatDateForInput } from '@/services/time.utils'
 
-import { Layer, LayerTimeSlider, LayerTimeMode } from '@/stores/map.store.model'
+const props = withDefaults(
+  defineProps<{
+    minDateAllowed?: string
+    maxDateAllowed?: string
+    dateValue?: string
+  }>(),
+  {
+    minDateAllowed: '',
+    maxDateAllowed: '',
+  }
+)
 
-const { t } = useTranslation()
-const props = defineProps<{
-  layer: Layer
+const emit = defineEmits<{
+  (e: 'change', dateValue: string): void
 }>()
-defineEmits<{
-  (e: 'changeRange'): void
-}>()
-const layerTime = <LayerTimeSlider>props.layer.time
-const dateValueStart: ShallowRef<string | undefined> = shallowRef(
-  props.layer.currentTime
-)
-const dateValueEnd: ShallowRef<string | undefined> = shallowRef(
-  props.layer.currentTime
-)
+
+const minValue = computed(() => formatDateForInput(props.minDateAllowed))
+const maxValue = computed(() => formatDateForInput(props.maxDateAllowed))
+
+function onChange(event: Event) {
+  emit('change', (event.target as HTMLInputElement).value)
+}
 </script>
 
 <template>
-  <span class="font-bold">{{ t('Distance:') }}</span>
-  <div class="lux-time-slider w-full">
-    <div>
-      <label :for="`${layer.id}-time-slider-start`" class="mr-1">
-        {{
-          layerTime.mode === LayerTimeMode.RANGE
-            ? t('From:', { nsSeparator: '|' })
-            : t('Date:', { nsSeparator: '|' })
-        }}
-      </label>
-      <input
-        :id="`${layer.id}-time-slider-start`"
-        class="border-[#767676] border-[1px] pl-1"
-        type="date"
-        v-model="dateValueStart"
-        @change="$emit('changeDateStart', dateValueStart)"
-      />
-    </div>
-    <div v-if="layerTime.mode === LayerTimeMode.RANGE">
-      <label :for="`${layer.id}-time-slider-end`" class="mr-1">
-        {{ t('To:', { nsSeparator: '|' }) }}
-      </label>
-      <input
-        :id="`${layer.id}-time-slider-end`"
-        class="border-[#767676] border-[1px] pl-1"
-        type="date"
-        v-model="dateValueEnd"
-        @change="$emit('changeDateEnd', dateValueEnd)"
-      />
-    </div>
-  </div>
+  <input
+    class="lux-time-slider-datepicker"
+    type="date"
+    :min="minValue"
+    :max="maxValue"
+    :value="dateValue ? formatDateForInput(dateValue) : ''"
+    @change="onChange"
+  />
 </template>

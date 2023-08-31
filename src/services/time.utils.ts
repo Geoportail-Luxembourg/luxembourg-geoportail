@@ -9,7 +9,7 @@ export enum TimeResolution {
 }
 
 /**
- * Format time regarding a resolution
+ * Format time regarding a resolution (comming from i18n)
  *
  * @param time (in ms format) timestamp to format
  * @param resolution resolution to use
@@ -19,7 +19,7 @@ export enum TimeResolution {
  * @returns Date string regarding the resolution
  */
 export function formatTimeValue(
-  time: number,
+  time: number | string | Date,
   resolution: TimeResolution = TimeResolution.SECOND,
   useISOFormat?: boolean,
   toUTC?: boolean
@@ -45,9 +45,32 @@ export function formatTimeValue(
   )[resolution]
 
   return resolutionPattern
-    ? DateTime.fromFormat(
-        dateISOString,
+    ? DateTime.fromISO(dateISOString).toFormat(
         `${toUTC ? 'UTC:' : ''}${resolutionPattern}`
       )
     : dateISOString.replace(/\.\d{3}/, '')
+}
+
+/**
+ * Format a date string or timestamp to ISO date,
+ * ! but with only 2 digits before the zulu
+ *
+ * @param date  The date string or timestamp
+ * @returns The corresponding date string ISO
+ */
+export function dateToISOString(date: string | number) {
+  return new Date(date).toISOString().split('.')[0] + 'Z'
+}
+
+/**
+ * Format an ISO date string to be used as a value for <input type="date" />
+ *
+ * @param dateISO - The date ISO string
+ * @returns The date string formatted as 'yyyy-MM-dd' for input date
+ *
+ * @example
+ * formatDateForInput('2014-08-31T12:43:47Z')
+ */
+export function formatDateForInput(dateISO: string) {
+  return DateTime.fromISO(dateISO).toFormat('yyyy-MM-dd')
 }

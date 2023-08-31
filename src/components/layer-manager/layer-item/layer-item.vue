@@ -1,11 +1,11 @@
 <script setup lang="ts">
-import { computed, ShallowRef, shallowRef } from 'vue'
+import { computed } from 'vue'
 
 import { useLayer } from '@/composables/layer'
-import { Layer, LayerTimeWidget } from '@/stores/map.store.model'
+import { Layer } from '@/stores/map.store.model'
 
-import LayerTimeDatepicker from '../layer-time/layer-time-datepicker.vue'
-import LayerTimeSlider from '../layer-time/layer-time-slider.vue'
+import LayerItemSub from './layer-item-sub.vue'
+import LayerTime from '../layer-time/layer-time.vue'
 
 const props = defineProps<{
   layer: Layer
@@ -14,22 +14,15 @@ const props = defineProps<{
   isLayerComparatorOpen: boolean
   displayLayerComparatorOpen: boolean
 }>()
-const emit = defineEmits([
-  'clickInfo',
-  'clickEdit',
-  'changeOpacity',
-  'clickToggle',
-  'clickToggleLayerComparator',
-  'clickRemove',
-])
+const emit = defineEmits<{
+  (e: 'clickInfo', layer: Layer): void
+  (e: 'clickToggle', layer: Layer): void
+  (e: 'clickToggleLayerComparator', layer: Layer): void
+  (e: 'clickRemove', layer: Layer): void
+  (e: 'changeOpacity', layer: Layer, opacity: number): void
+  (e: 'changeTime', dateStart?: string, dateEnd?: string): void
+}>()
 const { t, getLabel, onClickInfo } = useLayer(props.layer as Layer, { emit })
-
-const opacity: ShallowRef<number | undefined> = shallowRef(
-  (props.layer?.opacity ?? 1) * 100
-)
-const prevOpacity: ShallowRef<number | undefined> = shallowRef(
-  ((props.layer?.previousOpacity ?? opacity.value) as number) * 100
-)
 
 const txtDraggableLabel = computed(() =>
   t('Sort "{{layerName}}" in the list', {
@@ -50,39 +43,8 @@ const txtRemoveLayer = computed(() =>
   })
 )
 
-function onClickToggle() {
-  emit('clickToggle', props.layer)
-}
-
-function onToggleVisibility() {
-  if (opacity.value === 0) {
-    opacity.value = prevOpacity.value
-  } else {
-    prevOpacity.value = opacity.value
-    opacity.value = 0
-  }
-
-  dispatchChangeOpacity()
-}
-
-function onClickRemove() {
-  emit('clickRemove', props.layer)
-}
-
-function onChangeOpacity(event: Event) {
-  if (event.target) {
-    opacity.value = parseInt((event.target as HTMLInputElement).value)
-
-    dispatchChangeOpacity()
-  }
-}
-
-function onToggleLayerComparator() {
-  emit('clickToggleLayerComparator', props.layer)
-}
-
-function dispatchChangeOpacity() {
-  emit('changeOpacity', props.layer, opacity.value)
+function changeTime(dateStart?: string, dateEnd?: string) {
+  emit('changeTime', dateStart, dateEnd)
 }
 </script>
 
@@ -96,83 +58,47 @@ function dispatchChangeOpacity() {
       ></button>
       <button
         class="fa-solid fa-info mt-1"
+        :aria-label="txtTitleLabel"
         :title="txtTitleLabel"
         @click="onClickInfo"
       ></button>
       <button
-        :aria-expanded="props.isOpen"
-        :aria-controls="`layer-manager-item-content-${props.layer.id}`"
-        :data-cy="`myLayerItemLabel-${props.layer.id}`"
-        class="cursor-pointer grow text-left break-words w-[70%]"
-        @click="onClickToggle"
+        :aria-expanded="isOpen"
+        :aria-controls="`layer-manager-item-content-${layer.id}`"
+        :data-cy="`myLayerItemLabel-${layer.id}`"
+        class="cursor-pointer grow text-left break-words w-[70%] flex items-center"
+        @click="$emit('clickToggle', layer)"
       >
-        {{ getLabel() }}
+        <span class="grow">{{ getLabel() }}</span>
+        <span
+          class="w-3.5 fa-solid"
+          :class="isOpen ? 'fa-xmark' : 'fa-ellipsis'"
+          aria-hidden="true"
+        ></span>
       </button>
-      <button
-        class="mt-1 w-3.5 fa-solid"
-        :class="props.isOpen ? 'fa-xmark' : 'fa-ellipsis'"
-        @click="onClickToggle"
-        :aria-expanded="props.isOpen"
-        :aria-controls="`layer-manager-item-content-${props.layer.id}`"
-      ></button>
       <button
         class="mt-1 fa-solid fa-trash"
         :title="txtRemoveLayer"
-        @click="onClickRemove"
-      ></button>
-    </div>
-    <div
-      class="lux-layer-manager-item-content"
-      :class="props.isOpen ? 'h-6' : 'h-0'"
-      :id="`layer-manager-item-content-${props.layer.id}`"
-    >
-      <button
-        :title="
-          t('Toggle layer opacity for {{layerName}}', {
-            layerName: t(props.layer.name),
-          })
-        "
-        class="w-5 fa-solid"
-        :class="opacity === 0 ? 'fa-eye-slash' : 'fa-eye'"
-        @click="onToggleVisibility"
-      ></button>
-      <input
-        :id="`${props.layer.id}-steps-range`"
-        type="range"
-        min="0"
-        max="100"
-        :value="opacity"
-        step="25"
-        @change="onChangeOpacity"
-        class="m-2.5 w-16 h-[5px] rounded-lg appearance-none cursor-pointer"
-        :aria-label="
-          t('Change opacity for {{ layerName }}', { layerName: getLabel() })
-        "
-      />
-      <button
-        v-if="displayLayerComparatorOpen"
-        class="fa ml-auto text-sm cursor-pointer"
-        :class="props.isLayerComparatorOpen ? 'fa-adjust' : 'fa-circle'"
-        :aria-label="
-          t('Toggle layer comparator for {{ layerName }}', {
-            layerName: getLabel(),
-          })
-        "
-        @click="onToggleLayerComparator"
+        :aria-label="txtRemoveLayer"
+        @click="$emit('clickRemove', layer)"
       ></button>
     </div>
 
-    <!-- Layer time: slider widget -->
-    <layer-time-slider
-      v-if="layer.time && layer.time?.widget === LayerTimeWidget.SLIDER"
+    <!-- Layer item sub content (opacity and toggle comparator) -->
+    <layer-item-sub
       :layer="layer"
-    ></layer-time-slider>
+      :isOpen="isOpen"
+      :isLayerComparatorOpen="isLayerComparatorOpen"
+      :displayLayerComparatorOpen="displayLayerComparatorOpen"
+      @clickToggleLayerComparator="$emit('clickToggleLayerComparator', $event)"
+      @changeOpacity="(layer: Layer, value: number) => $emit('changeOpacity', layer, value)"
+    ></layer-item-sub>
 
-    <!-- Layer time: datepicker widget -->
-    <layer-time-datepicker
-      v-if="layer.time && layer.time?.widget === LayerTimeWidget.DATEPICKER"
+    <!-- Layer time: slider OR datepicker widgets -->
+    <layer-time
+      v-if="layer.time"
       :layer="layer"
-      class="mb-1"
-    ></layer-time-datepicker>
+      @changeTime="changeTime"
+    ></layer-time>
   </div>
 </template>

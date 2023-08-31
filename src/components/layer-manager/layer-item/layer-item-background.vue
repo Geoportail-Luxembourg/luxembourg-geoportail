@@ -39,6 +39,7 @@ function getLabel() {
     <button
       v-if="showEditButton"
       class="fa fa-pencil"
+      :aria-label="t('Open editor panel', { ns: 'client' })"
       :title="t('Open editor panel', { ns: 'client' })"
       @click="$emit('clickEdit')"
     ></button>

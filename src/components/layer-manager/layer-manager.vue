@@ -58,6 +58,10 @@ function changeOpacityLayer(layer: Layer, opacity: number) {
   mapStore.setLayerOpacity(layer.id as number, opacity / 100) // TODO: replace "as number"
 }
 
+function changeTime(layer: Layer, dateStart?: string, dateEnd?: string) {
+  mapStore.setLayerTime(layer.id as number, dateStart, dateEnd)
+}
+
 function removeLayer(layer: Layer) {
   mapStore.removeLayers(layer.id)
 }
@@ -95,6 +99,9 @@ function toggleLayerComparator() {
           @clickToggleLayerComparator="toggleLayerComparator"
           @clickInfo="setMetadataId(layer.id)"
           @changeOpacity="changeOpacityLayer"
+          @changeTime="
+            (dateStart, dateEnd) => changeTime(layer, dateStart, dateEnd)
+          "
         >
         </layer-item>
       </li>

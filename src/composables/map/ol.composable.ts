@@ -3,17 +3,17 @@ import ImageLayer from 'ol/layer/Image'
 import TileLayer from 'ol/layer/Tile'
 import type OlMap from 'ol/Map'
 import { ImageWMS, WMTS } from 'ol/source'
-import MapLibreLayer from '@geoblocks/ol-maplibre-layer'
 import WmtsTileGrid from 'ol/tilegrid/WMTS'
 import { getTopLeft } from 'ol/extent.js'
 import { get as getProjection, transformExtent } from 'ol/proj'
+import MapLibreLayer from '@geoblocks/ol-maplibre-layer'
 
 import { layersCache } from '@/stores/layers.cache'
 import type { Layer, LayerId } from '@/stores/map.store.model'
-import useMap from './map.composable'
 import { VectorSourceDict } from '@/composables/mvt-styles/mvt-styles.model'
 import { statePersistorStyleService } from '@/services/state-persistor/state-persistor-bgstyle.service'
 import { PROJECTION_WEBMERCATOR, PROJECTION_WGS84 } from './map.composable'
+import useMap from './map.composable'
 import { isHiDpi, stringToBoolean } from '@/services/utils'
 import { storageHelper } from '@/services/state-persistor/storage/storage.helper'
 import { SP_KEY_IPV6 } from '@/services/state-persistor/state-persistor.model'
@@ -22,6 +22,7 @@ import {
   TILE_MATRIX_IDS,
 } from '@/__fixtures__/wmts.fixture'
 import { useStyleStore } from '@/stores/style.store'
+import useLayers from '@/composables/layers/layers.composable'
 
 const DEFAULT_BGZINDEX = -200 // Value comming  from legacy
 const proxyWmsUrl = 'https://map.geoportail.lu/ogcproxywms'
@@ -50,9 +51,11 @@ function createWmsLayer(layer: Layer): ImageLayer<ImageWMS> {
       : {}),
   })
 
-  if (layer.currentTime) {
+  if (layer.currentTimeMinValue) {
+    // Should update source params:
+    // eg. '2014-08-31T00:00:00Z' or '2014-08-31T00:00:00Z/2020-12-31T23:59:59Z'
     const sourceParams = olSource.getParams()
-    sourceParams['TIME'] = layer.currentTime
+    sourceParams['TIME'] = useLayers().getLayerCurrentTime(layer)
     olSource.updateParams(sourceParams)
   }
 
@@ -100,8 +103,9 @@ function createWmtsLayer(layer: Layer): TileLayer<WMTS> {
     },
   })
 
-  if (layer.currentTime) {
-    const newLayer = layer.metadata?.['time_layers']?.[layer.currentTime]
+  if (layer.currentTimeMinValue) {
+    const newLayer =
+      layer.metadata?.['time_layers']?.[layer.currentTimeMinValue]
     const oldUrls = olSource.getUrls()
 
     if (newLayer && oldUrls) {
@@ -196,7 +200,7 @@ export default function useOpenLayers() {
 
     layer.set('metadata', spec.metadata)
     layer.set('queryable_id', spec.id)
-    layer.set('current_time', spec.currentTime) // TODO: legacy, check if still used?
+    layer.set('current_time', useLayers().getLayerCurrentTime(spec)) // TODO: legacy, check if still used?
     layer.set('time', spec.time) // TODO: legacy, check if still used?
     layer.setOpacity(spec.opacity as number)
 

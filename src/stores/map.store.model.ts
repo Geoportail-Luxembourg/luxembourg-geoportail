@@ -1,6 +1,8 @@
 import type { LayerType, Metadata } from '@/composables/themes/themes.model'
 import { TimeResolution } from '@/services/time.utils'
 
+export const LAYER_CURRENT_TIME_SEPARATOR = '/'
+
 export enum LayerImageType {
   PNG = 'image/png',
   JPG = 'image/jpeg',
@@ -21,9 +23,8 @@ export interface Layer {
   opacity?: number
   previousOpacity?: number
   time?: LayerTime
-  currentTime?: string
-  currentTimeMinDefValue?: string
-  currentTimeMaxDefValue?: string
+  currentTimeMinValue?: string
+  currentTimeMaxValue?: string
 }
 
 export enum LayerTimeMode {
@@ -39,19 +40,13 @@ export enum LayerTimeWidget {
 export interface LayerTime {
   minValue: string
   maxValue: string
-  resolution: TimeResolution
   minDefValue?: string
   maxDefValue?: string
   mode: LayerTimeMode
+  resolution: TimeResolution
   widget: LayerTimeWidget
-}
-
-export type LayerTimeSlider = LayerTime & {
-  values: string[]
-}
-
-export type LayerTimeDatePicker = LayerTime & {
-  interval: number[]
+  values?: string[]
+  interval?: number[]
 }
 
 export interface MapContext {
