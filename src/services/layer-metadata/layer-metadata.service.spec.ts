@@ -1,3 +1,12 @@
+const useThemesMock = {
+  findById: vi.fn(id => (id === 268 ? themeNodeMock : undefined)),
+  findBgLayerById: vi.fn(id => (id === 556 ? bgNodeMock : undefined)),
+}
+
+vi.mock('@/composables/themes/themes.composable', () => ({
+  default: () => useThemesMock,
+}))
+
 import { ThemeNodeModel } from '@/composables/themes/themes.model'
 import { layerMetadataService } from './layer-metadata.service'
 import { remoteMetadataHelper } from './remote-metadata.helper'
@@ -42,14 +51,6 @@ const bgNodeMock: ThemeNodeModel = {
   previousOpacity: 1,
   opacity: 1,
 }
-
-const useThemesMock = {
-  findById: vi.fn(id => (id === 268 ? themeNodeMock : undefined)),
-  findBgLayerById: vi.fn(id => (id === 556 ? bgNodeMock : undefined)),
-}
-vi.mock('@/composables/themes/themes.composable', () => ({
-  default: () => useThemesMock,
-}))
 
 const metadataMock = {
   title: 'Title that will be ignored on internal layer',

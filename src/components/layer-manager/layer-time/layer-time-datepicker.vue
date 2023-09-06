@@ -28,7 +28,7 @@ function onChange(event: Event) {
 
 <template>
   <input
-    class="lux-time-slider-datepicker"
+    class="lux-time-datepicker"
     type="date"
     :min="minValue"
     :max="maxValue"

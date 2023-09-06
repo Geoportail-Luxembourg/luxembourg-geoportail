@@ -22,7 +22,7 @@ describe('Catalogue', () => {
 
     it('adds selected layers to the map and to the layer manager', () => {
       cy.get('[data-cy="myLayersButton"]').click()
-      cy.get('[data-cy="myLayers"] > li').should('have.length', 3)
+      cy.get('[data-cy="myLayers"] > ul > li').should('have.length', 2)
     })
 
     it('displays title with updated number of layers', () => {
@@ -40,7 +40,7 @@ describe('Catalogue', () => {
       cy.get('[data-cy="myLayers"]').find('button').eq(2).click()
       cy.get('[data-cy="myLayers"]')
         .find('button')
-        .eq(5)
+        .eq(4)
         .click()
         .should(() => {
           expect(localStorage.getItem('opacities')).to.eq('1-0')
@@ -49,7 +49,7 @@ describe('Catalogue', () => {
       cy.url().should('contains', 'opacities=1-0')
       cy.get('[data-cy="myLayers"]')
         .find('button')
-        .eq(5)
+        .eq(4)
         .should('have.class', 'fa-eye-slash')
     })
   })
@@ -72,7 +72,7 @@ describe('Catalogue', () => {
       })
 
       cy.get('[data-cy="myLayersButton"]').click()
-      cy.get('[data-cy="myLayers"] > li').should('have.length', 3)
+      cy.get('[data-cy="myLayers"] > ul > li').should('have.length', 2)
     })
   })
 })
@@ -104,6 +104,6 @@ describe('Remote layers', () => {
     cy.get(
       '[data-cy="layerLabel-WMS||http://wmts1.geoportail.lu/opendata/service||ortho_2001"]'
     ).click()
-    cy.get('[data-cy="myLayers"] > li').should('have.length', 2)
+    cy.get('[data-cy="myLayers"] > ul > li').should('have.length', 1)
   })
 })

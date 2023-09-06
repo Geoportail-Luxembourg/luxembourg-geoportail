@@ -225,11 +225,11 @@
     @apply mr-1 min-w-[1.75rem] inline-block;
   }
 
-  .lux-time-slider-datepicker {
+  .lux-time-datepicker {
     @apply border-[#767676] border-[1px] pl-1;
   }
 
-  .lux-time-slider-slidebar {
+  .lux-time-slidebar {
     @apply mt-2 mb-2 ml-0 mr-0 w-full h-1 bg-[#d3e5d7] rounded-sm appearance-none cursor-pointer;
   }
 }

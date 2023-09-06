@@ -81,6 +81,8 @@ describe('StorageLayerMapper', () => {
           imageType: '',
           opacity: 1,
           previousOpacity: 1,
+          currentTimeMinValue: undefined,
+          currentTimeMaxValue: undefined,
         },
         {
           id: 360,
@@ -90,6 +92,8 @@ describe('StorageLayerMapper', () => {
           imageType: '',
           opacity: 1,
           previousOpacity: 1,
+          currentTimeMinValue: undefined,
+          currentTimeMaxValue: undefined,
         },
       ])
     })
@@ -105,6 +109,8 @@ describe('StorageLayerMapper', () => {
             imageType: '',
             opacity: 1,
             previousOpacity: 1,
+            currentTimeMinValue: undefined,
+            currentTimeMaxValue: undefined,
           },
           undefined,
           {
@@ -115,6 +121,8 @@ describe('StorageLayerMapper', () => {
             imageType: '',
             opacity: 1,
             previousOpacity: 1,
+            currentTimeMinValue: undefined,
+            currentTimeMaxValue: undefined,
           },
         ]
       )
@@ -130,6 +138,8 @@ describe('StorageLayerMapper', () => {
           imageType: '',
           opacity: 1,
           previousOpacity: 1,
+          currentTimeMinValue: undefined,
+          currentTimeMaxValue: undefined,
         },
         undefined,
       ])
@@ -150,6 +160,8 @@ describe('StorageLayerMapper', () => {
           opacity: 1,
           previousOpacity: 1,
           url: 'https://map.geoportail.lu/httpsproxy?url=www.mysuperserver.com%2Fmytiles',
+          currentTimeMinValue: undefined,
+          currentTimeMaxValue: undefined,
         },
       ])
     })

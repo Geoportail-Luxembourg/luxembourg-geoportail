@@ -84,7 +84,7 @@ function onChange(event: Event) {
     <!-- Slider -->
     <div>
       <input
-        class="lux-time-slider-slidebar"
+        class="lux-time-slidebar"
         min="0"
         type="range"
         :max="sliderNbSteps - 1"
