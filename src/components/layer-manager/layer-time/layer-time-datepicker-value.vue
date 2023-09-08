@@ -31,7 +31,7 @@ const dateValue: ShallowRef<string | undefined> = shallowRef(
         :date-value="dateValue"
         :min-date-allowed="props.layer.time?.minValue"
         :max-date-allowed="props.layer.time?.maxValue"
-        @change="$emit('changeTime', dateValue)"
+        @change="$emit('changeTime', $event)"
       />
     </div>
   </div>
