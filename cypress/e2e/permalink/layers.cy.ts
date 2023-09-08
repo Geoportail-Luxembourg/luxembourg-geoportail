@@ -59,7 +59,33 @@ describe('Permalink/State persistor - Layers', () => {
   })
 
   describe('Save layers to url', () => {
-    describe('When updating layer time with datepicker widget', () => {
+    describe('When updating layer time with datepicker widget with value mode', () => {
+      it('updates the layer time (date start) in the url', () => {
+        cy.visit(
+          '?version=3&lang=fr&layers=1858&opacities=1&time=2014-09-14T00%253A00%253A00Z'
+        )
+        cy.get('[data-cy="myLayersButton"]').click()
+        cy.get('[data-cy="myLayers"] input.lux-time-datepicker')
+          .eq(0)
+          .type('2015-09-02')
+        cy.get('[data-cy="myLayers"] input.lux-time-datepicker')
+          .eq(0)
+          .trigger('change')
+        cy.url().should('contains', '&time=2015-09-02T00%253A00%253A00Z')
+      })
+
+      it('does not have the date end datepicker', () => {
+        cy.visit(
+          '?version=3&lang=fr&layers=1858&opacities=1&time=2014-09-14T00%253A00%253A00Z'
+        )
+        cy.get('[data-cy="myLayersButton"]').click()
+        cy.get('[data-cy="myLayers"] input.lux-time-datepicker')
+          .eq(1)
+          .should('not.exist')
+      })
+    })
+
+    describe('When updating layer time with datepicker widget with range mode', () => {
       it('updates the layer time (date start) in the url', () => {
         cy.visit(
           '/?version=3&lang=fr&layers=1859&time=2014-10-14T00%253A00%253A00Z%252F2020-12-31T00%253A00%253A00Z'
@@ -95,7 +121,7 @@ describe('Permalink/State persistor - Layers', () => {
       })
     })
 
-    describe('When updating layer time with slider widget', () => {
+    describe('When updating layer time with slider widget with value mode', () => {
       it('updates the layer time (date start) in the url', () => {
         cy.visit(
           '/?version=3&lang=fr&layers=1860&time=2019-01-01T00%253A00%253A00Z%252F'
@@ -105,7 +131,7 @@ describe('Permalink/State persistor - Layers', () => {
         cy.get('[data-cy="myLayers"] input.lux-time-slidebar')
           .eq(0)
           .trigger('change')
-        cy.url().should('contains', '&time=2022-08-01T00%253A00%253A00Z%252F')
+        cy.url().should('contains', '&time=2022-08-01T00%253A00%253A00Z')
       })
     })
   })
