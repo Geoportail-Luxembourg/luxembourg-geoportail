@@ -62,7 +62,7 @@ export default function useLayers() {
   function getLayerCurrentTime(layer: Layer) {
     return [
       layer.currentTimeMinValue,
-      ...([layer.currentTimeMaxValue] || []),
+      ...(layer.currentTimeMaxValue ? [layer.currentTimeMaxValue] : []),
     ].join(LAYER_CURRENT_TIME_SEPARATOR)
   }
 
