@@ -28,6 +28,7 @@
   "dependencies": {
     "@camptocamp/ogc-client": "^0.3.4",
     "file-saver": "^2.0.5",
+    "luxon": "^3.4.1",
     "ol": "^6.5.0",
     "pinia": "^2.0.26",
     "sortablejs": "^1.15.0",
@@ -42,6 +43,7 @@
     "@pinia/testing": "^0.0.14",
     "@rushstack/eslint-patch": "^1.1.4",
     "@types/jsdom": "^20.0.1",
+    "@types/luxon": "^3.3.1",
     "@types/node": "^18.11.9",
     "@types/proj4": "^2.5.2",
     "@types/sortablejs": "^1.15.0",

@@ -1,4 +1,4 @@
-import { shallowMount } from '@vue/test-utils'
+import { mount } from '@vue/test-utils'
 
 import { Layer } from '@/stores/map.store.model'
 import LayerItem from './layer-item.vue'
@@ -12,11 +12,10 @@ const layerMock = {
 } as Layer
 
 const onClickInfo = vi.fn()
-const onClickToggle = vi.fn()
 
 describe('LayerItem', () => {
   it('renders properly', () => {
-    const wrapper = shallowMount(LayerItem, {
+    const wrapper = mount(LayerItem, {
       props: {
         layer: layerMock,
         draggableClassName: 'classnamedragg',
@@ -35,7 +34,7 @@ describe('LayerItem', () => {
   })
 
   it('renders properly when is open', () => {
-    const wrapper = shallowMount(LayerItem, {
+    const wrapper = mount(LayerItem, {
       props: {
         layer: layerMock,
         draggableClassName: 'classnamedragg',
@@ -51,9 +50,9 @@ describe('LayerItem', () => {
   })
 
   describe('actions', () => {
-    const wrapper = shallowMount(LayerItem, {
+    const wrapper = mount(LayerItem, {
       global: {
-        mocks: { onClickInfo, onClickToggle },
+        mocks: { onClickInfo },
       },
       props: {
         layer: layerMock,
@@ -69,18 +68,18 @@ describe('LayerItem', () => {
       expect(onClickInfo).toBeCalled()
     })
 
-    it('triggers #onClickToggle', async () => {
+    it('triggers #clickToggle', async () => {
       await wrapper.findAll('button')[2].trigger('click')
-      expect(onClickToggle).toBeCalled()
+      expect(wrapper.emitted().clickToggle).toBeTruthy()
     })
 
-    it('emits #onClickRemove', async () => {
-      await wrapper.findAll('button')[4].trigger('click')
+    it('emits #clickRemove', async () => {
+      await wrapper.findAll('button')[3].trigger('click')
       expect(wrapper.emitted().clickRemove).toBeTruthy()
     })
 
     it('triggers #onToggleVisibility emits #changeOpacity', async () => {
-      await wrapper.findAll('button')[5].trigger('click')
+      await wrapper.findAll('button')[4].trigger('click')
       expect(wrapper.emitted().changeOpacity).toBeTruthy()
     })
 

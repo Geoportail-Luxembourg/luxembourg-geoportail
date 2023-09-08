@@ -34,16 +34,23 @@ export default function useMap() {
   }
 
   function equalsLayer(layerA: Layer, layerB: Layer) {
+    return layerA.id === layerB.id
+  }
+
+  function strictEqualsLayer(
+    layerA: Layer | undefined,
+    layerB: Layer | undefined
+  ) {
     return layerA === layerB
   }
 
   function hasLayer(context: MapContext, layer: Layer) {
-    return context.layers?.some(l => equalsLayer(layer, l))
+    return context.layers?.some(l => equalsLayer(l, layer))
   }
 
   function layerHasChanged(oldContext: MapContext | null, layer: Layer) {
-    const oldLayer = oldContext?.layers?.find(l => l.id === layer.id)
-    return oldLayer !== layer
+    const oldLayer = oldContext?.layers?.find(l => equalsLayer(l, layer))
+    return !strictEqualsLayer(oldLayer, layer)
   }
 
   function contextHasChanged(

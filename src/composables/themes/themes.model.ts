@@ -72,8 +72,18 @@ export interface ThemeNodeModel {
   children?: ThemeNodeModel[]
   mixed?: boolean
   childLayers?: {
-    name: string
+    name?: string
   }[]
   functionalities?: {}
-  time?: { [key: string]: string | string[] | null }
+  time?: {
+    minValue: string
+    maxValue: string
+    minDefValue?: string | null
+    maxDefValue?: string | null
+    mode: string
+    resolution: string
+    widget: string
+    values?: string[]
+    interval?: number[]
+  }
 }

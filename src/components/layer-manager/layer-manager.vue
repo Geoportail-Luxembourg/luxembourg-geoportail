@@ -12,8 +12,8 @@ import { BLANK_BACKGROUNDLAYER } from '@/composables/background-layer/background
 import useMvtStyles from '@/composables/mvt-styles/mvt-styles.composable'
 import { useSliderComparatorStore } from '@/stores/slider-comparator.store'
 
-import LayerManagerItemBackground from './layer-item/layer-item-background.vue'
-import LayerManagerItem from './layer-item/layer-item.vue'
+import LayerItemBackground from './layer-item/layer-item-background.vue'
+import LayerItem from './layer-item/layer-item.vue'
 
 const { t } = useTranslation()
 
@@ -58,6 +58,10 @@ function changeOpacityLayer(layer: Layer, opacity: number) {
   mapStore.setLayerOpacity(layer.id as number, opacity / 100) // TODO: replace "as number"
 }
 
+function changeTime(layer: Layer, dateStart?: string, dateEnd?: string) {
+  mapStore.setLayerTime(layer.id as number, dateStart, dateEnd)
+}
+
 function removeLayer(layer: Layer) {
   mapStore.removeLayers(layer.id)
 }
@@ -76,51 +80,55 @@ function toggleLayerComparator() {
 </script>
 
 <template>
-  <ul id="sortable-layers">
-    <li
-      v-for="(layer, index) in layers"
-      :key="layer.id"
-      :id="(layer.id as string)"
-      data-cy="myLayer"
+  <div>
+    <ul id="sortable-layers">
+      <li
+        v-for="(layer, index) in layers"
+        :key="layer.id"
+        :id="(layer.id as string)"
+        data-cy="myLayer"
+      >
+        <layer-item
+          :draggableClassName="draggableClassName"
+          :layer="layer"
+          :isOpen="isLayerOpenId === layer.id"
+          :isLayerComparatorOpen="sliderActive"
+          :displayLayerComparatorOpen="index === 0"
+          @clickRemove="removeLayer"
+          @clickToggle="toggleAccordionItem"
+          @clickToggleLayerComparator="toggleLayerComparator"
+          @clickInfo="setMetadataId(layer.id)"
+          @changeOpacity="changeOpacityLayer"
+          @changeTime="
+            (dateStart, dateEnd) => changeTime(layer, dateStart, dateEnd)
+          "
+        >
+        </layer-item>
+      </li>
+    </ul>
+
+    <layer-item-background
+      :layer="bgLayer || BLANK_BACKGROUNDLAYER"
+      :showEditButton="bgLayerIsEditable"
+      @clickInfo="() => bgLayer && setMetadataId(bgLayer.id)"
+      @clickEdit="openEditionLayer"
     >
-      <layer-manager-item
-        :draggableClassName="draggableClassName"
-        :layer="layer"
-        :isOpen="isLayerOpenId === layer.id"
-        :isLayerComparatorOpen="sliderActive"
-        :displayLayerComparatorOpen="index === 0"
-        @clickRemove="removeLayer"
-        @clickToggle="toggleAccordionItem"
-        @clickToggleLayerComparator="toggleLayerComparator"
-        @clickInfo="setMetadataId(layer.id)"
-        @changeOpacity="changeOpacityLayer"
+    </layer-item-background>
+    <div class="flex flex-row justify-center space-x-1 my-2">
+      <button
+        data-cy="addLayer"
+        class="bg-white text-primary hover:bg-primary hover:text-white border border-slate-300 py-1.5 px-2.5"
+        @click="emit('displayCatalog')"
       >
-      </layer-manager-item>
-    </li>
-    <li>
-      <layer-manager-item-background
-        :layer="bgLayer || BLANK_BACKGROUNDLAYER"
-        :showEditButton="bgLayerIsEditable"
-        @clickInfo="() => bgLayer && setMetadataId(bgLayer.id)"
-        @clickEdit="openEditionLayer"
+        {{ t('+ Add layers', { ns: 'client' }) }}
+      </button>
+      <button
+        data-cy="addRemoteLayer"
+        class="bg-white text-primary hover:bg-primary hover:text-white border border-slate-300 py-1.5 px-2.5"
+        @click="setRemoteLayersOpen(true)"
       >
-      </layer-manager-item-background>
-      <div class="flex flex-row justify-center space-x-1 my-2">
-        <button
-          data-cy="addLayer"
-          class="bg-white text-primary hover:bg-primary hover:text-white border border-slate-300 py-1.5 px-2.5"
-          @click="emit('displayCatalog')"
-        >
-          {{ t('+ Add layers', { ns: 'client' }) }}
-        </button>
-        <button
-          data-cy="addRemoteLayer"
-          class="bg-white text-primary hover:bg-primary hover:text-white border border-slate-300 py-1.5 px-2.5"
-          @click="setRemoteLayersOpen(true)"
-        >
-          {{ t('+ Add external Wms', { ns: 'client' }) }}
-        </button>
-      </div>
-    </li>
-  </ul>
+        {{ t('+ Add external Wms', { ns: 'client' }) }}
+      </button>
+    </div>
+  </div>
 </template>

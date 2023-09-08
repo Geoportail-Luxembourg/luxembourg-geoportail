@@ -1,6 +1,10 @@
 import i18next from 'i18next'
 
-import type { Layer, LayerId } from '@/stores/map.store.model'
+import {
+  Layer,
+  LayerId,
+  LAYER_CURRENT_TIME_SEPARATOR,
+} from '@/stores/map.store.model'
 import { useMapStore } from '@/stores/map.store'
 import { useThemeStore } from '@/stores/config.store'
 import useThemes from '@/composables/themes/themes.composable'
@@ -22,9 +26,44 @@ export default function useLayers() {
     }
   }
 
+  /**
+   * Initialize the layer's opacity and time
+   *
+   * @param layer The layer spec, will be modified
+   * @returns The layer that have been modified
+   */
   function initLayer(layer: Layer) {
     layer.opacity = layer.previousOpacity = layer.metadata?.start_opacity ?? 1
+    initLayerCurrentTime(layer)
+
     return layer
+  }
+
+  /**
+   * Initialize layer's currentTimeMinValue and currentTimeMaxValue.
+   * Code legacy can be found in: ngeo.Time.getOptions()
+   *
+   * - currentTimeMinValue and currentTimeMaxValue comming from permalink if any (untouched here)
+   * - if not, retrieve from time options (from spec/fixtures)
+   * @param layer The layer spec, will be modified
+   */
+  function initLayerCurrentTime(layer: Layer) {
+    if (!layer.currentTimeMinValue) {
+      layer.currentTimeMinValue =
+        layer.time?.minDefValue ?? layer.time?.minValue
+    }
+
+    if (!layer.currentTimeMaxValue) {
+      layer.currentTimeMaxValue =
+        layer.time?.maxDefValue ?? layer.time?.maxValue
+    }
+  }
+
+  function getLayerCurrentTime(layer: Layer) {
+    return [
+      layer.currentTimeMinValue,
+      ...(layer.currentTimeMaxValue ? [layer.currentTimeMaxValue] : []),
+    ].join(LAYER_CURRENT_TIME_SEPARATOR)
   }
 
   function handleExclusionLayers(layer: Layer) {
@@ -87,6 +126,7 @@ export default function useLayers() {
 
   return {
     initLayer,
+    getLayerCurrentTime,
     handleExclusionLayers,
     toggleLayer,
   }

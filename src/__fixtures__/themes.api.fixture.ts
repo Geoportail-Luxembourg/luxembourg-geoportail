@@ -5851,6 +5851,137 @@ export const themesApiFixture = (): ConfigModel => ({
               "mixed": true
             },
             {
+                "id": 1861,
+                "name": "time_layers",
+                "children": [
+                    {
+                        "id": 1857,
+                        "name": "starkregen",
+                        "metadata": {},
+                        "dimensions": {},
+                        "type": "WMS",
+                        "layers": "starkregen",
+                        "imageType": "image/png",
+                        "childLayers": [
+                            {
+                                "name": "starkregen__0"
+                            }
+                        ]
+                    },
+                    {
+                        "id": 1858,
+                        "name": "parz",
+                        "metadata": {
+                            "time_config": "{\"time_override\": {\"timepositions\": [\"2014-08-31T12:43:47.000Z/2020-12-31T23:59:59.000Z/P1M\"]}}"
+                        },
+                        "dimensions": {},
+                        "type": "WMS",
+                        "layers": "parzelle",
+                        "imageType": "image/png",
+                        "childLayers": [
+                            {}
+                        ],
+                        "time": {
+                            "minValue": "2014-08-31T12:43:47Z",
+                            "maxValue": "2020-12-31T23:59:59Z",
+                            "interval": [
+                                0,
+                                1,
+                                0,
+                                0
+                            ],
+                            "resolution": "second",
+                            "minDefValue": "2014-08-31T12:43:47Z",
+                            "maxDefValue": null,
+                            "mode": "value",
+                            "widget": "datepicker"
+                        }
+                    },
+                    {
+                        "id": 1859,
+                        "name": "layer_datepicker_range",
+                        "metadata": {
+                            "time_config": "{\"time_override\": {\"timepositions\": [\"2014-08-31T12:43:47.000Z/2020-12-31T23:59:59.000Z/P1M\"]}}"
+                        },
+                        "dimensions": {},
+                        "type": "WMS",
+                        "layers": "layer_datepicker_range",
+                        "imageType": "image/png",
+                        "childLayers": [
+                            {}
+                        ],
+                        "time": {
+                            "minValue": "2014-08-31T12:43:47Z",
+                            "maxValue": "2020-12-31T23:59:59Z",
+                            "interval": [
+                                0,
+                                1,
+                                0,
+                                0
+                            ],
+                            "resolution": "second",
+                            "minDefValue": "2014-08-31T12:43:47Z",
+                            "maxDefValue": null,
+                            "mode": "range",
+                            "widget": "datepicker"
+                        }
+                    },
+                    {
+                        "id": 1860,
+                        "name": "act_ortho_time",
+                        "metadata": {
+                            "time_config": "{\"default_time\":\"2022-08\",\"time_links\":{\"2001-08\":\"ortho_2001\",\"2004-08\":\"ortho_2004\",\"2007-08\":\"ortho_2007\",\"2010-08\":\"ortho_2010\",\"2013-08\":\"ortho_2013\",\"2016-08\":\"ortho_2016\",\"2017-08\":\"ortho_2017\",\"2018-08\":\"ortho_2018\",\"2019-01\":\"ortho_2019_winter\",\"2019-08\":\"ortho_2019\",\"2020-08\":\"ortho_2020\",\"2021-08\":\"ortho_2021\",\"2022-08\":\"ortho_2022\"}}",
+                            "time_layers": {
+                                "2001-08-01T00:00:00Z": "ortho_2001",
+                                "2004-08-01T00:00:00Z": "ortho_2004",
+                                "2007-08-01T00:00:00Z": "ortho_2007",
+                                "2010-08-01T00:00:00Z": "ortho_2010",
+                                "2013-08-01T00:00:00Z": "ortho_2013",
+                                "2016-08-01T00:00:00Z": "ortho_2016",
+                                "2017-08-01T00:00:00Z": "ortho_2017",
+                                "2018-08-01T00:00:00Z": "ortho_2018",
+                                "2019-01-01T00:00:00Z": "ortho_2019_winter",
+                                "2019-08-01T00:00:00Z": "ortho_2019",
+                                "2020-08-01T00:00:00Z": "ortho_2020",
+                                "2021-08-01T00:00:00Z": "ortho_2021",
+                                "2022-08-01T00:00:00Z": "ortho_2022"
+                            }
+                        },
+                        "dimensions": {},
+                        "type": "WMTS",
+                        "url": "http://wmts.geoportail.lu/mapproxy_4_v3/wmts/1.0.0/WMTSCapabilities.xml",
+                        "layer": "act_ortho_time",
+                        "imageType": "image/jpeg",
+                        "time": {
+                            "minValue": "2001-08-01T00:00:00Z",
+                            "maxValue": "2022-08-01T00:00:00Z",
+                            "values": [
+                                "2001-08-01T00:00:00Z",
+                                "2004-08-01T00:00:00Z",
+                                "2007-08-01T00:00:00Z",
+                                "2010-08-01T00:00:00Z",
+                                "2013-08-01T00:00:00Z",
+                                "2016-08-01T00:00:00Z",
+                                "2017-08-01T00:00:00Z",
+                                "2018-08-01T00:00:00Z",
+                                "2019-01-01T00:00:00Z",
+                                "2019-08-01T00:00:00Z",
+                                "2020-08-01T00:00:00Z",
+                                "2021-08-01T00:00:00Z",
+                                "2022-08-01T00:00:00Z"
+                            ],
+                            "resolution": "month",
+                            "minDefValue": "2022-08-01T00:00:00Z",
+                            "maxDefValue": null,
+                            "mode": "value",
+                            "widget": "slider"
+                        }
+                    }
+                ],
+                "metadata": {},
+                "mixed": true
+            },
+            {
               "id": 484,
               "name": "eau_new_Hydrografie",
               "children": [

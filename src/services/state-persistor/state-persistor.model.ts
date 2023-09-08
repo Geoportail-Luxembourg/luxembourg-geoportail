@@ -14,6 +14,7 @@ export const SP_KEY_LAYERS = 'layers'
 export const SP_KEY_BGLAYER = 'bgLayer'
 export const SP_KEY_OPACITIES = 'opacities'
 export const SP_KEY_THEME = 'theme'
+export const SP_KEY_TIME_SELECTIONS = 'time' // !!! Separator is "--"?
 export const SP_KEY_ZOOM = 'zoom'
 export const SP_KEY_SRS = 'SRS' // TODO:
 export const SP_KEY_X = 'X'

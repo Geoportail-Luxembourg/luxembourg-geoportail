@@ -54,7 +54,8 @@ export class UrlStorage implements Storage {
   }
 
   getItem(key: string): string | null {
-    return this.getSnappedUrl().searchParams.get(key)
+    const value = this.getSnappedUrl().searchParams.get(key)
+    return value !== null ? decodeURIComponent(value) : value
   }
 
   removeItem(key: string) {

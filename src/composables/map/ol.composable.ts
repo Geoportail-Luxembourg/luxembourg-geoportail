@@ -3,17 +3,17 @@ import ImageLayer from 'ol/layer/Image'
 import TileLayer from 'ol/layer/Tile'
 import type OlMap from 'ol/Map'
 import { ImageWMS, WMTS } from 'ol/source'
-import MapLibreLayer from '@geoblocks/ol-maplibre-layer'
 import WmtsTileGrid from 'ol/tilegrid/WMTS'
 import { getTopLeft } from 'ol/extent.js'
 import { get as getProjection, transformExtent } from 'ol/proj'
+import MapLibreLayer from '@geoblocks/ol-maplibre-layer'
 
 import { layersCache } from '@/stores/layers.cache'
 import type { Layer, LayerId } from '@/stores/map.store.model'
-import useMap from './map.composable'
 import { VectorSourceDict } from '@/composables/mvt-styles/mvt-styles.model'
 import { statePersistorStyleService } from '@/services/state-persistor/state-persistor-bgstyle.service'
 import { PROJECTION_WEBMERCATOR, PROJECTION_WGS84 } from './map.composable'
+import useMap from './map.composable'
 import { isHiDpi, stringToBoolean } from '@/services/utils'
 import { storageHelper } from '@/services/state-persistor/storage/storage.helper'
 import { SP_KEY_IPV6 } from '@/services/state-persistor/state-persistor.model'
@@ -22,6 +22,7 @@ import {
   TILE_MATRIX_IDS,
 } from '@/__fixtures__/wmts.fixture'
 import { useStyleStore } from '@/stores/style.store'
+import useLayers from '@/composables/layers/layers.composable'
 
 const DEFAULT_BGZINDEX = -200 // Value comming  from legacy
 const proxyWmsUrl = 'https://map.geoportail.lu/ogcproxywms'
@@ -37,24 +38,34 @@ function getOlcsExtent() {
 
 function createWmsLayer(layer: Layer): ImageLayer<ImageWMS> {
   const { name, layers, imageType, url, id } = layer
+  const olSource = new ImageWMS({
+    url: url || proxyWmsUrl,
+    hidpi: isHiDpi(),
+    serverType: 'mapserver',
+    params: {
+      FORMAT: imageType,
+      LAYERS: layers,
+    },
+    ...((url !== undefined && url !== null) || remoteProxyWms
+      ? { crossOrigin: 'anonymous' }
+      : {}),
+  })
+
+  if (layer.currentTimeMinValue) {
+    // Should update source params:
+    // eg. '2014-08-31T00:00:00Z' or '2014-08-31T00:00:00Z/2020-12-31T23:59:59Z'
+    const sourceParams = olSource.getParams()
+    sourceParams['TIME'] = useLayers().getLayerCurrentTime(layer)
+    olSource.updateParams(sourceParams)
+  }
+
   const olLayer = new ImageLayer({
     properties: {
       'olcs.extent': getOlcsExtent(),
       label: name,
       id,
     },
-    source: new ImageWMS({
-      url: url || proxyWmsUrl,
-      hidpi: isHiDpi(),
-      serverType: 'mapserver',
-      params: {
-        FORMAT: imageType,
-        LAYERS: layers,
-      },
-      ...((url !== undefined && url !== null) || remoteProxyWms
-        ? { crossOrigin: 'anonymous' }
-        : {}),
-    }),
+    source: olSource,
   })
 
   return olLayer
@@ -65,25 +76,25 @@ function createWmtsLayer(layer: Layer): TileLayer<WMTS> {
   const hasRetina = getLayerHasRetina(layer)
   const projection = getProjection(PROJECTION_WEBMERCATOR)!
   const extent = projection!.getExtent()
-
-  const olLayer = new TileLayer({
-    source: new WMTS({
-      url: getLayerWmtsUrl(layer),
-      tilePixelRatio: hasRetina ? 2 : 1,
-      layer: name,
-      matrixSet: `GLOBAL_WEBMERCATOR_4_V3${hasRetina ? '_HD' : ''}`,
-      format: imageType,
-      requestEncoding: 'REST',
-      projection,
-      tileGrid: new WmtsTileGrid({
-        origin: getTopLeft(extent),
-        extent,
-        resolutions: TILE_GRID_RESOLUTION,
-        matrixIds: TILE_MATRIX_IDS,
-      }),
-      style: 'default',
-      crossOrigin: 'anonymous',
+  const olSource = new WMTS({
+    url: getLayerWmtsUrl(layer),
+    tilePixelRatio: hasRetina ? 2 : 1,
+    layer: name,
+    matrixSet: `GLOBAL_WEBMERCATOR_4_V3${hasRetina ? '_HD' : ''}`,
+    format: imageType,
+    requestEncoding: 'REST',
+    projection,
+    tileGrid: new WmtsTileGrid({
+      origin: getTopLeft(extent),
+      extent,
+      resolutions: TILE_GRID_RESOLUTION,
+      matrixIds: TILE_MATRIX_IDS,
     }),
+    style: 'default',
+    crossOrigin: 'anonymous',
+  })
+  const olLayer = new TileLayer({
+    source: olSource,
     properties: {
       // check that olcs.extent is still available for legacy app
       'olcs.extent': getOlcsExtent(),
@@ -91,6 +102,23 @@ function createWmtsLayer(layer: Layer): TileLayer<WMTS> {
       id,
     },
   })
+
+  if (layer.currentTimeMinValue) {
+    const newLayer =
+      layer.metadata?.['time_layers']?.[layer.currentTimeMinValue]
+    const oldUrls = olSource.getUrls()
+
+    if (newLayer && oldUrls) {
+      const newUrls = oldUrls.map(url =>
+        url.replace(
+          /\/[^/]*\/{TileMatrixSet}/,
+          '/' + newLayer + '/{TileMatrixSet}'
+        )
+      )
+      olSource.setUrls(newUrls)
+      olLayer.set('label', newLayer)
+    }
+  }
 
   return olLayer
 }
@@ -155,6 +183,7 @@ function getLayerHasRetina(layer: Layer) {
 export default function useOpenLayers() {
   function createLayer(spec: Layer): ImageLayer<ImageWMS> | TileLayer<WMTS> {
     let layer
+
     switch (spec.type) {
       case 'WMS': {
         layer = createWmsLayer(spec)
@@ -168,14 +197,18 @@ export default function useOpenLayers() {
       default:
         throw new Error(`Unrecognized layer type: ${spec.type}`)
     }
+
     layer.set('metadata', spec.metadata)
     layer.set('queryable_id', spec.id)
+    layer.set('current_time', useLayers().getLayerCurrentTime(spec)) // TODO: legacy, check if still used?
+    layer.set('time', spec.time) // TODO: legacy, check if still used?
     layer.setOpacity(spec.opacity as number)
 
     if (spec.metadata?.hasOwnProperty('attribution')) {
       const source = layer.getSource()
       source?.setAttributions(spec.metadata.attribution)
     }
+
     return layer
   }
 
