@@ -971,6 +971,42 @@ video {
     border-color: var(--alert-warning-secondary);
     color: var(--alert-warning-tertiary);
   }
+.lux-time-slider input[type='range']::-webkit-slider-thumb {
+  height: 1.25rem;
+  width: 0.5rem;
+  border-radius: 9999px;
+  border-color: var(--color-tertiary);
+  --tw-bg-opacity: 1;
+  background-color: rgb(255 255 255 / var(--tw-bg-opacity));
+    -webkit-appearance: none;
+    box-shadow: 0.1rem 0.1rem 0.1rem rgba(0, 0, 49, 0.2),
+      0 0 0.1rem rgba(0, 0, 75, 0.2);
+    border: 0.1rem solid rgba(0, 0, 30, 0.2);
+}
+.lux-time-slider-label {
+  margin-right: 0.25rem;
+  display: inline-block;
+  min-width: 1.75rem;
+}
+.lux-time-datepicker {
+  border-width: 1px;
+  --tw-border-opacity: 1;
+  border-color: rgb(118 118 118 / var(--tw-border-opacity));
+  padding-left: 0.25rem;
+}
+.lux-time-slidebar {
+  margin-top: 0.5rem;
+  margin-bottom: 0.5rem;
+  margin-left: 0px;
+  margin-right: 0px;
+  height: 0.25rem;
+  width: 100%;
+  cursor: pointer;
+  appearance: none;
+  border-radius: 0.125rem;
+  --tw-bg-opacity: 1;
+  background-color: rgb(211 229 215 / var(--tw-bg-opacity));
+}
 .visible {
   visibility: visible;
 }
@@ -12160,6 +12196,9 @@ video {
 .text-center {
   text-align: center;
 }
+.text-justify {
+  text-align: justify;
+}
 .text-start {
   text-align: start;
 }
@@ -12209,6 +12248,9 @@ video {
 }
 .uppercase {
   text-transform: uppercase;
+}
+.lowercase {
+  text-transform: lowercase;
 }
 .oldstyle-nums {
   --tw-numeric-figure: oldstyle-nums;
@@ -27641,6 +27683,11 @@ video {
 }
 .filter {
   filter: var(--tw-blur) var(--tw-brightness) var(--tw-contrast) var(--tw-grayscale) var(--tw-hue-rotate) var(--tw-invert) var(--tw-saturate) var(--tw-sepia) var(--tw-drop-shadow);
+}
+.transition {
+  transition-property: color, background-color, border-color, text-decoration-color, fill, stroke, opacity, box-shadow, transform, filter, backdrop-filter;
+  transition-timing-function: cubic-bezier(0.4, 0, 0.2, 1);
+  transition-duration: 150ms;
 }
 .transition-colors {
   transition-property: color, background-color, border-color, text-decoration-color, fill, stroke;

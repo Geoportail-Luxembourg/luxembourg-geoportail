@@ -7,7 +7,6 @@ import WmtsTileGrid from 'ol/tilegrid/WMTS'
 import { getTopLeft } from 'ol/extent.js'
 import { get as getProjection, transformExtent } from 'ol/proj'
 import MapLibreLayer from '@/lib/ol-maplibre-layer'
-<Merge Conflict>
 
 import { layersCache } from '@/stores/layers.cache'
 import type { Layer, LayerId } from '@/stores/map.store.model'
