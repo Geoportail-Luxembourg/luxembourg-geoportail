@@ -213,12 +213,61 @@
     color: var(--alert-warning-tertiary);
   }
 
+  .lux-time-displayed-dates {
+    @apply flex w-full;
+  }
+
+  .lux-slidebar-thumb {
+    @apply bg-white h-5 w-[0.55rem] rounded-full border-tertiary absolute top-0 z-[2];
+    box-shadow: 0.1rem 0.1rem 0.1rem rgba(0, 0, 49, 0.2),
+      0 0 0.1rem rgba(0, 0, 75, 0.2);
+    border: 0.1rem solid rgba(0, 0, 30, 0.2);
+  }
+
   .lux-time-slider input[type='range']::-webkit-slider-thumb {
-    @apply bg-white h-5 w-2 rounded-full border-tertiary;
+    @apply bg-white h-5  w-[0.55rem] rounded-full border-tertiary cursor-pointer;
     -webkit-appearance: none;
     box-shadow: 0.1rem 0.1rem 0.1rem rgba(0, 0, 49, 0.2),
       0 0 0.1rem rgba(0, 0, 75, 0.2);
     border: 0.1rem solid rgba(0, 0, 30, 0.2);
+  }
+
+  .lux-time-slider input[type='range']::-moz-range-thumb {
+    @apply bg-white h-5  w-[0.55rem] rounded-full border-tertiary cursor-pointer;
+    box-shadow: 0.1rem 0.1rem 0.1rem rgba(0, 0, 49, 0.2),
+      0 0 0.1rem rgba(0, 0, 75, 0.2);
+    border: 0.1rem solid rgba(0, 0, 30, 0.2);
+    -moz-appearance: none;
+  }
+
+  .lux-slidebar-thumb:focus,
+  .lux-slidebar-thumb:hover {
+    outline: 2px solid rgb(66, 66, 66);
+    box-shadow: 0.3rem 0.3rem 0.3rem rgba(0, 0, 49, 0.2),
+      0 0 0.3rem rgba(0, 0, 75, 0.2);
+  }
+
+  .lux-slidebar,
+  .lux-slidebar-track-full,
+  .lux-slidebar-track-selection {
+    @apply mt-2 mb-2 ml-0 mr-0 w-full h-1 bg-[#d3e5d7] rounded-sm appearance-none;
+  }
+
+  .lux-slidebar-fake {
+    @apply relative h-5;
+  }
+
+  .lux-slidebar-track {
+    @apply relative w-full;
+  }
+
+  .lux-slidebar-track-full {
+    @apply top-0 absolute w-full z-0;
+  }
+
+  .lux-slidebar-track-selection {
+    @apply top-0 absolute w-full z-[1];
+    background-color: #94ac9a;
   }
 
   .lux-time-slider-label {
@@ -227,10 +276,6 @@
 
   .lux-time-datepicker {
     @apply border-[#767676] border-[1px] pl-1;
-  }
-
-  .lux-time-slidebar {
-    @apply mt-2 mb-2 ml-0 mr-0 w-full h-1 bg-[#d3e5d7] rounded-sm appearance-none cursor-pointer;
   }
 }
 

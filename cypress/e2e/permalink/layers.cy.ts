@@ -48,10 +48,10 @@ describe('Permalink/State persistor - Layers', () => {
         cy.get('[data-cy="myLayers"] input.lux-time-datepicker')
           .eq(2)
           .should('have.value', '2014-08-31')
-        cy.get('[data-cy="myLayers"] input.lux-time-slidebar')
+        cy.get('[data-cy="myLayers"] input.lux-slidebar')
           .eq(0)
           .should('have.value', '9')
-        cy.get('[data-cy="myLayers"] .lux-time-slider-start-date')
+        cy.get('[data-cy="myLayers"] .lux-time-start-date')
           .eq(0)
           .should('have.text', '8-2019')
       })
@@ -127,11 +127,73 @@ describe('Permalink/State persistor - Layers', () => {
           '/?version=3&lang=fr&layers=1860&time=2019-01-01T00%253A00%253A00Z%252F'
         )
         cy.get('[data-cy="myLayersButton"]').click()
-        cy.get('[data-cy="myLayers"] input.lux-time-slidebar').eq(0).type('2')
-        cy.get('[data-cy="myLayers"] input.lux-time-slidebar')
+        cy.get('[data-cy="myLayers"] input.lux-slidebar').eq(0).type('2')
+        cy.get('[data-cy="myLayers"] input.lux-slidebar')
           .eq(0)
           .trigger('change')
         cy.url().should('contains', '&time=2022-08-01T00%253A00%253A00Z')
+      })
+    })
+
+    describe('When updating layer time with slider widget with range mode', () => {
+      it('increases the layer time (date start) in the url', () => {
+        cy.visit(
+          '/?version=3&lang=fr&layers=99999&time=2007-08-01T00%253A00%253A00Z%252F2019-01-01T00%253A00%253A00Z'
+        )
+        cy.get('[data-cy="myLayersButton"]').click()
+        cy.get('[data-cy="myLayers"] .lux-slidebar-thumb').eq(0).focus()
+        cy.get('[data-cy="myLayers"] .lux-slidebar-thumb')
+          .eq(0)
+          .type('{rightArrow}')
+        cy.url().should(
+          'contains',
+          '&time=2010-08-01T00%253A00%253A00Z%252F2019-01-01T00%253A00%253A00Z&'
+        )
+      })
+
+      it('decreases the layer time (date start) in the url', () => {
+        cy.visit(
+          '/?version=3&lang=fr&layers=99999&time=2007-08-01T00%253A00%253A00Z%252F2019-01-01T00%253A00%253A00Z'
+        )
+        cy.get('[data-cy="myLayersButton"]').click()
+        cy.get('[data-cy="myLayers"] .lux-slidebar-thumb').eq(0).focus()
+        cy.get('[data-cy="myLayers"] .lux-slidebar-thumb')
+          .eq(0)
+          .type('{leftArrow}')
+        cy.url().should(
+          'contains',
+          '&time=2004-08-01T00%253A00%253A00Z%252F2019-01-01T00%253A00%253A00Z&'
+        )
+      })
+
+      it('increases the layer time (date end) in the url', () => {
+        cy.visit(
+          '/?version=3&lang=fr&layers=99999&time=2007-08-01T00%253A00%253A00Z%252F2019-01-01T00%253A00%253A00Z'
+        )
+        cy.get('[data-cy="myLayersButton"]').click()
+        cy.get('[data-cy="myLayers"] .lux-slidebar-thumb').eq(1).focus()
+        cy.get('[data-cy="myLayers"] .lux-slidebar-thumb')
+          .eq(1)
+          .type('{rightArrow}')
+        cy.url().should(
+          'contains',
+          '&time=2007-08-01T00%253A00%253A00Z%252F2019-08-01T00%253A00%253A00Z&'
+        )
+      })
+
+      it('decreases the layer time (date end) in the url', () => {
+        cy.visit(
+          '/?version=3&lang=fr&layers=99999&time=2007-08-01T00%253A00%253A00Z%252F2019-01-01T00%253A00%253A00Z'
+        )
+        cy.get('[data-cy="myLayersButton"]').click()
+        cy.get('[data-cy="myLayers"] .lux-slidebar-thumb').eq(1).focus()
+        cy.get('[data-cy="myLayers"] .lux-slidebar-thumb')
+          .eq(1)
+          .type('{leftArrow}')
+        cy.url().should(
+          'contains',
+          '&time=2007-08-01T00%253A00%253A00Z%252F2018-08-01T00%253A00%253A00Z&'
+        )
       })
     })
   })

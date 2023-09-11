@@ -1,19 +1,28 @@
 <script setup lang="ts">
 import { computed } from 'vue'
+import { useTranslation } from 'i18next-vue'
 
 import { formatTimeValue } from '@/services/time.utils'
 import { Layer, LayerTimeMode } from '@/stores/map.store.model'
+import SliderRange from '@/components/common/slider-range/slider-range.vue'
+
+const { t } = useTranslation()
 
 const props = defineProps<{
   layer: Layer
 }>()
 const emit = defineEmits<{
-  (e: 'changeTime', dateStart: string): void
+  (e: 'changeTime', dateStart?: string, dateEnd?: string): void
 }>()
 
-const sliderValue = computed(() =>
+const selectedMinValue = computed(() =>
   props.layer.time?.values?.findIndex(
     val => val === props.layer.currentTimeMinValue
+  )
+)
+const selectedMaxValue = computed(() =>
+  props.layer.time?.values?.findIndex(
+    val => val === props.layer.currentTimeMaxValue
   )
 )
 const timeValues = computed(computeTimeValues)
@@ -71,32 +80,64 @@ function computeTimeValues() {
   return timeValueList
 }
 
-function onChange(event: Event) {
-  const cursorIndex = parseInt((event.target as HTMLInputElement).value)
-  const selectedTimeValue = timeValues.value[cursorIndex]
+function sliderValueToTimeValueMapper(selectedValue: number) {
+  const selectedTimeValue = timeValues.value[selectedValue]
 
-  emit('changeTime', new Date(selectedTimeValue).toISOString())
+  return new Date(selectedTimeValue).toISOString()
+}
+
+function onChangeSingleDate(event: Event) {
+  const cursorIndex = parseInt((event.target as HTMLInputElement).value)
+  const newDate = sliderValueToTimeValueMapper(cursorIndex)
+
+  emit('changeTime', newDate, props.layer.currentTimeMaxValue)
+}
+
+function onChangeRangeDate(min: number, max: number) {
+  const minDate = sliderValueToTimeValueMapper(min)
+  const maxDate = sliderValueToTimeValueMapper(max)
+
+  emit('changeTime', minDate, maxDate)
 }
 </script>
 
 <template>
   <div class="lux-time-slider w-full">
-    <!-- Slider -->
-    <div>
+    <!-- Slider LayerTimeMode.VALUE -->
+    <div
+      class="lux-time-slider-value"
+      v-if="layer.time?.mode === LayerTimeMode.VALUE"
+    >
       <input
-        class="lux-time-slidebar"
+        class="lux-slidebar"
         min="0"
         type="range"
         :max="sliderNbSteps - 1"
-        :value="sliderValue"
-        @change="onChange"
+        :value="selectedMinValue"
+        @change="onChangeSingleDate"
+      />
+    </div>
+    <!-- Slider LayerTimeMode.RANGE -->
+    <div
+      class="lux-time-slider-range mr-1.5"
+      v-if="layer.time?.mode === LayerTimeMode.RANGE"
+    >
+      <slider-range
+        :ariaLabelMin="`${t('Modifier la date de début', { ns: 'client' })}`"
+        :ariaLabelMax="`${t('Modifier la date de fin', { ns: 'client' })}`"
+        :minValue="0"
+        :maxValue="sliderNbSteps - 1"
+        :selectedMinValue="selectedMinValue ?? 0"
+        :selectedMaxValue="selectedMaxValue ?? sliderNbSteps - 1"
+        :totalSteps="sliderNbSteps"
+        @change="onChangeRangeDate"
       />
     </div>
 
     <!-- Display localized time values -->
-    <div class="lux-time-slider-displayed-dates">
+    <div class="lux-time-displayed-dates">
       <div
-        class="lux-time-slider-start-date"
+        class="lux-time-start-date grow"
         v-if="
           layer.time?.mode === LayerTimeMode.RANGE ||
           layer.time?.mode === LayerTimeMode.VALUE
@@ -110,7 +151,7 @@ function onChange(event: Event) {
       </div>
 
       <div
-        class="lux-time-slider-end-date"
+        class="lux-time-slider-end-date grow text-right"
         v-if="layer.time?.mode === LayerTimeMode.RANGE"
       >
         <span>{{
