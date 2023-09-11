@@ -155,15 +155,18 @@ function createVectorLayer(
     metadata: bgLayer.metadata,
   })
   const styleStore = useStyleStore()
-  if (newBgBaseLayer?.maplibreMap.loaded()) {
-    styleStore.setBaseStyle(bgLayer.id, newBgBaseLayer.getStyle())
+  if (newBgBaseLayer?.getMapLibreMap().loaded()) {
+    styleStore.setBaseStyle(
+      bgLayer.id,
+      newBgBaseLayer?.getMapLibreMap().getStyle()
+    )
   } else {
     new Promise(resolve =>
-      newBgBaseLayer?.maplibreMap.once('data', resolve)
+      newBgBaseLayer?.getMapLibreMap().once('data', resolve)
     ).then(() =>
       styleStore.setBaseStyle(
         bgLayer.id,
-        newBgBaseLayer?.maplibreMap.getStyle()
+        newBgBaseLayer?.getMapLibreMap().getStyle()
       )
     )
   }
@@ -220,6 +223,7 @@ export default function useOpenLayers() {
   }
 
   function addLayer(olMap: OlMap, layer: Layer) {
+    if (!layer) return
     const baseLayer = getOrCreateLayer(layer)
     olMap.addLayer(baseLayer)
   }
@@ -268,8 +272,7 @@ export default function useOpenLayers() {
     layersCache.set(id, layer)
   }
 
-  function getOrCreateLayer(layer: Layer | undefined | null): BaseLayer | null {
-    if (layer === null || layer === undefined) return null
+  function getOrCreateLayer(layer: Layer): BaseLayer {
     const id = layer.id
 
     const cachedLayer = layersCache.get(id)
@@ -285,7 +288,7 @@ export default function useOpenLayers() {
   function getLayerFromCache(
     layer: Layer | undefined | null
   ): BaseLayer | null {
-    return layer ? layersCache.get(layer.id) : null
+    return layer ? layersCache.get(layer.id) || null : null
   }
 
   function applyOnBgLayer(
@@ -313,7 +316,7 @@ export default function useOpenLayers() {
     let bgBaseLayer: BaseLayer | undefined = undefined
     if (bgLayer) {
       if (isLayerCached(bgLayer)) {
-        bgBaseLayer = getLayerFromCache(bgLayer)
+        bgBaseLayer = getLayerFromCache(bgLayer)!
       } else {
         // try to create vector layer from vector sources
         if (vectorSources) {

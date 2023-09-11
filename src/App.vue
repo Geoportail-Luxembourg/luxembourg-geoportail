@@ -3,7 +3,6 @@ import { onMounted, onUnmounted, watch } from 'vue'
 import { storeToRefs } from 'pinia'
 import MapLibreLayer from '@/lib/ol-maplibre-layer'
 
-import { MapLibreLayerType } from './composables/map/map.model'
 import HeaderBar from './components/header/header-bar.vue'
 import FooterBar from './components/footer/footer-bar.vue'
 
@@ -56,9 +55,9 @@ function resizeMap() {
   // the utility function traverseLayer is used as a workaround until OL is updated to 6.15
   // then the function getAllLayers below (added in OL v.6.10.0) can be used
   // map.getAllLayers().forEach(layer => {
-  traverseLayer(map.getLayerGroup(), [], layer => {
+  traverseLayer(map.getLayerGroup(), [], (layer: any) => {
     if (layer instanceof MapLibreLayer) {
-      ;(layer as MapLibreLayerType).maplibreMap.resize()
+      ;(layer as MapLibreLayer).getMapLibreMap().resize()
     }
     return true
   })

@@ -46,12 +46,12 @@ function setCustomStyle(styleEvent: Event) {
 }
 
 function getStyleUrl() {
-  if (styleStore.styleId === null) {
+  if (styleStore.styleSerial === null) {
     return styleService.getDefaultMapBoxStyleUrl(
       styleService.getVectorId(mapStore.bgLayer)
     )
   } else {
-    return `${styleService.getvtstyleUrl_}?id=${styleStore.styleId}`
+    return `${styleStore.registerUrls.get('get')}?id=${styleStore.styleSerial}`
   }
 }
 </script>

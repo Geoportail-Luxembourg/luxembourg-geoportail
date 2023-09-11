@@ -60,6 +60,8 @@ watch(sliderOffset, () => {
 function activate() {
   const olLayer = openLayers.getLayerFromCache(sliderTopLayer.value)
 
+  if (!olLayer) return
+
   olLayerPrerenderEvent = olLayer.on(
     <EventTypes>EventType.PRERENDER,
     function (event) {
