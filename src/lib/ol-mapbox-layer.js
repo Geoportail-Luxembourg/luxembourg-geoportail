@@ -11,7 +11,7 @@ import mapboxgl from 'mapbox-gl'
  * @property {string|HTMLElement} container
  */
 
-export default class MapBox extends Layer {
+export default class MapBoxLayer extends Layer {
   /**
    * @param {Options} options
    */

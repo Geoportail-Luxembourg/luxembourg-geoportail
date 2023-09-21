@@ -6,7 +6,8 @@ import { ImageWMS, WMTS } from 'ol/source'
 import WmtsTileGrid from 'ol/tilegrid/WMTS'
 import { getTopLeft } from 'ol/extent.js'
 import { get as getProjection, transformExtent } from 'ol/proj'
-import MapLibreLayer from '@/lib/ol-maplibre-layer'
+// for the time moment legacy mapbox is used instead of maplibre, but the naming "maplibre" is kept
+import MapLibreLayer from '@/lib/ol-mapbox-layer'
 
 import { layersCache } from '@/stores/layers.cache'
 import type { Layer, LayerId } from '@/stores/map.store.model'

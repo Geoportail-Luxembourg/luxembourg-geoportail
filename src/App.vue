@@ -1,7 +1,8 @@
 <script setup lang="ts">
 import { onMounted, onUnmounted, watch } from 'vue'
 import { storeToRefs } from 'pinia'
-import MapLibreLayer from '@/lib/ol-maplibre-layer'
+// for the time moment legacy mapbox is used instead of maplibre, but the naming "maplibre" is kept
+import MapLibreLayer from '@/lib/ol-mapbox-layer'
 
 import HeaderBar from './components/header/header-bar.vue'
 import FooterBar from './components/footer/footer-bar.vue'
