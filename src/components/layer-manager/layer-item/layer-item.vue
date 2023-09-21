@@ -80,7 +80,7 @@ function changeTime(dateStart?: string, dateEnd?: string) {
         ></span>
       </button>
       <button
-        class="mt-1 fa-solid fa-trash"
+        class="mt-1 fa-regular fa-trash-can"
         :title="txtRemoveLayer"
         :aria-label="txtRemoveLayer"
         @click="$emit('clickRemove', layer)"
