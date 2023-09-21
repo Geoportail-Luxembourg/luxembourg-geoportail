@@ -10,6 +10,7 @@ import { StyleSpecification } from '@/composables/mvt-styles/mvt-styles.model'
 import useMap from './map.composable'
 import { VectorSourceDict } from '@/composables/mvt-styles/mvt-styles.model'
 import useMvtStyles from '@/composables/mvt-styles/mvt-styles.composable'
+import useLayers from '@/composables/layers/layers.composable'
 
 export class OlSynchronizer {
   previousLayers: Layer[]
@@ -19,6 +20,7 @@ export class OlSynchronizer {
     const styleStore = useStyleStore()
     const mapService = useMap()
     const styleService = useMvtStyles()
+    const layersService = useLayers()
     const openLayers = useOpenLayers()
     const { appliedStyle } = storeToRefs(styleStore)
 
@@ -53,6 +55,11 @@ export class OlSynchronizer {
         )
         mutatedLayerComparisons.forEach(layer => {
           openLayers.setLayerOpacity(map, layer.id, layer.opacity as number)
+          openLayers.setLayerTime(
+            map,
+            layer.id,
+            layersService.getLayerCurrentTime(layer)
+          )
         })
 
         if (newContext.layers) {

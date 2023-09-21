@@ -62,6 +62,23 @@ export default function useLayers() {
     }
   }
 
+  /**
+   * Get layer's current label, by default: layer.name
+   * But for layer time of type 'WMTS', layer label may change according to selected min max date values
+   * @param layer
+   * @returns Layer name by default, may be adapted if WMTS layer time
+   */
+  function getLayerCurrentLabel(layer: Layer) {
+    const time = getLayerCurrentTime(layer)
+    let label = layer.name
+
+    if (time) {
+      label = layer.metadata?.time_layers?.[time] ?? label
+    }
+
+    return label
+  }
+
   function getLayerCurrentTime(layer: Layer) {
     return [
       layer.currentTimeMinValue,
@@ -129,6 +146,7 @@ export default function useLayers() {
 
   return {
     initLayer,
+    getLayerCurrentLabel,
     getLayerCurrentTime,
     handleExclusionLayers,
     toggleLayer,
