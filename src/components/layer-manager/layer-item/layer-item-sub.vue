@@ -1,7 +1,8 @@
 <script setup lang="ts">
-import { ShallowRef, shallowRef } from 'vue'
+import { ShallowRef, shallowRef, computed } from 'vue'
+import { useTranslation } from 'i18next-vue'
 
-import { useLayer } from '@/composables/layer'
+import useLayers from '@/composables/layers/layers.composable'
 import { Layer } from '@/stores/map.store.model'
 
 const props = defineProps<{
@@ -11,7 +12,11 @@ const props = defineProps<{
   displayLayerComparatorOpen: boolean
 }>()
 const emit = defineEmits(['changeOpacity', 'clickToggleLayerComparator'])
-const { t, getLabel } = useLayer(props.layer as Layer, { emit })
+const { t } = useTranslation()
+const layersService = useLayers()
+const layerLabel = computed(() =>
+  t(layersService.getLayerCurrentLabel(props.layer), { ns: 'client' })
+)
 
 const opacity: ShallowRef<number | undefined> = shallowRef(
   (props.layer?.opacity ?? 1) * 100
@@ -61,7 +66,7 @@ function dispatchChangeOpacity() {
       :class="opacity === 0 ? 'fa-eye-slash' : 'fa-eye'"
       :title="
         t('Toggle layer opacity for {{layerName}}', {
-          layerName: t(layer.name),
+          layerName: layerLabel,
         })
       "
       @click="onToggleVisibility"
@@ -76,7 +81,7 @@ function dispatchChangeOpacity() {
       @change="onChangeOpacity"
       class="m-2.5 w-16 h-[5px] rounded-lg appearance-none cursor-pointer"
       :aria-label="
-        t('Change opacity for {{ layerName }}', { layerName: getLabel() })
+        t('Change opacity for {{ layerName }}', { layerName: layerLabel })
       "
     />
     <button
@@ -87,7 +92,7 @@ function dispatchChangeOpacity() {
       :aria-checked="isLayerComparatorOpen"
       :aria-label="
         t('Toggle layer comparator for {{ layerName }}', {
-          layerName: getLabel(),
+          layerName: layerLabel,
         })
       "
       @click="onToggleLayerComparator"

@@ -10,6 +10,7 @@ import { StyleSpecification } from '@/composables/mvt-styles/mvt-styles.model'
 import useMap from './map.composable'
 import { VectorSourceDict } from '@/composables/mvt-styles/mvt-styles.model'
 import useMvtStyles from '@/composables/mvt-styles/mvt-styles.composable'
+import useLayers from '@/composables/layers/layers.composable'
 
 export class OlSynchronizer {
   previousLayers: Layer[]
@@ -19,6 +20,7 @@ export class OlSynchronizer {
     const styleStore = useStyleStore()
     const mapService = useMap()
     const styleService = useMvtStyles()
+    const layersService = useLayers()
     const openLayers = useOpenLayers()
     const { appliedStyle } = storeToRefs(styleStore)
 
@@ -48,11 +50,21 @@ export class OlSynchronizer {
 
         removedLayers.forEach(layer => openLayers.removeLayer(map, layer.id))
 
-        addedLayerComparisons.forEach(cmp =>
+        addedLayerComparisons.forEach(cmp => {
           openLayers.addLayer(map, cmp.layer)
-        )
+          openLayers.setLayerTime(
+            map,
+            cmp.layer.id,
+            layersService.getLayerCurrentTime(cmp.layer)
+          )
+        })
         mutatedLayerComparisons.forEach(layer => {
           openLayers.setLayerOpacity(map, layer.id, layer.opacity as number)
+          openLayers.setLayerTime(
+            map,
+            layer.id,
+            layersService.getLayerCurrentTime(layer)
+          )
         })
 
         if (newContext.layers) {
@@ -70,7 +82,6 @@ export class OlSynchronizer {
         openLayers.setBgLayer(map, bgLayer, styleStore.bgVectorSources)
     )
 
-    //const appliedStyle = computed(() =>
     watchEffect(() => {
       if (!styleStore.isExpertStyleActive) {
         // must ignore typing error (too deep)

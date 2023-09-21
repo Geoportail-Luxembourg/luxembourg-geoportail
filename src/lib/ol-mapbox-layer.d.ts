@@ -1,5 +1,7 @@
-export default MapBox
 import Layer from 'ol/layer/Layer'
+import { LayerSpecification } from '@/lib/ol-maplibre-layer'
+
+export default MapBox
 
 declare type OptionType = {
   maplibreOptions: unknown
@@ -14,7 +16,6 @@ declare class MapBox extends Layer {
   getMapLibreMap()
 }
 
-import { LayerSpecification } from '@/lib/ol-maplibre-layer'
 export declare type StyleSpecification = {
   version: 8
   name?: string

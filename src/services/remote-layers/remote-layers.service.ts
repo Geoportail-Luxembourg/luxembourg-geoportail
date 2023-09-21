@@ -1,7 +1,6 @@
 import { WmsEndpoint } from '@camptocamp/ogc-client'
 
 import { predefinedWmsFixture } from '@/__fixtures__/predefined-wms.fixture'
-import { remoteProxyWms } from '@/composables/map/ol.composable'
 import {
   OgcClientWmsEndpoint,
   RemoteWmsEndpointModel,
@@ -9,6 +8,7 @@ import {
 } from './remote-layers.model'
 import { LayerId } from '@/stores/map.store.model'
 import { WmtsEndpoint } from '@/services/remote-layers/wmts.endpoint'
+import { remoteProxyWms } from '@/services/ol-layer/ol-layer.utils'
 
 const forceUseProxy = true
 
