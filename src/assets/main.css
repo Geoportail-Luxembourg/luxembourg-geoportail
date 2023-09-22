@@ -224,6 +224,10 @@
     border: 0.1rem solid rgba(0, 0, 30, 0.2);
   }
 
+  .lux-slidebar-thumb.dragging {
+    background-color: var(--color-primary);
+  }
+
   .lux-time-slider input[type='range']::-webkit-slider-thumb {
     @apply bg-white h-5  w-[0.55rem] rounded-full border-tertiary cursor-pointer;
     -webkit-appearance: none;

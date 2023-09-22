@@ -27,20 +27,21 @@ function onChangeMax(value: number) {
 <template>
   <div class="lux-slidebar-fake">
     <slider-range-thumb
-      :ariaLabel="ariaLabelMin"
-      :minValue="minValue"
-      :maxValue="selectedMaxValue"
-      :selectedValue="selectedMinValue"
-      :totalSteps="totalSteps"
-      @change="onChangeMin"
-    />
-    <slider-range-thumb
       :totalSteps="totalSteps"
       :ariaLabel="ariaLabelMax"
       :minValue="selectedMinValue"
       :maxValue="maxValue"
       :selectedValue="selectedMaxValue"
       @change="onChangeMax"
+    />
+    <!-- Put Min date value after Max value, this is just for z-index grabbing -->
+    <slider-range-thumb
+      :ariaLabel="ariaLabelMin"
+      :minValue="minValue"
+      :maxValue="selectedMaxValue"
+      :selectedValue="selectedMinValue"
+      :totalSteps="totalSteps"
+      @change="onChangeMin"
     />
     <slider-range-track
       :selectedMinValue="selectedMinValue"

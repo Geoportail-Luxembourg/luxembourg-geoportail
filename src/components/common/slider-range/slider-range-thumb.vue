@@ -12,6 +12,7 @@ const emit = defineEmits<{
   (e: 'change', value: number): void
 }>()
 
+const isDragging = ref(false)
 const sliderBarElement: Ref<HTMLElement | null> = ref(null)
 const thumbElement: Ref<HTMLElement | null> = ref(null)
 const thumbElementWidth = computed(() => thumbElement.value?.offsetWidth || 40)
@@ -23,8 +24,6 @@ const currentLeftOffset = computed(() => {
   return Math.round(offset - thumbElementWidth.value / 2)
 })
 const styleObject = computed(() => ({ left: `${currentLeftOffset.value}px` }))
-
-let isDragging = false
 
 onUnmounted(() => {
   document.removeEventListener('mousemove', onMouseMove)
@@ -44,14 +43,14 @@ function onKeyDownRight() {
 }
 
 function onMouseDown() {
-  isDragging = true
+  isDragging.value = true
 
   document.addEventListener('mousemove', onMouseMove)
   document.addEventListener('mouseup', onMouseUp)
 }
 
 function onMouseMove(payload: MouseEvent) {
-  if (!isDragging) {
+  if (!isDragging.value) {
     return
   }
 
@@ -65,7 +64,7 @@ function onMouseMove(payload: MouseEvent) {
 }
 
 function onMouseUp() {
-  isDragging = false
+  isDragging.value = false
 
   document.removeEventListener('mousemove', onMouseMove)
   document.removeEventListener('mouseup', onMouseUp)
@@ -76,6 +75,7 @@ function onMouseUp() {
   <div class="w-full" role="slider" ref="sliderBarElement">
     <button
       class="lux-slidebar-thumb"
+      :class="isDragging ? 'dragging' : ''"
       ref="thumbElement"
       :style="styleObject"
       @keydown.space="onKeyDownRight"
