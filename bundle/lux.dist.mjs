@@ -30986,7 +30986,7 @@ var mapboxGl = { exports: {} };
   });
 })(mapboxGl);
 const mapboxgl = mapboxGl.exports;
-class MapBox extends Layer {
+class MapBoxLayer extends Layer {
   constructor(options) {
     const baseOptions = Object.assign({}, options);
     delete baseOptions.accessToken;
@@ -39951,7 +39951,7 @@ function createVectorLayer(vectorSources, bgLayer) {
     },
     styleSource
   );
-  const newBgBaseLayer = new MapBox({
+  const newBgBaseLayer = new MapBoxLayer({
     maplibreOptions: options,
     label: bgLayer.name,
     id: bgLayer.id,
@@ -48528,7 +48528,7 @@ const _sfc_main = /* @__PURE__ */ defineComponent({
       const map2 = useMap().getOlMap();
       map2.updateSize();
       traverseLayer(map2.getLayerGroup(), [], (layer) => {
-        if (layer instanceof MapBox) {
+        if (layer instanceof MapBoxLayer) {
           layer.getMapLibreMap().resize();
         }
         return true;
@@ -48606,7 +48606,7 @@ export {
   LayerMetadata,
   LayerPanel,
   MapContainer,
-  MapBox as MapLibreLayer,
+  MapBoxLayer as MapLibreLayer,
   RemoteLayers,
   SliderComparator,
   y as VueDOMPurifyHTML,

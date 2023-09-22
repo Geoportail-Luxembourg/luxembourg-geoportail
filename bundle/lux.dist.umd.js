@@ -31000,7 +31000,7 @@ This will fail in production.`);
     });
   })(mapboxGl);
   const mapboxgl = mapboxGl.exports;
-  class MapBox extends Layer__default.default {
+  class MapBoxLayer extends Layer__default.default {
     constructor(options) {
       const baseOptions = Object.assign({}, options);
       delete baseOptions.accessToken;
@@ -39965,7 +39965,7 @@ This will fail in production.`);
       },
       styleSource
     );
-    const newBgBaseLayer = new MapBox({
+    const newBgBaseLayer = new MapBoxLayer({
       maplibreOptions: options,
       label: bgLayer.name,
       id: bgLayer.id,
@@ -48542,7 +48542,7 @@ This will fail in production.`);
         const map2 = useMap().getOlMap();
         map2.updateSize();
         traverseLayer(map2.getLayerGroup(), [], (layer) => {
-          if (layer instanceof MapBox) {
+          if (layer instanceof MapBoxLayer) {
             layer.getMapLibreMap().resize();
           }
           return true;
@@ -48619,7 +48619,7 @@ This will fail in production.`);
   exports2.LayerMetadata = LayerMetadata;
   exports2.LayerPanel = LayerPanel;
   exports2.MapContainer = MapContainer;
-  exports2.MapLibreLayer = MapBox;
+  exports2.MapLibreLayer = MapBoxLayer;
   exports2.RemoteLayers = RemoteLayers;
   exports2.SliderComparator = SliderComparator;
   exports2.VueDOMPurifyHTML = y;
