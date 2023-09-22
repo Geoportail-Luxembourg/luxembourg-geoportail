@@ -6,27 +6,28 @@ const props = defineProps<{
   minValue: number
   maxValue: number
   selectedMinValue: number
-  selectedMaxValue: number
+  selectedMaxValue?: number
   totalSteps: number
   ariaLabelMin?: string
   ariaLabelMax?: string
 }>()
 const emit = defineEmits<{
-  (e: 'change', min: number, max: number): void
+  (e: 'change', min: number, max?: number, dragging?: boolean): void
 }>()
 
-function onChangeMin(value: number) {
-  emit('change', value, props.selectedMaxValue)
+function onChangeMin(value: number, dragging: boolean) {
+  emit('change', value, props.selectedMaxValue, dragging)
 }
 
-function onChangeMax(value: number) {
-  emit('change', props.selectedMinValue, value)
+function onChangeMax(value: number, dragging: boolean) {
+  emit('change', props.selectedMinValue, value, dragging)
 }
 </script>
 
 <template>
   <div class="lux-slidebar-fake">
     <slider-range-thumb
+      v-if="selectedMaxValue"
       :totalSteps="totalSteps"
       :ariaLabel="ariaLabelMax"
       :minValue="selectedMinValue"
@@ -38,7 +39,7 @@ function onChangeMax(value: number) {
     <slider-range-thumb
       :ariaLabel="ariaLabelMin"
       :minValue="minValue"
-      :maxValue="selectedMaxValue"
+      :maxValue="selectedMaxValue ?? totalSteps - 1"
       :selectedValue="selectedMinValue"
       :totalSteps="totalSteps"
       @change="onChangeMin"

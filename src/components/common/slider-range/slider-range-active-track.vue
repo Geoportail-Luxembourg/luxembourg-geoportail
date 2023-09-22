@@ -3,7 +3,7 @@ import { Ref, computed, ref } from 'vue'
 
 const props = defineProps<{
   selectedMinValue: number
-  selectedMaxValue: number
+  selectedMaxValue?: number
   totalSteps: number
 }>()
 const sliderTrackElement: Ref<HTMLElement | null> = ref(null)
@@ -18,7 +18,10 @@ const currentLeftOffset = computed(() => {
 const currentWidthOffset = computed(() => {
   let offsetWidth = 0
 
-  if (sliderTrackElement.value?.offsetWidth) {
+  if (
+    props.selectedMaxValue !== undefined &&
+    sliderTrackElement.value?.offsetWidth
+  ) {
     const offsetRight =
       (sliderTrackElement.value?.offsetWidth * props.selectedMaxValue) /
       (props.totalSteps - 1)
@@ -37,6 +40,7 @@ const styleObject = computed(() => ({
 <template>
   <div ref="sliderTrackElement" class="lux-slidebar-track">
     <div
+      v-if="selectedMaxValue !== undefined"
       ref="sliderTrackSelectionElement"
       class="lux-slidebar-track-selection"
       :style="styleObject"

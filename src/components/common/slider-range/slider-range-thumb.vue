@@ -9,7 +9,7 @@ const props = defineProps<{
   selectedValue: number
 }>()
 const emit = defineEmits<{
-  (e: 'change', value: number): void
+  (e: 'change', value: number, dragging: boolean): void
 }>()
 
 const isDragging = ref(false)
@@ -31,7 +31,9 @@ onUnmounted(() => {
 })
 
 function onMoveThumb(value: number) {
-  emit('change', Math.min(Math.max(value, props.minValue), props.maxValue))
+  const valueThumb = Math.min(Math.max(value, props.minValue), props.maxValue)
+
+  emit('change', valueThumb, isDragging.value)
 }
 
 function onKeyDownLeft() {
@@ -54,20 +56,26 @@ function onMouseMove(payload: MouseEvent) {
     return
   }
 
+  onMoveThumb(getPayloadValue(payload))
+}
+
+function onMouseUp(payload: MouseEvent) {
+  isDragging.value = false
+
+  onMoveThumb(getPayloadValue(payload))
+
+  document.removeEventListener('mousemove', onMouseMove)
+  document.removeEventListener('mouseup', onMouseUp)
+}
+
+function getPayloadValue(payload: MouseEvent) {
   const value = sliderBarElement.value?.offsetWidth
     ? ((payload.clientX - thumbElementWidth.value / 2) *
         (props.totalSteps - 1)) /
       sliderBarElement.value?.offsetWidth
     : 0
 
-  onMoveThumb(Math.floor(value))
-}
-
-function onMouseUp() {
-  isDragging.value = false
-
-  document.removeEventListener('mousemove', onMouseMove)
-  document.removeEventListener('mouseup', onMouseUp)
+  return Math.floor(value)
 }
 </script>
 
