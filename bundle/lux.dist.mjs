@@ -39765,10 +39765,8 @@ const themes = useThemes();
 function useLayers() {
   function hasIntersect(exclusionA, exclusionB) {
     try {
-      const concat = JSON.parse(exclusionA).concat(JSON.parse(exclusionB)).sort((a, b) => a - b);
-      return concat.some(
-        (element, index2, array) => index2 && element === array[index2 - 1]
-      );
+      const concat = JSON.parse(exclusionA).concat(JSON.parse(exclusionB));
+      return new Set(concat).size < concat.length;
     } catch (e) {
       return false;
     }
@@ -39795,17 +39793,17 @@ function useLayers() {
     ].join(LAYER_CURRENT_TIME_SEPARATOR);
   }
   function handleExclusionLayers(layer) {
-    var _a;
+    var _a, _b, _c, _d, _e;
     if (!((_a = layer.metadata) == null ? void 0 : _a.exclusion)) {
       return;
     }
     const mapStore = useMapStore();
     const excludedLayers = mapStore.layers.filter(
       (_layer) => {
-        var _a2, _b;
+        var _a2, _b2;
         return hasIntersect(
           (_a2 = layer == null ? void 0 : layer.metadata) == null ? void 0 : _a2.exclusion,
-          (_b = _layer == null ? void 0 : _layer.metadata) == null ? void 0 : _b.exclusion
+          (_b2 = _layer == null ? void 0 : _layer.metadata) == null ? void 0 : _b2.exclusion
         );
       }
     );
@@ -39822,6 +39820,23 @@ function useLayers() {
           }
         )
       );
+    }
+    if (layer.id !== ((_b = mapStore.bgLayer) == null ? void 0 : _b.id)) {
+      if (hasIntersect(
+        (_c = layer.metadata) == null ? void 0 : _c.exclusion,
+        (_e = (_d = mapStore.bgLayer) == null ? void 0 : _d.metadata) == null ? void 0 : _e.exclusion
+      )) {
+        mapStore.setBgLayer(null);
+        alert(
+          instance.t(
+            "Background has been deactivated because the layer {{layer}} cannot be displayed on top of it.",
+            {
+              layer: instance.t(layer.name, { ns: "client" }),
+              ns: "client"
+            }
+          )
+        );
+      }
     }
   }
   function toggleLayer(id, show = true) {

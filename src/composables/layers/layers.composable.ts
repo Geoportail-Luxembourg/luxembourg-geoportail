@@ -14,13 +14,9 @@ const themes = useThemes()
 export default function useLayers() {
   function hasIntersect(exclusionA: string, exclusionB: string) {
     try {
-      const concat: number[] = JSON.parse(exclusionA)
-        .concat(JSON.parse(exclusionB))
-        .sort((a: number, b: number) => a - b)
+      const concat = JSON.parse(exclusionA).concat(JSON.parse(exclusionB))
 
-      return concat.some(
-        (element, index, array) => index && element === array[index - 1]
-      )
+      return new Set(concat).size < concat.length
     } catch (e) {
       return false
     }
@@ -96,12 +92,36 @@ export default function useLayers() {
         )
       )
     }
+
+    if (layer.id !== mapStore.bgLayer?.id) {
+      if (
+        hasIntersect(
+          layer.metadata?.exclusion as string,
+          mapStore.bgLayer?.metadata?.exclusion as string
+        )
+      ) {
+        mapStore.setBgLayer(null)
+        alert(
+          i18next.t(
+            'Background has been deactivated because ' +
+              'the layer {{layer}} cannot be displayed on top of it.',
+            {
+              layer: i18next.t(layer.name, { ns: 'client' }),
+              ns: 'client',
+            }
+          )
+        )
+      }
+    }
   }
 
   function toggleLayer(id: LayerId, show = true) {
     const themeStore = useThemeStore()
     const mapStore = useMapStore()
 
+    // the cast from ThemeNodeModel | undefined to Layer might not be correct.
+    // in the themes fixture only WMS layers correspond to the Layer definition,
+    // whereas WMTS layers have "layer" property
     const layer = <Layer>themes.findById(id, themeStore.theme)
 
     if (layer) {
@@ -115,6 +135,13 @@ export default function useLayers() {
         mapStore.addLayers(
           initLayer(layer),
           ...linkedLayers.map(layerId =>
+            // TODO: not sure if the layer exclusion is working correctly for linked layers?
+            // we might need somthing like the commented code below:
+            // {
+            //   const newLinkedLayer = themes.findById(parseInt(layerId, 10)) as unknown as Layer
+            //   handleExclusionLayers(newLinkedLayer)
+            //   return initLayer(newLinkedLayer)
+            // }
             initLayer(
               themes.findById(parseInt(layerId, 10)) as unknown as Layer
             )
