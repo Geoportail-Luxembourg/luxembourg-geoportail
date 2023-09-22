@@ -89,6 +89,14 @@ describe('Map Store', () => {
       expect(mapStore.layers.length).toBe(1)
     })
 
+    it('remove all layers', () => {
+      const mapStore = useMapStore()
+      mapStore.addLayers(layer1, layer2, layer3)
+      expect(mapStore.layers.length).toBe(3)
+      mapStore.removeAllLayers()
+      expect(mapStore.layers.length).toBe(0)
+    })
+
     it('reorder layers', () => {
       const mapStore = useMapStore()
       mapStore.addLayers(layer1, layer2, layer3)
