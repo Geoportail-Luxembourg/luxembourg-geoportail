@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import SliderRangeThumb from './slider-range-thumb.vue'
-import SliderRangeTrack from './slider-range-track.vue'
+import SliderRangeActiveTrack from './slider-range-active-track.vue'
 
 const props = defineProps<{
   minValue: number
@@ -43,7 +43,7 @@ function onChangeMax(value: number) {
       :totalSteps="totalSteps"
       @change="onChangeMin"
     />
-    <slider-range-track
+    <slider-range-active-track
       :selectedMinValue="selectedMinValue"
       :selectedMaxValue="selectedMaxValue"
       :totalSteps="totalSteps"
