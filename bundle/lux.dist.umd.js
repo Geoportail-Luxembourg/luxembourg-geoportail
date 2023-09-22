@@ -36499,6 +36499,9 @@ This will fail in production.`);
         (layer) => layerIds.indexOf(layer.id) === -1
       );
     }
+    function removeAllLayers() {
+      layers.value = [];
+    }
     function hasLayer(layerId) {
       var _a;
       return !!((_a = layers.value) == null ? void 0 : _a.find((layer) => layer.id === layerId));
@@ -36539,6 +36542,7 @@ This will fail in production.`);
       bgLayer,
       addLayers,
       removeLayers,
+      removeAllLayers,
       reorderLayers,
       setLayerOpacity,
       setLayerTime,
