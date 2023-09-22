@@ -1,8 +1,8 @@
 import { LayerId } from '@/stores/map.store.model'
 // import type { StyleSpecification } from 'maplibre-gl'
 // export type { StyleSpecification } from 'maplibre-gl'
-import type { StyleSpecification } from '@/lib/ol-maplibre-layer'
-export type { StyleSpecification } from '@/lib/ol-maplibre-layer'
+import type { StyleSpecification } from '@/lib/ol-mapbox-layer'
+export type { StyleSpecification } from '@/lib/ol-mapbox-layer'
 
 export interface BgLayerDef {
   icon_id: string
