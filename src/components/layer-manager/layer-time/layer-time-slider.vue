@@ -90,7 +90,7 @@ function onChangeSingleDate(event: Event) {
   const cursorIndex = parseInt((event.target as HTMLInputElement).value)
   const newDate = sliderValueToTimeValueMapper(cursorIndex)
 
-  emit('changeTime', newDate, props.layer.currentTimeMaxValue)
+  emit('changeTime', newDate)
 }
 
 function onChangeRangeDate(min: number, max: number) {
