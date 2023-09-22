@@ -143,7 +143,7 @@ describe('Permalink/State persistor - Layers', () => {
         cy.get('[data-cy="myLayersButton"]').click()
         cy.get('[data-cy="myLayers"] .lux-slidebar-thumb').eq(0).focus()
         cy.get('[data-cy="myLayers"] .lux-slidebar-thumb')
-          .eq(0)
+          .eq(1) // ! date start/end for slider range have been reversed for ui/z-index purpose
           .type('{rightArrow}')
         cy.url().should(
           'contains',
@@ -158,7 +158,7 @@ describe('Permalink/State persistor - Layers', () => {
         cy.get('[data-cy="myLayersButton"]').click()
         cy.get('[data-cy="myLayers"] .lux-slidebar-thumb').eq(0).focus()
         cy.get('[data-cy="myLayers"] .lux-slidebar-thumb')
-          .eq(0)
+          .eq(1) // ! date start/end for slider range have been reversed for ui/z-index purpose
           .type('{leftArrow}')
         cy.url().should(
           'contains',
@@ -173,7 +173,7 @@ describe('Permalink/State persistor - Layers', () => {
         cy.get('[data-cy="myLayersButton"]').click()
         cy.get('[data-cy="myLayers"] .lux-slidebar-thumb').eq(1).focus()
         cy.get('[data-cy="myLayers"] .lux-slidebar-thumb')
-          .eq(1)
+          .eq(0) // ! date start/end for slider range have been reversed for ui/z-index purpose
           .type('{rightArrow}')
         cy.url().should(
           'contains',
@@ -188,7 +188,7 @@ describe('Permalink/State persistor - Layers', () => {
         cy.get('[data-cy="myLayersButton"]').click()
         cy.get('[data-cy="myLayers"] .lux-slidebar-thumb').eq(1).focus()
         cy.get('[data-cy="myLayers"] .lux-slidebar-thumb')
-          .eq(1)
+          .eq(0) // ! date start/end for slider range have been reversed for ui/z-index purpose
           .type('{leftArrow}')
         cy.url().should(
           'contains',
