@@ -6,7 +6,8 @@ import { ImageWMS, WMTS } from 'ol/source'
 import WmtsTileGrid from 'ol/tilegrid/WMTS'
 import { getTopLeft } from 'ol/extent.js'
 import { get as getProjection, transformExtent } from 'ol/proj'
-import MapLibreLayer from '@geoblocks/ol-maplibre-layer'
+// for the time moment legacy mapbox is used instead of maplibre, but the naming "maplibre" is kept
+import MapLibreLayer from '@/lib/ol-mapbox-layer'
 
 import { layersCache } from '@/stores/layers.cache'
 import type { Layer, LayerId } from '@/stores/map.store.model'
@@ -67,6 +68,9 @@ function createWmsLayer(layer: Layer): ImageLayer<ImageWMS> {
     },
     source: olSource,
   })
+  olLayer.set('olcs.extent', getOlcsExtent())
+  olLayer.set('label', name)
+  olLayer.set('id', id)
 
   return olLayer
 }
@@ -102,6 +106,9 @@ function createWmtsLayer(layer: Layer): TileLayer<WMTS> {
       id,
     },
   })
+  olLayer.set('olcs.extent', getOlcsExtent())
+  olLayer.set('label', name)
+  olLayer.set('id', id)
 
   if (layer.currentTimeMinValue) {
     const newLayer =
@@ -148,15 +155,18 @@ function createVectorLayer(
     metadata: bgLayer.metadata,
   })
   const styleStore = useStyleStore()
-  if (newBgBaseLayer?.maplibreMap.loaded()) {
-    styleStore.setBaseStyle(bgLayer.id, newBgBaseLayer.getStyle())
+  if (newBgBaseLayer?.getMapLibreMap().loaded()) {
+    styleStore.setBaseStyle(
+      bgLayer.id,
+      newBgBaseLayer?.getMapLibreMap().getStyle()
+    )
   } else {
     new Promise(resolve =>
-      newBgBaseLayer?.maplibreMap.once('data', resolve)
+      newBgBaseLayer?.getMapLibreMap().once('data', resolve)
     ).then(() =>
       styleStore.setBaseStyle(
         bgLayer.id,
-        newBgBaseLayer?.maplibreMap.getStyle()
+        newBgBaseLayer?.getMapLibreMap().getStyle()
       )
     )
   }
@@ -213,7 +223,8 @@ export default function useOpenLayers() {
   }
 
   function addLayer(olMap: OlMap, layer: Layer) {
-    const baseLayer = getLayerFromCache(layer)
+    if (!layer) return
+    const baseLayer = getOrCreateLayer(layer)
     olMap.addLayer(baseLayer)
   }
 
@@ -261,7 +272,7 @@ export default function useOpenLayers() {
     layersCache.set(id, layer)
   }
 
-  function getLayerFromCache(layer: Layer): BaseLayer {
+  function getOrCreateLayer(layer: Layer): BaseLayer {
     const id = layer.id
 
     const cachedLayer = layersCache.get(id)
@@ -272,6 +283,12 @@ export default function useOpenLayers() {
       addLayerToCache(id, newLayer)
       return newLayer
     }
+  }
+
+  function getLayerFromCache(
+    layer: Layer | undefined | null
+  ): BaseLayer | null {
+    return layer ? layersCache.get(layer.id) || null : null
   }
 
   function applyOnBgLayer(
@@ -295,10 +312,11 @@ export default function useOpenLayers() {
       .getArray()
       .findIndex(layer => layer.getZIndex() === DEFAULT_BGZINDEX)
 
+    const oldBgLayerId = mapLayers.getArray()[currentBgLayerPos]?.get('id')
     let bgBaseLayer: BaseLayer | undefined = undefined
     if (bgLayer) {
       if (isLayerCached(bgLayer)) {
-        bgBaseLayer = getLayerFromCache(bgLayer)
+        bgBaseLayer = getLayerFromCache(bgLayer)!
       } else {
         // try to create vector layer from vector sources
         if (vectorSources) {
@@ -326,7 +344,9 @@ export default function useOpenLayers() {
         olMap.addLayer(bgBaseLayer)
       }
     }
-    statePersistorStyleService.restoreStyle(true)
+    if (oldBgLayerId !== bgLayer?.id) {
+      statePersistorStyleService.restoreStyle(true)
+    }
   }
 
   return {

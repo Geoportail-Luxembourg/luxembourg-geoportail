@@ -1,3 +1,3 @@
-import MapLibreLayer from '@geoblocks/ol-maplibre-layer'
+import MapLibreLayer from '@/lib/ol-mapbox-layer'
 
 export declare type MapLibreLayerType = typeof MapLibreLayer

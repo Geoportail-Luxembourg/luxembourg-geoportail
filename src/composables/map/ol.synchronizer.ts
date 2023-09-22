@@ -88,12 +88,28 @@ export class OlSynchronizer {
     watch(appliedStyle, (style: StyleSpecification) => {
       if (styleStore.bgStyle === null && !styleStore.isExpertStyleActive) {
         styleService
-          .unregisterStyle(styleStore.styleId)
-          .then((styleStore.styleId = null))
+          .unregisterStyle(styleStore.styleSerial, styleStore.registerUrls)
+          .then((styleStore.styleSerial = null))
       } else {
         styleService
-          .registerStyle(style, styleStore.styleId)
-          .then(id => (styleStore.styleId = id))
+          .registerStyle(style, styleStore.styleSerial, styleStore.registerUrls)
+          .then(serial => {
+            styleStore.styleSerial = serial
+            const id = mapStore?.bgLayer?.id
+            if (mapStore?.bgLayer && id !== undefined && serial !== undefined) {
+              openLayers.applyOnBgLayer(map, bgLayer => {
+                bgLayer.set(
+                  'xyz_custom',
+                  styleService.getDefaultMapBoxStyleXYZ(serial)
+                )
+              })
+              openLayers.setBgLayer(
+                map,
+                mapStore?.bgLayer,
+                styleStore.bgVectorSources
+              )
+            }
+          })
       }
       openLayers.applyOnBgLayer(map, bgLayer =>
         styleService.applyConsolidatedStyle(bgLayer, style)
