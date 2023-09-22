@@ -36485,6 +36485,9 @@ const useMapStore = defineStore("map", () => {
       (layer) => layerIds.indexOf(layer.id) === -1
     );
   }
+  function removeAllLayers() {
+    layers.value = [];
+  }
   function hasLayer(layerId) {
     var _a;
     return !!((_a = layers.value) == null ? void 0 : _a.find((layer) => layer.id === layerId));
@@ -36525,6 +36528,7 @@ const useMapStore = defineStore("map", () => {
     bgLayer,
     addLayers,
     removeLayers,
+    removeAllLayers,
     reorderLayers,
     setLayerOpacity,
     setLayerTime,

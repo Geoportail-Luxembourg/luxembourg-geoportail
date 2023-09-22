@@ -23,6 +23,10 @@ export const useMapStore = defineStore('map', () => {
     )
   }
 
+  function removeAllLayers() {
+    layers.value = []
+  }
+
   function hasLayer(layerId: LayerId) {
     return !!layers.value?.find(layer => layer.id === layerId)
   }
@@ -71,6 +75,7 @@ export const useMapStore = defineStore('map', () => {
     bgLayer,
     addLayers,
     removeLayers,
+    removeAllLayers,
     reorderLayers,
     setLayerOpacity,
     setLayerTime,
