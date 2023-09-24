@@ -8,6 +8,7 @@ import LayerItemSub from './layer-item-sub.vue'
 import LayerTime from '../layer-time/layer-time.vue'
 
 const props = defineProps<{
+  is3d: boolean
   layer: Layer
   draggableClassName: string
   isOpen: boolean
@@ -52,6 +53,7 @@ function changeTime(dateStart?: string, dateEnd?: string) {
   <div class="lux-layer-manager-item relative">
     <div class="w-full flex flex-nowrap items-start gap-x-2">
       <button
+        v-if="!is3d"
         class="fa-solid fa-bars cursor-move mt-1"
         :class="draggableClassName"
         :title="txtDraggableLabel"
@@ -71,6 +73,7 @@ function changeTime(dateStart?: string, dateEnd?: string) {
       >
         <span class="grow">{{ getLabel() }}</span>
         <span
+          v-if="!is3d"
           class="w-3.5 fa-solid"
           :class="isOpen ? 'fa-xmark' : 'fa-ellipsis'"
           aria-hidden="true"
@@ -86,6 +89,7 @@ function changeTime(dateStart?: string, dateEnd?: string) {
 
     <!-- Layer item sub content (opacity and toggle comparator) -->
     <layer-item-sub
+      v-if="!is3d"
       :layer="layer"
       :isOpen="isOpen"
       :isLayerComparatorOpen="isLayerComparatorOpen"

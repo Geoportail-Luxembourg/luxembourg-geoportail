@@ -13,6 +13,16 @@ export const useThemeStore = defineStore(
       themes.value?.find(theme => theme.name === themeName.value)
     )
     const bgLayers = computed(() => config.value?.background_layers || [])
+    const layerTrees_3d = computed(() => {
+      return {
+        name: 'root_3d',
+        id: -222,
+        children: themes.value
+          ?.filter(theme => theme.metadata?.ol3d_type !== undefined)
+          .map(layer => layer.children[0]),
+        metadata: {},
+      }
+    })
 
     function setThemes(themes: ConfigModel) {
       config.value = themes
@@ -28,6 +38,7 @@ export const useThemeStore = defineStore(
       themeName,
       theme,
       bgLayers,
+      layerTrees_3d,
       setTheme,
       setThemes,
     }
