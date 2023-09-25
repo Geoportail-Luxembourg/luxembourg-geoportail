@@ -37,17 +37,15 @@ function updateLayerTree() {
 }
 
 watchEffect(() => {
-  if (layerTree3d.value) {
+  if (layerTrees_3d.value) {
+    const treeModel = layerTree3d.value
+      ? layerTree3d.value
+      : themesToLayerTree(layerTrees_3d.value)
     layerTree3d.value = layerTreeService.updateLayers(
-      layerTree3d.value,
+      treeModel,
       mapStore.layers_3d
     )
   }
-})
-
-watchEffect(() => {
-  if (!layerTrees_3d.value) return null
-  layerTree3d.value = themesToLayerTree(layerTrees_3d.value)
 })
 
 function toggleParent(node: LayerTreeNodeModel, is3d: boolean) {

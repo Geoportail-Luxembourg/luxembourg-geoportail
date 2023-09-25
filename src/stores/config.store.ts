@@ -14,12 +14,14 @@ export const useThemeStore = defineStore(
     )
     const bgLayers = computed(() => config.value?.background_layers || [])
     const layerTrees_3d = computed(() => {
+      const ol3d_groups = themes.value?.filter(
+        theme => theme.metadata?.ol3d_type !== undefined
+      )
+      if (!ol3d_groups) return undefined
       return {
         name: 'root_3d',
         id: -222,
-        children: themes.value
-          ?.filter(theme => theme.metadata?.ol3d_type !== undefined)
-          .map(layer => layer.children[0]),
+        children: ol3d_groups.map(layer => layer.children[0]),
         metadata: {},
       }
     })
