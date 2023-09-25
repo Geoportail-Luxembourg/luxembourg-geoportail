@@ -2,7 +2,12 @@
 import { computed, ref } from 'vue'
 import { useTranslation } from 'i18next-vue'
 
-import { dateToISOString, formatTimeValue } from '@/services/time.utils'
+import {
+  dateToISOString,
+  formatTimeValue,
+  getClosestValue,
+  DEFAULT_TIME_INTERVAL,
+} from '@/services/time.utils'
 import { Layer, LayerTimeMode } from '@/stores/map.store.model'
 import SliderRange from '@/components/common/slider-range/slider-range.vue'
 
@@ -14,16 +19,43 @@ const props = defineProps<{
 const emit = defineEmits<{
   (e: 'changeTime', dateStart?: string, dateEnd?: string): void
 }>()
+
 const timeValues = computed(computeTimeValues)
-const sliderNbSteps = computed(() => timeValues.value?.length)
+const minLimit = computed(() =>
+  props.layer.time?.minValue
+    ? new Date(props.layer.time?.minValue).getTime()
+    : 0
+)
+const maxLimit = computed(() =>
+  props.layer.time?.maxValue
+    ? new Date(props.layer.time?.maxValue).getTime()
+    : 0
+)
+const sliderNbSteps = computed(() => maxLimit.value - minLimit.value)
 const currentTimeMaxValue = ref(props.layer.currentTimeMaxValue)
 const currentTimeMinValue = ref(props.layer.currentTimeMinValue)
 const selectedMinValue = computed(() =>
-  props.layer.time?.values?.findIndex(val => val === currentTimeMinValue.value)
+  currentTimeMinValue.value
+    ? new Date(currentTimeMinValue.value).getTime()
+    : undefined
 )
 const selectedMaxValue = computed(() =>
-  props.layer.time?.values?.findIndex(val => val === currentTimeMaxValue.value)
+  currentTimeMaxValue.value
+    ? new Date(currentTimeMaxValue.value).getTime()
+    : undefined
 )
+const selectedMinValueConverted = computed(() =>
+  convertTimestampToPercent(selectedMinValue.value)
+)
+const selectedMaxValueConverted = computed(() =>
+  convertTimestampToPercent(selectedMaxValue.value)
+)
+
+function convertTimestampToPercent(timestamp?: number) {
+  return timestamp
+    ? ((timestamp - minLimit.value) / sliderNbSteps.value) * 100
+    : 0
+}
 
 function computeTimeValues() {
   // Copy from legacy function in v3: timeSliderComponent getTimeValueList_()
@@ -31,19 +63,19 @@ function computeTimeValues() {
   const timeValueList: number[] = []
 
   if (!layerTime) {
-    return timeValueList
+    return undefined
   }
 
   if (layerTime.values) {
-    return layerTime.values
+    return layerTime.values.map(time => new Date(time).getTime())
   }
 
-  // maxValue == null means the UI shall use the current date
+  // NB. maxValue == null means the UI shall use the current date
   const minDate = new Date(layerTime.minValue)
   const maxDate = new Date(layerTime.maxValue ?? Date.now())
   const maxNbValues = 1024
   const endDate = new Date(minDate.getTime())
-  const layerTimeInterval = layerTime.interval ?? [0, 1, 0, 0]
+  const layerTimeInterval = layerTime.interval ?? DEFAULT_TIME_INTERVAL
 
   endDate.setFullYear(
     minDate.getFullYear() + maxNbValues * layerTimeInterval[0]
@@ -77,19 +109,32 @@ function computeTimeValues() {
   return timeValueList
 }
 
-function sliderValueToTimeValueMapper(selectedValue: number) {
-  const selectedTimeValue = timeValues.value[selectedValue]
+/**
+ * Compute the closest available layer date from the selected timestamp
+ * legacy v3: timeSliderComponent.getClosestValue_()
+ * @param timestamp The selected date (timestamp formatted)
+ */
+function sliderValueToTimeValueMapper(value: number) {
+  const timestamp =
+    (value / 100) * (maxLimit.value - minLimit.value) + minLimit.value
+  const selectedTimeValue = getClosestValue(timestamp, {
+    minValue: minLimit.value,
+    maxValue: maxLimit.value,
+    timeValueList: timeValues.value,
+    timeInterval: props.layer.time?.interval,
+  })
 
   return dateToISOString(selectedTimeValue) // Always use custom dateToISOString()
 }
 
 function onDraggingDates(min: number, max?: number) {
   const minDate = sliderValueToTimeValueMapper(min)
-  const maxDate =
-    max !== undefined ? sliderValueToTimeValueMapper(max) : undefined
-
   currentTimeMinValue.value = minDate
-  currentTimeMaxValue.value = maxDate
+
+  if (max) {
+    const maxDate = sliderValueToTimeValueMapper(max)
+    currentTimeMaxValue.value = maxDate
+  }
 }
 
 function onChangeDates(min: number, max?: number, dragging?: boolean) {
@@ -110,10 +155,7 @@ function onChangeDates(min: number, max?: number, dragging?: boolean) {
     >
       <slider-range
         :ariaLabelMin="`${t('Modifier la date de début', { ns: 'client' })}`"
-        :minValue="0"
-        :maxValue="sliderNbSteps - 1"
-        :selectedMinValue="selectedMinValue ?? 0"
-        :totalSteps="sliderNbSteps"
+        :selectedMinValue="selectedMinValueConverted"
         @change="onChangeDates"
       />
     </div>
@@ -125,17 +167,15 @@ function onChangeDates(min: number, max?: number, dragging?: boolean) {
       <slider-range
         :ariaLabelMin="`${t('Modifier la date de début', { ns: 'client' })}`"
         :ariaLabelMax="`${t('Modifier la date de fin', { ns: 'client' })}`"
-        :minValue="0"
-        :maxValue="sliderNbSteps - 1"
-        :selectedMinValue="selectedMinValue ?? 0"
-        :selectedMaxValue="selectedMaxValue ?? sliderNbSteps - 1"
-        :totalSteps="sliderNbSteps"
+        :selectedMinValue="selectedMinValueConverted"
+        :selectedMaxValue="selectedMaxValueConverted"
         @change="onChangeDates"
       />
     </div>
 
     <!-- Display localized time values -->
     <div class="lux-time-displayed-dates">
+      <!-- Display localized time values Min value -->
       <div
         class="lux-time-start-date grow"
         v-if="
@@ -149,7 +189,7 @@ function onChangeDates(min: number, max?: number, dragging?: boolean) {
             : '-'
         }}</span>
       </div>
-
+      <!-- Display localized time values Max value -->
       <div
         class="lux-time-slider-end-date grow text-right"
         v-if="layer.time?.mode === LayerTimeMode.RANGE"

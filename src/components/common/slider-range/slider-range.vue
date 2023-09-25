@@ -3,11 +3,8 @@ import SliderRangeThumb from './slider-range-thumb.vue'
 import SliderRangeActiveTrack from './slider-range-active-track.vue'
 
 const props = defineProps<{
-  minValue: number
-  maxValue: number
   selectedMinValue: number
   selectedMaxValue?: number
-  totalSteps: number
   ariaLabelMin?: string
   ariaLabelMax?: string
 }>()
@@ -26,28 +23,26 @@ function onChangeMax(value: number, dragging: boolean) {
 
 <template>
   <div class="lux-slidebar-fake">
+    <!-- Draggable Max thumb button -->
     <slider-range-thumb
       v-if="selectedMaxValue"
-      :totalSteps="totalSteps"
       :ariaLabel="ariaLabelMax"
-      :minValue="selectedMinValue"
-      :maxValue="maxValue"
+      :minLimit="selectedMinValue"
       :selectedValue="selectedMaxValue"
       @change="onChangeMax"
     />
-    <!-- Put Min date value after Max value, this is just for z-index grabbing -->
+    <!-- Draggable Min thumb button -->
+    <!-- put Min value after Max value, this is just for z-index grabbing -->
     <slider-range-thumb
       :ariaLabel="ariaLabelMin"
-      :minValue="minValue"
-      :maxValue="selectedMaxValue ?? totalSteps - 1"
+      :maxLimit="selectedMaxValue"
       :selectedValue="selectedMinValue"
-      :totalSteps="totalSteps"
       @change="onChangeMin"
     />
+    <!-- Selection highlight -->
     <slider-range-active-track
       :selectedMinValue="selectedMinValue"
       :selectedMaxValue="selectedMaxValue"
-      :totalSteps="totalSteps"
     />
   </div>
 </template>

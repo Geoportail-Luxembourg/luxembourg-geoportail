@@ -1,30 +1,30 @@
 <script setup lang="ts">
-import { Ref, computed, ref } from 'vue'
+import { computed, ref } from 'vue'
 
 const props = defineProps<{
   selectedMinValue: number
   selectedMaxValue?: number
-  totalSteps: number
 }>()
-const sliderTrackElement: Ref<HTMLElement | null> = ref(null)
-const sliderTrackSelectionElement: Ref<HTMLElement | null> = ref(null)
-const currentLeftOffset = computed(() => {
-  const offsetLeft = sliderTrackElement.value?.offsetWidth
-    ? (sliderTrackElement.value?.offsetWidth * props.selectedMinValue) /
-      (props.totalSteps - 1)
+
+const elRefFullTrack = ref<HTMLElement>()
+const elRefSelectionTrack = ref<HTMLElement>()
+
+const currentLeftOffset = computed(() =>
+  elRefFullTrack.value
+    ? Math.round(
+        (elRefFullTrack.value.offsetWidth * props.selectedMinValue) / 100
+      )
     : 0
-  return Math.round(offsetLeft)
-})
+)
 const currentWidthOffset = computed(() => {
   let offsetWidth = 0
 
   if (
     props.selectedMaxValue !== undefined &&
-    sliderTrackElement.value?.offsetWidth
+    elRefFullTrack.value?.offsetWidth
   ) {
     const offsetRight =
-      (sliderTrackElement.value?.offsetWidth * props.selectedMaxValue) /
-      (props.totalSteps - 1)
+      (elRefFullTrack.value?.offsetWidth * props.selectedMaxValue) / 100
 
     offsetWidth = offsetRight - currentLeftOffset.value
   }
@@ -38,10 +38,10 @@ const styleObject = computed(() => ({
 </script>
 
 <template>
-  <div ref="sliderTrackElement" class="lux-slidebar-track">
+  <div ref="elRefFullTrack" class="lux-slidebar-track">
     <div
       v-if="selectedMaxValue !== undefined"
-      ref="sliderTrackSelectionElement"
+      ref="elRefSelectionTrack"
       class="lux-slidebar-track-selection"
       :style="styleObject"
     ></div>

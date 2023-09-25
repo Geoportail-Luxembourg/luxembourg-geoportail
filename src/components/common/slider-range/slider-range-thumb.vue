@@ -1,27 +1,31 @@
 <script setup lang="ts">
-import { onUnmounted, Ref, computed, ref } from 'vue'
+import { onUnmounted, computed, ref } from 'vue'
 
-const props = defineProps<{
-  ariaLabel?: string
-  minValue: number
-  maxValue: number
-  totalSteps: number
-  selectedValue: number
-}>()
+const props = withDefaults(
+  defineProps<{
+    ariaLabel?: string
+    maxLimit?: number
+    minLimit?: number
+    selectedValue: number
+  }>(),
+  {
+    maxLimit: 100,
+    minLimit: 0,
+  }
+)
 const emit = defineEmits<{
   (e: 'change', value: number, dragging: boolean): void
 }>()
 
 const isDragging = ref(false)
-const sliderBarElement: Ref<HTMLElement | null> = ref(null)
-const thumbElement: Ref<HTMLElement | null> = ref(null)
-const thumbElementWidth = computed(() => thumbElement.value?.offsetWidth || 40)
+const elRefTrack = ref<HTMLElement>()
+const elRefThumb = ref<HTMLElement>()
+const elRefTrackWidth = computed(() => elRefTrack.value?.offsetWidth || 0)
+const elRefThumbWidth = computed(() => elRefThumb.value?.offsetWidth || 40)
+const currentValue = ref(props.selectedValue) // Is detached from selectedValue, keep its own state
 const currentLeftOffset = computed(() => {
-  const offset = sliderBarElement.value?.offsetWidth
-    ? (sliderBarElement.value?.offsetWidth * props.selectedValue) /
-      (props.totalSteps - 1)
-    : 0
-  return Math.round(offset - thumbElementWidth.value / 2)
+  const offset = (elRefTrackWidth.value * currentValue.value) / 100
+  return offset - elRefThumbWidth.value / 2
 })
 const styleObject = computed(() => ({ left: `${currentLeftOffset.value}px` }))
 
@@ -31,17 +35,16 @@ onUnmounted(() => {
 })
 
 function onMoveThumb(value: number) {
-  const valueThumb = Math.min(Math.max(value, props.minValue), props.maxValue)
-
-  emit('change', valueThumb, isDragging.value)
+  currentValue.value = Math.max(Math.min(value, 100), 0)
+  emit('change', currentValue.value, isDragging.value)
 }
 
 function onKeyDownLeft() {
-  onMoveThumb(props.selectedValue - 1)
+  onMoveThumb(currentValue.value - 1)
 }
 
 function onKeyDownRight() {
-  onMoveThumb(props.selectedValue + 1)
+  onMoveThumb(currentValue.value + 1)
 }
 
 function onMouseDown() {
@@ -68,23 +71,27 @@ function onMouseUp(payload: MouseEvent) {
   document.removeEventListener('mouseup', onMouseUp)
 }
 
+/**
+ * From mouse move event getpayload, if it is a range (there are two thumbs coexisting,
+ * there must be minLimit or maxLimit), then check if it does not exceed the limit
+ * @param payload
+ */
 function getPayloadValue(payload: MouseEvent) {
-  const value = sliderBarElement.value?.offsetWidth
-    ? ((payload.clientX - thumbElementWidth.value / 2) *
-        (props.totalSteps - 1)) /
-      sliderBarElement.value?.offsetWidth
+  const value = elRefTrack.value?.offsetWidth
+    ? ((payload.clientX - elRefThumbWidth.value * 2) * 100) /
+      elRefTrack.value?.offsetWidth
     : 0
 
-  return Math.floor(value)
+  return Math.round(Math.max(Math.min(value, props.maxLimit), props.minLimit))
 }
 </script>
 
 <template>
-  <div class="w-full" role="slider" ref="sliderBarElement">
+  <div class="w-full" role="slider" ref="elRefTrack">
     <button
       class="lux-slidebar-thumb"
       :class="isDragging ? 'dragging' : ''"
-      ref="thumbElement"
+      ref="elRefThumb"
       :style="styleObject"
       @keydown.space="onKeyDownRight"
       @keydown.right="onKeyDownRight"
