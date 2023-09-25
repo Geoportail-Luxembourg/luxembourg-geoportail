@@ -67,7 +67,7 @@ function toggleLayer(node: LayerTreeNodeModel, is3d: boolean) {
 <template>
   <layer-tree-node
     class="mb-6"
-    v-if="layerTree3d"
+    v-if="layerTree3d && mapStore.is_3d_active"
     :node="layerTree3d"
     :key="layerTree3d.id"
     @toggle-parent="node => toggleParent(node, true)"

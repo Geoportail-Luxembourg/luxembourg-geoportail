@@ -8,6 +8,7 @@ export const useMapStore = defineStore('map', () => {
   const map: Ref<MapContext> = ref({})
   const layers: ShallowRef<Layer[]> = shallowRef([])
   const layers_3d: ShallowRef<any[]> = shallowRef([])
+  const is_3d_active: Ref<boolean> = ref(false)
   const bgLayer: Ref<Layer | undefined | null> = ref(undefined) // undefined => at start app | null => blank bgLayer
 
   function setBgLayer(layer: Layer | null) {
@@ -81,6 +82,7 @@ export const useMapStore = defineStore('map', () => {
     map,
     layers,
     layers_3d,
+    is_3d_active,
     bgLayer,
     addLayers,
     add3dLayers,
