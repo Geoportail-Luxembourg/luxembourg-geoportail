@@ -36489,6 +36489,7 @@ This will fail in production.`);
     const layers = shallowRef([]);
     const layers_3d = shallowRef([]);
     const is_3d_active = ref(false);
+    const is_3d_mesh = ref(true);
     const bgLayer = ref(void 0);
     function setBgLayer(layer) {
       bgLayer.value = layer;
@@ -36549,6 +36550,7 @@ This will fail in production.`);
       layers,
       layers_3d,
       is_3d_active,
+      is_3d_mesh,
       bgLayer,
       addLayers,
       add3dLayers,
@@ -39708,6 +39710,8 @@ This will fail in production.`);
     LayerTimeWidget2["SLIDER"] = "slider";
     return LayerTimeWidget2;
   })(LayerTimeWidget || {});
+  const ROOT_NAME_3D = "root_3d";
+  const DUMMY_ID_ROOT_3D = -222;
   const useThemeStore = defineStore(
     "config",
     () => {
@@ -39738,8 +39742,8 @@ This will fail in production.`);
         if (!ol3d_groups)
           return void 0;
         return {
-          name: "root_3d",
-          id: -222,
+          name: ROOT_NAME_3D,
+          id: DUMMY_ID_ROOT_3D,
           children: ol3d_groups.map((layer) => layer.children[0]),
           metadata: {}
         };
@@ -39784,6 +39788,10 @@ This will fail in production.`);
         }
       }
     }
+    function find3dLayerById(id) {
+      const { layerTrees_3d } = useThemeStore();
+      return findByIdOrName(id, void 0, layerTrees_3d);
+    }
     function findBgLayerById(id) {
       const { bgLayers } = useThemeStore();
       return bgLayers.find((l2) => l2.id === id);
@@ -39799,6 +39807,7 @@ This will fail in production.`);
     return {
       findById,
       findByName,
+      find3dLayerById,
       findBgLayerById,
       findBgLayerByName,
       setTheme
@@ -43073,7 +43082,7 @@ This will fail in production.`);
       __publicField(this, "localMetadataBaseUrl", "https://map.geoportail.lu/getMetadata");
     }
     async getLayerMetadata(id, currentLanguage) {
-      const layer = useThemes().findBgLayerById(+id) || useThemes().findById(+id);
+      const layer = useThemes().findBgLayerById(+id) || useThemes().findById(+id) || useThemes().find3dLayerById(+id);
       if (layer) {
         const localMetadata = layer.metadata;
         const metadataId = localMetadata == null ? void 0 : localMetadata.metadata_id;
@@ -43853,7 +43862,7 @@ This will fail in production.`);
             onToggleParent: _cache[0] || (_cache[0] = (node) => toggleParent(node, true)),
             onToggleLayer: _cache[1] || (_cache[1] = (node) => toggleLayer(node, true))
           }, null, 8, ["node"])) : createCommentVNode("v-if", true),
-          unref(layerTree) ? (openBlock(), createBlock(LayerTreeNode, {
+          unref(layerTree) && !(unref(mapStore).is_3d_active && unref(mapStore).is_3d_mesh) ? (openBlock(), createBlock(LayerTreeNode, {
             node: unref(layerTree),
             key: unref(layerTree).id,
             onToggleParent: _cache[2] || (_cache[2] = (node) => toggleParent(node, false)),
