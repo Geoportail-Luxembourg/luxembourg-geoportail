@@ -48765,11 +48765,13 @@ export {
   themeSelectorService,
   useAppStore,
   useBackgroundLayer,
+  useLayers,
   useMap,
   useMapStore,
   useMvtStyles,
   useOpenLayers,
   useStyleStore,
   useThemeStore,
+  useThemes,
   watch
 };
