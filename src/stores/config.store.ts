@@ -3,6 +3,9 @@ import { computed, ref, shallowRef, ShallowRef } from 'vue'
 
 import { ConfigModel } from '@/composables/themes/themes.model'
 
+const ROOT_NAME_3D = 'root_3d'
+const DUMMY_ID_ROOT_3D = -222
+
 export const useThemeStore = defineStore(
   'config',
   () => {
@@ -19,8 +22,8 @@ export const useThemeStore = defineStore(
       )
       if (!ol3d_groups) return undefined
       return {
-        name: 'root_3d',
-        id: -222,
+        name: ROOT_NAME_3D,
+        id: DUMMY_ID_ROOT_3D,
         children: ol3d_groups.map(layer => layer.children[0]),
         metadata: {},
       }
