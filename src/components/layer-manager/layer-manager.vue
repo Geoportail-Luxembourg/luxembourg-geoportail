@@ -22,7 +22,7 @@ const mapStore = useMapStore()
 const appStore = useAppStore()
 const styles = useMvtStyles()
 const sliderStore = useSliderComparatorStore()
-const { bgLayer } = storeToRefs(mapStore)
+const { layers_3d, bgLayer } = storeToRefs(mapStore)
 const { sliderActive } = storeToRefs(sliderStore)
 
 const layers = computed(() => [...mapStore.layers].reverse())
@@ -81,6 +81,33 @@ function toggleLayerComparator() {
 
 <template>
   <div>
+    <ul class="mb-4" v-if="layers_3d.length > 0">
+      <li
+        v-for="(layer, index) in layers_3d"
+        :key="layer.id"
+        :id="(layer.id as string)"
+        data-cy="myLayer"
+      >
+        <layer-item
+          :is3d="true"
+          :draggableClassName="draggableClassName"
+          :layer="layer"
+          :isOpen="isLayerOpenId === layer.id"
+          :isLayerComparatorOpen="sliderActive"
+          :displayLayerComparatorOpen="index === 0"
+          @clickRemove="removeLayer"
+          @clickToggle="toggleAccordionItem"
+          @clickToggleLayerComparator="toggleLayerComparator"
+          @clickInfo="setMetadataId(layer.id)"
+          @changeOpacity="changeOpacityLayer"
+          @changeTime="
+            (dateStart, dateEnd) => changeTime(layer, dateStart, dateEnd)
+          "
+        >
+        </layer-item>
+      </li>
+    </ul>
+
     <ul id="sortable-layers">
       <li
         v-for="(layer, index) in layers"
@@ -89,6 +116,7 @@ function toggleLayerComparator() {
         data-cy="myLayer"
       >
         <layer-item
+          :is3d="false"
           :draggableClassName="draggableClassName"
           :layer="layer"
           :isOpen="isLayerOpenId === layer.id"

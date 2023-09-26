@@ -115,14 +115,15 @@ export default function useLayers() {
     }
   }
 
-  function toggleLayer(id: LayerId, show = true) {
+  function toggleLayer(id: LayerId, show = true, is3d: boolean) {
     const themeStore = useThemeStore()
     const mapStore = useMapStore()
 
     // the cast from ThemeNodeModel | undefined to Layer might not be correct.
     // in the themes fixture only WMS layers correspond to the Layer definition,
     // whereas WMTS layers have "layer" property
-    const layer = <Layer>themes.findById(id, themeStore.theme)
+    const store = is3d ? themeStore.layerTrees_3d : themeStore.theme
+    const layer = <Layer>themes.findById(id, store)
 
     if (layer) {
       const linkedLayers = layer.metadata?.linked_layers || []
@@ -132,7 +133,8 @@ export default function useLayers() {
       } else {
         handleExclusionLayers(layer)
 
-        mapStore.addLayers(
+        const addLayers = is3d ? mapStore.add3dLayers : mapStore.addLayers
+        addLayers(
           initLayer(layer),
           ...linkedLayers.map(layerId =>
             // TODO: not sure if the layer exclusion is working correctly for linked layers?

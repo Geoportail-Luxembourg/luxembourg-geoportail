@@ -7,6 +7,9 @@ import { LayerId, Layer, MapContext } from './map.store.model'
 export const useMapStore = defineStore('map', () => {
   const map: Ref<MapContext> = ref({})
   const layers: ShallowRef<Layer[]> = shallowRef([])
+  const layers_3d: ShallowRef<any[]> = shallowRef([])
+  const is_3d_active: Ref<boolean> = ref(false)
+  const is_3d_mesh: Ref<boolean> = ref(true)
   const bgLayer: Ref<Layer | undefined | null> = ref(undefined) // undefined => at start app | null => blank bgLayer
 
   function setBgLayer(layer: Layer | null) {
@@ -17,8 +20,15 @@ export const useMapStore = defineStore('map', () => {
     layers.value = [...new Set([...layers.value, ...newLayers])]
   }
 
+  function add3dLayers(...newLayers: Layer[]) {
+    layers_3d.value = [...new Set([...layers_3d.value, ...newLayers])]
+  }
+
   function removeLayers(...layerIds: LayerId[]) {
     layers.value = layers.value.filter(
+      layer => layerIds.indexOf(layer.id) === -1
+    )
+    layers_3d.value = layers_3d.value.filter(
       layer => layerIds.indexOf(layer.id) === -1
     )
   }
@@ -72,8 +82,12 @@ export const useMapStore = defineStore('map', () => {
   return {
     map,
     layers,
+    layers_3d,
+    is_3d_active,
+    is_3d_mesh,
     bgLayer,
     addLayers,
+    add3dLayers,
     removeLayers,
     removeAllLayers,
     reorderLayers,

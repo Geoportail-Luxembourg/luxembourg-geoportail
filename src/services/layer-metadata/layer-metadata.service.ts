@@ -21,7 +21,9 @@ export class LayerMetadataService {
 
   async getLayerMetadata(id: LayerId, currentLanguage: string) {
     const layer: ThemeNodeModel | undefined =
-      useThemes().findBgLayerById(+id) || useThemes().findById(+id)
+      useThemes().findBgLayerById(+id) ||
+      useThemes().findById(+id) ||
+      useThemes().find3dLayerById(+id)
 
     if (layer) {
       // Internal layer
