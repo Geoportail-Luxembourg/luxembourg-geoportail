@@ -24,7 +24,9 @@ export const useThemeStore = defineStore(
       return {
         name: ROOT_NAME_3D,
         id: DUMMY_ID_ROOT_3D,
-        children: ol3d_groups.map(layer => layer.children[0]),
+        children: ol3d_groups.map(layer =>
+          layer?.children ? layer.children[0] : layer
+        ),
         metadata: {},
       }
     })

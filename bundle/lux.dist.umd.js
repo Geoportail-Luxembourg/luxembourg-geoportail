@@ -39744,7 +39744,7 @@ This will fail in production.`);
         return {
           name: ROOT_NAME_3D,
           id: DUMMY_ID_ROOT_3D,
-          children: ol3d_groups.map((layer) => layer.children[0]),
+          children: ol3d_groups.map((layer) => (layer == null ? void 0 : layer.children) ? layer.children[0] : layer),
           metadata: {}
         };
       });
@@ -40544,6 +40544,9 @@ This will fail in production.`);
   const ZoomToExtentControl = /* @__PURE__ */ _export_sfc(_sfc_main$B, [["__file", "/home/mkirmse/devel/gmf/luxembourg-geoportail_rebase/src/components/map-controls/zoom-to-extent-control.vue"]]);
   const _sfc_main$A = /* @__PURE__ */ defineComponent({
     __name: "map-container",
+    props: {
+      v4_standalone: { type: Boolean, required: false, default: false }
+    },
     setup(__props) {
       const map2 = useMap();
       const mapContainer = ref(null);
@@ -40574,7 +40577,7 @@ This will fail in production.`);
           createVNode(ZoomToExtentControl, { extent: DEFAULT_EXTENT }),
           createVNode(FullscreenControl),
           createVNode(AttributionControl),
-          createVNode(Map3dControl),
+          __props.v4_standalone ? (openBlock(), createBlock(Map3dControl, { key: 0 })) : createCommentVNode("v-if", true),
           createVNode(LocationControl)
         ], 512);
       };
@@ -48710,7 +48713,7 @@ This will fail in production.`);
             ])) : createCommentVNode("v-if", true),
             createCommentVNode(" Map container and slider comparator "),
             createBaseVNode("div", _hoisted_5, [
-              createVNode(MapContainer),
+              createVNode(MapContainer, { v4_standalone: true }),
               createVNode(SliderComparator),
               createVNode(RemoteLayers),
               createVNode(LayerMetadata)

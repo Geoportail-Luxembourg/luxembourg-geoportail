@@ -16,6 +16,15 @@ const map = useMap()
 const mapContainer = ref(null)
 const olMap = map.createMap()
 
+withDefaults(
+  defineProps<{
+    v4_standalone?: boolean
+  }>(),
+  {
+    v4_standalone: false,
+  }
+)
+
 const DEFAULT_EXTENT = [
   425152.9429259216, 6324465.99999133, 914349.9239510496, 6507914.867875754,
 ] // TODO: comming from legacy var "defaultExtent", to be moved to config
@@ -45,7 +54,7 @@ provide('olMap', olMap)
     <zoom-to-extent-control :extent="DEFAULT_EXTENT" />
     <fullscreen-control />
     <attribution-control />
-    <map-3d-control />
+    <map-3d-control v-if="v4_standalone" />
     <location-control />
   </div>
 </template>
