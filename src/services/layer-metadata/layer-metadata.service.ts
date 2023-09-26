@@ -6,7 +6,7 @@ import {
   isoLang2To3,
   stringToHtml,
 } from './layer-metadata.utils'
-import useThemes from '../../composables/themes/themes.composable'
+import useThemes from '@/composables/themes/themes.composable'
 import { LayerId } from '@/stores/map.store.model'
 import { remoteMetadataHelper } from './remote-metadata.helper'
 import { REMOTE_SERVICE_TYPE } from '../remote-layers/remote-layers.model'
