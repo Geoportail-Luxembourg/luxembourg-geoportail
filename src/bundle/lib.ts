@@ -18,6 +18,7 @@ import HeaderBar from '@/components/header/header-bar.vue'
 import FooterBar from '@/components/footer/footer-bar.vue'
 import LayerPanel from '@/components/layer-panel/layer-panel.vue'
 import SliderComparator from '@/components/slider/slider-comparator.vue'
+import useBackgroundLayer from '@/composables/background-layer/background-layer.composable'
 import useMap from '@/composables/map/map.composable'
 import useMvtStyles from '@/composables/mvt-styles/mvt-styles.composable'
 import useOpenLayers from '@/composables/map/ol.composable'
@@ -100,6 +101,7 @@ export {
   useMvtStyles,
   useOpenLayers,
   useAppStore,
+  useBackgroundLayer,
   useMapStore,
   useStyleStore,
   useThemeStore,
