@@ -1,5 +1,7 @@
 import { setActivePinia, createPinia } from 'pinia'
 
+import useBackgroundLayer from '../composables/background-layer/background-layer.composable'
+import useLayers from '../composables/layers/layers.composable'
 import { useMapStore } from './map.store'
 import { Layer } from './map.store.model'
 
@@ -25,6 +27,9 @@ const layer3: Layer = {
   layers: 'layer3_layers',
   type: 'WMTS',
   imageType: '',
+  metadata: {
+    exclusion: '["test_single1", "test_exclude"]',
+  },
 }
 
 const layer4: Layer = {
@@ -33,6 +38,9 @@ const layer4: Layer = {
   layers: 'layer4_layers',
   type: 'WMTS',
   imageType: '',
+  metadata: {
+    exclusion: '["test_single2", "test_exclude"]',
+  },
 }
 
 const backgroundLayer: Layer = {
@@ -41,6 +49,9 @@ const backgroundLayer: Layer = {
   layers: 'background_layers',
   type: 'BG WMTS',
   imageType: '',
+  metadata: {
+    exclusion: '["test_single3", "test_exclude"]',
+  },
 }
 
 describe('Map Store', () => {
@@ -172,6 +183,50 @@ describe('Map Store', () => {
       const mapStore = useMapStore()
       expect(mapStore.bgLayer).toBe(undefined)
       mapStore.setBgLayer(backgroundLayer)
+      expect(mapStore.bgLayer).toStrictEqual(backgroundLayer)
+    })
+    vi.mock('../composables/themes/themes.composable', () => {
+      return {
+        default: () => {
+          return {
+            findById: (id: any, node?: any): any => {
+              expect(node).toBeUndefined()
+              if (id === 2) return layer2
+              if (id === 3) return layer3
+              if (id === 4) return layer4
+            },
+          }
+        },
+      }
+    })
+    vi.stubGlobal('alert', vi.fn())
+    it('layer exclusion', () => {
+      const mapStore = useMapStore()
+      expect(mapStore.bgLayer).toBe(undefined)
+      mapStore.setBgLayer(backgroundLayer)
+      expect(mapStore.bgLayer).toStrictEqual(backgroundLayer)
+      useLayers().toggleLayer(2)
+      expect(mapStore.layers.length).toBe(1)
+      expect(window.alert).toHaveBeenCalledTimes(0)
+      useLayers().toggleLayer(3)
+      expect(window.alert).toHaveBeenCalledTimes(1)
+      expect(mapStore.layers.length).toBe(2)
+      expect(mapStore.bgLayer).toStrictEqual(null)
+      useLayers().toggleLayer(4)
+      expect(window.alert).toHaveBeenCalledTimes(2)
+      expect(mapStore.layers.length).toBe(2)
+      expect(mapStore.bgLayer).toStrictEqual(null)
+    })
+    it('bg exclusion', () => {
+      const mapStore = useMapStore()
+      expect(mapStore.bgLayer).toBe(undefined)
+      mapStore.addLayers(layer2, layer3, layer4)
+      expect(mapStore.layers.length).toBe(3)
+      mapStore.setBgLayer(backgroundLayer)
+      expect(mapStore.layers.length).toBe(3)
+      useBackgroundLayer().setMapBackground(backgroundLayer)
+      expect(mapStore.layers.length).toBe(1)
+      expect(window.alert).toHaveBeenCalled()
       expect(mapStore.bgLayer).toStrictEqual(backgroundLayer)
     })
   })
