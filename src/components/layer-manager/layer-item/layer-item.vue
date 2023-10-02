@@ -53,7 +53,6 @@ function changeTime(dateStart?: string, dateEnd?: string) {
   <div class="lux-layer-manager-item relative">
     <div class="w-full flex flex-nowrap items-start gap-x-2">
       <button
-        v-if="!is3d"
         class="fa-solid fa-bars cursor-move mt-1"
         :class="draggableClassName"
         :title="txtDraggableLabel"
@@ -68,7 +67,8 @@ function changeTime(dateStart?: string, dateEnd?: string) {
         :aria-expanded="isOpen"
         :aria-controls="`layer-manager-item-content-${layer.id}`"
         :data-cy="`myLayerItemLabel-${layer.id}`"
-        class="cursor-pointer grow text-left break-words w-[70%] flex items-center"
+        :class="is3d ? 'cursor-default' : ''"
+        class="grow text-left break-words w-[70%] flex items-center"
         @click="$emit('clickToggle', layer)"
       >
         <span class="grow">{{ getLabel() }}</span>
