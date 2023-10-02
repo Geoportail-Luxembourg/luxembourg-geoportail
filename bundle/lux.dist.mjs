@@ -36531,6 +36531,12 @@ const useMapStore = defineStore("map", () => {
       return elt;
     });
   }
+  function setIs3dActive(active) {
+    is_3d_active.value = active;
+  }
+  function setIs3dMesh(active) {
+    is_3d_mesh.value = active;
+  }
   return {
     map: map2,
     layers,
@@ -36546,6 +36552,8 @@ const useMapStore = defineStore("map", () => {
     setLayerOpacity,
     setLayerTime,
     setBgLayer,
+    setIs3dActive,
+    setIs3dMesh,
     hasLayer
   };
 });
@@ -39833,7 +39841,7 @@ function useLayers() {
     ].join(LAYER_CURRENT_TIME_SEPARATOR);
   }
   function handleExclusionLayers(layer) {
-    var _a, _b, _c, _d, _e;
+    var _a, _b;
     if (!((_a = layer.metadata) == null ? void 0 : _a.exclusion)) {
       return;
     }
@@ -39862,21 +39870,26 @@ function useLayers() {
       );
     }
     if (layer.id !== ((_b = mapStore.bgLayer) == null ? void 0 : _b.id)) {
-      if (hasIntersect(
-        (_c = layer.metadata) == null ? void 0 : _c.exclusion,
-        (_e = (_d = mapStore.bgLayer) == null ? void 0 : _d.metadata) == null ? void 0 : _e.exclusion
-      )) {
-        mapStore.setBgLayer(null);
-        alert(
-          instance.t(
-            "Background has been deactivated because the layer {{layer}} cannot be displayed on top of it.",
-            {
-              layer: instance.t(layer.name, { ns: "client" }),
-              ns: "client"
-            }
-          )
-        );
-      }
+      handleExclusionWithBg(layer);
+    }
+  }
+  function handleExclusionWithBg(layer) {
+    var _a, _b, _c;
+    const mapStore = useMapStore();
+    if (hasIntersect(
+      (_a = layer.metadata) == null ? void 0 : _a.exclusion,
+      (_c = (_b = mapStore.bgLayer) == null ? void 0 : _b.metadata) == null ? void 0 : _c.exclusion
+    )) {
+      mapStore.setBgLayer(null);
+      alert(
+        instance.t(
+          "Background has been deactivated because the layer {{layer}} cannot be displayed on top of it.",
+          {
+            layer: instance.t(layer.name, { ns: "client" }),
+            ns: "client"
+          }
+        )
+      );
     }
   }
   function toggleLayer(id, show = true, is3d) {
@@ -40457,7 +40470,7 @@ const _sfc_main$E = /* @__PURE__ */ defineComponent({
       return openBlock(), createElementBlock("div", {
         ref_key: "controlElement",
         ref: controlElement,
-        class: normalizeClass(`tracker-off ${props.className} ${unref(CLASS_UNSELECTABLE)} ${unref(CLASS_CONTROL)} ${unref(mapStore).is_3d_active ? "map-3d-selected" : ""}`)
+        class: normalizeClass(`${props.className} ${unref(CLASS_UNSELECTABLE)} ${unref(CLASS_CONTROL)} ${unref(mapStore).is_3d_active ? "active" : ""}`)
       }, [
         createBaseVNode("button", {
           title: unref(t)(props.tipLabel),
@@ -43073,7 +43086,8 @@ class LayerMetadataService {
     __publicField(this, "localMetadataBaseUrl", "https://map.geoportail.lu/getMetadata");
   }
   async getLayerMetadata(id, currentLanguage) {
-    const layer = useThemes().findBgLayerById(+id) || useThemes().findById(+id) || useThemes().find3dLayerById(+id);
+    const themesService = useThemes();
+    const layer = themesService.findBgLayerById(+id) || themesService.findById(+id) || themesService.find3dLayerById(+id);
     if (layer) {
       const localMetadata = layer.metadata;
       const metadataId = localMetadata == null ? void 0 : localMetadata.metadata_id;
@@ -43812,6 +43826,9 @@ const _sfc_main$k = /* @__PURE__ */ defineComponent({
     const layers = useLayers();
     const layerTree = shallowRef();
     const layerTree3d = shallowRef();
+    const showDefaultCatalog = computed(
+      () => !mapStore.is_3d_active || mapStore.is_3d_active && !mapStore.is_3d_mesh
+    );
     const { layerTrees_3d } = storeToRefs(themeStore);
     watchEffect(updateLayerTree);
     function updateLayerTree() {
@@ -43845,21 +43862,23 @@ const _sfc_main$k = /* @__PURE__ */ defineComponent({
       layers.toggleLayer(+node.id, !node.checked, is3d);
     }
     return (_ctx, _cache) => {
-      return openBlock(), createElementBlock(Fragment, null, [
+      return openBlock(), createElementBlock("div", null, [
+        createCommentVNode(" 3D layers catalog, only displayed when 3D is active "),
         unref(layerTree3d) && unref(mapStore).is_3d_active ? (openBlock(), createBlock(LayerTreeNode, {
-          class: "mb-6",
+          class: "mb-7",
           node: unref(layerTree3d),
           key: unref(layerTree3d).id,
           onToggleParent: _cache[0] || (_cache[0] = (node) => toggleParent(node, true)),
           onToggleLayer: _cache[1] || (_cache[1] = (node) => toggleLayer(node, true))
         }, null, 8, ["node"])) : createCommentVNode("v-if", true),
-        unref(layerTree) && !(unref(mapStore).is_3d_active && unref(mapStore).is_3d_mesh) ? (openBlock(), createBlock(LayerTreeNode, {
+        createCommentVNode(" Main catalog, displays by default and 3D terrain active "),
+        unref(layerTree) && unref(showDefaultCatalog) ? (openBlock(), createBlock(LayerTreeNode, {
           node: unref(layerTree),
           key: unref(layerTree).id,
           onToggleParent: _cache[2] || (_cache[2] = (node) => toggleParent(node, false)),
           onToggleLayer: _cache[3] || (_cache[3] = (node) => toggleLayer(node, false))
         }, null, 8, ["node"])) : createCommentVNode("v-if", true)
-      ], 64);
+      ]);
     };
   }
 });
@@ -46501,11 +46520,10 @@ const _sfc_main$b = /* @__PURE__ */ defineComponent({
     return (_ctx, _cache) => {
       return openBlock(), createElementBlock("div", _hoisted_1$9, [
         createBaseVNode("div", _hoisted_2$9, [
-          !__props.is3d ? (openBlock(), createElementBlock("button", {
-            key: 0,
+          createBaseVNode("button", {
             class: normalizeClass(["fa-solid fa-bars cursor-move mt-1", __props.draggableClassName]),
             title: unref(txtDraggableLabel)
-          }, null, 10, _hoisted_3$8)) : createCommentVNode("v-if", true),
+          }, null, 10, _hoisted_3$8),
           createBaseVNode("button", {
             class: "fa-solid fa-info mt-1",
             "aria-label": unref(txtTitleLabel),
@@ -46516,7 +46534,7 @@ const _sfc_main$b = /* @__PURE__ */ defineComponent({
             "aria-expanded": __props.isOpen,
             "aria-controls": `layer-manager-item-content-${__props.layer.id}`,
             "data-cy": `myLayerItemLabel-${__props.layer.id}`,
-            class: "cursor-pointer grow text-left break-words w-[70%] flex items-center",
+            class: normalizeClass([__props.is3d ? "cursor-default" : "", "grow text-left break-words w-[70%] flex items-center"]),
             onClick: _cache[1] || (_cache[1] = ($event) => _ctx.$emit("clickToggle", __props.layer))
           }, [
             createBaseVNode("span", _hoisted_6$4, toDisplayString(unref(getLabel)()), 1),
@@ -46525,7 +46543,7 @@ const _sfc_main$b = /* @__PURE__ */ defineComponent({
               class: normalizeClass(["w-3.5 fa-solid", __props.isOpen ? "fa-xmark" : "fa-ellipsis"]),
               "aria-hidden": "true"
             }, null, 2)) : createCommentVNode("v-if", true)
-          ], 8, _hoisted_5$8),
+          ], 10, _hoisted_5$8),
           createBaseVNode("button", {
             class: "mt-1 fa-solid fa-trash",
             title: unref(txtRemoveLayer),
@@ -46572,9 +46590,10 @@ const _sfc_main$a = /* @__PURE__ */ defineComponent({
     const appStore = useAppStore();
     const styles = useMvtStyles();
     const sliderStore = useSliderComparatorStore();
-    const { layers_3d, bgLayer } = storeToRefs(mapStore);
+    const { bgLayer } = storeToRefs(mapStore);
     const { sliderActive } = storeToRefs(sliderStore);
     const layers = computed(() => [...mapStore.layers].reverse());
+    const layers3d = computed(() => [...mapStore.layers_3d].reverse());
     const isLayerOpenId = shallowRef();
     const draggableClassName = "drag-handle";
     const bgLayerIsEditable = computed(
@@ -46618,8 +46637,8 @@ const _sfc_main$a = /* @__PURE__ */ defineComponent({
     }
     return (_ctx, _cache) => {
       return openBlock(), createElementBlock("div", null, [
-        unref(layers_3d).length > 0 ? (openBlock(), createElementBlock("ul", _hoisted_1$8, [
-          (openBlock(true), createElementBlock(Fragment, null, renderList(unref(layers_3d), (layer, index2) => {
+        unref(layers3d).length > 0 ? (openBlock(), createElementBlock("ul", _hoisted_1$8, [
+          (openBlock(true), createElementBlock(Fragment, null, renderList(unref(layers3d), (layer, index2) => {
             return openBlock(), createElementBlock("li", {
               key: layer.id,
               id: layer.id
