@@ -37,10 +37,8 @@ const toggle3d = () => {
 <template>
   <div
     ref="controlElement"
-    :class="`tracker-off ${
-      props.className
-    } ${CLASS_UNSELECTABLE} ${CLASS_CONTROL} ${
-      mapStore.is_3d_active ? 'map-3d-selected' : ''
+    :class="`${props.className} ${CLASS_UNSELECTABLE} ${CLASS_CONTROL} ${
+      mapStore.is_3d_active ? 'active' : ''
     }`"
   >
     <button :title="t(props.tipLabel)" @click="toggle3d">

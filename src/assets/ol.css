@@ -20,6 +20,10 @@
     font-family: 'geoportail-icons-wc';
   }
 
+  .ol-control.active button {
+    @apply bg-primary text-white;
+  }
+
   .ol-zoom {
     @apply top-2 left-2;
   }
@@ -30,6 +34,10 @@
 
   .ol-zoom-extent {
     @apply left-2 top-[86px];
+  }
+
+  .lux-control {
+    @apply p-0 right-2 z-[2] border-[color:var(--color-btn-ol)] border-[1px];
   }
 
   .geoportailv3-attribution {
@@ -46,22 +54,12 @@
   }
 
   .location-button {
-    z-index: 2;
+    @apply lux-control;
     bottom: 55px;
-    padding: 0;
-    right: 8px;
-    border: 1px solid #8394a0;
   }
 
   .map-3d-button {
-    z-index: 2;
+    @apply lux-control;
     bottom: 105px;
-    padding: 0;
-    right: 8px;
-    border: 1px solid #8394a0;
-  }
-  .map-3d-selected button {
-    background-color: brown;
-    color: white;
   }
 }
