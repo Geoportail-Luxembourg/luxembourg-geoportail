@@ -230,4 +230,18 @@ describe('Map Store', () => {
       expect(mapStore.bgLayer).toStrictEqual(backgroundLayer)
     })
   })
+  describe('Map Store -- 3D', () => {
+    it('set is_3d_active', () => {
+      const mapStore = useMapStore()
+      expect(mapStore.is_3d_active).toBe(false)
+      mapStore.setIs3dActive(true)
+      expect(mapStore.is_3d_active).toStrictEqual(true)
+    })
+    it('set is_3d_mesh', () => {
+      const mapStore = useMapStore()
+      expect(mapStore.is_3d_mesh).toBe(true)
+      mapStore.setIs3dMesh(false)
+      expect(mapStore.is_3d_mesh).toStrictEqual(false)
+    })
+  })
 })

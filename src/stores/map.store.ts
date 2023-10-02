@@ -79,6 +79,14 @@ export const useMapStore = defineStore('map', () => {
     })
   }
 
+  function setIs3dActive(active: boolean) {
+    is_3d_active.value = active
+  }
+
+  function setIs3dMesh(active: boolean) {
+    is_3d_mesh.value = active
+  }
+
   return {
     map,
     layers,
@@ -94,6 +102,8 @@ export const useMapStore = defineStore('map', () => {
     setLayerOpacity,
     setLayerTime,
     setBgLayer,
+    setIs3dActive,
+    setIs3dMesh,
     hasLayer,
   }
 })
