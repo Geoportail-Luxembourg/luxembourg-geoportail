@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { ShallowRef, shallowRef, watchEffect } from 'vue'
+import { computed, ShallowRef, shallowRef, watchEffect } from 'vue'
 import { storeToRefs } from 'pinia'
 
 import useLayers from '@/composables/layers/layers.composable'
@@ -16,6 +16,10 @@ const themeStore = useThemeStore()
 const layers = useLayers()
 const layerTree: ShallowRef<LayerTreeNodeModel | undefined> = shallowRef()
 const layerTree3d: ShallowRef<LayerTreeNodeModel | undefined> = shallowRef()
+const showDefaultCatalog = computed(
+  () =>
+    !mapStore.is_3d_active || (mapStore.is_3d_active && !mapStore.is_3d_mesh)
+)
 
 const { layerTrees_3d } = storeToRefs(themeStore)
 
@@ -64,17 +68,19 @@ function toggleLayer(node: LayerTreeNodeModel, is3d: boolean) {
 
 <template>
   <div>
+    <!-- 3D layers catalog, only displayed when 3D is active -->
     <layer-tree-node
-      class="mb-6"
+      class="mb-7"
       v-if="layerTree3d && mapStore.is_3d_active"
       :node="layerTree3d"
       :key="layerTree3d.id"
       @toggle-parent="node => toggleParent(node, true)"
       @toggle-layer="node => toggleLayer(node, true)"
     ></layer-tree-node>
+
+    <!-- Main catalog, displays by default and 3D terrain active -->
     <layer-tree-node
-      v-if="layerTree"
-      :class="mapStore.is_3d_active && mapStore.is_3d_mesh ? 'mt-7' : ''"
+      v-if="layerTree && showDefaultCatalog"
       :node="layerTree"
       :key="layerTree.id"
       @toggle-parent="node => toggleParent(node, false)"

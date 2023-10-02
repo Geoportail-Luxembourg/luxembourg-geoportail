@@ -22,10 +22,11 @@ const mapStore = useMapStore()
 const appStore = useAppStore()
 const styles = useMvtStyles()
 const sliderStore = useSliderComparatorStore()
-const { layers_3d, bgLayer } = storeToRefs(mapStore)
+const { bgLayer } = storeToRefs(mapStore)
 const { sliderActive } = storeToRefs(sliderStore)
 
 const layers = computed(() => [...mapStore.layers].reverse())
+const layers3d = computed(() => [...mapStore.layers_3d].reverse())
 const isLayerOpenId: ShallowRef<LayerId | undefined> = shallowRef()
 const draggableClassName = 'drag-handle'
 const bgLayerIsEditable = computed(() =>
@@ -81,9 +82,9 @@ function toggleLayerComparator() {
 
 <template>
   <div>
-    <ul class="mb-4" v-if="layers_3d.length > 0">
+    <ul class="mb-4" v-if="layers3d.length > 0">
       <li
-        v-for="(layer, index) in layers_3d"
+        v-for="(layer, index) in layers3d"
         :key="layer.id"
         :id="(layer.id as string)"
         data-cy="myLayer"
