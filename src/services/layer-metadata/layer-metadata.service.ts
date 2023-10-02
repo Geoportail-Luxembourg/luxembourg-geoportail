@@ -20,10 +20,11 @@ export class LayerMetadataService {
   private localMetadataBaseUrl = 'https://map.geoportail.lu/getMetadata'
 
   async getLayerMetadata(id: LayerId, currentLanguage: string) {
+    const themesService = useThemes()
     const layer: ThemeNodeModel | undefined =
-      useThemes().findBgLayerById(+id) ||
-      useThemes().findById(+id) ||
-      useThemes().find3dLayerById(+id)
+      themesService.findBgLayerById(+id) ||
+      themesService.findById(+id) ||
+      themesService.find3dLayerById(+id)
 
     if (layer) {
       // Internal layer
