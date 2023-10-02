@@ -63,19 +63,22 @@ function toggleLayer(node: LayerTreeNodeModel, is3d: boolean) {
 </script>
 
 <template>
-  <layer-tree-node
-    class="mb-6"
-    v-if="layerTree3d && mapStore.is_3d_active"
-    :node="layerTree3d"
-    :key="layerTree3d.id"
-    @toggle-parent="node => toggleParent(node, true)"
-    @toggle-layer="node => toggleLayer(node, true)"
-  ></layer-tree-node>
-  <layer-tree-node
-    v-if="layerTree && !(mapStore.is_3d_active && mapStore.is_3d_mesh)"
-    :node="layerTree"
-    :key="layerTree.id"
-    @toggle-parent="node => toggleParent(node, false)"
-    @toggle-layer="node => toggleLayer(node, false)"
-  ></layer-tree-node>
+  <div>
+    <layer-tree-node
+      class="mb-6"
+      v-if="layerTree3d && mapStore.is_3d_active"
+      :node="layerTree3d"
+      :key="layerTree3d.id"
+      @toggle-parent="node => toggleParent(node, true)"
+      @toggle-layer="node => toggleLayer(node, true)"
+    ></layer-tree-node>
+    <layer-tree-node
+      v-if="layerTree"
+      :class="mapStore.is_3d_active && mapStore.is_3d_mesh ? 'mt-7' : ''"
+      :node="layerTree"
+      :key="layerTree.id"
+      @toggle-parent="node => toggleParent(node, false)"
+      @toggle-layer="node => toggleLayer(node, false)"
+    ></layer-tree-node>
+  </div>
 </template>
