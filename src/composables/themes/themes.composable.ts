@@ -22,9 +22,9 @@ export default function useThemes() {
     name?: string,
     node?: ThemeNodeModel
   ): ThemeNodeModel | undefined {
-    const { theme } = useThemeStore()
+    const { themes } = useThemeStore()
 
-    node = node || theme
+    node = node || themes?.find(theme => findByIdOrName(id, name, theme))
     if ((id && node?.id === id) || (name && node?.name === name)) {
       return node
     } else if (node?.children) {
