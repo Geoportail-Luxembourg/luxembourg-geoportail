@@ -94,24 +94,30 @@ export default function useLayers() {
     }
 
     if (layer.id !== mapStore.bgLayer?.id) {
-      if (
-        hasIntersect(
-          layer.metadata?.exclusion as string,
-          mapStore.bgLayer?.metadata?.exclusion as string
+      handleExclusionWithBg(layer)
+    }
+  }
+
+  function handleExclusionWithBg(layer: Layer) {
+    const mapStore = useMapStore()
+
+    if (
+      hasIntersect(
+        layer.metadata?.exclusion as string,
+        mapStore.bgLayer?.metadata?.exclusion as string
+      )
+    ) {
+      mapStore.setBgLayer(null)
+      alert(
+        i18next.t(
+          'Background has been deactivated because ' +
+            'the layer {{layer}} cannot be displayed on top of it.',
+          {
+            layer: i18next.t(layer.name, { ns: 'client' }),
+            ns: 'client',
+          }
         )
-      ) {
-        mapStore.setBgLayer(null)
-        alert(
-          i18next.t(
-            'Background has been deactivated because ' +
-              'the layer {{layer}} cannot be displayed on top of it.',
-            {
-              layer: i18next.t(layer.name, { ns: 'client' }),
-              ns: 'client',
-            }
-          )
-        )
-      }
+      )
     }
   }
 
