@@ -41,9 +41,13 @@ export const useMapStore = defineStore('map', () => {
     return !!layers.value?.find(layer => layer.id === layerId)
   }
 
-  function reorderLayers(layersId: LayerId[]) {
-    layers.value = [
-      ...(layers.value?.sort(
+  function reorderLayers(layersId: LayerId[], is3d = false) {
+    // TODO: When 3D feat. done, improve mapStores, use composable/inheritance to avoid
+    // duplicate functionnality like add/removing/reordering layers/3d layers
+    const layersRef = is3d ? layers_3d : layers
+
+    layersRef.value = [
+      ...(layersRef.value?.sort(
         (a, b) => layersId.indexOf(a.id) - layersId.indexOf(b.id)
       ) || []),
     ]
