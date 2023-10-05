@@ -21,11 +21,12 @@ export const useThemeStore = defineStore(
         theme => theme.metadata?.ol3d_type !== undefined
       )
       if (!ol3d_groups) return undefined
+
       return {
         name: ROOT_NAME_3D,
         id: DUMMY_ID_ROOT_3D,
-        children: ol3d_groups.map(layer =>
-          layer?.children ? layer.children[0] : layer
+        children: ol3d_groups.flatMap(layer =>
+          layer?.children ? layer.children : layer
         ),
         metadata: {},
       }

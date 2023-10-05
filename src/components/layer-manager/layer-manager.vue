@@ -37,22 +37,35 @@ const emit = defineEmits(['displayCatalog'])
 const { setRemoteLayersOpen } = useAppStore()
 
 onMounted(() => {
-  const sortableLayers = document.getElementById('sortable-layers')
-  if (sortableLayers) {
-    Sortable.create(sortableLayers, {
-      dataIdAttr: 'data-id',
-      dragClass: 'lux-sortable-drag',
-      ghostClass: 'lux-sortable-ghost',
-      sort: true,
-      handle: `.${draggableClassName}`,
-      onSort: sortMethod,
-    })
+  const sortableParams = {
+    dataIdAttr: 'data-id',
+    dragClass: 'lux-sortable-drag',
+    ghostClass: 'lux-sortable-ghost',
+    sort: true,
+    handle: `.${draggableClassName}`,
   }
+  const sortableLayersDOM = document.querySelector('.sortable-layers')
+  const sortableLayers3dDOM = document.querySelector('.sortable-layers-3d')
+
+  sortableLayersDOM &&
+    Sortable.create(<HTMLElement>sortableLayersDOM, {
+      ...sortableParams,
+      ...{ onSort: sortMethod },
+    })
+  sortableLayers3dDOM &&
+    Sortable.create(<HTMLElement>sortableLayers3dDOM, {
+      ...sortableParams,
+      ...{ onSort: sort3dMethod },
+    })
 })
 
-function sortMethod(event: SortableEvent) {
-  const items = event.to.children
-  mapStore.reorderLayers([...items].map(val => Number(val.id)).reverse())
+function sortMethod(event: SortableEvent, is3d?: boolean) {
+  const layersIds = [...event.to.children].map(val => Number(val.id)).reverse()
+  mapStore.reorderLayers(layersIds, is3d)
+}
+
+function sort3dMethod(event: SortableEvent) {
+  sortMethod(event, true)
 }
 
 function changeOpacityLayer(layer: Layer, opacity: number) {
@@ -82,7 +95,7 @@ function toggleLayerComparator() {
 
 <template>
   <div>
-    <ul class="mb-4" v-if="layers3d.length > 0">
+    <ul class="mb-4 sortable-layers-3d" v-if="layers3d.length > 0">
       <li
         v-for="(layer, index) in layers3d"
         :key="layer.id"
@@ -109,7 +122,7 @@ function toggleLayerComparator() {
       </li>
     </ul>
 
-    <ul id="sortable-layers">
+    <ul class="sortable-layers">
       <li
         v-for="(layer, index) in layers"
         :key="layer.id"
