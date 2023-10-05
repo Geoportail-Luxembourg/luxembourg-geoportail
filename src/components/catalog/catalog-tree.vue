@@ -69,14 +69,14 @@ function toggleLayer(node: LayerTreeNodeModel, is3d: boolean) {
 <template>
   <div>
     <!-- 3D layers catalog, only displayed when 3D is active -->
-    <layer-tree-node
-      class="mb-7"
-      v-if="layerTree3d && mapStore.is_3d_active"
-      :node="layerTree3d"
-      :key="layerTree3d.id"
-      @toggle-parent="node => toggleParent(node, true)"
-      @toggle-layer="node => toggleLayer(node, true)"
-    ></layer-tree-node>
+    <div class="mb-7" v-if="layerTree3d && mapStore.is_3d_active">
+      <layer-tree-node
+        :node="layerTree3d"
+        :key="layerTree3d.id"
+        @toggle-parent="node => toggleParent(node, true)"
+        @toggle-layer="node => toggleLayer(node, true)"
+      ></layer-tree-node>
+    </div>
 
     <!-- Main catalog, displays by default and 3D terrain active -->
     <layer-tree-node
