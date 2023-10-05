@@ -239,9 +239,9 @@ describe('Map Store', () => {
     })
     it('set is_3d_mesh', () => {
       const mapStore = useMapStore()
-      expect(mapStore.is_3d_mesh).toBe(true)
-      mapStore.setIs3dMesh(false)
-      expect(mapStore.is_3d_mesh).toStrictEqual(false)
+      expect(mapStore.is_3d_mesh).toBe(false)
+      mapStore.setIs3dMesh(true)
+      expect(mapStore.is_3d_mesh).toStrictEqual(true)
     })
   })
 })
