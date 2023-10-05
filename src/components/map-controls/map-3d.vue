@@ -30,7 +30,7 @@ onMounted(() =>
 )
 
 const toggle3d = () => {
-  mapStore.is_3d_active = !mapStore.is_3d_active
+  mapStore.setIs3dActive(!mapStore.is3dActive)
 }
 </script>
 
@@ -38,7 +38,7 @@ const toggle3d = () => {
   <div
     ref="controlElement"
     :class="`${props.className} ${CLASS_UNSELECTABLE} ${CLASS_CONTROL} ${
-      mapStore.is_3d_active ? 'active' : ''
+      mapStore.is3dActive ? 'active' : ''
     }`"
   >
     <button :title="t(props.tipLabel)" @click="toggle3d">

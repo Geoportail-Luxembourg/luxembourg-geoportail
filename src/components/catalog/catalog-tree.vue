@@ -17,8 +17,7 @@ const layers = useLayers()
 const layerTree: ShallowRef<LayerTreeNodeModel | undefined> = shallowRef()
 const layerTree3d: ShallowRef<LayerTreeNodeModel | undefined> = shallowRef()
 const showDefaultCatalog = computed(
-  () =>
-    !mapStore.is_3d_active || (mapStore.is_3d_active && !mapStore.is_3d_mesh)
+  () => !mapStore.is3dActive || (mapStore.is3dActive && !mapStore.is3dMesh)
 )
 
 const { layerTrees_3d } = storeToRefs(themeStore)
@@ -47,7 +46,7 @@ watchEffect(() => {
       : themesToLayerTree(layerTrees_3d.value)
     layerTree3d.value = layerTreeService.updateLayers(
       treeModel,
-      mapStore.layers_3d
+      mapStore.layers3d
     )
   }
 })
@@ -69,7 +68,7 @@ function toggleLayer(node: LayerTreeNodeModel, is3d: boolean) {
 <template>
   <div>
     <!-- 3D layers catalog, only displayed when 3D is active -->
-    <div class="mb-7" v-if="layerTree3d && mapStore.is_3d_active">
+    <div class="mb-7" v-if="layerTree3d && mapStore.is3dActive">
       <layer-tree-node
         :node="layerTree3d"
         :key="layerTree3d.id"

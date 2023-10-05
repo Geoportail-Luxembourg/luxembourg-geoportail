@@ -26,7 +26,7 @@ const { bgLayer } = storeToRefs(mapStore)
 const { sliderActive } = storeToRefs(sliderStore)
 
 const layers = computed(() => [...mapStore.layers].reverse())
-const layers3d = computed(() => [...mapStore.layers_3d].reverse())
+const layers3d = computed(() => [...mapStore.layers3d].reverse())
 const isLayerOpenId: ShallowRef<LayerId | undefined> = shallowRef()
 const draggableClassName = 'drag-handle'
 const bgLayerIsEditable = computed(() =>

@@ -231,17 +231,17 @@ describe('Map Store', () => {
     })
   })
   describe('Map Store -- 3D', () => {
-    it('set is_3d_active', () => {
+    it('set is3dActive', () => {
       const mapStore = useMapStore()
-      expect(mapStore.is_3d_active).toBe(false)
+      expect(mapStore.is3dActive).toBe(false)
       mapStore.setIs3dActive(true)
-      expect(mapStore.is_3d_active).toStrictEqual(true)
+      expect(mapStore.is3dActive).toStrictEqual(true)
     })
-    it('set is_3d_mesh', () => {
+    it('set is3dMesh', () => {
       const mapStore = useMapStore()
-      expect(mapStore.is_3d_mesh).toBe(false)
+      expect(mapStore.is3dMesh).toBe(false)
       mapStore.setIs3dMesh(true)
-      expect(mapStore.is_3d_mesh).toStrictEqual(true)
+      expect(mapStore.is3dMesh).toStrictEqual(true)
     })
   })
 })

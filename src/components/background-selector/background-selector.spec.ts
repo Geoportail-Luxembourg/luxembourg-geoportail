@@ -48,7 +48,7 @@ describe('BackgroundSelector', () => {
       stubActions: false,
       initialState: {
         map: {
-          is_3d_mesh: true,
+          is3dMesh: true,
         },
       },
     })
