@@ -8,6 +8,7 @@ import LayerItemSub from './layer-item-sub.vue'
 import LayerTime from '../layer-time/layer-time.vue'
 
 const props = defineProps<{
+  is3d: boolean
   layer: Layer
   draggableClassName: string
   isOpen: boolean
@@ -66,11 +67,13 @@ function changeTime(dateStart?: string, dateEnd?: string) {
         :aria-expanded="isOpen"
         :aria-controls="`layer-manager-item-content-${layer.id}`"
         :data-cy="`myLayerItemLabel-${layer.id}`"
-        class="cursor-pointer grow text-left break-words w-[70%] flex items-center"
+        :class="is3d ? 'cursor-default' : ''"
+        class="grow text-left break-words w-[70%] flex items-center"
         @click="$emit('clickToggle', layer)"
       >
         <span class="grow">{{ getLabel() }}</span>
         <span
+          v-if="!is3d"
           class="w-3.5 fa-solid"
           :class="isOpen ? 'fa-xmark' : 'fa-ellipsis'"
           aria-hidden="true"
@@ -86,6 +89,7 @@ function changeTime(dateStart?: string, dateEnd?: string) {
 
     <!-- Layer item sub content (opacity and toggle comparator) -->
     <layer-item-sub
+      v-if="!is3d"
       :layer="layer"
       :isOpen="isOpen"
       :isLayerComparatorOpen="isLayerComparatorOpen"

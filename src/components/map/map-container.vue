@@ -7,6 +7,7 @@ import { statePersistorMapService } from '@/services/state-persistor/state-persi
 
 import AttributionControl from '../map-controls/attribution-control.vue'
 import LocationControl from '../map-controls/location-control.vue'
+import Map3dControl from '../map-controls/map-3d.vue'
 import FullscreenControl from '../map-controls/fullscreen-control.vue'
 import ZoomControl from '../map-controls/zoom-control.vue'
 import ZoomToExtentControl from '../map-controls/zoom-to-extent-control.vue'
@@ -14,6 +15,15 @@ import ZoomToExtentControl from '../map-controls/zoom-to-extent-control.vue'
 const map = useMap()
 const mapContainer = ref(null)
 const olMap = map.createMap()
+
+withDefaults(
+  defineProps<{
+    v4_standalone?: boolean
+  }>(),
+  {
+    v4_standalone: false,
+  }
+)
 
 const DEFAULT_EXTENT = [
   425152.9429259216, 6324465.99999133, 914349.9239510496, 6507914.867875754,
@@ -44,6 +54,7 @@ provide('olMap', olMap)
     <zoom-to-extent-control :extent="DEFAULT_EXTENT" />
     <fullscreen-control />
     <attribution-control />
+    <map-3d-control v-if="v4_standalone" />
     <location-control />
   </div>
 </template>

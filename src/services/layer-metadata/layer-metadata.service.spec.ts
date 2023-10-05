@@ -1,6 +1,7 @@
 const useThemesMock = {
   findById: vi.fn(id => (id === 268 ? themeNodeMock : undefined)),
   findBgLayerById: vi.fn(id => (id === 556 ? bgNodeMock : undefined)),
+  find3dLayerById: vi.fn(id => (id === 333 ? ol3dNodeMock : undefined)),
 }
 
 vi.mock('@/composables/themes/themes.composable', () => ({
@@ -29,6 +30,15 @@ const themeNodeMock: ThemeNodeModel = {
       name: 'districts_labels__DISTRICTS_LABELS',
     },
   ],
+}
+
+const ol3dNodeMock: ThemeNodeModel = {
+  id: 333,
+  name: '3d buildings',
+  metadata: {
+    attribution: 'bla',
+    metadata_id: 'a1fea2a0e',
+  },
 }
 
 const bgNodeMock: ThemeNodeModel = {
@@ -150,6 +160,26 @@ describe('LayerMetadataService', () => {
     })
     it('should get correct metadata', () => {
       expect(metadata).toEqual(metadataMock)
+    })
+  })
+  describe('#getLayerMetadata with 3d layer', () => {
+    let metadata
+    beforeEach(async () => {
+      metadata = await layerMetadataService.getLayerMetadata(333, 'fr')
+    })
+    it('should call get 3d metadata', () => {
+      expect(spyLocalMetadata).toHaveBeenCalledTimes(1)
+    })
+    it('should get correct metadata', () => {
+      expect(metadata).toEqual({
+        title: '3d buildings',
+        description: '',
+        hasLegend: false,
+        keywords: [],
+        accessConstraints: 'none',
+        serviceDescription:
+          'Toutes les données publiées à travers ce service sont licencées sous CC0 ou CC-BY selon la couche',
+      })
     })
   })
 })

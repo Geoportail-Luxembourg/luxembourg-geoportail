@@ -37,6 +37,11 @@ export default function useThemes() {
     }
   }
 
+  function find3dLayerById(id: LayerId) {
+    const { layerTrees_3d } = useThemeStore()
+    return findByIdOrName(id, undefined, layerTrees_3d)
+  }
+
   function findBgLayerById(id: LayerId) {
     const { bgLayers } = useThemeStore()
 
@@ -58,6 +63,7 @@ export default function useThemes() {
   return {
     findById,
     findByName,
+    find3dLayerById,
     findBgLayerById,
     findBgLayerByName,
     setTheme,

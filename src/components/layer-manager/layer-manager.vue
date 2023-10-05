@@ -26,6 +26,7 @@ const { bgLayer } = storeToRefs(mapStore)
 const { sliderActive } = storeToRefs(sliderStore)
 
 const layers = computed(() => [...mapStore.layers].reverse())
+const layers3d = computed(() => [...mapStore.layers3d].reverse())
 const isLayerOpenId: ShallowRef<LayerId | undefined> = shallowRef()
 const draggableClassName = 'drag-handle'
 const bgLayerIsEditable = computed(() =>
@@ -36,22 +37,35 @@ const emit = defineEmits(['displayCatalog'])
 const { setRemoteLayersOpen } = useAppStore()
 
 onMounted(() => {
-  const sortableLayers = document.getElementById('sortable-layers')
-  if (sortableLayers) {
-    Sortable.create(sortableLayers, {
-      dataIdAttr: 'data-id',
-      dragClass: 'lux-sortable-drag',
-      ghostClass: 'lux-sortable-ghost',
-      sort: true,
-      handle: `.${draggableClassName}`,
-      onSort: sortMethod,
-    })
+  const sortableParams = {
+    dataIdAttr: 'data-id',
+    dragClass: 'lux-sortable-drag',
+    ghostClass: 'lux-sortable-ghost',
+    sort: true,
+    handle: `.${draggableClassName}`,
   }
+  const sortableLayersDOM = document.querySelector('.sortable-layers')
+  const sortableLayers3dDOM = document.querySelector('.sortable-layers-3d')
+
+  sortableLayersDOM &&
+    Sortable.create(<HTMLElement>sortableLayersDOM, {
+      ...sortableParams,
+      ...{ onSort: sortMethod },
+    })
+  sortableLayers3dDOM &&
+    Sortable.create(<HTMLElement>sortableLayers3dDOM, {
+      ...sortableParams,
+      ...{ onSort: sort3dMethod },
+    })
 })
 
-function sortMethod(event: SortableEvent) {
-  const items = event.to.children
-  mapStore.reorderLayers([...items].map(val => Number(val.id)).reverse())
+function sortMethod(event: SortableEvent, is3d?: boolean) {
+  const layersIds = [...event.to.children].map(val => Number(val.id)).reverse()
+  mapStore.reorderLayers(layersIds, is3d)
+}
+
+function sort3dMethod(event: SortableEvent) {
+  sortMethod(event, true)
 }
 
 function changeOpacityLayer(layer: Layer, opacity: number) {
@@ -81,7 +95,34 @@ function toggleLayerComparator() {
 
 <template>
   <div>
-    <ul id="sortable-layers">
+    <ul class="mb-4 sortable-layers-3d" v-if="layers3d.length > 0">
+      <li
+        v-for="(layer, index) in layers3d"
+        :key="layer.id"
+        :id="(layer.id as string)"
+        data-cy="myLayer"
+      >
+        <layer-item
+          :is3d="true"
+          :draggableClassName="draggableClassName"
+          :layer="layer"
+          :isOpen="isLayerOpenId === layer.id"
+          :isLayerComparatorOpen="sliderActive"
+          :displayLayerComparatorOpen="index === 0"
+          @clickRemove="removeLayer"
+          @clickToggle="toggleAccordionItem"
+          @clickToggleLayerComparator="toggleLayerComparator"
+          @clickInfo="setMetadataId(layer.id)"
+          @changeOpacity="changeOpacityLayer"
+          @changeTime="
+            (dateStart, dateEnd) => changeTime(layer, dateStart, dateEnd)
+          "
+        >
+        </layer-item>
+      </li>
+    </ul>
+
+    <ul class="sortable-layers">
       <li
         v-for="(layer, index) in layers"
         :key="layer.id"
@@ -89,6 +130,7 @@ function toggleLayerComparator() {
         data-cy="myLayer"
       >
         <layer-item
+          :is3d="false"
           :draggableClassName="draggableClassName"
           :layer="layer"
           :isOpen="isLayerOpenId === layer.id"

@@ -34321,107 +34321,123 @@ export const themesApiFixture = (): ConfigModel => ({
     {
       "id": 2332,
       "name": "3D Layers",
-      "icon": "https://map.geoportail.lu/static/28b5ca945a404fcc9e82ae20f9914ef3/images/blank.png",
+      "icon": "https://map.geoportail.lu/static/d2144cd4331d47088bccb212d813be14/images/blank.png",
       "children": [
-        {
-          "id": 1958,
-          "name": "3d Layers",
-          "children": [
-            {
-              "id": 2346,
-              "name": "ACT2022_BD_L_BATI3D_LOD2",
+          {
+              "id": 1958,
+              "name": "3d Layers",
+              "children": [
+                  {
+                      "id": 2346,
+                      "name": "ACT2022_BD_L_BATI3D_LOD2",
+                      "metadata": {
+                          "exclusion": "[\"mesh_2020_vs_bd-l-bati-3d\"]",
+                          "metadata_id": "2e8b722a-87ea-4b62-a307-423832adabab",
+                          "ol3d_defaultlayer": true
+                      },
+                      "dimensions": {},
+                      "type": "WMTS",
+                      "url": "https://acts3.geoportail.lu/3d-data/3d-tiles",
+                      "layer": "ACT2022_BD_L_BATI3D_LOD2",
+                      "imageType": "image/png"
+                  },
+                  {
+                      "id": 2348,
+                      "name": "VDL2022_LOD2_IMPORT",
+                      "metadata": {
+                          "exclusion": "[\"mesh_2020_vs_bd-l-bati-3d_vdl\"]",
+                          "metadata_id": "a116f21e-faf1-4bdd-9a29-064fd9a30b8d",
+                          "ol3d_defaultlayer": true
+                      },
+                      "dimensions": {},
+                      "type": "WMTS",
+                      "url": "https://acts3.geoportail.lu/3d-data/3d-tiles",
+                      "layer": "VDL2022_LOD2_IMPORT_old",
+                      "imageType": "image/png"
+                  },
+                  {
+                      "id": 2350,
+                      "name": "VDL2022_BRIDGES_IMPORT",
+                      "metadata": {
+                          "exclusion": "[\"mesh_2020_vs_bridges_vdl\"]",
+                          "metadata_id": "95c91657-5d7b-4b1f-bc74-de0e2db0f5c7",
+                          "ol3d_defaultlayer": true
+                      },
+                      "dimensions": {},
+                      "type": "WMTS",
+                      "url": "https://acts3.geoportail.lu/3d-data/3d-tiles",
+                      "layer": "Bridges_LOD2",
+                      "imageType": "image/png"
+                  },
+                  {
+                      "id": 2397,
+                      "name": "ACT2019_LiDAR_Bridges",
+                      "metadata": {
+                          "exclusion": "[\"mesh_2020_vs_bridges_ACT\"]",
+                          "metadata_id": "0690e5cb-50df-4cf8-8cf3-d12dbecfc171",
+                          "ol3d_defaultlayer": true
+                      },
+                      "dimensions": {},
+                      "type": "WMTS",
+                      "url": "https://acts3.geoportail.lu/3d-data/3d-tiles",
+                      "layer": "ACT2019_LiDAR_Bridges_LOD1",
+                      "imageType": "image/png"
+                  },
+                  {
+                      "id": 2384,
+                      "name": "ACT2019_LiDAR_Vegetation",
+                      "metadata": {
+                          "exclusion": "[\"mesh_2020_vs_trees\"]",
+                          "metadata_id": "99180a32-bf64-46c2-b901-ce055b0f01fe",
+                          "ol3d_defaultlayer": true
+                      },
+                      "dimensions": {},
+                      "type": "WMTS",
+                      "url": "https://acts3.geoportail.lu/3d-data/3d-tiles",
+                      "layer": "ACT2019_LiDAR_Vegetation",
+                      "imageType": "image/png"
+                  },
+                  {
+                      "id": 2538,
+                      "name": "ACT2019_LiDAR_Powerlines",
+                      "metadata": {},
+                      "dimensions": {},
+                      "type": "WMTS",
+                      "url": "https://acts3.geoportail.lu/3d-data/3d-tiles",
+                      "layer": "ACT2019_LiDAR_Powerlines",
+                      "imageType": "image/png"
+                  }
+              ],
               "metadata": {
-                "exclusion": "[\"mesh_2020_vs_bd-l-bati-3d\"]",
-                "metadata_id": "2e8b722a-87ea-4b62-a307-423832adabab",
-                "ol3d_defaultlayer": true
+                  "display_in_switcher": true,
+                  "is_expanded": true
               },
-              "dimensions": {
-
-              },
-              "type": "WMTS",
-              "url": "https://acts3.geoportail.lu/3d-data/3d-tiles",
-              "layer": "ACT2022_BD_L_BATI3D_LOD2",
-              "imageType": "image/png"
-            },
-            {
-              "id": 2348,
-              "name": "VDL2022_LOD2_IMPORT",
-              "metadata": {
-                "exclusion": "[\"mesh_2020_vs_bd-l-bati-3d_vdl\"]",
-                "metadata_id": "a116f21e-faf1-4bdd-9a29-064fd9a30b8d",
-                "ol3d_defaultlayer": true
-              },
-              "dimensions": {
-
-              },
-              "type": "WMTS",
-              "url": "https://acts3.geoportail.lu/3d-data/3d-tiles",
-              "layer": "VDL2022_LOD2_IMPORT_old",
-              "imageType": "image/png"
-            },
-            {
-              "id": 2350,
-              "name": "VDL2022_BRIDGES_IMPORT",
-              "metadata": {
-                "exclusion": "[\"mesh_2020_vs_bridges_vdl\"]",
-                "metadata_id": "95c91657-5d7b-4b1f-bc74-de0e2db0f5c7",
-                "ol3d_defaultlayer": true
-              },
-              "dimensions": {
-
-              },
-              "type": "WMTS",
-              "url": "https://acts3.geoportail.lu/3d-data/3d-tiles",
-              "layer": "Bridges_LOD2",
-              "imageType": "image/png"
-            },
-            {
-              "id": 2397,
-              "name": "ACT2019_LiDAR_Bridges",
-              "metadata": {
-                "exclusion": "[\"mesh_2020_vs_bridges_ACT\"]",
-                "metadata_id": "0690e5cb-50df-4cf8-8cf3-d12dbecfc171",
-                "ol3d_defaultlayer": true
-              },
-              "dimensions": {
-
-              },
-              "type": "WMTS",
-              "url": "https://acts3.geoportail.lu/3d-data/3d-tiles",
-              "layer": "ACT2019_LiDAR_Bridges_LOD1",
-              "imageType": "image/png"
-            },
-            {
-              "id": 2384,
-              "name": "ACT2019_LiDAR_Vegetation",
-              "metadata": {
-                "exclusion": "[\"mesh_2020_vs_trees\"]",
-                "metadata_id": "99180a32-bf64-46c2-b901-ce055b0f01fe",
-                "ol3d_defaultlayer": true
-              },
-              "dimensions": {
-
-              },
-              "type": "WMTS",
-              "url": "https://acts3.geoportail.lu/3d-data/3d-tiles",
-              "layer": "ACT2019_LiDAR_Vegetation",
-              "imageType": "image/png"
-            }
-          ],
-          "metadata": {
-            "display_in_switcher": true,
-            "is_expanded": true
+              "mixed": true
           },
-          "mixed": true
-        }
+          {
+              "id": 2447,
+              "name": "reference_objects_3d",
+              "children": [
+                  {
+                      "id": 2446,
+                      "name": "OBJ3D_sharedBikes",
+                      "metadata": {},
+                      "dimensions": {},
+                      "type": "WMTS",
+                      "url": "https://acts3.geoportail.lu/3d-data/3d-tiles/OBJECTS3D",
+                      "layer": "SharedBikes",
+                      "imageType": "image/png"
+                  }
+              ],
+              "metadata": {},
+              "mixed": true
+          }
       ],
-      "functionalities": {
-
-      },
+      "functionalities": {},
       "metadata": {
-        "ol3d_type": "data"
+          "ol3d_type": "data"
       }
-    },
+  },
     {
       "id": 824,
       "name": "ahc",

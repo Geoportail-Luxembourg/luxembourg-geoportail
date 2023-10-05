@@ -17,6 +17,7 @@ describe('LayerItem', () => {
   it('renders properly', () => {
     const wrapper = mount(LayerItem, {
       props: {
+        is3d: false,
         layer: layerMock,
         draggableClassName: 'classnamedragg',
         isOpen: false,
@@ -36,6 +37,7 @@ describe('LayerItem', () => {
   it('renders properly when is open', () => {
     const wrapper = mount(LayerItem, {
       props: {
+        is3d: false,
         layer: layerMock,
         draggableClassName: 'classnamedragg',
         isOpen: true,
@@ -55,6 +57,7 @@ describe('LayerItem', () => {
         mocks: { onClickInfo },
       },
       props: {
+        is3d: false,
         layer: layerMock,
         draggableClassName: 'classnamedragg',
         isOpen: true,

@@ -7,6 +7,9 @@ import { LayerId, Layer, MapContext } from './map.store.model'
 export const useMapStore = defineStore('map', () => {
   const map: Ref<MapContext> = ref({})
   const layers: ShallowRef<Layer[]> = shallowRef([])
+  const layers3d: ShallowRef<any[]> = shallowRef([])
+  const is3dActive: Ref<boolean> = ref(false)
+  const is3dMesh: Ref<boolean> = ref(false)
   const bgLayer: Ref<Layer | undefined | null> = ref(undefined) // undefined => at start app | null => blank bgLayer
 
   function setBgLayer(layer: Layer | null) {
@@ -17,8 +20,15 @@ export const useMapStore = defineStore('map', () => {
     layers.value = [...new Set([...layers.value, ...newLayers])]
   }
 
+  function add3dLayers(...newLayers: Layer[]) {
+    layers3d.value = [...new Set([...layers3d.value, ...newLayers])]
+  }
+
   function removeLayers(...layerIds: LayerId[]) {
     layers.value = layers.value.filter(
+      layer => layerIds.indexOf(layer.id) === -1
+    )
+    layers3d.value = layers3d.value.filter(
       layer => layerIds.indexOf(layer.id) === -1
     )
   }
@@ -31,9 +41,13 @@ export const useMapStore = defineStore('map', () => {
     return !!layers.value?.find(layer => layer.id === layerId)
   }
 
-  function reorderLayers(layersId: LayerId[]) {
-    layers.value = [
-      ...(layers.value?.sort(
+  function reorderLayers(layersId: LayerId[], is3d = false) {
+    // TODO: When 3D feat. done, improve mapStores, use composable/inheritance to avoid
+    // duplicate functionnality like add/removing/reordering layers/3d layers
+    const layersRef = is3d ? layers3d : layers
+
+    layersRef.value = [
+      ...(layersRef.value?.sort(
         (a, b) => layersId.indexOf(a.id) - layersId.indexOf(b.id)
       ) || []),
     ]
@@ -69,17 +83,31 @@ export const useMapStore = defineStore('map', () => {
     })
   }
 
+  function setIs3dActive(active: boolean) {
+    is3dActive.value = active
+  }
+
+  function setIs3dMesh(active: boolean) {
+    is3dMesh.value = active
+  }
+
   return {
     map,
     layers,
+    layers3d,
+    is3dActive,
+    is3dMesh,
     bgLayer,
     addLayers,
+    add3dLayers,
     removeLayers,
     removeAllLayers,
     reorderLayers,
     setLayerOpacity,
     setLayerTime,
     setBgLayer,
+    setIs3dActive,
+    setIs3dMesh,
     hasLayer,
   }
 })

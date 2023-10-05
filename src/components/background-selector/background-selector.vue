@@ -18,7 +18,7 @@ const { t } = useTranslation()
 const backgroundLayer = useBackgroundLayer()
 const mapStore = useMapStore()
 const themeStore = useThemeStore()
-const { bgLayer: bgLayerContext } = storeToRefs(mapStore)
+const { bgLayer: bgLayerContext, is3dMesh } = storeToRefs(mapStore)
 
 const props = defineProps({
   isOpen: {
@@ -88,7 +88,7 @@ function toggleSelector() {
 </script>
 
 <template>
-  <div class="flex flex-row-reverse">
+  <div v-if="!is3dMesh" class="flex flex-row-reverse">
     <div
       data-cy="selectedBg"
       class="lux-bg-sel border border-black"

@@ -6,7 +6,7 @@ import {
   isoLang2To3,
   stringToHtml,
 } from './layer-metadata.utils'
-import useThemes from '../../composables/themes/themes.composable'
+import useThemes from '@/composables/themes/themes.composable'
 import { LayerId } from '@/stores/map.store.model'
 import { remoteMetadataHelper } from './remote-metadata.helper'
 import { REMOTE_SERVICE_TYPE } from '../remote-layers/remote-layers.model'
@@ -20,8 +20,11 @@ export class LayerMetadataService {
   private localMetadataBaseUrl = 'https://map.geoportail.lu/getMetadata'
 
   async getLayerMetadata(id: LayerId, currentLanguage: string) {
+    const themesService = useThemes()
     const layer: ThemeNodeModel | undefined =
-      useThemes().findBgLayerById(+id) || useThemes().findById(+id)
+      themesService.findBgLayerById(+id) ||
+      themesService.findById(+id) ||
+      themesService.find3dLayerById(+id)
 
     if (layer) {
       // Internal layer
