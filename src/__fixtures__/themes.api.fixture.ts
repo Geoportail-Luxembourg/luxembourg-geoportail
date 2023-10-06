@@ -5993,6 +5993,35 @@ export const themesApiFixture = (): ConfigModel => ({
                           "mode": "value",
                           "widget": "slider"
                       }
+                  },
+                  {
+                      "id": 999999,
+                      "name": "layer_datepicker_range",
+                      "metadata": {
+                          "time_config": "{\"time_override\": {\"timepositions\": [\"2014-08-31T12:43:47.000Z/2020-12-31T23:59:59.000Z/P1M\"]}}"
+                      },
+                      "dimensions": {},
+                      "type": "WMS",
+                      "layers": "layer_datepicker_range",
+                      "imageType": "image/png",
+                      "childLayers": [
+                          {}
+                      ],
+                      "time": {
+                          "minValue": "2014-08-31T12:43:47Z",
+                          "maxValue": "2020-12-31T23:59:59Z",
+                          "interval": [
+                              0,
+                              1,
+                              0,
+                              0
+                          ],
+                          "resolution": "second",
+                          "minDefValue": "2014-08-31T12:43:47Z",
+                          "maxDefValue": null,
+                          "mode": "range",
+                          "widget": "datepicker"
+                      }
                   }
               ],
                 "metadata": {},
