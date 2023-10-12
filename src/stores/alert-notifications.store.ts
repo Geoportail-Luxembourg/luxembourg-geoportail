@@ -14,6 +14,14 @@ export const useAlertNotificationsStore = defineStore(
   () => {
     const notifications: Ref<AlertNotificationModel[]> = ref([])
 
+    /**
+     * Add a new notification message to the store
+     *
+     * @param message The message to display as a notification
+     * @param type By default, simple info (blue theme), or can also be warning or error
+     * @param duration Duration in ms
+     * @see AlertNotificationType
+     */
     function addNotification(
       message: string,
       type = DEFAULT_NOTIFICATION_TYPE,
