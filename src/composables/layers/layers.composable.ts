@@ -8,11 +8,14 @@ import {
 } from '@/stores/map.store.model'
 import { useMapStore } from '@/stores/map.store'
 import { useThemeStore } from '@/stores/config.store'
+import { useAlertNotificationsStore } from '@/stores/alert-notifications.store'
 import useThemes from '@/composables/themes/themes.composable'
-
-const themes = useThemes()
+import { AlertNotificationType } from '@/stores/alert-notifications.store.model'
 
 export default function useLayers() {
+  const themes = useThemes()
+  const notificationsStore = useAlertNotificationsStore()
+
   function hasIntersect(exclusionA: string, exclusionB: string) {
     try {
       const concat = JSON.parse(exclusionA).concat(JSON.parse(exclusionB))
@@ -81,7 +84,7 @@ export default function useLayers() {
     if (excludedLayers.length > 0) {
       mapStore.removeLayers(...excludedLayers.map(_layer => _layer.id))
 
-      alert(
+      notificationsStore.addNotification(
         i18next.t(
           'The layer <b>{{layersToRemove}}</b> has been removed because it cannot be displayed while the layer <b>{{layer}}</b> is displayed',
           {
@@ -92,7 +95,8 @@ export default function useLayers() {
             layer: i18next.t(layer.name, { ns: 'client' }),
             ns: 'client',
           }
-        )
+        ),
+        AlertNotificationType.WARNING
       )
     }
 
@@ -111,7 +115,8 @@ export default function useLayers() {
       )
     ) {
       mapStore.setBgLayer(null)
-      alert(
+
+      notificationsStore.addNotification(
         i18next.t(
           'Background has been deactivated because ' +
             'the layer {{layer}} cannot be displayed on top of it.',
@@ -119,7 +124,8 @@ export default function useLayers() {
             layer: i18next.t(layer.name, { ns: 'client' }),
             ns: 'client',
           }
-        )
+        ),
+        AlertNotificationType.WARNING
       )
     }
   }
