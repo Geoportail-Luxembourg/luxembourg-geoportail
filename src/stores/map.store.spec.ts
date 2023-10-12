@@ -1,9 +1,12 @@
 import { setActivePinia, createPinia } from 'pinia'
+import { createTestingPinia } from '@pinia/testing'
 
-import useBackgroundLayer from '../composables/background-layer/background-layer.composable'
-import useLayers from '../composables/layers/layers.composable'
+import useBackgroundLayer from '@/composables/background-layer/background-layer.composable'
+import useLayers from '@/composables/layers/layers.composable'
+import { Layer } from '@/stores/map.store.model'
+import { useAlertNotificationsStore } from '@/stores/alert-notifications.store'
+
 import { useMapStore } from './map.store'
-import { Layer } from './map.store.model'
 
 const layer1: Layer = {
   id: 1,
@@ -179,12 +182,6 @@ describe('Map Store', () => {
   })
 
   describe('Map Store -- Background layer', () => {
-    it('set background layer', () => {
-      const mapStore = useMapStore()
-      expect(mapStore.bgLayer).toBe(undefined)
-      mapStore.setBgLayer(backgroundLayer)
-      expect(mapStore.bgLayer).toStrictEqual(backgroundLayer)
-    })
     vi.mock('../composables/themes/themes.composable', () => {
       return {
         default: () => {
@@ -199,25 +196,48 @@ describe('Map Store', () => {
         },
       }
     })
-    vi.stubGlobal('alert', vi.fn())
-    it('layer exclusion', () => {
+
+    let notificationsStore: ReturnType<typeof useAlertNotificationsStore>
+
+    beforeEach(() => {
+      const pinia = createTestingPinia({
+        createSpy: vi.fn,
+        stubActions: false,
+      })
+      notificationsStore = useAlertNotificationsStore(pinia)
+    })
+
+    it('set background layer', () => {
       const mapStore = useMapStore()
       expect(mapStore.bgLayer).toBe(undefined)
       mapStore.setBgLayer(backgroundLayer)
       expect(mapStore.bgLayer).toStrictEqual(backgroundLayer)
-      useLayers().toggleLayer(2)
+    })
+
+    it('layer exclusion', () => {
+      // TODO: this is not testing mapstore
+      // TODO: move in a new test file for layers.composable
+      // TODO: make unit tests on each handleExclusion instead
+      const mapStore = useMapStore()
+      expect(mapStore.bgLayer).toBe(undefined)
+      mapStore.setBgLayer(backgroundLayer)
+      expect(mapStore.bgLayer).toStrictEqual(backgroundLayer)
+      useLayers().toggleLayer(2, undefined, false)
       expect(mapStore.layers.length).toBe(1)
-      expect(window.alert).toHaveBeenCalledTimes(0)
-      useLayers().toggleLayer(3)
-      expect(window.alert).toHaveBeenCalledTimes(1)
+      expect(notificationsStore.addNotification).toHaveBeenCalledTimes(0)
+      useLayers().toggleLayer(3, true, false)
+      expect(notificationsStore.addNotification).toHaveBeenCalledTimes(1)
       expect(mapStore.layers.length).toBe(2)
       expect(mapStore.bgLayer).toStrictEqual(null)
-      useLayers().toggleLayer(4)
-      expect(window.alert).toHaveBeenCalledTimes(2)
+      useLayers().toggleLayer(4, true, false)
+      expect(notificationsStore.addNotification).toHaveBeenCalledTimes(2)
       expect(mapStore.layers.length).toBe(2)
       expect(mapStore.bgLayer).toStrictEqual(null)
     })
     it('bg exclusion', () => {
+      // TODO: this is not testing mapstore
+      // TODO: move in a new test file for layers.composable
+      // TODO: make unit tests on each handleExclusion instead
       const mapStore = useMapStore()
       expect(mapStore.bgLayer).toBe(undefined)
       mapStore.addLayers(layer2, layer3, layer4)
@@ -226,7 +246,7 @@ describe('Map Store', () => {
       expect(mapStore.layers.length).toBe(3)
       useBackgroundLayer().setMapBackground(backgroundLayer)
       expect(mapStore.layers.length).toBe(1)
-      expect(window.alert).toHaveBeenCalled()
+      expect(notificationsStore.addNotification).toHaveBeenCalled()
       expect(mapStore.bgLayer).toStrictEqual(backgroundLayer)
     })
   })

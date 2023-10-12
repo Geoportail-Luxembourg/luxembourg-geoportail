@@ -12,10 +12,9 @@ import { useAlertNotificationsStore } from '@/stores/alert-notifications.store'
 import useThemes from '@/composables/themes/themes.composable'
 import { AlertNotificationType } from '@/stores/alert-notifications.store.model'
 
-export default function useLayers() {
-  const themes = useThemes()
-  const notificationsStore = useAlertNotificationsStore()
+const themes = useThemes()
 
+export default function useLayers() {
   function hasIntersect(exclusionA: string, exclusionB: string) {
     try {
       const concat = JSON.parse(exclusionA).concat(JSON.parse(exclusionB))
@@ -69,6 +68,8 @@ export default function useLayers() {
   }
 
   function handleExclusionLayers(layer: Layer) {
+    const notificationsStore = useAlertNotificationsStore()
+
     if (!layer.metadata?.exclusion) {
       return
     }
@@ -107,6 +108,7 @@ export default function useLayers() {
 
   function handleExclusionWithBg(layer: Layer) {
     const mapStore = useMapStore()
+    const notificationsStore = useAlertNotificationsStore()
 
     if (
       hasIntersect(
