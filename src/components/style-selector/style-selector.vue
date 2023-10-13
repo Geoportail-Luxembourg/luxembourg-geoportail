@@ -6,6 +6,7 @@ import { useTranslation } from 'i18next-vue'
 import SimpleStyleSelector from '@/components/style-selector/simple-style-selector.vue'
 import MediumStyleSelector from '@/components/style-selector/medium-style-selector.vue'
 import ExpertStyleSelector from '@/components/style-selector/expert-style-selector.vue'
+import ExpandablePanel from '@/components/common/expandable-panel.vue'
 import { useAppStore } from '@/stores/app.store'
 import { useMapStore } from '@/stores/map.store'
 import { useStyleStore } from '@/stores/style.store'
@@ -28,7 +29,7 @@ watch(bgLayer, bgLayer => {
   }
 })
 
-let panelOpen: Ref<
+let currentOpenPanel: Ref<
   undefined | 'simpleStyle' | 'mediumStyle' | 'advancedStyle'
 > = ref(undefined)
 
@@ -40,96 +41,47 @@ function resetStyle() {
 <template>
   <div v-if="styleCapabilities.isEditable">
     <div v-if="styleCapabilities.hasSimpleStyle" class="mb-px">
-      <button
-        @click="
+      <expandable-panel
+        :title="t('Choose a predefined style')"
+        :expanded="currentOpenPanel === 'simpleStyle'"
+        @togglePanel="
           () =>
-            (panelOpen =
-              panelOpen === 'simpleStyle' ? undefined : 'simpleStyle')
+            (currentOpenPanel =
+              currentOpenPanel === 'simpleStyle' ? undefined : 'simpleStyle')
         "
-        class="group node-1 w-full text-left flex px-2 py-1.5 uppercase bg-tertiary"
       >
-        <div
-          class="grow"
-          :class="panelOpen === 'simpleStyle' ? 'text-white' : 'text-secondary'"
-        >
-          {{ t('Choose a predefined style') }}
-        </div>
-        <div class="leading-6">
-          <div
-            class="fa fa-sharp fa-solid group-hover:text-white text-primary"
-            :class="
-              panelOpen === 'simpleStyle' ? 'fa-caret-up' : 'fa-caret-down'
-            "
-          ></div>
-        </div>
-      </button>
-      <simple-style-selector
-        :class="panelOpen === 'simpleStyle' ? '' : 'hidden'"
-      />
+        <simple-style-selector
+      /></expandable-panel>
     </div>
 
     <div v-if="styleCapabilities.hasAdvancedStyle" class="mb-px">
-      <button
-        @click="
+      <expandable-panel
+        :title="t('Change main colours')"
+        :expanded="currentOpenPanel === 'mediumStyle'"
+        @togglePanel="
           () =>
-            (panelOpen =
-              panelOpen === 'mediumStyle' ? undefined : 'mediumStyle')
+            (currentOpenPanel =
+              currentOpenPanel === 'mediumStyle' ? undefined : 'mediumStyle')
         "
-        class="group node-1 w-full text-left flex px-2 py-1.5 uppercase bg-tertiary"
       >
-        <div
-          class="grow"
-          :class="panelOpen === 'mediumStyle' ? 'text-white' : 'text-secondary'"
-        >
-          {{ t('Change main colours') }}
-        </div>
-        <div class="leading-6">
-          <div
-            class="fa fa-sharp fa-solid group-hover:text-white text-primary"
-            :class="
-              panelOpen === 'mediumStyle' ? 'fa-caret-up' : 'fa-caret-down'
-            "
-          ></div>
-        </div>
-      </button>
-      <medium-style-selector
-        :class="panelOpen === 'mediumStyle' ? '' : 'hidden'"
-        v-if="bgLayer"
-        :layer="bgLayer"
-      />
+        <medium-style-selector v-if="bgLayer" :layer="bgLayer"
+      /></expandable-panel>
     </div>
 
     <div v-if="styleCapabilities.hasExpertStyle" class="mb-px">
-      <button
-        @click="
+      <expandable-panel
+        :title="t('Advanced settings')"
+        :expanded="currentOpenPanel === 'advancedStyle'"
+        @togglePanel="
           () =>
-            (panelOpen =
-              panelOpen === 'advancedStyle' ? undefined : 'advancedStyle')
+            (currentOpenPanel =
+              currentOpenPanel === 'advancedStyle'
+                ? undefined
+                : 'advancedStyle')
         "
-        class="group node-1 w-full text-left flex px-2 py-1.5 uppercase bg-tertiary"
       >
-        <div
-          class="grow"
-          :class="
-            panelOpen === 'advancedStyle' ? 'text-white' : 'text-secondary'
-          "
-        >
-          {{ t('Advanced settings') }}
-        </div>
-        <div class="leading-6">
-          <div
-            class="fa fa-sharp fa-solid group-hover:text-white text-primary"
-            :class="
-              panelOpen === 'advancedStyle' ? 'fa-caret-up' : 'fa-caret-down'
-            "
-          ></div>
-        </div>
-      </button>
-      <expert-style-selector
-        :class="panelOpen === 'advancedStyle' ? '' : 'hidden'"
-        v-if="bgLayer"
-        :layer="bgLayer"
-      />
+        <expert-style-selector v-if="bgLayer" :layer="bgLayer"
+      /></expandable-panel>
     </div>
     <button @click="resetStyle" class="lux-btn my-2">
       {{ t('Reset style', { ns: 'client' }) }}
