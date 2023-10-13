@@ -4304,5 +4304,7 @@
   "f_dc_connectors_available": "Points de charge CC disponibles",
   "f_ac_max_power": "Puissance CA Watt",
   "f_ac_connectors_total": "Points de charge CA",
-  "f_ac_connectors_available": "Points de charge CA disponibles"
+  "f_ac_connectors_available": "Points de charge CA disponibles",
+  "Modifier la date de début": "Modifier la date de début",
+  "Modifier la date de fin": "Modifier la date de fin"
 }

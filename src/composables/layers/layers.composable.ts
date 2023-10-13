@@ -8,7 +8,9 @@ import {
 } from '@/stores/map.store.model'
 import { useMapStore } from '@/stores/map.store'
 import { useThemeStore } from '@/stores/config.store'
+import { useAlertNotificationsStore } from '@/stores/alert-notifications.store'
 import useThemes from '@/composables/themes/themes.composable'
+import { AlertNotificationType } from '@/stores/alert-notifications.store.model'
 
 const themes = useThemes()
 
@@ -66,6 +68,8 @@ export default function useLayers() {
   }
 
   function handleExclusionLayers(layer: Layer) {
+    const notificationsStore = useAlertNotificationsStore()
+
     if (!layer.metadata?.exclusion) {
       return
     }
@@ -81,7 +85,7 @@ export default function useLayers() {
     if (excludedLayers.length > 0) {
       mapStore.removeLayers(...excludedLayers.map(_layer => _layer.id))
 
-      alert(
+      notificationsStore.addNotification(
         i18next.t(
           'The layer <b>{{layersToRemove}}</b> has been removed because it cannot be displayed while the layer <b>{{layer}}</b> is displayed',
           {
@@ -92,7 +96,8 @@ export default function useLayers() {
             layer: i18next.t(layer.name, { ns: 'client' }),
             ns: 'client',
           }
-        )
+        ),
+        AlertNotificationType.WARNING
       )
     }
 
@@ -103,6 +108,7 @@ export default function useLayers() {
 
   function handleExclusionWithBg(layer: Layer) {
     const mapStore = useMapStore()
+    const notificationsStore = useAlertNotificationsStore()
 
     if (
       hasIntersect(
@@ -111,7 +117,8 @@ export default function useLayers() {
       )
     ) {
       mapStore.setBgLayer(null)
-      alert(
+
+      notificationsStore.addNotification(
         i18next.t(
           'Background has been deactivated because ' +
             'the layer {{layer}} cannot be displayed on top of it.',
@@ -119,7 +126,8 @@ export default function useLayers() {
             layer: i18next.t(layer.name, { ns: 'client' }),
             ns: 'client',
           }
-        )
+        ),
+        AlertNotificationType.WARNING
       )
     }
   }

@@ -32,11 +32,10 @@ function onEnter(el: Element, done: () => void) {
   >
     <div
       v-if="show"
+      v-dompurify-html="props.notification.message"
       class="lux-alert"
       :class="`lux-${props.notification.type}`"
       role="alert"
-    >
-      {{ props.notification.message }}
-    </div>
+    ></div>
   </Transition>
 </template>
