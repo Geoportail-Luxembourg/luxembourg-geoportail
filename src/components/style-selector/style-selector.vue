@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { ref, computed, watch } from 'vue'
+import { Ref, ref, computed, watch } from 'vue'
 import { storeToRefs } from 'pinia'
 import { useTranslation } from 'i18next-vue'
 
@@ -28,9 +28,9 @@ watch(bgLayer, bgLayer => {
   }
 })
 
-let isSimpleStyleOpen = ref(false)
-let isMediumStyleOpen = ref(false)
-let isAdvancedStyleOpen = ref(false)
+let panelOpen: Ref<
+  undefined | 'simpleStyle' | 'mediumStyle' | 'advancedStyle'
+> = ref(undefined)
 
 function resetStyle() {
   styleStore.setStyle(null)
@@ -41,45 +41,59 @@ function resetStyle() {
   <div v-if="styleCapabilities.isEditable">
     <div v-if="styleCapabilities.hasSimpleStyle" class="mb-px">
       <button
-        @click="() => (isSimpleStyleOpen = !isSimpleStyleOpen)"
+        @click="
+          () =>
+            (panelOpen =
+              panelOpen === 'simpleStyle' ? undefined : 'simpleStyle')
+        "
         class="group node-1 w-full text-left flex px-2 py-1.5 uppercase bg-tertiary"
       >
         <div
           class="grow"
-          :class="isSimpleStyleOpen ? 'text-white' : 'text-secondary'"
+          :class="panelOpen === 'simpleStyle' ? 'text-white' : 'text-secondary'"
         >
           {{ t('Choose a predefined style') }}
         </div>
         <div class="leading-6">
           <div
             class="fa fa-sharp fa-solid group-hover:text-white text-primary"
-            :class="isSimpleStyleOpen ? 'fa-caret-up' : 'fa-caret-down'"
+            :class="
+              panelOpen === 'simpleStyle' ? 'fa-caret-up' : 'fa-caret-down'
+            "
           ></div>
         </div>
       </button>
-      <simple-style-selector :class="isSimpleStyleOpen ? '' : 'hidden'" />
+      <simple-style-selector
+        :class="panelOpen === 'simpleStyle' ? '' : 'hidden'"
+      />
     </div>
 
     <div v-if="styleCapabilities.hasAdvancedStyle" class="mb-px">
       <button
-        @click="() => (isMediumStyleOpen = !isMediumStyleOpen)"
+        @click="
+          () =>
+            (panelOpen =
+              panelOpen === 'mediumStyle' ? undefined : 'mediumStyle')
+        "
         class="group node-1 w-full text-left flex px-2 py-1.5 uppercase bg-tertiary"
       >
         <div
           class="grow"
-          :class="isMediumStyleOpen ? 'text-white' : 'text-secondary'"
+          :class="panelOpen === 'mediumStyle' ? 'text-white' : 'text-secondary'"
         >
           {{ t('Change main colours') }}
         </div>
         <div class="leading-6">
           <div
             class="fa fa-sharp fa-solid group-hover:text-white text-primary"
-            :class="isMediumStyleOpen ? 'fa-caret-up' : 'fa-caret-down'"
+            :class="
+              panelOpen === 'mediumStyle' ? 'fa-caret-up' : 'fa-caret-down'
+            "
           ></div>
         </div>
       </button>
       <medium-style-selector
-        :class="isMediumStyleOpen ? '' : 'hidden'"
+        :class="panelOpen === 'mediumStyle' ? '' : 'hidden'"
         v-if="bgLayer"
         :layer="bgLayer"
       />
@@ -87,24 +101,32 @@ function resetStyle() {
 
     <div v-if="styleCapabilities.hasExpertStyle" class="mb-px">
       <button
-        @click="() => (isAdvancedStyleOpen = !isAdvancedStyleOpen)"
+        @click="
+          () =>
+            (panelOpen =
+              panelOpen === 'advancedStyle' ? undefined : 'advancedStyle')
+        "
         class="group node-1 w-full text-left flex px-2 py-1.5 uppercase bg-tertiary"
       >
         <div
           class="grow"
-          :class="isAdvancedStyleOpen ? 'text-white' : 'text-secondary'"
+          :class="
+            panelOpen === 'advancedStyle' ? 'text-white' : 'text-secondary'
+          "
         >
           {{ t('Advanced settings') }}
         </div>
         <div class="leading-6">
           <div
             class="fa fa-sharp fa-solid group-hover:text-white text-primary"
-            :class="isAdvancedStyleOpen ? 'fa-caret-up' : 'fa-caret-down'"
+            :class="
+              panelOpen === 'advancedStyle' ? 'fa-caret-up' : 'fa-caret-down'
+            "
           ></div>
         </div>
       </button>
       <expert-style-selector
-        :class="isAdvancedStyleOpen ? '' : 'hidden'"
+        :class="panelOpen === 'advancedStyle' ? '' : 'hidden'"
         v-if="bgLayer"
         :layer="bgLayer"
       />
