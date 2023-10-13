@@ -42,7 +42,7 @@ function resetStyle() {
   <div v-if="styleCapabilities.isEditable">
     <div v-if="styleCapabilities.hasSimpleStyle" class="mb-px">
       <expandable-panel
-        :title="t('Choose a predefined style')"
+        :title="t('Simple')"
         :expanded="currentOpenPanel === 'simpleStyle'"
         @togglePanel="
           () =>
@@ -56,7 +56,7 @@ function resetStyle() {
 
     <div v-if="styleCapabilities.hasAdvancedStyle" class="mb-px">
       <expandable-panel
-        :title="t('Change main colours')"
+        :title="t('Medium')"
         :expanded="currentOpenPanel === 'mediumStyle'"
         @togglePanel="
           () =>
@@ -70,7 +70,7 @@ function resetStyle() {
 
     <div v-if="styleCapabilities.hasExpertStyle" class="mb-px">
       <expandable-panel
-        :title="t('Advanced settings')"
+        :title="t('Expert (style.json)')"
         :expanded="currentOpenPanel === 'advancedStyle'"
         @togglePanel="
           () =>
