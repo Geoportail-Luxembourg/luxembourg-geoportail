@@ -8,6 +8,15 @@ export enum TimeResolution {
   SECOND = 'second',
 }
 
+export interface TimeOptions {
+  timeValueList?: number[]
+  minValue: number
+  maxValue: number
+  timeInterval?: number[]
+}
+
+export const DEFAULT_TIME_INTERVAL = [0, 1, 0, 0]
+
 /**
  * Format time regarding a resolution (comming from i18n)
  *
@@ -73,4 +82,96 @@ export function dateToISOString(date: string | number) {
  */
 export function formatDateForInput(dateISO: string) {
   return DateTime.fromISO(dateISO).toFormat('yyyy-MM-dd')
+}
+
+/**
+ * Compute the closest available layer date from the selected timestamp
+ * legacy v3: timeSliderComponent.getClosestValue_()
+ * @param timestamp The selected date (timestamp formatted)
+ */
+export function getClosestValue(timestamp: number, timeOptions: TimeOptions) {
+  if (timestamp <= timeOptions.minValue) {
+    return timeOptions.minValue
+  }
+
+  if (timestamp >= timeOptions.maxValue) {
+    return timeOptions.maxValue
+  }
+
+  if (timeOptions.timeValueList) {
+    return getClosestValueFromList(timestamp, timeOptions)
+  }
+
+  return getClosestValueFromStartInterval(timestamp, timeOptions)
+}
+
+/**
+ * Time stops are defined as a list of values
+ * @param timestamp
+ * @param timeOptions
+ * @returns
+ */
+function getClosestValueFromList(timestamp: number, timeOptions: TimeOptions) {
+  const timeValueList = timeOptions.timeValueList ?? []
+  let index
+  let leftIndex = 0
+  let rightIndex = timeValueList.length - 1
+
+  while (rightIndex - leftIndex > 1) {
+    index = Math.floor((leftIndex + rightIndex) / 2)
+    if (timeValueList[index] >= timestamp) {
+      rightIndex = index
+    } else {
+      leftIndex = index
+    }
+  }
+
+  const leftDistance = Math.abs(timeValueList[leftIndex] - timestamp)
+  const rightDistance = Math.abs(timeValueList[rightIndex] - timestamp)
+
+  return timeValueList[leftDistance < rightDistance ? leftIndex : rightIndex]
+}
+
+/**
+ * Time stops are defined by a start date plus an interval
+ * @param timestamp
+ * @param timeOptions
+ */
+function getClosestValueFromStartInterval(
+  timestamp: number,
+  timeOptions: TimeOptions
+) {
+  const interval = timeOptions.timeInterval ?? DEFAULT_TIME_INTERVAL
+  const targetDate = new Date(timestamp).getTime()
+  const startDate = new Date(timeOptions.minValue)
+  const maxDate = timeOptions.maxValue
+  let bestDate = timeOptions.minValue
+  let bestDistance = Math.abs(targetDate - bestDate)
+
+  for (let i = 1; ; i++) {
+    // The start date should always be used as a reference
+    // because adding a month twice could differ from adding
+    // two months at once
+    const next = new Date(startDate.getTime())
+    next.setFullYear(startDate.getFullYear() + i * interval[0])
+    next.setMonth(
+      startDate.getMonth() + i * interval[1],
+      startDate.getDate() + i * interval[2]
+    )
+    next.setSeconds(startDate.getSeconds() + i * interval[3])
+
+    if (next.getTime() > maxDate) {
+      break
+    }
+
+    const distance = Math.abs(targetDate - next.getTime())
+    if (distance <= bestDistance) {
+      bestDate = next.getTime()
+      bestDistance = distance
+    } else {
+      break
+    }
+  }
+
+  return bestDate
 }

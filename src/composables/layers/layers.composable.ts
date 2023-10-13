@@ -4,6 +4,7 @@ import {
   Layer,
   LayerId,
   LAYER_CURRENT_TIME_SEPARATOR,
+  LayerTimeMode,
 } from '@/stores/map.store.model'
 import { useMapStore } from '@/stores/map.store'
 import { useThemeStore } from '@/stores/config.store'
@@ -49,7 +50,9 @@ export default function useLayers() {
         layer.time?.minDefValue ?? layer.time?.minValue
     }
 
-    if (!layer.currentTimeMaxValue) {
+    const isRange = layer.time?.mode === LayerTimeMode.RANGE
+
+    if (!layer.currentTimeMaxValue && isRange) {
       layer.currentTimeMaxValue =
         layer.time?.maxDefValue ?? layer.time?.maxValue
     }

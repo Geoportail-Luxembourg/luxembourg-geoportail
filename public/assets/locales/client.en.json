@@ -4055,5 +4055,7 @@
   "f_dc_connectors_available": "DC charge points available",
   "f_ac_max_power": "Power output AC Watt",
   "f_ac_connectors_total": "AC charge points",
-  "f_ac_connectors_available": "AC charge points available"
+  "f_ac_connectors_available": "AC charge points available",
+  "Modifier la date de début": "",
+  "Modifier la date de fin": ""
 }

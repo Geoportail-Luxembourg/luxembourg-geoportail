@@ -4302,5 +4302,7 @@
   "f_dc_connectors_available": "freie DC Ladepunkte",
   "f_ac_max_power": "Ladeleistung AC Watt",
   "f_ac_connectors_total": "AC Ladepunkte",
-  "f_ac_connectors_available": "freie AC Ladepunkte"
+  "f_ac_connectors_available": "freie AC Ladepunkte",
+  "Modifier la date de début": "",
+  "Modifier la date de fin": ""
 }
