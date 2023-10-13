@@ -31109,7 +31109,7 @@ function uF(t) {
     },
     source: o
   });
-  return m.set("olcs.extent", Hg()), m.set("label", e), m.set("id", h), m;
+  return m.set("olcs.extent", Hg()), m.set("label", e), m.set("layer_name", e), m.set("id", h), m;
 }
 function cF(t) {
   var b, T;
@@ -31137,7 +31137,7 @@ function cF(t) {
       id: a
     }
   });
-  if (g.set("olcs.extent", Hg()), g.set("label", e), g.set("id", a), t.currentTimeMinValue) {
+  if (g.set("olcs.extent", Hg()), g.set("label", e), g.set("layer_name", e), g.set("id", a), t.currentTimeMinValue) {
     const M = (T = (b = t.metadata) == null ? void 0 : b.time_layers) == null ? void 0 : T[t.currentTimeMinValue], I = m.getUrls();
     if (M && I) {
       const P = I.map(
@@ -37519,7 +37519,8 @@ ii.init({
   fallbackLng: "fr",
   backend: {
     loadPath: "/static-ngeo/web-components/assets/locales/{{ns}}.{{lng}}.json"
-  }
+  },
+  nsSeparator: "|"
 });
 const cx = $k(P7);
 cx.use(JL());
