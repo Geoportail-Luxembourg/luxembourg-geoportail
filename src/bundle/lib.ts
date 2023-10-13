@@ -52,6 +52,7 @@ i18next.init({
   backend: {
     loadPath: `/static-ngeo/web-components/assets/locales/{{ns}}.{{lng}}.json`,
   },
+  nsSeparator: '|', // ! force separator to '|' instead of ':' because some i18n keys have ':' (otherwise, i18next doesn't find the key)
 })
 
 import App from '../App.vue'
