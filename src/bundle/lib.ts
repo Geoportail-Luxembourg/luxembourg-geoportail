@@ -37,6 +37,7 @@ import { statePersistorMyMapService } from '@/services/state-persistor/state-per
 import { proxyUrlHelper } from '@/services/proxyurl/proxyurl.helper'
 import { themeSelectorService } from '@/components/theme-selector/theme-selector.service'
 import MapLibreLayer from '@/lib/ol-mapbox-layer'
+import StyleSelector from '@/components/style-selector/style-selector.vue'
 
 import i18next from 'i18next'
 import backend from 'i18next-http-backend'
@@ -120,4 +121,5 @@ export {
   statePersistorMyMapService,
   themeSelectorService,
   MapLibreLayer,
+  StyleSelector,
 }
