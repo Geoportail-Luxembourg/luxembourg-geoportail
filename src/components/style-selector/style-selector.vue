@@ -16,6 +16,7 @@ const { t } = useTranslation()
 const mapStore = useMapStore()
 const appStore = useAppStore()
 const styleStore = useStyleStore()
+const { bgStyle } = storeToRefs(styleStore)
 const { bgLayer } = storeToRefs(mapStore)
 const styles = useMvtStyles()
 
@@ -83,7 +84,7 @@ function resetStyle() {
         <expert-style-selector v-if="bgLayer" :layer="bgLayer"
       /></expandable-panel>
     </div>
-    <button @click="resetStyle" class="lux-btn my-2">
+    <button v-if="bgStyle" @click="resetStyle" class="lux-btn my-2">
       {{ t('Reset style', { ns: 'client' }) }}
     </button>
   </div>
