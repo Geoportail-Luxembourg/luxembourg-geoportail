@@ -39,20 +39,44 @@ function resetStyle() {
 
 <template>
   <div v-if="styleCapabilities.isEditable">
-    <button @click="() => appStore.closeStyleEditorPanel()">X close</button>
-    <h2 class="h-20 shrink-0 flex justify-between lux-panel-title">
-      {{ t('Style editor') }}
-    </h2>
-    <div v-if="styleCapabilities.hasSimpleStyle">
-      <button @click="() => (isSimpleStyleOpen = !isSimpleStyleOpen)">
-        {{ t('Choose a predefined style') }}
+    <div v-if="styleCapabilities.hasSimpleStyle" class="mb-px">
+      <button
+        @click="() => (isSimpleStyleOpen = !isSimpleStyleOpen)"
+        class="group node-1 w-full text-left flex px-2 py-1.5 uppercase bg-tertiary"
+      >
+        <div
+          class="grow"
+          :class="isSimpleStyleOpen ? 'text-white' : 'text-secondary'"
+        >
+          {{ t('Choose a predefined style') }}
+        </div>
+        <div class="leading-6">
+          <div
+            class="fa fa-sharp fa-solid group-hover:text-white text-primary"
+            :class="isSimpleStyleOpen ? 'fa-caret-up' : 'fa-caret-down'"
+          ></div>
+        </div>
       </button>
       <simple-style-selector :class="isSimpleStyleOpen ? '' : 'hidden'" />
     </div>
 
-    <div v-if="styleCapabilities.hasAdvancedStyle">
-      <button @click="() => (isMediumStyleOpen = !isMediumStyleOpen)">
-        {{ t('Change main colours') }}
+    <div v-if="styleCapabilities.hasAdvancedStyle" class="mb-px">
+      <button
+        @click="() => (isMediumStyleOpen = !isMediumStyleOpen)"
+        class="group node-1 w-full text-left flex px-2 py-1.5 uppercase bg-tertiary"
+      >
+        <div
+          class="grow"
+          :class="isMediumStyleOpen ? 'text-white' : 'text-secondary'"
+        >
+          {{ t('Change main colours') }}
+        </div>
+        <div class="leading-6">
+          <div
+            class="fa fa-sharp fa-solid group-hover:text-white text-primary"
+            :class="isMediumStyleOpen ? 'fa-caret-up' : 'fa-caret-down'"
+          ></div>
+        </div>
       </button>
       <medium-style-selector
         :class="isMediumStyleOpen ? '' : 'hidden'"
@@ -61,9 +85,23 @@ function resetStyle() {
       />
     </div>
 
-    <div v-if="styleCapabilities.hasExpertStyle">
-      <button @click="() => (isAdvancedStyleOpen = !isAdvancedStyleOpen)">
-        {{ t('Advanced settings') }}
+    <div v-if="styleCapabilities.hasExpertStyle" class="mb-px">
+      <button
+        @click="() => (isAdvancedStyleOpen = !isAdvancedStyleOpen)"
+        class="group node-1 w-full text-left flex px-2 py-1.5 uppercase bg-tertiary"
+      >
+        <div
+          class="grow"
+          :class="isAdvancedStyleOpen ? 'text-white' : 'text-secondary'"
+        >
+          {{ t('Advanced settings') }}
+        </div>
+        <div class="leading-6">
+          <div
+            class="fa fa-sharp fa-solid group-hover:text-white text-primary"
+            :class="isAdvancedStyleOpen ? 'fa-caret-up' : 'fa-caret-down'"
+          ></div>
+        </div>
       </button>
       <expert-style-selector
         :class="isAdvancedStyleOpen ? '' : 'hidden'"
@@ -71,7 +109,7 @@ function resetStyle() {
         :layer="bgLayer"
       />
     </div>
-    <button @click="resetStyle" class="lux-btn">
+    <button @click="resetStyle" class="lux-btn my-2">
       {{ t('Reset style', { ns: 'client' }) }}
     </button>
   </div>
