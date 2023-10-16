@@ -270,11 +270,11 @@
   }
 
   .lux-slidebar-track-full {
-    @apply top-0 absolute w-full z-0;
+    @apply top-0 absolute w-full z-0 hover:cursor-pointer;
   }
 
   .lux-slidebar-track-selection {
-    @apply top-0 absolute w-full z-[1];
+    @apply top-0 absolute w-full z-[1] hover:cursor-pointer;
     background-color: #94ac9a;
   }
 
