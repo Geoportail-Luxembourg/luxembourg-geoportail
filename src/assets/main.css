@@ -24,6 +24,10 @@
     @apply text-default;
   }
 
+  a {
+    @apply text-primary no-underline;
+  }
+
   input[type='range']::-webkit-slider-thumb {
     @apply bg-tertiary h-4 w-4 rounded-full border-tertiary;
     -webkit-appearance: none;
@@ -280,6 +284,14 @@
 
   .lux-time-datepicker {
     @apply border-[#767676] border-[1px] pl-1;
+  }
+
+  .lux-attribution {
+    @apply absolute bottom-0 z-10 text-[0.8em];
+    background: rgba(255, 255, 255, 0.7);
+    padding-left: 4px;
+    padding-right: 4px;
+    color: #6b818f;
   }
 }
 

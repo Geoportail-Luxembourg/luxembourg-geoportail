@@ -101,49 +101,51 @@ const { layersOpen } = storeToRefs(useAppStore())
       class="w-[466px] hidden sm:flex flex-row justify-end text-gray-500 whitespace-nowrap"
     >
       <ButtonLink
-        class="hidden lg:flex"
+        class="hidden lg:flex text-gray-500"
         :label="t('What\'s new', { ns: 'client' })"
         :link="`https://geoportail.lu/${i18next.language}/questions/whats-new/`"
       >
       </ButtonLink>
       <!--TODO get geonetworkBaseUrl from config-->
       <ButtonLink
-        class="hidden lg:flex"
+        class="hidden lg:flex text-gray-500"
         :label="t('Geocatalogue', { ns: 'client' })"
         link=""
       >
       </ButtonLink>
       <!--TODO handle feedback links (for different portals?)-->
       <ButtonLink
-        class="hidden lg:flex"
+        class="hidden lg:flex text-gray-500"
         :label="t('Feedback', { ns: 'client' })"
         link=""
       >
       </ButtonLink>
       <ButtonLink
-        class="hidden lg:flex"
+        class="hidden lg:flex text-gray-500"
         :label="t('A Propos', { ns: 'client' })"
         :link="`https://www.geoportail.lu/${i18next.language}/propos/`"
       >
       </ButtonLink>
       <ButtonLink
-        class="hidden lg:flex"
+        class="hidden lg:flex text-gray-500"
         :label="t('Aide', { ns: 'client' })"
         :link="`https://www.geoportail.lu/${i18next.language}/documentation/`"
       >
       </ButtonLink>
       <ButtonLink
-        class="hidden lg:flex"
+        class="hidden lg:flex text-gray-500"
         :label="t('Contact', { ns: 'client' })"
         :link="`https://www.geoportail.lu/${i18next.language}/propos/contactez-nous/`"
       >
       </ButtonLink>
       <ButtonLink
+        class="text-gray-500"
         :label="t('Legalites', { ns: 'client' })"
         :link="`https://www.geoportail.lu/${i18next.language}/propos/mentions-legales/`"
       >
       </ButtonLink>
       <ButtonLink
+        class="text-gray-500"
         :label="t('ACT', { ns: 'client' })"
         :link="`http://www.act.public.lu/`"
       >
