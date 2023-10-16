@@ -3,6 +3,7 @@ import type OlMap from 'ol/Map'
 
 import { layersCache } from '@/stores/layers.cache'
 import type { Layer, LayerId } from '@/stores/map.store.model'
+import useLayers from '@/composables/layers/layers.composable'
 import { VectorSourceDict } from '@/composables/mvt-styles/mvt-styles.model'
 import { statePersistorStyleService } from '@/services/state-persistor/state-persistor-bgstyle.service'
 import { olLayerFactoryService } from '@/services/ol-layer/ol-layer-factory.service'
@@ -50,11 +51,14 @@ export default function useOpenLayers() {
     if (layer) layer.setOpacity(opacity)
   }
 
-  function setLayerTime(olMap: OlMap, layerId: LayerId, time: string) {
-    const layer = findLayer(olMap, layerId)
+  function setLayerTime(olMap: OlMap, layer: Layer) {
+    //layerId: LayerId, time: string) {
+    const layersService = useLayers()
+    const olLayer = findLayer(olMap, layer.id)
+    const time = layersService.getLayerCurrentTime(layer)
 
-    if (layer) {
-      olLayerTimeService.setLayerTime(<OlLayer>layer, time)
+    if (time && olLayer) {
+      olLayerTimeService.setLayerTime(<OlLayer>olLayer, time)
     }
   }
 
