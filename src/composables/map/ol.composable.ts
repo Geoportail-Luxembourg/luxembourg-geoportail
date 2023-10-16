@@ -70,6 +70,7 @@ function createWmsLayer(layer: Layer): ImageLayer<ImageWMS> {
   })
   olLayer.set('olcs.extent', getOlcsExtent())
   olLayer.set('label', name)
+  olLayer.set('layer_name', name) // for v3 compatibility (search)
   olLayer.set('id', id)
 
   return olLayer
@@ -108,6 +109,7 @@ function createWmtsLayer(layer: Layer): TileLayer<WMTS> {
   })
   olLayer.set('olcs.extent', getOlcsExtent())
   olLayer.set('label', name)
+  olLayer.set('layer_name', name) // for v3 compatibility (search)
   olLayer.set('id', id)
 
   if (layer.currentTimeMinValue) {

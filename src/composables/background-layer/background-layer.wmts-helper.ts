@@ -83,6 +83,7 @@ export function createBgWmtsLayer(layer: Layer): TileLayer<WMTS> {
     )
   )
   tileLayer.set('label', name)
+  tileLayer.set('layer_name', name) // for v3 compatibility (search)
   tileLayer.set('id', id)
 
   // tileLayer.type = 'TILE'
