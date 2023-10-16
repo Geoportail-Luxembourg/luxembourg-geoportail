@@ -38600,11 +38600,10 @@ export const themesApiFixture = (): ConfigModel => ({
       id: 556,
       name: 'basemap_2015_global',
       metadata: {
-        attribution:
-          '&copy; <a href="https://www.mapzen.com/rights">CARTO</a>  &copy; <a href="https://openstreetmap.org/copyright">OpenStreetMap</a> contributors for data outside of Luxembourg',
-        exclusion: '[31, 32]',
-        legend_name: 'act:roadmap_vt',
-        metadata_id: 'a1fea2a0-e0a0-4e5f-a61d-9b3c3a9426bd',
+        attribution: "&copy; <a href='https://www.maptiler.com/copyright/'>MapTiler</a> &copy; <a href=\"https://openstreetmap.org/copyright\">OpenStreetMap</a> contributors for data outside of Luxembourg",
+        exclusion: "[31, 32]",
+        legend_name: "act:roadmap_vt",
+        metadata_id: "a1fea2a0-e0a0-4e5f-a61d-9b3c3a9426bd"
       },
       dimensions: {},
       type: 'WMTS',
@@ -38618,9 +38617,10 @@ export const themesApiFixture = (): ConfigModel => ({
       id: 502,
       name: 'topo_bw_jpeg',
       metadata: {
-        exclusion: '[35, 45]',
-        legend_name: 'act_topovt_bw',
-        metadata_id: 'b786acc2-b87e-4c7a-aff7-52778357243b',
+        attribution: "&copy; <a href='https://www.maptiler.com/copyright/'>MapTiler</a> &copy; <a href=\"https://openstreetmap.org/copyright\">OpenStreetMap</a> contributors for data outside of Luxembourg",
+        exclusion: "[35, 45]",
+        legend_name: "act_topovt_bw",
+        metadata_id: "b786acc2-b87e-4c7a-aff7-52778357243b"
       },
       dimensions: {},
       type: 'WMTS',
@@ -38634,9 +38634,10 @@ export const themesApiFixture = (): ConfigModel => ({
       id: 529,
       name: 'topogr_global',
       metadata: {
-        exclusion: '[36, 46]',
-        legend_name: 'act_topovt',
-        metadata_id: 'b786acc2-b87e-4c7a-aff7-52778357243b',
+        attribution: "&copy; <a href='https://www.maptiler.com/copyright/'>MapTiler</a> &copy; <a href=\"https://openstreetmap.org/copyright\">OpenStreetMap</a> contributors for data outside of Luxembourg",
+        exclusion: "[36, 46]",
+        legend_name: "act_topovt",
+        metadata_id: "b786acc2-b87e-4c7a-aff7-52778357243b"
       },
       dimensions: {},
       type: 'WMTS',
