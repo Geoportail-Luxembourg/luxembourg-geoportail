@@ -48,11 +48,13 @@ export class OlSynchronizer {
 
         removedLayers.forEach(layer => openLayers.removeLayer(map, layer.id))
 
-        addedLayerComparisons.forEach(cmp =>
+        addedLayerComparisons.forEach(cmp => {
           openLayers.addLayer(map, cmp.layer)
-        )
+          openLayers.setLayerTime(map, cmp.layer)
+        })
         mutatedLayerComparisons.forEach(layer => {
           openLayers.setLayerOpacity(map, layer.id, layer.opacity as number)
+          openLayers.setLayerTime(map, layer)
         })
 
         if (newContext.layers) {
@@ -70,7 +72,6 @@ export class OlSynchronizer {
         openLayers.setBgLayer(map, bgLayer, styleStore.bgVectorSources)
     )
 
-    //const appliedStyle = computed(() =>
     watchEffect(() => {
       if (!styleStore.isExpertStyleActive) {
         // must ignore typing error (too deep)

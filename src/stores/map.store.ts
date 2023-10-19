@@ -1,10 +1,12 @@
-import { dateToISOString } from '@/services/time.utils'
 import { defineStore, acceptHMRUpdate } from 'pinia'
 import { ref, Ref, ShallowRef, shallowRef } from 'vue'
 
+import useLayers from '@/composables/layers/layers.composable'
+import { dateToISOString } from '@/services/time.utils'
 import { LayerId, Layer, MapContext } from './map.store.model'
 
 export const useMapStore = defineStore('map', () => {
+  const layersService = useLayers()
   const map: Ref<MapContext> = ref({})
   const layers: ShallowRef<Layer[]> = shallowRef([])
   const layers3d: ShallowRef<any[]> = shallowRef([])
@@ -69,7 +71,7 @@ export const useMapStore = defineStore('map', () => {
   ) {
     layers.value = layers.value.map(elt => {
       if (elt.id === layerId) {
-        return {
+        const layer = {
           ...elt,
           ...{
             currentTimeMinValue: dateStart
@@ -78,6 +80,14 @@ export const useMapStore = defineStore('map', () => {
             currentTimeMaxValue: dateEnd ? dateToISOString(dateEnd) : undefined,
           },
         }
+
+        if (layer.type === 'WMTS') {
+          // Force update layer name to update wmts requests
+          // /!\ do it here, after setting time values 'currentTimeMinValue' and 'currentTimeMaxValue'
+          layer.name = layersService.getLayerCurrentLabel(layer)
+        }
+
+        return layer
       }
       return elt
     })

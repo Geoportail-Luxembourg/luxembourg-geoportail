@@ -1,4 +1,5 @@
 <script setup lang="ts">
+import { watch } from 'vue'
 import { onUnmounted, computed, ref } from 'vue'
 
 const props = withDefaults(
@@ -33,6 +34,13 @@ onUnmounted(() => {
   document.removeEventListener('mousemove', onMouseMove)
   document.removeEventListener('mouseup', onMouseUp)
 })
+
+watch(
+  () => props.selectedValue,
+  value => {
+    currentValue.value = value
+  }
+)
 
 function onMoveThumb(value: number) {
   currentValue.value = Math.max(Math.min(value, 100), 0)
@@ -93,10 +101,10 @@ function getPayloadValue(payload: MouseEvent) {
       :class="isDragging ? 'dragging' : ''"
       ref="elRefThumb"
       :style="styleObject"
-      @keydown.space="onKeyDownRight"
-      @keydown.right="onKeyDownRight"
-      @keydown.left="onKeyDownLeft"
-      @keydown.delete="onKeyDownLeft"
+      @keydown.space.stop="onKeyDownRight"
+      @keydown.right.stop="onKeyDownRight"
+      @keydown.left.stop="onKeyDownLeft"
+      @keydown.delete.stop="onKeyDownLeft"
       @mousedown="onMouseDown"
       @mousemove="onMouseMove"
       @mouseup="onMouseUp"

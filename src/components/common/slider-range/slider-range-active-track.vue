@@ -5,6 +5,9 @@ const props = defineProps<{
   selectedMinValue: number
   selectedMaxValue?: number
 }>()
+const emit = defineEmits<{
+  (e: 'change', value: number): void
+}>()
 
 const elRefFullTrack = ref<HTMLElement>()
 const elRefSelectionTrack = ref<HTMLElement>()
@@ -35,6 +38,16 @@ const styleObject = computed(() => ({
   left: `${currentLeftOffset.value}px`,
   width: `${currentWidthOffset.value}px`,
 }))
+
+function onClick(payload: MouseEvent) {
+  if (elRefFullTrack.value) {
+    const offsetLeft = elRefFullTrack.value.getBoundingClientRect().x
+    const value =
+      ((payload.clientX - offsetLeft) * 100) / elRefFullTrack.value.offsetWidth
+
+    emit('change', value)
+  }
+}
 </script>
 
 <template>
@@ -44,7 +57,8 @@ const styleObject = computed(() => ({
       ref="elRefSelectionTrack"
       class="lux-slidebar-track-selection"
       :style="styleObject"
+      @click="onClick"
     ></div>
-    <div class="lux-slidebar-track-full"></div>
+    <div class="lux-slidebar-track-full" @click="onClick"></div>
   </div>
 </template>

@@ -47,7 +47,7 @@ function close() {
         role="dialog"
         ref="modal"
         tabindex="0"
-        @keydown.esc="close()"
+        @keydown.esc.stop="close()"
         class="fixed inset-x-0 inset-y-8 flex items-start justify-center z-[1100] outline-none"
       >
         <div class="bg-white shadow-modal rounded-lg overflow-hidden w-[700px]">

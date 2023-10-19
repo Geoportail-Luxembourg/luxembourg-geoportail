@@ -3,6 +3,7 @@ import { computed } from 'vue'
 
 import { useLayer } from '@/composables/layer'
 import { Layer } from '@/stores/map.store.model'
+import useLayers from '@/composables/layers/layers.composable'
 
 import LayerItemSub from './layer-item-sub.vue'
 import LayerTime from '../layer-time/layer-time.vue'
@@ -23,24 +24,28 @@ const emit = defineEmits<{
   (e: 'changeOpacity', layer: Layer, opacity: number): void
   (e: 'changeTime', dateStart?: string, dateEnd?: string): void
 }>()
-const { t, getLabel, onClickInfo } = useLayer(props.layer as Layer, { emit })
+const { t, onClickInfo } = useLayer(props.layer, { emit })
+const layersService = useLayers()
+const layerLabel = computed(() =>
+  t(layersService.getLayerCurrentLabel(props.layer), { ns: 'client' })
+)
 
 const txtDraggableLabel = computed(() =>
   t('Sort "{{layerName}}" in the list', {
     ns: 'client',
-    layerName: getLabel(),
+    layerName: layerLabel.value,
   })
 )
 const txtTitleLabel = computed(() =>
   t('Display informations for "{{layerName}}"', {
     ns: 'client',
-    layerName: getLabel(),
+    layerName: layerLabel.value,
   })
 )
 const txtRemoveLayer = computed(() =>
   t('Remove layer "{{layerName}}"', {
     ns: 'client',
-    layerName: getLabel(),
+    layerName: layerLabel.value,
   })
 )
 
@@ -71,7 +76,7 @@ function changeTime(dateStart?: string, dateEnd?: string) {
         class="grow text-left break-words w-[70%] flex items-center"
         @click="$emit('clickToggle', layer)"
       >
-        <span class="grow">{{ getLabel() }}</span>
+        <span class="grow">{{ layerLabel }}</span>
         <span
           v-if="!is3d"
           class="w-3.5 fa-solid"
@@ -80,7 +85,7 @@ function changeTime(dateStart?: string, dateEnd?: string) {
         ></span>
       </button>
       <button
-        class="mt-1 fa-solid fa-trash"
+        class="mt-1 fa-regular fa-trash-can"
         :title="txtRemoveLayer"
         :aria-label="txtRemoveLayer"
         @click="$emit('clickRemove', layer)"
