@@ -20,6 +20,11 @@ export default function useMap() {
     return map
   }
 
+  /**
+   * Creates and return an OpenLayers map
+   * 'keyboardEventTarget': document options is mandatory to use "esc" and "back" on keydown
+   * @returns The newly created OpenLayers map
+   */
   function createMap() {
     olMap.value = map = new OlMap({
       view: new OlView({
@@ -28,6 +33,7 @@ export default function useMap() {
         multiWorld: true,
       }),
       controls: [],
+      keyboardEventTarget: document, // Very important for listening keyboard events when drawing in v3!
     })
 
     return map

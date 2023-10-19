@@ -8335,7 +8335,8 @@ function zl() {
         center: [682439, 6379152],
         multiWorld: !0
       }),
-      controls: []
+      controls: [],
+      keyboardEventTarget: document
     }), q_;
   }
   function n(T, M) {
