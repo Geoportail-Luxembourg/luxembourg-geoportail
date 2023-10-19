@@ -38617,7 +38617,7 @@ export const themesApiFixture = (): ConfigModel => ({
       id: 502,
       name: 'topo_bw_jpeg',
       metadata: {
-        attribution: "&copy; <a href='https://www.maptiler.com/copyright/'>MapTiler</a> &copy; <a href=\"https://openstreetmap.org/copyright\">OpenStreetMap</a> contributors for data outside of Luxembourg",
+        attribution: "&copy; B&W custom attribution for test only",
         exclusion: "[35, 45]",
         legend_name: "act_topovt_bw",
         metadata_id: "b786acc2-b87e-4c7a-aff7-52778357243b"

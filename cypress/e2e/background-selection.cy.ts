@@ -17,25 +17,58 @@ describe('Background selector', () => {
     cy.get('[data-cy="available-bgs"]').find('button').should('not.be.hidden')
   })
 
-  it('updates the layer manager and the map when selecting a background layer', () => {
+  it('has the default background layer on the map', () => {
     cy.window().then(window => {
       const layers = (<AUTWindowOlMap>window).olMap.getLayers().getArray()
       expect(layers[0].get('id')).to.eq(556)
     })
 
-    cy.get('[data-cy="selectedBg"]').find('button').click()
-    cy.get('[data-cy="available-bgs"]')
-      .find('button')
-      .filter('[title*="topo_bw"]')
-      .click()
-    cy.get('.lux-layer-manager-item')
-      .last()
-      .contains('Carte topographique N/B')
+    cy.get('[data-cy="attributionControl"]')
       .should('be.visible')
+      .contains(
+        '© MapTiler © OpenStreetMap contributors for data outside of Luxembourg'
+      )
+  })
 
-    cy.window().then(window => {
-      const layers = (<AUTWindowOlMap>window).olMap.getLayers().getArray()
-      expect(layers[0].get('id')).to.eq(502)
+  describe('When changing to black and white background layer', () => {
+    beforeEach(() => {
+      cy.get('[data-cy="selectedBg"]').find('button').click()
+      cy.get('[data-cy="available-bgs"]')
+        .find('button')
+        .filter('[title*="topo_bw"]')
+        .click()
+    })
+
+    it('updates the layer manager and the map when selecting a background layer', () => {
+      cy.get('.lux-layer-manager-item')
+        .last()
+        .contains('Carte topographique N/B')
+        .should('be.visible')
+
+      cy.window().then(window => {
+        const layers = (<AUTWindowOlMap>window).olMap.getLayers().getArray()
+        expect(layers[0].get('id')).to.eq(502)
+      })
+    })
+
+    it('updates the attribution content', () => {
+      cy.get('[data-cy="attributionControl"]')
+        .should('be.visible')
+        .contains('© B&W custom attribution for test only')
+    })
+  })
+
+  describe('When changing to "Orthophoto 2013" background layer', () => {
+    beforeEach(() => {
+      cy.get('[data-cy="selectedBg"]').find('button').click()
+      cy.get('[data-cy="available-bgs"]')
+        .find('button')
+        .filter('[title*="Orthophoto 2013"]')
+        .click()
+    })
+
+    it('removes the attribution element because layer s attribution is empty', () => {
+      cy.get('[data-cy="attributionControl"]').should('not.exist')
     })
   })
 
