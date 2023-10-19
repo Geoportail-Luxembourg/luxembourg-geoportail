@@ -45,10 +45,12 @@ function onChange(value: number) {
       maxValue.value = value
     } else if (value <= props.selectedMinValue) {
       minValue.value = value
-    } else if (+(maxValue.value - value) < +(minValue.value - value)) {
+    } else if (
+      Math.abs(maxValue.value - value) < Math.abs(minValue.value - value)
+    ) {
       maxValue.value = value
     } else {
-      maxValue.value = value
+      minValue.value = value
     }
   }
 
