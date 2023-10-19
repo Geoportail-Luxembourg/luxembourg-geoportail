@@ -24,6 +24,10 @@
     @apply text-default;
   }
 
+  a {
+    @apply text-primary no-underline;
+  }
+
   input[type='range']::-webkit-slider-thumb {
     @apply bg-tertiary h-4 w-4 rounded-full border-tertiary;
     -webkit-appearance: none;

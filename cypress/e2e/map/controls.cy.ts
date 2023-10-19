@@ -17,7 +17,14 @@ describe('Map controls', () => {
       cy.get('[data-cy="mapContainer"] .ol-full-screen')
     })
 
-    // TODO: test attribution control
+    it('displays the attribution text', () => {
+      cy.get('[data-cy="attributionControl"]')
+        .should('be.visible')
+        .contains(
+          '© MapTiler © OpenStreetMap contributors for data outside of Luxembourg'
+        )
+    })
+
     // TODO: test Location control
     // TODO: test 3D control
     // TODO: test info bar control
