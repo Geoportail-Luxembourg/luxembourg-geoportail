@@ -14,7 +14,7 @@ class OlLayerVectorHelper {
     vectorSources: VectorSourceDict // TODO: this comes from a store, use direct access here?
   ): OlLayer | undefined {
     const mapService = useMap()
-    const { id, metadata } = layer
+    const { id, metadata, name } = layer
     const styleSource = vectorSources.get(id)
 
     if (!styleSource) {
@@ -25,15 +25,15 @@ class OlLayerVectorHelper {
       container: mapService.getOlMap().getTarget(),
       ...styleSource,
     }
-
     const olLayer = new MapLibreLayer({
       maplibreOptions: options,
-      label: layer.name,
+      label: name,
       id,
       queryable_id: id,
       metadata,
     })
     const styleStore = useStyleStore()
+
     if (olLayer?.getMapLibreMap().loaded()) {
       styleStore.setBaseStyle(id, olLayer?.getMapLibreMap().getStyle())
     } else {
