@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { ref, watch } from 'vue'
+import { ref } from 'vue'
 import SliderRangeThumb from './slider-range-thumb.vue'
 import SliderRangeActiveTrack from './slider-range-active-track.vue'
 
@@ -14,20 +14,6 @@ const emit = defineEmits<{
 }>()
 const minValue = ref(props.selectedMinValue)
 const maxValue = ref(props.selectedMaxValue)
-
-watch(
-  () => props.selectedMinValue,
-  value => {
-    minValue.value = value
-  }
-)
-
-watch(
-  () => props.selectedMaxValue,
-  value => {
-    maxValue.value = value
-  }
-)
 
 function onChangeMin(value: number, dragging: boolean) {
   emit('change', value, props.selectedMaxValue, dragging)
