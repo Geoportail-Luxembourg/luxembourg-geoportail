@@ -40,13 +40,6 @@ export class OlLayerFactoryService {
     olLayer.set('time', layer.time)
     olLayer.setOpacity(layer.opacity as number)
 
-    if (layer.metadata?.hasOwnProperty('attribution')) {
-      // TODO: fix this to display attribution, but at that time, this brokes the vue runtime-dom
-      // (bgBaseLayer as typeof MapLibreLayer).maplibreMap.setAttributions(bgLayer.metadata?.attribution)
-      //   const source = olLayer.getSource()
-      //   source?.setAttributions(layer.metadata.attribution)
-    }
-
     return olLayer
   }
 }
