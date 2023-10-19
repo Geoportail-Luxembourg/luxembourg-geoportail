@@ -12,7 +12,7 @@ watchEffect(() => {
 
 <template>
   <div
-    class="lux-attribution"
+    class="absolute bottom-0 z-10 text-[0.8em] px-[4px] text-[#6b818f] bg-[#ffffffb3]"
     v-if="attribution"
     v-dompurify-html="attribution"
   ></div>

@@ -285,14 +285,6 @@
   .lux-time-datepicker {
     @apply border-[#767676] border-[1px] pl-1;
   }
-
-  .lux-attribution {
-    @apply absolute bottom-0 z-10 text-[0.8em];
-    background: rgba(255, 255, 255, 0.7);
-    padding-left: 4px;
-    padding-right: 4px;
-    color: #6b818f;
-  }
 }
 
 .fa-solid {
