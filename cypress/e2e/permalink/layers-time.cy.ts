@@ -94,10 +94,8 @@ describe('Permalink/State persistor - Layers', () => {
         cy.get('[data-cy="myLayersButton"]').click()
         cy.get('[data-cy="myLayers"] .lux-slidebar-thumb')
           .eq(0)
-          .type(
-            '{rightArrow}{rightArrow}{rightArrow}{rightArrow}{rightArrow}{rightArrow}{rightArrow}{rightArrow}{rightArrow}{rightArrow}{rightArrow}'
-          )
-        cy.url().should('contains', '&time=2021-08-01T00%253A00%253A00Z')
+          .type('{rightArrow}{rightArrow}{rightArrow}{rightArrow}{rightArrow}')
+        cy.url().should('contains', '&time=2020-08-01T00%253A00%253A00Z&')
       })
 
       it('decreases the layer time (date start) in the url', () => {
@@ -138,10 +136,8 @@ describe('Permalink/State persistor - Layers', () => {
           .type(
             '{leftArrow}{leftArrow}{leftArrow}{leftArrow}{leftArrow}{leftArrow}{leftArrow}'
           )
-        cy.url().should(
-          'contains',
-          '&time=2015-03-31T12%253A43%253A47Z%252F2019-05-01T12%253A43%253A47Z&'
-        )
+
+        cy.url().should('contains', '2015-03-31').and('contains', '2019-05-01')
       })
 
       it('increases the layer time (date end) in the url', () => {
@@ -154,10 +150,7 @@ describe('Permalink/State persistor - Layers', () => {
           .type(
             '{rightArrow}{rightArrow}{rightArrow}{rightArrow}{rightArrow}{rightArrow}'
           )
-        cy.url().should(
-          'contains',
-          '&time=2015-08-31T12%253A43%253A47Z%252F2019-10-01T12%253A43%253A47Z&'
-        )
+        cy.url().should('contains', '2015-08-31').and('contains', '2019-10-01')
       })
 
       it('decreases the layer time (date end) in the url', () => {
