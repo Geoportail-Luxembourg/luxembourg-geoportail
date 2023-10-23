@@ -48,7 +48,7 @@ provide('olMap', olMap)
     id="map-container"
     data-cy="mapContainer"
     ref="mapContainer"
-    class="h-full w-full bg-white absolute"
+    class="h-full w-full bg-white relative"
   >
     <zoom-control />
     <zoom-to-extent-control :extent="DEFAULT_EXTENT" />
