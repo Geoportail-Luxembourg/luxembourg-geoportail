@@ -31587,7 +31587,7 @@ const VF = /* @__PURE__ */ ar({
       id: "map-container",
       ref_key: "mapContainer",
       ref: n,
-      class: "h-full w-full bg-white absolute"
+      class: "h-full w-full bg-white relative"
     }, [
       Ft(FF),
       Ft(UF, { extent: s }),
@@ -37567,7 +37567,7 @@ const L7 = { class: "h-screen flex flex-col overflow-hidden" }, D7 = { class: "f
         Ye(" Map container and slider comparator "),
         ze("div", z7, [
           Ft(GF, { v4_standalone: !0 }),
-          Ft(y9),
+          Ft(y9, { class: "absolute top-0" }),
           Ft(U8),
           Ft(PV)
         ]),
