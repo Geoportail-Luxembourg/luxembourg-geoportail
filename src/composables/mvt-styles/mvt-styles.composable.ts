@@ -250,6 +250,7 @@ export default function useMvtStyles() {
         .then(result => {
           return result.id
         })
+        .catch(error => console.warn(error))
     })
   }
 

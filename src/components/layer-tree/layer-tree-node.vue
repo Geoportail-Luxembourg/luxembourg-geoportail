@@ -2,6 +2,7 @@
 import { useTranslation } from 'i18next-vue'
 import { computed } from 'vue'
 import { useMetadataStore } from '@/stores/metadata.store'
+import ExpandablePanel from '@/components/common/expandable-panel.vue'
 
 import type { LayerTreeNodeModel } from './layer-tree.model'
 
@@ -32,28 +33,15 @@ function toggleParent(node: LayerTreeNodeModel) {
 <template>
   <div class="mb-px" v-if="isParent" key="node.id">
     <!--    First level parents-->
-    <button
-      v-if="node.depth === 1"
-      class="group node-1 w-full text-left flex px-2 py-1.5 uppercase bg-tertiary"
-      :aria-expanded="node.expanded"
-      @click="toggleParent(node)"
-      :data-cy="`parentLayerLabel-${node.id}`"
-    >
-      <div
-        class="grow"
-        :class="node.expanded ? 'text-white' : 'text-secondary'"
-      >
-        {{ label }}
-      </div>
-      <div class="leading-6">
-        <div
-          class="fa fa-sharp fa-solid group-hover:text-white text-primary"
-          :class="node.expanded ? 'fa-caret-up' : 'fa-caret-down'"
-        ></div>
-      </div>
-    </button>
+    <div v-if="node.depth === 1" :data-cy="`parentLayerLabel-${node.id}`">
+      <expandable-panel
+        :title="label"
+        :expanded="node.expanded"
+        @togglePanel="toggleParent(node)"
+      />
+    </div>
 
-    <!--    Other parents-->
+    <!--    Other parents (with custom panel style)-->
     <button
       v-else-if="node.depth > 1 && !isMaxDepth"
       class="w-full text-left flex px-2 py-1.5 pl-2"

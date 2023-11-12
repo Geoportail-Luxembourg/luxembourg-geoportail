@@ -1,11 +1,12 @@
 <script setup lang="ts">
-import { ref, computed, watch } from 'vue'
+import { Ref, ref, computed, watch } from 'vue'
 import { storeToRefs } from 'pinia'
 import { useTranslation } from 'i18next-vue'
 
 import SimpleStyleSelector from '@/components/style-selector/simple-style-selector.vue'
 import MediumStyleSelector from '@/components/style-selector/medium-style-selector.vue'
 import ExpertStyleSelector from '@/components/style-selector/expert-style-selector.vue'
+import ExpandablePanel from '@/components/common/expandable-panel.vue'
 import { useAppStore } from '@/stores/app.store'
 import { useMapStore } from '@/stores/map.store'
 import { useStyleStore } from '@/stores/style.store'
@@ -15,6 +16,7 @@ const { t } = useTranslation()
 const mapStore = useMapStore()
 const appStore = useAppStore()
 const styleStore = useStyleStore()
+const { bgStyle } = storeToRefs(styleStore)
 const { bgLayer } = storeToRefs(mapStore)
 const styles = useMvtStyles()
 
@@ -28,9 +30,9 @@ watch(bgLayer, bgLayer => {
   }
 })
 
-let isSimpleStyleOpen = ref(false)
-let isMediumStyleOpen = ref(false)
-let isAdvancedStyleOpen = ref(false)
+let currentOpenPanel: Ref<
+  undefined | 'simpleStyle' | 'mediumStyle' | 'advancedStyle'
+> = ref(undefined)
 
 function resetStyle() {
   styleStore.setStyle(null)
@@ -38,40 +40,51 @@ function resetStyle() {
 </script>
 
 <template>
-  <div v-if="styleCapabilities.isEditable">
-    <button @click="() => appStore.closeStyleEditorPanel()">X close</button>
-    <h2 class="h-20 shrink-0 flex justify-between lux-panel-title">
-      {{ t('Style editor') }}
-    </h2>
-    <div v-if="styleCapabilities.hasSimpleStyle">
-      <button @click="() => (isSimpleStyleOpen = !isSimpleStyleOpen)">
-        {{ t('Choose a predefined style') }}
-      </button>
-      <simple-style-selector :class="isSimpleStyleOpen ? '' : 'hidden'" />
+  <div v-if="styleCapabilities.isEditable" data-cy="styleSelector">
+    <div v-if="styleCapabilities.hasSimpleStyle" class="mb-px">
+      <expandable-panel
+        :title="t('Simple')"
+        :expanded="currentOpenPanel === 'simpleStyle'"
+        @togglePanel="
+          () =>
+            (currentOpenPanel =
+              currentOpenPanel === 'simpleStyle' ? undefined : 'simpleStyle')
+        "
+      >
+        <simple-style-selector
+      /></expandable-panel>
     </div>
 
-    <div v-if="styleCapabilities.hasAdvancedStyle">
-      <button @click="() => (isMediumStyleOpen = !isMediumStyleOpen)">
-        {{ t('Change main colours') }}
-      </button>
-      <medium-style-selector
-        :class="isMediumStyleOpen ? '' : 'hidden'"
-        v-if="bgLayer"
-        :layer="bgLayer"
-      />
+    <div v-if="styleCapabilities.hasAdvancedStyle" class="mb-px">
+      <expandable-panel
+        :title="t('Medium')"
+        :expanded="currentOpenPanel === 'mediumStyle'"
+        @togglePanel="
+          () =>
+            (currentOpenPanel =
+              currentOpenPanel === 'mediumStyle' ? undefined : 'mediumStyle')
+        "
+      >
+        <medium-style-selector v-if="bgLayer" :layer="bgLayer"
+      /></expandable-panel>
     </div>
 
-    <div v-if="styleCapabilities.hasExpertStyle">
-      <button @click="() => (isAdvancedStyleOpen = !isAdvancedStyleOpen)">
-        {{ t('Advanced settings') }}
-      </button>
-      <expert-style-selector
-        :class="isAdvancedStyleOpen ? '' : 'hidden'"
-        v-if="bgLayer"
-        :layer="bgLayer"
-      />
+    <div v-if="styleCapabilities.hasExpertStyle" class="mb-px">
+      <expandable-panel
+        :title="t('Expert (style.json)')"
+        :expanded="currentOpenPanel === 'advancedStyle'"
+        @togglePanel="
+          () =>
+            (currentOpenPanel =
+              currentOpenPanel === 'advancedStyle'
+                ? undefined
+                : 'advancedStyle')
+        "
+      >
+        <expert-style-selector v-if="bgLayer" :layer="bgLayer"
+      /></expandable-panel>
     </div>
-    <button @click="resetStyle" class="lux-btn">
+    <button v-if="bgStyle" @click="resetStyle" class="lux-btn my-2">
       {{ t('Reset style', { ns: 'client' }) }}
     </button>
   </div>
