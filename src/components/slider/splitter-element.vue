@@ -11,7 +11,6 @@ const props = defineProps<{
   sliderRatio: number
   sliderTopLayer: Layer
   sliderOffset: number
-  containerOffset: number
 }>()
 const emit = defineEmits(['moveSplitBar', 'escSplitBar'])
 const { t } = useTranslation()
@@ -40,7 +39,7 @@ function onMouseMove(payload: MouseEvent) {
     return
   }
 
-  moveSplitBar(payload.clientX - props.containerOffset)
+  moveSplitBar(payload.clientX)
 }
 
 function onMouseUp() {
