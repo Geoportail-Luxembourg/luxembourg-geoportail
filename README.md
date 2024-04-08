@@ -160,3 +160,11 @@ const remoteProxyWms = 'https://map.geoportail.lu/httpsproxy'
 
 proxyUrlHelper.init(proxyWmsUrl, remoteProxyWms)
 ```
+### Use components, services, stores, composables
+
+To use components, services, stores or composables in you application, all these should explicitely exported in the lib.
+
+To do so,
+
+const LayerPanelElement = createElementInstance(LayerPanel, app)
+customElements.define('layer-panel', LayerPanelElement)
