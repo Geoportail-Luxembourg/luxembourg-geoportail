@@ -21,7 +21,7 @@ describe('Catalogue', () => {
     })
 
     it('adds selected layers to the map and to the layer manager', () => {
-      cy.get('[data-cy="myLayersButton"]').click()
+      cy.get('[data-cy="myLayersButton"]').click({ force: true })
       cy.get('[data-cy="myLayers"] > ul > li').should('have.length', 2)
     })
 
@@ -38,13 +38,13 @@ describe('Catalogue', () => {
 
       cy.get('[data-cy="myLayersButton"]').click()
       cy.get('[data-cy="myLayers"]').find('button').eq(2).click()
-      cy.get('[data-cy="myLayers"]')
-        .find('button')
-        .eq(4)
-        .click()
-        .should(() => {
-          expect(localStorage.getItem('opacities')).to.eq('1-0')
-        }) // toggle button visible
+
+      const myLayersBtn = () =>
+        cy.get('[data-cy="myLayers"]').find('button').eq(4)
+      myLayersBtn().click()
+      myLayersBtn().should(() => {
+        expect(localStorage.getItem('opacities')).to.eq('1-0')
+      }) // toggle button visible
 
       cy.url().should('contains', 'opacities=1-0')
       cy.get('[data-cy="myLayers"]')

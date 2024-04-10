@@ -59,10 +59,11 @@ describe('Language selector', () => {
     expect(localStorage.getItem('lang')).to.eq('fr')
 
     cy.get('[data-cy="langSelect"] .lux-dropdown-btn').click()
-    cy.get('[data-cy="langSelect"] [data-value="lb"]')
-      .click()
-      .should(() => {
-        expect(localStorage.getItem('lang')).to.eq('lb')
-      })
+
+    const langSelect = () => cy.get('[data-cy="langSelect"] [data-value="lb"]')
+    langSelect().click()
+    langSelect().should(() => {
+      expect(localStorage.getItem('lang')).to.eq('lb')
+    })
   })
 })
