@@ -142,6 +142,7 @@ onUnmounted(() => {
     :sliderRatio="sliderRatio"
     :sliderTopLayer="sliderTopLayer"
     :sliderOffset="sliderOffset"
+    :containerOffset="getMapOffsetLeft()"
     @moveSplitBar="onMoveSplitBar"
     @escSplitBar="onEscSplitBar"
   ></splitter-element>

@@ -11,6 +11,7 @@ const props = defineProps<{
   sliderRatio: number
   sliderTopLayer: Layer
   sliderOffset: number
+  containerOffset: number
 }>()
 const emit = defineEmits(['moveSplitBar', 'escSplitBar'])
 const { t } = useTranslation()
@@ -50,11 +51,13 @@ function onMouseUp() {
 }
 
 function onKeyDownRight() {
-  moveSplitBar(sliderElement.value!.offsetLeft + DEFAULT_STEP_ONKEYDOWN)
+  const offsetLeft = props.containerOffset + sliderElement.value!.offsetLeft
+  moveSplitBar(offsetLeft + DEFAULT_STEP_ONKEYDOWN)
 }
 
 function onKeyDownLeft() {
-  moveSplitBar(sliderElement.value!.offsetLeft - DEFAULT_STEP_ONKEYDOWN)
+  const offsetLeft = props.containerOffset + sliderElement.value!.offsetLeft
+  moveSplitBar(offsetLeft - DEFAULT_STEP_ONKEYDOWN)
 }
 
 function onKeyDownEsc() {
