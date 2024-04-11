@@ -23,13 +23,25 @@ const { sliderActive, sliderRatio, sliderTopLayer } = storeToRefs(sliderStore)
 const splitterElementOffset = computed(
   () => splitterElement.value?.sliderElement?.offsetWidth || 0
 )
-const sliderOffset = computed(() =>
-  olMap.value && splitterElement.value
+
+const getMapOffsetLeft = function () {
+  // Try to get the offsetLeft of the map viewport's parent element
+  let offsetLeft = olMap.value?.getViewport()?.parentElement?.offsetLeft
+  // If the offsetLeft is still undefined or equal to 0, use the offsetLeft of the map wrapper element (if it exists)
+  if (offsetLeft === undefined || offsetLeft === 0) {
+    offsetLeft = mapWrapperElement?.offsetLeft
+  }
+
+  // Return the offsetLeft, ensuring it is a number (defaults to 0)
+  return offsetLeft !== undefined ? offsetLeft : 0
+}
+
+const sliderOffset = computed(() => {
+  return olMap.value && splitterElement.value
     ? sliderRatio.value * olMap.value.getSize()![0] -
-      splitterElement.value?.sliderElement?.offsetWidth! / 2 +
-      olMap.value.getViewport().offsetLeft
+        splitterElement.value?.sliderElement?.offsetWidth! / 2
     : 0
-)
+})
 
 let olLayerPrerenderEvent: EventsKey
 let olLayerPostrenderEvent: EventsKey
@@ -100,7 +112,7 @@ function deactivate() {
 
 function onMoveSplitBar(offsetLeft: number) {
   const mapSize = olMap.value?.getSize()!
-  const newRatio = offsetLeft / mapSize[0]
+  const newRatio = (offsetLeft - getMapOffsetLeft()) / mapSize[0]
 
   sliderStore.setRatio(newRatio)
 }
@@ -130,7 +142,7 @@ onUnmounted(() => {
     :sliderRatio="sliderRatio"
     :sliderTopLayer="sliderTopLayer"
     :sliderOffset="sliderOffset"
-    :containerOffset="mapWrapperElement?.offsetLeft || 0"
+    :containerOffset="getMapOffsetLeft()"
     @moveSplitBar="onMoveSplitBar"
     @escSplitBar="onEscSplitBar"
   ></splitter-element>
