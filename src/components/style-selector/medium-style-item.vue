@@ -33,7 +33,9 @@ function updateVisibility(visibilityChangeEvent: Event) {
 
 <template>
   <div class="flex w-full items-center">
-    <label for="colorId" class="w-40">{{ t(style.label) }}</label>
+    <label for="colorId" class="w-40 m-0 font-medium">{{
+      t(style.label)
+    }}</label>
     <div class="grow">
       <input
         v-if="colorEditable && props.style.color"
