@@ -67,7 +67,9 @@ function getStyleUrl() {
         class="text-white border-2 relative h-[100px] w-[85px] mx-[10px] my-0 mb-[15px] z-5 text-sm after:absolute after:left-[20px] after:top-[10px] after:z-4 after:w-[3.6em] after:text-center after:content-download"
         @click="downloadCustomStyleFile()"
       >
-        <span class="absolute top-[70px] w-full text-center text-base">
+        <span
+          class="absolute top-[70px] w-full text-center text-base leading-3 font-medium text-white"
+        >
           {{ t('Download style') }}
         </span>
       </a>
@@ -75,10 +77,12 @@ function getStyleUrl() {
         class="text-white border-2 relative h-[100px] w-[85px] mx-[10px] my-0 mb-[15px] text-sm"
       >
         <label
-          class="'block z-[5] w-full h-full cursor-pointer after:absolute after:py-[15px] after:px-[15px] after:w-full after:text-center after:content-upload"
+          class="'block z-[5] w-full h-full cursor-pointer after:absolute after:pt-[15px] after:px-[15px] after:w-full after:text-center after:content-upload"
           for="uploadMvtStyle"
         >
-          <span class="absolute top-[70px] w-full text-center text-base">
+          <span
+            class="absolute top-[70px] w-full text-center text-base leading-3 font-medium"
+          >
             {{ t('Upload style') }}
           </span>
         </label>
