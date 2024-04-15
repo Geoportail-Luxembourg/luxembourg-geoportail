@@ -22,9 +22,13 @@ import { statePersistorThemeService } from '@/services/state-persistor/state-per
 import { statePersistorLayersOpenService } from '@/services/state-persistor/state-persistor-layersopen.service'
 import { statePersistorStyleService } from '@/services/state-persistor/state-persistor-bgstyle.service'
 import { statePersistorMyMapService } from '@/services/state-persistor/state-persistor-mymap.service'
+import { proxyUrlHelper } from '@/services/proxyurl/proxyurl.helper'
+
 import { useAppStore } from '@/stores/app.store'
 import useMap from '@/composables/map/map.composable'
 import traverseLayer from '@/lib/tools.js'
+
+const appStore = useAppStore()
 
 // Important, keep order!
 statePersistorMyMapService.bootstrap()
@@ -34,7 +38,11 @@ statePersistorLayersOpenService.bootstrapLayersOpen()
 statePersistorStyleService.bootstrapStyle()
 statePersistorBgLayerService.bootstrap()
 
-const { layersOpen, styleEditorOpen } = storeToRefs(useAppStore())
+const { layersOpen, styleEditorOpen } = storeToRefs(appStore)
+proxyUrlHelper.init(
+  import.meta.env.VITE_PROXYURL_WMS,
+  import.meta.env.VITE_PROXYURL_REMOTE
+)
 
 watch(layersOpen, () =>
   setTimeout(() => {
