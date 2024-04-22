@@ -11,7 +11,7 @@ import LayerTime from '../layer-time/layer-time.vue'
 const props = defineProps<{
   is3d: boolean
   layer: Layer
-  draggableClassName: string
+  dragHandlerClassName: string
   isOpen: boolean
   isLayerComparatorOpen: boolean
   displayLayerComparatorOpen: boolean
@@ -59,7 +59,7 @@ function changeTime(dateStart?: string, dateEnd?: string) {
     <div class="w-full flex flex-nowrap items-start gap-x-2">
       <button
         class="fa-solid fa-bars cursor-move mt-1"
-        :class="draggableClassName"
+        :class="dragHandlerClassName"
         :title="txtDraggableLabel"
       ></button>
       <button

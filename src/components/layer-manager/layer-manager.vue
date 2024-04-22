@@ -11,6 +11,7 @@ import type { Layer, LayerId } from '@/stores/map.store.model'
 import { BLANK_BACKGROUNDLAYER } from '@/composables/background-layer/background-layer.model'
 import useMvtStyles from '@/composables/mvt-styles/mvt-styles.composable'
 import { useSliderComparatorStore } from '@/stores/slider-comparator.store'
+import { isFireFox } from '@/services/utils'
 
 import LayerItemBackground from './layer-item/layer-item-background.vue'
 import LayerItem from './layer-item/layer-item.vue'
@@ -28,7 +29,7 @@ const { sliderActive } = storeToRefs(sliderStore)
 const layers = computed(() => [...mapStore.layers].reverse())
 const layers3d = computed(() => [...mapStore.layers3d].reverse())
 const isLayerOpenId: ShallowRef<LayerId | undefined> = shallowRef()
-const draggableClassName = 'drag-handle'
+const dragHandlerClassName = 'drag-handle'
 const bgLayerIsEditable = computed(() =>
   styles.isLayerStyleEditable(bgLayer.value)
 )
@@ -37,12 +38,12 @@ const emit = defineEmits(['displayCatalog'])
 const { setRemoteLayersOpen } = useAppStore()
 
 onMounted(() => {
-  const sortableParams = {
-    dataIdAttr: 'data-id',
+  const sortableParams = <Sortable.Options>{
     dragClass: 'lux-sortable-drag',
     ghostClass: 'lux-sortable-ghost',
     sort: true,
-    handle: `.${draggableClassName}`,
+    handle: `.${dragHandlerClassName}`,
+    forceFallback: isFireFox, // Otherwise, doesnt work for FF
   }
   const sortableLayersDOM = document.querySelector('.sortable-layers')
   const sortableLayers3dDOM = document.querySelector('.sortable-layers-3d')
@@ -104,7 +105,7 @@ function toggleLayerComparator() {
       >
         <layer-item
           :is3d="true"
-          :draggableClassName="draggableClassName"
+          :dragHandlerClassName="dragHandlerClassName"
           :layer="layer"
           :isOpen="isLayerOpenId === layer.id"
           :isLayerComparatorOpen="sliderActive"
@@ -131,7 +132,7 @@ function toggleLayerComparator() {
       >
         <layer-item
           :is3d="false"
-          :draggableClassName="draggableClassName"
+          :dragHandlerClassName="dragHandlerClassName"
           :layer="layer"
           :isOpen="isLayerOpenId === layer.id"
           :isLayerComparatorOpen="sliderActive"
