@@ -14,7 +14,7 @@
     "test:unit": "vitest --environment jsdom --root .",
     "test:unit:ci": "vitest run --environment jsdom --coverage",
     "test:e2e": "INSRUMENT_COVERAGE=true start-server-and-test preview :4173 'cypress open --e2e'",
-    "test:e2e:ci": "INSRUMENT_COVERAGE=true start-server-and-test 'vite dev --port 4173' :4173 'cypress run --e2e'",
+    "test:e2e:ci": "INSRUMENT_COVERAGE=true start-server-and-test 'VITE_USE_PROXYURL=false vite dev --port 4173' :4173 'cypress run --e2e'",
     "test:e2e:dev": "INSRUMENT_COVERAGE=true start-server-and-test 'vite dev --port 4173' :4173 'cypress open --e2e'",
     "coverage-report": "nyc report",
     "type-check:dev": "npm run type-check -- --watch",

@@ -1,8 +1,9 @@
+import { proxyUrlHelper } from '@/services/proxyurl/proxyurl.helper'
 import { useMapStore } from '@/stores/map.store'
 import { Layer, LayerId, LayerImageType } from '@/stores/map.store.model'
 import { LayerTreeNodeModel } from '@/components/layer-tree/layer-tree.model'
+
 import { RemoteLayer, REMOTE_SERVICE_TYPE } from './remote-layers.model'
-import { remoteLayersService } from './remote-layers.service'
 
 function sortLayerTreeNoChildrenFirst(a: RemoteLayer, b: RemoteLayer) {
   if ((a.children && !b.children) || b.children?.length === 0) {
@@ -43,7 +44,7 @@ export function remoteLayerIdtoLayer(layerId: string) {
 
   return remoteLayerToLayer({
     id,
-    url: remoteLayersService.getProxyfiedUrl(url),
+    url: proxyUrlHelper.getProxyfiedUrl(url),
     remoteLayer: { name, type } as RemoteLayer,
   })
 }

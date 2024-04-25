@@ -148,3 +148,15 @@ RUN mkdir /etc/static-ngeo/web-components \
     && cp -r /usr/lib/node_modules/luxembourg-geoportail/bundle/assets/ /etc/static-ngeo/web-components/assets/ \
     && cp /usr/lib/node_modules/luxembourg-geoportail/bundle/style.css /etc/static-ngeo/web-components/style.css
 ```
+
+### Initialize app settings
+
+Configure your proxy urls, otherwise, layers may not display correctly.
+
+```js
+// Inside your App.vue, or in your custom js if using lux as a lib:
+const proxyWmsUrl = 'https://map.geoportail.lu/ogcproxywms'
+const remoteProxyWms = 'https://map.geoportail.lu/httpsproxy'
+
+proxyUrlHelper.init(proxyWmsUrl, remoteProxyWms)
+```

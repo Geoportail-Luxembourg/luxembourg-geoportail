@@ -1,3 +1,5 @@
+.prettierignore
+
 ## editors
 /.idea
 *.iml
@@ -24,6 +26,7 @@
 /dist/
 /out-tsc/
 .parcel-cache
+.env
 
 # fixtures
 /src/__fixtures__/

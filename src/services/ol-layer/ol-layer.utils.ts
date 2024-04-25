@@ -8,9 +8,6 @@ import {
   PROJECTION_WGS84,
 } from '@/composables/map/map.composable'
 
-export const proxyWmsUrl = 'https://map.geoportail.lu/ogcproxywms'
-export const remoteProxyWms = 'https://map.geoportail.lu/httpsproxy'
-
 export function getOlcsExtent() {
   return transformExtent(
     [5.31, 49.38, 6.64, 50.21],

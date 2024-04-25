@@ -1,7 +1,9 @@
 <script setup lang="ts">
 import { shallowRef, ShallowRef, watchEffect } from 'vue'
+import { storeToRefs } from 'pinia'
 import { useTranslation } from 'i18next-vue'
 
+import { useAppStore } from '@/stores/app.store'
 import { useMapStore } from '@/stores/map.store'
 import DropdownList from '@/components/common/dropdown-list.vue'
 import ModalDialog from '@/components/common/modal-dialog.vue'
@@ -10,16 +12,14 @@ import LayerTreeNode from '@/components/layer-tree/layer-tree-node.vue'
 import { LayerTreeNodeModel } from '@/components/layer-tree/layer-tree.model'
 import { layerTreeService } from '@/components/layer-tree/layer-tree.service'
 import useLayers from '@/composables/layers/layers.composable'
-
 import {
   remoteLayersToLayerTreeMapper,
   remoteLayerToLayer,
-} from '../../services/remote-layers/remote-layers.mapper'
-import { remoteLayersService } from '../../services/remote-layers/remote-layers.service'
-import { OgcClientWmsEndpoint } from '../../services/remote-layers/remote-layers.model'
+} from '@/services/remote-layers/remote-layers.mapper'
+import { remoteLayersService } from '@/services/remote-layers/remote-layers.service'
+import { OgcClientWmsEndpoint } from '@/services/remote-layers/remote-layers.model'
+import { proxyUrlHelper } from '@/services/proxyurl/proxyurl.helper'
 import { WmtsEndpoint } from '@/services/remote-layers/wmts.endpoint'
-import { storeToRefs } from 'pinia'
-import { useAppStore } from '@/stores/app.store'
 
 const { t } = useTranslation()
 const mapStore = useMapStore()
@@ -110,7 +110,7 @@ function toggleLayer(node: LayerTreeNodeModel) {
       const layer = layers.initLayer(
         remoteLayerToLayer({
           id,
-          url: remoteLayersService.getProxyfiedUrl(currentRemoteUrl),
+          url: proxyUrlHelper.getProxyfiedUrl(currentRemoteUrl),
           remoteLayer,
         })
       )

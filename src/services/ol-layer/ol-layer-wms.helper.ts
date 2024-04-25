@@ -1,23 +1,24 @@
 import ImageLayer from 'ol/layer/Image'
 import ImageWMS from 'ol/source/ImageWMS'
 
+import { proxyUrlHelper } from '@/services/proxyurl/proxyurl.helper'
 import { isHiDpi } from '@/services/utils'
 import { Layer } from '@/stores/map.store.model'
 import { OlLayer } from './ol-layer.model'
-import { getOlcsExtent, proxyWmsUrl, remoteProxyWms } from './ol-layer.utils'
+import { getOlcsExtent } from './ol-layer.utils'
 
 class OlLayerWmsHelper {
   createOlLayer(layer: Layer): OlLayer /* Returns: ImageLayer<ImageWMS> */ {
     const { name, layers, imageType, url, id } = layer
     const olSource = new ImageWMS({
-      url: url || proxyWmsUrl,
+      url: url || proxyUrlHelper.wmsProxyUrl,
       hidpi: isHiDpi(),
       serverType: 'mapserver',
       params: {
         FORMAT: imageType,
         LAYERS: layers,
       },
-      ...((url !== undefined && url !== null) || remoteProxyWms
+      ...((url !== undefined && url !== null) || proxyUrlHelper.remoteProxyUrl
         ? { crossOrigin: 'anonymous' }
         : {}),
     })

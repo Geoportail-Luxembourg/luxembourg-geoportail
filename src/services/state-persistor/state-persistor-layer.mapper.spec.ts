@@ -66,6 +66,16 @@ vi.mock('@/composables/themes/themes.composable', () => ({
 }))
 
 describe('StorageLayerMapper', () => {
+  beforeEach(() => {
+    vi.mock('@/services/proxyurl/proxyurl.helper', () => {
+      return {
+        proxyUrlHelper: {
+          getProxyfiedUrl: (url: string) => `myproxifiedurl=${url}`,
+        },
+      }
+    })
+  })
+
   afterEach(() => {
     vi.restoreAllMocks()
   })
@@ -154,7 +164,7 @@ describe('StorageLayerMapper', () => {
           imageType: 'image/png',
           opacity: 1,
           previousOpacity: 1,
-          url: 'https://map.geoportail.lu/httpsproxy?url=www.mysuperserver.com%2Fmytiles',
+          url: 'myproxifiedurl=www.mysuperserver.com/mytiles',
           currentTimeMinValue: undefined,
         },
       ])

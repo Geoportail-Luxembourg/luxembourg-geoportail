@@ -34,6 +34,7 @@ import { statePersistorThemeService } from '@/services/state-persistor/state-per
 import { statePersistorLayersOpenService } from '@/services/state-persistor/state-persistor-layersopen.service'
 import { statePersistorStyleService } from '@/services/state-persistor/state-persistor-bgstyle.service'
 import { statePersistorMyMapService } from '@/services/state-persistor/state-persistor-mymap.service'
+import { proxyUrlHelper } from '@/services/proxyurl/proxyurl.helper'
 import { themeSelectorService } from '@/components/theme-selector/theme-selector.service'
 import MapLibreLayer from '@/lib/ol-mapbox-layer'
 
@@ -100,6 +101,7 @@ export {
   FooterBar,
   LayerPanel,
   SliderComparator,
+  proxyUrlHelper,
   useLayers,
   useMap,
   useMvtStyles,

@@ -1,15 +1,29 @@
+import { createPinia, setActivePinia } from 'pinia'
+import { LayerImageType } from '@/stores/map.store.model'
 import { RemoteLayer } from './remote-layers.model'
 import {
   remoteLayersToLayerTreeMapper,
   remoteLayerIdtoLayer,
 } from './remote-layers.mapper'
-import { createPinia, setActivePinia } from 'pinia'
-import { LayerImageType } from '@/stores/map.store.model'
-import { remoteLayersService } from './remote-layers.service'
+import { LayerTreeNodeModel } from '@/components/layer-tree/layer-tree.model'
 
 describe('remoteLayersToLayerTreeMapper', () => {
+  beforeEach(() => {
+    vi.mock('@/services/proxyurl/proxyurl.helper', () => {
+      return {
+        proxyUrlHelper: {
+          getProxyfiedUrl: (url: string) => `myproxifiedurl=${url}`,
+        },
+      }
+    })
+  })
+
+  afterEach(() => {
+    vi.restoreAllMocks()
+  })
+
   describe('map WMS layers to tree (including sort)', () => {
-    let layerTree
+    let layerTree: LayerTreeNodeModel
     const remoteWmsLayers: RemoteLayer[] = [
       {
         name: 'RootLayer',
@@ -150,9 +164,6 @@ describe('remoteLayersToLayerTreeMapper', () => {
 })
 
 describe('#remoteLayerIdtoLayer using #remoteLayerToLayer', () => {
-  vi.spyOn(remoteLayersService, 'getProxyfiedUrl').mockImplementation(
-    url => `myproxifiedurl=${url}`
-  )
   describe('WMS', () => {
     const wmsLayer = remoteLayerIdtoLayer('WMS||http://example.com||Layer1')
     it('should convert a remote WMS layer id to a layer object', () => {
