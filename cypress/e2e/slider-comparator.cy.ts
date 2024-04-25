@@ -37,9 +37,10 @@ describe('Permalink/State persistor - Layer comparator (lc & sliderRatio)', () =
         'have.class',
         'fa-circle'
       )
-      cy.get('#layer-manager-item-content-346 button:last-child')
-        .click()
-        .should('have.class', 'fa-adjust')
+      const layerItemBtn = () =>
+        cy.get('#layer-manager-item-content-346 button:last-child')
+      layerItemBtn().click()
+      layerItemBtn().should('have.class', 'fa-adjust')
     })
 
     it('displays the splitter on the map with le layer label', () => {
@@ -66,10 +67,15 @@ describe('Permalink/State persistor - Layer comparator (lc & sliderRatio)', () =
       sliderElement
         .then($el => $el.position().left)
         .then(prevLeft => {
-          cy.get('button[data-cy="sliderElement"]')
-            .trigger('mousemove', { which: 1, clientX: 800, clientY: 600 })
-            .trigger('mouseup')
-          cy.get('button[data-cy="sliderElement"]')
+          const sliderElementBtn = () =>
+            cy.get('button[data-cy="sliderElement"]')
+          sliderElementBtn().trigger('mousemove', {
+            which: 1,
+            clientX: 800,
+            clientY: 600,
+          })
+          sliderElementBtn().trigger('mouseup')
+          sliderElementBtn()
             .then($el => $el.position().left)
             .then(currentLeft => {
               expect(currentLeft).to.be.gt(prevLeft)
@@ -81,9 +87,15 @@ describe('Permalink/State persistor - Layer comparator (lc & sliderRatio)', () =
       sliderElement
         .then($el => $el.position().left)
         .then(prevLeft => {
-          cy.get('button[data-cy="sliderElement"]')
-            .trigger('mousemove', { which: 1, clientX: 100, clientY: 600 })
-            .trigger('mouseup')
+          const sliderElementBtn = () =>
+            cy.get('button[data-cy="sliderElement"]')
+          sliderElementBtn().trigger('mousemove', {
+            which: 1,
+            clientX: 100,
+            clientY: 600,
+          })
+          sliderElementBtn().trigger('mouseup')
+
           cy.get('button[data-cy="sliderElement"]')
             .then($el => $el.position().left)
             .then(currentLeft => {

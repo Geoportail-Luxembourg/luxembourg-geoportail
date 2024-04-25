@@ -27,9 +27,10 @@ describe('Theme selector', () => {
     })
 
     it('updates the colors of the language selector', () => {
-      cy.get('[data-cy="langSelect"] .lux-dropdown-btn')
-        .click()
-        .should('have.css', 'background-color', 'rgb(232, 76, 61)')
+      const langSelectBtn = () =>
+        cy.get('[data-cy="langSelect"] .lux-dropdown-btn')
+      langSelectBtn().click()
+      langSelectBtn().should('have.css', 'background-color', 'rgb(232, 76, 61)')
 
       cy.get('[data-cy="langSelect"] .lux-dropdown-list li:not(.selected)')
         .should('have.length', 3)
