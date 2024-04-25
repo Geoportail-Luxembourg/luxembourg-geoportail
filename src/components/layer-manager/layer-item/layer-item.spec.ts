@@ -19,7 +19,7 @@ describe('LayerItem', () => {
       props: {
         is3d: false,
         layer: layerMock,
-        draggableClassName: 'classnamedragg',
+        dragHandleClassName: 'classnamedragg',
         isOpen: false,
         isLayerComparatorOpen: false,
         displayLayerComparatorOpen: false,
@@ -39,7 +39,7 @@ describe('LayerItem', () => {
       props: {
         is3d: false,
         layer: layerMock,
-        draggableClassName: 'classnamedragg',
+        dragHandleClassName: 'classnamedragg',
         isOpen: true,
         isLayerComparatorOpen: false,
         displayLayerComparatorOpen: false,
@@ -59,7 +59,7 @@ describe('LayerItem', () => {
       props: {
         is3d: false,
         layer: layerMock,
-        draggableClassName: 'classnamedragg',
+        dragHandleClassName: 'classnamedragg',
         isOpen: true,
         isLayerComparatorOpen: false,
         displayLayerComparatorOpen: false,

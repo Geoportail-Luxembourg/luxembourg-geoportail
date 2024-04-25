@@ -133,7 +133,7 @@
   }
 
   .lux-sortable-ghost {
-    @apply before:absolute before:w-full before:h-full before:z-10 before:bg-primary before:content-[''];
+    @apply before:absolute before:w-full before:h-[32px] before:z-10 before:bg-primary before:content-[''];
   }
 
   .lux-sortable-drag {

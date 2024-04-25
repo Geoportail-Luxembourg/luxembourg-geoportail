@@ -48,3 +48,25 @@ export function isHiDpi() {
       '(min-resolution: 192dpi)'
   ).matches
 }
+
+function testUserAgent(pattern: RegExp) {
+  return (
+    typeof window !== 'undefined' &&
+    window.navigator &&
+    pattern.test(navigator.userAgent)
+  )
+}
+
+export const isFireFox = testUserAgent(/firefox/i)
+export const isSafari =
+  testUserAgent(/safari/i) &&
+  !testUserAgent(/chrome/i) &&
+  !testUserAgent(/android/i)
+export const isIOS = testUserAgent(/iP(ad|od|hone)/i)
+export const isChromeAndroid =
+  testUserAgent(/chrome/i) && testUserAgent(/android/i)
+export const isChrome = testUserAgent(/chrome/i)
+export const isIE = testUserAgent(
+  /(?:Trident.*rv[ :]?11\.|msie|iemobile|Windows Phone)/i
+)
+export const isEdge = testUserAgent(/Edge/i)
