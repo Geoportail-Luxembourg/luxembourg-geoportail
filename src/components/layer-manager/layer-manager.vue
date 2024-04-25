@@ -29,7 +29,7 @@ const { sliderActive } = storeToRefs(sliderStore)
 const layers = computed(() => [...mapStore.layers].reverse())
 const layers3d = computed(() => [...mapStore.layers3d].reverse())
 const isLayerOpenId: ShallowRef<LayerId | undefined> = shallowRef()
-const dragHandlerClassName = 'drag-handle'
+const dragHandleClassName = 'drag-handle'
 const bgLayerIsEditable = computed(() =>
   styles.isLayerStyleEditable(bgLayer.value)
 )
@@ -42,7 +42,7 @@ onMounted(() => {
     dragClass: 'lux-sortable-drag',
     ghostClass: 'lux-sortable-ghost',
     sort: true,
-    handle: `.${dragHandlerClassName}`,
+    handle: `.${dragHandleClassName}`,
     forceFallback: isFireFox, // Otherwise, doesnt work for FF
   }
   const sortableLayersDOM = document.querySelector('.sortable-layers')
@@ -105,7 +105,7 @@ function toggleLayerComparator() {
       >
         <layer-item
           :is3d="true"
-          :dragHandlerClassName="dragHandlerClassName"
+          :dragHandleClassName="dragHandleClassName"
           :layer="layer"
           :isOpen="isLayerOpenId === layer.id"
           :isLayerComparatorOpen="sliderActive"
@@ -132,7 +132,7 @@ function toggleLayerComparator() {
       >
         <layer-item
           :is3d="false"
-          :dragHandlerClassName="dragHandlerClassName"
+          :dragHandleClassName="dragHandleClassName"
           :layer="layer"
           :isOpen="isLayerOpenId === layer.id"
           :isLayerComparatorOpen="sliderActive"
