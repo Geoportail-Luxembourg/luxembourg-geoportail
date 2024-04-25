@@ -2,7 +2,7 @@ import { proxyUrlHelper } from '@/services/proxyurl/proxyurl.helper'
 
 describe('proxyUrlHelper', () => {
   beforeEach(() => {
-    proxyUrlHelper.init('someWmsProxyUrl', 'someRemoteProxyUrl')
+    proxyUrlHelper.init_v3('someWmsProxyUrl', 'someRemoteProxyUrl')
   })
   afterEach(() => {
     vi.restoreAllMocks()
