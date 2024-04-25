@@ -165,7 +165,9 @@ proxyUrlHelper.init(proxyWmsUrl, remoteProxyWms)
 
 To use components, services, stores or composables in you application, all these should explicitely exported in the lib.
 
-To do so,
+To create custom components in the application using the lib, adapt the following code snippet to relevant components in the target app:
 
+```js
 const LayerPanelElement = createElementInstance(LayerPanel, app)
 customElements.define('layer-panel', LayerPanelElement)
+```
