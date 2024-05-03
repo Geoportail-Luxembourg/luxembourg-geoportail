@@ -142,7 +142,7 @@ export default function useOpenLayers() {
         olMap.addLayer(bgBaseLayer)
       }
     }
-    if (oldBgLayerId !== bgLayer?.id) {
+    if (oldBgLayerId && oldBgLayerId !== bgLayer?.id) {
       statePersistorStyleService.restoreStyle(true)
     }
   }
