@@ -41,9 +41,9 @@ describe('Style selector', () => {
         .filter(':visible')
         .eq(3)
         .click()
-        .then(() => {
-          expect(localStorage.getItem('basemap_2015_global')).to.eq(newStyle)
-        })
+      cy.window().then(win => {
+        expect(win.localStorage.getItem('basemap_2015_global')).to.eq(newStyle)
+      })
     })
   })
 
@@ -76,9 +76,9 @@ describe('Style selector', () => {
         .filter(':visible')
         .first()
         .click()
-        .then(() => {
-          expect(localStorage.getItem('basemap_2015_global')).to.eq(newStyle)
-        })
+      cy.window().then(win => {
+        expect(win.localStorage.getItem('basemap_2015_global')).to.eq(newStyle)
+      })
     })
   })
 })
