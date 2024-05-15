@@ -30,7 +30,7 @@ export default defineConfig((/*{ command, mode }*/) => {
       },
     },
     optimizeDeps: {
-      exclude: ['ol'],
+      exclude: ['ol', 'mapbox-gl'],
       force: false,
       disabled: true,
     },
@@ -43,11 +43,11 @@ export default defineConfig((/*{ command, mode }*/) => {
       fileName: 'lux.dist',
     },
     commonjsOptions: {
-      exclude: ['ol'],
+      exclude: ['ol', 'mapbox-gl'],
     },
     outDir: 'bundle', // TODO: rename /dist
     rollupOptions: {
-      external: [/^ol\/.*/],
+      external: [/^ol\/.*/, /mapbox-gl/],
       output: {
         globals: {
           vue: 'Vue',
