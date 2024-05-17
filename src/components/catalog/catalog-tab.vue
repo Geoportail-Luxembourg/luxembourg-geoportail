@@ -11,11 +11,10 @@ const { themeGridOpen } = storeToRefs(useAppStore())
 
 <template>
   <theme-selector />
-  <div
+  <catalog
     data-cy="catalog"
     class="pt-5 absolute inset-x-2.5 bg-primary overflow-y-auto overflow-x-hidden"
     v-if="themeGridOpen === false"
   >
-    <catalog></catalog>
-  </div>
+  </catalog>
 </template>
