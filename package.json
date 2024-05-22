@@ -7,7 +7,7 @@
     "dev": "vite --force",
     "build": "run-p type-check build-only",
     "build-only": "vite build",
-    "build:lib:prod": "npx vite build --mode prod --config vite-dist.config.ts --minify=esbuild --debug && cp bundle/lux.dist.mjs bundle/lux.dist.js",
+    "build:lib:prod": "npx vite build --mode prod --config vite-dist.config.ts --minify=esbuild --debug && npx babel bundle/lux.dist.mjs --out-file bundle/lux.dist.js",
     "build:lib:dev": "npx vite build --mode dev --config vite-dist.config.ts --minify=false --base=/dev/main.html/ --debug && cp bundle/lux.dist.mjs bundle/lux.dist.js",
     "preview": "vite preview",
     "test": "npm run test:unit",
@@ -38,12 +38,12 @@
     "vue-dompurify-html": "^3.1.2"
   },
   "devDependencies": {
+    "@babel/cli": "^7.24.5",
     "@babel/core": "^7.24.5",
     "@babel/preset-env": "^7.24.5",
     "@cypress/code-coverage": "^3.10.0",
     "@istanbuljs/nyc-config-typescript": "^1.0.2",
     "@pinia/testing": "^0.0.14",
-    "@rollup/plugin-babel": "^6.0.4",
     "@rushstack/eslint-patch": "^1.1.4",
     "@types/jsdom": "^20.0.1",
     "@types/luxon": "^3.3.1",

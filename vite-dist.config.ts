@@ -4,7 +4,6 @@ import { type UserConfig } from 'vite'
 import { resolve } from 'path'
 import vue from '@vitejs/plugin-vue'
 import type { RootNode, TemplateChildNode } from '@vue/compiler-core'
-import babel from '@rollup/plugin-babel'
 
 function removeDataTestAttrs(node: RootNode | TemplateChildNode) {
   if (node.type === 1 /* NodeTypes.ELEMENT */) {
@@ -14,7 +13,7 @@ function removeDataTestAttrs(node: RootNode | TemplateChildNode) {
   }
 }
 
-export default defineConfig(({ mode }) => {
+export default defineConfig((/*{ command, mode }*/) => {
   const base: UserConfig = {
     plugins: [
       vue({
@@ -54,16 +53,6 @@ export default defineConfig(({ mode }) => {
           vue: 'Vue',
         },
       },
-      plugins:
-        /* add babel plugin in prod to transpile code to legacy JS
-        also see .babelrc using corejs for polyfills */
-        mode === 'prod'
-          ? [
-              babel({
-                exclude: 'node_modules/**',
-              }),
-            ]
-          : [],
     },
   }
 
