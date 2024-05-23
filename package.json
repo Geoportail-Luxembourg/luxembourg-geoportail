@@ -8,7 +8,7 @@
     "build": "run-p type-check build-only",
     "build-only": "vite build",
     "build:lib:prod": "npx vite build --mode prod --config vite-dist.config.ts --minify=esbuild --debug && npx babel bundle/lux.dist.mjs --out-file bundle/lux.dist.js",
-    "build:lib:dev": "npx vite build --mode dev --config vite-dist.config.ts --minify=false --base=/dev/main.html/ --debug && cp bundle/lux.dist.mjs bundle/lux.dist.js",
+    "build:lib:dev": "npx vite build --mode staging --config vite-dist.config.ts --minify=false --base=/dev/main.html/ --debug && cp bundle/lux.dist.mjs bundle/lux.dist.js",
     "preview": "vite preview",
     "test": "npm run test:unit",
     "test:unit": "vitest --environment jsdom --root .",

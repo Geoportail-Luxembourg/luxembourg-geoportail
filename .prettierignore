@@ -27,6 +27,7 @@
 /out-tsc/
 .parcel-cache
 .env
+.env.*
 
 # fixtures
 /src/__fixtures__/
