@@ -1,3 +1,4 @@
+import BaseLayer from 'ol/layer/Base'
 import {
   SimpleStyle,
   StyleItem,
@@ -11,15 +12,17 @@ import {
 import { useStyleStore } from '@/stores/style.store'
 import type { Layer } from '@/stores/map.store.model'
 import { bgConfigFixture } from '@/__fixtures__/background.config.fixture'
-import BaseLayer from 'ol/layer/Base'
+import { urlStorage } from '@/services/state-persistor/storage/url-storage'
+import { SP_KEY_EMBEDDED_SERVER, SP_KEY_EMBEDDED_SERVER_PROTOCOL, SP_KEY_SERIAL, SP_KEY_SERIAL_LAYERS } from '@/services/state-persistor/state-persistor.model'
+
+const VECTORTILES_URL = import.meta.env.VITE_VECTORTILES_URL
 
 export default function useMvtStyles() {
   function getDefaultMapBoxStyleUrl(label: string | undefined) {
-    const searchParams = new URLSearchParams(document.location.search)
-    const server = searchParams.get('embeddedserver')
-    const proto = searchParams.get('embeddedserverprotocol') || 'http'
+    const server = urlStorage.getItem(SP_KEY_EMBEDDED_SERVER)
+    const proto = urlStorage.getItem(SP_KEY_EMBEDDED_SERVER_PROTOCOL) || 'http'    
     const url =
-      (server ? `${proto}://${server}` : 'https://vectortiles.geoportail.lu') +
+      (server ? `${proto}://${server}` : VECTORTILES_URL) +
       `/styles/${label}/style.json`
     return url
   }
@@ -34,11 +37,12 @@ export default function useMvtStyles() {
     return isValidUUIDv4Regex.test(serial)
   }
 
-  const styleStore = useStyleStore()
   function setCustomStyleSerial(
     bgLayer: Layer | undefined | null,
     serial: string
   ) {
+    const styleStore = useStyleStore()
+    
     if (bgLayer === null || bgLayer === undefined) return
     const newVectorSources: VectorSourceDict = new Map()
     styleStore.bgVectorSources.forEach((vectorSource, key) => {
@@ -57,6 +61,7 @@ export default function useMvtStyles() {
     keyword: string,
     isAuthenticated: boolean = false
   ) {
+    // TODO: -CLEAN STYLE- xyz_custom not used??????
     // let lsData = JSON.parse(window.localStorage.getItem(label));
     const xyz_custom = '' // undefined;
     // if (!!lsData && lsData.serial) {
@@ -70,19 +75,18 @@ export default function useMvtStyles() {
       label,
       defaultMapBoxStyle,
       defaultMapBoxStyleXYZ,
-      xyz: xyz_custom || defaultMapBoxStyleXYZ,
-      xyz_custom,
+      xyz: xyz_custom || defaultMapBoxStyleXYZ, // TODO: -CLEAN STYLE- xyz_custom not used??????
+      xyz_custom, // TODO: -CLEAN STYLE- xyz_custom not used??????
       style: defaultMapBoxStyle,
     }
 
-    const serial = new URLSearchParams(window.location.search).get('serial')
-    const serialLayer = new URLSearchParams(window.location.search).get(
-      'serialLayer'
-    )
+    const serial = urlStorage.getItem(SP_KEY_SERIAL)
+    const serialLayer = urlStorage.getItem(SP_KEY_SERIAL_LAYERS)
+
     if (serial) {
       if (isValidSerial(serial)) {
-        console.log(serialLayer)
-      }
+        console.log(serialLayer) // TODO: -CLEAN STYLE- why console log?
+      } // TODO: -CLEAN STYLE- clean comments...
       // // if serial is number id, retrieve style form it
       // if (isValidSerial(serial)) {
       //     // if label and serialLayer are equal, or fallback to roadmap layer if serialLayer is null
@@ -221,7 +225,7 @@ export default function useMvtStyles() {
 
   function unregisterStyle(
     styleId: String | null,
-    registerUrls: Map<string, string>
+    registerUrls: Map<string, string> // TODO: -CLEAN STYLE- use exported const instead of Map
   ) {
     if (styleId === null) {
       return Promise.resolve()
@@ -234,7 +238,7 @@ export default function useMvtStyles() {
   function registerStyle(
     style: StyleSpecification,
     oldStyleId: String | null,
-    registerUrls: Map<string, string>
+    registerUrls: Map<string, string> // TODO: -CLEAN STYLE- use exported const instead of Map
   ) {
     return unregisterStyle(oldStyleId, registerUrls).then(() => {
       const formData = new FormData()
@@ -270,26 +274,24 @@ export default function useMvtStyles() {
     }
   }
 
+  function getBgLayerDef(bgLayer: Layer | undefined | null): BgLayerDef | undefined {
+    return bgConfigFixture().bg_layers.find(l => l.id == bgLayer?.id)
+  }
+
   function getVectorId(bgLayer: Layer | undefined | null): string | undefined {
-    const bgLayerDef: BgLayerDef | undefined = bgConfigFixture().bg_layers.find(
-      l => l.id == bgLayer?.id
-    )
+    const bgLayerDef = getBgLayerDef(bgLayer)
     return bgLayerDef?.vector_id
   }
 
   function isLayerStyleEditable(bgLayer: Layer | undefined | null): boolean {
-    const bgLayerDef: BgLayerDef | undefined = bgConfigFixture().bg_layers.find(
-      l => l.id == bgLayer?.id
-    )
+    const bgLayerDef = getBgLayerDef(bgLayer)
     return bgLayerDef?.vector_id !== undefined
   }
 
   function getStyleCapabilitiesFromLayer(
     bgLayer: Layer | undefined | null
   ): StyleCapabilities {
-    const bgLayerDef: BgLayerDef | undefined = bgConfigFixture().bg_layers.find(
-      l => l.id == bgLayer?.id
-    )
+    const bgLayerDef = getBgLayerDef(bgLayer)
     return {
       isEditable: bgLayerDef?.vector_id !== undefined,
       hasSimpleStyle: bgLayerDef?.simple_style_class !== undefined,

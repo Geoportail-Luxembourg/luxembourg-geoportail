@@ -31,8 +31,9 @@ export const useStyleStore = defineStore(
         ['upload', '/uploadvtstyle'],
         ['delete', '/deletevtstyle'],
       ])
-    )
+    ) // TODO: -CLEAN STYLE- useless shallowref, useless Map... use const instead plus move outside the store
 
+    // TODO: -CLEAN STYLE- put code below in a function eg. initBglayers(), plus move this init outside the store
     const promises: Promise<{ id: LayerId; config: IMvtConfig }>[] = []
     bgConfigFixture().bg_layers.forEach(bgLayer => {
       if (bgLayer.vector_id) {
@@ -111,7 +112,7 @@ export const useStyleStore = defineStore(
       disableExpertStyle,
       enableExpertStyle,
       styleSerial,
-      registerUrls,
+      registerUrls, // TODO: -CLEAN STYLE- useless shallowref, useless Map... use const instead plus move outside the store
     }
   },
   {}

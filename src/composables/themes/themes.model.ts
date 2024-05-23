@@ -54,6 +54,14 @@ export type Metadata = Partial<{
 }>
 
 export type LayerType = 'WMS' | 'WFS' | 'WMTS' | 'BG WMTS' | 'BG MVT' | '3D'
+export const LayerType = {
+  WMS: 'WMS' as LayerType,
+  WFS: 'WFS' as LayerType,
+  WMTS: 'WMTS' as LayerType,
+  BG_WMTS: 'BG WMTS' as LayerType,
+  BG_MVT: 'BG MVT' as LayerType,
+  '3D': '3D' as LayerType,
+}
 
 export interface ThemeNodeModel {
   id: number
