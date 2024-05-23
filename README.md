@@ -14,7 +14,7 @@ $ npm run start
 - `dev` runs your app for development, reloading on file changes
 - `build` builds your app and outputs it in your `dist` directory
 - `build-only` builds your app and outputs it in your `dist` directory, but without type checking
-- `build:lib:prod` builds custom elements as lib
+- `build:lib:prod` builds custom elements as lib and transpiles it to legacy JS to allow minification (uglify) in v3
 - `build:lib:dev` builds custom elements as lib with base URL for local dev environnement (`--base=/dev/main`)
 - `test`, `test:unit`, `test:unit:ci` runs your test suite with Vitest. See _Unit testing_ section
 - `test:e2e`, `test:e2e:ci`, `test:e2e:dev` see _End to end testing_ section
@@ -57,6 +57,8 @@ In the project **luxembourg-geoportail**, build the app as library with this com
 $ npm run build:lib:prod
 ```
 
+Note: Building in prod mode also transpiles the lib to legacy JS to allow minification (via UglifyJsPlugin) in v3
+
 When using the lib in local developpement mode within the geoportailv3 docker composition, use (this sets the necessary base URL option `--base=/dev/main`):
 
 ```
@@ -68,6 +70,8 @@ This will generate an export of all available **Vue components** and **State per
 To see what are the components exported, check the `/src/bundle/lib.ts` that is the entry point for the build of the library.
 
 ⚠️ This build includes its own **Vue.js** dependencies and will export Vue's utilities such as watchers that can be used to interact with the lib state. For this reason, avoid including another Vue.js dep in the targeted project.
+
+The build configuration can be found in `vite-dist.config`. It excludes `OpenLayers` and `mapbox-gl` from the lib to prevent problems (eg. in minification) when running the lib within v3. The lib uses the `ol` and `mapbox-gl` instances of v3, which versions should be similar to those in v4.
 
 ### Import the lib in another app
 
