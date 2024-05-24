@@ -3,6 +3,7 @@ import { computed, ref, shallowRef, ShallowRef } from 'vue'
 
 import { ConfigModel } from '@/composables/themes/themes.model'
 
+const DEFAULT_CURRENT_THEME = 'main'
 const ROOT_NAME_3D = 'root_3d'
 const DUMMY_ID_ROOT_3D = -222
 
@@ -10,7 +11,7 @@ export const useThemeStore = defineStore(
   'config',
   () => {
     const config: ShallowRef<ConfigModel | undefined> = shallowRef()
-    const themeName = ref('main')
+    const themeName = ref(DEFAULT_CURRENT_THEME)
     const themes = computed(() => config.value?.themes)
     const theme = computed(() =>
       themes.value?.find(theme => theme.name === themeName.value)
@@ -34,10 +35,20 @@ export const useThemeStore = defineStore(
 
     function setThemes(themes: ConfigModel) {
       config.value = themes
+
+      // Force reset current theme, eg. if theme was restricted,
+      // may not exists anymore when user disconnect
+      if (theme.value === undefined) {
+        resetCurrentTheme()
+      }
     }
 
     function setTheme(name: string) {
       themeName.value = name
+    }
+
+    function resetCurrentTheme() {
+      themeName.value = DEFAULT_CURRENT_THEME
     }
 
     return {
