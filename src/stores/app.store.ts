@@ -17,6 +17,7 @@ export const useAppStore = defineStore(
     const remoteLayersOpen = ref()
     const styleEditorOpen = ref(false)
     const drawToolbarOpen = ref(false)
+    const isOffLine = ref(false)
 
     function setLang(language: string) {
       lang.value = language
@@ -81,6 +82,7 @@ export const useAppStore = defineStore(
       openStyleEditorPanel,
       closeStyleEditorPanel,
       setDrawToolbarOpen,
+      isOffLine,
     }
   },
   {}

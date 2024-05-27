@@ -27,6 +27,23 @@ export interface Layer {
   currentTimeMaxValue?: string
 }
 
+export interface LayerSpec {
+  id: LayerId
+  name: string
+  layers: string
+  url?: string
+  type: LayerType
+  imageType: string
+  metadata?: Metadata
+  dimensions?: {}
+  style?: string
+  opacity?: number
+  previousOpacity?: number
+  time?: LayerTime
+  currentTimeMinValue?: string
+  currentTimeMaxValue?: string
+}
+
 export enum LayerTimeMode {
   VALUE = 'value',
   RANGE = 'range',

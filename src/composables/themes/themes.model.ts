@@ -60,6 +60,8 @@ export enum LayerTypeValue {
   BG_WMTS = 'BG WMTS',
   BG_MVT = 'BG MVT',
   '3D' = '3D',
+  TILE_WMS = 'tileWMS',
+  LAYER_OFFLINE = 'LAYER_OFFLINE', // Can be 'tileWMS' or 'WMTS' but comming from offline specs in localforage
 }
 
 export type LayerType = `${LayerTypeValue}`

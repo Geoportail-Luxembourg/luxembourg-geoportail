@@ -1,15 +1,18 @@
 import { watch, watchEffect } from 'vue'
+import { storeToRefs } from 'pinia'
+
 import type OlMap from 'ol/Map'
 import useOpenLayers from './ol.composable'
-import { storeToRefs } from 'pinia'
 
 import { Layer } from '@/stores/map.store.model'
 import { useMapStore } from '@/stores/map.store'
 import { useStyleStore } from '@/stores/style.store'
-import { StyleSpecification } from '@/composables/mvt-styles/mvt-styles.model'
-import useMap from './map.composable'
-import { VectorSourceDict } from '@/composables/mvt-styles/mvt-styles.model'
+import { StyleSpecification, VectorSourceDict } from '@/composables/mvt-styles/mvt-styles.model'
 import useMvtStyles from '@/composables/mvt-styles/mvt-styles.composable'
+import useMap from '@/composables/map/map.composable'
+import useOffline from '@/composables/offline/offline.composable'
+import { OLLAYER_PROP_XYZ_CUSTOM } from '@/services/ol-layer/ol-layer.model'
+import { useAppStore } from '@/stores/app.store'
 
 export class OlSynchronizer {
   previousLayers: Layer[]
@@ -21,6 +24,7 @@ export class OlSynchronizer {
     const mapService = useMap()
     const styleService = useMvtStyles()
     const openLayers = useOpenLayers()
+    const { getIsOffline } = useOffline()
     const { appliedStyle } = storeToRefs(styleStore)
 
     watch(
@@ -123,6 +127,7 @@ export class OlSynchronizer {
             })
         }, 2000)
       }
+
       openLayers.applyOnBgLayer(map, bgLayer =>
         styleService.applyConsolidatedStyle(bgLayer, style)
       )

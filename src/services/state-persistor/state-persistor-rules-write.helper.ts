@@ -9,6 +9,8 @@ import {
   SP_KEY_LAYERCOMPARATOR,
   SP_KEY_LAYERCOMPARATOR_SLIDERRATIO,
   StatePersistorRulesHelper,
+  SP_KEY_OFFLINE,
+  SP_KEY_ONLINE,
 } from './state-persistor.model'
 
 export abstract class RulesWriteHelper extends StatePersistorRulesHelper {

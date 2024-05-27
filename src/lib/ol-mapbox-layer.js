@@ -1,6 +1,6 @@
 import Layer from 'ol/layer/Layer'
 import { toDegrees } from 'ol/math'
-import { toLonLat } from 'ol/proj.js'
+import { toLonLat } from 'ol/proj'
 
 import mapboxgl from 'mapbox-gl'
 

@@ -10,6 +10,7 @@ import {
   StyleSpecification,
   IMvtConfig,
 } from '@/composables/mvt-styles/mvt-styles.model'
+import useOffline from '@/composables/offline/offline.composable'
 import { useStyleStore } from '@/stores/style.store'
 import { styleUrlHelper } from '@/services/styleurl/styleurl.helper'
 import type { Layer, LayerId } from '@/stores/map.store.model'
@@ -21,6 +22,7 @@ import {
   SP_KEY_SERIAL,
   SP_KEY_SERIAL_LAYERS,
 } from '@/services/state-persistor/state-persistor.model'
+import { debounce } from '@/services/utils'
 
 export default function useMvtStyles() {
   function getDefaultMapBoxStyleUrl(label: string | undefined) {
@@ -229,31 +231,28 @@ export default function useMvtStyles() {
   }
 
   function unregisterStyle(styleId: String | null) {
-    if (styleId === null) {
-      return Promise.resolve()
-    } else {
-      const url = `${styleUrlHelper.mvtStylesDeleteUrl}?id=${styleId}`
-      return fetch(url).catch(() => '')
-    }
+    return !styleId
+      ? Promise.resolve()
+      : fetch(`${styleUrlHelper.mvtStylesDeleteUrl}?id=${styleId}`)
+        .catch(console.warn)
   }
 
-  function registerStyle(style: StyleSpecification, oldStyleId: String | null) {
-    return unregisterStyle(oldStyleId).then(() => {
-      const formData = new FormData()
-      const data = JSON.stringify(style)
-      const blob = new Blob([data], { type: 'application/json' })
-      formData.append('style', blob, 'style.json')
-      const options = {
-        method: 'POST',
-        body: formData,
-      }
-      return fetch(styleUrlHelper.mvtStylesUploadUrl, options)
-        .then(response => response.json())
-        .then(result => {
-          return result.id
-        })
-        .catch(error => console.warn(error))
-    })
+  async function registerStyle(style: StyleSpecification, oldStyleId: String | null) {
+    await unregisterStyle(oldStyleId)
+    
+    const formData = new FormData()
+    const data = JSON.stringify(style)
+    const blob = new Blob([data], { type: 'application/json' })
+    formData.append('style', blob, 'style.json')
+    const options = {
+      method: 'POST',
+      body: formData,
+    }
+    
+    return fetch(styleUrlHelper.mvtStylesUploadUrl, options)
+      .then(response => response.json())
+      .then(result => result.id)
+      .catch(console.warn)
   }
 
   function applyConsolidatedStyle(
@@ -313,6 +312,12 @@ export default function useMvtStyles() {
     )
   }
 
+  function saveStyle(style: StyleSpecification) {}
+
+  function onApplyStyle() {
+    debounce(saveStyle, 2000)
+  }
+
   /**
    * Initialize background layers configurations and styles from background fixtures
    * // TODO: get rid of bg fixture, plug with v3 api instead
@@ -350,5 +355,6 @@ export default function useMvtStyles() {
     isLayerStyleEditable,
     getStyleCapabilitiesFromLayer,
     initBackgroundsConfigs,
+    onApplyStyle,
   }
 }

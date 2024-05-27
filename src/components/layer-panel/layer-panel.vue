@@ -1,17 +1,21 @@
 <script setup lang="ts">
-import { useTranslation } from 'i18next-vue'
+import { computed } from 'vue'
 import { storeToRefs } from 'pinia'
+import { useTranslation } from 'i18next-vue'
 
 import CatalogTab from '@/components/catalog/catalog-tab.vue'
 import LayerManager from '@/components/layer-manager/layer-manager.vue'
 import { useAppStore } from '@/stores/app.store'
 import { useMapStore } from '@/stores/map.store'
+import useOffline from '@/composables/offline/offline.composable'
 
 const { t } = useTranslation()
 const appStore = useAppStore()
 const { setLayersOpen } = appStore
 const { myLayersTabOpen } = storeToRefs(appStore)
 const { layers } = storeToRefs(useMapStore())
+const showCatalogButton = computed(() => !useOffline().isOffLine.value)
+const showMyLayersTab = computed(() => (myLayersTabOpen.value || useOffline().isOffLine.value))
 
 function onClickMyLayers() {
   appStore.setMyLayersTabOpen(true)
@@ -44,18 +48,19 @@ function onDisplayCatalog() {
         data-cy="myLayersButton"
         @click="onClickMyLayers"
         class="text-white px-4 hover:bg-primary cursor-pointer text-center uppercase"
-        :class="myLayersTabOpen ? 'bg-primary' : 'bg-tertiary'"
-        :aria-expanded="myLayersTabOpen"
+        :class="showMyLayersTab ? 'bg-primary' : 'bg-tertiary'"
+        :aria-expanded="showMyLayersTab"
       >
         {{ t('my_layers', { ns: 'client' }) }}
         <span v-if="layers.length">({{ layers.length }})</span>
       </button>
       <button
+        v-if="showCatalogButton"
         data-cy="catalogButton"
         @click="onDisplayCatalog"
         class="text-white px-4 hover:bg-primary cursor-pointer text-center uppercase"
-        :class="myLayersTabOpen ? 'bg-tertiary' : 'bg-primary'"
-        :aria-expanded="!myLayersTabOpen"
+        :class="showMyLayersTab ? 'bg-tertiary' : 'bg-primary'"
+        :aria-expanded="!showMyLayersTab"
       >
         {{ t('Catalog', { ns: 'client' }) }}
       </button>
@@ -65,10 +70,10 @@ function onDisplayCatalog() {
     <div class="relative grow p-2.5 bg-primary overflow-auto">
       <layer-manager
         data-cy="myLayers"
-        v-if="myLayersTabOpen"
+        v-if="showMyLayersTab"
         @display-catalog="onDisplayCatalog"
       ></layer-manager>
-      <catalog-tab v-if="!myLayersTabOpen"></catalog-tab>
+      <catalog-tab v-if="!showMyLayersTab"></catalog-tab>
     </div>
   </div>
 </template>

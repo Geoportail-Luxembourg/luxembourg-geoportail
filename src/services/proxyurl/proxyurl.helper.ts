@@ -64,7 +64,7 @@ class ProxyUrlHelper {
       this._remoteProxyUrl = remoteProxyUrl
     }
 
-    if (import.meta.env.MODE === 'dev') {
+    if (import.meta.env.MODE !== 'prod') {
       console.warn(
         'Deprecated: ProxyUrlHelper.init_v3() is meant to be removed when v4 is fully operational'
       )
