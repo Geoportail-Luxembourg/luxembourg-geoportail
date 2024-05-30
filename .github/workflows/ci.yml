@@ -53,7 +53,7 @@ jobs:
         shell: bash
         run: echo "VITE_DEPLOY_GHPAGES=true" >> $GITHUB_ENV
 
-      - run: npm run build-only -- --base=${{env.LUX_BASE}}
+      - run: npm run build-only -- --base=${{env.LUX_BASE}} --mode=staging
 
       - name: deploy to gh pages
         run: |
