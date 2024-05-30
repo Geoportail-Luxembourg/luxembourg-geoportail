@@ -46,7 +46,10 @@ class OlLayerVectorHelper {
       )
     }
 
-    olLayer.set(OLLAYER_PROP_DEFAULT_MAPBOX_STYLE, styleService.getDefaultMapBoxStyleUrl(styleService.getVectorId(layer))) // for v3 compatibility
+    olLayer.set(
+      OLLAYER_PROP_DEFAULT_MAPBOX_STYLE,
+      styleService.getDefaultMapBoxStyleUrl(styleService.getVectorId(layer))
+    ) // for v3 compatibility
 
     return olLayer
   }
