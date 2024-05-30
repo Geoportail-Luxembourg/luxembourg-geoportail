@@ -13,7 +13,7 @@ function removeDataTestAttrs(node: RootNode | TemplateChildNode) {
   }
 }
 
-export default defineConfig(({ command, mode }) => {
+export default defineConfig(({ mode }) => {
   const base: UserConfig = {
     plugins: [
       vue({

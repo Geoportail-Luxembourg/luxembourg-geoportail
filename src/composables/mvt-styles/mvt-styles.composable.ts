@@ -13,14 +13,58 @@ import { useStyleStore } from '@/stores/style.store'
 import type { Layer } from '@/stores/map.store.model'
 import { bgConfigFixture } from '@/__fixtures__/background.config.fixture'
 import { urlStorage } from '@/services/state-persistor/storage/url-storage'
-import { SP_KEY_EMBEDDED_SERVER, SP_KEY_EMBEDDED_SERVER_PROTOCOL, SP_KEY_SERIAL, SP_KEY_SERIAL_LAYERS } from '@/services/state-persistor/state-persistor.model'
-
-const VECTORTILES_URL = import.meta.env.VITE_VECTORTILES_URL
+import {
+  SP_KEY_EMBEDDED_SERVER,
+  SP_KEY_EMBEDDED_SERVER_PROTOCOL,
+  SP_KEY_SERIAL,
+  SP_KEY_SERIAL_LAYERS,
+} from '@/services/state-persistor/state-persistor.model'
 
 export default function useMvtStyles() {
+  // TODO: When v4 fully ready, remove setRegisterUrl_v3 and move below vars outside the function
+  let VECTORTILES_URL = import.meta.env.VITE_VECTORTILES_URL
+  let MVTSTYLES_PATH_GET = import.meta.env.VITE_MVTSTYLES_PATH_GET
+  let MVTSTYLES_PATH_UPLOAD = import.meta.env.VITE_MVTSTYLES_PATH_UPLOAD
+  let MVTSTYLES_PATH_DELETE = import.meta.env.VITE_MVTSTYLES_PATH_DELETE
+
+  /**
+   * Use this function in v3 to configure MvtRegister's urls and vectortiles url.
+   *
+   * @param registeredUrls An object to set all urls (get, upload, delete, and vectortiles)
+   * @deprecated use env var instead (this function is meant to be removed when v4 is fully operational)
+   */
+  function setRegisterUrl_v3(registeredUrls: {
+    get?: string
+    upload?: string
+    delete?: string
+    vectortiles?: string
+  }) {
+    if (registeredUrls.get) {
+      MVTSTYLES_PATH_GET = registeredUrls.get
+    }
+
+    if (registeredUrls.upload) {
+      MVTSTYLES_PATH_UPLOAD = registeredUrls.upload
+    }
+
+    if (registeredUrls.delete) {
+      MVTSTYLES_PATH_DELETE = registeredUrls.delete
+    }
+
+    if (registeredUrls.vectortiles) {
+      VECTORTILES_URL = registeredUrls.vectortiles
+    }
+
+    if (import.meta.env.MODE !== 'prod') {
+      console.warn(
+        'Deprecated: useMvtStyles().setRegisterUrl_v3() is meant to be removed when v4 is fully operational'
+      )
+    }
+  }
+
   function getDefaultMapBoxStyleUrl(label: string | undefined) {
     const server = urlStorage.getItem(SP_KEY_EMBEDDED_SERVER)
-    const proto = urlStorage.getItem(SP_KEY_EMBEDDED_SERVER_PROTOCOL) || 'http'    
+    const proto = urlStorage.getItem(SP_KEY_EMBEDDED_SERVER_PROTOCOL) || 'http'
     const url =
       (server ? `${proto}://${server}` : VECTORTILES_URL) +
       `/styles/${label}/style.json`
@@ -42,7 +86,7 @@ export default function useMvtStyles() {
     serial: string
   ) {
     const styleStore = useStyleStore()
-    
+
     if (bgLayer === null || bgLayer === undefined) return
     const newVectorSources: VectorSourceDict = new Map()
     styleStore.bgVectorSources.forEach((vectorSource, key) => {
@@ -76,7 +120,7 @@ export default function useMvtStyles() {
       defaultMapBoxStyle,
       defaultMapBoxStyleXYZ,
       xyz: xyz_custom || defaultMapBoxStyleXYZ, // TODO: -CLEAN STYLE- xyz_custom not used??????
-      xyz_custom, // TODO: -CLEAN STYLE- xyz_custom not used??????
+      xyz_custom, // TODO: -CLEAN STYLE- xyz_custom used in synchronizer
       style: defaultMapBoxStyle,
     }
 
@@ -185,7 +229,7 @@ export default function useMvtStyles() {
   function applyDefaultStyle(
     bgLayer: Layer | undefined | null,
     baseStyles: VectorStyleDict,
-    activeStyle: StyleItem[] | null | undefined
+    activeStyles: StyleItem[] | null | undefined
   ): StyleSpecification | undefined {
     if (!bgLayer) return
     // need a deep copy of the object to preserve default style
@@ -195,8 +239,8 @@ export default function useMvtStyles() {
     ) as any
     if (!baseStyle) return
     if (!baseStyle || !baseStyle.layers) return
-    if (activeStyle) {
-      activeStyle.forEach(styleItem => {
+    if (activeStyles) {
+      activeStyles.forEach(styleItem => {
         baseStyle?.layers.forEach((layer, i) => {
           for (const styleProperty of stylePropertyTypeList) {
             const props = styleItem[`${styleProperty}s`] || []
@@ -223,24 +267,17 @@ export default function useMvtStyles() {
     return baseStyle
   }
 
-  function unregisterStyle(
-    styleId: String | null,
-    registerUrls: Map<string, string> // TODO: -CLEAN STYLE- use exported const instead of Map
-  ) {
+  function unregisterStyle(styleId: String | null) {
     if (styleId === null) {
       return Promise.resolve()
     } else {
-      const url = `${registerUrls.get('delete')}?id=${styleId}`
+      const url = `${MVTSTYLES_PATH_DELETE}?id=${styleId}`
       return fetch(url).catch(() => '')
     }
   }
 
-  function registerStyle(
-    style: StyleSpecification,
-    oldStyleId: String | null,
-    registerUrls: Map<string, string> // TODO: -CLEAN STYLE- use exported const instead of Map
-  ) {
-    return unregisterStyle(oldStyleId, registerUrls).then(() => {
+  function registerStyle(style: StyleSpecification, oldStyleId: String | null) {
+    return unregisterStyle(oldStyleId).then(() => {
       const formData = new FormData()
       const data = JSON.stringify(style)
       const blob = new Blob([data], { type: 'application/json' })
@@ -249,7 +286,7 @@ export default function useMvtStyles() {
         method: 'POST',
         body: formData,
       }
-      return fetch(registerUrls.get('upload') || '', options)
+      return fetch(MVTSTYLES_PATH_UPLOAD, options)
         .then(response => response.json())
         .then(result => {
           return result.id
@@ -274,7 +311,9 @@ export default function useMvtStyles() {
     }
   }
 
-  function getBgLayerDef(bgLayer: Layer | undefined | null): BgLayerDef | undefined {
+  function getBgLayerDef(
+    bgLayer: Layer | undefined | null
+  ): BgLayerDef | undefined {
     return bgConfigFixture().bg_layers.find(l => l.id == bgLayer?.id)
   }
 
@@ -314,6 +353,10 @@ export default function useMvtStyles() {
   }
 
   return {
+    MVTSTYLES_PATH_GET,
+    MVTSTYLES_PATH_UPLOAD,
+    MVTSTYLES_PATH_DELETE,
+    setRegisterUrl_v3,
     getDefaultMapBoxStyleUrl,
     getDefaultMapBoxStyleXYZ,
     setConfigForLayer,
