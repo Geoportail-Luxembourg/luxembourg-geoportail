@@ -28,7 +28,7 @@ export default function useMvtStyles() {
   }
 
   function getDefaultMapBoxStyleXYZ(label: string | undefined) {
-    return `https://vectortiles.geoportail.lu/styles/${label}/{z}/{x}/{y}.png`
+    return `${VECTORTILES_URL}/styles/${label}/{z}/{x}/{y}.png`
   }
 
   function isValidSerial(serial: string) {
