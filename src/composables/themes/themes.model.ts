@@ -53,14 +53,13 @@ export type Metadata = Partial<{
   hasRetina: boolean
 }>
 
-export type LayerType = 'WMS' | 'WFS' | 'WMTS' | 'BG WMTS' | 'BG MVT' | '3D'
-export const LayerType = {
-  WMS: 'WMS' as LayerType,
-  WFS: 'WFS' as LayerType,
-  WMTS: 'WMTS' as LayerType,
-  BG_WMTS: 'BG WMTS' as LayerType,
-  BG_MVT: 'BG MVT' as LayerType,
-  '3D': '3D' as LayerType,
+export enum LayerType {
+  WMS = 'WMS',
+  WFS = 'WFS',
+  WMTS = 'WMTS',
+  BG_WMTS = 'BG WMTS',
+  BG_MVT = 'BG MVT',
+  '3D' = '3D',
 }
 
 export interface ThemeNodeModel {
