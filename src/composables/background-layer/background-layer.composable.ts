@@ -13,6 +13,7 @@ import {
   BgLayerDefaultsType,
 } from '@/composables/background-layer/background-layer.model'
 import useThemes from '@/composables/themes/themes.composable'
+import { LayerTypeValue } from '../themes/themes.model'
 
 export default function useBackgroundLayer() {
   const appStore = useAppStore()
@@ -42,15 +43,19 @@ export default function useBackgroundLayer() {
 
   function setMapBackground(bgLayer: Layer | null) {
     if (bgLayer) {
-      if (bgLayer.type === 'WMTS' || bgLayer.type === 'BG WMTS') {
-        bgLayer.type = 'BG WMTS'
-      } else if (bgLayer.type === 'BG MVT') {
+      if (
+        bgLayer.type === LayerTypeValue.WMTS ||
+        bgLayer.type === LayerTypeValue.BG_WMTS
+      ) {
+        bgLayer.type = 'BG WMTS' // <= ????
+      } else if (bgLayer.type === LayerTypeValue.BG_MVT) {
         console.log(`passed through MVT layer ${bgLayer.name}`)
       } else {
         throw new Error(
           `Only WMTS and MVT BG layers are currently implemented (not ${bgLayer.type} for ${bgLayer.name})`
         )
       }
+
       layers.handleExclusionLayers(bgLayer)
       mapStore.setBgLayer(layers.initLayer(bgLayer))
     } else {

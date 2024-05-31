@@ -15,7 +15,7 @@ import {
 import olLayerWmsHelper from './ol-layer-wms.helper'
 import olLayerWmtsHelper from './ol-layer-wmts.helper'
 import olLayerVectorHelper from './ol-layer-vector.helper'
-import { LayerType } from '@/composables/themes/themes.model'
+import { LayerTypeValue } from '@/composables/themes/themes.model'
 
 export class OlLayerFactoryService {
   createOlLayer(layer: Layer, vectorSources?: VectorSourceDict): OlLayer {
@@ -29,11 +29,11 @@ export class OlLayerFactoryService {
     // If no vector layer has been created, add raster layer
     if (!olLayer) {
       switch (layer.type) {
-        case LayerType.WMS:
+        case LayerTypeValue.WMS:
           olLayer = olLayerWmsHelper.createOlLayer(layer)
           break
-        case LayerType.WMTS:
-        case LayerType.BG_WMTS:
+        case LayerTypeValue.WMTS:
+        case LayerTypeValue.BG_WMTS:
           olLayer = olLayerWmtsHelper.createOlLayer(layer)
           break
         default:
