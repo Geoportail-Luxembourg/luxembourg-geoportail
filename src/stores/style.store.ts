@@ -25,13 +25,6 @@ export const useStyleStore = defineStore(
     const styleSerial: ShallowRef<String | null> = shallowRef(null)
     const appliedStyle: ShallowRef<StyleSpecification | undefined> =
       shallowRef()
-    const registerUrls: ShallowRef<Map<string, string>> = shallowRef(
-      new Map([
-        ['get', '/getvtstyle'],
-        ['upload', '/uploadvtstyle'],
-        ['delete', '/deletevtstyle'],
-      ])
-    ) // TODO: -CLEAN STYLE- useless shallowref, useless Map... use const instead plus move outside the store
 
     // TODO: -CLEAN STYLE- put code below in a function eg. initBglayers(), plus move this init outside the store
     const promises: Promise<{ id: LayerId; config: IMvtConfig }>[] = []
@@ -53,10 +46,6 @@ export const useStyleStore = defineStore(
       styleConfigs.forEach(c => vectorDict.set(c.id, c.config))
       bgVectorSources.value = vectorDict
     })
-
-    function setRegisterUrl(key: string, url: string) {
-      registerUrls.value.set(key, url)
-    }
 
     function setBgVectorSources(vectorDict: VectorSourceDict) {
       bgVectorSources.value = vectorDict
@@ -106,13 +95,11 @@ export const useStyleStore = defineStore(
       removeBaseStyle,
       setBaseStyle,
       setBgVectorSources,
-      setRegisterUrl,
       setSimpleStyle,
       setStyle,
       disableExpertStyle,
       enableExpertStyle,
       styleSerial,
-      registerUrls, // TODO: -CLEAN STYLE- useless shallowref, useless Map... use const instead plus move outside the store
     }
   },
   {}
