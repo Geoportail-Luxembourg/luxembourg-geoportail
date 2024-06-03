@@ -3,14 +3,12 @@ import { shallowRef, ShallowRef } from 'vue'
 import useMvtStyles from '@/composables/mvt-styles/mvt-styles.composable'
 import type { LayerId } from '@/stores/map.store.model'
 import {
-  IMvtConfig,
   SimpleStyle,
   StyleItem,
   VectorSourceDict,
   VectorStyleDict,
   StyleSpecification,
 } from '@/composables/mvt-styles/mvt-styles.model'
-import { bgConfigFixture } from '@/__fixtures__/background.config.fixture'
 
 export const useStyleStore = defineStore(
   'style',
@@ -25,27 +23,6 @@ export const useStyleStore = defineStore(
     const styleSerial: ShallowRef<String | null> = shallowRef(null)
     const appliedStyle: ShallowRef<StyleSpecification | undefined> =
       shallowRef()
-
-    // TODO: -CLEAN STYLE- put code below in a function eg. initBglayers(), plus move this init outside the store
-    const promises: Promise<{ id: LayerId; config: IMvtConfig }>[] = []
-    bgConfigFixture().bg_layers.forEach(bgLayer => {
-      if (bgLayer.vector_id) {
-        const conf = styleService.setConfigForLayer(
-          bgLayer.icon_id,
-          bgLayer.vector_id
-        )
-        promises.push(
-          conf.then(c => {
-            return { id: bgLayer.id, config: c as IMvtConfig }
-          })
-        )
-      }
-    })
-    Promise.all(promises).then(styleConfigs => {
-      const vectorDict: VectorSourceDict = new Map()
-      styleConfigs.forEach(c => vectorDict.set(c.id, c.config))
-      bgVectorSources.value = vectorDict
-    })
 
     function setBgVectorSources(vectorDict: VectorSourceDict) {
       bgVectorSources.value = vectorDict

@@ -8,9 +8,10 @@ import {
   VectorSourceDict,
   VectorStyleDict,
   StyleSpecification,
+  IMvtConfig,
 } from '@/composables/mvt-styles/mvt-styles.model'
 import { useStyleStore } from '@/stores/style.store'
-import type { Layer } from '@/stores/map.store.model'
+import type { Layer, LayerId } from '@/stores/map.store.model'
 import { bgConfigFixture } from '@/__fixtures__/background.config.fixture'
 import { urlStorage } from '@/services/state-persistor/storage/url-storage'
 import {
@@ -65,10 +66,11 @@ export default function useMvtStyles() {
   function getDefaultMapBoxStyleUrl(label: string | undefined) {
     const server = urlStorage.getItem(SP_KEY_EMBEDDED_SERVER)
     const proto = urlStorage.getItem(SP_KEY_EMBEDDED_SERVER_PROTOCOL) || 'http'
-    const url =
+
+    return (
       (server ? `${proto}://${server}` : VECTORTILES_URL) +
       `/styles/${label}/style.json`
-    return url
+    )
   }
 
   function getDefaultMapBoxStyleXYZ(label: string | undefined) {
@@ -352,6 +354,28 @@ export default function useMvtStyles() {
     )
   }
 
+  /**
+   * Initialize background layers configurations and styles from background fixtures
+   * // TODO: get rid of bg fixture, plug with v3 api instead
+   */
+  function initBackgroundsConfigs() {
+    const promises: Promise<{ id: LayerId; config: IMvtConfig }>[] = []
+    const styleStoreService = useStyleStore()
+
+    bgConfigFixture().bg_layers.forEach(bgLayer => {
+      if (bgLayer.vector_id) {
+        const conf = setConfigForLayer(bgLayer.icon_id, bgLayer.vector_id)
+        promises.push(conf.then(config => ({ id: bgLayer.id, config })))
+      }
+    })
+
+    Promise.all(promises).then(styleConfigs => {
+      const vectorDict: VectorSourceDict = new Map()
+      styleConfigs.forEach(c => vectorDict.set(c.id, c.config))
+      styleStoreService.setBgVectorSources(vectorDict)
+    })
+  }
+
   return {
     MVTSTYLES_PATH_GET,
     MVTSTYLES_PATH_UPLOAD,
@@ -370,5 +394,6 @@ export default function useMvtStyles() {
     checkSelection,
     isLayerStyleEditable,
     getStyleCapabilitiesFromLayer,
+    initBackgroundsConfigs,
   }
 }
