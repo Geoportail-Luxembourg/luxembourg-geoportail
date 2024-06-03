@@ -83,7 +83,7 @@ function activate() {
       const tl = getRenderPixel(<RenderEvent>event, [0, 0])
       const tr = getRenderPixel(<RenderEvent>event, [width, 0])
       const bl = getRenderPixel(<RenderEvent>event, [0, mapSize[1]])
-      const br = getRenderPixel(<RenderEvent>event, [width, mapSize[0]])
+      const br = getRenderPixel(<RenderEvent>event, [width, mapSize[1]])
 
       ctx.save()
       ctx.beginPath()
