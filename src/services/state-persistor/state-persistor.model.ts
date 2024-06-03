@@ -1,13 +1,15 @@
 import { UrlStorage } from './storage/url-storage'
 
 export const SP_KEY_IPV6 = 'ipv6' // TODO:
+export const SP_KEY_ADDRESS = 'address'
 export const SP_KEY_APPLOGIN = 'applogin' // TODO:
 export const SP_KEY_LOCALFORAGE = 'localforage' // TODO:
 export const SP_KEY_DEBUG = 'debug' // TODO:
+export const SP_KEY_EMBEDDED_SERVER = 'embeddedserver'
+export const SP_KEY_EMBEDDED_SERVER_PROTOCOL = 'embeddedserverprotocol'
 export const SP_KEY_FID = 'fid' // TODO:
 export const SP_KEY_LANG = 'lang'
 export const SP_KEY_LAYERS_OPEN = 'layersOpen'
-export const SP_KEY_ADDRESS = 'address'
 export const SP_KEY_VERSION = 'version'
 export const SP_KEY_MAPID = 'map_id' // TODO:
 export const SP_KEY_LAYERS = 'layers'
@@ -20,6 +22,7 @@ export const SP_KEY_SRS = 'SRS' // TODO:
 export const SP_KEY_X = 'X'
 export const SP_KEY_Y = 'Y'
 export const SP_KEY_SERIAL = 'serial'
+export const SP_KEY_SERIAL_LAYERS = 'serialLayer'
 export const SP_KEYS_STYLE = [
   'basemap_2015_global',
   'topogr_global',

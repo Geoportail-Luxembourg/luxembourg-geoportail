@@ -51,7 +51,7 @@ function getStyleUrl() {
       styleService.getVectorId(mapStore.bgLayer)
     )
   } else {
-    return `${styleStore.registerUrls.get('get')}?id=${styleStore.styleSerial}`
+    return `${styleService.MVTSTYLES_PATH_GET}?id=${styleStore.styleSerial}`
   }
 }
 </script>

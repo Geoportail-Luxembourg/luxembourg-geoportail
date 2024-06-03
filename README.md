@@ -155,6 +155,8 @@ RUN mkdir /etc/static-ngeo/web-components \
 
 ### Initialize app settings
 
+#### 1. Proxy and remote urls
+
 Configure your proxy urls, otherwise, layers may not display correctly.
 
 ```js
@@ -164,6 +166,20 @@ const remoteProxyWms = 'https://map.geoportail.lu/httpsproxy'
 
 proxyUrlHelper.init(proxyWmsUrl, remoteProxyWms)
 ```
+
+#### 2. Vector tiles url
+
+Configure url for vector tiles (see `.env`, `.env-staging` files).
+
+```bash
+# Urls for vectortiles to be used in prod
+VITE_VECTORTILES_URL="https://vectortiles.geoportail.lu"
+
+# OR Urls for vectortiles to be used in staging/dev mode
+VITE_VECTORTILES_URL="https://vectortiles-staging.geoportail.lu"
+```
+
+💡 For more info about styling, see `src/composables/mvt-styles/README.md`
 
 ### Use components, services, stores, composables
 

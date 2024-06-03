@@ -89,11 +89,11 @@ export class OlSynchronizer {
     watch(appliedStyle, (style: StyleSpecification) => {
       if (styleStore.bgStyle === null && !styleStore.isExpertStyleActive) {
         styleService
-          .unregisterStyle(styleStore.styleSerial, styleStore.registerUrls)
+          .unregisterStyle(styleStore.styleSerial)
           .then((styleStore.styleSerial = null))
       } else {
         styleService
-          .registerStyle(style, styleStore.styleSerial, styleStore.registerUrls)
+          .registerStyle(style, styleStore.styleSerial)
           .then(serial => {
             styleStore.styleSerial = serial
             const id = mapStore?.bgLayer?.id
