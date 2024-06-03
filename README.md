@@ -179,6 +179,8 @@ VITE_VECTORTILES_URL="https://vectortiles.geoportail.lu"
 VITE_VECTORTILES_URL="https://vectortiles-staging.geoportail.lu"
 ```
 
+💡 For more info about styling, see `src/composables/mvt-styles/README.md`
+
 ### Use components, services, stores, composables
 
 To use components, services, stores or composables in you application, all these should explicitely exported in the lib.
