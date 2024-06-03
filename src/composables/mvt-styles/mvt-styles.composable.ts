@@ -119,8 +119,8 @@ export default function useMvtStyles() {
       label,
       defaultMapBoxStyle,
       defaultMapBoxStyleXYZ,
-      xyz: xyz_custom || defaultMapBoxStyleXYZ, // TODO: -CLEAN STYLE- xyz_custom not used??????
-      xyz_custom, // TODO: -CLEAN STYLE- xyz_custom used in synchronizer
+      xyz: xyz_custom || defaultMapBoxStyleXYZ,
+      xyz_custom,
       style: defaultMapBoxStyle,
     }
 
@@ -229,7 +229,7 @@ export default function useMvtStyles() {
   function applyDefaultStyle(
     bgLayer: Layer | undefined | null,
     baseStyles: VectorStyleDict,
-    activeStyles: StyleItem[] | null | undefined
+    activeStyle: StyleItem[] | null | undefined
   ): StyleSpecification | undefined {
     if (!bgLayer) return
     // need a deep copy of the object to preserve default style
@@ -239,8 +239,8 @@ export default function useMvtStyles() {
     ) as any
     if (!baseStyle) return
     if (!baseStyle || !baseStyle.layers) return
-    if (activeStyles) {
-      activeStyles.forEach(styleItem => {
+    if (activeStyle) {
+      activeStyle.forEach(styleItem => {
         baseStyle?.layers.forEach((layer, i) => {
           for (const styleProperty of stylePropertyTypeList) {
             const props = styleItem[`${styleProperty}s`] || []
