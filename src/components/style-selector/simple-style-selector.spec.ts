@@ -2,10 +2,11 @@ import { shallowMount } from '@vue/test-utils'
 
 import SimpleStyleSelector from './simple-style-selector.vue'
 import { useStyleStore } from '@/stores/style.store'
-import { SimpleRoadStyle } from '@/composables/mvt-styles/mvt-styles.model'
+import { SimpleStyle } from '@/composables/mvt-styles/mvt-styles.model'
 import { createTestingPinia } from '@pinia/testing'
+import useMvtStyles from '@/composables/mvt-styles/mvt-styles.composable'
 
-const dummySimpleStyles: SimpleRoadStyle[] = [
+const dummySimpleStyles: SimpleStyle[] = [
   {
     unlocalized_label: 'entity1',
     hillshade: false,
@@ -37,6 +38,7 @@ describe('StyleEditor', () => {
     stubActions: false,
   })
   const styleStore = useStyleStore()
+  useMvtStyles().initBackgroundsConfigs()
 
   it('default simple bgStyle test', () => {
     expect(styleStore.bgStyle).toBe(undefined)
