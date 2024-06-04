@@ -25,9 +25,11 @@ import { statePersistorMyMapService } from '@/services/state-persistor/state-per
 
 import { useAppStore } from '@/stores/app.store'
 import useMap from '@/composables/map/map.composable'
+import useMvtStyles from '@/composables/mvt-styles/mvt-styles.composable'
 import traverseLayer from '@/lib/tools.js'
 
 const appStore = useAppStore()
+const mvtStyleService = useMvtStyles()
 
 // Important, keep order!
 statePersistorMyMapService.bootstrap()
@@ -36,6 +38,7 @@ statePersistorThemeService.bootstrap()
 statePersistorLayersOpenService.bootstrapLayersOpen()
 statePersistorStyleService.bootstrapStyle()
 statePersistorBgLayerService.bootstrap()
+mvtStyleService.initBackgroundsConfigs()
 
 const { layersOpen, styleEditorOpen } = storeToRefs(appStore)
 
