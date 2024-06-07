@@ -16,6 +16,7 @@ export const useAppStore = defineStore(
     const mapId: Ref<string | undefined> = ref()
     const remoteLayersOpen = ref()
     const styleEditorOpen = ref(false)
+    const drawToolbarOpen = ref(false)
 
     function setLang(language: string) {
       lang.value = language
@@ -58,6 +59,10 @@ export const useAppStore = defineStore(
       styleEditorOpen.value = false
     }
 
+    function setDrawToolbarOpen(open: boolean) {
+      drawToolbarOpen.value = open
+    }
+
     return {
       lang,
       layersOpen,
@@ -66,6 +71,7 @@ export const useAppStore = defineStore(
       mapId,
       styleEditorOpen,
       remoteLayersOpen,
+      drawToolbarOpen,
       setLang,
       setLayersOpen,
       setMyLayersTabOpen,
@@ -74,6 +80,7 @@ export const useAppStore = defineStore(
       setMapId,
       openStyleEditorPanel,
       closeStyleEditorPanel,
+      setDrawToolbarOpen,
     }
   },
   {}

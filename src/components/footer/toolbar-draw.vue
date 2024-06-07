@@ -1,0 +1,39 @@
+<script setup lang="ts">
+import ButtonText from './button-text.vue'
+import { useTranslation } from 'i18next-vue'
+
+const { t } = useTranslation()
+</script>
+<template>
+  <div data-cy="toolbarDraw">
+    <ul
+      class="absolute bottom-full top-auto z-20 flex flex-row justify-start divide-y-0 divide-x divide-gray-400 divide-solid box-content border-y-0 border-x border-gray-400"
+    >
+      <li>
+        <ButtonText :label="t('Draw Point', { ns: 'client' })"> </ButtonText>
+      </li>
+      <li>
+        <ButtonText :label="t('Label', { ns: 'client' })"> </ButtonText>
+      </li>
+      <li>
+        <ButtonText :label="t('Line', { ns: 'client' })"> </ButtonText>
+      </li>
+      <li>
+        <ButtonText :label="t('Polygon', { ns: 'client' })"> </ButtonText>
+      </li>
+      <li>
+        <ButtonText :label="t('Circle', { ns: 'client' })"> </ButtonText>
+      </li>
+    </ul>
+    <ul class="absolute bottom-full top-auto z-10 pl-[130px] pb-16 w-[326px]">
+      <li
+        class="flex flex-row justify-center text-white bg-tertiary hover:bg-primary py-2 box-content border-y border-x border-gray-400"
+      >
+        <label>
+          <input type="checkbox" />
+          {{ t('Suivre la route', { ns: 'client' }) }}
+        </label>
+      </li>
+    </ul>
+  </div>
+</template>

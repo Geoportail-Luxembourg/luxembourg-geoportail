@@ -3,12 +3,13 @@ import { storeToRefs } from 'pinia'
 
 import ButtonIcon from './button-icon.vue'
 import ButtonLink from './button-link.vue'
+import ToolbarDraw from './toolbar-draw.vue'
 import { useTranslation } from 'i18next-vue'
 import { useAppStore } from '@/stores/app.store'
 
 const { t, i18next } = useTranslation()
-const { setLayersOpen } = useAppStore()
-const { layersOpen } = storeToRefs(useAppStore())
+const { setLayersOpen, setDrawToolbarOpen } = useAppStore()
+const { layersOpen, drawToolbarOpen } = storeToRefs(useAppStore())
 </script>
 <template>
   <footer
@@ -68,12 +69,14 @@ const { layersOpen } = storeToRefs(useAppStore())
 
     <!-- center buttons -->
     <div
-      class="flex flex-col w-12 sm:w-64 sm:flex-row justify-start text-primary divide-y sm:divide-y-0 sm:divide-x divide-gray-400 divide-solid box-content border-y sm:border-y-0 border-x border-gray-400"
+      class="relative flex flex-col w-12 sm:w-64 sm:flex-row justify-start text-primary divide-y sm:divide-y-0 sm:divide-x divide-gray-400 divide-solid box-content border-y sm:border-y-0 border-x border-gray-400"
     >
+      <ToolbarDraw v-if="drawToolbarOpen" />
       <ButtonIcon
-        class="text-gray-300"
         :label="t('Dessin', { ns: 'client' })"
         icon="draw"
+        @click="() => setDrawToolbarOpen(!drawToolbarOpen)"
+        data-cy="drawButton"
       >
       </ButtonIcon>
       <ButtonIcon
