@@ -16,6 +16,7 @@ import RemoteLayers from '@/components/remote-layers/remote-layers.vue'
 import LayerMetadata from '@/components/layer-metadata/layer-metadata.vue'
 import HeaderBar from '@/components/header/header-bar.vue'
 import FooterBar from '@/components/footer/footer-bar.vue'
+import ToolbarDraw from '@/components/footer/toolbar-draw.vue'
 import LayerPanel from '@/components/layer-panel/layer-panel.vue'
 import SliderComparator from '@/components/slider/slider-comparator.vue'
 import useBackgroundLayer from '@/composables/background-layer/background-layer.composable'
@@ -101,6 +102,7 @@ export {
   LayerMetadata,
   HeaderBar,
   FooterBar,
+  ToolbarDraw,
   LayerPanel,
   SliderComparator,
   proxyUrlHelper,
