@@ -20,13 +20,13 @@ const { layersOpen, drawToolbarOpen } = storeToRefs(useAppStore())
       class="flex flex-col w-full sm:w-80 sm:flex-row justify-start text-primary divide-y sm:divide-y-0 sm:divide-x divide-gray-400 divide-solid box-content border-y sm:border-y-0 border-x border-gray-400"
     >
       <li>
-        <ButtonIcon
+        <button-icon
           :label="t('Layers', { ns: 'client' })"
           icon="layers"
           :active="layersOpen"
           @click="() => setLayersOpen(!layersOpen)"
         >
-        </ButtonIcon>
+        </button-icon>
       </li>
 
       <!--TODOs in each button when implemented
@@ -34,36 +34,36 @@ const { layersOpen, drawToolbarOpen } = storeToRefs(useAppStore())
         - add click handler that calls setLayersOpen(true) and opens tool (also via app store)
       -->
       <li>
-        <ButtonIcon
+        <button-icon
           class="text-gray-300"
           :label="t('My Maps', { ns: 'client' })"
           icon="mymaps"
         >
-        </ButtonIcon>
+        </button-icon>
       </li>
       <li>
-        <ButtonIcon
+        <button-icon
           class="text-gray-300"
           :label="t('Infos', { ns: 'client' })"
           icon="infos"
         >
-        </ButtonIcon>
+        </button-icon>
       </li>
       <li>
-        <ButtonIcon
+        <button-icon
           class="text-gray-300"
           :label="t('Legends', { ns: 'client' })"
           icon="legends"
         >
-        </ButtonIcon>
+        </button-icon>
       </li>
       <li>
-        <ButtonIcon
+        <button-icon
           class="text-gray-300"
           :label="t('Routing', { ns: 'client' })"
           icon="routing"
         >
-        </ButtonIcon>
+        </button-icon>
       </li>
     </ul>
 
@@ -71,32 +71,32 @@ const { layersOpen, drawToolbarOpen } = storeToRefs(useAppStore())
     <div
       class="relative flex flex-col w-12 sm:w-64 sm:flex-row justify-start text-primary divide-y sm:divide-y-0 sm:divide-x divide-gray-400 divide-solid box-content border-y sm:border-y-0 border-x border-gray-400"
     >
-      <ToolbarDraw v-if="drawToolbarOpen" />
-      <ButtonIcon
+      <toolbar-draw v-if="drawToolbarOpen" />
+      <button-icon
         :label="t('Dessin', { ns: 'client' })"
         icon="draw"
         @click="() => setDrawToolbarOpen(!drawToolbarOpen)"
         data-cy="drawButton"
       >
-      </ButtonIcon>
-      <ButtonIcon
+      </button-icon>
+      <button-icon
         class="text-gray-300 hidden sm:block"
         :label="t('Mesurer', { ns: 'client' })"
         icon="measure"
       >
-      </ButtonIcon>
-      <ButtonIcon
+      </button-icon>
+      <button-icon
         class="text-gray-300 hidden sm:block"
         :label="t('Imprimer', { ns: 'client' })"
         icon="print"
       >
-      </ButtonIcon>
-      <ButtonIcon
+      </button-icon>
+      <button-icon
         class="text-gray-300"
         :label="t('Partager', { ns: 'client' })"
         icon="share"
       >
-      </ButtonIcon>
+      </button-icon>
     </div>
 
     <!-- right buttons -->

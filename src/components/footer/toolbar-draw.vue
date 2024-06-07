@@ -10,19 +10,19 @@ const { t } = useTranslation()
       class="absolute bottom-full top-auto z-20 flex flex-row justify-start divide-y-0 divide-x divide-gray-400 divide-solid box-content border-y-0 border-x border-gray-400"
     >
       <li>
-        <ButtonText :label="t('Draw Point', { ns: 'client' })"> </ButtonText>
+        <button-text :label="t('Draw Point', { ns: 'client' })"> </button-text>
       </li>
       <li>
-        <ButtonText :label="t('Label', { ns: 'client' })"> </ButtonText>
+        <button-text :label="t('Label', { ns: 'client' })"> </button-text>
       </li>
       <li>
-        <ButtonText :label="t('Line', { ns: 'client' })"> </ButtonText>
+        <button-text :label="t('Line', { ns: 'client' })"> </button-text>
       </li>
       <li>
-        <ButtonText :label="t('Polygon', { ns: 'client' })"> </ButtonText>
+        <button-text :label="t('Polygon', { ns: 'client' })"> </button-text>
       </li>
       <li>
-        <ButtonText :label="t('Circle', { ns: 'client' })"> </ButtonText>
+        <button-text :label="t('Circle', { ns: 'client' })"> </button-text>
       </li>
     </ul>
     <ul class="absolute bottom-full top-auto z-10 pl-[130px] pb-16 w-[326px]">
