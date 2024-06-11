@@ -11,6 +11,7 @@ import {
   IMvtConfig,
 } from '@/composables/mvt-styles/mvt-styles.model'
 import { useStyleStore } from '@/stores/style.store'
+import { styleUrlHelper } from '@/services/styleurl/styleurl.helper'
 import type { Layer, LayerId } from '@/stores/map.store.model'
 import { bgConfigFixture } from '@/__fixtures__/background.config.fixture'
 import { urlStorage } from '@/services/state-persistor/storage/url-storage'
@@ -22,59 +23,17 @@ import {
 } from '@/services/state-persistor/state-persistor.model'
 
 export default function useMvtStyles() {
-  // TODO: When v4 fully ready, remove setRegisterUrl_v3 and move below vars outside the function
-  let VECTORTILES_URL = import.meta.env.VITE_VECTORTILES_URL
-  let MVTSTYLES_PATH_GET = import.meta.env.VITE_MVTSTYLES_PATH_GET
-  let MVTSTYLES_PATH_UPLOAD = import.meta.env.VITE_MVTSTYLES_PATH_UPLOAD
-  let MVTSTYLES_PATH_DELETE = import.meta.env.VITE_MVTSTYLES_PATH_DELETE
-
-  /**
-   * Use this function in v3 to configure MvtRegister's urls and vectortiles url.
-   *
-   * @param registeredUrls An object to set all urls (get, upload, delete, and vectortiles)
-   * @deprecated use env var instead (this function is meant to be removed when v4 is fully operational)
-   */
-  function setRegisterUrl_v3(registeredUrls: {
-    get?: string
-    upload?: string
-    delete?: string
-    vectortiles?: string
-  }) {
-    if (registeredUrls.get) {
-      MVTSTYLES_PATH_GET = registeredUrls.get
-    }
-
-    if (registeredUrls.upload) {
-      MVTSTYLES_PATH_UPLOAD = registeredUrls.upload
-    }
-
-    if (registeredUrls.delete) {
-      MVTSTYLES_PATH_DELETE = registeredUrls.delete
-    }
-
-    if (registeredUrls.vectortiles) {
-      VECTORTILES_URL = registeredUrls.vectortiles
-    }
-
-    if (import.meta.env.MODE !== 'prod') {
-      console.warn(
-        'Deprecated: useMvtStyles().setRegisterUrl_v3() is meant to be removed when v4 is fully operational'
-      )
-    }
-  }
-
   function getDefaultMapBoxStyleUrl(label: string | undefined) {
     const server = urlStorage.getItem(SP_KEY_EMBEDDED_SERVER)
     const proto = urlStorage.getItem(SP_KEY_EMBEDDED_SERVER_PROTOCOL) || 'http'
-
-    return (
-      (server ? `${proto}://${server}` : VECTORTILES_URL) +
+    const url =
+      (server ? `${proto}://${server}` : styleUrlHelper.vectortilesUrl) +
       `/styles/${label}/style.json`
-    )
+    return url
   }
 
   function getDefaultMapBoxStyleXYZ(label: string | undefined) {
-    return `${VECTORTILES_URL}/styles/${label}/{z}/{x}/{y}.png`
+    return `${styleUrlHelper.vectortilesUrl}/styles/${label}/{z}/{x}/{y}.png`
   }
 
   function isValidSerial(serial: string) {
@@ -273,7 +232,7 @@ export default function useMvtStyles() {
     if (styleId === null) {
       return Promise.resolve()
     } else {
-      const url = `${MVTSTYLES_PATH_DELETE}?id=${styleId}`
+      const url = `${styleUrlHelper.mvtStylesDeleteUrl}?id=${styleId}`
       return fetch(url).catch(() => '')
     }
   }
@@ -288,7 +247,7 @@ export default function useMvtStyles() {
         method: 'POST',
         body: formData,
       }
-      return fetch(MVTSTYLES_PATH_UPLOAD, options)
+      return fetch(styleUrlHelper.mvtStylesUploadUrl, options)
         .then(response => response.json())
         .then(result => {
           return result.id
@@ -377,10 +336,6 @@ export default function useMvtStyles() {
   }
 
   return {
-    MVTSTYLES_PATH_GET,
-    MVTSTYLES_PATH_UPLOAD,
-    MVTSTYLES_PATH_DELETE,
-    setRegisterUrl_v3,
     getDefaultMapBoxStyleUrl,
     getDefaultMapBoxStyleXYZ,
     setConfigForLayer,

@@ -98,12 +98,14 @@ export class OlSynchronizer {
             styleStore.styleSerial = serial
             const id = mapStore?.bgLayer?.id
             if (mapStore?.bgLayer && id !== undefined && serial !== undefined) {
-              openLayers.applyOnBgLayer(map, bgLayer => {
-                bgLayer.set(
-                  'xyz_custom',
-                  styleService.getDefaultMapBoxStyleXYZ(serial)
-                )
-              })
+              // todo V3 : xyz_custom is used for 3D in V3
+              // currently it shall not be used in V4 to avoid mixing up things
+              // openLayers.applyOnBgLayer(map, bgLayer => {
+              //   bgLayer.set(
+              //     'xyz_custom',
+              //     styleService.getDefaultMapBoxStyleXYZ(serial)
+              //   )
+              // })
               openLayers.setBgLayer(
                 map,
                 mapStore?.bgLayer,

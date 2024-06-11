@@ -40,6 +40,9 @@ export default defineConfig(({ command, mode }) => {
         '/getvtstyle': backendHost,
         '/uploadvtstyle': backendHost,
         '/deletevtstyle': backendHost,
+        '/getpermalinkstyle': backendHost,
+        '/uploadpermalinkstyle': backendHost,
+        '/deletepermalinkstyle': backendHost,
       },
     },
   }
