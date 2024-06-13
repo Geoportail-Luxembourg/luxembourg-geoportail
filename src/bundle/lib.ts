@@ -35,6 +35,7 @@ import { statePersistorLayersOpenService } from '@/services/state-persistor/stat
 import { statePersistorStyleService } from '@/services/state-persistor/state-persistor-bgstyle.service'
 import { statePersistorMyMapService } from '@/services/state-persistor/state-persistor-mymap.service'
 import { proxyUrlHelper } from '@/services/proxyurl/proxyurl.helper'
+import { styleUrlHelper } from '@/services/styleurl/styleurl.helper'
 import { themeSelectorService } from '@/components/theme-selector/theme-selector.service'
 import MapLibreLayer from '@/lib/ol-mapbox-layer'
 import StyleSelector from '@/components/style-selector/style-selector.vue'
@@ -103,6 +104,7 @@ export {
   LayerPanel,
   SliderComparator,
   proxyUrlHelper,
+  styleUrlHelper,
   useLayers,
   useMap,
   useMvtStyles,

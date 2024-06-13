@@ -5,6 +5,7 @@ import { saveAs } from 'file-saver'
 
 import { useMapStore } from '@/stores/map.store'
 import { useStyleStore } from '@/stores/style.store'
+import { styleUrlHelper } from '@/services/styleurl/styleurl.helper'
 import useMvtStyles from '@/composables/mvt-styles/mvt-styles.composable'
 
 const mapStore = useMapStore()
@@ -51,7 +52,7 @@ function getStyleUrl() {
       styleService.getVectorId(mapStore.bgLayer)
     )
   } else {
-    return `${styleService.MVTSTYLES_PATH_GET}?id=${styleStore.styleSerial}`
+    return `${styleUrlHelper.mvtStylesGetUrl}?id=${styleStore.styleSerial}`
   }
 }
 </script>
