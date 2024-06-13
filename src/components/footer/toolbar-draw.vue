@@ -1,8 +1,10 @@
 <script setup lang="ts">
+import { ref } from 'vue'
 import ButtonText from './button-text.vue'
 import { useTranslation } from 'i18next-vue'
 
 const { t } = useTranslation()
+const drawLineActive = ref(false)
 </script>
 <template>
   <div data-cy="toolbarDraw">
@@ -16,7 +18,12 @@ const { t } = useTranslation()
         <button-text :label="t('Label', { ns: 'client' })"> </button-text>
       </li>
       <li>
-        <button-text :label="t('Line', { ns: 'client' })"> </button-text>
+        <button-text
+          :label="t('Line', { ns: 'client' })"
+          @click="() => (drawLineActive = !drawLineActive)"
+          data-cy="drawLineButton"
+        >
+        </button-text>
       </li>
       <li>
         <button-text :label="t('Polygon', { ns: 'client' })"> </button-text>
@@ -25,7 +32,11 @@ const { t } = useTranslation()
         <button-text :label="t('Circle', { ns: 'client' })"> </button-text>
       </li>
     </ul>
-    <ul class="absolute bottom-full top-auto z-10 pl-[130px] pb-16 w-[326px]">
+    <ul
+      class="absolute bottom-full top-auto z-10 pl-[130px] pb-16 w-[326px]"
+      v-if="drawLineActive"
+      data-cy="followRoads"
+    >
       <li
         class="flex flex-row justify-center text-white bg-tertiary hover:bg-primary py-2 box-content border-y border-x border-gray-400"
       >
