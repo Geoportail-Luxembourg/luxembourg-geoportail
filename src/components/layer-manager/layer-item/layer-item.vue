@@ -4,6 +4,7 @@ import { computed } from 'vue'
 import { useLayer } from '@/composables/layer'
 import { Layer } from '@/stores/map.store.model'
 import useLayers from '@/composables/layers/layers.composable'
+import useOffline from '@/composables/offline/offline.composable'
 
 import LayerItemSub from './layer-item-sub.vue'
 import LayerTime from '../layer-time/layer-time.vue'
@@ -29,6 +30,7 @@ const layersService = useLayers()
 const layerLabel = computed(() =>
   t(layersService.getLayerCurrentLabel(props.layer), { ns: 'client' })
 )
+const showInfoButton = computed(() => !useOffline().isOffLine.value)
 
 const txtDraggableLabel = computed(() =>
   t('Sort "{{layerName}}" in the list', {
@@ -63,6 +65,7 @@ function changeTime(dateStart?: string, dateEnd?: string) {
         :title="txtDraggableLabel"
       ></button>
       <button
+        v-if="showInfoButton"
         class="fa-solid fa-info mt-1"
         :aria-label="txtTitleLabel"
         :title="txtTitleLabel"
