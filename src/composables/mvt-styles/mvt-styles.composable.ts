@@ -23,8 +23,6 @@ import {
 } from '@/services/state-persistor/state-persistor.model'
 
 export default function useMvtStyles() {
-  let timeoutID: NodeJS.Timeout
-
   function getDefaultMapBoxStyleUrl(label: string | undefined) {
     const server = urlStorage.getItem(SP_KEY_EMBEDDED_SERVER)
     const proto = urlStorage.getItem(SP_KEY_EMBEDDED_SERVER_PROTOCOL) || 'http'
@@ -240,17 +238,6 @@ export default function useMvtStyles() {
   }
 
   function registerStyle(style: StyleSpecification, oldStyleId: String | null) {
-    clearTimeout(timeoutID)
-
-    timeoutID = setTimeout(() => {
-      registerStyleNow(style, oldStyleId)
-    }, 2000)
-  }
-
-  async function registerStyleNow(
-    style: StyleSpecification,
-    oldStyleId: String | null
-  ) {
     return unregisterStyle(oldStyleId).then(() => {
       const formData = new FormData()
       const data = JSON.stringify(style)

@@ -14,6 +14,7 @@ import useMvtStyles from '@/composables/mvt-styles/mvt-styles.composable'
 export class OlSynchronizer {
   previousLayers: Layer[]
   previousVectorSources: VectorSourceDict
+  timeoutID: NodeJS.Timeout
   constructor(map: OlMap) {
     const mapStore = useMapStore()
     const styleStore = useStyleStore()
@@ -92,27 +93,35 @@ export class OlSynchronizer {
           .unregisterStyle(styleStore.styleSerial)
           .then((styleStore.styleSerial = null))
       } else {
-        styleService
-          .registerStyle(style, styleStore.styleSerial)
-          .then(serial => {
-            styleStore.styleSerial = serial
-            const id = mapStore?.bgLayer?.id
-            if (mapStore?.bgLayer && id !== undefined && serial !== undefined) {
-              // todo V3 : xyz_custom is used for 3D in V3
-              // currently it shall not be used in V4 to avoid mixing up things
-              // openLayers.applyOnBgLayer(map, bgLayer => {
-              //   bgLayer.set(
-              //     'xyz_custom',
-              //     styleService.getDefaultMapBoxStyleXYZ(serial)
-              //   )
-              // })
-              openLayers.setBgLayer(
-                map,
-                mapStore?.bgLayer,
-                styleStore.bgVectorSources
-              )
-            }
-          })
+        clearTimeout(this.timeoutID)
+
+        this.timeoutID = setTimeout(() => {
+          styleService
+            .registerStyle(style, styleStore.styleSerial)
+            .then(serial => {
+              styleStore.styleSerial = serial
+              const id = mapStore?.bgLayer?.id
+              if (
+                mapStore?.bgLayer &&
+                id !== undefined &&
+                serial !== undefined
+              ) {
+                // todo V3 : xyz_custom is used for 3D in V3
+                // currently it shall not be used in V4 to avoid mixing up things
+                // openLayers.applyOnBgLayer(map, bgLayer => {
+                //   bgLayer.set(
+                //     'xyz_custom',
+                //     styleService.getDefaultMapBoxStyleXYZ(serial)
+                //   )
+                // })
+                openLayers.setBgLayer(
+                  map,
+                  mapStore?.bgLayer,
+                  styleStore.bgVectorSources
+                )
+              }
+            })
+        }, 2000)
       }
       openLayers.applyOnBgLayer(map, bgLayer =>
         styleService.applyConsolidatedStyle(bgLayer, style)
