@@ -1,7 +1,6 @@
 import { useMapStore } from '@/stores/map.store'
 import { Layer } from '@/stores/map.store.model'
 import useLayers from '@/composables/layers/layers.composable'
-import { LayerTypeValue } from '@/composables/themes/themes.model'
 
 import { OfflineLayerSpec } from './offline.model'
 
@@ -11,10 +10,13 @@ export default function useOfflineLayers() {
   
   function offlineLayerToLayer(offlineLayerSpec: OfflineLayerSpec): Layer {
     const options = JSON.parse(offlineLayerSpec.layerSerialization)
+    const { id, label: name } = options
 
     return {
+      id,
+      name,
       options,
-      type: LayerTypeValue.LAYER_OFFLINE
+      type: offlineLayerSpec.layerType,
     } as unknown as Layer
   }
 
@@ -24,21 +26,9 @@ export default function useOfflineLayers() {
    * @see recreateOfflineLayer in v3
    */
   function createOfflineLayer(offlineLayerSpec: OfflineLayerSpec) {
-    // v3
-    // let layer
-    // if (offlineLayer.layerType === 'tile') {
-    //   const serialization = offlineLayer.layerSerialization;
-    //   const tileLoadFunction = this.createTileLoadFunction_(offlineLayer);
-    //   const layer = this.serDes_.deserializeTileLayer(serialization, tileLoadFunction);
-    // }
-    // return layer
-    // end v3
-
     const layer = layers.initLayer(
       offlineLayerToLayer(offlineLayerSpec)
     )
-
-    console.log('createOfflineLayer layer:', layer)
 
     mapStore.addLayers(layer)
   }
