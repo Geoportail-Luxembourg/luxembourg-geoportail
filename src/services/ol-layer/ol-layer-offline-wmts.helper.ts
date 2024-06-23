@@ -24,6 +24,10 @@ class OlLayerWmtsOfflineHelper extends OlLayerTileOfflineHelper {
   }
 
   serializeTileLayer(options: Layer): string {
+    console.log(
+      'OlLayerWmtsOfflineHelper::serializeTileLayer() options=',
+      options
+    )
     throw new Error('Method not implemented.')
   }
 }

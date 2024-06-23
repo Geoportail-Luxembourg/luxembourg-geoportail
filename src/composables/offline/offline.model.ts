@@ -2,6 +2,7 @@ import WMTSSource from 'ol/source/WMTS'
 import TileWMS from 'ol/source/TileWMS'
 import type BaseLayer from 'ol/layer/Base'
 
+import { LayerType } from '@/composables/themes/themes.model'
 import { Layer } from '@/stores/map.store.model'
 
 export interface OfflineLayerSpec {
@@ -31,4 +32,5 @@ export type OffLineLayer = Layer & {
 
 export type OffLineLayerOptions = Omit<BaseLayer, 'source'> & {
   source: string | TileWMS | WMTSSource
+  sourceType: LayerType
 }

@@ -10,7 +10,6 @@ import {
   StyleSpecification,
   IMvtConfig,
 } from '@/composables/mvt-styles/mvt-styles.model'
-import useOffline from '@/composables/offline/offline.composable'
 import { useStyleStore } from '@/stores/style.store'
 import { styleUrlHelper } from '@/services/styleurl/styleurl.helper'
 import type { Layer, LayerId } from '@/stores/map.store.model'
@@ -22,7 +21,6 @@ import {
   SP_KEY_SERIAL,
   SP_KEY_SERIAL_LAYERS,
 } from '@/services/state-persistor/state-persistor.model'
-import { debounce } from '@/services/utils'
 
 export default function useMvtStyles() {
   function getDefaultMapBoxStyleUrl(label: string | undefined) {
@@ -316,12 +314,6 @@ export default function useMvtStyles() {
     )
   }
 
-  function saveStyle(style: StyleSpecification) {}
-
-  function onApplyStyle() {
-    debounce(saveStyle, 2000)
-  }
-
   /**
    * Initialize background layers configurations and styles from background fixtures
    * // TODO: get rid of bg fixture, plug with v3 api instead
@@ -359,6 +351,5 @@ export default function useMvtStyles() {
     isLayerStyleEditable,
     getStyleCapabilitiesFromLayer,
     initBackgroundsConfigs,
-    onApplyStyle,
   }
 }

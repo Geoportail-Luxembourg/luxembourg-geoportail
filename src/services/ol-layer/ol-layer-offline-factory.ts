@@ -1,4 +1,3 @@
-import { VectorSourceDict } from '@/composables/mvt-styles/mvt-styles.model'
 import { LayerTypeValue } from '@/composables/themes/themes.model'
 import { OffLineLayer } from '@/composables/offline/offline.model'
 import { Layer } from '@/stores/map.store.model'

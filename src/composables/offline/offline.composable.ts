@@ -5,7 +5,6 @@ import { useMapStore } from '@/stores/map.store'
 import { clearLayersCache } from '@/stores/layers.cache'
 import useOfflineLayers from '@/composables/offline/offline-layers.composable'
 import { OfflineLayerSpec } from '@/composables/offline/offline.model'
-import useMap from '../map/map.composable'
 
 let localforage_v3: any
 

@@ -3,7 +3,6 @@ import { Layer } from '@/stores/map.store.model'
 import useLayers from '@/composables/layers/layers.composable'
 
 import { OfflineLayerSpec, OfflineLayerTypeValue } from './offline.model'
-import { LayerTypeValue } from '../themes/themes.model'
 
 export default function useOfflineLayers() {
   const { initLayer } = useLayers()
