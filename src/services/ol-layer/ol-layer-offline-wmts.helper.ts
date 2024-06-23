@@ -2,23 +2,28 @@ import { Options } from 'ol/layer/BaseTile'
 import WmtsSource from 'ol/source/WMTS'
 import WmtsTileGrid from 'ol/tilegrid/WMTS'
 
-import { OffLineSerialization, OffLineSerializationWMTS } from '@/composables/offline/offline.model'
+import { OffLineLayerOptions } from '@/composables/offline/offline.model'
+import { Layer } from '@/stores/map.store.model'
 
 import { OlLayerTileOfflineHelper } from './ol-layer-offline-tile'
 
 class OlLayerWmtsOfflineHelper extends OlLayerTileOfflineHelper {
-  deserializeTileLayer(options: OffLineSerializationWMTS) {
-    options.tileLoadFunction = this.createTileLoadFunction()
-    options.source = new WmtsSource(options)
+  deserializeTileLayer(options: OffLineLayerOptions) {
+    const sourceOptions = JSON.parse(<string>options.source)
 
-    if (options.tileGrid) {
-      options.tileGrid = new WmtsTileGrid(options)
+    sourceOptions.tileLoadFunction = this.createTileLoadFunction()
+
+    if (sourceOptions.tileGrid) {
+      const tileGrid = new WmtsTileGrid(JSON.parse(sourceOptions.tileGrid))
+      sourceOptions.tileGrid = tileGrid
     }
 
-    return options as Options<WmtsSource>
+    options.source = new WmtsSource(sourceOptions)
+
+    return <Options<WmtsSource>>options
   }
 
-  serializeTileLayer(options: OffLineSerialization): string {
+  serializeTileLayer(options: Layer): string {
     throw new Error('Method not implemented.')
   }
 }

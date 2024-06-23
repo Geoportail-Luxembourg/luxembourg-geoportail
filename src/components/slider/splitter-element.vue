@@ -1,8 +1,7 @@
 <script setup lang="ts">
-import { onMounted, onUnmounted, ref, Ref } from 'vue'
+import { computed, onMounted, onUnmounted, ref, Ref } from 'vue'
 import { useTranslation } from 'i18next-vue'
 import { Layer } from '@/stores/map.store.model'
-import { computed } from 'vue'
 
 const DEFAULT_STEP_ONKEYDOWN = 30
 

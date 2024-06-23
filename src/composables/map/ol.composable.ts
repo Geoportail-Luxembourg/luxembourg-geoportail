@@ -52,7 +52,6 @@ export default function useOpenLayers() {
   }
 
   function setLayerTime(olMap: OlMap, layer: Layer) {
-    //layerId: LayerId, time: string) {
     const layersService = useLayers()
     const olLayer = findLayer(olMap, layer.id)
     const time = layersService.getLayerCurrentTime(layer)

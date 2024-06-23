@@ -5,8 +5,10 @@ import OlView from 'ol/View'
 import type {
   Layer,
   LayerComparison,
+  LayerId,
   MapContext,
 } from '@/stores/map.store.model'
+import { MutationTypeValue } from './map.model'
 
 export const PROJECTION_WEBMERCATOR = 'EPSG:3857'
 export const PROJECTION_WGS84 = 'EPSG:4326'
@@ -128,6 +130,31 @@ export default function useMap() {
     return []
   }
 
+  /**
+   * Returns the mutation type, needed to know how to handle the layer change.
+   * eg. when switching to offline, the layer should be removed and added again
+   * @param layerId 
+   * @param newContext 
+   * @param oldContext 
+   * @returns MutationType or null if no mutation or any other mutation 
+   */
+  function getMutationType(
+    layerId: LayerId,
+    newContext: MapContext,
+    oldContext: MapContext | null
+  ) {
+    const newLayer = newContext.layers?.find(l => l.id === layerId)
+    const oldLayer = oldContext?.layers?.find(l => l.id === layerId)
+
+    if(newLayer?.type !== oldLayer?.type) {
+      // There is a change on layer type (eg. swhitching to offline)
+      // Layer should be removed and added again
+      return MutationTypeValue.ON_LAYER_TYPE
+    }
+
+    return null
+  }
+
   return {
     olMap,
     getOlMap,
@@ -139,5 +166,6 @@ export default function useMap() {
     getAddedLayers,
     getRemovedLayers,
     getMutatedLayers,
+    getMutationType
   }
 }

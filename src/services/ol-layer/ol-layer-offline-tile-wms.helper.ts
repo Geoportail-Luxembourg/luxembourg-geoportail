@@ -1,25 +1,30 @@
 import { Options } from 'ol/layer/BaseTile'
-import TileWMSSource from 'ol/source/TileWMS'
-
-import { OffLineSerializationTile } from '@/composables/offline/offline.model'
-
-import { OlLayerTileOfflineHelper } from './ol-layer-offline-tile'
+import TileWMS from 'ol/source/TileWMS'
 import TileGrid from 'ol/tilegrid/TileGrid'
 
-class OlLayerTileWmsOfflineHelper extends OlLayerTileOfflineHelper {
-  deserializeTileLayer(options: OffLineSerializationTile) {
-    options.tileLoadFunction = this.createTileLoadFunction()
-    options.gutter = import.meta.env.VITE_GUTTER // A gutter around the tiles to download (to avoid cut symbols)
-    options.source = new TileWMSSource(options)
+import { OffLineLayerOptions } from '@/composables/offline/offline.model'
+import { Layer } from '@/stores/map.store.model'
 
-    if (options.tileGrid) {
-      options.tileGrid = new TileGrid(options)
+import { OlLayerTileOfflineHelper } from './ol-layer-offline-tile'
+
+class OlLayerTileWmsOfflineHelper extends OlLayerTileOfflineHelper {
+  deserializeTileLayer(options: OffLineLayerOptions) {
+    const sourceOptions = JSON.parse(<string>options.source)
+    
+    sourceOptions.tileLoadFunction = this.createTileLoadFunction()    
+    sourceOptions.gutter = parseInt(import.meta.env.VITE_OFFLINE_GUTTER, 10) // A gutter around the tiles to download (to avoid cut symbols)
+
+    if (sourceOptions.tileGrid) {
+      const tileGrid = new TileGrid(JSON.parse(sourceOptions.tileGrid))
+      sourceOptions.tileGrid = tileGrid
     }
 
-    return options as Options<TileWMSSource>
+    options.source = new TileWMS(sourceOptions)
+
+    return <Options<TileWMS>>options
   }
 
-  serializeTileLayer(options: OffLineSerializationTile): string {
+  serializeTileLayer(options: Layer): string {
     throw new Error('Method not implemented.')
   }
 }
