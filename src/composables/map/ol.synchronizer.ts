@@ -55,9 +55,13 @@ export class OlSynchronizer {
         })
 
         mutatedLayerComparisons.forEach(layer => {
-          const mutationType = mapService.getMutationType(layer.id, newContext, oldContext)
+          const mutationType = mapService.getMutationType(
+            layer.id,
+            newContext,
+            oldContext
+          )
 
-          if(mutationType === MutationTypeValue.ON_LAYER_TYPE) {
+          if (mutationType === MutationTypeValue.ON_LAYER_TYPE) {
             // eg. when switching to offline, the layer type changes
             // the layer should be removed and added again with a new factory
             openLayers.removeLayer(map, layer.id)
@@ -65,7 +69,7 @@ export class OlSynchronizer {
           } else {
             openLayers.setLayerOpacity(map, layer.id, layer.opacity as number)
           }
-          
+
           openLayers.setLayerTime(map, layer)
         })
 

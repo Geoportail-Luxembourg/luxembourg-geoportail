@@ -6,7 +6,11 @@ import TileSource from 'ol/source/Tile'
 
 import MapBoxLayer from '@/lib/ol-mapbox-layer'
 
-export type OlLayer = ImageLayer<ImageWMS> | TileLayer<WMTS> | TileLayer<TileSource> | MapBoxLayer
+export type OlLayer =
+  | ImageLayer<ImageWMS>
+  | TileLayer<WMTS>
+  | TileLayer<TileSource>
+  | MapBoxLayer
 
 export const OLLAYER_PROP_ID = 'id'
 export const OLLAYER_PROP_LABEL = 'label'

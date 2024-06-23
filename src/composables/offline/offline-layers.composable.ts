@@ -8,7 +8,7 @@ import { LayerTypeValue } from '../themes/themes.model'
 export default function useOfflineLayers() {
   const { initLayer } = useLayers()
   const { addLayers } = useMapStore()
-  
+
   function offlineLayerToLayer(offlineLayerSpec: OfflineLayerSpec): Layer {
     const options = JSON.parse(offlineLayerSpec.layerSerialization)
     const { id, label: name } = options
@@ -27,17 +27,18 @@ export default function useOfflineLayers() {
    * @see recreateOfflineLayer in v3
    */
   function createOfflineLayer(offlineLayerSpec: OfflineLayerSpec) {
-    if (offlineLayerSpec.layerType === OfflineLayerTypeValue.LAYER_OFFLINE_TILE) { // v3 cond. don't know why?
-      const layer = initLayer(
-        offlineLayerToLayer(offlineLayerSpec)
-      )
-  
+    if (
+      offlineLayerSpec.layerType === OfflineLayerTypeValue.LAYER_OFFLINE_TILE
+    ) {
+      // v3 cond. don't know why?
+      const layer = initLayer(offlineLayerToLayer(offlineLayerSpec))
+
       addLayers(layer)
     }
   }
 
   return {
     createOfflineLayer,
-    offlineLayerToLayer
+    offlineLayerToLayer,
   }
 }

@@ -15,7 +15,9 @@ const { setLayersOpen } = appStore
 const { myLayersTabOpen } = storeToRefs(appStore)
 const { layers } = storeToRefs(useMapStore())
 const showCatalogButton = computed(() => !useOffline().isOffLine.value)
-const showMyLayersTab = computed(() => (myLayersTabOpen.value || useOffline().isOffLine.value))
+const showMyLayersTab = computed(
+  () => myLayersTabOpen.value || useOffline().isOffLine.value
+)
 
 function onClickMyLayers() {
   appStore.setMyLayersTabOpen(true)

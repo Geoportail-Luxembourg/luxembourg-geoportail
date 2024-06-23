@@ -1,4 +1,4 @@
-import { OfflineLayerTypeValue } from "@/composables/offline/offline.model"
+import { OfflineLayerTypeValue } from '@/composables/offline/offline.model'
 
 export interface ConfigModel {
   ogcServers: {}
@@ -62,7 +62,7 @@ export enum LayerTypeValue {
   BG_WMTS = 'BG WMTS',
   BG_MVT = 'BG MVT',
   '3D' = '3D',
-  TILE_WMS = 'tileWMS'
+  TILE_WMS = 'tileWMS',
 }
 
 export type LayerType = `${LayerTypeValue | OfflineLayerTypeValue}`

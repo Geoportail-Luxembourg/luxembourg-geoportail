@@ -17,7 +17,7 @@ export default function useOffline() {
   /**
    * Use this function in v3 to init localforage_v3 in v3
    * @param localforage
-   * 
+   *
    * @deprecated this function is meant to be removed when v4 is fully operational
    */
   function initLocalforage_v3(localforage: any) {
@@ -41,9 +41,10 @@ export default function useOffline() {
   function doRestore(offlineLayerSpecs: OfflineLayerSpec[]) {
     clearLayersCache()
     removeAllLayers()
-    setBgLayer(null);
-
-    [...offlineLayerSpecs].reverse().forEach(spec => offlineLayers.createOfflineLayer(spec))
+    setBgLayer(null)
+    ;[...offlineLayerSpecs]
+      .reverse()
+      .forEach(spec => offlineLayers.createOfflineLayer(spec))
   }
 
   // TODO: migrate offline
@@ -54,7 +55,6 @@ export default function useOffline() {
   // - indexeddb
   // - test switch offline
   // - service worker
-
 
   // ngeoOfflineStorage/offlineStorage => for rasters
   // swdb/responses => for vectors

@@ -65,7 +65,7 @@ function testUserAgent(pattern: RegExp) {
 export function normalizeURL(url: string) {
   const extractor = new RegExp('[^/]*//[^/]+/(.*)')
   const matches = url.match(extractor)
-  
+
   return matches ? matches[1] : null
 }
 
@@ -82,4 +82,3 @@ export const isIE = testUserAgent(
   /(?:Trident.*rv[ :]?11\.|msie|iemobile|Windows Phone)/i
 )
 export const isEdge = testUserAgent(/Edge/i)
-

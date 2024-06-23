@@ -233,13 +233,17 @@ export default function useMvtStyles() {
   function unregisterStyle(styleId: String | null) {
     return !styleId
       ? Promise.resolve()
-      : fetch(`${styleUrlHelper.mvtStylesDeleteUrl}?id=${styleId}`)
-        .catch(console.warn)
+      : fetch(`${styleUrlHelper.mvtStylesDeleteUrl}?id=${styleId}`).catch(
+          console.warn
+        )
   }
 
-  async function registerStyle(style: StyleSpecification, oldStyleId: String | null) {
+  async function registerStyle(
+    style: StyleSpecification,
+    oldStyleId: String | null
+  ) {
     await unregisterStyle(oldStyleId)
-    
+
     const formData = new FormData()
     const data = JSON.stringify(style)
     const blob = new Blob([data], { type: 'application/json' })
@@ -248,7 +252,7 @@ export default function useMvtStyles() {
       method: 'POST',
       body: formData,
     }
-    
+
     return fetch(styleUrlHelper.mvtStylesUploadUrl, options)
       .then(response => response.json())
       .then(result => result.id)

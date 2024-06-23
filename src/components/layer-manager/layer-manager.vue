@@ -162,7 +162,8 @@ function toggleLayerComparator() {
 
     <div
       v-if="showAddLayerButton"
-      class="flex flex-row justify-center space-x-1 my-2">
+      class="flex flex-row justify-center space-x-1 my-2"
+    >
       <button
         data-cy="addLayer"
         class="bg-white text-primary hover:bg-primary hover:text-white border border-slate-300 py-1.5 px-2.5"

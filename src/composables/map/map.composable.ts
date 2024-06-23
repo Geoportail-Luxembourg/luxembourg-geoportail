@@ -133,10 +133,10 @@ export default function useMap() {
   /**
    * Returns the mutation type, needed to know how to handle the layer change.
    * eg. when switching to offline, the layer should be removed and added again
-   * @param layerId 
-   * @param newContext 
-   * @param oldContext 
-   * @returns MutationType or null if no mutation or any other mutation 
+   * @param layerId
+   * @param newContext
+   * @param oldContext
+   * @returns MutationType or null if no mutation or any other mutation
    */
   function getMutationType(
     layerId: LayerId,
@@ -146,7 +146,7 @@ export default function useMap() {
     const newLayer = newContext.layers?.find(l => l.id === layerId)
     const oldLayer = oldContext?.layers?.find(l => l.id === layerId)
 
-    if(newLayer?.type !== oldLayer?.type) {
+    if (newLayer?.type !== oldLayer?.type) {
       // There is a change on layer type (eg. swhitching to offline)
       // Layer should be removed and added again
       return MutationTypeValue.ON_LAYER_TYPE
@@ -166,6 +166,6 @@ export default function useMap() {
     getAddedLayers,
     getRemovedLayers,
     getMutatedLayers,
-    getMutationType
+    getMutationType,
   }
 }

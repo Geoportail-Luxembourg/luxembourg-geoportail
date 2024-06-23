@@ -10,8 +10,8 @@ import { OlLayerTileOfflineHelper } from './ol-layer-offline-tile'
 class OlLayerTileWmsOfflineHelper extends OlLayerTileOfflineHelper {
   deserializeTileLayer(options: OffLineLayerOptions) {
     const sourceOptions = JSON.parse(<string>options.source)
-    
-    sourceOptions.tileLoadFunction = this.createTileLoadFunction()    
+
+    sourceOptions.tileLoadFunction = this.createTileLoadFunction()
     sourceOptions.gutter = parseInt(import.meta.env.VITE_OFFLINE_GUTTER, 10) // A gutter around the tiles to download (to avoid cut symbols)
 
     if (sourceOptions.tileGrid) {
