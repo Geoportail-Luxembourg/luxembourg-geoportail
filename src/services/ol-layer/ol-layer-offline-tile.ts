@@ -31,9 +31,6 @@ export abstract class OlLayerTileOfflineHelper {
     const loadFunction = (tile: ImageTile, src: string) => {
       const localforageKey = normalizeURL(src)
 
-      // TODO: here la clef n'est pas la bonne à cause de la résolution de la tuile (et de la bbox?)
-      console.log('----- loadFunction localforageKey = ', localforageKey)
-
       localforage
         .getItem(localforageKey)
         .then((content: string) => {

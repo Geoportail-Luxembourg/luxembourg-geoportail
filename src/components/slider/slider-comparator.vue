@@ -72,8 +72,6 @@ watch(sliderOffset, () => {
 function activate() {
   const olLayer = openLayers.getLayerFromCache(sliderTopLayer.value)
 
-  console.log('----activate slider comparator olLayer', olLayer)
-
   if (!olLayer) return
 
   olLayerPrerenderEvent = olLayer.on(
