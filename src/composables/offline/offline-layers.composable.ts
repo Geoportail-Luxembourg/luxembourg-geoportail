@@ -11,7 +11,7 @@ export default function useOfflineLayers() {
 
   function offlineLayerToLayer(offlineLayerSpec: OfflineLayerSpec): Layer {
     const options = JSON.parse(offlineLayerSpec.layerSerialization)
-    const { id, label: name } = options
+    const { id, label: name, opacity } = options
     let type = <string>offlineLayerSpec.layerType
 
     if (type === LayerTypeValue.BG_WMTS) {
@@ -23,6 +23,7 @@ export default function useOfflineLayers() {
       name,
       options,
       type,
+      metadata: { start_opacity: opacity },
     } as unknown as Layer
   }
 
