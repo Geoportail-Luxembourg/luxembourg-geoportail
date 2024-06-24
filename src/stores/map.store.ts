@@ -13,6 +13,8 @@ export const useMapStore = defineStore('map', () => {
   const is3dActive: Ref<boolean> = ref(false)
   const is3dMesh: Ref<boolean> = ref(false)
   const bgLayer: Ref<Layer | undefined | null> = ref(undefined) // undefined => at start app | null => blank bgLayer
+  const minZoom: Ref<number | undefined> = ref(undefined)
+  const maxZoom: Ref<number | undefined> = ref(undefined)
 
   function setBgLayer(layer: Layer | null) {
     bgLayer.value = layer
@@ -108,6 +110,8 @@ export const useMapStore = defineStore('map', () => {
     is3dActive,
     is3dMesh,
     bgLayer,
+    minZoom,
+    maxZoom,
     addLayers,
     add3dLayers,
     removeLayers,

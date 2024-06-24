@@ -3,6 +3,7 @@ import { onMounted, provide, ref } from 'vue'
 
 import useMap from '@/composables/map/map.composable'
 import { OlSynchronizer } from '@/composables/map/ol.synchronizer'
+import { OlViewSynchronizer } from '@/composables/map/ol-view.synchronizer'
 import { statePersistorMapService } from '@/services/state-persistor/state-persistor-map.service'
 
 import AttributionControl from '../map-controls/attribution-control.vue'
@@ -32,6 +33,7 @@ const DEFAULT_EXTENT = [
 onMounted(() => {
   if (mapContainer.value) {
     new OlSynchronizer(olMap)
+    new OlViewSynchronizer(olMap)
     statePersistorMapService.bootstrap()
     olMap.setTarget(mapContainer.value)
 
