@@ -1,5 +1,7 @@
 import { mount } from '@vue/test-utils'
+import { createTestingPinia } from '@pinia/testing'
 
+import { useAppStore } from '@/stores/app.store'
 import { Layer } from '@/stores/map.store.model'
 import LayerItem from './layer-item.vue'
 
@@ -14,6 +16,26 @@ const layerMock = {
 const onClickInfo = vi.fn()
 
 describe('LayerItem', () => {
+  createTestingPinia({
+    createSpy: vi.fn,
+    initialState: {
+      map: {
+        layers: [],
+        bgLayer: null,
+      },
+      app: {
+        layersOpen: false,
+        myLayersTabOpen: false,
+        themeGridOpen: false,
+        mapId: undefined,
+        remoteLayersOpen: undefined,
+        styleEditorOpen: false,
+        drawToolbarOpen: false,
+        isOffLine: false,
+      },
+    },
+  })
+
   it('renders properly', () => {
     const wrapper = mount(LayerItem, {
       props: {
@@ -89,6 +111,26 @@ describe('LayerItem', () => {
     it('emits #onChangeOpacity', async () => {
       await wrapper.find('input').trigger('change')
       expect(wrapper.emitted().changeOpacity).toBeTruthy()
+    })
+  })
+
+  describe('When app is offline', () => {
+    it('hides info button', () => {
+      const store = useAppStore()
+      const wrapper = mount(LayerItem, {
+        props: {
+          is3d: false,
+          layer: layerMock,
+          dragHandleClassName: 'classnamedragg',
+          isOpen: true,
+          isLayerComparatorOpen: false,
+          displayLayerComparatorOpen: false,
+        },
+      })
+
+      store.isOffLine = true
+
+      expect(wrapper.vm.showInfoButton).toBe(false)
     })
   })
 })

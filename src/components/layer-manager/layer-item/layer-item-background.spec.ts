@@ -1,5 +1,7 @@
 import { shallowMount } from '@vue/test-utils'
+import { createTestingPinia } from '@pinia/testing'
 
+import { useAppStore } from '@/stores/app.store'
 import { Layer } from '@/stores/map.store.model'
 import LayerItemBackground from './layer-item-background.vue'
 
@@ -14,6 +16,26 @@ const bgLayerMock = {
 const onClickInfo = vi.fn()
 
 describe('LayerItemBackground', () => {
+  createTestingPinia({
+    createSpy: vi.fn,
+    initialState: {
+      map: {
+        layers: [],
+        bgLayer: null,
+      },
+      app: {
+        layersOpen: false,
+        myLayersTabOpen: false,
+        themeGridOpen: false,
+        mapId: undefined,
+        remoteLayersOpen: undefined,
+        styleEditorOpen: false,
+        drawToolbarOpen: false,
+        isOffLine: false,
+      },
+    },
+  })
+
   it('renders properly', () => {
     const wrapper = shallowMount(LayerItemBackground, {
       props: {
@@ -56,6 +78,22 @@ describe('LayerItemBackground', () => {
     it('emits #clickEdit', async () => {
       await wrapper.findAll('button')[1].trigger('click')
       expect(wrapper.emitted().clickEdit).toBeTruthy()
+    })
+  })
+
+  describe('When app is offline', () => {
+    it('hides info button', () => {
+      const store = useAppStore()
+      const wrapper = shallowMount(LayerItemBackground, {
+        props: {
+          showEditButton: false,
+          layer: bgLayerMock,
+        },
+      })
+
+      store.isOffLine = true
+
+      expect(wrapper.vm.showInfoButton).toBe(false)
     })
   })
 })
