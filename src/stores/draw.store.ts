@@ -1,39 +1,52 @@
 import { defineStore } from 'pinia'
-import { ref } from 'vue'
+import { reactive } from 'vue'
 
 export const useDrawStore = defineStore('draw', () => {
-  const drawPointActive = ref(false)
-  const drawLabelActive = ref(false)
-  const drawLineActive = ref(false)
-  const drawCircleActive = ref(false)
-  const drawPolygonActive = ref(false)
+  const drawState = reactive({
+    drawPointActive: false,
+    drawLabelActive: false,
+    drawLineActive: false,
+    drawCircleActive: false,
+    drawPolygonActive: false,
+  })
 
   function setDrawPointActive(active: boolean) {
-    drawPointActive.value = active
+    setActiveState('drawPointActive', active)
   }
 
   function setDrawLabelActive(active: boolean) {
-    drawLabelActive.value = active
+    setActiveState('drawLabelActive', active)
   }
 
   function setDrawLineActive(active: boolean) {
-    drawLineActive.value = active
+    setActiveState('drawLineActive', active)
   }
 
   function setDrawCircleActive(active: boolean) {
-    drawCircleActive.value = active
+    setActiveState('drawCircleActive', active)
   }
 
   function setDrawPolygonActive(active: boolean) {
-    drawPolygonActive.value = active
+    setActiveState('drawPolygonActive', active)
+  }
+
+  function setActiveState(activeStateKey: string, active: boolean) {
+    if (!active) {
+      drawState[activeStateKey] = false
+    } else {
+      Object.keys(drawState).forEach(key => {
+        if (key === activeStateKey) {
+          drawState[key] = active
+        } else {
+          drawState[key] = !active
+        }
+      })
+    }
+    console.log(drawState)
   }
 
   return {
-    drawPointActive,
-    drawLabelActive,
-    drawLineActive,
-    drawCircleActive,
-    drawPolygonActive,
+    drawState,
     setDrawPointActive,
     setDrawLabelActive,
     setDrawLineActive,

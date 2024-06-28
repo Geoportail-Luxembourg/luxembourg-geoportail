@@ -1,5 +1,4 @@
 import { useDrawStore } from '@/stores/draw.store'
-import { storeToRefs } from 'pinia'
 import { watch } from 'vue'
 import Draw from 'ol/interaction/Draw'
 import { listen } from 'ol/events.js'
@@ -7,8 +6,7 @@ import useMap from '../map/map.composable'
 import useDrawnFeatures from './drawn-features.composable'
 
 export default function useDraw() {
-  const { setDrawPointActive } = useDrawStore()
-  const { drawPointActive } = storeToRefs(useDrawStore())
+  const { setDrawPointActive, drawState } = useDrawStore()
   const drawPoint = new Draw({ type: 'Point' })
   drawPoint.setActive(false)
 
@@ -21,17 +19,20 @@ export default function useDraw() {
     onDrawEnd(event)
   })
 
-  watch(drawPointActive, active => {
-    drawPoint.setActive(active)
-    if (active) {
-      console.log('Draw point is active')
-    } else {
-      console.log('Draw point is not active')
+  watch(
+    () => drawState.drawPointActive,
+    active => {
+      drawPoint.setActive(active)
+      if (active) {
+        console.log('Draw point is active')
+      } else {
+        console.log('Draw point is not active')
+      }
     }
-  })
+  )
 
   function toggleDrawPoint() {
-    setDrawPointActive(!drawPointActive.value)
+    setDrawPointActive(!drawState.drawPointActive)
   }
 
   function onDrawEnd(event) {
