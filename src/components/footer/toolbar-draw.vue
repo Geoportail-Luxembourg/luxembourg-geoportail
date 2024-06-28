@@ -2,9 +2,11 @@
 import { ref } from 'vue'
 import ButtonText from './button-text.vue'
 import { useTranslation } from 'i18next-vue'
+import useDraw from '@/composables/draw/draw.composable'
 
 const { t } = useTranslation()
 const drawLineActive = ref(false)
+const draw = useDraw()
 </script>
 <template>
   <div data-cy="toolbarDraw">
@@ -12,7 +14,11 @@ const drawLineActive = ref(false)
       class="absolute bottom-full top-auto z-20 flex flex-row justify-start divide-y-0 divide-x divide-gray-400 divide-solid box-content border-y-0 border-x border-gray-400"
     >
       <li>
-        <button-text :label="t('Draw Point', { ns: 'client' })"> </button-text>
+        <button-text
+          :label="t('Draw Point', { ns: 'client' })"
+          @click="() => draw.toggleDrawPoint()"
+        >
+        </button-text>
       </li>
       <li>
         <button-text :label="t('Label', { ns: 'client' })"> </button-text>
