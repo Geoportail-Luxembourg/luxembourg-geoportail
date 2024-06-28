@@ -1,11 +1,11 @@
 <script setup lang="ts">
-import { ref } from 'vue'
 import ButtonText from './button-text.vue'
 import { useTranslation } from 'i18next-vue'
 import useDraw from '@/composables/draw/draw.composable'
+import { useDrawStore } from '@/stores/draw.store'
 
 const { t } = useTranslation()
-const drawLineActive = ref(false)
+const { drawState } = useDrawStore()
 const draw = useDraw()
 </script>
 <template>
@@ -26,7 +26,7 @@ const draw = useDraw()
       <li>
         <button-text
           :label="t('Line', { ns: 'client' })"
-          @click="() => (drawLineActive = !drawLineActive)"
+          @click="() => draw.toggleDrawLine()"
           data-cy="drawLineButton"
         >
         </button-text>
@@ -40,7 +40,7 @@ const draw = useDraw()
     </ul>
     <ul
       class="absolute bottom-full top-auto z-10 pl-[130px] pb-16 w-[326px]"
-      v-if="drawLineActive"
+      v-if="drawState.drawLineActive"
       data-cy="followRoads"
     >
       <li
