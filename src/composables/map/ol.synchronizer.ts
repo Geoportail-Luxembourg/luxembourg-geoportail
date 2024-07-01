@@ -101,6 +101,11 @@ export class OlSynchronizer {
     // must ignore typing error (too deep)
     // @ts-ignore
     watch(appliedStyle, (style: StyleSpecification) => {
+      // TODO: -CLEAN STYLE- getIsOffline() is a patch for v3, it is meant to be removed when rework on styles is working properly
+      if (getIsOffline()) {
+        return
+      }
+
       if (styleStore.bgStyle === null && !styleStore.isExpertStyleActive) {
         styleService
           .unregisterStyle(styleStore.styleSerial)
