@@ -54,7 +54,7 @@ export const stylePropertyTypeList: StylePropertyType[] = [
 ]
 export interface StyleItem {
   label: string
-  color: string
+  color?: string
   lines?: string[]
   fills?: string[]
   symbols?: string[]

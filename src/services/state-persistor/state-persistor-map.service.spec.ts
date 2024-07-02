@@ -117,6 +117,8 @@ describe('StatePersistorMapService', () => {
     })
 
     describe('when there is not value in storage', () => {
+      const defaultViewZoom = import.meta.env.VITE_DEFAULT_VIEW_ZOOM
+
       it('restores the view center with default value when no X,Y found in storage', () => {
         statePersistorMapService.restore()
         expect(view.setCenter).toHaveBeenCalledWith([
@@ -124,9 +126,9 @@ describe('StatePersistorMapService', () => {
         ])
       })
 
-      it('restores the zoom center with default value 8', () => {
+      it(`restores the zoom center with default value ${defaultViewZoom}`, () => {
         statePersistorMapService.restore()
-        expect(view.setZoom).toHaveBeenCalledWith(8)
+        expect(view.setZoom).toHaveBeenCalledWith(defaultViewZoom)
       })
     })
 

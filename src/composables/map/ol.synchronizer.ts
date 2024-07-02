@@ -1,19 +1,18 @@
 import { watch, watchEffect } from 'vue'
-import type OlMap from 'ol/Map'
-import useOpenLayers from './ol.composable'
 import { storeToRefs } from 'pinia'
 
-import { Layer } from '@/stores/map.store.model'
+import type OlMap from 'ol/Map'
+import useOpenLayers from './ol.composable'
+
 import { useMapStore } from '@/stores/map.store'
 import { useStyleStore } from '@/stores/style.store'
 import { StyleSpecification } from '@/composables/mvt-styles/mvt-styles.model'
-import useMap from './map.composable'
-import { VectorSourceDict } from '@/composables/mvt-styles/mvt-styles.model'
 import useMvtStyles from '@/composables/mvt-styles/mvt-styles.composable'
+import useMap from '@/composables/map/map.composable'
+import useOffline from '@/composables/offline/offline.composable'
+import { MutationTypeValue } from './map.model'
 
 export class OlSynchronizer {
-  previousLayers: Layer[]
-  previousVectorSources: VectorSourceDict
   timeoutID: NodeJS.Timeout
   constructor(map: OlMap) {
     const mapStore = useMapStore()
@@ -21,16 +20,17 @@ export class OlSynchronizer {
     const mapService = useMap()
     const styleService = useMvtStyles()
     const openLayers = useOpenLayers()
+    const { getIsOffline } = useOffline()
     const { appliedStyle } = storeToRefs(styleStore)
 
     watch(
       () => mapStore.layers,
-      layers => {
+      (newLayers, oldLayers) => {
         const oldContext = {
-          layers: this.previousLayers,
+          layers: oldLayers,
         }
         const newContext = {
-          layers,
+          layers: newLayers,
         }
         const removedLayers = mapService.getRemovedLayers(
           newContext,
@@ -53,16 +53,29 @@ export class OlSynchronizer {
           openLayers.addLayer(map, cmp.layer)
           openLayers.setLayerTime(map, cmp.layer)
         })
+
         mutatedLayerComparisons.forEach(layer => {
-          openLayers.setLayerOpacity(map, layer.id, layer.opacity as number)
+          const mutationType = mapService.getMutationType(
+            layer.id,
+            newContext,
+            oldContext
+          )
+
+          if (mutationType === MutationTypeValue.ON_LAYER_TYPE) {
+            // eg. when switching to offline, the layer type changes
+            // the layer should be removed and added again with a new factory
+            openLayers.removeLayer(map, layer.id)
+            openLayers.addLayer(map, layer)
+          } else {
+            openLayers.setLayerOpacity(map, layer.id, layer.opacity as number)
+          }
+
           openLayers.setLayerTime(map, layer)
         })
 
         if (newContext.layers) {
           openLayers.reorderLayers(map, newContext.layers)
         }
-
-        this.previousLayers = layers
       }
     )
 
@@ -88,6 +101,11 @@ export class OlSynchronizer {
     // must ignore typing error (too deep)
     // @ts-ignore
     watch(appliedStyle, (style: StyleSpecification) => {
+      // TODO: -CLEAN STYLE- getIsOffline() is a patch for v3, it is meant to be removed when rework on styles is working properly
+      if (getIsOffline()) {
+        return
+      }
+
       if (styleStore.bgStyle === null && !styleStore.isExpertStyleActive) {
         styleService
           .unregisterStyle(styleStore.styleSerial)
@@ -123,6 +141,7 @@ export class OlSynchronizer {
             })
         }, 2000)
       }
+
       openLayers.applyOnBgLayer(map, bgLayer =>
         styleService.applyConsolidatedStyle(bgLayer, style)
       )
@@ -130,11 +149,11 @@ export class OlSynchronizer {
 
     watch(
       () => styleStore.bgVectorSources,
-      newVectorSources => {
+      (newVectorSources, oldVectorSources) => {
         for (const id of newVectorSources.keys()) {
           if (
-            !this.previousVectorSources ||
-            this.previousVectorSources.get(id) !== newVectorSources.get(id)
+            !oldVectorSources ||
+            oldVectorSources.get(id) !== newVectorSources.get(id)
           ) {
             openLayers.removeFromCache(id)
             if (id === mapStore?.bgLayer?.id) {
@@ -143,7 +162,6 @@ export class OlSynchronizer {
             }
           }
         }
-        this.previousVectorSources = newVectorSources
       }
     )
   }

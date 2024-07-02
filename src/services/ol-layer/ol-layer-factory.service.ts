@@ -1,5 +1,7 @@
 import useLayers from '@/composables/layers/layers.composable'
 import { VectorSourceDict } from '@/composables/mvt-styles/mvt-styles.model'
+import { OfflineLayerTypeValue } from '@/composables/offline/offline.model'
+import { LayerTypeValue } from '@/composables/themes/themes.model'
 import { Layer } from '@/stores/map.store.model'
 
 import {
@@ -15,7 +17,7 @@ import {
 import olLayerWmsHelper from './ol-layer-wms.helper'
 import olLayerWmtsHelper from './ol-layer-wmts.helper'
 import olLayerVectorHelper from './ol-layer-vector.helper'
-import { LayerTypeValue } from '@/composables/themes/themes.model'
+import { olLayerOfflineFactoryService } from './ol-layer-offline-factory'
 
 export class OlLayerFactoryService {
   createOlLayer(layer: Layer, vectorSources?: VectorSourceDict): OlLayer {
@@ -35,6 +37,10 @@ export class OlLayerFactoryService {
         case LayerTypeValue.WMTS:
         case LayerTypeValue.BG_WMTS:
           olLayer = olLayerWmtsHelper.createOlLayer(layer)
+          break
+        case OfflineLayerTypeValue.LAYER_OFFLINE_TILE:
+        case OfflineLayerTypeValue.LAYER_OFFLINE_VECTOR:
+          olLayer = olLayerOfflineFactoryService.createOlLayer(layer)
           break
         default:
           throw new Error(`Unrecognized layer type: ${layer.type}`)

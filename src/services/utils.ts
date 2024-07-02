@@ -57,6 +57,18 @@ function testUserAgent(pattern: RegExp) {
   )
 }
 
+/**
+ * Extract the part after the URL authority.
+ * @param url A URL to normalize
+ * @returns The normalized string.
+ */
+export function normalizeURL(url: string) {
+  const extractor = new RegExp('[^/]*//[^/]+/(.*)')
+  const matches = url.match(extractor)
+
+  return matches ? matches[1] : null
+}
+
 export const isFireFox = testUserAgent(/firefox/i)
 export const isSafari =
   testUserAgent(/safari/i) &&

@@ -1,3 +1,5 @@
+import { OfflineLayerTypeValue } from '@/composables/offline/offline.model'
+
 export interface ConfigModel {
   ogcServers: {}
   themes: ThemeNodeModel[]
@@ -60,9 +62,10 @@ export enum LayerTypeValue {
   BG_WMTS = 'BG WMTS',
   BG_MVT = 'BG MVT',
   '3D' = '3D',
+  TILE_WMS = 'tileWMS',
 }
 
-export type LayerType = `${LayerTypeValue}`
+export type LayerType = `${LayerTypeValue | OfflineLayerTypeValue}`
 
 export interface ThemeNodeModel {
   id: number

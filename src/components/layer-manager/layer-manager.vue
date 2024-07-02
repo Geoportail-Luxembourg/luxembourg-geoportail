@@ -10,6 +10,7 @@ import { useMetadataStore } from '@/stores/metadata.store'
 import type { Layer, LayerId } from '@/stores/map.store.model'
 import { BLANK_BACKGROUNDLAYER } from '@/composables/background-layer/background-layer.model'
 import useMvtStyles from '@/composables/mvt-styles/mvt-styles.composable'
+import useOffline from '@/composables/offline/offline.composable'
 import { useSliderComparatorStore } from '@/stores/slider-comparator.store'
 import { isFireFox } from '@/services/utils'
 
@@ -33,6 +34,7 @@ const dragHandleClassName = 'drag-handle'
 const bgLayerIsEditable = computed(() =>
   styles.isLayerStyleEditable(bgLayer.value)
 )
+const showAddLayerButton = computed(() => !useOffline().isOffLine.value)
 
 const emit = defineEmits(['displayCatalog'])
 const { setRemoteLayersOpen } = useAppStore()
@@ -157,7 +159,11 @@ function toggleLayerComparator() {
       @clickEdit="openEditionLayer"
     >
     </layer-item-background>
-    <div class="flex flex-row justify-center space-x-1 my-2">
+
+    <div
+      v-if="showAddLayerButton"
+      class="flex flex-row justify-center space-x-1 my-2"
+    >
       <button
         data-cy="addLayer"
         class="bg-white text-primary hover:bg-primary hover:text-white border border-slate-300 py-1.5 px-2.5"
@@ -172,6 +178,11 @@ function toggleLayerComparator() {
       >
         {{ t('+ Add external Wms', { ns: 'client' }) }}
       </button>
+    </div>
+
+    <!-- Preload webfont -->
+    <div class="lux-preload">
+      <i class="fa-regular fa-trash-can"></i>
     </div>
   </div>
 </template>

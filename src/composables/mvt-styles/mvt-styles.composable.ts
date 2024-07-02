@@ -229,31 +229,32 @@ export default function useMvtStyles() {
   }
 
   function unregisterStyle(styleId: String | null) {
-    if (styleId === null) {
-      return Promise.resolve()
-    } else {
-      const url = `${styleUrlHelper.mvtStylesDeleteUrl}?id=${styleId}`
-      return fetch(url).catch(() => '')
-    }
+    return !styleId
+      ? Promise.resolve()
+      : fetch(`${styleUrlHelper.mvtStylesDeleteUrl}?id=${styleId}`).catch(
+          console.warn
+        )
   }
 
-  function registerStyle(style: StyleSpecification, oldStyleId: String | null) {
-    return unregisterStyle(oldStyleId).then(() => {
-      const formData = new FormData()
-      const data = JSON.stringify(style)
-      const blob = new Blob([data], { type: 'application/json' })
-      formData.append('style', blob, 'style.json')
-      const options = {
-        method: 'POST',
-        body: formData,
-      }
-      return fetch(styleUrlHelper.mvtStylesUploadUrl, options)
-        .then(response => response.json())
-        .then(result => {
-          return result.id
-        })
-        .catch(error => console.warn(error))
-    })
+  async function registerStyle(
+    style: StyleSpecification,
+    oldStyleId: String | null
+  ) {
+    await unregisterStyle(oldStyleId)
+
+    const formData = new FormData()
+    const data = JSON.stringify(style)
+    const blob = new Blob([data], { type: 'application/json' })
+    formData.append('style', blob, 'style.json')
+    const options = {
+      method: 'POST',
+      body: formData,
+    }
+
+    return fetch(styleUrlHelper.mvtStylesUploadUrl, options)
+      .then(response => response.json())
+      .then(result => result.id)
+      .catch(console.warn)
   }
 
   function applyConsolidatedStyle(

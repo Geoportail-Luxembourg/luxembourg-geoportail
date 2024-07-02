@@ -10,7 +10,12 @@ import {
 } from '@/__fixtures__/wmts.fixture'
 import { PROJECTION_WEBMERCATOR } from '@/composables/map/map.composable'
 import { Layer } from '@/stores/map.store.model'
-import { OlLayer } from './ol-layer.model'
+import {
+  OLLAYER_PROP_LABEL,
+  OLLAYER_PROP_LAYER_NAME,
+  OLLAYER_PROP_METADATA,
+  OlLayer,
+} from './ol-layer.model'
 import {
   getLayerHasRetina,
   getLayerWmtsUrl,
@@ -55,14 +60,16 @@ class OlLayerWmtsHelper {
   }
 
   setLayerTime(olLayer: OlLayer, olSource: WmtsSource, time: string) {
-    const newLayerName: string = olLayer.get('metadata')['time_layers'][time]
+    const newLayerName: string = olLayer.get(OLLAYER_PROP_METADATA)[
+      'time_layers'
+    ][time]
     const oldUrls = olSource.getUrls()
 
     if (oldUrls) {
       const newUrls = this.transformUrls(oldUrls, newLayerName)
       olSource.setUrls(newUrls)
-      olLayer.set('label', newLayerName)
-      olLayer.set('layer_name', newLayerName) // for v3 compatibility (search)
+      olLayer.set(OLLAYER_PROP_LABEL, newLayerName)
+      olLayer.set(OLLAYER_PROP_LAYER_NAME, newLayerName) // for v3 compatibility (search)
     }
   }
 

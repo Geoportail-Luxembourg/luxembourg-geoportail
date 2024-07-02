@@ -4,6 +4,7 @@ import { computed } from 'vue'
 import { useLayer } from '@/composables/layer'
 import { Layer } from '@/stores/map.store.model'
 import { IBackgroundLayer } from '@/composables/background-layer/background-layer.model'
+import useOffline from '@/composables/offline/offline.composable'
 
 const props = defineProps<{
   showEditButton: boolean
@@ -21,6 +22,7 @@ const txtTitleLabel = computed(() =>
     layerName: getLabel(),
   })
 )
+const showInfoButton = computed(() => !useOffline().isOffLine.value)
 
 function getLabel() {
   // TODO: use getLabel from useLayer? not working as composable is not updated
@@ -31,6 +33,7 @@ function getLabel() {
 <template>
   <div class="lux-layer-manager-item mt-2.5">
     <button
+      v-if="showInfoButton"
       class="fa fa-info w-3"
       :title="txtTitleLabel"
       @click="onClickInfo"

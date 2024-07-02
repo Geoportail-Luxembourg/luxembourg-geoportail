@@ -25,6 +25,8 @@ import useMap from '@/composables/map/map.composable'
 import useMvtStyles from '@/composables/mvt-styles/mvt-styles.composable'
 import useOpenLayers from '@/composables/map/ol.composable'
 import useThemes from '@/composables/themes/themes.composable'
+import useOffline from '@/composables/offline/offline.composable'
+import useOfflineLayers from '@/composables/offline/offline-layers.composable'
 import { useAppStore } from '@/stores/app.store'
 import { useMapStore } from '@/stores/map.store'
 import { useStyleStore } from '@/stores/style.store'
@@ -40,6 +42,7 @@ import { styleUrlHelper } from '@/services/styleurl/styleurl.helper'
 import { themeSelectorService } from '@/components/theme-selector/theme-selector.service'
 import MapLibreLayer from '@/lib/ol-mapbox-layer'
 import StyleSelector from '@/components/style-selector/style-selector.vue'
+import { clearLayersCache } from '@/stores/layers.cache'
 
 import i18next from 'i18next'
 import backend from 'i18next-http-backend'
@@ -112,6 +115,8 @@ export {
   useMvtStyles,
   useOpenLayers,
   useThemes,
+  useOffline,
+  useOfflineLayers,
   useAppStore,
   useBackgroundLayer,
   useMapStore,
@@ -126,4 +131,5 @@ export {
   themeSelectorService,
   MapLibreLayer,
   StyleSelector,
+  clearLayersCache,
 }
