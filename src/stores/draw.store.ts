@@ -42,7 +42,6 @@ export const useDrawStore = defineStore('draw', () => {
         }
       })
     }
-    console.log(drawState)
   }
 
   return {

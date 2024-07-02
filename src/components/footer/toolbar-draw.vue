@@ -16,26 +16,43 @@ const draw = useDraw()
       <li>
         <button-text
           :label="t('Draw Point', { ns: 'client' })"
+          :active="drawState.drawPointActive"
           @click="() => draw.toggleDrawPoint()"
         >
         </button-text>
       </li>
       <li>
-        <button-text :label="t('Label', { ns: 'client' })"> </button-text>
+        <button-text
+          :label="t('Label', { ns: 'client' })"
+          :active="drawState.drawLabelActive"
+          @click="() => draw.toggleDrawLabel()"
+        >
+        </button-text>
       </li>
       <li>
         <button-text
           :label="t('Line', { ns: 'client' })"
+          :active="drawState.drawLineActive"
           @click="() => draw.toggleDrawLine()"
           data-cy="drawLineButton"
         >
         </button-text>
       </li>
       <li>
-        <button-text :label="t('Polygon', { ns: 'client' })"> </button-text>
+        <button-text
+          :label="t('Polygon', { ns: 'client' })"
+          :active="drawState.drawPolygonActive"
+          @click="() => draw.toggleDrawPolygon()"
+        >
+        </button-text>
       </li>
       <li>
-        <button-text :label="t('Circle', { ns: 'client' })"> </button-text>
+        <button-text
+          :label="t('Circle', { ns: 'client' })"
+          :active="drawState.drawCircleActive"
+          @click="() => draw.toggleDrawCircle()"
+        >
+        </button-text>
       </li>
     </ul>
     <ul
