@@ -43,6 +43,10 @@
 }
 
 @layer components {
+  .lux-preload {
+    @apply w-0 h-0 overflow-hidden;
+  }
+
   .lux-primary {
     @apply bg-tertiary text-secondary px-2 py-1.5 uppercase;
   }

@@ -179,5 +179,10 @@ function toggleLayerComparator() {
         {{ t('+ Add external Wms', { ns: 'client' }) }}
       </button>
     </div>
+
+    <!-- Preload webfont -->
+    <div class="lux-preload">
+      <i class="fa-regular fa-trash-can"></i>
+    </div>
   </div>
 </template>
