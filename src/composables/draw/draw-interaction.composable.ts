@@ -9,12 +9,17 @@ export default function useDrawInteraction(options: any) {
   const map = useMap().getOlMap()
   map.addInteraction(drawInteraction)
 
-  //if this become too specific by gemetry type, move back to draw.composable
+  //if the listens becomes too specific by geometry type, move back to draw.composable or split into multiple composables by geom type
+  // listen(drawInteraction, 'drawstart', event => {
+  //   // todo: implement measure tooltip (createMeasureTooltip_) per geometry type (see e.g. onDrawLineStart_)
+  // })
+
   listen(drawInteraction, 'drawend', event => {
     onDrawEnd(event)
   })
   const { addFeature } = useDrawnFeatures()
   function onDrawEnd(event) {
+    //todo: this.removeMeasureTooltip_();
     addFeature(event.feature)
   }
 

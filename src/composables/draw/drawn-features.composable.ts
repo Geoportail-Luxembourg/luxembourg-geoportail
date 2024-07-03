@@ -18,12 +18,8 @@ export default function useDrawnFeatures() {
   map.addLayer(drawLayer)
 
   function addFeature(feature) {
-    //todo: handle mutuability etc.
+    //todo: handle mutuability, save to mymaps, encode in URL
     features.push(feature)
-    // var features = this.features.getArray().slice();
-    // features.push(feature);
-    // this.saveFeature(feature);
-    // this.encodeFeaturesInUrl_(features);
   }
 
   return {

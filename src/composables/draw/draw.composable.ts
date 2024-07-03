@@ -26,6 +26,7 @@ export default function useDraw() {
         const isActive = state[`${key}Active`]
         drawInteractions[key].setActive(isActive)
       })
+      // todo: set messages from DrawController.onChangeActive_ here and implement modal to display them
     },
     { deep: true }
   )
