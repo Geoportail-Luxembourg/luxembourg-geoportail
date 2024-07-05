@@ -26,7 +26,7 @@ class OlLayerOfflineFactoryService {
   }
 
   getOfflineLayerSourceType(layer: OffLineLayer) {
-    return layer.options.sourceType
+    return layer.options?.sourceType
   }
 }
 

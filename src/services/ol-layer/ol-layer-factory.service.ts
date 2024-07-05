@@ -39,7 +39,7 @@ export class OlLayerFactoryService {
           olLayer = olLayerWmtsHelper.createOlLayer(layer)
           break
         case OfflineLayerTypeValue.LAYER_OFFLINE_TILE:
-        case OfflineLayerTypeValue.LAYER_OFFLINE_VECTOR:
+        case OfflineLayerTypeValue.LAYER_OFFLINE_BG_VECTOR:
           olLayer = olLayerOfflineFactoryService.createOlLayer(layer)
           break
         default:
