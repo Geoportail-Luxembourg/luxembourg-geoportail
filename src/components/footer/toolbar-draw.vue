@@ -18,6 +18,7 @@ const draw = useDraw()
           :label="t('Draw Point', { ns: 'client' })"
           :active="drawState.drawPointActive"
           @click="() => draw.toggleDrawPoint()"
+          data-cy="drawPointButton"
         >
         </button-text>
       </li>
@@ -26,6 +27,7 @@ const draw = useDraw()
           :label="t('Label', { ns: 'client' })"
           :active="drawState.drawLabelActive"
           @click="() => draw.toggleDrawLabel()"
+          data-cy="drawLabelButton"
         >
         </button-text>
       </li>
@@ -43,6 +45,7 @@ const draw = useDraw()
           :label="t('Polygon', { ns: 'client' })"
           :active="drawState.drawPolygonActive"
           @click="() => draw.toggleDrawPolygon()"
+          data-cy="drawPolygonButton"
         >
         </button-text>
       </li>
@@ -51,6 +54,7 @@ const draw = useDraw()
           :label="t('Circle', { ns: 'client' })"
           :active="drawState.drawCircleActive"
           @click="() => draw.toggleDrawCircle()"
+          data-cy="drawCircleButton"
         >
         </button-text>
       </li>
