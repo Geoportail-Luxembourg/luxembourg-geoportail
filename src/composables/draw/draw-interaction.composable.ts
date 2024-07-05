@@ -1,9 +1,9 @@
 import { listen } from 'ol/events.js'
-import Draw from 'ol/interaction/Draw'
+import Draw, { DrawEvent, Options } from 'ol/interaction/Draw'
 import useMap from '@/composables/map/map.composable'
 import useDrawnFeatures from './drawn-features.composable'
 
-export default function useDrawInteraction(options: any) {
+export default function useDrawInteraction(options: Options) {
   const drawInteraction = new Draw(options)
   drawInteraction.setActive(false)
   const map = useMap().getOlMap()
@@ -15,10 +15,10 @@ export default function useDrawInteraction(options: any) {
   // })
 
   listen(drawInteraction, 'drawend', event => {
-    onDrawEnd(event)
+    onDrawEnd(event as DrawEvent)
   })
   const { addFeature } = useDrawnFeatures()
-  function onDrawEnd(event) {
+  function onDrawEnd(event: DrawEvent) {
     //todo: this.removeMeasureTooltip_();
     addFeature(event.feature)
   }

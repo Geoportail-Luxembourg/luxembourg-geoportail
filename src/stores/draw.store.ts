@@ -1,6 +1,14 @@
 import { defineStore } from 'pinia'
 import { reactive } from 'vue'
 
+export type DrawState = {
+  drawPointActive: boolean
+  drawLabelActive: boolean
+  drawLineActive: boolean
+  drawCircleActive: boolean
+  drawPolygonActive: boolean
+}
+
 export const useDrawStore = defineStore('draw', () => {
   const drawState = reactive({
     drawPointActive: false,
@@ -8,7 +16,7 @@ export const useDrawStore = defineStore('draw', () => {
     drawLineActive: false,
     drawCircleActive: false,
     drawPolygonActive: false,
-  })
+  } as DrawState)
 
   function setDrawPointActive(active: boolean) {
     setActiveState('drawPointActive', active)
@@ -30,15 +38,16 @@ export const useDrawStore = defineStore('draw', () => {
     setActiveState('drawPolygonActive', active)
   }
 
-  function setActiveState(activeStateKey: string, active: boolean) {
+  function setActiveState(activeStateKey: keyof DrawState, active: boolean) {
     if (!active) {
       drawState[activeStateKey] = false
     } else {
       Object.keys(drawState).forEach(key => {
+        const stateKey = key as keyof DrawState
         if (key === activeStateKey) {
-          drawState[key] = active
+          drawState[stateKey] = active
         } else {
-          drawState[key] = !active
+          drawState[stateKey] = !active
         }
       })
     }
