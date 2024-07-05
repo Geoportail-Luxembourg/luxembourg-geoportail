@@ -29,7 +29,7 @@ export interface OfflineContent {
 }
 
 export type OffLineLayer = Layer & {
-  options?: OffLineLayerOptions
+  options: OffLineLayerOptions
 }
 
 export type OffLineLayerOptions = Omit<BaseLayer, 'source'> & {
