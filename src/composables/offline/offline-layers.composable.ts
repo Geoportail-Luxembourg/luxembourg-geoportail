@@ -47,7 +47,7 @@ export default function useOfflineLayers() {
       OfflineLayerTypeValue.LAYER_OFFLINE_BG_VECTOR,
     ]
 
-    if (validOfflineLayer.indexOf(offlineLayerSpec.layerType) > -1) {
+    if (validOfflineLayer.includes(offlineLayerSpec.layerType)) {
       try {
         const layer = initLayer(offlineLayerToLayer(offlineLayerSpec))
 
