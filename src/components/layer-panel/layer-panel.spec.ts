@@ -1,4 +1,4 @@
-import { shallowMount } from '@vue/test-utils'
+import { mount } from '@vue/test-utils'
 import { createTestingPinia } from '@pinia/testing'
 
 import CatalogTab from '@/components/catalog/catalog-tab.vue'
@@ -8,11 +8,11 @@ import LayerPanel from './layer-panel.vue'
 import { useAppStore } from '@/stores/app.store'
 
 describe('LayerPanel', () => {
-  const mountComponent = () => shallowMount(LayerPanel)
+  const mountComponent = () => mount(LayerPanel)
   let wrapper: ReturnType<typeof mountComponent>
 
   beforeEach(() => {
-    wrapper = shallowMount(LayerPanel, {
+    wrapper = mount(LayerPanel, {
       global: {
         plugins: [createTestingPinia()],
       },
