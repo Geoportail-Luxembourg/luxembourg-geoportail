@@ -15,6 +15,7 @@ export interface OfflineLayerSpec {
 export enum OfflineLayerTypeValue {
   LAYER_OFFLINE_TILE = 'tile', // Comming from offline specs in localforage
   LAYER_OFFLINE_VECTOR = 'vector', // Comming from offline specs in localforage
+  LAYER_OFFLINE_BG_VECTOR = 'bg_vector', // Comming from offline specs in localforage
   LAYER_OFFLINE_BG_WMTS = 'off_bg_wmts', // From localforage = BG WMTS but is override
 }
 
