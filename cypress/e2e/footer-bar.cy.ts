@@ -45,4 +45,31 @@ describe('Footer bar', () => {
       })
     })
   })
+
+  describe('MyMaps button', () => {
+    describe('When opening MyMaps panel', () => {
+      beforeEach(() => {
+        cy.get('[data-cy="mymapsOpenClose"]').find('button').click()
+      })
+
+      it('MyMaps panel is shown', () => {
+        cy.get('[data-cy="myMapsPanel"]').should('exist')
+      })
+
+      it('Other panels are closed', () => {
+        cy.get('[data-cy="styleSelector"]').should('not.exist')
+        cy.get('[data-cy="layerPanel"]').should('not.exist')
+      })
+
+      describe('When clicking on myMapsPanel button', () => {
+        beforeEach(() => {
+          cy.get('[data-cy="layersOpenClose"]').find('button').click()
+        })
+
+        it('closes the left panel', () => {
+          cy.get('[data-cy="myMapsPanel"]').should('not.exist')
+        })
+      })
+    })
+  })
 })

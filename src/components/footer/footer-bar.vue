@@ -8,8 +8,12 @@ import { useTranslation } from 'i18next-vue'
 import { useAppStore } from '@/stores/app.store'
 
 const { t, i18next } = useTranslation()
-const { setLayersOpen, closeStyleEditorPanel, setDrawToolbarOpen } = useAppStore()
-const { layersOpen, drawToolbarOpen, styleEditorOpen } = storeToRefs(
+const {
+  setLayersOpen,
+  setDrawToolbarOpen,
+  toggleMyMapsOpen,
+} = useAppStore()
+const { layersOpen, drawToolbarOpen, styleEditorOpen, myMapsOpen } = storeToRefs(
   useAppStore()
 )
 
@@ -41,11 +45,13 @@ function onClickLayersIcon() {
         - remove class="text-gray-300"
         - add click handler that calls setLayersOpen(true) and opens tool (also via app store)
       -->
-      <li>
+      <li data-cy="mymapsOpenClose">
         <button-icon
           class="text-gray-300"
           :label="t('my_maps', { ns: 'client' })"
           icon="mymaps"
+          :active="myMapsOpen"
+          @click="toggleMyMapsOpen"
         >
         </button-icon>
       </li>
