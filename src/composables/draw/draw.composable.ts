@@ -2,6 +2,8 @@ import { DrawState, useDrawStore } from '@/stores/draw.store'
 import { watch } from 'vue'
 import useDrawInteraction from './draw-interaction.composable'
 import Draw from 'ol/interaction/Draw'
+import useOpenLayers from '../map/ol.composable'
+import useMap from '../map/map.composable'
 
 type DrawInteractions = {
   drawPoint: Draw
@@ -27,6 +29,10 @@ export default function useDraw() {
     drawCircle: useDrawInteraction({ type: 'Circle' }).drawInteraction,
     drawPolygon: useDrawInteraction({ type: 'Polygon' }).drawInteraction,
   } as DrawInteractions
+
+  const openLayers = useOpenLayers()
+  const map = useMap().getOlMap()
+  openLayers.addLayer(map, { type: 'DRAW', id: 'drawLayer', opacity: 1 })
 
   watch(
     () => drawState,

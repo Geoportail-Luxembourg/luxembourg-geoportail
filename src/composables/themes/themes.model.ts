@@ -60,6 +60,7 @@ export enum LayerTypeValue {
   BG_WMTS = 'BG WMTS',
   BG_MVT = 'BG MVT',
   '3D' = '3D',
+  DRAW = 'DRAW',
 }
 
 export type LayerType = `${LayerTypeValue}`
