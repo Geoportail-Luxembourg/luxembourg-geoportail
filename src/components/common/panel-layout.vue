@@ -18,6 +18,7 @@ const { t } = useTranslation()
       <slot name="header"></slot>
       <span
         ><button
+          data-cy="panelClose"
           @click="() => closeFn()"
           :aria-label="t('Close', { ns: 'client' })"
           class="fa-sharp fa-solid fa-close"

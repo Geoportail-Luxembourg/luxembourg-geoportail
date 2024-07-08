@@ -25,7 +25,7 @@ function onClickLayersIcon() {
     <ul
       class="flex flex-col w-full sm:w-80 sm:flex-row justify-start text-primary divide-y sm:divide-y-0 sm:divide-x divide-gray-400 divide-solid box-content border-y sm:border-y-0 border-x border-gray-400"
     >
-      <li>
+      <li data-cy="layersOpenClose">
         <button-icon
           :label="t('layers', { ns: 'client' })"
           icon="layers"
