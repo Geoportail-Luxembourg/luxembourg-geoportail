@@ -75,6 +75,7 @@ const { layersOpen, drawToolbarOpen } = storeToRefs(useAppStore())
       <button-icon
         :label="t('Dessin', { ns: 'client' })"
         icon="draw"
+        :active="drawToolbarOpen"
         @click="() => setDrawToolbarOpen(!drawToolbarOpen)"
         data-cy="drawButton"
       >
