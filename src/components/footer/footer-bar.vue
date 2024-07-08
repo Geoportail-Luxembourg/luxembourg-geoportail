@@ -51,7 +51,7 @@ function onClickLayersIcon() {
           :label="t('my_maps', { ns: 'client' })"
           icon="mymaps"
           :active="myMapsOpen"
-          @click="toggleMyMapsOpen"
+          @click="() => toggleMyMapsOpen()"
         >
         </button-icon>
       </li>

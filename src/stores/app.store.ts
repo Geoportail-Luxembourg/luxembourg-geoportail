@@ -63,7 +63,7 @@ export const useAppStore = defineStore(
     }
 
     function toggleMyMapsOpen(open?: boolean) {
-      myMapsOpen.value = typeof open !== undefined ? open : !myMapsOpen.value
+      myMapsOpen.value = open !== undefined ? open : !myMapsOpen.value
 
       if (myMapsOpen.value) {
         styleEditorOpen.value = false
