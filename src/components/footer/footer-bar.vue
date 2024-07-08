@@ -8,7 +8,7 @@ import { useTranslation } from 'i18next-vue'
 import { useAppStore } from '@/stores/app.store'
 
 const { t, i18next } = useTranslation()
-const { setLayersOpen, setDrawToolbarOpen } = useAppStore()
+const { setLayersOpen, closeStyleEditorPanel, setDrawToolbarOpen } = useAppStore()
 const { layersOpen, drawToolbarOpen, styleEditorOpen } = storeToRefs(
   useAppStore()
 )
