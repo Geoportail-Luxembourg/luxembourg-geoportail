@@ -26,6 +26,7 @@ const styles = useMvtStyles()
 const sliderStore = useSliderComparatorStore()
 const { bgLayer } = storeToRefs(mapStore)
 const { sliderActive } = storeToRefs(sliderStore)
+const { mapId } = storeToRefs(appStore)
 
 const layers = computed(() => [...mapStore.layers].reverse())
 const layers3d = computed(() => [...mapStore.layers3d].reverse())
@@ -98,6 +99,9 @@ function toggleLayerComparator() {
 
 <template>
   <div>
+    <div v-if="mapId && layers.length === 0" class="text-black">
+      {{ t('No layer selected', { ns: 'client' }) }}
+    </div>
     <ul class="mb-4 sortable-layers-3d" v-if="layers3d.length > 0">
       <li
         v-for="(layer, index) in layers3d"
