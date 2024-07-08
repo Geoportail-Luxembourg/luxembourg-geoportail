@@ -8,8 +8,14 @@ import { useTranslation } from 'i18next-vue'
 import { useAppStore } from '@/stores/app.store'
 
 const { t, i18next } = useTranslation()
-const { setLayersOpen, setDrawToolbarOpen } = useAppStore()
+const { setLayersOpen, closeStyleEditorPanel, setDrawToolbarOpen } =
+  useAppStore()
 const { layersOpen, drawToolbarOpen } = storeToRefs(useAppStore())
+
+function onClickLayersIcon() {
+  setLayersOpen(!layersOpen.value)
+  closeStyleEditorPanel()
+}
 </script>
 <template>
   <footer
@@ -24,7 +30,7 @@ const { layersOpen, drawToolbarOpen } = storeToRefs(useAppStore())
           :label="t('layers', { ns: 'client' })"
           icon="layers"
           :active="layersOpen"
-          @click="() => setLayersOpen(!layersOpen)"
+          @click="onClickLayersIcon"
         >
         </button-icon>
       </li>

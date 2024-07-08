@@ -5,7 +5,7 @@ import { useTranslation } from 'i18next-vue'
 
 import CatalogTab from '@/components/catalog/catalog-tab.vue'
 import LayerManager from '@/components/layer-manager/layer-manager.vue'
-import BasePanelLayout from '@/components/base-layouts/panel-layout.vue'
+import BasePanelLayout from '@/components/common/panel-layout.vue'
 import { useAppStore } from '@/stores/app.store'
 import { useMapStore } from '@/stores/map.store'
 import useOffline from '@/composables/offline/offline.composable'
