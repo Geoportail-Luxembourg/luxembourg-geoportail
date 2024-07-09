@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { useTranslation } from 'i18next-vue'
 
-import BasePanelLayout from '@/components/common/panel-layout.vue'
+import SidePanelLayout from '@/components/common/panel-layout.vue'
 
 import { useAppStore } from '@/stores/app.store'
 import StyleSelector from './style-selector.vue'
@@ -11,7 +11,7 @@ const appStore = useAppStore()
 </script>
 
 <template>
-  <base-panel-layout
+  <side-panel-layout
     :data-cy-value="'stylePanel'"
     :close-fn="appStore.closeStyleEditorPanel"
   >
@@ -24,5 +24,5 @@ const appStore = useAppStore()
     <template v-slot:content>
       <style-selector />
     </template>
-  </base-panel-layout>
+  </side-panel-layout>
 </template>

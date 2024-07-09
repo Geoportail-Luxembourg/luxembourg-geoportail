@@ -5,7 +5,7 @@ import { useTranslation } from 'i18next-vue'
 
 import CatalogTab from '@/components/catalog/catalog-tab.vue'
 import LayerManager from '@/components/layer-manager/layer-manager.vue'
-import BasePanelLayout from '@/components/common/panel-layout.vue'
+import SidePanelLayout from '@/components/common/panel-layout.vue'
 import { useAppStore } from '@/stores/app.store'
 import { useMapStore } from '@/stores/map.store'
 import useOffline from '@/composables/offline/offline.composable'
@@ -30,7 +30,7 @@ function onDisplayCatalog() {
 </script>
 
 <template>
-  <base-panel-layout
+  <side-panel-layout
     :data-cy-value="'layerPanel'"
     :close-fn="() => setLayersOpen(false)"
   >
@@ -74,5 +74,5 @@ function onDisplayCatalog() {
       ></layer-manager>
       <catalog-tab v-if="!showMyLayersTab"></catalog-tab>
     </template>
-  </base-panel-layout>
+  </side-panel-layout>
 </template>
