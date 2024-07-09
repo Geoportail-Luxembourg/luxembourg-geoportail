@@ -101,45 +101,43 @@ export class OlSynchronizer {
     // must ignore typing error (too deep)
     // @ts-ignore
     watch(appliedStyle, (style: StyleSpecification) => {
-      // TODO: -CLEAN STYLE- getIsOffline() is a patch for v3, it is meant to be removed when rework on styles is working properly
-      if (getIsOffline()) {
-        return
-      }
-
-      if (styleStore.bgStyle === null && !styleStore.isExpertStyleActive) {
-        styleService
-          .unregisterStyle(styleStore.styleSerial)
-          .then((styleStore.styleSerial = null))
-      } else {
-        clearTimeout(this.timeoutID)
-
-        this.timeoutID = setTimeout(() => {
+      if (!getIsOffline()) {
+        // register style only in online mode
+        if (styleStore.bgStyle === null && !styleStore.isExpertStyleActive) {
           styleService
-            .registerStyle(style, styleStore.styleSerial)
-            .then(serial => {
-              styleStore.styleSerial = serial
-              const id = mapStore?.bgLayer?.id
-              if (
-                mapStore?.bgLayer &&
-                id !== undefined &&
-                serial !== undefined
-              ) {
-                // todo V3 : xyz_custom is used for 3D in V3
-                // currently it shall not be used in V4 to avoid mixing up things
-                // openLayers.applyOnBgLayer(map, bgLayer => {
-                //   bgLayer.set(
-                //     'xyz_custom',
-                //     styleService.getDefaultMapBoxStyleXYZ(serial)
-                //   )
-                // })
-                openLayers.setBgLayer(
-                  map,
-                  mapStore?.bgLayer,
-                  styleStore.bgVectorSources
-                )
-              }
-            })
-        }, 2000)
+            .unregisterStyle(styleStore.styleSerial)
+            .then((styleStore.styleSerial = null))
+        } else {
+          clearTimeout(this.timeoutID)
+
+          this.timeoutID = setTimeout(() => {
+            styleService
+              .registerStyle(style, styleStore.styleSerial)
+              .then(serial => {
+                styleStore.styleSerial = serial
+                const id = mapStore?.bgLayer?.id
+                if (
+                  mapStore?.bgLayer &&
+                  id !== undefined &&
+                  serial !== undefined
+                ) {
+                  // todo V3 : xyz_custom is used for 3D in V3
+                  // currently it shall not be used in V4 to avoid mixing up things
+                  // openLayers.applyOnBgLayer(map, bgLayer => {
+                  //   bgLayer.set(
+                  //     'xyz_custom',
+                  //     styleService.getDefaultMapBoxStyleXYZ(serial)
+                  //   )
+                  // })
+                  openLayers.setBgLayer(
+                    map,
+                    mapStore?.bgLayer,
+                    styleStore.bgVectorSources
+                  )
+                }
+              })
+          }, 2000)
+        }
       }
 
       openLayers.applyOnBgLayer(map, bgLayer =>
