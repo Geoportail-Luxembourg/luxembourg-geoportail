@@ -1,10 +1,15 @@
 <script setup lang="ts">
-import { ref } from 'vue'
 import ButtonText from './button-text.vue'
 import { useTranslation } from 'i18next-vue'
+import useDraw from '@/composables/draw/draw.composable'
+import { useDrawStore } from '@/stores/draw.store'
+import { storeToRefs } from 'pinia'
 
 const { t } = useTranslation()
-const drawLineActive = ref(false)
+const { toggleActiveState } = useDrawStore()
+const { drawStateActive } = storeToRefs(useDrawStore())
+// keep logic in composable
+useDraw()
 </script>
 <template>
   <div data-cy="toolbarDraw">
@@ -12,29 +17,54 @@ const drawLineActive = ref(false)
       class="absolute bottom-full top-auto z-20 flex flex-row justify-start divide-y-0 divide-x divide-gray-400 divide-solid box-content border-y-0 border-x border-gray-400"
     >
       <li>
-        <button-text :label="t('Draw Point', { ns: 'client' })"> </button-text>
+        <button-text
+          :label="t('Draw Point', { ns: 'client' })"
+          :active="drawStateActive === 'drawPoint'"
+          @click="() => toggleActiveState('drawPoint')"
+          data-cy="drawPointButton"
+        >
+        </button-text>
       </li>
       <li>
-        <button-text :label="t('Label', { ns: 'client' })"> </button-text>
+        <button-text
+          :label="t('Label', { ns: 'client' })"
+          :active="drawStateActive === 'drawLabel'"
+          @click="() => toggleActiveState('drawLabel')"
+          data-cy="drawLabelButton"
+        >
+        </button-text>
       </li>
       <li>
         <button-text
           :label="t('Line', { ns: 'client' })"
-          @click="() => (drawLineActive = !drawLineActive)"
+          :active="drawStateActive === 'drawLine'"
+          @click="() => toggleActiveState('drawLine')"
           data-cy="drawLineButton"
         >
         </button-text>
       </li>
       <li>
-        <button-text :label="t('Polygon', { ns: 'client' })"> </button-text>
+        <button-text
+          :label="t('Polygon', { ns: 'client' })"
+          :active="drawStateActive === 'drawPolygon'"
+          @click="() => toggleActiveState('drawPolygon')"
+          data-cy="drawPolygonButton"
+        >
+        </button-text>
       </li>
       <li>
-        <button-text :label="t('Circle', { ns: 'client' })"> </button-text>
+        <button-text
+          :label="t('Circle', { ns: 'client' })"
+          :active="drawStateActive === 'drawCircle'"
+          @click="() => toggleActiveState('drawCircle')"
+          data-cy="drawCircleButton"
+        >
+        </button-text>
       </li>
     </ul>
     <ul
       class="absolute bottom-full top-auto z-10 pl-[130px] pb-16 w-[326px]"
-      v-if="drawLineActive"
+      v-if="drawStateActive === 'drawLine'"
       data-cy="followRoads"
     >
       <li
