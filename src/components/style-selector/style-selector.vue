@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { Ref, ref, computed, watch } from 'vue'
+import { computed, watch } from 'vue'
 import { storeToRefs } from 'pinia'
 import { useTranslation } from 'i18next-vue'
 
@@ -7,7 +7,7 @@ import SimpleStyleSelector from '@/components/style-selector/simple-style-select
 import MediumStyleSelector from '@/components/style-selector/medium-style-selector.vue'
 import ExpertStyleSelector from '@/components/style-selector/expert-style-selector.vue'
 import ExpandablePanel from '@/components/common/expandable-panel.vue'
-import { useAppStore } from '@/stores/app.store'
+import { useAppStore, type openedPanel } from '@/stores/app.store'
 import { useMapStore } from '@/stores/map.store'
 import { useStyleStore } from '@/stores/style.store'
 import useMvtStyles from '@/composables/mvt-styles/mvt-styles.composable'
@@ -18,6 +18,7 @@ const appStore = useAppStore()
 const styleStore = useStyleStore()
 const { bgStyle, isExpertStyleActive } = storeToRefs(styleStore)
 const { bgLayer } = storeToRefs(mapStore)
+const { styleEditorCurrentOpenPanel } = storeToRefs(appStore)
 const styles = useMvtStyles()
 
 const styleCapabilities = computed(() =>
@@ -30,12 +31,13 @@ watch(bgLayer, bgLayer => {
   }
 })
 
-let currentOpenPanel: Ref<
-  undefined | 'simpleStyle' | 'mediumStyle' | 'advancedStyle'
-> = ref(undefined)
-
 function resetStyle() {
   styleStore.setStyle(null)
+}
+
+function onTogglePanel(panelName: openedPanel) {
+  styleEditorCurrentOpenPanel.value =
+    styleEditorCurrentOpenPanel.value === panelName ? undefined : panelName
 }
 </script>
 
@@ -44,45 +46,37 @@ function resetStyle() {
     <div v-if="styleCapabilities.hasSimpleStyle" class="mb-px">
       <expandable-panel
         :title="t('Simple')"
-        :expanded="currentOpenPanel === 'simpleStyle'"
-        @togglePanel="
-          () =>
-            (currentOpenPanel =
-              currentOpenPanel === 'simpleStyle' ? undefined : 'simpleStyle')
-        "
+        :expanded="styleEditorCurrentOpenPanel === 'simpleStyle'"
+        @togglePanel="() => onTogglePanel('simpleStyle')"
       >
-        <simple-style-selector
-      /></expandable-panel>
+        <simple-style-selector></simple-style-selector>
+      </expandable-panel>
     </div>
 
     <div v-if="styleCapabilities.hasAdvancedStyle" class="mb-px">
       <expandable-panel
         :title="t('Medium')"
-        :expanded="currentOpenPanel === 'mediumStyle'"
-        @togglePanel="
-          () =>
-            (currentOpenPanel =
-              currentOpenPanel === 'mediumStyle' ? undefined : 'mediumStyle')
-        "
+        :expanded="styleEditorCurrentOpenPanel === 'mediumStyle'"
+        @togglePanel="() => onTogglePanel('mediumStyle')"
       >
-        <medium-style-selector v-if="bgLayer" :layer="bgLayer"
-      /></expandable-panel>
+        <medium-style-selector
+          v-if="bgLayer"
+          :layer="bgLayer"
+        ></medium-style-selector>
+      </expandable-panel>
     </div>
 
     <div v-if="styleCapabilities.hasExpertStyle" class="mb-px">
       <expandable-panel
         :title="t('Expert (style.json)')"
-        :expanded="currentOpenPanel === 'advancedStyle'"
-        @togglePanel="
-          () =>
-            (currentOpenPanel =
-              currentOpenPanel === 'advancedStyle'
-                ? undefined
-                : 'advancedStyle')
-        "
+        :expanded="styleEditorCurrentOpenPanel === 'advancedStyle'"
+        @togglePanel="() => onTogglePanel('advancedStyle')"
       >
-        <expert-style-selector v-if="bgLayer" :layer="bgLayer"
-      /></expandable-panel>
+        <expert-style-selector
+          v-if="bgLayer"
+          :layer="bgLayer"
+        ></expert-style-selector>
+      </expandable-panel>
     </div>
     <button
       v-if="bgStyle || isExpertStyleActive"

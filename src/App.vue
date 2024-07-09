@@ -8,11 +8,11 @@ import HeaderBar from './components/header/header-bar.vue'
 import FooterBar from './components/footer/footer-bar.vue'
 
 import AlertNotifications from '@/components/alert-notifications/alert-notifications.vue'
-import StyleSelector from '@/components/style-selector/style-selector.vue'
 import RemoteLayers from '@/components/remote-layers/remote-layers.vue'
 import LayerMetadata from '@/components/layer-metadata/layer-metadata.vue'
 import BackgroundSelector from '@/components/background-selector/background-selector.vue'
 import LayerPanel from '@/components/layer-panel/layer-panel.vue'
+import StylePanel from '@/components/style-selector/style-panel.vue'
 import MapContainer from '@/components/map/map-container.vue'
 import SliderComparator from '@/components/slider/slider-comparator.vue'
 
@@ -42,14 +42,15 @@ mvtStyleService.initBackgroundsConfigs()
 
 const { layersOpen, styleEditorOpen } = storeToRefs(appStore)
 
-watch(layersOpen, () =>
-  setTimeout(() => {
-    resizeMap()
-  }, 50)
-)
+watch(layersOpen, timeoutResizeMap)
+watch(styleEditorOpen, timeoutResizeMap)
 
 onMounted(() => window.addEventListener('resize', resizeMap))
 onUnmounted(() => window.removeEventListener('resize', resizeMap))
+
+function timeoutResizeMap() {
+  setTimeout(() => resizeMap(), 50)
+}
 
 function resizeMap() {
   // Update all canvas size when layer panel is opened/closed
@@ -79,13 +80,16 @@ function resizeMap() {
 
     <main class="flex grow">
       <!-- Layer panel -->
-      <div v-if="layersOpen" class="w-full sm:w-80 bg-secondary z-10">
+      <div
+        v-if="layersOpen && !styleEditorOpen"
+        class="w-full sm:w-80 bg-secondary z-10"
+      >
         <layer-panel />
       </div>
 
       <!-- Style editor -->
-      <div v-if="styleEditorOpen" class="w-80 bg-primary">
-        <style-selector />
+      <div v-if="styleEditorOpen" class="w-full sm:w-80 bg-secondary z-10">
+        <style-panel />
       </div>
 
       <!-- Map container and slider comparator -->
