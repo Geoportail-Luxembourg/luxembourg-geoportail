@@ -43,7 +43,20 @@ const icons = [
   'share',
 ]
 
+function getMode() {
+  // Get mode from npm cmd line (no use of a new package eg. 'yargs', 'minimist', etc...)
+  return process.argv
+    .slice(2)
+    .reduce(
+      (prev, curr, currI, arr) => (curr === '--mode' ? arr[currI + 1] : prev),
+      'dev'
+    )
+}
+
 module.exports = {
+  corePlugins: {
+    preflight: getMode() === 'dev', // activate Tailwind preflight only in dev mode (= standalone v4)
+  },
   content: ['index.html', './src/**/*.{html,js,ts,vue}'],
   theme: {
     container: {
@@ -191,7 +204,7 @@ module.exports = {
       pattern: /ol-*/,
     },
   ],
-  plugins: [],
+  plugins: [require('@tailwindcss/typography')],
 }
 
 function generateThemeSafelist() {
