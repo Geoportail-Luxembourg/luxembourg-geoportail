@@ -10,7 +10,6 @@ import { useMetadataStore } from '@/stores/metadata.store'
 import type { Layer, LayerId } from '@/stores/map.store.model'
 import { BLANK_BACKGROUNDLAYER } from '@/composables/background-layer/background-layer.model'
 import useMvtStyles from '@/composables/mvt-styles/mvt-styles.composable'
-import useOffline from '@/composables/offline/offline.composable'
 import { useSliderComparatorStore } from '@/stores/slider-comparator.store'
 import { isFireFox } from '@/services/utils'
 
@@ -26,7 +25,8 @@ const styles = useMvtStyles()
 const sliderStore = useSliderComparatorStore()
 const { bgLayer } = storeToRefs(mapStore)
 const { sliderActive } = storeToRefs(sliderStore)
-const { mapId } = storeToRefs(appStore)
+const { isOffLine } = storeToRefs(appStore)
+const { setRemoteLayersOpen } = appStore
 
 const layers = computed(() => [...mapStore.layers].reverse())
 const layers3d = computed(() => [...mapStore.layers3d].reverse())
@@ -35,10 +35,9 @@ const dragHandleClassName = 'drag-handle'
 const bgLayerIsEditable = computed(() =>
   styles.isLayerStyleEditable(bgLayer.value)
 )
-const showAddLayerButton = computed(() => !useOffline().isOffLine.value)
+const showAddLayerButton = computed(() => !isOffLine.value)
 
 const emit = defineEmits(['displayCatalog'])
-const { setRemoteLayersOpen } = useAppStore()
 
 onMounted(() => {
   const sortableParams = <Sortable.Options>{
@@ -99,7 +98,7 @@ function toggleLayerComparator() {
 
 <template>
   <div>
-    <div v-if="mapId && layers.length === 0" class="text-black">
+    <div v-if="isOffLine && layers.length === 0" class="text-black">
       {{ t('No layer selected', { ns: 'client' }) }}
     </div>
     <ul class="mb-4 sortable-layers-3d" v-if="layers3d.length > 0">
