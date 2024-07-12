@@ -29,7 +29,7 @@ function onDisplayCatalog() {
 </script>
 
 <template>
-  <div data-cy="layerPanel" class="flex flex-col h-full pt-1.5">
+  <div data-cy="layerPanel" class="lux flex flex-col h-full pt-1.5">
     <!-- Panel title and close button -->
     <div class="h-16 shrink-0 flex justify-between lux-panel-title">
       <h1>

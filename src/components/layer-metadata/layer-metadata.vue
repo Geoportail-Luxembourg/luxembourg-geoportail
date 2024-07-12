@@ -64,7 +64,7 @@ function closeLayerMetadata() {
   >
     <template v-slot:content>
       <div
-        class="grid gap-2 grid-cols-3 pt-3 text-[13px] font-arial break-words"
+        class="lux grid gap-2 grid-cols-3 pt-3 text-[13px] font-arial break-words"
       >
         <layer-metadata-item
           v-if="layerMetadata.name"

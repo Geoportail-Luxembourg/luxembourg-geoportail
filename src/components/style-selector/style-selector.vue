@@ -40,7 +40,7 @@ function resetStyle() {
 </script>
 
 <template>
-  <div v-if="styleCapabilities.isEditable" data-cy="styleSelector">
+  <div class="lux" v-if="styleCapabilities.isEditable" data-cy="styleSelector">
     <div v-if="styleCapabilities.hasSimpleStyle" class="mb-px">
       <expandable-panel
         :title="t('Simple')"
