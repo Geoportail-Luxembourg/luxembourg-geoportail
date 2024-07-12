@@ -45,6 +45,7 @@
     "@istanbuljs/nyc-config-typescript": "^1.0.2",
     "@pinia/testing": "^0.0.14",
     "@rushstack/eslint-patch": "^1.1.4",
+    "@tailwindcss/typography": "^0.5.13",
     "@types/jsdom": "^20.0.1",
     "@types/luxon": "^3.3.1",
     "@types/node": "^18.11.9",

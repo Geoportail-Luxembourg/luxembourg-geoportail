@@ -54,15 +54,34 @@ function getMode() {
 }
 
 module.exports = {
-  corePlugins: {
-    preflight: getMode() === 'dev', // activate Tailwind preflight only in dev mode (= standalone v4)
-  },
   content: ['index.html', './src/**/*.{html,js,ts,vue}'],
   theme: {
     container: {
       center: true,
     },
     extend: {
+      typography:
+        getMode() === 'dev'
+          ? {}
+          : {
+              // TODO: when switching to v4 full standalone in prod, remove this cond.
+              DEFAULT: {
+                // Override preflight for integration in v3
+                css: {
+                  h1: {},
+                  h2: {},
+                  h3: {},
+                  h4: {},
+                  h5: {},
+                  h6: {},
+                  input: {
+                    borderWidth: '1px',
+                    borderColor: 'rgb(118, 118, 118)',
+                    borderStyle: 'inset',
+                  },
+                },
+              },
+            },
       colors: {
         default: 'var(--color-default)',
         primary: 'var(--color-primary)',
@@ -178,6 +197,8 @@ module.exports = {
     'lux-alert-info',
     'lux-alert-danger',
     'lux-alert-warning',
+    'lux-btn-grey',
+    'lux-btn-grey:hover',
     'md:bg-route',
     'md:bg-topo_bw',
     'md:bg-topo',
