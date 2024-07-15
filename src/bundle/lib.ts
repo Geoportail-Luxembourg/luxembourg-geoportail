@@ -7,7 +7,9 @@ import { defineCustomElement } from '@/bundle/runtime-dom/apiCustomElement'
 
 initProjections()
 
+import './lib.css' // Tell Vite to build the css
 import '../assets/main.css' // Tell Vite to build the css
+
 import AlertNotifications from '@/components/alert-notifications/alert-notifications.vue'
 import DropdownList from '@/components/common/dropdown-list.vue'
 import MapContainer from '@/components/map/map-container.vue'

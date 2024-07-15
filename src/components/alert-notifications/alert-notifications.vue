@@ -16,7 +16,7 @@ function onClose(index: number) {
   <Teleport to="body">
     <div
       v-if="notifications.length"
-      class="lux lux-notifications fixed w-[500px] top-10 left-1/2 ml-[-250px] z-50"
+      class="lux-notifications fixed w-[500px] top-10 left-1/2 ml-[-250px] z-50"
       data-cy="alertNotifications"
     >
       <Notification

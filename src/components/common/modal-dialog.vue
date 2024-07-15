@@ -48,7 +48,7 @@ function close() {
         ref="modal"
         tabindex="0"
         @keydown.esc.stop="close()"
-        class="lux fixed inset-x-0 inset-y-8 flex items-start justify-center z-[1100] outline-none"
+        class="fixed inset-x-0 inset-y-8 flex items-start justify-center z-[1100] outline-none"
       >
         <div class="bg-white shadow-modal rounded-lg overflow-hidden w-[700px]">
           <!-- header (title)-->

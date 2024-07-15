@@ -88,7 +88,7 @@ function toggleSelector() {
 </script>
 
 <template>
-  <div v-if="!is3dMesh" class="lux flex flex-row-reverse">
+  <div v-if="!is3dMesh" class="flex flex-row-reverse">
     <div
       data-cy="selectedBg"
       class="lux-bg-sel border border-black"
