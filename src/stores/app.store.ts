@@ -13,7 +13,7 @@ export const useAppStore = defineStore(
     const layersOpen = ref(DEFAULT_LAYER_PANEL_OPENED)
     const myLayersTabOpen = ref(DEFAULT_MY_LAYERS_TAB_OPENED)
     const themeGridOpen = ref(DEFAULT_THEME_GRID_OPENED)
-    const mapId: Ref<string | undefined> = ref()
+    const mapId: Ref<string | undefined> = ref() // => MyMaps map id
     const remoteLayersOpen = ref()
     const styleEditorOpen = ref(false)
     const drawToolbarOpen = ref(false)
