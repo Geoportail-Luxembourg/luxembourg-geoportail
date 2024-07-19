@@ -9,10 +9,12 @@ import type {
   MapContext,
 } from '@/stores/map.store.model'
 import { MutationTypeValue } from './map.model'
+import { transformExtent } from 'ol/proj'
 
 export const PROJECTION_WEBMERCATOR = 'EPSG:3857'
 export const PROJECTION_WGS84 = 'EPSG:4326'
 export const PROJECTION_LUX = 'EPSG:2169'
+const MAX_EXTENT = JSON.parse(import.meta.env.VITE_DEFAULT_MAX_EXTENT)
 
 let map: OlMap
 const olMap: ShallowRef<OlMap | undefined> = shallowRef()
@@ -30,9 +32,12 @@ export default function useMap() {
   function createMap() {
     olMap.value = map = new OlMap({
       view: new OlView({
-        zoom: 10,
         center: [682439, 6379152],
-        multiWorld: true,
+        constrainResolution: true, // Prevent intermediates zooms
+        enableRotation: true,
+        extent: transformExtent(MAX_EXTENT, 'EPSG:4326', 'EPSG:3857'),
+        multiWorld: false,
+        zoom: 8,
       }),
       controls: [],
       keyboardEventTarget: document, // Very important for listening keyboard events when drawing in v3!
