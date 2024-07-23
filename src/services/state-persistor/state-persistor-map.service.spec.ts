@@ -69,7 +69,7 @@ describe('StatePersistorMapService', () => {
           new MapBrowserEvent('change:resolution', olMap, nativeEvent)
         )
       vi.runAllTimers()
-      expect(storageHelper.setValue).toHaveBeenNthCalledWith(1, SP_KEY_ZOOM, 10)
+      expect(storageHelper.setValue).toHaveBeenNthCalledWith(1, SP_KEY_ZOOM, 8)
     })
   })
 
