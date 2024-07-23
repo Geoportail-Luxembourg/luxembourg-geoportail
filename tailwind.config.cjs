@@ -43,7 +43,22 @@ const icons = [
   'share',
 ]
 
+function getMode() {
+  // Get mode from npm cmd line (no use of a new package eg. 'yargs', 'minimist', etc...)
+  return process.argv
+    .slice(2)
+    .reduce(
+      (prev, curr, currI, arr) => (curr === '--mode' ? arr[currI + 1] : prev),
+      'dev'
+    )
+}
+
 module.exports = {
+  corePlugins: {
+    // Activate Tailwind preflight only in dev mode (= standalone v4)
+    // for lib lux to be integreated inv3, preflight is replaced by lib.css (some css classes have been removed, eg. h1, h2, 3h3 styling)
+    preflight: getMode() === 'dev',
+  },
   content: ['index.html', './src/**/*.{html,js,ts,vue}'],
   theme: {
     container: {
@@ -165,6 +180,8 @@ module.exports = {
     'lux-alert-info',
     'lux-alert-danger',
     'lux-alert-warning',
+    'lux-btn-grey',
+    'lux-btn-grey:hover',
     'md:bg-route',
     'md:bg-topo_bw',
     'md:bg-topo',
