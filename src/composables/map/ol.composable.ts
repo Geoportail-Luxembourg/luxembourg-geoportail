@@ -142,7 +142,7 @@ export default function useOpenLayers() {
       }
     }
     if (oldBgLayerId && oldBgLayerId !== bgLayer?.id) {
-      statePersistorStyleService.restoreStyle(true)
+      statePersistorStyleService.restore(true)
     }
   }
 

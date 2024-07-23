@@ -5,6 +5,7 @@ export const SP_KEY_ADDRESS = 'address'
 export const SP_KEY_APPLOGIN = 'applogin' // TODO:
 export const SP_KEY_LOCALFORAGE = 'localforage' // TODO:
 export const SP_KEY_DEBUG = 'debug' // TODO:
+export const SP_KEY_EMBEDDED = 'embedded' // Embedded Map mode (no header, no toolbar)
 export const SP_KEY_EMBEDDED_SERVER = 'embeddedserver'
 export const SP_KEY_EMBEDDED_SERVER_PROTOCOL = 'embeddedserverprotocol'
 export const SP_KEY_FID = 'fid' // TODO:

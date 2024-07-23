@@ -2,6 +2,9 @@ import { ShallowRef, shallowRef } from 'vue'
 import OlMap from 'ol/Map'
 import OlView from 'ol/View'
 
+// for the time moment legacy mapbox is used instead of maplibre, but the naming "maplibre" is kept
+import MapLibreLayer from '@/lib/ol-mapbox-layer'
+import traverseLayer from '@/lib/tools.js'
 import type {
   Layer,
   LayerComparison,
@@ -160,6 +163,27 @@ export default function useMap() {
     return null
   }
 
+  function resize() {
+    // Update all canvas size when layer panel is opened/closed
+    const map = useMap().getOlMap()
+
+    // Update ol layers' canvas size
+    map.updateSize()
+
+    // And trigger update MapLibre layers' canvas size
+    // the utility function traverseLayer is used as a workaround until OL is updated to 6.15
+    // then the function getAllLayers below (added in OL v.6.10.0) can be used
+    // map.getAllLayers().forEach(layer => {
+    traverseLayer(map.getLayerGroup(), [], (layer: any) => {
+      if (layer instanceof MapLibreLayer) {
+        ;(layer as MapLibreLayer).getMapLibreMap().resize()
+      }
+      return true
+    })
+
+    // TODO: Add slide effect and do this update after slide animation ends
+  }
+
   return {
     olMap,
     getOlMap,
@@ -172,5 +196,6 @@ export default function useMap() {
     getRemovedLayers,
     getMutatedLayers,
     getMutationType,
+    resize
   }
 }

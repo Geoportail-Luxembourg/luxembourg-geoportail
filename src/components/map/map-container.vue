@@ -1,6 +1,8 @@
 <script setup lang="ts">
-import { onMounted, provide, ref } from 'vue'
+import { onMounted, provide, ref, watch, watchEffect } from 'vue'
+import { storeToRefs } from 'pinia'
 
+import { useAppStore } from '@/stores/app.store'
 import useMap from '@/composables/map/map.composable'
 import { OlSynchronizer } from '@/composables/map/ol.synchronizer'
 import { OlViewSynchronizer } from '@/composables/map/ol-view.synchronizer'
@@ -13,6 +15,8 @@ import FullscreenControl from '../map-controls/fullscreen-control.vue'
 import ZoomControl from '../map-controls/zoom-control.vue'
 import ZoomToExtentControl from '../map-controls/zoom-to-extent-control.vue'
 
+const appStore = useAppStore()
+const { embedded } = storeToRefs(appStore)
 const map = useMap()
 const mapContainer = ref(null)
 const olMap = map.createMap()
@@ -39,6 +43,15 @@ onMounted(() => {
 
     // Direct access to olMap for cypress
     window.olMap = olMap
+  }
+})
+
+watchEffect(() => {
+  if (mapContainer.value && embedded.value) {
+    setTimeout(() => {
+      console.log("setTimeout DO RESIZE")
+      map.resize()
+    }, 100)
   }
 })
 

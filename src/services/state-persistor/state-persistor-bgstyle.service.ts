@@ -10,22 +10,22 @@ import { StyleItem } from '@/composables/mvt-styles/mvt-styles.model'
 
 class StatePersistorStyleService {
   styleWatcher: WatchStopHandle
-  bootstrapStyle() {
+  bootstrap() {
     const styleStore = useStyleStore()
     let stop: WatchStopHandle
     let activatePersistance: boolean = false
     // eslint-disable-next-line prefer-const
     stop = watchEffect(() => {
       if (styleStore.bgVectorSources) {
-        this.restoreStyle(false)
-        if (activatePersistance) this.persistStyle()
+        this.restore(false)
+        if (activatePersistance) this.persist()
         activatePersistance = true
         stop && stop() // test if exists, for HMR support
       }
     })
   }
 
-  persistStyle() {
+  persist() {
     const styleStore = useStyleStore()
     const { bgStyle } = storeToRefs(styleStore)
 
@@ -54,7 +54,7 @@ class StatePersistorStyleService {
     }
   }
 
-  restoreStyle(localStorageOnly: boolean) {
+  restore(localStorageOnly: boolean) {
     const styleStore = useStyleStore()
     styleStore.setStyle(null)
     const mapStore = useMapStore()

@@ -11,6 +11,7 @@ export const DEFAULT_MYMAPS_OPENED = false
 export const useAppStore = defineStore(
   'app',
   () => {
+    const embedded = ref(false)
     const lang = ref(DEFAULT_LANG)
     const layersOpen = ref(DEFAULT_LAYER_PANEL_OPENED)
     const myLayersTabOpen = ref(DEFAULT_MY_LAYERS_TAB_OPENED)
@@ -72,6 +73,7 @@ export const useAppStore = defineStore(
     }
 
     return {
+      embedded,
       lang,
       layersOpen,
       myLayersTabOpen,
