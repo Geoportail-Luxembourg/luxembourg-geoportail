@@ -1,3 +1,13 @@
+/*****
+ * This is a copy of Tailwind's preflight css.
+ * Default Tailwind's preflight css is deactivated for build:lib cmd,
+ * (see tailwind.config.cjs, "preflight: getMode() === 'dev'")
+ * and this lib.css is used in place of the default preflight.
+ * We use this custom preflight css because some css styles (eg. for h1, inputs, buttons, ...)
+ * are causing some UI glitches in v3 (unwanted borders, paddings, wrong text sizes...).
+ *
+ * !!! When v4 is fully functionnal, this file is no longer needed an should be removed.
+ */
 @tailwind base;
 
 @layer base {
