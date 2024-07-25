@@ -50,48 +50,58 @@ import i18next from 'i18next'
 import backend from 'i18next-http-backend'
 import I18NextVue from 'i18next-vue'
 
-i18next.use(backend)
-i18next.init({
-  lng: 'fr',
-  debug: false,
-  defaultNS: 'client',
-  supportedLngs: ['de', 'en', 'fr', 'lb'],
-  ns: ['client', 'legends', 'server', 'tooltips'],
-  fallbackLng: 'fr',
-  backend: {
-    loadPath: `/static-ngeo/web-components/assets/locales/{{ns}}.{{lng}}.json`,
-  },
-  nsSeparator: '|', // ! force separator to '|' instead of ':' because some i18n keys have ':' (otherwise, i18next doesn't find the key)
-})
-
 import App from '../App.vue'
 
-const app = createApp(App)
-
-app.use(createPinia())
-app.use(I18NextVue, { i18next })
-app.use(VueDOMPurifyHTML)
-
-const createElementInstance = (component = {}, app = null) => {
-  return defineCustomElement(
-    {
-      setup: () => {
-        const inst = getCurrentInstance()!
-
-        Object.assign(inst.appContext, app._context)
-        Object.assign(inst.provides, app._context.provides)
-      },
-      render: () => h(component),
+export default function useLuxLib(options: any) {
+  const i18nextConfig = options.i18nextConfig ?? {
+    lng: 'fr',
+    debug: false,
+    defaultNS: 'client',
+    supportedLngs: ['de', 'en', 'fr', 'lb'],
+    ns: ['client', 'legends', 'server', 'tooltips'],
+    fallbackLng: 'fr',
+    backend: {
+      loadPath: `/static-ngeo/web-components/assets/locales/{{ns}}.{{lng}}.json`,
     },
-    { shadowRoot: false }
-  )
+    nsSeparator: '|', // ! force separator to '|' instead of ':' because some i18n keys have ':' (otherwise, i18next doesn't find the key)
+  }
+
+  i18next.use(backend)
+  i18next.init(i18nextConfig)
+
+  const app = createApp(App)
+
+  app.use(createPinia())
+  app.use(I18NextVue, { i18next })
+  app.use(VueDOMPurifyHTML)
+
+  const createElementInstance = (component = {}, app = null) => {
+    return defineCustomElement(
+      {
+        setup: () => {
+          const inst = getCurrentInstance()!
+
+          Object.assign(inst.appContext, app._context)
+          Object.assign(inst.provides, app._context.provides)
+        },
+        render: () => h(component),
+      },
+      { shadowRoot: false }
+    )
+  }
+
+  return {
+    app,
+    createElementInstance,
+  }
 }
 
 export {
-  app,
+  createApp,
+  h,
   App,
   i18next,
-  createElementInstance,
+  getCurrentInstance,
   defineCustomElement,
   createPinia,
   storeToRefs,
