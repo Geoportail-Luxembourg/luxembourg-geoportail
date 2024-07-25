@@ -66,6 +66,7 @@ function dispatchChangeOpacity() {
       :class="opacity === 0 ? 'fa-eye-slash' : 'fa-eye'"
       :title="
         t('Toggle layer opacity for {{layerName}}', {
+          ns: 'app',
           layerName: layerLabel,
         })
       "
@@ -81,7 +82,10 @@ function dispatchChangeOpacity() {
       @change="onChangeOpacity"
       class="m-2.5 w-16 h-[5px] rounded-lg appearance-none cursor-pointer"
       :aria-label="
-        t('Change opacity for {{ layerName }}', { layerName: layerLabel })
+        t('Change opacity for {{layerName}}', {
+          ns: 'app',
+          layerName: layerLabel,
+        })
       "
     />
     <button
@@ -92,6 +96,7 @@ function dispatchChangeOpacity() {
       :aria-checked="isLayerComparatorOpen"
       :aria-label="
         t('Toggle layer comparator for {{ layerName }}', {
+          ns: 'app',
           layerName: layerLabel,
         })
       "

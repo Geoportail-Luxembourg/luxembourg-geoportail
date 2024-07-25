@@ -52,7 +52,8 @@ function updateVisibility(visibilityChangeEvent: Event) {
       :checked="props.style.visible"
       @change="updateVisibility"
       :aria-label="
-        t('Show or hide {{ thematicName }}', {
+        t('Show or hide {{thematicName}}', {
+          ns: 'app',
           thematicName: props.style.label,
         })
       "

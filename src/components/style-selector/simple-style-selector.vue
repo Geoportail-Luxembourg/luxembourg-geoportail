@@ -52,6 +52,7 @@ function onStylingSelected(item: SimpleStyle) {
       <button
         :title="
           t('Select style: {{styleName}}', {
+            ns: 'app',
             styleName: t(item.unlocalized_label),
           })
         "

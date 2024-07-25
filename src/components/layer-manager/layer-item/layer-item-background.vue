@@ -18,7 +18,7 @@ const { t, onClickInfo } = useLayer(props.layer, { emit })
 
 const txtTitleLabel = computed(() =>
   t('Display informations for "{{layerName}}"', {
-    ns: 'client',
+    ns: 'app',
     layerName: getLabel(),
   })
 )
@@ -42,8 +42,8 @@ function getLabel() {
     <button
       v-if="showEditButton"
       class="fa fa-pencil"
-      :aria-label="t('Open editor panel', { ns: 'client' })"
-      :title="t('Open editor panel', { ns: 'client' })"
+      :aria-label="t('Open editor panel', { ns: 'app' })"
+      :title="t('Open editor panel', { ns: 'app' })"
       @click="$emit('clickEdit')"
     ></button>
   </div>

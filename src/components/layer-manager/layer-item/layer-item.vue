@@ -34,19 +34,19 @@ const showInfoButton = computed(() => !useOffline().isOffLine.value)
 
 const txtDraggableLabel = computed(() =>
   t('Sort "{{layerName}}" in the list', {
-    ns: 'client',
+    ns: 'app',
     layerName: layerLabel.value,
   })
 )
 const txtTitleLabel = computed(() =>
   t('Display informations for "{{layerName}}"', {
-    ns: 'client',
+    ns: 'app',
     layerName: layerLabel.value,
   })
 )
 const txtRemoveLayer = computed(() =>
   t('Remove layer "{{layerName}}"', {
-    ns: 'client',
+    ns: 'app',
     layerName: layerLabel.value,
   })
 )

@@ -15,10 +15,10 @@ const availableLanguages = computed(() =>
   ['en', 'de', 'fr', 'lb'].map(lang => ({
     label: t(lang),
     value: lang,
-    ariaLabel: t('Change language: {{lang}}', { lang: lang }),
+    ariaLabel: t('Change language: {{lang}}', { ns: 'app', lang }),
   }))
 )
-const placeholder = t('Change language')
+const placeholder = t('Change language', { ns: 'app' })
 
 statePersistorLangService.bootstrap()
 
