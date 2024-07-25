@@ -21,7 +21,7 @@ const { layersOpen, drawToolbarOpen } = storeToRefs(useAppStore())
     >
       <li>
         <button-icon
-          :label="t('Layers', { ns: 'client' })"
+          :label="t('layers', { ns: 'client' })"
           icon="layers"
           :active="layersOpen"
           @click="() => setLayersOpen(!layersOpen)"
@@ -36,7 +36,7 @@ const { layersOpen, drawToolbarOpen } = storeToRefs(useAppStore())
       <li>
         <button-icon
           class="text-gray-300"
-          :label="t('My Maps', { ns: 'client' })"
+          :label="t('my_maps', { ns: 'client' })"
           icon="mymaps"
         >
         </button-icon>
@@ -44,7 +44,7 @@ const { layersOpen, drawToolbarOpen } = storeToRefs(useAppStore())
       <li>
         <button-icon
           class="text-gray-300"
-          :label="t('Infos', { ns: 'client' })"
+          :label="t('infos', { ns: 'client' })"
           icon="infos"
         >
         </button-icon>

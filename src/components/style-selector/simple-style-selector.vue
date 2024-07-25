@@ -36,7 +36,7 @@ function onStylingSelected(item: SimpleStyle) {
   <div class="text-white border-2 p-[10px] m-[10px]">
     <!-- TODO: create clean container for simple and advanced style editors -->
     <h5 class="text-center mb-3">
-      {{ t('Select a style', { ns: 'client' }) }}
+      {{ t('Sélectionner un set de couleurs', { ns: 'client' }) }}
     </h5>
     <div
       v-for="item in simpleStyles"

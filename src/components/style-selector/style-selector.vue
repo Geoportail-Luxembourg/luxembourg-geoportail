@@ -89,7 +89,7 @@ function resetStyle() {
       @click="resetStyle"
       class="lux-btn my-2"
     >
-      {{ t('Reset style', { ns: 'client' }) }}
+      {{ t('Réinitialiser style', { ns: 'client' }) }}
     </button>
   </div>
 </template>

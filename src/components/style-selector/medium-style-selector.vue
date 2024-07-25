@@ -38,8 +38,8 @@ function changeStyle(i: number, newStyle: StyleItem) {
     <h5 class="text-center mb-3">
       {{
         isColorVisible
-          ? t('Select a colour for every theme')
-          : t('Activate categories')
+          ? t('Sélectionner une couleur par couche')
+          : t('Afficher une catégorie par couche')
       }}
     </h5>
     <medium-style-item
