@@ -154,7 +154,7 @@ function onChangeDates(min: number, max?: number, dragging?: boolean) {
       v-if="layer.time?.mode === LayerTimeMode.VALUE"
     >
       <slider-range
-        :ariaLabelMin="`${t('Modifier la date de début', { ns: 'client' })}`"
+        :ariaLabelMin="`${t('Edit the start date', { ns: 'app' })}`"
         :selectedMinValue="selectedMinValueConverted"
         @change="onChangeDates"
       />
@@ -165,8 +165,8 @@ function onChangeDates(min: number, max?: number, dragging?: boolean) {
       v-if="layer.time?.mode === LayerTimeMode.RANGE"
     >
       <slider-range
-        :ariaLabelMin="`${t('Modifier la date de début', { ns: 'client' })}`"
-        :ariaLabelMax="`${t('Modifier la date de fin', { ns: 'client' })}`"
+        :ariaLabelMin="`${t('Edit the start date', { ns: 'app' })}`"
+        :ariaLabelMax="`${t('Edit the end date', { ns: 'app' })}`"
         :selectedMinValue="selectedMinValueConverted"
         :selectedMaxValue="selectedMaxValueConverted"
         @change="onChangeDates"

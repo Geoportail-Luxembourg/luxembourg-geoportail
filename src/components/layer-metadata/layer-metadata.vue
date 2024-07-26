@@ -86,7 +86,7 @@ function closeLayerMetadata() {
             <button
               :title="
                 t('Display full description', {
-                  ns: 'client',
+                  ns: 'app',
                 })
               "
               v-if="!displayFullDescription"
@@ -98,7 +98,7 @@ function closeLayerMetadata() {
             <button
               :title="
                 t('Hide full description', {
-                  ns: 'client',
+                  ns: 'app',
                 })
               "
               v-if="

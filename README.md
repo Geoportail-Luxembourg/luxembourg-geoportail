@@ -45,6 +45,15 @@ For e2e tests, the code is instrumented with the Istanbul library to obtain resu
 
 ⚠️ `test:e2e:ci` command should launch tests on the generated build production. For now, it launches the vite dev server, otherwise the code coverage report is not generated and the next ci command `npx nyc report` will trigger an error.
 
+## 🖋️ Translations i18n
+
+In Lux v4 standalone, local files `app.fr.json` and `client.fr.json` are used.
+
+- `app.fr.json` contains both specific i18n from v4 that does not exists in v3 (eg. title, aria label, etc) and the content of the original v3 app.fr.json
+- `client.fr.json` contains the same key/values as in v3 (it is a copy), update this file whenever there is an update in v3.
+
+When Lux is used in lib mode 📦, it is possible to oerride i18next configuration to customize file paths to get translations from v3 directly (instead of delivering both v4 and v3 i18n files).
+
 ## 📦 Build as a lib for integration (in geoportal v3)
 
 In order to use the new Lux components made with Vuejs as an external dep, follow steps below.
