@@ -26,6 +26,15 @@ $ npm run start
 
 A `.prettierignore` file is used by prettier and lint to exclude some files (such as the built bundle, the lib files, or the fixtures, ...).
 
+## ⚙️ .env files and modes
+
+- `.env` used for production mode, for now, production mode is available only for building the lib (to be included in v3, on production or on migration platform)
+- `.env.development` used for development mode, v4 pure standalone app
+- `.env.e2e` use for e2e mode, v4 pure standalone app but for e2e testing
+- `.env.staging` used for development, staging mode, used while the lib is build in dev mode (include v4 in v3 as a lib and test locally on `http://localhost:8080/dev/main.html`)
+
+⚠️ It's important to note that `NODE_ENV` (`process.env.NODE_ENV`) and modes are two different concepts. See: https://vitejs.dev/guide/env-and-mode
+
 ## 💉 Test
 
 ### Unit testing

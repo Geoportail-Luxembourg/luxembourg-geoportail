@@ -94,4 +94,3 @@ onUnmounted(() => window.removeEventListener('resize', map.resize))
     <alert-notifications />
   </div>
 </template>
-@/services/state-persistor/state-persistor-app.service

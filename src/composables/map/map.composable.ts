@@ -18,6 +18,7 @@ export const PROJECTION_WEBMERCATOR = 'EPSG:3857'
 export const PROJECTION_WGS84 = 'EPSG:4326'
 export const PROJECTION_LUX = 'EPSG:2169'
 const MAX_EXTENT = JSON.parse(import.meta.env.VITE_DEFAULT_MAX_EXTENT)
+const DEFAULT_VIEW_ZOOM = parseInt(import.meta.env.VITE_DEFAULT_VIEW_ZOOM, 10)
 
 let map: OlMap
 const olMap: ShallowRef<OlMap | undefined> = shallowRef()
@@ -40,7 +41,7 @@ export default function useMap() {
         enableRotation: true,
         extent: transformExtent(MAX_EXTENT, 'EPSG:4326', 'EPSG:3857'),
         multiWorld: false,
-        zoom: 8,
+        zoom: DEFAULT_VIEW_ZOOM,
       }),
       controls: [],
       keyboardEventTarget: document, // Very important for listening keyboard events when drawing in v3!
@@ -196,6 +197,6 @@ export default function useMap() {
     getRemovedLayers,
     getMutatedLayers,
     getMutationType,
-    resize
+    resize,
   }
 }

@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { onMounted, provide, ref, watch, watchEffect } from 'vue'
+import { onMounted, provide, ref, watchEffect } from 'vue'
 import { storeToRefs } from 'pinia'
 
 import { useAppStore } from '@/stores/app.store'
@@ -48,10 +48,16 @@ onMounted(() => {
 
 watchEffect(() => {
   if (mapContainer.value && embedded.value) {
+    // Specific to v3 when embedded mode:
+    // wait for 1000ms = wait for angular to end drawing component
+    // Otherwise, map height won't fit (angular has not yet finished removing header and footer in the dom,
+    // resulting in an unwanted gutter when mode ise embedded)
+    // Timer is to be removed when standalone fully fonctionnal
+    const ms = import.meta.env.VITE_MODE_LIB === 'true' ? 1000 : 0
+
     setTimeout(() => {
-      console.log("setTimeout DO RESIZE")
       map.resize()
-    }, 100)
+    }, ms)
   }
 })
 

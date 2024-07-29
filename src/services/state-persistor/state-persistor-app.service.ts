@@ -58,5 +58,4 @@ class StatePersistorAppService {
   }
 }
 
-export const statePersistorAppService =
-  new StatePersistorAppService()
+export const statePersistorAppService = new StatePersistorAppService()
