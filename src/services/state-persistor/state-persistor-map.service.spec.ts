@@ -117,7 +117,10 @@ describe('StatePersistorMapService', () => {
     })
 
     describe('when there is not value in storage', () => {
-      const defaultViewZoom = import.meta.env.VITE_DEFAULT_VIEW_ZOOM
+      const defaultViewZoom = parseInt(
+        import.meta.env.VITE_DEFAULT_VIEW_ZOOM,
+        10
+      )
 
       it('restores the view center with default value when no X,Y found in storage', () => {
         statePersistorMapService.restore()
