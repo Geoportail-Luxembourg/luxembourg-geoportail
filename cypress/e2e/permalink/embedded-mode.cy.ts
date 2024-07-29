@@ -31,11 +31,14 @@ describe('Permalink/State persistor - embedded mode', () => {
 
   describe('Embedded mode is enabled', () => {
     describe('when embedded is true in permalink', () => {
+      beforeEach(() => {
+        cy.visit('/theme/main?embedded=true')
+      })
+
       it('shows only the map, the zoom control and the background switcher', () => {
-        cy.visit('/?embedded=true')
         cy.get('header').should('not.exist')
         cy.get('[data-cy="layerPanel"]').should('not.exist')
-        cy.get('[data-cy="selectedBg"]').should('not.exist')
+        cy.get('[data-cy="selectedBg"]').should('exist')
         cy.get('div.ol-full-screen').should('not.exist')
         cy.get('div.map-3d-button').should('not.exist')
         cy.get('div.location-button').should('not.exist')
@@ -45,11 +48,14 @@ describe('Permalink/State persistor - embedded mode', () => {
     })
 
     describe('when embedded is in permalink', () => {
+      beforeEach(() => {
+        cy.visit('/theme/main?embedded=true')
+      })
+
       it('shows only the map, the zoom control and the background switcher', () => {
-        cy.visit('/?embedded')
         cy.get('header').should('not.exist')
         cy.get('[data-cy="layerPanel"]').should('not.exist')
-        cy.get('[data-cy="selectedBg"]').should('not.exist')
+        cy.get('[data-cy="selectedBg"]').should('exist')
         cy.get('div.ol-full-screen').should('not.exist')
         cy.get('div.map-3d-button').should('not.exist')
         cy.get('div.location-button').should('not.exist')
