@@ -39,7 +39,7 @@ statePersistorStyleService.bootstrap()
 statePersistorBgLayerService.bootstrap()
 mvtStyleService.initBackgroundsConfigs()
 
-const { layersOpen, myMapsOpen, styleEditorOpen } = storeToRefs(appStore)
+const { embedded, layersOpen, myMapsOpen, styleEditorOpen } = storeToRefs(appStore)
 
 watch(layersOpen, timeoutResizeMap)
 watch(styleEditorOpen, timeoutResizeMap)
@@ -55,42 +55,37 @@ onUnmounted(() => window.removeEventListener('resize', map.resize))
 
 <template>
   <div class="h-screen flex flex-col overflow-hidden">
-    <header-bar />
+    <header-bar v-if="!embedded" />
 
     <main class="flex grow">
       <!-- Layer panel -->
       <div
-        v-if="layersOpen && !styleEditorOpen"
+        v-if="layersOpen && !styleEditorOpen && !embedded"
         class="w-full sm:w-80 bg-secondary z-10"
       >
         <layer-panel />
       </div>
 
       <!-- Style editor -->
-      <div v-if="styleEditorOpen" class="w-full sm:w-80 bg-secondary z-10">
-        <style-panel />
-      </div>
-
-      <!-- MyMaps panel -->
-      <div v-if="myMapsOpen" class="w-full sm:w-80 bg-secondary z-10">
-        <my-maps-panel />
+      <div v-if="styleEditorOpen && !embedded" class="w-80 bg-primary">
+        <style-selector />
       </div>
 
       <!-- Map container and slider comparator -->
       <div class="map-wrapper grow bg-blue-100 relative">
         <map-container :v4_standalone="true" />
-        <slider-comparator class="absolute top-0" />
-        <remote-layers />
-        <layer-metadata />
+        <slider-comparator v-if="!embedded" class="absolute top-0" />
+        <remote-layers v-if="!embedded" />
+        <layer-metadata v-if="!embedded" />
       </div>
 
       <!-- Background selector -->
-      <div class="absolute right-1 top-16">
+      <div class="absolute right-1" :class="embedded ? 'top-2' : 'top-16'">
         <background-selector />
       </div>
     </main>
 
-    <footer-bar class="fixed bottom-5 sm:static z-20" />
-    <alert-notifications />
+    <footer-bar v-if="!embedded" class="fixed bottom-5 sm:static z-20" />
+    <alert-notifications v-if="!embedded" />
   </div>
 </template>
