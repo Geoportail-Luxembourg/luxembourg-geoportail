@@ -35,7 +35,11 @@ class StatePersistorStyleService {
         (value, oldValue) => {
           if (oldValue !== value) {
             const mapStore = useMapStore()
-            if (mapStore.bgLayer) {
+            // check if current layer is a vector layer
+            if (
+              mapStore.bgLayer &&
+              styleStore.bgVectorSources.has(mapStore.bgLayer.id)
+            ) {
               storageHelper.setValue(
                 mapStore.bgLayer.name,
                 value || [],
