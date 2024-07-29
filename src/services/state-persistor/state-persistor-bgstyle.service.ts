@@ -40,11 +40,15 @@ class StatePersistorStyleService {
               mapStore.bgLayer &&
               styleStore.bgVectorSources.has(mapStore.bgLayer.id)
             ) {
-              storageHelper.setValue(
-                mapStore.bgLayer.name,
-                value || [],
-                storageStyleMapper.styleToLocalStorage
-              )
+              if (value && value.length) {
+                storageHelper.setValue(
+                  mapStore.bgLayer.name,
+                  value || [],
+                  storageStyleMapper.styleToLocalStorage
+                )
+              } else {
+                storageHelper.removeItem(mapStore.bgLayer.name)
+              }
               storageHelper.setValue(
                 SP_KEY_SERIAL,
                 value || [],
