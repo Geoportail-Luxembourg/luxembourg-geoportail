@@ -43,7 +43,7 @@ class StatePersistorAppService {
 
   restoreEmbeddedMode() {
     const embbeded = <boolean>(
-      (storageHelper.getValue(SP_KEY_EMBEDDED) !== 'false')
+      (storageHelper.getValue(SP_KEY_EMBEDDED) === 'true')
     )
     const { embedded } = storeToRefs(useAppStore())
     embedded.value = embbeded
