@@ -31,8 +31,22 @@ describe('Permalink/State persistor - embedded mode', () => {
 
   describe('Embedded mode is enabled', () => {
     describe('when embedded is true in permalink', () => {
-      it('opens full app with all components', () => {
+      it('shows only the map, the zoom control and the background switcher', () => {
         cy.visit('/?embedded=true')
+        cy.get('header').should('not.exist')
+        cy.get('[data-cy="layerPanel"]').should('not.exist')
+        cy.get('[data-cy="selectedBg"]').should('not.exist')
+        cy.get('div.ol-full-screen').should('not.exist')
+        cy.get('div.map-3d-button').should('not.exist')
+        cy.get('div.location-button').should('not.exist')
+        cy.get('[data-cy="attributionControl"]').should('not.exist')
+        cy.get('footer').should('not.exist')
+      })
+    })
+
+    describe('when embedded is in permalink', () => {
+      it('shows only the map, the zoom control and the background switcher', () => {
+        cy.visit('/?embedded')
         cy.get('header').should('not.exist')
         cy.get('[data-cy="layerPanel"]').should('not.exist')
         cy.get('[data-cy="selectedBg"]').should('not.exist')

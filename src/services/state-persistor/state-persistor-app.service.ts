@@ -42,11 +42,12 @@ class StatePersistorAppService {
   }
 
   restoreEmbeddedMode() {
-    const embbeded = <boolean>(
-      (storageHelper.getValue(SP_KEY_EMBEDDED) === 'true')
+    const embbededStorage = storageHelper.getValue(SP_KEY_EMBEDDED)
+    const embbededEnabled = <boolean>(
+      (embbededStorage !== null && embbededStorage !== 'false')
     )
     const { embedded } = storeToRefs(useAppStore())
-    embedded.value = embbeded
+    embedded.value = embbededEnabled
   }
 
   restoreLayersOpen() {
