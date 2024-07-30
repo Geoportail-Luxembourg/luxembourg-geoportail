@@ -11,13 +11,12 @@ jobs:
         id: create_release
         uses: octokit/request-action@v2.x
         with:
+          # secrets.GITHUB_TOKEN is a secret only valid for one CI execution
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           route: POST /repos/{owner}/{repo}/releases
-          # headers:
           owner: 'Geoportail-Luxembourg'
           repo: 'luxembourg-geoportail'
           tag_name: ${{ github.ref }}
-          # target_committish: ${{ github.ref }}
       - uses: actions/checkout@v3
         with:
           persist-credentials: false
@@ -31,12 +30,16 @@ jobs:
         shell: bash
         run: npm run build:lib:prod
 
-      - name: Tar prod library
-        shell: bash
-        run: tar -czvf bundle.tgz bundle
+      - name: manually create npm package
+        run: |
+          tar --transform="s|bundle|package/bundle|" -rvf luxembourg-geoportail-0.0.0-dev.tar bundle
+          tar --transform="s|src/bundle/package_without_deps|package/package|" -rvf luxembourg-geoportail-0.0.0-dev.tar src/bundle/package_without_deps.json
+          tar --transform="s|README.md|package/README.md|" -rvf luxembourg-geoportail-0.0.0-dev.tar README.md
+          tar --transform="s|LICENSE|package/LICENSE|" -rvf luxembourg-geoportail-0.0.0-dev.tar LICENSE
+          gzip luxembourg-geoportail-0.0.0-dev.tar
 
       - name: upload manually
-        run: 'curl -X POST "https://uploads.github.com/repos/$owner/$repo/releases/$id/assets?name=bundle.tgz" --header "Authorization: Bearer ${{ secrets.GITHUB_TOKEN }}" -H "Content-Type: application/octet-stream" --data-binary "@bundle.tgz"'
+        run: 'curl -X POST "https://uploads.github.com/repos/$owner/$repo/releases/$id/assets?name=luxembourg-geoportail-0.0.0-dev.tar.gz" --header "Authorization: Bearer ${{ secrets.GITHUB_TOKEN }}" -H "Content-Type: application/octet-stream" --data-binary "@luxembourg-geoportail-0.0.0-dev.tar.gz"'
         env:
           owner: 'Geoportail-Luxembourg'
           repo: 'luxembourg-geoportail'
