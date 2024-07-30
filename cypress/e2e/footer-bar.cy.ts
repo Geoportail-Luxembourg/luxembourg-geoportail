@@ -38,9 +38,9 @@ describe('Footer bar', () => {
           cy.get('[data-cy="layersOpenClose"]').find('button').click()
         })
 
-        it('closes the left panel', () => {
+        it('closes the style selector and goes back to layer panel', () => {
           cy.get('[data-cy="styleSelector"]').should('not.exist')
-          cy.get('[data-cy="layerPanel"]').should('not.exist')
+          cy.get('[data-cy="layerPanel"]').should('exist')
         })
       })
     })
