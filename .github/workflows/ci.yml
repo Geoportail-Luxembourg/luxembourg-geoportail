@@ -27,10 +27,10 @@ jobs:
           # headers:
           owner: 'Geoportail-Luxembourg'
           repo: 'luxembourg-geoportail'
-          tag_name: 'CI_${{ github.event.pull_request.head.ref }}_${{ github.event.pull_request.head.sha }}'
+          tag_name: 'CI_${{ github.event.pull_request.head.sha }}'
           target_committish: ${{ github.event.pull_request.head.sha }}
       - name: show release
-        run: 'echo outputs ${{ steps.create_release.outputs }}'
+        run: 'echo outputs ${{ toJson(steps.create_release.outputs) }}'
 
       # - uses: actions/checkout@v3
       #   with:
