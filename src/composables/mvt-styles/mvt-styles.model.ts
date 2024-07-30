@@ -24,11 +24,15 @@ export interface IMvtConfig {
 export type VectorSourceDict = Map<LayerId, IMvtConfig>
 export type VectorStyleDict = Map<LayerId, StyleSpecification>
 
+export enum StyleSection {
+  simpleStyle,
+  mediumStyle,
+  advancedStyle,
+}
+
 export interface StyleCapabilities {
   isEditable: boolean
-  hasSimpleStyle: boolean
-  hasAdvancedStyle: boolean
-  hasExpertStyle: boolean
+  styleEditors: StyleSection[]
 }
 
 export interface SimpleStyle {

@@ -6,25 +6,37 @@ describe('Style selector', () => {
   })
 
   it('renders the style selector properly', () => {
-    cy.get('[data-cy="styleSelector"').should('not.be.hidden')
-    cy.get('[data-cy="styleSelector"')
-      .find('button')
-      .filter(':visible')
-      .should('have.length', 3)
+    cy.get('[data-cy="styleSelector"]').should('not.be.hidden')
+    cy.get('[data-cy="styleSelector"] > div > button').should('have.length', 3)
   })
 
   it('has no style value in localStorage', () => {
     expect(localStorage.getItem('basemap_2015_global')).to.eq('')
   })
 
+  describe('Style panel', () => {
+    describe('When closing the style panel', () => {
+      beforeEach(() => {
+        cy.get('[data-cy="panelClose"]').click()
+      })
+
+      it('closes the style panel', () => {
+        cy.get('[data-cy="styleSelector"]').should('not.exist')
+      })
+
+      it('shows the layer panel', () => {
+        cy.get('[data-cy="layerPanel"]').should('exist')
+      })
+    })
+  })
+
   describe('Simple style selector', () => {
     beforeEach(() => {
-      cy.get('[data-cy="styleSelector"')
+      cy.get('[data-cy="styleSelector"]')
         .find('button')
         .filter(':visible')
         .first()
         .as('simple')
-      cy.get('@simple').click()
     })
     it('renders the simple style selector properly', () => {
       cy.get('@simple')
@@ -49,12 +61,10 @@ describe('Style selector', () => {
 
   describe('Medium style selector', () => {
     beforeEach(() => {
-      cy.get('[data-cy="styleSelector"')
-        .find('button')
-        .filter(':visible')
+      cy.get('[data-cy="styleSelector"] > div > button')
         .eq(1)
         .as('medium')
-      cy.get('@medium').click()
+        .click()
     })
     it('renders the medium style selector properly', () => {
       cy.get('@medium')

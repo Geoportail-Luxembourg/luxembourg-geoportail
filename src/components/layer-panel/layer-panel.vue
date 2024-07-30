@@ -5,6 +5,7 @@ import { useTranslation } from 'i18next-vue'
 
 import CatalogTab from '@/components/catalog/catalog-tab.vue'
 import LayerManager from '@/components/layer-manager/layer-manager.vue'
+import SidePanelLayout from '@/components/common/side-panel-layout.vue'
 import { useAppStore } from '@/stores/app.store'
 import { useMapStore } from '@/stores/map.store'
 import useOffline from '@/composables/offline/offline.composable'
@@ -29,23 +30,19 @@ function onDisplayCatalog() {
 </script>
 
 <template>
-  <div data-cy="layerPanel" class="flex flex-col h-full pt-1.5">
+  <side-panel-layout
+    :data-cy-value="'layerPanel'"
+    :close-fn="() => setLayersOpen(false)"
+  >
     <!-- Panel title and close button -->
-    <div class="h-16 shrink-0 flex justify-between lux-panel-title">
+    <template v-slot:header>
       <h1>
         {{ t('layers', { ns: 'client' }) }}
       </h1>
-      <span
-        ><button
-          @click="() => setLayersOpen(false)"
-          :aria-label="t('Close', { ns: 'client' })"
-          class="fa-sharp fa-solid fa-close"
-        ></button
-      ></span>
-    </div>
+    </template>
 
     <!-- My Layers and Catalog tab labels -->
-    <div class="flex flex-row gap-2 h-10 text-2xl">
+    <template v-slot:tabs>
       <button
         data-cy="myLayersButton"
         @click="onClickMyLayers"
@@ -66,16 +63,16 @@ function onDisplayCatalog() {
       >
         {{ t('Catalog', { ns: 'client' }) }}
       </button>
-    </div>
+    </template>
 
     <!-- Panel content (MyLayers and Catalog) -->
-    <div class="relative grow p-2.5 bg-primary overflow-auto">
+    <template v-slot:content>
       <layer-manager
         data-cy="myLayers"
         v-if="showMyLayersTab"
         @display-catalog="onDisplayCatalog"
       ></layer-manager>
       <catalog-tab v-if="!showMyLayersTab"></catalog-tab>
-    </div>
-  </div>
+    </template>
+  </side-panel-layout>
 </template>

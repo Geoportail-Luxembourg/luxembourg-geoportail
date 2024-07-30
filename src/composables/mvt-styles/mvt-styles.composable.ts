@@ -9,6 +9,7 @@ import {
   VectorStyleDict,
   StyleSpecification,
   IMvtConfig,
+  StyleSection,
 } from '@/composables/mvt-styles/mvt-styles.model'
 import { useStyleStore } from '@/stores/style.store'
 import { styleUrlHelper } from '@/services/styleurl/styleurl.helper'
@@ -293,11 +294,15 @@ export default function useMvtStyles() {
     bgLayer: Layer | undefined | null
   ): StyleCapabilities {
     const bgLayerDef = getBgLayerDef(bgLayer)
+    const styleEditors: StyleSection[] = [
+      ...(bgLayerDef?.simple_style_class ? [StyleSection.simpleStyle] : []),
+      ...(bgLayerDef?.medium_style_class ? [StyleSection.mediumStyle] : []),
+      ...(bgLayerDef?.expert_style_class ? [StyleSection.advancedStyle] : []),
+    ]
+
     return {
       isEditable: bgLayerDef?.vector_id !== undefined,
-      hasSimpleStyle: bgLayerDef?.simple_style_class !== undefined,
-      hasAdvancedStyle: bgLayerDef?.medium_style_class !== undefined,
-      hasExpertStyle: bgLayerDef?.expert_style_class !== undefined,
+      styleEditors,
     }
   }
 
