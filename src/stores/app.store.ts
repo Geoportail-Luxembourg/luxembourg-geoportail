@@ -1,16 +1,11 @@
 import { Ref, ref } from 'vue'
 import { acceptHMRUpdate, defineStore } from 'pinia'
+import { StyleSection } from '@/composables/mvt-styles/mvt-styles.model'
 
 export const DEFAULT_LANG = 'fr'
 export const DEFAULT_LAYER_PANEL_OPENED = true
 export const DEFAULT_MY_LAYERS_TAB_OPENED = false
 export const DEFAULT_THEME_GRID_OPENED = false
-
-export type openedPanel =
-  | undefined
-  | 'simpleStyle'
-  | 'mediumStyle'
-  | 'advancedStyle'
 
 export const useAppStore = defineStore(
   'app',
@@ -22,7 +17,8 @@ export const useAppStore = defineStore(
     const mapId: Ref<string | undefined> = ref() // => MyMaps map id
     const remoteLayersOpen = ref()
     const styleEditorOpen = ref(false)
-    const styleEditorCurrentOpenPanel: Ref<openedPanel> = ref(undefined)
+    const styleEditorOpenedSection: Ref<StyleSection | undefined> =
+      ref(undefined)
     const drawToolbarOpen = ref(false)
     const isOffLine = ref(false)
 
@@ -71,7 +67,7 @@ export const useAppStore = defineStore(
       themeGridOpen,
       mapId,
       styleEditorOpen,
-      styleEditorCurrentOpenPanel,
+      styleEditorOpenedSection,
       remoteLayersOpen,
       drawToolbarOpen,
       setLang,
