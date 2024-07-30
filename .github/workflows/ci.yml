@@ -30,7 +30,13 @@ jobs:
           tag_name: 'CI_${{ github.event.pull_request.head.sha }}'
           target_committish: ${{ github.event.pull_request.head.sha }}
       - name: show release
-        run: "echo '${{ steps.create_release.outputs.data }} ${{ toJson(steps.create_release.outputs.data) }} ${{ toJson(steps.create_release.outputs.data).id }}'"
+        run: "echo '${{ steps.create_release.outputs.data }}'"
+      - name: show2
+        run: "echo '${{ steps.create_release.outputs.data.value }}'"
+      - name: show3
+        run: "echo '${{ toJson(steps.create_release.outputs.data.value) }}'"
+      - name: show4
+        run: "echo '${{ steps.create_release.outputs.data.value.id }}'"
         # run: "echo '${{ steps.create_release.outputs.data.assets_url }} ${{ steps.create_release.outputs.data.id }}'"
 
       - name: attach PJ for release id ${{ steps.create_release.outputs.data.id }}
