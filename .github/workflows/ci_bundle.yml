@@ -31,12 +31,12 @@ jobs:
         shell: bash
         run: npm run build:lib:prod
 
-      - name: Zip prod library
+      - name: Tar prod library
         shell: bash
-        run: zip -r bundle.zip bundle
+        run: tar -czvf bundle.tgz bundle
 
       - name: upload manually
-        run: 'curl -X POST "https://uploads.github.com/repos/$owner/$repo/releases/$id/assets?name=bundle.zip" --header "Authorization: Bearer ${{ secrets.GITHUB_TOKEN }}" -H "Content-Type: application/octet-stream" --data-binary "@bundle.zip"'
+        run: 'curl -X POST "https://uploads.github.com/repos/$owner/$repo/releases/$id/assets?name=bundle.tgz" --header "Authorization: Bearer ${{ secrets.GITHUB_TOKEN }}" -H "Content-Type: application/octet-stream" --data-binary "@bundle.tgz"'
         env:
           owner: 'Geoportail-Luxembourg'
           repo: 'luxembourg-geoportail'
