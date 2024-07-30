@@ -13,6 +13,7 @@ import LayerMetadata from '@/components/layer-metadata/layer-metadata.vue'
 import BackgroundSelector from '@/components/background-selector/background-selector.vue'
 import LayerPanel from '@/components/layer-panel/layer-panel.vue'
 import StylePanel from '@/components/style-selector/style-panel.vue'
+import MyMapsPanel from '@/components/my-maps/my-maps-panel.vue'
 import MapContainer from '@/components/map/map-container.vue'
 import SliderComparator from '@/components/slider/slider-comparator.vue'
 
@@ -40,10 +41,11 @@ statePersistorStyleService.bootstrapStyle()
 statePersistorBgLayerService.bootstrap()
 mvtStyleService.initBackgroundsConfigs()
 
-const { layersOpen, styleEditorOpen } = storeToRefs(appStore)
+const { layersOpen, myMapsOpen, styleEditorOpen } = storeToRefs(appStore)
 
 watch(layersOpen, timeoutResizeMap)
 watch(styleEditorOpen, timeoutResizeMap)
+watch(myMapsOpen, timeoutResizeMap)
 
 onMounted(() => window.addEventListener('resize', resizeMap))
 onUnmounted(() => window.removeEventListener('resize', resizeMap))
@@ -90,6 +92,11 @@ function resizeMap() {
       <!-- Style editor -->
       <div v-if="styleEditorOpen" class="w-full sm:w-80 bg-secondary z-10">
         <style-panel />
+      </div>
+
+      <!-- MyMaps panel -->
+      <div v-if="myMapsOpen" class="w-full sm:w-80 bg-secondary z-10">
+        <my-maps-panel />
       </div>
 
       <!-- Map container and slider comparator -->

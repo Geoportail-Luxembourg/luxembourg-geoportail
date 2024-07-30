@@ -6,6 +6,7 @@ export const DEFAULT_LANG = 'fr'
 export const DEFAULT_LAYER_PANEL_OPENED = true
 export const DEFAULT_MY_LAYERS_TAB_OPENED = false
 export const DEFAULT_THEME_GRID_OPENED = false
+export const DEFAULT_MYMAPS_OPENED = false
 
 export const useAppStore = defineStore(
   'app',
@@ -15,6 +16,7 @@ export const useAppStore = defineStore(
     const myLayersTabOpen = ref(DEFAULT_MY_LAYERS_TAB_OPENED)
     const themeGridOpen = ref(DEFAULT_THEME_GRID_OPENED)
     const mapId: Ref<string | undefined> = ref() // => MyMaps map id
+    const myMapsOpen = ref(DEFAULT_MYMAPS_OPENED)
     const remoteLayersOpen = ref()
     const styleEditorOpen = ref(false)
     const styleEditorOpenedSection: Ref<StyleSection | undefined> =
@@ -60,12 +62,22 @@ export const useAppStore = defineStore(
       drawToolbarOpen.value = open
     }
 
+    function toggleMyMapsOpen(open?: boolean) {
+      myMapsOpen.value = open ?? !myMapsOpen.value
+
+      if (myMapsOpen.value) {
+        styleEditorOpen.value = false
+        layersOpen.value = false
+      }
+    }
+
     return {
       lang,
       layersOpen,
       myLayersTabOpen,
       themeGridOpen,
       mapId,
+      myMapsOpen,
       styleEditorOpen,
       styleEditorOpenedSection,
       remoteLayersOpen,
@@ -80,6 +92,7 @@ export const useAppStore = defineStore(
       closeStyleEditorPanel,
       setDrawToolbarOpen,
       isOffLine,
+      toggleMyMapsOpen,
     }
   },
   {}
