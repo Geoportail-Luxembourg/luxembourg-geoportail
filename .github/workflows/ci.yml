@@ -12,41 +12,6 @@ jobs:
   lux-deploy:
     runs-on: ubuntu-latest
     steps:
-      - name: print hash ${GITHUB_SHA} ${{ github.event.pull_request.head.sha }}
-        run: 'echo ${{ github.event.pull_request.base.ref }} ${{ github.event.pull_request.head.ref }} ${{ github.event.pull_request.head.sha }}'
-      - name: Show GitHub context
-        env:
-          GITHUB_CONTEXT: ${{ toJson(github) }}
-        run: echo "$GITHUB_CONTEXT"
-      - name: create release
-        id: create_release
-        uses: octokit/request-action@v2.x
-        with:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-          route: POST /repos/{owner}/{repo}/releases
-          # headers:
-          owner: 'Geoportail-Luxembourg'
-          repo: 'luxembourg-geoportail'
-          tag_name: 'CI_${{ github.event.pull_request.head.sha }}_${{ github.event.pull_request.head.ref }}'
-          target_committish: ${{ github.event.pull_request.head.ref }}
-      - name: show release
-        run: "echo '${{ fromJSON(steps.create_release.outputs.data).id }}'"
-
-      - name: attach PJ for release id ${{ fromJSON(steps.create_release.outputs.data).id }}
-        uses: octokit/request-action@v2.x
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        with:
-          route: POST https://uploads.github.com/repos/{owner}/{repo}/releases/{id}/assets?name=test
-          # headers:
-          owner: 'Geoportail-Luxembourg'
-          repo: 'luxembourg-geoportail'
-          id: ${{ fromJSON(steps.create_release.outputs.data).id }}
-          headers: 'Content-Type: text:plain'
-          mediaType: | # The | is significant!
-            format: raw
-          body: 'bla'
-
       - uses: actions/checkout@v3
         with:
           persist-credentials: false
@@ -105,18 +70,3 @@ jobs:
             * Luxembourg-geoportail: https://geoportail-luxembourg.github.io/luxembourg-geoportail/${{env.BRANCH_NAME}}/'
           comment_includes: 'GitHub Pages links:'
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-
-      - name: Build prod library
-        shell: bash
-        run: npm run build:lib:prod
-
-      - name: BuildZip prod library
-        shell: bash
-        run: zip -r bundle.zip bundle
-
-      - name: upload manually
-        run: 'curl -X POST "https://uploads.github.com/repos/$owner/$repo/releases/$id/assets?name=bundle.zip" --header "Authorization: Bearer ${{ secrets.GITHUB_TOKEN }}" -H "Content-Type: application/octet-stream" --data-binary "@bundle.zip"'
-        env:
-          owner: 'Geoportail-Luxembourg'
-          repo: 'luxembourg-geoportail'
-          id: ${{ fromJSON(steps.create_release.outputs.data).id }}

@@ -1,0 +1,43 @@
+name: CI
+on:
+  push:
+    tags:
+      - '*'
+jobs:
+  lux-package:
+    runs-on: ubuntu-latest
+    steps:
+      - name: create release
+        id: create_release
+        uses: octokit/request-action@v2.x
+        with:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          route: POST /repos/{owner}/{repo}/releases
+          # headers:
+          owner: 'Geoportail-Luxembourg'
+          repo: 'luxembourg-geoportail'
+          tag_name: 'CI_${{ github.ref }}'
+          target_committish: ${{ github.ref }}
+      - uses: actions/checkout@v3
+        with:
+          persist-credentials: false
+          fetch-depth: 0
+      - uses: actions/setup-node@v3
+        with:
+          node-version: 16
+          cache: 'npm'
+      - run: npm ci
+      - name: Build prod library
+        shell: bash
+        run: npm run build:lib:prod
+
+      - name: Zip prod library
+        shell: bash
+        run: zip -r bundle.zip bundle
+
+      - name: upload manually
+        run: 'curl -X POST "https://uploads.github.com/repos/$owner/$repo/releases/$id/assets?name=bundle.zip" --header "Authorization: Bearer ${{ secrets.GITHUB_TOKEN }}" -H "Content-Type: application/octet-stream" --data-binary "@bundle.zip"'
+        env:
+          owner: 'Geoportail-Luxembourg'
+          repo: 'luxembourg-geoportail'
+          id: ${{ fromJSON(steps.create_release.outputs.data).id }}
