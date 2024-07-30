@@ -12,9 +12,12 @@ jobs:
   lux-deploy:
     runs-on: ubuntu-latest
     steps:
-      - name: print hash ${GITHUB_SHA}
-        run: 'echo ${{env.BRANCH_NAME}} ${{env.GITHUB_SHA}}'
-
+      - name: print hash ${GITHUB_SHA} ${{ github.event.pull_request.head.sha }}
+        run: 'echo ${{ github.event.pull_request.base.ref }} ${{ github.event.pull_request.head.ref }} ${{ github.event.pull_request.head.sha }}'
+      - name: Show GitHub context
+        env:
+          GITHUB_CONTEXT: ${{ toJson(github) }}
+          run: echo "$GITHUB_CONTEXT"
       - name: create release
         uses: octokit/request-action@v2.x
         with:
