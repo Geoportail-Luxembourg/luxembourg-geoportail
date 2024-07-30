@@ -45,7 +45,14 @@ jobs:
           headers: 'Content-Type: text:plain'
           mediaType: | # The | is significant!
             format: raw
-          data: 'bla'
+          body: 'bla'
+
+      - name: upload manually
+        run: 'curl -X POST "https://uploads.github.com/repos/{owner}/{repo}/releases/{id}/assets?name=test_bash" --header "Authorization: Bearer ${{ secrets.GITHUB_TOKEN }}" -H "Content-Type: application/octet-stream" --data-binary "blabla"'
+        with:
+          owner: 'Geoportail-Luxembourg'
+          repo: 'luxembourg-geoportail'
+          id: ${{ fromJSON(steps.create_release.outputs.data).id }}
 
       # - uses: actions/checkout@v3
       #   with:
