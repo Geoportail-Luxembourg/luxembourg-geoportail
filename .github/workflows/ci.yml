@@ -30,16 +30,9 @@ jobs:
           tag_name: 'CI_${{ github.event.pull_request.head.sha }}'
           target_committish: ${{ github.event.pull_request.head.sha }}
       - name: show release
-        run: "echo '${{ steps.create_release.outputs.data }}'"
-      - name: show2
-        run: "echo '${{ fromJSON(steps.create_release.outputs.data) }}'"
-      - name: show3
         run: "echo '${{ fromJSON(steps.create_release.outputs.data).id }}'"
-      - name: show4
-        run: "echo '${{ toJSON(steps.create_release.outputs.data) }}'"
-        # run: "echo '${{ steps.create_release.outputs.data.assets_url }} ${{ steps.create_release.outputs.data.id }}'"
 
-      - name: attach PJ for release id ${{ steps.create_release.outputs.data.id }}
+      - name: attach PJ for release id ${{ fromJSON(steps.create_release.outputs.data).id }}
         uses: octokit/request-action@v2.x
         with:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
@@ -47,7 +40,7 @@ jobs:
           # headers:
           owner: 'Geoportail-Luxembourg'
           repo: 'luxembourg-geoportail'
-          id: ${{ steps.create_release.outputs.data.id }}
+          id: fromJSON(steps.create_release.outputs.data).id
           headers: 'Content-Type: text:plain'
           body: 'bla'
 
