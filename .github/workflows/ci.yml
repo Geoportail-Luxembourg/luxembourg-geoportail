@@ -40,7 +40,7 @@ jobs:
           # headers:
           owner: 'Geoportail-Luxembourg'
           repo: 'luxembourg-geoportail'
-          id: fromJSON(steps.create_release.outputs.data).id
+          id: ${{ fromJSON(steps.create_release.outputs.data).id }}
           headers: 'Content-Type: text:plain'
           body: 'bla'
 
