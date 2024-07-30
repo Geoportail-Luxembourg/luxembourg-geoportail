@@ -32,6 +32,18 @@ jobs:
       - name: show release
         run: "printf 'outputs ${{ toJson(steps.create_release.outputs) }}'"
 
+      - name: attach PJ for release id ${{ steps.create_release.outputs.data.id }}
+        uses: octokit/request-action@v2.x
+        with:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          route: POST https://uploads.github.com/repos/{owner}/{repo}/releases/{id}/assets?name=test
+          # headers:
+          owner: 'Geoportail-Luxembourg'
+          repo: 'luxembourg-geoportail'
+          id: ${{ steps.create_release.outputs.data.id }}
+          headers: 'Content-Type: text:plain'
+          body: 'bla'
+
       # - uses: actions/checkout@v3
       #   with:
       #     persist-credentials: false
