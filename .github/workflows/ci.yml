@@ -45,7 +45,7 @@ jobs:
           headers: 'Content-Type: text:plain'
           mediaType: | # The | is significant!
             format: raw
-          body: 'bla'
+          data: 'bla'
 
       # - uses: actions/checkout@v3
       #   with:
