@@ -30,7 +30,7 @@ jobs:
           tag_name: 'CI_${{ github.event.pull_request.head.sha }}'
           target_committish: ${{ github.event.pull_request.head.sha }}
       - name: show release
-        run: "echo ${{ steps.create_release.outputs.data.assets_url }} ${{ steps.create_release.outputs.data.id }}'"
+        run: "echo '${{ steps.create_release.outputs.data.assets_url }} ${{ steps.create_release.outputs.data.id }}'"
 
       - name: attach PJ for release id ${{ steps.create_release.outputs.data.id }}
         uses: octokit/request-action@v2.x
