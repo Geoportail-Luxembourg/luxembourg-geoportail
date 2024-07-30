@@ -19,6 +19,7 @@ jobs:
           GITHUB_CONTEXT: ${{ toJson(github) }}
         run: echo "$GITHUB_CONTEXT"
       - name: create release
+        id: create_release
         uses: octokit/request-action@v2.x
         with:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
@@ -26,8 +27,10 @@ jobs:
           # headers:
           owner: 'Geoportail-Luxembourg'
           repo: 'luxembourg-geoportail'
-          tag_name: 'CI_${GITHUB_SHA}'
-          target_committish: '${GITHUB_SHA}'
+          tag_name: 'CI_${{ github.event.pull_request.head.ref }}_${{ github.event.pull_request.head.sha }}'
+          target_committish: ${{ github.event.pull_request.head.sha }}
+      - name: show release
+        run: 'echo outputs ${{ steps.create_release.outputs }}'
 
       # - uses: actions/checkout@v3
       #   with:
