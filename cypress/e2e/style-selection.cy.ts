@@ -7,10 +7,7 @@ describe('Style selector', () => {
 
   it('renders the style selector properly', () => {
     cy.get('[data-cy="styleSelector"]').should('not.be.hidden')
-    cy.get('[data-cy="styleSelector"]')
-      .find('button')
-      .filter(':visible')
-      .should('have.length', 3)
+    cy.get('[data-cy="styleSelector"] > div > button').should('have.length', 3)
   })
 
   it('has no style value in localStorage', () => {
@@ -40,7 +37,6 @@ describe('Style selector', () => {
         .filter(':visible')
         .first()
         .as('simple')
-      cy.get('@simple').click()
     })
     it('renders the simple style selector properly', () => {
       cy.get('@simple')
@@ -65,12 +61,10 @@ describe('Style selector', () => {
 
   describe('Medium style selector', () => {
     beforeEach(() => {
-      cy.get('[data-cy="styleSelector"]')
-        .find('button')
-        .filter(':visible')
+      cy.get('[data-cy="styleSelector"] > div > button')
         .eq(1)
         .as('medium')
-      cy.get('@medium').click()
+        .click()
     })
     it('renders the medium style selector properly', () => {
       cy.get('@medium')
