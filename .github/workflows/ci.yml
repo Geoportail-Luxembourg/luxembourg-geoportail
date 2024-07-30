@@ -35,13 +35,15 @@ jobs:
       - name: attach PJ for release id ${{ fromJSON(steps.create_release.outputs.data).id }}
         uses: octokit/request-action@v2.x
         with:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          # GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           route: POST https://uploads.github.com/repos/{owner}/{repo}/releases/{id}/assets?name=test
           # headers:
           owner: 'Geoportail-Luxembourg'
           repo: 'luxembourg-geoportail'
           id: ${{ fromJSON(steps.create_release.outputs.data).id }}
           headers: 'Content-Type: text:plain'
+          mediaType: | # The | is significant!
+            format: raw
           body: 'bla'
 
       # - uses: actions/checkout@v3
