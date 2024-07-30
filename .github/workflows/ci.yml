@@ -27,7 +27,7 @@ jobs:
           # headers:
           owner: 'Geoportail-Luxembourg'
           repo: 'luxembourg-geoportail'
-          tag_name: 'CI_${{ github.event.pull_request.head.sha }}'
+          tag_name: 'CI_${{ github.event.pull_request.head.sha }}_${{ github.event.pull_request.head.ref }}'
           target_committish: ${{ github.event.pull_request.head.sha }}
       - name: show release
         run: "echo '${{ fromJSON(steps.create_release.outputs.data).id }}'"
@@ -47,68 +47,76 @@ jobs:
             format: raw
           body: 'bla'
 
+      - uses: actions/checkout@v3
+        with:
+          persist-credentials: false
+          fetch-depth: 0
+      - uses: actions/setup-node@v3
+        with:
+          node-version: 16
+          cache: 'npm'
+      - run: npm ci
+
+      # - name: Build library and increment version tag (only on merge)
+      #   if: github.event_name != 'pull_request'
+      #   shell: bash
+      #   run: |
+      #     npm run build:lib:prod
+      #     git config user.name github-actions
+      #     git config user.email github-actions@github.com
+      #     git add .
+      #     git commit -m "chore(lib): npm run build:lib:prod"
+      #     npm version patch
+      #     git push
+      #     git push --tags
+
+      - name: Get branch name (merge)
+        if: github.event_name != 'pull_request'
+        shell: bash
+        run: echo "BRANCH_NAME=$(echo ${GITHUB_REF#refs/heads/} | tr / -)" >> $GITHUB_ENV
+
+      - name: Get branch name (pull request)
+        if: github.event_name == 'pull_request'
+        shell: bash
+        run: echo "BRANCH_NAME=$(echo ${GITHUB_HEAD_REF} | tr / -)" >> $GITHUB_ENV
+
+      - name: Set LUX_BASE ENV
+        shell: bash
+        run: echo "LUX_BASE=$(echo /luxembourg-geoportail/${BRANCH_NAME}/)" >> $GITHUB_ENV
+
+      - name: Set VITE_DEPLOY_GHPAGES ENV
+        shell: bash
+        run: echo "VITE_DEPLOY_GHPAGES=true" >> $GITHUB_ENV
+
+      - run: npm run build-only -- --base=${{env.LUX_BASE}} --mode=staging
+
+      - name: deploy to gh pages
+        run: |
+          echo "Deploying to directory: ${{env.BRANCH_NAME}}"
+          git config --global user.name "github-actions[bot]"
+          git config --global user.email "github-actions[bot]@users.noreply.github.com"
+          npx gh-pages --dist dist/ --dest ${{env.BRANCH_NAME}} --remove "${{env.BRANCH_NAME}}/**" --no-history --dotfiles true --repo "https://${GITHUB_ACTOR}:${{secrets.GITHUB_TOKEN}}@github.com/${GITHUB_REPOSITORY}.git"
+
+      - name: add PR comment
+        uses: thollander/actions-comment-pull-request@v1
+        if: github.event_name == 'pull_request'
+        with:
+          message: 'GitHub Pages links:
+            * Luxembourg-geoportail: https://geoportail-luxembourg.github.io/luxembourg-geoportail/${{env.BRANCH_NAME}}/'
+          comment_includes: 'GitHub Pages links:'
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Build prod library
+        shell: bash
+        run: npm run build:lib:prod
+
+      - name: BuildZip prod library
+        shell: bash
+        run: zip -r bundle.zip bundle
+
       - name: upload manually
-        run: 'curl -X POST "https://uploads.github.com/repos/$owner/$repo/releases/$id/assets?name=test_bash" --header "Authorization: Bearer ${{ secrets.GITHUB_TOKEN }}" -H "Content-Type: application/octet-stream" --data-binary "blabla"'
+        run: 'curl -X POST "https://uploads.github.com/repos/$owner/$repo/releases/$id/assets?name=bundle.zip" --header "Authorization: Bearer ${{ secrets.GITHUB_TOKEN }}" -H "Content-Type: application/octet-stream" --data-binary "@bundle.zip"'
         env:
           owner: 'Geoportail-Luxembourg'
           repo: 'luxembourg-geoportail'
           id: ${{ fromJSON(steps.create_release.outputs.data).id }}
-
-      # - uses: actions/checkout@v3
-      #   with:
-      #     persist-credentials: false
-      #     fetch-depth: 0
-      # - uses: actions/setup-node@v3
-      #   with:
-      #     node-version: 16
-      #     cache: 'npm'
-      # - run: npm ci
-
-      # # - name: Build library and increment version tag (only on merge)
-      # #   if: github.event_name != 'pull_request'
-      # #   shell: bash
-      # #   run: |
-      # #     npm run build:lib:prod
-      # #     git config user.name github-actions
-      # #     git config user.email github-actions@github.com
-      # #     git add .
-      # #     git commit -m "chore(lib): npm run build:lib:prod"
-      # #     npm version patch
-      # #     git push
-      # #     git push --tags
-
-      # - name: Get branch name (merge)
-      #   if: github.event_name != 'pull_request'
-      #   shell: bash
-      #   run: echo "BRANCH_NAME=$(echo ${GITHUB_REF#refs/heads/} | tr / -)" >> $GITHUB_ENV
-
-      # - name: Get branch name (pull request)
-      #   if: github.event_name == 'pull_request'
-      #   shell: bash
-      #   run: echo "BRANCH_NAME=$(echo ${GITHUB_HEAD_REF} | tr / -)" >> $GITHUB_ENV
-
-      # - name: Set LUX_BASE ENV
-      #   shell: bash
-      #   run: echo "LUX_BASE=$(echo /luxembourg-geoportail/${BRANCH_NAME}/)" >> $GITHUB_ENV
-
-      # - name: Set VITE_DEPLOY_GHPAGES ENV
-      #   shell: bash
-      #   run: echo "VITE_DEPLOY_GHPAGES=true" >> $GITHUB_ENV
-
-      # - run: npm run build-only -- --base=${{env.LUX_BASE}} --mode=staging
-
-      # - name: deploy to gh pages
-      #   run: |
-      #     echo "Deploying to directory: ${{env.BRANCH_NAME}}"
-      #     git config --global user.name "github-actions[bot]"
-      #     git config --global user.email "github-actions[bot]@users.noreply.github.com"
-      #     npx gh-pages --dist dist/ --dest ${{env.BRANCH_NAME}} --remove "${{env.BRANCH_NAME}}/**" --no-history --dotfiles true --repo "https://${GITHUB_ACTOR}:${{secrets.GITHUB_TOKEN}}@github.com/${GITHUB_REPOSITORY}.git"
-
-      # - name: add PR comment
-      #   uses: thollander/actions-comment-pull-request@v1
-      #   if: github.event_name == 'pull_request'
-      #   with:
-      #     message: 'GitHub Pages links:
-      #       * Luxembourg-geoportail: https://geoportail-luxembourg.github.io/luxembourg-geoportail/${{env.BRANCH_NAME}}/'
-      #     comment_includes: 'GitHub Pages links:'
-      #     GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
