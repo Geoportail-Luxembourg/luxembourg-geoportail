@@ -16,8 +16,8 @@ jobs:
           # headers:
           owner: 'Geoportail-Luxembourg'
           repo: 'luxembourg-geoportail'
-          tag_name: 'CI_${{ github.ref }}'
-          target_committish: ${{ github.ref }}
+          tag_name: ${{ github.ref }}
+          # target_committish: ${{ github.ref }}
       - uses: actions/checkout@v3
         with:
           persist-credentials: false
