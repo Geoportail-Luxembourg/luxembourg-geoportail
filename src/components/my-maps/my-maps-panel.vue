@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { useTranslation } from 'i18next-vue'
 
-import BasePanelLayout from '@/components/common/panel-layout.vue'
+import SidePanelLayout from '@/components/common/side-panel-layout.vue'
 
 import { useAppStore } from '@/stores/app.store'
 
@@ -18,7 +18,7 @@ function clickCreateNewMap() {
 </script>
 
 <template>
-  <base-panel-layout
+  <side-panel-layout
     :data-cy-value="'myMapsPanel'"
     :close-fn="() => appStore.toggleMyMapsOpen(false)"
   >
@@ -42,5 +42,5 @@ function clickCreateNewMap() {
         </button>
       </div>
     </template>
-  </base-panel-layout>
+  </side-panel-layout>
 </template>

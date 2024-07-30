@@ -8,19 +8,18 @@ import { useTranslation } from 'i18next-vue'
 import { useAppStore } from '@/stores/app.store'
 
 const { t, i18next } = useTranslation()
-const {
-  setLayersOpen,
-  setDrawToolbarOpen,
-  toggleMyMapsOpen,
-} = useAppStore()
-const { layersOpen, drawToolbarOpen, styleEditorOpen, myMapsOpen } = storeToRefs(
-  useAppStore()
-)
+const { setLayersOpen, setDrawToolbarOpen, toggleMyMapsOpen } = useAppStore()
+const { layersOpen, drawToolbarOpen, styleEditorOpen, myMapsOpen } =
+  storeToRefs(useAppStore())
 
 function onClickLayersIcon() {
   const open = !layersOpen.value
   setLayersOpen(open)
-  styleEditorOpen.value = false
+
+  if (open) {
+    styleEditorOpen.value = false
+    myMapsOpen.value = false
+  }
 }
 </script>
 <template>
@@ -47,7 +46,6 @@ function onClickLayersIcon() {
       -->
       <li data-cy="mymapsOpenClose">
         <button-icon
-          class="text-gray-300"
           :label="t('my_maps', { ns: 'client' })"
           icon="mymaps"
           :active="myMapsOpen"
