@@ -28,7 +28,7 @@ jobs:
           owner: 'Geoportail-Luxembourg'
           repo: 'luxembourg-geoportail'
           tag_name: 'CI_${{ github.event.pull_request.head.sha }}_${{ github.event.pull_request.head.ref }}'
-          target_committish: ${{ github.event.pull_request.head.sha }}
+          target_committish: ${{ github.event.pull_request.head.ref }}
       - name: show release
         run: "echo '${{ fromJSON(steps.create_release.outputs.data).id }}'"
 
