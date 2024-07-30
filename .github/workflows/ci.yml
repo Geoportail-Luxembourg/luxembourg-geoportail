@@ -12,6 +12,14 @@ jobs:
   lux-deploy:
     runs-on: ubuntu-latest
     steps:
+      - name: create release
+        uses: octokit/request-action@v2.x
+        with:
+          route: POST /repos/{owner}/{repo}/releases
+          # headers:
+          tag_name: 'CI_${GITHUB_SHA}'
+          target_committish: '${GITHUB_SHA}'
+
       - uses: actions/checkout@v3
         with:
           persist-credentials: false
@@ -70,11 +78,3 @@ jobs:
             * Luxembourg-geoportail: https://geoportail-luxembourg.github.io/luxembourg-geoportail/${{env.BRANCH_NAME}}/'
           comment_includes: 'GitHub Pages links:'
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-
-      - name: create release
-        uses: octokit/request-action@v2.x
-        with:
-          route: POST /repos/{owner}/{repo}/releases
-          # headers:
-          tag_name: 'CI_${GITHUB_SHA}'
-          target_committish: '${GITHUB_SHA}'
