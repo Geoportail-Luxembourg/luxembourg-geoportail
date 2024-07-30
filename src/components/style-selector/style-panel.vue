@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { useTranslation } from 'i18next-vue'
 
-import SidePanelLayout from '@/components/common/panel-layout.vue'
+import SidePanelLayout from '@/components/common/side-panel-layout.vue'
 
 import { useAppStore } from '@/stores/app.store'
 import StyleSelector from './style-selector.vue'

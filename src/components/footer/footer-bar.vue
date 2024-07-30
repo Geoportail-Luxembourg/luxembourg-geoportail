@@ -8,13 +8,15 @@ import { useTranslation } from 'i18next-vue'
 import { useAppStore } from '@/stores/app.store'
 
 const { t, i18next } = useTranslation()
-const { setLayersOpen, closeStyleEditorPanel, setDrawToolbarOpen } =
+const { setLayersOpen, setDrawToolbarOpen } = useAppStore()
+const { layersOpen, drawToolbarOpen, styleEditorOpen } = storeToRefs(
   useAppStore()
-const { layersOpen, drawToolbarOpen } = storeToRefs(useAppStore())
+)
 
 function onClickLayersIcon() {
-  setLayersOpen(!layersOpen.value)
-  closeStyleEditorPanel()
+  const open = !layersOpen.value
+  setLayersOpen(open)
+  styleEditorOpen.value = false
 }
 </script>
 <template>

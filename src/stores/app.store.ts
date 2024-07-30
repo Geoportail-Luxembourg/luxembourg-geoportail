@@ -52,10 +52,12 @@ export const useAppStore = defineStore(
 
     function openStyleEditorPanel() {
       styleEditorOpen.value = true
+      layersOpen.value = false
     }
 
     function closeStyleEditorPanel() {
       styleEditorOpen.value = false
+      layersOpen.value = true
     }
 
     function setDrawToolbarOpen(open: boolean) {
