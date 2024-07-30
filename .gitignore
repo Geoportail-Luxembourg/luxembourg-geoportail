@@ -20,6 +20,7 @@
 # build
 /_site/
 /dist/
+/bundle
 /out-tsc/
 .parcel-cache
 
