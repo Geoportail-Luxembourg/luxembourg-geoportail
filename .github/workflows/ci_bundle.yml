@@ -33,9 +33,13 @@ jobs:
       - name: manually create npm package
         run: |
           tar --transform="s|bundle|package/bundle|" -rvf luxembourg-geoportail-0.0.0-dev.tar bundle
+      - run: |
           tar --transform="s|src/bundle/package_without_deps|package/package|" -rvf luxembourg-geoportail-0.0.0-dev.tar src/bundle/package_without_deps.json
+      - run: |
           tar --transform="s|README.md|package/README.md|" -rvf luxembourg-geoportail-0.0.0-dev.tar README.md
+      - run: |
           tar --transform="s|LICENSE|package/LICENSE|" -rvf luxembourg-geoportail-0.0.0-dev.tar LICENSE
+      - run: |
           gzip luxembourg-geoportail-0.0.0-dev.tar
 
       - name: upload manually
