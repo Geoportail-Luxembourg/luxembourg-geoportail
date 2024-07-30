@@ -39,7 +39,8 @@ statePersistorStyleService.bootstrap()
 statePersistorBgLayerService.bootstrap()
 mvtStyleService.initBackgroundsConfigs()
 
-const { embedded, layersOpen, myMapsOpen, styleEditorOpen } = storeToRefs(appStore)
+const { embedded, layersOpen, myMapsOpen, styleEditorOpen } =
+  storeToRefs(appStore)
 
 watch(layersOpen, timeoutResizeMap)
 watch(styleEditorOpen, timeoutResizeMap)
@@ -58,25 +59,34 @@ onUnmounted(() => window.removeEventListener('resize', map.resize))
     <header-bar v-if="!embedded" />
 
     <main class="flex grow">
-      <!-- Layer panel -->
-      <div
-        v-if="layersOpen && !styleEditorOpen && !embedded"
-        class="w-full sm:w-80 bg-secondary z-10"
-      >
-        <layer-panel />
-      </div>
+      <template v-if="!embedded">
+        <!-- Layer panel -->
+        <div
+          v-if="layersOpen && !styleEditorOpen"
+          class="w-full sm:w-80 bg-secondary z-10"
+        >
+          <layer-panel />
+        </div>
 
-      <!-- Style editor -->
-      <div v-if="styleEditorOpen && !embedded" class="w-80 bg-primary">
-        <style-selector />
-      </div>
+        <!-- Style editor -->
+        <div v-if="styleEditorOpen" class="w-full sm:w-80 bg-secondary z-10">
+          <style-panel />
+        </div>
+
+        <!-- MyMaps panel -->
+        <div v-if="myMapsOpen" class="w-full sm:w-80 bg-secondary z-10">
+          <my-maps-panel />
+        </div>
+      </template>
 
       <!-- Map container and slider comparator -->
       <div class="map-wrapper grow bg-blue-100 relative">
         <map-container :v4_standalone="true" />
-        <slider-comparator v-if="!embedded" class="absolute top-0" />
-        <remote-layers v-if="!embedded" />
-        <layer-metadata v-if="!embedded" />
+        <template v-if="!embedded">
+          <slider-comparator class="absolute top-0" />
+          <remote-layers />
+          <layer-metadata />
+        </template>
       </div>
 
       <!-- Background selector -->
@@ -85,7 +95,9 @@ onUnmounted(() => window.removeEventListener('resize', map.resize))
       </div>
     </main>
 
-    <footer-bar v-if="!embedded" class="fixed bottom-5 sm:static z-20" />
-    <alert-notifications v-if="!embedded" />
+    <template v-if="!embedded">
+      <footer-bar class="fixed bottom-5 sm:static z-20" />
+      <alert-notifications />
+    </template>
   </div>
 </template>

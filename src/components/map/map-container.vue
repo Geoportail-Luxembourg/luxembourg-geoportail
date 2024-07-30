@@ -73,9 +73,12 @@ provide('olMap', olMap)
   >
     <zoom-control />
     <zoom-to-extent-control :extent="DEFAULT_EXTENT" />
-    <fullscreen-control v-if="!embedded" />
-    <attribution-control v-if="!embedded" />
-    <map-3d-control v-if="v4_standalone && !embedded" />
-    <location-control v-if="!embedded" />
+
+    <template v-if="!embedded">
+      <fullscreen-control />
+      <attribution-control />
+      <map-3d-control v-if="v4_standalone" />
+      <location-control />
+    </template>
   </div>
 </template>
