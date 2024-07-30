@@ -30,7 +30,7 @@ jobs:
           tag_name: 'CI_${{ github.event.pull_request.head.sha }}'
           target_committish: ${{ github.event.pull_request.head.sha }}
       - name: show release
-        run: 'echo outputs ${{ toJson(steps.create_release.outputs) }}'
+        run: "printf 'outputs ${{ toJson(steps.create_release.outputs) }}'"
 
       # - uses: actions/checkout@v3
       #   with:
