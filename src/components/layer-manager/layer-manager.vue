@@ -1,17 +1,16 @@
 <script setup lang="ts">
 import { computed, onMounted, ShallowRef, shallowRef } from 'vue'
 import { storeToRefs } from 'pinia'
-import Sortable, { SortableEvent } from 'sortablejs'
 import { useTranslation } from 'i18next-vue'
 
 import { useAppStore } from '@/stores/app.store'
 import { useMapStore } from '@/stores/map.store'
 import { useMetadataStore } from '@/stores/metadata.store'
 import type { Layer, LayerId } from '@/stores/map.store.model'
+import useSortable from '@/composables/sortable'
 import { BLANK_BACKGROUNDLAYER } from '@/composables/background-layer/background-layer.model'
 import useMvtStyles from '@/composables/mvt-styles/mvt-styles.composable'
 import { useSliderComparatorStore } from '@/stores/slider-comparator.store'
-import { isFireFox } from '@/services/utils'
 
 import LayerItemBackground from './layer-item/layer-item-background.vue'
 import LayerItem from './layer-item/layer-item.vue'
@@ -40,35 +39,24 @@ const showAddLayerButton = computed(() => !isOffLine.value)
 const emit = defineEmits(['displayCatalog'])
 
 onMounted(() => {
-  const sortableParams = <Sortable.Options>{
-    dragClass: 'lux-sortable-drag',
-    ghostClass: 'lux-sortable-ghost',
-    sort: true,
-    handle: `.${dragHandleClassName}`,
-    forceFallback: isFireFox, // Otherwise, doesnt work for FF
-  }
-  const sortableLayersDOM = document.querySelector('.sortable-layers')
-  const sortableLayers3dDOM = document.querySelector('.sortable-layers-3d')
+  const sortableLayersDOM = <HTMLElement>(
+    document.querySelector('.sortable-layers')
+  )
+  const sortableLayers3dDOM = <HTMLElement>(
+    document.querySelector('.sortable-layers-3d')
+  )
 
-  sortableLayersDOM &&
-    Sortable.create(<HTMLElement>sortableLayersDOM, {
-      ...sortableParams,
-      ...{ onSort: sortMethod },
-    })
-  sortableLayers3dDOM &&
-    Sortable.create(<HTMLElement>sortableLayers3dDOM, {
-      ...sortableParams,
-      ...{ onSort: sort3dMethod },
-    })
+  useSortable(sortableLayersDOM, { onSort: sortMethod })
+  useSortable(sortableLayers3dDOM, { onSort: sort3dMethod })
 })
 
-function sortMethod(event: SortableEvent, is3d?: boolean) {
-  const layersIds = [...event.to.children].map(val => Number(val.id)).reverse()
+function sortMethod(elements: HTMLCollection, is3d?: boolean) {
+  const layersIds = [...elements].map(val => Number(val.id)).reverse()
   mapStore.reorderLayers(layersIds, is3d)
 }
 
-function sort3dMethod(event: SortableEvent) {
-  sortMethod(event, true)
+function sort3dMethod(elements: HTMLCollection) {
+  sortMethod(elements, true)
 }
 
 function changeOpacityLayer(layer: Layer, opacity: number) {

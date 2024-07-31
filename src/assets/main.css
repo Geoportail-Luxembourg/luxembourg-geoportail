@@ -76,9 +76,30 @@
     outline: none;
   }
 
+  .lux-icon {
+    font-family: 'geoportail-icons-wc';
+  }
+
+  .lux-icon.point::before {
+    content: '\E901';
+  }
+
+  .lux-icon.line::before {
+    content: '\E900';
+  }
+
+  .lux-icon.polygon::before {
+    content: '\E902';
+  }
+
   .lux-btn {
     @apply bg-white border text-primary py-[6px] px-[12px] hover:bg-primary hover:text-white leading-snug focus:bg-[#e6e6e6] focus:border-[#8c8c8c] focus:[color:var(--color-primary)] focus:lux-outlined;
     border: 1px solid var(--button-bg-color);
+  }
+
+  .lux-btn-primary {
+    @apply lux-btn bg-primary text-white hover:bg-quaternary;
+    border: 1px solid var(--color-quaternary);
   }
 
   .lux-btn-grey {
@@ -306,6 +327,22 @@
   .lux-tooltip {
     @apply relative bg-black bg-opacity-50 rounded text-white p-1.5 opacity-70 whitespace-nowrap;
   }
+  
+  .lux-draw-panel-title {
+    @apply text-white;
+  }
+
+  .lux-drawing-item {
+    @apply my-1;
+  }
+
+  .lux-drawing-item-label {
+    @apply text-white;
+  }
+
+  .lux-drawing-item-content {
+    @apply bg-secondary mt-1 mb-2 p-3;
+  }
 }
 
 .fa-solid {
@@ -327,98 +364,129 @@
     --color-primary: #2980b9;
     --color-secondary: #97bbd3;
     --color-tertiary: #1f5d87;
+    --color-quaternary: #20638f;
     --color-navbar-default: #777;
     --color-btn-ol: #8394a0;
     --main-primary: #2980b9;
     --main-secondary: #97bbd3;
     --main-tertiary: #1f5d87;
+    --main-quaternary: #20638f;
     --tourisme-primary: #e84c3d;
     --tourisme-secondary: #e88c83;
     --tourisme-tertiary: #a50f15;
+    --tourisme-quaternary: #d82a1a;
     --emwelt-primary: #558b2f;
     --emwelt-secondary: #85bb5c;
     --emwelt-tertiary: #255d00;
+    --emwelt-quaternary: #667625;
     --eau-primary: #03a2ac;
     --eau-secondary: #45cdd6;
     --eau-tertiary: #078f98;
+    --eau-quaternary: #02737a;
     --pag-primary: #2b8cbe;
     --pag-secondary: #74a9cf;
     --pag-tertiary: #045a8d;
+    --pag-quaternary: #226d94;
     --agriculture-primary: #f39c11;
     --agriculture-secondary: #ffc363;
     --agriculture-tertiary: #9c6101;
+    --agriculture-quaternary: #c77e0a;
     --lenoz-primary: #f4b72b;
     --lenoz-secondary: #f3d89b;
     --lenoz-tertiary: #b3851d;
+    --lenoz-quaternary: #e0a00c;
     --preizerdaul-primary: #2980b9;
     --preizerdaul-secondary: #97bbd3;
     --preizerdaul-tertiary: #1f5d87;
+    --preizerdaul-quaternary: #821a2c;
     --wellenstein-primary: #7ac573;
     --wellenstein-secondary: #b0e4ab;
     --wellenstein-tertiary: #42803c;
+    --wellenstein-quaternary: #58b64f;
     --lintgen-primary: #f3c531;
     --lintgen-secondary: #f3d89b;
     --lintgen-tertiary: #b3851d;
+    --lintgen-quaternary: #e4b10d;
     --remich-primary: #8ca229;
     --remich-secondary: #bacd63;
     --remich-tertiary: #5c6b1b;
+    --remich-quaternary: #69791f;
     --at-primary: #f4511e;
     --at-secondary: #ff844c;
     --at-tertiary: #b91400;
+    --at-quaternary: #986a34;
     --cadastre_hertzien-primary: #7ac573;
     --cadastre_hertzien-secondary: #b0e4ab;
     --cadastre_hertzien-tertiary: #42803c;
+    --cadastre_hertzien-quaternary: #4f792b;
     --urban_farming-primary: #028349;
     --urban_farming-secondary: #4ab475;
     --urban_farming-tertiary: #005520;
+    --urban_farming-quaternary: #005520;
     --energie-primary: #558b2f;
     --energie-secondary: #85bb5c;
     --energie-tertiary: #255d00;
+    --energie-quaternary: #255d00;
     --atlas_demographique-primary: #f4b72b;
     --atlas_demographique-secondary: #f3d89b;
     --atlas_demographique-tertiary: #b3851d;
+    --atlas_demographique-quaternary: #b3851d;
     --logement-primary: #b0271a;
     --logement-secondary: #e95b43;
     --logement-tertiary: #790000;
+    --logement-quaternary: #790000;
     --np_our-primary: #76b854;
     --np_our-secondary: #a8ea82;
     --np_our-tertiary: #458725;
+    --np_our-quaternary: #458725;
     --geosciences-primary: #895e03;
     --geosciences-secondary: #d7ba87;
     --geosciences-tertiary: #5e4024;
+    --geosciences-quaternary: #5e4024;
     --ahc-primary: #ff5722;
     --ahc-secondary: #ff8a50;
     --ahc-tertiary: #c41c00;
+    --ahc-quaternary: #c41c00;
     --municipalities-primary: #9e9ac8;
     --municipalities-secondary: #cbc9e2;
     --municipalities-tertiary: #756bb1;
+    --municipalities-quaternary: #7e79b6;
     --Amenagement_du_territoire-primary: #f4511e;
     --Amenagement_du_territoire-secondary: #ff844c;
     --Amenagement_du_territoire-tertiary: #b91400;
+    --Amenagement_du_territoire-quaternary: #b91400;
     --Environnement_naturel-primary: #879d31;
     --Environnement_naturel-secondary: #bacd81;
     --Environnement_naturel-tertiary: #627529;
+    --Environnement_naturel-quaternary: #627529;
     --Environnement_humain-primary: #558b2f;
     --Environnement_humain-secondary: #85bb5c;
     --Environnement_humain-tertiary: #255d00;
+    --Environnement_humain-quaternary: #255d00;
     --Occupation_du_sol-primary: #8d6e63;
     --Occupation_du_sol-secondary: #bd9b8f;
     --Occupation_du_sol-tertiary: #5e4238;
+    --Occupation_du_sol-quaternary: #5e4238;
     --intranet-at-primary: #9e9ac8;
     --intranet-at-secondary: #cbc9e2;
     --intranet-at-tertiary: #756bb1;
+    --intranet-at-quaternary: #756bb1;
     --prof-primary: #006d2c;
     --prof-secondary: #99d8c9;
     --prof-tertiary: #238b45;
+    --prof-quaternary: #003a17;
     --go-primary: #555;
     --go-secondary: #bbb;
     --go-tertiary: #756bb1;
+    --go-quaternary: #3b3b3b;
     --sig_secours-primary: #2979ff;
     --sig_secours-secondary: #75a7ff;
     --sig_secours-tertiary: #004ecb;
+    --sig_secours-quaternary: #004ecb;
     --school-primary: #756bb1;
     --school-secondary: #9e9ac8;
     --school-tertiary: #54278f;
+    --school-quaternary: #54278f;
     --button-bg-color: #ccc;
   }
 }
