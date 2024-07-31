@@ -64,7 +64,6 @@ export const useAppStore = defineStore(
 
       if (drawToolbarOpen.value) {
         myMapsOpen.value = true
-        styleEditorOpen.value = false
         layersOpen.value = false
       }
     }
