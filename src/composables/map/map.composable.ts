@@ -2,6 +2,9 @@ import { ShallowRef, shallowRef } from 'vue'
 import OlMap from 'ol/Map'
 import OlView from 'ol/View'
 
+// for the time moment legacy mapbox is used instead of maplibre, but the naming "maplibre" is kept
+import MapLibreLayer from '@/lib/ol-mapbox-layer'
+import traverseLayer from '@/lib/tools.js'
 import type {
   Layer,
   LayerComparison,
@@ -15,6 +18,7 @@ export const PROJECTION_WEBMERCATOR = 'EPSG:3857'
 export const PROJECTION_WGS84 = 'EPSG:4326'
 export const PROJECTION_LUX = 'EPSG:2169'
 const MAX_EXTENT = JSON.parse(import.meta.env.VITE_DEFAULT_MAX_EXTENT)
+const DEFAULT_VIEW_ZOOM = parseInt(import.meta.env.VITE_DEFAULT_VIEW_ZOOM, 10)
 
 let map: OlMap
 const olMap: ShallowRef<OlMap | undefined> = shallowRef()
@@ -37,7 +41,7 @@ export default function useMap() {
         enableRotation: true,
         extent: transformExtent(MAX_EXTENT, 'EPSG:4326', 'EPSG:3857'),
         multiWorld: false,
-        zoom: 8,
+        zoom: DEFAULT_VIEW_ZOOM,
       }),
       controls: [],
       keyboardEventTarget: document, // Very important for listening keyboard events when drawing in v3!
@@ -160,6 +164,27 @@ export default function useMap() {
     return null
   }
 
+  function resize() {
+    // Update all canvas size when layer panel is opened/closed
+    const map = useMap().getOlMap()
+
+    // Update ol layers' canvas size
+    map.updateSize()
+
+    // And trigger update MapLibre layers' canvas size
+    // the utility function traverseLayer is used as a workaround until OL is updated to 6.15
+    // then the function getAllLayers below (added in OL v.6.10.0) can be used
+    // map.getAllLayers().forEach(layer => {
+    traverseLayer(map.getLayerGroup(), [], (layer: any) => {
+      if (layer instanceof MapLibreLayer) {
+        ;(layer as MapLibreLayer).getMapLibreMap().resize()
+      }
+      return true
+    })
+
+    // TODO: Add slide effect and do this update after slide animation ends
+  }
+
   return {
     olMap,
     getOlMap,
@@ -172,5 +197,6 @@ export default function useMap() {
     getRemovedLayers,
     getMutatedLayers,
     getMutationType,
+    resize,
   }
 }

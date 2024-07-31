@@ -1,6 +1,8 @@
 <script setup lang="ts">
-import { onMounted, provide, ref } from 'vue'
+import { onMounted, provide, ref, watchEffect } from 'vue'
+import { storeToRefs } from 'pinia'
 
+import { useAppStore } from '@/stores/app.store'
 import useMap from '@/composables/map/map.composable'
 import { OlSynchronizer } from '@/composables/map/ol.synchronizer'
 import { OlViewSynchronizer } from '@/composables/map/ol-view.synchronizer'
@@ -13,6 +15,8 @@ import FullscreenControl from '../map-controls/fullscreen-control.vue'
 import ZoomControl from '../map-controls/zoom-control.vue'
 import ZoomToExtentControl from '../map-controls/zoom-to-extent-control.vue'
 
+const appStore = useAppStore()
+const { embedded } = storeToRefs(appStore)
 const map = useMap()
 const mapContainer = ref(null)
 const olMap = map.createMap()
@@ -42,6 +46,21 @@ onMounted(() => {
   }
 })
 
+watchEffect(() => {
+  if (mapContainer.value && embedded.value) {
+    // Specific to v3 when embedded mode:
+    // wait for 1000ms = wait for angular to end drawing component
+    // Otherwise, map height won't fit (angular has not yet finished removing header and footer in the dom,
+    // resulting in an unwanted gutter when mode ise embedded)
+    // Timer is to be removed when standalone fully fonctionnal
+    const ms = import.meta.env.VITE_MODE_LIB === 'true' ? 1000 : 0
+
+    setTimeout(() => {
+      map.resize()
+    }, ms)
+  }
+})
+
 provide('olMap', olMap)
 </script>
 
@@ -54,9 +73,12 @@ provide('olMap', olMap)
   >
     <zoom-control />
     <zoom-to-extent-control :extent="DEFAULT_EXTENT" />
-    <fullscreen-control />
-    <attribution-control />
-    <map-3d-control v-if="v4_standalone" />
-    <location-control />
+
+    <template v-if="!embedded">
+      <fullscreen-control />
+      <attribution-control />
+      <map-3d-control v-if="v4_standalone" />
+      <location-control />
+    </template>
   </div>
 </template>

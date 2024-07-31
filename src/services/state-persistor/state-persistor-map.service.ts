@@ -96,7 +96,7 @@ class StatePersistorMapService implements StatePersistorService {
           ? Number(zoom)
           : V2_ZOOM_TO_V3_ZOOM_[zoom as KeyZoomV2ToV3]
     } else {
-      viewZoom = import.meta.env.VITE_DEFAULT_VIEW_ZOOM
+      viewZoom = parseInt(import.meta.env.VITE_DEFAULT_VIEW_ZOOM, 10)
     }
 
     if (x != null && y != null) {

@@ -2,19 +2,23 @@ import { watch, watchEffect, WatchStopHandle } from 'vue'
 import { storeToRefs } from 'pinia'
 
 import { useAppStore } from '@/stores/app.store'
-import { SP_KEY_LAYERS_OPEN } from './state-persistor.model'
+import { SP_KEY_EMBEDDED, SP_KEY_LAYERS_OPEN } from './state-persistor.model'
 import { storageHelper } from './storage/storage.helper'
 
-class StatePersistorLayersOpenService {
-  bootstrapLayersOpen() {
-    this.restoreLayersOpen()
+class StatePersistorAppService {
+  bootstrap() {
+    this.restore()
 
     let stop: WatchStopHandle
     // eslint-disable-next-line prefer-const
     stop = watchEffect(() => {
-      this.persistLayersOpen()
+      this.persist()
       stop && stop() // test if exists, for HMR support
     })
+  }
+
+  persist() {
+    this.persistLayersOpen()
   }
 
   persistLayersOpen() {
@@ -32,6 +36,20 @@ class StatePersistorLayersOpenService {
     )
   }
 
+  restore() {
+    this.restoreLayersOpen()
+    this.restoreEmbeddedMode() // NB. don't persist embbeded mode, only do restore
+  }
+
+  restoreEmbeddedMode() {
+    const embbededStorage = storageHelper.getValue(SP_KEY_EMBEDDED)
+    const embbededEnabled = <boolean>(
+      (embbededStorage !== null && embbededStorage !== 'false')
+    )
+    const { embedded } = storeToRefs(useAppStore())
+    embedded.value = embbededEnabled
+  }
+
   restoreLayersOpen() {
     const layersOpen = <boolean>(
       (storageHelper.getValue(SP_KEY_LAYERS_OPEN) !== 'false')
@@ -41,5 +59,4 @@ class StatePersistorLayersOpenService {
   }
 }
 
-export const statePersistorLayersOpenService =
-  new StatePersistorLayersOpenService()
+export const statePersistorAppService = new StatePersistorAppService()
