@@ -2,6 +2,7 @@
 import { useTranslation } from 'i18next-vue'
 
 import SidePanelLayout from '@/components/common/side-panel-layout.vue'
+import DrawPanel from '@/components/draw/draw-panel.vue'
 
 import { useAppStore } from '@/stores/app.store'
 
@@ -41,6 +42,8 @@ function clickCreateNewMap() {
           {{ t('Créer une nouvelle carte', { ns: 'client' }) }}
         </button>
       </div>
+
+      <DrawPanel />
     </template>
   </side-panel-layout>
 </template>

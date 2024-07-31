@@ -35,10 +35,27 @@ export const useAppStore = defineStore(
 
     function setMyLayersTabOpen(open: boolean) {
       myLayersTabOpen.value = open
+
+      if (myLayersTabOpen.value) {
+        themeGridOpen.value = false
+      }
     }
 
     function setThemeGridOpen(open: boolean) {
       themeGridOpen.value = open
+    }
+
+    function toggleThemeGrid() {
+      if (themeGridOpen.value) {
+        layersOpen.value = false
+        myMapsOpen.value = false
+        themeGridOpen.value = false
+      } else {
+        themeGridOpen.value = true
+        layersOpen.value = true
+        myMapsOpen.value = false
+        myLayersTabOpen.value && (myLayersTabOpen.value = false)
+      }
     }
 
     function setRemoteLayersOpen(open: boolean) {
@@ -65,6 +82,7 @@ export const useAppStore = defineStore(
       if (drawToolbarOpen.value) {
         myMapsOpen.value = true
         layersOpen.value = false
+        themeGridOpen.value = false
       }
     }
 
@@ -74,6 +92,7 @@ export const useAppStore = defineStore(
       if (myMapsOpen.value) {
         styleEditorOpen.value = false
         layersOpen.value = false
+        themeGridOpen.value = false
       }
     }
 
@@ -100,6 +119,7 @@ export const useAppStore = defineStore(
       setDrawToolbarOpen,
       isOffLine,
       toggleMyMapsOpen,
+      toggleThemeGrid,
     }
   },
   {}
