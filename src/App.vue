@@ -56,9 +56,9 @@ onUnmounted(() => window.removeEventListener('resize', map.resize))
 
 <template>
   <div class="h-screen flex flex-col overflow-hidden">
-    <!----------------------------------->
+    <!-- ----------------------------- -->
     <!-- Template for full app display -->
-    <!----------------------------------->
+    <!-- ----------------------------- -->
     <template v-if="!embedded">
       <header-bar />
 
@@ -99,9 +99,9 @@ onUnmounted(() => window.removeEventListener('resize', map.resize))
       <alert-notifications />
     </template>
 
-    <!----------------------------------->
+    <!-- ----------------------------- -->
     <!-- Template for embedded mode    -->
-    <!----------------------------------->
+    <!-- ----------------------------- -->
     <template v-else>
       <main class="flex grow">
         <!-- Map container and slider comparator -->
