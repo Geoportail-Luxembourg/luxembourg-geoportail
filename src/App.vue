@@ -56,10 +56,13 @@ onUnmounted(() => window.removeEventListener('resize', map.resize))
 
 <template>
   <div class="h-screen flex flex-col overflow-hidden">
-    <header-bar v-if="!embedded" />
+    <!----------------------------------->
+    <!-- Template for full app display -->
+    <!----------------------------------->
+    <template v-if="!embedded">
+      <header-bar />
 
-    <main class="flex grow">
-      <template v-if="!embedded">
+      <main class="flex grow">
         <!-- Layer panel -->
         <div
           v-if="layersOpen && !styleEditorOpen"
@@ -77,27 +80,40 @@ onUnmounted(() => window.removeEventListener('resize', map.resize))
         <div v-if="myMapsOpen" class="w-full sm:w-80 bg-secondary z-10">
           <my-maps-panel />
         </div>
-      </template>
 
-      <!-- Map container and slider comparator -->
-      <div class="map-wrapper grow bg-blue-100 relative">
-        <map-container :v4_standalone="true" />
-        <template v-if="!embedded">
+        <!-- Map container and slider comparator -->
+        <div class="map-wrapper grow bg-blue-100 relative">
+          <map-container :v4_standalone="true" />
           <slider-comparator class="absolute top-0" />
           <remote-layers />
           <layer-metadata />
-        </template>
-      </div>
+        </div>
 
-      <!-- Background selector -->
-      <div class="absolute right-1" :class="embedded ? 'top-2' : 'top-16'">
-        <background-selector />
-      </div>
-    </main>
+        <!-- Background selector -->
+        <div class="absolute right-1 top-16">
+          <background-selector />
+        </div>
+      </main>
 
-    <template v-if="!embedded">
       <footer-bar class="fixed bottom-5 sm:static z-20" />
       <alert-notifications />
+    </template>
+
+    <!----------------------------------->
+    <!-- Template for embedded mode    -->
+    <!----------------------------------->
+    <template v-else>
+      <main class="flex grow">
+        <!-- Map container and slider comparator -->
+        <div class="map-wrapper grow bg-blue-100 relative">
+          <map-container :v4_standalone="true" />
+        </div>
+
+        <!-- Background selector -->
+        <div class="absolute right-1 top-2">
+          <background-selector />
+        </div>
+      </main>
     </template>
   </div>
 </template>
