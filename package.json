@@ -25,9 +25,6 @@
     "format": "prettier --write --list-different . --ignore-path .prettierignore && npm run lint:js -- --fix",
     "prepare": "husky install"
   },
-  "files": [
-    "bundle/*"
-  ],
   "dependencies": {
     "@camptocamp/ogc-client": "^0.3.4",
     "file-saver": "^2.0.5",
