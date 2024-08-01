@@ -70,6 +70,7 @@ module.exports = {
         primary: 'var(--color-primary)',
         secondary: 'var(--color-secondary)',
         tertiary: 'var(--color-tertiary)',
+        quaternary: 'var(--color-quaternary)',
         ...generateThemeColors(),
       },
       fontFamily: {
@@ -218,6 +219,15 @@ function generateThemeSafelist() {
     `hover:text-${theme}-primary`,
     `after:content-${theme}`,
     `before:content-${theme}`,
+    `${theme}-secondary`,
+    `bg-${theme}-secondary`,
+    `hover:text-${theme}-secondary`,
+    `${theme}-tertiary`,
+    `bg-${theme}-tertiary`,
+    `hover:text-${theme}-tertiary`,
+    `${theme}-quaternary`,
+    `bg-${theme}-quaternary`,
+    `hover:text-${theme}-quaternary`,
   ])
 }
 function generateIconSafelist() {
@@ -232,6 +242,7 @@ function generateThemeColors() {
       [`${theme}-primary`, `var(--${theme}-primary)`],
       [`${theme}-secondary`, `var(--${theme}-secondary)`],
       [`${theme}-tertiary`, `var(--${theme}-tertiary)`],
+      [`${theme}-quaternary`, `var(--${theme}-quaternary)`],
     ])
   )
 }
