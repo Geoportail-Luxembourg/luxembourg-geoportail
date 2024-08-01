@@ -302,6 +302,16 @@
   .lux-time-datepicker {
     @apply border-[#767676] border-[1px] pl-1;
   }
+
+  .lux-tooltip {
+    position: relative;
+    background: rgba(0, 0, 0, 0.5);
+    border-radius: 4px;
+    color: white;
+    padding: 4px 8px;
+    opacity: 0.7;
+    white-space: nowrap;
+  }
 }
 
 .fa-solid {
