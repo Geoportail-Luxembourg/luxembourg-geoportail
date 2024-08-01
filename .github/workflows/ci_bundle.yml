@@ -29,21 +29,16 @@ jobs:
       - name: Build prod library
         shell: bash
         run: npm run build:lib:prod
-
-      - name: manually create npm package
-        run: |
-          tar --transform="s|bundle|package/bundle|" -rvf luxembourg-geoportail-0.0.0-dev.tar bundle
-      - run: |
-          tar --transform="s|src/bundle/package_without_deps|package/package|" -rvf luxembourg-geoportail-0.0.0-dev.tar src/bundle/package_without_deps.json
-      - run: |
-          tar --transform="s|README.md|package/README.md|" -rvf luxembourg-geoportail-0.0.0-dev.tar README.md
-      - run: |
-          tar --transform="s|LICENSE|package/LICENSE|" -rvf luxembourg-geoportail-0.0.0-dev.tar LICENSE
-      - run: |
-          gzip luxembourg-geoportail-0.0.0-dev.tar
+      - name: Build prod library
+        shell: bash
+        run: npm pack
 
       - name: upload manually
-        run: 'curl -X POST "https://uploads.github.com/repos/$owner/$repo/releases/$id/assets?name=luxembourg-geoportail-0.0.0-dev.tar.gz" --header "Authorization: Bearer ${{ secrets.GITHUB_TOKEN }}" -H "Content-Type: application/octet-stream" --data-binary "@luxembourg-geoportail-0.0.0-dev.tar.gz"'
+        run: |
+          project_name=$(npm run env | grep "npm_package_name" | sed s/npm_package_name=//)
+          pkg_name=$(ls $project_name-*)
+          lib_name=$(echo $pkg_name | sed s/luxembourg-geoportail-/luxembourg-geoportail-lib-/)
+          curl -X POST "https://uploads.github.com/repos/$owner/$repo/releases/$id/assets?name=$lib_name" --header "Authorization: Bearer ${{ secrets.GITHUB_TOKEN }}" -H "Content-Type: application/octet-stream" --data-binary "@$pkg_name"'
         env:
           owner: 'Geoportail-Luxembourg'
           repo: 'luxembourg-geoportail'
