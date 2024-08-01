@@ -38,7 +38,7 @@ jobs:
           project_name=$(npm run env | grep "npm_package_name" | sed s/npm_package_name=//)
           pkg_name=$(ls $project_name-*)
           lib_name=$(echo $pkg_name | sed s/luxembourg-geoportail-/luxembourg-geoportail-lib-/)
-          curl -X POST "https://uploads.github.com/repos/$owner/$repo/releases/$id/assets?name=$lib_name" --header "Authorization: Bearer ${{ secrets.GITHUB_TOKEN }}" -H "Content-Type: application/octet-stream" --data-binary "@$pkg_name"'
+          curl -X POST "https://uploads.github.com/repos/$owner/$repo/releases/$id/assets?name=$lib_name" --header "Authorization: Bearer ${{ secrets.GITHUB_TOKEN }}" -H "Content-Type: application/octet-stream" --data-binary "@$pkg_name"
         env:
           owner: 'Geoportail-Luxembourg'
           repo: 'luxembourg-geoportail'
