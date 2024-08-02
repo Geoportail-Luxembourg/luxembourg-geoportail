@@ -61,6 +61,12 @@ export const useAppStore = defineStore(
 
     function setDrawToolbarOpen(open: boolean) {
       drawToolbarOpen.value = open
+
+      if (drawToolbarOpen.value) {
+        myMapsOpen.value = true
+        styleEditorOpen.value = false
+        layersOpen.value = false
+      }
     }
 
     function toggleMyMapsOpen(open?: boolean) {

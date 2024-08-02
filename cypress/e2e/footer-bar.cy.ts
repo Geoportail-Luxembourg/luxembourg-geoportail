@@ -20,6 +20,12 @@ describe('Footer bar', () => {
       cy.get('button[data-cy="drawLineButton"]').click()
       cy.get('[data-cy="followRoads"]').should('not.exist')
     })
+
+    it('opens the MyMaps panel', () => {
+      cy.get('[data-cy="myMapsPanel"]').should('not.exist')
+      cy.get('button[data-cy="drawButton"]').click()
+      cy.get('[data-cy="myMapsPanel"]').should('exist')
+    })
   })
 
   describe('Layers button', () => {
