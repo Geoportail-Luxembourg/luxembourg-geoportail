@@ -7,6 +7,7 @@ import VectorLayer from 'ol/layer/Vector'
 import VectorSource from 'ol/source/Vector'
 import { storeToRefs } from 'pinia'
 import { useDrawStore } from '@/stores/draw.store'
+import { createStyleFunction } from './draw-utils'
 
 import { useDrawStore } from '@/stores/draw.store'
 import { DrawFeature } from '@/stores/draw.store.model'
@@ -49,7 +50,7 @@ export default function useDrawnFeatures() {
     feature.set('linestyle', 'plain')
     feature.set('shape', 'circle')
     feature.set('isLabel', drawStateActive.value === 'drawLabel')
-    // feature.setStyle(this.featureStyleFunction_)
+    feature.setStyle(createStyleFunction(map))
     feature.set('display_order', nbFeatures)
     // this.drawnFeatures_.getLayer().changed()
 
