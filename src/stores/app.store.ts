@@ -7,6 +7,10 @@ export const DEFAULT_LAYER_PANEL_OPENED = true
 export const DEFAULT_MY_LAYERS_TAB_OPENED = false
 export const DEFAULT_THEME_GRID_OPENED = false
 export const DEFAULT_MYMAPS_OPENED = false
+export const DEFAULT_FEEDBACK_OPENED = false
+export const DEFAULT_FEEDBACKANF_OPENED = false
+export const DEFAULT_FEEDBACKAGE_OPENED = false
+export const DEFAULT_FEEDBACKCRUES_OPENED = false
 
 export const useAppStore = defineStore(
   'app',
@@ -18,6 +22,10 @@ export const useAppStore = defineStore(
     const themeGridOpen = ref(DEFAULT_THEME_GRID_OPENED)
     const mapId: Ref<string | undefined> = ref() // => MyMaps map id
     const myMapsOpen = ref(DEFAULT_MYMAPS_OPENED)
+    const feedbackOpen = ref(DEFAULT_FEEDBACK_OPENED)
+    const feedbackanfOpen = ref(DEFAULT_FEEDBACKANF_OPENED)
+    const feedbackageOpen = ref(DEFAULT_FEEDBACKAGE_OPENED)
+    const feedbackcruesOpen = ref(DEFAULT_FEEDBACKCRUES_OPENED)
     const remoteLayersOpen = ref()
     const styleEditorOpen = ref(false)
     const styleEditorOpenedSection: Ref<StyleSection | undefined> =
@@ -104,6 +112,10 @@ export const useAppStore = defineStore(
       themeGridOpen,
       mapId,
       myMapsOpen,
+      feedbackOpen,
+      feedbackanfOpen,
+      feedbackageOpen,
+      feedbackcruesOpen,
       styleEditorOpen,
       styleEditorOpenedSection,
       remoteLayersOpen,

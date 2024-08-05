@@ -8,6 +8,7 @@ import VectorSource from 'ol/source/Vector'
 import { storeToRefs } from 'pinia'
 import { useDrawStore } from '@/stores/draw.store'
 import { createStyleFunction } from './draw-utils'
+import { useAppStore } from '@/stores/app.store'
 
 import { useDrawStore } from '@/stores/draw.store'
 import { DrawFeature } from '@/stores/draw.store.model'
@@ -21,6 +22,9 @@ export default function useDrawnFeatures() {
   const drawStore = useDrawStore()
   const map = useMap().getOlMap()
   const { drawStateActive } = storeToRefs(useDrawStore())
+  const { feedbackOpen, feedbackanfOpen, feedbackageOpen, feedbackcruesOpen } =
+    storeToRefs(useAppStore())
+  const { toggleMyMapsOpen } = useAppStore()
 
   const features = new Collection<Feature<Geometry>>()
   const drawLayer = new VectorLayer({
@@ -34,10 +38,7 @@ export default function useDrawnFeatures() {
   map.addLayer(drawLayer)
 
   function addFeature(feature: Feature<Geometry>) {
-    //todo: handle mutuability, save to mymaps, encode in URL
     const name = getName(feature)
-    console.log('name', name)
-
     const nbFeatures = features.getLength()
     feature.set('name', name + ' ' + (nbFeatures + 1))
     feature.set('description', '')
@@ -52,9 +53,34 @@ export default function useDrawnFeatures() {
     feature.set('isLabel', drawStateActive.value === 'drawLabel')
     feature.setStyle(createStyleFunction(map))
     feature.set('display_order', nbFeatures)
-    // this.drawnFeatures_.getLayer().changed()
-
+    drawLayer.changed()
+    // TODO Mymaps
+    // if (this.appMymaps_.isEditable()) {
+    //   feature.set('__map_id__', this.appMymaps_.getMapId());
+    // } else {
+    //   feature.set('__map_id__', undefined);
+    // }
     features.push(feature)
+    // TODO Update Profile: v3 sets attribute for watcher
+    // feature.set('__refreshProfile__', true)
+    // TODO Select feature
+    // this.selectedFeatures_.clear()
+    // this.selectedFeatures_.push(feature)
+    // TODO Save feature: saveFeatureInMymaps_ (Mymaps) and encodeFeaturesInUrl_
+    // this.drawnFeatures_.saveFeature(feature)
+    // TODO Modify: Activate
+    // this.drawnFeatures_.activateModifyIfNeeded(event.feature)
+    // TODO GetDevice
+    // if (!this.appGetDevice_.testEnv('xs')) {
+    if (
+      feedbackOpen.value !== true &&
+      feedbackanfOpen.value !== true &&
+      feedbackageOpen.value !== true &&
+      feedbackcruesOpen.value !== true
+    ) {
+      toggleMyMapsOpen(true)
+    }
+    // }
 
     // TODO: to improve saving
     const geomType = feature.getGeometry()?.getType()
@@ -99,7 +125,6 @@ export default function useDrawnFeatures() {
     }
 
     return coordinates
-    console.log('features', features)
   }
 
   function getName(feature: Feature<Geometry>) {
