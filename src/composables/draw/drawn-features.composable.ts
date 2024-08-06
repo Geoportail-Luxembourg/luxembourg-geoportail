@@ -9,6 +9,7 @@ import { storeToRefs } from 'pinia'
 import { useDrawStore } from '@/stores/draw.store'
 import { createStyleFunction } from './draw-utils'
 import { useAppStore } from '@/stores/app.store'
+import { screenSizeIsAtLeast } from '@/services/common/device.utils'
 
 import { useDrawStore } from '@/stores/draw.store'
 import { DrawFeature } from '@/stores/draw.store.model'
@@ -70,9 +71,8 @@ export default function useDrawnFeatures() {
     // this.drawnFeatures_.saveFeature(feature)
     // TODO Modify: Activate
     // this.drawnFeatures_.activateModifyIfNeeded(event.feature)
-    // TODO GetDevice
-    // if (!this.appGetDevice_.testEnv('xs')) {
     if (
+      screenSizeIsAtLeast('md') &&
       feedbackOpen.value !== true &&
       feedbackanfOpen.value !== true &&
       feedbackageOpen.value !== true &&
@@ -80,7 +80,6 @@ export default function useDrawnFeatures() {
     ) {
       toggleMyMapsOpen(true)
     }
-    // }
 
     // TODO: to improve saving
     const geomType = feature.getGeometry()?.getType()

@@ -20,7 +20,6 @@ export default function useDrawInteraction(options: Options) {
   function onDrawEnd(event: DrawEvent) {
     drawTooltip.remove()
     addFeature(event.feature)
-    //TODO: migrate rest of DRawController.onDrawEnd_
   }
 
   return {
