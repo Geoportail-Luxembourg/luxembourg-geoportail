@@ -1,3 +1,5 @@
+import { Collection, Feature } from 'ol'
+import { Geometry } from 'ol/geom'
 import { defineStore } from 'pinia'
 import { ShallowRef, ref } from 'vue'
 
@@ -5,6 +7,9 @@ import { DrawFeature, DrawStateActive } from './draw.store.model'
 
 export const useDrawStore = defineStore('draw', () => {
   const drawStateActive = ref<DrawStateActive>(undefined)
+  const drawnFeatures = ref<Collection<Feature<Geometry>>>(
+    new Collection<Feature<Geometry>>()
+  )
   const drawFeatures: ShallowRef<DrawFeature[]> = ref([
     // 'Point',
     // 'Polygon',
@@ -21,6 +26,10 @@ export const useDrawStore = defineStore('draw', () => {
     }
   }
 
+  function addDrawnFeature(feature: Feature<Geometry>) {
+    drawnFeatures.value.push(feature)
+  }
+
   function removeFeature(featureId: number) {
     drawFeatures.value = drawFeatures.value.filter(
       feature => feature.id !== featureId
@@ -30,8 +39,10 @@ export const useDrawStore = defineStore('draw', () => {
   return {
     drawFeatures,
     drawStateActive,
+    drawnFeatures,
     featureEditionDocked,
     removeFeature,
     toggleActiveState,
+    addDrawnFeature,
   }
 })

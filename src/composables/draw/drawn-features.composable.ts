@@ -22,12 +22,13 @@ const DEFAULT_DRAW_ZINDEX = 1000
 export default function useDrawnFeatures() {
   const drawStore = useDrawStore()
   const map = useMap().getOlMap()
-  const { drawStateActive } = storeToRefs(useDrawStore())
+  const { drawStateActive, drawnFeatures } = storeToRefs(useDrawStore())
+  const { addDrawnFeature } = useDrawStore()
   const { feedbackOpen, feedbackanfOpen, feedbackageOpen, feedbackcruesOpen } =
     storeToRefs(useAppStore())
   const { toggleMyMapsOpen } = useAppStore()
 
-  const features = new Collection<Feature<Geometry>>()
+  const features = drawnFeatures.value as Collection<Feature<Geometry>>
   const drawLayer = new VectorLayer({
     source: new VectorSource({
       features,
@@ -61,14 +62,13 @@ export default function useDrawnFeatures() {
     // } else {
     //   feature.set('__map_id__', undefined);
     // }
-    features.push(feature)
+    addDrawnFeature(feature)
     // TODO Update Profile: v3 sets attribute for watcher
     // feature.set('__refreshProfile__', true)
     // TODO Select feature
     // this.selectedFeatures_.clear()
     // this.selectedFeatures_.push(feature)
-    // TODO Save feature: saveFeatureInMymaps_ (Mymaps) and encodeFeaturesInUrl_
-    // this.drawnFeatures_.saveFeature(feature)
+    saveFeature(feature)
     // TODO Modify: Activate
     // this.drawnFeatures_.activateModifyIfNeeded(event.feature)
     if (
@@ -183,6 +183,31 @@ export default function useDrawnFeatures() {
         break
     }
     return name
+  }
+
+  function saveFeature(feature: Feature) {
+    console.log('saveFeature', feature)
+    // TODO Mymaps: saveFeatureInMymaps_
+    // if (this.appMymaps_.isEditable() &&
+    //     !!feature.get('__map_id__')) {
+    //   this.saveFeatureInMymaps_(feature);
+    // }
+    encodeFeaturesInUrl(features.getArray())
+  }
+
+  function encodeFeaturesInUrl(features: Feature[]) {
+    const featuresToEncode = features.filter(function (feature) {
+      return !feature.get('__map_id__')
+    })
+    if (featuresToEncode.length > 0) {
+      // this.ngeoLocation_.updateParams({
+      //   'features': this.fhFormat_.writeFeatures(featuresToEncode)
+      // });
+      console.log('featuresToEncode', featuresToEncode)
+    } else {
+      // this.ngeoLocation_.deleteParam('features');
+      console.log('no features to encode')
+    }
   }
 
   return {
