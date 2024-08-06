@@ -1,6 +1,7 @@
 import { Ref, ref } from 'vue'
 import { acceptHMRUpdate, defineStore } from 'pinia'
 import { StyleSection } from '@/composables/mvt-styles/mvt-styles.model'
+import { screenSizeIsAtLeast } from '@/services/common/device.utils'
 
 export const DEFAULT_LANG = 'fr'
 export const DEFAULT_LAYER_PANEL_OPENED = true
@@ -87,7 +88,7 @@ export const useAppStore = defineStore(
     function setDrawToolbarOpen(open: boolean) {
       drawToolbarOpen.value = open
 
-      if (drawToolbarOpen.value) {
+      if (drawToolbarOpen.value && screenSizeIsAtLeast('md')) {
         myMapsOpen.value = true
         layersOpen.value = false
         themeGridOpen.value = false
