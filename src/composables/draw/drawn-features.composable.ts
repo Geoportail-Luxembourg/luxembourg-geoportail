@@ -68,7 +68,7 @@ export default function useDrawnFeatures() {
     // TODO Select feature
     // this.selectedFeatures_.clear()
     // this.selectedFeatures_.push(feature)
-    saveFeature(feature)
+    // saveFeature(feature)
     // TODO Modify: Activate
     // this.drawnFeatures_.activateModifyIfNeeded(event.feature)
     if (
@@ -185,30 +185,31 @@ export default function useDrawnFeatures() {
     return name
   }
 
-  function saveFeature(feature: Feature) {
-    console.log('saveFeature', feature)
-    // TODO Mymaps: saveFeatureInMymaps_
-    // if (this.appMymaps_.isEditable() &&
-    //     !!feature.get('__map_id__')) {
-    //   this.saveFeatureInMymaps_(feature);
-    // }
-    encodeFeaturesInUrl(features.getArray())
-  }
+  // function saveFeature(feature: Feature) {
+  //   console.log('saveFeature', feature)
+  //   // TODO Mymaps: saveFeatureInMymaps_
+  //   // if (this.appMymaps_.isEditable() &&
+  //   //     !!feature.get('__map_id__')) {
+  //   //   this.saveFeatureInMymaps_(feature);
+  //   // }
+  //   encodeFeaturesInUrl(features.getArray())
+  // }
 
-  function encodeFeaturesInUrl(features: Feature[]) {
-    const featuresToEncode = features.filter(function (feature) {
-      return !feature.get('__map_id__')
-    })
-    if (featuresToEncode.length > 0) {
-      // this.ngeoLocation_.updateParams({
-      //   'features': this.fhFormat_.writeFeatures(featuresToEncode)
-      // });
-      console.log('featuresToEncode', featuresToEncode)
-    } else {
-      // this.ngeoLocation_.deleteParam('features');
-      console.log('no features to encode')
-    }
-  }
+  // //TODO: call encoding / decoding from state persistor
+  // function encodeFeaturesInUrl(features: Feature[]) {
+  //   const featuresToEncode = features.filter(function (feature) {
+  //     return !feature.get('__map_id__')
+  //   })
+  //   if (featuresToEncode.length > 0) {
+  //     // this.ngeoLocation_.updateParams({
+  //     //   'features': this.fhFormat_.writeFeatures(featuresToEncode)
+  //     // });
+  //     console.log('featuresToEncode', featuresToEncode)
+  //   } else {
+  //     // this.ngeoLocation_.deleteParam('features');
+  //     console.log('no features to encode')
+  //   }
+  // }
 
   return {
     addFeature,
