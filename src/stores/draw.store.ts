@@ -27,6 +27,15 @@ export const useDrawStore = defineStore('draw', () => {
 
   function addDrawnFeature(feature: Feature<Geometry>) {
     drawnFeatures.value.push(feature)
+    // triggerRef(drawnFeatures)
+    // drawnFeatures.value = new Collection<Feature<Geometry>>([
+    //   ...drawnFeatures.value.getArray(),
+    //   feature,
+    // ])
+  }
+
+  function setDrawnFeatures(features: Collection<Feature<Geometry>>) {
+    drawnFeatures.value = features
   }
 
   return {
@@ -34,5 +43,6 @@ export const useDrawStore = defineStore('draw', () => {
     drawnFeatures,
     toggleActiveState,
     addDrawnFeature,
+    setDrawnFeatures,
   }
 })
