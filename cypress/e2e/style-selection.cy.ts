@@ -11,7 +11,7 @@ describe('Style selector', () => {
   })
 
   it('has no style value in localStorage', () => {
-    expect(localStorage.getItem('basemap_2015_global')).to.eq('')
+    expect(localStorage.getItem('basemap_2015_global')).to.be.null
   })
 
   describe('Style panel', () => {

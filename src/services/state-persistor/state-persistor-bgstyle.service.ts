@@ -35,12 +35,20 @@ class StatePersistorStyleService {
         (value, oldValue) => {
           if (oldValue !== value) {
             const mapStore = useMapStore()
-            if (mapStore.bgLayer) {
-              storageHelper.setValue(
-                mapStore.bgLayer.name,
-                value || [],
-                storageStyleMapper.styleToLocalStorage
-              )
+            // check if current layer is a vector layer
+            if (
+              mapStore.bgLayer &&
+              styleStore.bgVectorSources.has(mapStore.bgLayer.id)
+            ) {
+              if (value && value.length) {
+                storageHelper.setValue(
+                  mapStore.bgLayer.name,
+                  value || [],
+                  storageStyleMapper.styleToLocalStorage
+                )
+              } else {
+                storageHelper.removeItem(mapStore.bgLayer.name)
+              }
               storageHelper.setValue(
                 SP_KEY_SERIAL,
                 value || [],
