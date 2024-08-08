@@ -1,9 +1,6 @@
 name: CI_package
 on:
   pull_request:
-    types:
-      - edited
-      - closed
     branches:
       - main
   push:
@@ -16,7 +13,8 @@ jobs:
     steps:
       - name: checkout ${{ github.head_ref }}
         uses: actions/checkout@v4
-        ref: ${{ github.head_ref }}
+        with:
+          ref: ${{ github.head_ref }}
       - run: git status
       - run: git ref-parse --abbrev-ref HEAD
       - name: tag ${{ github.head_ref }}
