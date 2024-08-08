@@ -2,7 +2,8 @@ name: CI_package
 on:
   pull_request:
     types:
-      - '*'
+      - edited
+      - closed
     branches:
       - main
   push:
