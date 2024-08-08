@@ -37,7 +37,12 @@ jobs:
           persist-credentials: false
           fetch-depth: 0
       - name: compute tag name
-        run: echo "AUTO_TAG=$(git rev-parse --abbrev-ref HEAD)_tag_$(git rev-parse --short HEAD)" >> $GITHUB_ENV
+        shell: bash
+        run: |
+          tt = 1
+          echo $tt
+          at = $(git rev-parse --abbrev-ref HEAD)_tag_$(git rev-parse --short HEAD)
+          echo "AUTO_TAG=$at" >> $GITHUB_ENV
       - name: check tag name
         run: |
           echo ${{ env.AUTO_TAG }}
@@ -51,7 +56,7 @@ jobs:
           route: POST /repos/{owner}/{repo}/releases
           owner: 'Geoportail-Luxembourg'
           repo: 'luxembourg-geoportail'
-          tag_name: ${{ github.event_name == 'push' && github.ref || }}
+          tag_name: ${{ github.event_name == 'push' && github.ref || env.AUTO_TAG }}
       - uses: actions/setup-node@v3
         with:
           node-version: 16
