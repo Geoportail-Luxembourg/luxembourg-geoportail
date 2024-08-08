@@ -22,7 +22,7 @@ jobs:
         run: |
           # date > generated.txt
           # Note: the following account information will not work on GHES
-          git tag $(git rev-parse --abbrev-ref HEAD)_tag_$(git rev-parse --short HEAD)
+          git tag $(git rev-parse --abbrev-ref HEAD)_CI_$(git rev-parse --short HEAD)
           git push --tags
   lux-package:
     # if: github.event_name == 'push'
@@ -42,7 +42,7 @@ jobs:
         run: |
           tt=1
           echo $tt
-          at=$(git rev-parse --abbrev-ref HEAD)_tag_$(git rev-parse --short HEAD)
+          at=$(git rev-parse --abbrev-ref HEAD)_CI_$(git rev-parse --short HEAD)
           echo "AUTO_TAG=$at" >> $GITHUB_ENV
       - name: check tag name
         run: |

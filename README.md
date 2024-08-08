@@ -98,7 +98,7 @@ The results of the build can be found in the folder `bundle`
 An automatic mecanism has been created with github actions. This workflow is triggered when a tag is pushed into the repo.
 
 For the moment there is no automatic tag generation on pull requests, so for dev, the following naming conventions are recommended:
-<branch_name>\_tag\_<short_commit>
+<branch_name>\_TAG\_<short_commit>
 
 ```
 echo $(git rev-parse --abbrev-ref HEAD)_tag_$(git rev-parse --short HEAD)
@@ -111,6 +111,11 @@ The CI automatically builds the lib, creates a release named after the tag and i
 ```
 
 This package URL can also be used to reference the dependency for NPM in package.json, see below
+
+### Automatic tag in CI
+
+On merge of a PR on main branch the CI will create an automatic tag of type
+<branch_name>\_CI\_<short_commit>
 
 ### Import the lib in another app
 
