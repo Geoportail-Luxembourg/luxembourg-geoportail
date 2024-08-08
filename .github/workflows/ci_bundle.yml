@@ -1,6 +1,8 @@
 name: CI_package
 on:
   pull_request:
+    type:
+      - closed
     branches:
       - main
   push:
@@ -20,12 +22,10 @@ jobs:
       - run: git rev-parse --abbrev-ref HEAD
       - name: tag ${{ github.head_ref }}
         run: |
-          # date > generated.txt
-          # Note: the following account information will not work on GHES
           git tag $(git rev-parse --abbrev-ref HEAD)_CI_$(git rev-parse --short HEAD)
           git push --tags
   lux-package:
-    # if: github.event_name == 'push'
+    # the combination if always + needs xx makes sure the mackage job runs after completion of the tag job
     if: ${{ always() }}
     needs: tag-version
     runs-on: ubuntu-latest
@@ -40,14 +40,8 @@ jobs:
       - name: compute tag name
         shell: bash
         run: |
-          tt=1
-          echo $tt
           at=$(git rev-parse --abbrev-ref HEAD)_CI_$(git rev-parse --short HEAD)
           echo "AUTO_TAG=$at" >> $GITHUB_ENV
-      - name: check tag name
-        run: |
-          echo ${{ env.AUTO_TAG }}
-          echo ${{ env.TAG }}
       - name: create release
         id: create_release
         uses: octokit/request-action@v2.x

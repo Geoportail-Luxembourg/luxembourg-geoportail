@@ -117,6 +117,35 @@ This package URL can also be used to reference the dependency for NPM in package
 On merge of a PR on main branch the CI will create an automatic tag of type
 <branch_name>\_CI\_<short_commit>
 
+### Cleanup of tags:
+
+Everyone should clean their own dev-only tags.
+
+The following scripts might come handy to avoid messing up the repo with unused tags.
+
+#### cleaning out local tags before pushing any
+
+Before a git push --tags, one should sync the local tags with the remote ones:
+
+```
+for t in $(git tag -l); do git tag -d $t; done
+git fetch -t
+```
+
+#### cleaning usused tags
+
+there is not any CI automation yet. However, the naming conventio that dev tags shall start with the branch name, makes cleaning them much easier.
+
+```
+for t in $(git tag -l | grep GSLUX-635_automate_tag_on_merge_); do git push origin :refs/tags/$t; done
+```
+
+where `GSLUX-635_automate_tag_on_merge` is the branch name
+
+#### cleaning releases
+
+releases must be deleted manually in the github web interface. The github API might be used, but this can be slightly complex.
+
 ### Import the lib in another app
 
 You can include the built lib multiple ways in the `package.json`:
