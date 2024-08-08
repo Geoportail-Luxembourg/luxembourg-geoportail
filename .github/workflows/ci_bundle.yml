@@ -30,7 +30,7 @@ jobs:
     needs: tag-version
     runs-on: ubuntu-latest
     env:
-      TAG: ${{ github.event_name == 'push' && github.ref || format('{0}_tag_{1]', github.head_ref, github.sha) }}
+      TAG: ${{ github.event_name == 'push' && github.ref || format('{0}_tag_{1}', github.head_ref, github.sha) }}
     steps:
       - uses: actions/checkout@v3
         with:
