@@ -34,6 +34,7 @@ jobs:
     steps:
       - uses: actions/checkout@v3
         with:
+          ref: ${{ github.head_ref }}
           persist-credentials: false
           fetch-depth: 0
       - name: compute tag name
