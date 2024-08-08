@@ -82,10 +82,6 @@ export class OlSynchronizer {
     watch(
       () => mapStore.bgLayer,
       async bgLayer => {
-        // TODO: remove timeout, only to make sync bug reproducable
-        console.log('waiting to switch BG')
-        await new Promise(r => setTimeout(r, 1000))
-        console.log('waited - now switch BG')
         bgLayer !== undefined &&
           openLayers.setBgLayer(map, bgLayer, styleStore.bgVectorSources)
       }
