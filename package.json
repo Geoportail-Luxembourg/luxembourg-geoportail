@@ -3,6 +3,7 @@
   "version": "0.0.0-dev",
   "private": true,
   "scripts": {
+    "tag": "git tag $(git rev-parse --abbrev-ref HEAD)_TAG_$(git rev-parse --short HEAD)",
     "start": "npm run dev",
     "dev": "vite --force",
     "build": "run-p type-check build-only",

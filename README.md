@@ -97,11 +97,14 @@ The results of the build can be found in the folder `bundle`
 
 An automatic mecanism has been created with github actions. This workflow is triggered when a tag is pushed into the repo.
 
-For the moment there is no automatic tag generation on pull requests, so for dev, the following naming conventions are recommended:
+For dev releases, create a new tag, the CI will then generate the release. The following naming conventions are recommended:
 <branch_name>\_TAG\_<short_commit>
 
+an npm script is included in package.json, so just call
+
 ```
-echo $(git rev-parse --abbrev-ref HEAD)_tag_$(git rev-parse --short HEAD)
+npm run tag
+git push --tags
 ```
 
 The CI automatically builds the lib, creates a release named after the tag and includes the built bundle in the release. The built package can then be downloaded at the URL:
