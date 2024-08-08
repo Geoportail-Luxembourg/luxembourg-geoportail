@@ -16,12 +16,11 @@ jobs:
         with:
           ref: ${{ github.head_ref }}
       - run: git status
-      - run: git ref-parse --abbrev-ref HEAD
+      - run: git rev-parse --abbrev-ref HEAD
       - name: tag ${{ github.head_ref }}
         run: |
           # date > generated.txt
           # Note: the following account information will not work on GHES
-          git checkout ${{ github.head_ref }}
           git tag $(git rev-parse --abbrev-ref HEAD)_tag_$(git rev-parse --short HEAD)
           git push --tags
   lux-package:
