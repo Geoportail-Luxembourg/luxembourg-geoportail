@@ -1,6 +1,6 @@
 {
   "name": "luxembourg-geoportail",
-  "version": "0.0.0",
+  "version": "0.0.0-dev",
   "private": true,
   "scripts": {
     "start": "npm run dev",
@@ -25,6 +25,10 @@
     "format": "prettier --write --list-different . --ignore-path .prettierignore && npm run lint:js -- --fix",
     "prepare": "husky install"
   },
+  "files": [
+    "*",
+    "bundle/*"
+  ],
   "dependencies": {
     "@camptocamp/ogc-client": "^0.3.4",
     "file-saver": "^2.0.5",
