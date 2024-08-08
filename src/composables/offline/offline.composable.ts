@@ -2,7 +2,9 @@ import { storeToRefs } from 'pinia'
 
 import { useAppStore } from '@/stores/app.store'
 import { useMapStore } from '@/stores/map.store'
+import { useStyleStore } from '@/stores/style.store'
 import { clearLayersCache } from '@/stores/layers.cache'
+import useMvtStyles from '@/composables/mvt-styles/mvt-styles.composable'
 import useOfflineLayers from '@/composables/offline/offline-layers.composable'
 import { OfflineContent } from '@/composables/offline/offline.model'
 
@@ -39,6 +41,13 @@ export default function useOffline() {
     isOffLine.value = isOffline
   }
 
+  // function doRestoreV3(offlineContent: OfflineContent) {
+  //   // restore function
+  //   doRestoreClearAll()
+  //   doRestoreZooms(offlineContent)
+  //   doRestoreLayers(offlineContent)
+  // }
+
   function doRestore(offlineContent: OfflineContent) {
     doRestoreClearAll()
     doRestoreZooms(offlineContent)
@@ -52,6 +61,7 @@ export default function useOffline() {
     clearLayersCache()
     removeAllLayers()
     setBgLayer(null)
+    useStyleStore().setBgVectorSources({})
   }
 
   /**
@@ -69,6 +79,7 @@ export default function useOffline() {
    * @param offlineContent
    */
   function doRestoreLayers(offlineContent: OfflineContent) {
+    useMvtStyles().initBackgroundsConfigs()
     ;[...offlineContent.layers]
       .reverse()
       .forEach(spec => offlineLayers.createOfflineLayer(spec))
