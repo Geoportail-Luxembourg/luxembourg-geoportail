@@ -65,9 +65,9 @@ When Lux is used in lib mode 📦, it is possible to oerride i18next configurati
 
 ## 📦 Build as a lib for integration (in geoportal v3)
 
-In order to use the new Lux components made with Vuejs as an external dep, follow steps below.
+In order to use the new Lux components made with Vuejs as an external dep, the library must be built and imported in the V3 project.
 
-### Build the lib
+### Manual Build
 
 In the project **luxembourg-geoportail**, build the app as library with this command:
 
@@ -91,6 +91,27 @@ To see what are the components exported, check the `/src/bundle/lib.ts` that is 
 
 The build configuration can be found in `vite-dist.config`. It excludes `OpenLayers` and `mapbox-gl` from the lib to prevent problems (eg. in minification) when running the lib within v3. The lib uses the `ol` and `mapbox-gl` instances of v3, which versions should be similar to those in v4.
 
+The results of the build can be found in the folder `bundle`
+
+### Automatic build via CI
+
+An automatic mecanism has been created with github actions. This workflow is triggered when a tag is pushed into the repo.
+
+For the moment there is no automatic tag generation on pull requests, so for dev, the following naming conventions are recommended:
+<branch_name>\_tag\_<short_commit>
+
+```
+echo $(git rev-parse --abbrev-ref HEAD)_tag_$(git rev-parse --short HEAD)
+```
+
+The CI automatically builds the lib, creates a release named after the tag and includes the built bundle in the release. The built package can then be downloaded at the URL:
+
+```
+"https://github.com/Geoportail-Luxembourg/luxembourg-geoportail/releases/download/<release_name>/luxembourg-geoportail-lib-0.0.0-dev.tgz"
+```
+
+This package URL can also be used to reference the dependency for NPM in package.json, see below
+
 ### Import the lib in another app
 
 You can include the built lib multiple ways in the `package.json`:
@@ -107,8 +128,7 @@ You can include the built lib multiple ways in the `package.json`:
       "version": "1.0.0",
       "license": "ISC",
       "dependencies": {
-        "luxembourg-geoportail": "git://github.com/Geoportail-Luxembourg/luxembourg-geoportail.git#GSLUX-602-IntegrationV3"
-        // or "https://github.com/Geoportail-Luxembourg/luxembourg-geoportail.git#GSLUX-602-IntegrationV3"
+        "luxembourg-geoportail": "ttps://github.com/Geoportail-Luxembourg/luxembourg-geoportail/releases/download/GSLUX-635_create_release_CI_6606389/luxembourg-geoportail-lib-0.0.0-dev.tgz"
       },
       "devDependencies": {
         // ...

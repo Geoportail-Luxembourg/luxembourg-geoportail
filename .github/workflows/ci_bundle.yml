@@ -25,13 +25,12 @@ jobs:
         with:
           node-version: 16
           cache: 'npm'
-      - run: npm ci
-      - name: Build prod library
+      - name: Build and pack prod library
         shell: bash
-        run: npm run build:lib:prod
-      - name: Build prod library
-        shell: bash
-        run: npm pack
+        run: |
+          npm ci
+          npm run build:lib:prod
+          npm pack
 
       - name: upload manually
         run: |
