@@ -41,7 +41,14 @@ export default function useOffline() {
     isOffLine.value = isOffline
   }
 
-  // function doRestoreV3(offlineContent: OfflineContent) {
+  /**
+   * Use this function in v3 to restore offline Layers in V3
+   * with better sync to prevent having layers which are not yet created
+   * @param localforage
+   *
+   * @deprecated this function is meant to be removed when v4 is fully operational
+   */
+  // function doRestore_v3(offlineContent: OfflineContent) {
   //   // restore function
   //   doRestoreClearAll()
   //   doRestoreZooms(offlineContent)
@@ -61,7 +68,7 @@ export default function useOffline() {
     clearLayersCache()
     removeAllLayers()
     setBgLayer(null)
-    useStyleStore().setBgVectorSources({})
+    useStyleStore().setBgVectorSources(new Map())
   }
 
   /**
