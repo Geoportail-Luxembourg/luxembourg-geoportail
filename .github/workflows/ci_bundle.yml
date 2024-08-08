@@ -1,10 +1,27 @@
 name: CI_package
 on:
+  pull_request:
+    types:
+      - edited
+      - closed
+    branches:
+      - master
   push:
     tags:
       - '*'
 jobs:
+  tag-version:
+    if: github.event_name == 'pull_request'
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - run: |
+          # date > generated.txt
+          # Note: the following account information will not work on GHES
+          git tag $(git rev-parse --abbrev-ref HEAD)_tag_$(git rev-parse --short HEAD)
+          git push --tags
   lux-package:
+    if: github.event_name == 'push'
     runs-on: ubuntu-latest
     steps:
       - name: create release
