@@ -1,16 +1,33 @@
 name: CI_package
 on:
   pull_request:
-    types:
-      - closed
-    branches:
-      - main
-  push:
-    tags:
-      - '*'
 jobs:
+  debug info:
+    runs-on: ubuntu-latest
+    steps:
+      - name: first ${{ github.head_ref }}
+        run: echo ${{ github }}
+      - name: needs
+        run: echo ${{ needs }}
+      - name: strategy
+        run: echo ${{ strategy }}
+      - name: matrix
+        run: echo ${{ matrix }}
+      - name: job
+        run: echo ${{ job }}
+      - name: runner
+        run: echo ${{ runner }}
+      - name: env
+        run: echo ${{ env }}
+      - name: vars
+        run: echo ${{ vars }}
+      - name: steps
+        run: echo ${{ steps }}
+      - name: inputs
+        run: echo ${{ inputs }}
   tag-version:
-    if: github.event_name == 'pull_request'
+    if: github.ref == "no_skip"
+    # if: (github.ref == "coucou")github.event_name == 'pull_request'
     runs-on: ubuntu-latest
     steps:
       - name: checkout ${{ github.head_ref }}
@@ -29,7 +46,8 @@ jobs:
     # after completion of the tag-version job.
     # In case of a tag push, the tag-version job is skipped but the lux-package job will run
     # In case of a closed PR, the tag-version job runs first, the lux-package job runs after completion
-    if: ${{ always() }}
+    if: github.ref == "no_skip"
+    # if: ${{ always() }}
     needs: tag-version
     runs-on: ubuntu-latest
     steps:
