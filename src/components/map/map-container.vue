@@ -7,7 +7,7 @@ import useMap from '@/composables/map/map.composable'
 import { OlSynchronizer } from '@/composables/map/ol.synchronizer'
 import { OlViewSynchronizer } from '@/composables/map/ol-view.synchronizer'
 import { statePersistorMapService } from '@/services/state-persistor/state-persistor-map.service'
-
+import { statePersistorFeaturesService } from '@/services/state-persistor/state-persistor-features.service'
 import AttributionControl from '../map-controls/attribution-control.vue'
 import LocationControl from '../map-controls/location-control.vue'
 import Map3dControl from '../map-controls/map-3d.vue'
@@ -20,6 +20,8 @@ const { embedded } = storeToRefs(appStore)
 const map = useMap()
 const mapContainer = ref(null)
 const olMap = map.createMap()
+// add draw layer after map init to allow restoring draw features
+map.addDrawLayer()
 
 withDefaults(
   defineProps<{
@@ -39,6 +41,7 @@ onMounted(() => {
     new OlSynchronizer(olMap)
     new OlViewSynchronizer(olMap)
     statePersistorMapService.bootstrap()
+    statePersistorFeaturesService.bootstrap()
     olMap.setTarget(mapContainer.value)
 
     // Direct access to olMap for cypress

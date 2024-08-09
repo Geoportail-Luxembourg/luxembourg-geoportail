@@ -8,6 +8,7 @@ export const SP_KEY_DEBUG = 'debug' // TODO:
 export const SP_KEY_EMBEDDED = 'embedded' // Embedded Map mode (no header, no toolbar)
 export const SP_KEY_EMBEDDED_SERVER = 'embeddedserver'
 export const SP_KEY_EMBEDDED_SERVER_PROTOCOL = 'embeddedserverprotocol'
+export const SP_KEY_FEATURES = 'features'
 export const SP_KEY_FID = 'fid' // TODO:
 export const SP_KEY_LANG = 'lang'
 export const SP_KEY_LAYERS_OPEN = 'layersOpen'
