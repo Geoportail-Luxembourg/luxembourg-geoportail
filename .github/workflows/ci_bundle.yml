@@ -1,12 +1,48 @@
 name: CI_package
 on:
+  pull_request:
+    types:
+      - closed
+    branches:
+      - main
   push:
     tags:
       - '*'
 jobs:
-  lux-package:
+  tag-version:
+    if: github.event_name == 'pull_request'
     runs-on: ubuntu-latest
     steps:
+      - name: checkout ${{ github.head_ref }}
+        uses: actions/checkout@v4
+        with:
+          ref: ${{ github.head_ref }}
+          fetch-depth: 0
+      - run: git status
+      - run: git rev-parse --abbrev-ref HEAD
+      - name: tag ${{ github.head_ref }}
+        run: |
+          git tag $(git rev-parse --abbrev-ref HEAD)_CI_$(git rev-parse --short HEAD)
+          git push --tags
+  lux-package:
+    # the combination (if always) + (needs tag-version) makes sure the lux-package job runs
+    # after completion of the tag-version job.
+    # In case of a tag push, the tag-version job is skipped but the lux-package job will run
+    # In case of a closed PR, the tag-version job runs first, the lux-package job runs after completion
+    if: ${{ always() }}
+    needs: tag-version
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: ${{ github.head_ref }}
+          persist-credentials: false
+          fetch-depth: 0
+      - name: compute tag name
+        shell: bash
+        run: |
+          at=$(git rev-parse --abbrev-ref HEAD)_CI_$(git rev-parse --short HEAD)
+          echo "AUTO_TAG=$at" >> $GITHUB_ENV
       - name: create release
         id: create_release
         uses: octokit/request-action@v2.x
@@ -16,11 +52,7 @@ jobs:
           route: POST /repos/{owner}/{repo}/releases
           owner: 'Geoportail-Luxembourg'
           repo: 'luxembourg-geoportail'
-          tag_name: ${{ github.ref }}
-      - uses: actions/checkout@v3
-        with:
-          persist-credentials: false
-          fetch-depth: 0
+          tag_name: ${{ github.event_name == 'push' && github.ref || env.AUTO_TAG }}
       - uses: actions/setup-node@v3
         with:
           node-version: 16
