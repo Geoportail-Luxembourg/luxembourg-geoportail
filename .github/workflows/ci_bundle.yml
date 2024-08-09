@@ -25,14 +25,15 @@ jobs:
           git tag $(git rev-parse --abbrev-ref HEAD)_CI_$(git rev-parse --short HEAD)
           git push --tags
   lux-package:
-    # the combination if always + needs xx makes sure the mackage job runs after completion of the tag job
+    # the combination (if always) + (needs tag-version) makes sure the lux-package job runs
+    # after completion of the tag-version job.
+    # In case of a tag push, the tag-version job is skipped but the lux-package job will run
+    # In case of a closed PR, the tag-version job runs first, the lux-package job runs after completion
     if: ${{ always() }}
     needs: tag-version
     runs-on: ubuntu-latest
-    env:
-      TAG: ${{ github.event_name == 'push' && github.ref || format('{0}_tag_{1}', github.head_ref, github.sha) }}
     steps:
-      - uses: actions/checkout@v3
+      - uses: actions/checkout@v4
         with:
           ref: ${{ github.head_ref }}
           persist-credentials: false

@@ -98,7 +98,7 @@ The results of the build can be found in the folder `bundle`
 An automatic mecanism has been created with github actions. This workflow is triggered when a tag is pushed into the repo.
 
 For dev releases, create a new tag, the CI will then generate the release. The following naming conventions are recommended:
-<branch_name>\_TAG\_<short_commit>
+<branch_name>\_DEV\_<short_commit>
 
 an npm script is included in package.json, so just call
 
@@ -137,17 +137,18 @@ git fetch -t
 
 #### cleaning usused tags
 
-there is not any CI automation yet. However, the naming conventio that dev tags shall start with the branch name, makes cleaning them much easier.
+There is not any CI automation yet for cleaning tags. However, the naming convention (dev tags shall start with the branch name) makes cleaning them much easier.
 
 ```
 for t in $(git tag -l | grep GSLUX-635_automate_tag_on_merge_); do git push origin :refs/tags/$t; done
+for t in $(git tag -l | grep GSLUX-635_automate_tag_on_merge_); do git tag -d $t; done
 ```
 
 where `GSLUX-635_automate_tag_on_merge` is the branch name
 
 #### cleaning releases
 
-releases must be deleted manually in the github web interface. The github API might be used, but this can be slightly complex.
+Releases must be deleted manually in the github web interface. The github API might be used, but this would be some extra complexity for the moment.
 
 ### Import the lib in another app
 
