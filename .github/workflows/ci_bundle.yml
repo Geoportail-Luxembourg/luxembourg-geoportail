@@ -2,30 +2,6 @@ name: CI_package
 on:
   pull_request:
 jobs:
-  debug-info:
-    if: github.ref == 'no_skip'
-    runs-on: ubuntu-latest
-    steps:
-      - name: first ${{ github.head_ref }}
-        run: echo '${{ toJSON(github) }}'
-      - name: needs
-        run: echo '${{ toJSON(needs) }}'
-      - name: strategy
-        run: echo '${{ toJSON(strategy) }}'
-      - name: matrix
-        run: echo '${{ toJSON(matrix) }}'
-      - name: job
-        run: echo '${{ toJSON(job) }}'
-      - name: runner
-        run: echo '${{ toJSON(runner) }}'
-      - name: env
-        run: echo '${{ toJSON(env) }}'
-      - name: vars
-        run: echo '${{ toJSON(vars) }}'
-      - name: steps
-        run: echo '${{ toJSON(steps) }}'
-      - name: inputs
-        run: echo '${{ toJSON(inputs) }}'
   tag-version:
     # if: github.event_name == 'pull_request'
     runs-on: ubuntu-latest
