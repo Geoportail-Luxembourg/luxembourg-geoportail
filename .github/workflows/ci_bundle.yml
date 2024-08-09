@@ -6,25 +6,25 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: first ${{ github.head_ref }}
-        run: echo ${{ github }}
+        run: echo ${{ toJSON(github) }}
       - name: needs
-        run: echo ${{ needs }}
+        run: echo ${{ toJSON(needs) }}
       - name: strategy
-        run: echo ${{ strategy }}
+        run: echo ${{ toJSON(strategy) }}
       - name: matrix
-        run: echo ${{ matrix }}
+        run: echo ${{ toJSON(matrix) }}
       - name: job
-        run: echo ${{ job }}
+        run: echo ${{ toJSON(job) }}
       - name: runner
-        run: echo ${{ runner }}
+        run: echo ${{ toJSON(runner) }}
       - name: env
-        run: echo ${{ env }}
+        run: echo ${{ toJSON(env) }}
       - name: vars
-        run: echo ${{ vars }}
+        run: echo ${{ toJSON(vars) }}
       - name: steps
-        run: echo ${{ steps }}
+        run: echo ${{ toJSON(steps) }}
       - name: inputs
-        run: echo ${{ inputs }}
+        run: echo ${{ toJSON(inputs) }}
   tag-version:
     if: github.ref == 'no_skip'
     # if: github.event_name == 'pull_request'
