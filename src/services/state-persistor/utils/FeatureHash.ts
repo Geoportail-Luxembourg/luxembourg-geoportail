@@ -297,7 +297,7 @@ class FeatureHash extends TextFeature {
       if (attributesText != '') {
         const parts = attributesText.split("'")
         for (let i = 0; i < parts.length; ++i) {
-          const part = decodeURIComponent(parts[i])
+          const part = parts[i]
           const keyVal = part.split('*')
           console.assert(keyVal.length === 2)
           let key = keyVal[0]
@@ -400,11 +400,11 @@ class FeatureHash extends TextFeature {
         if (encodedProperties.length !== 0) {
           encodedProperties.push("'")
         }
-        const encoded = encodeURIComponent(
+        const encoded =
           key.replace(/[()'*]/g, '_') +
-            '*' +
-            value.toString().replace(/[()'*]/g, '_')
-        )
+          '*' +
+          value.toString().replace(/[()'*]/g, '_')
+
         encodedProperties.push(encoded)
       }
     }
@@ -611,7 +611,7 @@ function encodeStylePoint_(imageStyle: any, encodedStyles: string[]) {
     if (encodedStyles.length > 0) {
       encodedStyles.push("'")
     }
-    encodedStyles.push(encodeURIComponent('pointRadius*' + radius))
+    encodedStyles.push('pointRadius*' + radius)
     const fillStyle = imageStyle.getFill()
     if (fillStyle !== null) {
       encodeStyleFill_(fillStyle, encodedStyles)
@@ -668,7 +668,7 @@ function encodeStyleFill_(
     if (encodedStyles.length > 0) {
       encodedStyles.push("'")
     }
-    encodedStyles.push(encodeURIComponent(propertyName + '*' + fillColorHex))
+    encodedStyles.push(propertyName + '*' + fillColorHex)
   }
 }
 
@@ -694,14 +694,14 @@ function encodeStyleStroke_(strokeStyle: Stroke, encodedStyles: string[]) {
     if (encodedStyles.length > 0) {
       encodedStyles.push("'")
     }
-    encodedStyles.push(encodeURIComponent('strokeColor*' + strokeColorHex))
+    encodedStyles.push('strokeColor*' + strokeColorHex)
   }
   const strokeWidth = strokeStyle.getWidth()
   if (strokeWidth !== undefined) {
     if (encodedStyles.length > 0) {
       encodedStyles.push("'")
     }
-    encodedStyles.push(encodeURIComponent('strokeWidth*' + strokeWidth))
+    encodedStyles.push('strokeWidth*' + strokeWidth)
   }
 }
 
@@ -720,7 +720,7 @@ function encodeStyleText_(textStyle: Text, encodedStyles: string[]) {
       if (encodedStyles.length > 0) {
         encodedStyles.push("'")
       }
-      encodedStyles.push(encodeURIComponent('fontSize*' + font[1]))
+      encodedStyles.push('fontSize*' + font[1])
     }
   }
   const fillStyle = textStyle.getFill()
@@ -1047,7 +1047,7 @@ function getStyleProperties_(text: string /*feature: Feature*/) {
   const properties: any = {}
 
   for (let i = 0; i < parts.length; ++i) {
-    const part = decodeURIComponent(parts[i])
+    const part = parts[i]
     const keyVal = part.split('*')
     console.assert(keyVal.length === 2)
     const key = keyVal[0]
