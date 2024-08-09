@@ -3,6 +3,7 @@ on:
   pull_request:
 jobs:
   debug-info:
+    if: github.ref == 'no_skip'
     runs-on: ubuntu-latest
     steps:
       - name: first ${{ github.head_ref }}
@@ -26,20 +27,17 @@ jobs:
       - name: inputs
         run: echo '${{ toJSON(inputs) }}'
   tag-version:
-    if: github.ref == 'no_skip'
     # if: github.event_name == 'pull_request'
     runs-on: ubuntu-latest
     steps:
       - name: checkout ${{ github.head_ref }}
         uses: actions/checkout@v4
         with:
-          ref: ${{ github.head_ref }}
+          # ref: ${{ github.head_ref }}
           fetch-depth: 0
-      - run: git status
-      - run: git rev-parse --abbrev-ref HEAD
       - name: tag ${{ github.head_ref }}
         run: |
-          git tag $(git rev-parse --abbrev-ref HEAD)_CI_$(git rev-parse --short HEAD)
+          git tag ${{ github.head_ref }}_CI_$(git rev-parse --short HEAD)
           git push --tags
   lux-package:
     # the combination (if always) + (needs tag-version) makes sure the lux-package job runs
