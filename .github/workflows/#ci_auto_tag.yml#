@@ -1,6 +1,0 @@
-name: Auto tag on PR
-on:
-  pull_request:
-    types: [edited, closed]
-
-jobs:

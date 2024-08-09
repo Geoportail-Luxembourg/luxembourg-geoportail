@@ -2,7 +2,7 @@ name: CI_package
 on:
   pull_request:
 jobs:
-  debug info:
+  debug-info:
     runs-on: ubuntu-latest
     steps:
       - name: first ${{ github.head_ref }}
