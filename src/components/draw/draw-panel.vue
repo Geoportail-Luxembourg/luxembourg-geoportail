@@ -14,11 +14,14 @@ const isOpenItemPolygon = ref(false)
 const isOpenItemLineString = ref(false)
 
 const drawingMenuOptions = [
-  { label: 'Copier dans ma carte', action: () => console.log('TODO')},
-  { label: 'Effacer tous les dessins', action: () => console.log('TODO')},
-  { label: 'Créer une nouvelle carte à partir de ces dessins', action: () => console.log('TODO')},
-  { label: 'Fusionner des lignes', action: () => console.log('TODO')},
-  { label: 'Couper une ligne', action: () => console.log('TODO')}
+  { label: 'Copier dans ma carte', action: () => console.log('TODO') },
+  { label: 'Effacer tous les dessins', action: () => console.log('TODO') },
+  {
+    label: 'Créer une nouvelle carte à partir de ces dessins',
+    action: () => console.log('TODO'),
+  },
+  { label: 'Fusionner des lignes', action: () => console.log('TODO') },
+  { label: 'Couper une ligne', action: () => console.log('TODO') },
 ]
 
 onMounted(() => {
@@ -32,19 +35,21 @@ onMounted(() => {
   <div class="lux-draw-panel" data-cy="drawPanel">
     <div class="lux-draw-panel-title flex">
       <h5 class="grow">{{ t('Dessins') }}</h5>
-      
-      <MenuPopup :items="drawingMenuOptions"
-            :direction="'down'"
-            :ariaLabel="t('Drawings menu')"
-            >
-            <i class="fa-solid fa-square-caret-down hover:text-tertiary"></i>
-            <template #item="{ item }">
-              <MenuPopupItem
-                :item="item"
-                @click="() => item.action && item.action()">
-                {{ t(item.label) }}
-              </MenuPopupItem>
-            </template>
+
+      <MenuPopup
+        :items="drawingMenuOptions"
+        :direction="'down'"
+        :ariaLabel="t('Drawings menu')"
+      >
+        <i class="fa-solid fa-square-caret-down hover:text-tertiary"></i>
+        <template #item="{ item }">
+          <MenuPopupItem
+            :item="item"
+            @click="() => item.action && item.action()"
+          >
+            {{ t(item.label) }}
+          </MenuPopupItem>
+        </template>
       </MenuPopup>
     </div>
 

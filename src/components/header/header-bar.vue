@@ -10,10 +10,7 @@ import { themeSelectorService } from '../theme-selector/theme-selector.service'
 
 const { t } = useTranslation()
 const appStore = useAppStore()
-const { layersOpen, myLayersTabOpen, myMapsOpen, themeGridOpen } =
-  storeToRefs(appStore)
-const { setLayersOpen, setMyLayersTabOpen, setThemeGridOpen, toggleThemeGrid } =
-  appStore
+const { toggleThemeGrid } = appStore
 const themeStore = useThemeStore()
 const { theme } = storeToRefs(themeStore)
 

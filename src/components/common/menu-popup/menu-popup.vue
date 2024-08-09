@@ -1,15 +1,21 @@
 <script setup lang="ts">
-import { onMounted, onUnmounted, shallowRef, ShallowRef, Ref, ref, watch } from 'vue'
+import {
+  onMounted,
+  onUnmounted,
+  shallowRef,
+  ShallowRef,
+  Ref,
+  ref,
+  watch,
+} from 'vue'
 
 const props = defineProps<{
-    items: {label: string, action?: (event?: MouseEvent) => any}[]
-    direction?: 'up' | 'down'
-    ariaLabel?: string
-    ariaLabelledby?: string
-  }>()
-const emit = defineEmits(['change'])
+  items: { label: string; action?: (event?: MouseEvent) => any }[]
+  direction?: 'up' | 'down'
+  ariaLabel?: string
+  ariaLabelledby?: string
+}>()
 const isOpen: ShallowRef<boolean> = shallowRef(false)
-const selectedValue: ShallowRef<string | undefined> = shallowRef()
 const btnElement: Ref<HTMLElement | null> = ref(null)
 const ddElement: Ref<HTMLElement | null> = ref(null)
 
@@ -22,11 +28,6 @@ function toggleDropdown(forceOpen?: boolean) {
   isOpen.value = forceOpen ?? !isOpen.value
 }
 
-function onClickOpenBtn(event: MouseEvent) {
-  event.stopImmediatePropagation()
-  toggleDropdown()
-}
-
 function onClickOutsideOpenBtn() {
   toggleDropdown(false)
 }
@@ -34,13 +35,14 @@ function onClickOutsideOpenBtn() {
 onMounted(() => document.addEventListener('click', onClickOutsideOpenBtn))
 onUnmounted(() => document.removeEventListener('click', onClickOutsideOpenBtn))
 
-watch((isOpen), isOpen => {
+watch(isOpen, isOpen => {
   if (!isOpen) return
 
   const opener = btnElement.value!
   const dropdown = ddElement.value!
   const rect = opener.getBoundingClientRect()
-  const top = props.direction === 'down' ? rect.bottom : rect.top - dropdown.offsetHeight
+  const top =
+    props.direction === 'down' ? rect.bottom : rect.top - dropdown.offsetHeight
 
   dropdown.style.top = `${top}px`
   dropdown.style.left = `${rect.left + rect.width - dropdown.offsetWidth}px`
@@ -55,17 +57,14 @@ watch((isOpen), isOpen => {
 
     <Teleport to="body">
       <ul
-          :aria-label="ariaLabel"
-          :aria-labelledby="ariaLabelledby"
-          class="lux-menu-popup-list"
-          :class="isOpen ? '' : 'invisible'"
-          ref="ddElement"
-          role="menu"
-        >
-        <li
-          v-for="item in props.items"
-          :key="item.label"
-        >
+        :aria-label="ariaLabel"
+        :aria-labelledby="ariaLabelledby"
+        class="lux-menu-popup-list"
+        :class="isOpen ? '' : 'invisible'"
+        ref="ddElement"
+        role="menu"
+      >
+        <li v-for="item in props.items" :key="item.label">
           <slot :name="`item`" :item="item">
             {{ item.label }}
           </slot>

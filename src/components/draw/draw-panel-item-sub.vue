@@ -23,11 +23,11 @@ const isModifiying = computed(
 )
 
 const drawingMenuOptions = [
-  { label: 'Exporter un GPX', action: () => console.log('TODO')},
-  { label: 'Exporter un KML', action: () => console.log('TODO')},
-  { label: 'Exporter un Shapefile', action: () => console.log('TODO')},
-  { label: 'Changer sens de la ligne', action: () => console.log('TODO')},
-  { label: 'Créer cercle concentrique', action: () => console.log('TODO')}
+  { label: 'Exporter un GPX', action: () => console.log('TODO') },
+  { label: 'Exporter un KML', action: () => console.log('TODO') },
+  { label: 'Exporter un Shapefile', action: () => console.log('TODO') },
+  { label: 'Changer sens de la ligne', action: () => console.log('TODO') },
+  { label: 'Créer cercle concentrique', action: () => console.log('TODO') },
 ]
 
 function onCancel() {
@@ -64,7 +64,6 @@ function onClickDock() {
 
     <!-- Default display feature options -->
     <div v-if="!isModifiying">
-
       <!-- Button edit feature: EDIT/END EDITION -->
       <button class="lux-btn-primary" v-if="!isEditingStyle">
         {{ t("Editer l'objet") }}
@@ -75,7 +74,6 @@ function onClickDock() {
 
       <!-- List of actions on the current feature -->
       <div class="flex text-primary items-center gap-2 float-right">
-
         <!-- Fit view on current feature -->
         <button @click="onSearch"><i class="fa fa-search"></i></button>
 
@@ -93,20 +91,22 @@ function onClickDock() {
         <button @click="onRemove"><i class="fa fa-trash"></i></button>
 
         <!-- Menu dropdown with all other possible actions on feature -->
-        <MenuPopup :items="drawingMenuOptions"
-            :direction="'up'"
-            :ariaLabel="t('Drawings menu')"
+        <MenuPopup
+          :items="drawingMenuOptions"
+          :direction="'up'"
+          :ariaLabel="t('Drawings menu')"
+        >
+          <!-- Button to open the menu -->
+          <i class="fa-solid fa-square-caret-down hover:text-tertiary"></i>
+          <!-- Loop through items for the menu -->
+          <template #item="{ item }">
+            <MenuPopupItem
+              :item="item"
+              @click="() => item.action && item.action()"
             >
-            <!-- Button to open the menu -->
-            <i class="fa-solid fa-square-caret-down hover:text-tertiary"></i>
-            <!-- Loop through items for the menu -->
-            <template #item="{ item }">
-              <MenuPopupItem
-                :item="item"
-                @click="() => item.action && item.action()">
-                {{ t(item.label) }}
-              </MenuPopupItem>
-            </template>
+              {{ t(item.label) }}
+            </MenuPopupItem>
+          </template>
         </MenuPopup>
       </div>
     </div>

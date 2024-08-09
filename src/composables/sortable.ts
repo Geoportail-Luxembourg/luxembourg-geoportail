@@ -1,4 +1,3 @@
-import { onMounted } from 'vue'
 import Sortable from 'sortablejs'
 
 import { isFireFox } from '@/services/utils'
@@ -27,6 +26,7 @@ export default function useSortable(
   element &&
     (sortable = Sortable.create(element, {
       ...sortableParams,
+      // eslint-disable-next-line @typescript-eslint/no-unused-vars
       ...((params && (({ onSort, ...rest }) => rest)(params)) || {}), // inline synthax to extract onSort
     }))
 
