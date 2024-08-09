@@ -4,7 +4,6 @@ import featureHash from './utils/FeatureHash'
 
 class StorageFeaturesMapper {
   featuresToUrl(features: Collection<Feature<Geometry>> | null): string {
-    console.log('featuresToUrl', features)
     if (!features) return ''
     const featureArray = features.getArray()
     const featuresToEncode = featureArray.filter(function (feature) {
@@ -17,11 +16,8 @@ class StorageFeaturesMapper {
     }
   }
 
-  urlToFeatures(url: string | null): Collection<Feature<Geometry>> {
-    console.log('urlToFeatures', url)
-    return url
-      ? new Collection<Feature<Geometry>>()
-      : new Collection<Feature<Geometry>>()
+  urlToFeatures(url: string | null): Feature<Geometry>[] {
+    return url ? featureHash.readFeatures(url) : []
   }
 }
 

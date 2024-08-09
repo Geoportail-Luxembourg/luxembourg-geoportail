@@ -275,14 +275,14 @@ class FeatureHash extends TextFeature {
    * @override
    * @protected
    */
-  readFeatureFromText(text: string, opt_options: any) {
+  readFeatureFromText(text: string /*, opt_options: any*/) {
     console.assert(text.length > 2)
     console.assert(text[1] === '(')
     console.assert(text[text.length - 1] === ')')
     let splitIndex = text.indexOf('~')
     const geometryText =
       splitIndex >= 0 ? text.substring(0, splitIndex) + ')' : text
-    const geometry = this.readGeometryFromText(geometryText, opt_options)
+    const geometry = this.readGeometryFromText(geometryText /*, opt_options*/)
     const feature = new olFeature(geometry)
     if (splitIndex >= 0) {
       const attributesAndStylesText = text.substring(
@@ -328,7 +328,7 @@ class FeatureHash extends TextFeature {
    * @override
    * @protected
    */
-  readFeaturesFromText(text: string, opt_options: any) {
+  readFeaturesFromText(text: string /*, opt_options: any*/) {
     console.assert(text[0] === 'F')
     /** @type {Array.<ol.Feature>} */
     const features = []
@@ -337,8 +337,8 @@ class FeatureHash extends TextFeature {
       const index = text.indexOf(')')
       console.assert(index >= 0)
       const feature = this.readFeatureFromText(
-        text.substring(0, index + 1),
-        opt_options
+        text.substring(0, index + 1)
+        /*,opt_options*/
       )
       features.push(feature)
       text = text.substring(index + 1)
@@ -354,8 +354,7 @@ class FeatureHash extends TextFeature {
    * @override
    * @protected
    */
-  readGeometryFromText(text: string, opt_options: any) {
-    console.log(opt_options)
+  readGeometryFromText(text: string /*, opt_options: any*/) {
     const geometryReader: any = GEOMETRY_READERS_[text[0] as GeometryReaderKeys]
     console.assert(geometryReader !== undefined)
     this.prevX_ = 0
@@ -738,7 +737,7 @@ function encodeStyleText_(textStyle: Text, encodedStyles: string[]) {
  * @this {FeatureHash}
  * @private
  */
-const readLineStringGeometry_ = (text: string) => {
+function readLineStringGeometry_(this: FeatureHash, text: string) {
   console.assert(text.substring(0, 2) === 'l(')
   console.assert(text[text.length - 1] == ')')
   text = text.substring(2, text.length - 1)
@@ -754,7 +753,7 @@ const readLineStringGeometry_ = (text: string) => {
  * @this {FeatureHash}
  * @private
  */
-const readMultiLineStringGeometry_ = (text: string) => {
+function readMultiLineStringGeometry_(this: FeatureHash, text: string) {
   console.assert(text.substring(0, 2) === 'L(')
   console.assert(text[text.length - 1] == ')')
   text = text.substring(2, text.length - 1)
@@ -783,7 +782,7 @@ const readMultiLineStringGeometry_ = (text: string) => {
  * @this {FeatureHash}
  * @private
  */
-const readPointGeometry_ = (text: string) => {
+function readPointGeometry_(this: FeatureHash, text: string) {
   console.assert(text.substring(0, 2) === 'p(')
   console.assert(text[text.length - 1] == ')')
   text = text.substring(2, text.length - 1)
@@ -800,7 +799,7 @@ const readPointGeometry_ = (text: string) => {
  * @this {FeatureHash}
  * @private
  */
-const readMultiPointGeometry_ = (text: string) => {
+function readMultiPointGeometry_(this: FeatureHash, text: string) {
   console.assert(text.substring(0, 2) === 'P(')
   console.assert(text[text.length - 1] == ')')
   text = text.substring(2, text.length - 1)
@@ -816,7 +815,7 @@ const readMultiPointGeometry_ = (text: string) => {
  * @this {FeatureHash}
  * @private
  */
-const readPolygonGeometry_ = (text: string) => {
+function readPolygonGeometry_(this: FeatureHash, text: string) {
   console.assert(text.substring(0, 2) === 'a(')
   console.assert(text[text.length - 1] == ')')
   text = text.substring(2, text.length - 1)
@@ -849,7 +848,7 @@ const readPolygonGeometry_ = (text: string) => {
  * @this {FeatureHash}
  * @private
  */
-const readMultiPolygonGeometry_ = (text: string) => {
+function readMultiPolygonGeometry_(this: FeatureHash, text: string) {
   console.assert(text.substring(0, 2) === 'A(')
   console.assert(text[text.length - 1] == ')')
   text = text.substring(2, text.length - 1)

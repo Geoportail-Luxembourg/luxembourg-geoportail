@@ -24,14 +24,13 @@ class StatePersistorFeaturesService implements StatePersistorService {
     watch(
       drawnFeatures as Ref<Collection<Feature<Geometry>>>,
       value => {
-        console.log('persist', value)
         storageHelper.setValue(
           SP_KEY_FEATURES,
           value,
           storageFeaturesMapper.featuresToUrl
         )
       },
-      { immediate: true, deep: true }
+      { immediate: true, deep: true } // deep: true is necessary for Collection in Ref
     )
   }
 
@@ -42,7 +41,6 @@ class StatePersistorFeaturesService implements StatePersistorService {
       SP_KEY_FEATURES,
       storageFeaturesMapper.urlToFeatures
     )
-    console.log('restore', features)
     setDrawnFeatures(features)
   }
 }

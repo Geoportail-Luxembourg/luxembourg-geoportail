@@ -13,6 +13,8 @@ export type DrawStateActive =
 
 export const useDrawStore = defineStore('draw', () => {
   const drawStateActive = ref<DrawStateActive>(undefined)
+  // no immutable changes on drawnFeatures in functions bellow,
+  // but keep same Collection for sync with ol source (map)
   const drawnFeatures = ref<Collection<Feature<Geometry>>>(
     new Collection<Feature<Geometry>>()
   )
@@ -27,15 +29,11 @@ export const useDrawStore = defineStore('draw', () => {
 
   function addDrawnFeature(feature: Feature<Geometry>) {
     drawnFeatures.value.push(feature)
-    // triggerRef(drawnFeatures)
-    // drawnFeatures.value = new Collection<Feature<Geometry>>([
-    //   ...drawnFeatures.value.getArray(),
-    //   feature,
-    // ])
   }
 
-  function setDrawnFeatures(features: Collection<Feature<Geometry>>) {
-    drawnFeatures.value = features
+  function setDrawnFeatures(features: Feature<Geometry>[]) {
+    drawnFeatures.value.clear()
+    drawnFeatures.value.extend(features)
   }
 
   return {

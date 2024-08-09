@@ -20,6 +20,8 @@ const { embedded } = storeToRefs(appStore)
 const map = useMap()
 const mapContainer = ref(null)
 const olMap = map.createMap()
+// add draw layer after map init to allow restoring draw features
+map.addDrawLayer()
 
 withDefaults(
   defineProps<{
