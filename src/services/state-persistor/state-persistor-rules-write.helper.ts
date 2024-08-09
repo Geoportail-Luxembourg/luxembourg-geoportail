@@ -9,6 +9,7 @@ import {
   SP_KEY_LAYERCOMPARATOR,
   SP_KEY_LAYERCOMPARATOR_SLIDERRATIO,
   StatePersistorRulesHelper,
+  SP_KEY_FEATURES,
 } from './state-persistor.model'
 
 export abstract class RulesWriteHelper extends StatePersistorRulesHelper {
@@ -28,6 +29,9 @@ export abstract class RulesWriteHelper extends StatePersistorRulesHelper {
       return SP_AVAILABLE_STORAGES.localStorage
     }
     if (key === SP_KEY_SERIAL) {
+      return SP_AVAILABLE_STORAGES.permalink
+    }
+    if (key === SP_KEY_FEATURES) {
       return SP_AVAILABLE_STORAGES.permalink
     }
     if (key === SP_KEY_THEME) {
