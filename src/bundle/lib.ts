@@ -39,7 +39,6 @@ import { statePersistorThemeService } from '@/services/state-persistor/state-per
 import { statePersistorAppService } from '@/services/state-persistor/state-persistor-app.service'
 import { statePersistorStyleService } from '@/services/state-persistor/state-persistor-bgstyle.service'
 import { statePersistorMyMapService } from '@/services/state-persistor/state-persistor-mymap.service'
-import { statePersistorFeaturesService } from '@/services/state-persistor/state-persistor-features.service'
 import { proxyUrlHelper } from '@/services/proxyurl/proxyurl.helper'
 import { styleUrlHelper } from '@/services/styleurl/styleurl.helper'
 import { themeSelectorService } from '@/components/theme-selector/theme-selector.service'
@@ -145,7 +144,6 @@ export {
   statePersistorAppService,
   statePersistorStyleService,
   statePersistorMyMapService,
-  statePersistorFeaturesService,
   themeSelectorService,
   MapLibreLayer,
   StyleSelector,
