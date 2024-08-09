@@ -343,6 +343,11 @@
   .lux-drawing-item-content {
     @apply bg-secondary mt-1 mb-2 p-3;
   }
+
+  .lux-menu-popup-list {
+    @apply py-1 z-50 absolute text-[color:var(--color-default)] bg-white border-[color:var(--color-border-default)] border-[1px];
+    box-shadow: 0 6px 12px rgba(0, 0, 0, 0.175);
+  }
 }
 
 .fa-solid {
@@ -366,7 +371,7 @@
     --color-tertiary: #1f5d87;
     --color-quaternary: #20638f;
     --color-navbar-default: #777;
-    --color-btn-ol: #8394a0;
+    --color-border-default: #8394a0;
     --main-primary: #2980b9;
     --main-secondary: #97bbd3;
     --main-tertiary: #1f5d87;
