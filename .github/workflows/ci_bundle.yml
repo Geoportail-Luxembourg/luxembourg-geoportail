@@ -1,35 +1,27 @@
 name: CI_package
 on:
   pull_request:
-    types:
-      - closed
-    branches:
-      - main
-  push:
-    tags:
-      - '*'
 jobs:
   tag-version:
-    if: github.event_name == 'pull_request'
+    # if: github.event_name == 'pull_request'
     runs-on: ubuntu-latest
     steps:
       - name: checkout ${{ github.head_ref }}
         uses: actions/checkout@v4
         with:
-          ref: ${{ github.head_ref }}
+          # ref: ${{ github.head_ref }}
           fetch-depth: 0
-      - run: git status
-      - run: git rev-parse --abbrev-ref HEAD
       - name: tag ${{ github.head_ref }}
         run: |
-          git tag $(git rev-parse --abbrev-ref HEAD)_CI_$(git rev-parse --short HEAD)
+          git tag ${{ github.head_ref }}_CI_$(git rev-parse --short HEAD)
           git push --tags
   lux-package:
     # the combination (if always) + (needs tag-version) makes sure the lux-package job runs
     # after completion of the tag-version job.
     # In case of a tag push, the tag-version job is skipped but the lux-package job will run
     # In case of a closed PR, the tag-version job runs first, the lux-package job runs after completion
-    if: ${{ always() }}
+    if: github.ref == 'no_skip'
+    # if: ${{ always() }}
     needs: tag-version
     runs-on: ubuntu-latest
     steps:
