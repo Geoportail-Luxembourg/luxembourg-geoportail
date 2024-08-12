@@ -1,13 +1,16 @@
 <script setup lang="ts">
-import ButtonText from './button-text.vue'
 import { useTranslation } from 'i18next-vue'
-import useDraw from '@/composables/draw/draw.composable'
-import { useDrawStore } from '@/stores/draw.store'
 import { storeToRefs } from 'pinia'
 
+import useDraw from '@/composables/draw/draw.composable'
+import { useDrawStore } from '@/stores/draw.store'
+
+import ButtonText from './button-text.vue'
+
 const { t } = useTranslation()
-const { toggleActiveState } = useDrawStore()
-const { drawStateActive } = storeToRefs(useDrawStore())
+const drawStore = useDrawStore()
+const { toggleActiveState } = drawStore
+const { drawStateActive } = storeToRefs(drawStore)
 // keep logic in composable
 useDraw()
 </script>

@@ -108,7 +108,13 @@ describe('LayerManager', () => {
       })
 
       it('#sortMethod', async () => {
-        await wrapper.vm.sortMethod({ to: { children: [] } })
+        const layerCollection = document.createElement('div')
+        const layer1 = document.createElement('div')
+        const layer2 = document.createElement('div')
+        layerCollection.appendChild(layer1)
+        layerCollection.appendChild(layer2)
+
+        await wrapper.vm.sortMethod(layerCollection.children)
         expect(mapStore.reorderLayers).toHaveBeenCalledTimes(1)
       })
     })

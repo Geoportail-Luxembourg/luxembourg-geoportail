@@ -363,7 +363,7 @@
   }
 
   .lux-menu-popup-list {
-    @apply py-1 z-50 absolute text-[color:var(--color-default)] bg-white border-[color:var(--color-border-default)] border-[1px];
+    @apply py-1 z-50 top-0 left-0 absolute text-[color:var(--color-default)] bg-white border-[color:var(--color-border-default)] border-[1px];
     box-shadow: 0 6px 12px rgba(0, 0, 0, 0.175);
   }
 

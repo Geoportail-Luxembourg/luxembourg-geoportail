@@ -1,69 +1,72 @@
 <script setup lang="ts">
-import { onMounted } from 'vue'
+import { storeToRefs } from 'pinia'
 import { useTranslation } from 'i18next-vue'
 
 import MenuPopup from '@/components/common/menu-popup/menu-popup.vue'
 import MenuPopupItem from '@/components/common/menu-popup/menu-popup-item.vue'
-import useSortable from '@/composables/sortable'
 import { useDrawStore } from '@/stores/draw.store'
 
-import DrawPanelFeature from './draw-panel-feature.vue'
-import { storeToRefs } from 'pinia'
+import DrawPanelFeatures from './draw-panel-features.vue'
 
 const { t } = useTranslation()
 
 const drawStore = useDrawStore()
 const { drawFeatures: features } = storeToRefs(drawStore)
 const drawingMenuOptions = [
-  { label: 'Copier dans ma carte', action: () => console.log('TODO') },
-  { label: 'Effacer tous les dessins', action: () => console.log('TODO') },
+  {
+    label: 'Copier dans ma carte',
+    action: () => alert('TODO: Draw feature click drawingMenuOptions'),
+  },
+  {
+    label: 'Effacer tous les dessins',
+    action: () => alert('TODO: Draw feature click drawingMenuOptions'),
+  },
   {
     label: 'Créer une nouvelle carte à partir de ces dessins',
-    action: () => console.log('TODO'),
+    action: () => alert('TODO: Draw feature click drawingMenuOptions'),
   },
-  { label: 'Fusionner des lignes', action: () => console.log('TODO') },
-  { label: 'Couper une ligne', action: () => console.log('TODO') },
+  {
+    label: 'Fusionner des lignes',
+    action: () => alert('TODO: Draw feature click drawingMenuOptions'),
+  },
+  {
+    label: 'Couper une ligne',
+    action: () => alert('TODO: Draw feature click drawingMenuOptions'),
+  },
 ]
-
-onMounted(() => {
-  useSortable(<HTMLElement>document.querySelector('.sortable-features'))
-})
 </script>
 
 <template>
-  <hr class="separator my-5" />
+  <template v-if="features.length > 0">
+    <hr class="separator my-5" />
 
-  <div class="lux-draw-panel" data-cy="drawPanel">
-    <div class="lux-draw-panel-title flex">
-      <h5 class="grow">{{ t('Dessins') }}</h5>
+    <!-- Title and caret dropdown menu -->
+    <div class="lux-draw-panel absolute w-[93%]" data-cy="drawPanel">
+      <div class="lux-draw-panel-title flex">
+        <h5 class="grow">{{ t('Dessins') }}</h5>
 
-      <MenuPopup
-        :items="drawingMenuOptions"
-        :direction="'down'"
-        :ariaLabel="t('Drawings menu')"
-      >
-        <i class="fa-solid fa-square-caret-down hover:text-tertiary"></i>
-        <template #item="{ item }">
-          <MenuPopupItem
-            :item="item"
-            @click="() => item.action && item.action()"
-          >
-            {{ t(item.label) }}
-          </MenuPopupItem>
-        </template>
-      </MenuPopup>
+        <!-- Dropdown menu -->
+        <MenuPopup
+          :items="drawingMenuOptions"
+          :direction="'down'"
+          :ariaLabel="t('Drawings menu')"
+        >
+          <i class="fa-solid fa-square-caret-down hover:text-tertiary"></i>
+          <template #item="{ item }">
+            <MenuPopupItem
+              :item="item"
+              @click="() => item.action && item.action()"
+            >
+              {{ t(item.label) }}
+            </MenuPopupItem>
+          </template>
+        </MenuPopup>
+      </div>
+
+      <!-- Drawings/Features list -->
+      <DrawPanelFeatures />
     </div>
-
-    <ul class="mx-1 sortable-features" v-if="features.length">
-      <li
-        class="lux-drawing-item"
-        v-for="(feature, index) in features"
-        :key="index"
-      >
-        <DrawPanelFeature :featureId="30" :feature="feature" />
-      </li>
-    </ul>
-  </div>
+  </template>
 </template>
 
 <style scoped>

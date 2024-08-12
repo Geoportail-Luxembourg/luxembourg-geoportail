@@ -9,11 +9,11 @@ const { t } = useTranslation()
 </script>
 
 <template>
-  <div :data-cy="dataCyValue" class="flex flex-col h-full pt-1.5">
+  <div :data-cy="dataCyValue" class="lux-panel flex flex-col h-full pt-1.5">
     <!-- Panel title and close button -->
     <div
       v-if="$slots.header"
-      class="h-16 shrink-0 flex justify-between lux-panel-title"
+      class="lux-panel-title h-16 shrink-0 flex justify-between"
     >
       <slot name="header"></slot>
       <span
@@ -27,12 +27,15 @@ const { t } = useTranslation()
     </div>
 
     <!-- Tabs -->
-    <div v-if="$slots.tabs" class="flex flex-row gap-2 h-10 text-2xl">
+    <div
+      v-if="$slots.tabs"
+      class="lux-panel-tabs flex flex-row gap-2 h-10 text-2xl"
+    >
       <slot name="tabs"></slot>
     </div>
 
     <!-- Panel content -->
-    <div class="relative grow p-2.5 bg-primary overflow-auto">
+    <div class="lux-panel-content relative grow p-2.5 bg-primary overflow-auto">
       <slot name="content" />
     </div>
   </div>

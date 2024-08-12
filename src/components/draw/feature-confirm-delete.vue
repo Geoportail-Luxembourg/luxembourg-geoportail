@@ -6,4 +6,6 @@ const { t } = useTranslation()
 
 <template>
   {{ t('Êtes-vous certain de vouloir effacer cet élément de la carte ?') }}
+
+  <slot name="footer"></slot>
 </template>
