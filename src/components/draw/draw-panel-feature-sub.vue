@@ -114,9 +114,9 @@ function onClickDock() {
 
   <!-- UI when user is modifying feature -->
   <template v-else>
-    <FeatureEditInfo v-if="isEditingInfo" />
+    <FeatureEditInfo v-if="isEditingInfo" :feature="feature" />
     <FeatureEditStyle v-if="isEditingStyle" :feature="feature" />
-    <FeatureDelete v-if="isDeleting" />
+    <FeatureDelete v-if="isDeleting" :feature="feature" />
 
     <div class="text-right">
       <button class="lux-btn mr-2" @click="onCancel">{{ t('Cancel') }}</button>

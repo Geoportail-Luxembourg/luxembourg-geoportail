@@ -3,14 +3,14 @@ import backend from 'i18next-http-backend'
 import I18NextVue from 'i18next-vue'
 
 import { createApp } from 'vue'
+import VueDOMPurifyHTML from 'vue-dompurify-html'
 import { createPinia } from 'pinia'
 
 import { initProjections } from '@/services/projection.utils'
-import App from './App.vue'
-
-import VueDOMPurifyHTML from 'vue-dompurify-html'
 import { useThemeStore } from './stores/config.store'
 import { themesApiFixture } from './__fixtures__/themes.api.fixture'
+
+import App from './App.vue'
 
 import './assets/main.css'
 import './assets/ol.css'

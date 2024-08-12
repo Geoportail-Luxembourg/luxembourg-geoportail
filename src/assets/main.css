@@ -94,12 +94,11 @@
 
   .lux-btn {
     @apply bg-white border text-primary py-[6px] px-[12px] hover:bg-primary hover:text-white leading-snug focus:bg-[#e6e6e6] focus:border-[#8c8c8c] focus:[color:var(--color-primary)] focus:lux-outlined;
-    border: 1px solid var(--button-bg-color);
+    border: 1px solid var(--color-gray);
   }
 
   .lux-btn-primary {
-    @apply lux-btn bg-primary text-white hover:bg-quaternary;
-    border: 1px solid var(--color-quaternary);
+    @apply lux-btn bg-primary text-white hover:bg-quaternary border-[1px] border-[color:var(--color-quaternary)];
   }
 
   .lux-btn-grey {
@@ -340,13 +339,45 @@
     @apply text-white;
   }
 
+  .lux-drawing-item-label .selected {
+    @apply bg-tertiary;
+  }
+
   .lux-drawing-item-content {
-    @apply bg-secondary mt-1 mb-2 p-3;
+    @apply mt-1 mb-2 p-3;
+    background-color: rgba(255, 255, 255, 0.5);
+  }
+
+  .lux-drawing-item-content input[type='text'],
+  .lux-drawing-item-content textarea {
+    @apply bg-secondary px-3 py-[6px] text-white;
+  }
+
+  .lux-drawing-item-content input[type='color'],
+  .lux-drawing-item-content input[type='number'] {
+    border: 1px solid rgb(118, 118, 118);
+  }
+
+  .lux-drawing-item-content input[type='number'] {
+    @apply py-[2px] px-1;
   }
 
   .lux-menu-popup-list {
     @apply py-1 z-50 absolute text-[color:var(--color-default)] bg-white border-[color:var(--color-border-default)] border-[1px];
     box-shadow: 0 6px 12px rgba(0, 0, 0, 0.175);
+  }
+
+  .form-control {
+    border: 1px solid var(--color-gray);
+    box-shadow: inset 0 1px 1px rgba(0, 0, 0, 0.075);
+    transition: border-color ease-in-out 0.15s, box-shadow ease-in-out 0.15s;
+  }
+
+  .form-control:focus {
+    border-color: #66afe9;
+    outline: 0;
+    box-shadow: inset 0 1px 1px rgba(0, 0, 0, 0.075),
+      0 0 8px rgba(102, 175, 233, 0.6);
   }
 }
 
@@ -492,6 +523,6 @@
     --school-secondary: #9e9ac8;
     --school-tertiary: #54278f;
     --school-quaternary: #54278f;
-    --button-bg-color: #ccc;
+    --color-gray: #ccc;
   }
 }

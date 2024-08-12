@@ -1,5 +1,5 @@
 import { defineStore } from 'pinia'
-import { ref } from 'vue'
+import { Ref, ref } from 'vue'
 
 export type DrawStateActive =
   | undefined
@@ -11,6 +11,12 @@ export type DrawStateActive =
 
 export const useDrawStore = defineStore('draw', () => {
   const drawStateActive = ref<DrawStateActive>(undefined)
+  const drawFeatures: Ref<string[]> = ref([
+    'Point',
+    'Polygon',
+    'LineString',
+    'Circle',
+  ]) // TODO improve typing in an other PR
 
   function toggleActiveState(newState: DrawStateActive) {
     if (drawStateActive.value === newState) {
@@ -21,6 +27,7 @@ export const useDrawStore = defineStore('draw', () => {
   }
 
   return {
+    drawFeatures,
     drawStateActive,
     toggleActiveState,
   }

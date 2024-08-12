@@ -4,11 +4,10 @@ import { storeToRefs } from 'pinia'
 
 import useThemes from '@/composables/themes/themes.composable'
 import { useThemeStore } from '@/stores/config.store'
+import { useAppStore } from '@/stores/app.store'
 
 import ThemeGrid from './theme-grid.vue'
 import ThemeSelectorButton from './theme-selector-button.vue'
-
-import { useAppStore } from '@/stores/app.store'
 
 const appStore = useAppStore()
 const { setThemeGridOpen } = appStore
