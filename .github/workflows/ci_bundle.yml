@@ -13,6 +13,11 @@ jobs:
     steps:
       - name: checkout ${{ github.head_ref }}
         uses: actions/checkout@v4
+      - name: check git
+        shell: bash
+        run: |
+          git version
+          git log --help | grep "%P" -C 5
       - name: temporize
         shell: bash
         run: |
@@ -26,7 +31,7 @@ jobs:
       - name: quit branch for detached head
         shell: bash
         run: |
-          git checkout $(git log -n 1 --pretty=%h)
+          git checkout cb5445b
       - name: check
         shell: bash
         run: |
