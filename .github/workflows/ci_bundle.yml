@@ -16,6 +16,9 @@ jobs:
       - name: compute tag name
         shell: bash
         run: |
+          echo git log --pretty="%p" -n 1
+          echo git log --pretty="%h" -n 1
+          echo $([[ $(git log --pretty="%p" -n 1 | wc -w) -gt 1 ]] && echo "PR 1" || echo "regular push 1")
           echo $([[ $(git log --pretty="%p" -n 1 | wc -w) -gt 1 ]] \
           && echo "PR" \
           || echo "regular push")
