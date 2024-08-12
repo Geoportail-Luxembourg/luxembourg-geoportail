@@ -12,6 +12,8 @@ jobs:
     steps:
       - name: checkout ${{ github.head_ref }}
         uses: actions/checkout@v4
+      - name: test
+        run: echo $(git branch --show-current) $(echo $(git log -n 1 --pretty="%s" | sed "s|.*Geoportail-Luxembourg/\(.*\)|\1|"))
       - name: compute tag name
         shell: bash
         run: |
