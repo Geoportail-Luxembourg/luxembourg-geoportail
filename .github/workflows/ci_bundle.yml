@@ -3,7 +3,6 @@ on:
   push:
     branches:
       - 'dummy_main'
-      - 'dummy_main_PR_test'
     tags:
       - '*'
 jobs:
@@ -16,34 +15,13 @@ jobs:
         with:
           # default depth is 1, but we need the parent refs
           fetch-depth: 2
-      - name: check
-        shell: bash
-        run: |
-          git log -n 1
-          git log -n 1 --parents
-          git log -n 1 --pretty=%p
       - name: compute tag name
         shell: bash
         run: |
-          git log --pretty="%h" -n 1
-          git log -n 1
-          git log -n 2
-          git log -n 2 --parents
-          git log --pretty=%P -1 --merges
-          git log --pretty=%P -1 --no-merges
-          git log --pretty="%p" -n 1
-          git log -n 1 --pretty="%P"
-          git log -n 1 --pretty="%p"
-          git log -n 1 --pretty=%p
-          git log --pretty="%p" -n 1
-          echo $([[ $(git log --pretty="%p" -n 1 | wc -w) -gt 1 ]] && echo "PR 1" || echo "regular push 1")
-          echo $([[ $(git log --pretty="%p" -n 1 | wc -w) -gt 1 ]] \
-          && echo "PR" \
-          || echo "regular push")
           branch=$([[ $(git log --pretty="%p" -n 1 | wc -w) -gt 1 ]] \
           && echo $(git log -n 1 --pretty="%s" | sed "s|.*Geoportail-Luxembourg/\(.*\)|\1|") \
           || git branch --show-current)
-          echo branch
+          echo $branch
           echo "AUTO_TAG=${branch}_CI_$(git log -n 1 --pretty=%h)" >> $GITHUB_ENV
       - name: tag ${{ github.head_ref }}
         run: |
