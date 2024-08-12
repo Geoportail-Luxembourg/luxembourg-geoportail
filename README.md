@@ -97,11 +97,14 @@ The results of the build can be found in the folder `bundle`
 
 An automatic mecanism has been created with github actions. This workflow is triggered when a tag is pushed into the repo.
 
-For the moment there is no automatic tag generation on pull requests, so for dev, the following naming conventions are recommended:
-<branch_name>\_tag\_<short_commit>
+For dev releases, create a new tag, the CI will then generate the release. The following naming conventions are recommended:
+<branch_name>\_DEV\_<short_commit>
+
+an npm script is included in package.json, so just call
 
 ```
-echo $(git rev-parse --abbrev-ref HEAD)_tag_$(git rev-parse --short HEAD)
+npm run tag
+git push --tags
 ```
 
 The CI automatically builds the lib, creates a release named after the tag and includes the built bundle in the release. The built package can then be downloaded at the URL:
@@ -111,6 +114,41 @@ The CI automatically builds the lib, creates a release named after the tag and i
 ```
 
 This package URL can also be used to reference the dependency for NPM in package.json, see below
+
+### Automatic tag in CI
+
+On merge of a PR on main branch the CI will create an automatic tag of type
+<branch_name>\_CI\_<short_commit>
+
+### Cleanup of tags:
+
+Everyone should clean their own dev-only tags.
+
+The following scripts might come handy to avoid messing up the repo with unused tags.
+
+#### cleaning out local tags before pushing any
+
+Before a git push --tags, one should sync the local tags with the remote ones:
+
+```
+for t in $(git tag -l); do git tag -d $t; done
+git fetch -t
+```
+
+#### cleaning usused tags
+
+There is not any CI automation yet for cleaning tags. However, the naming convention (dev tags shall start with the branch name) makes cleaning them much easier.
+
+```
+for t in $(git tag -l | grep GSLUX-635_automate_tag_on_merge_); do git push origin :refs/tags/$t; done
+for t in $(git tag -l | grep GSLUX-635_automate_tag_on_merge_); do git tag -d $t; done
+```
+
+where `GSLUX-635_automate_tag_on_merge` is the branch name
+
+#### cleaning releases
+
+Releases must be deleted manually in the github web interface. The github API might be used, but this would be some extra complexity for the moment.
 
 ### Import the lib in another app
 

@@ -1,12 +1,53 @@
 name: CI_package
 on:
   push:
+    branches:
+      - 'main'
     tags:
       - '*'
 jobs:
-  lux-package:
+  tag-version:
+    if: github.ref_type != 'tag'
     runs-on: ubuntu-latest
     steps:
+      - name: checkout ${{ github.head_ref }}
+        uses: actions/checkout@v4
+        with:
+          # default depth is 1, but we need the parent refs
+          fetch-depth: 2
+      - name: compute tag name
+        shell: bash
+        run: |
+          branch=$([[ $(git log --pretty="%p" -n 1 | wc -w) -gt 1 ]] \
+          && echo $(git log -n 1 --pretty="%s" | sed "s|.*Geoportail-Luxembourg/\(.*\)|\1|") \
+          || git branch --show-current)
+          echo $branch
+          echo "AUTO_TAG=${branch}_CI_$(git log -n 1 --pretty=%h)" >> $GITHUB_ENV
+      - name: tag ${{ github.head_ref }}
+        run: |
+          git tag ${{ env.AUTO_TAG }}
+          git push --tags
+  lux-package:
+    # the combination (if always) + (needs tag-version) makes sure the lux-package job runs
+    # after completion of the tag-version job.
+    # In case of a tag push, the tag-version job is skipped but the lux-package job will run
+    # In case of a closed PR, the tag-version job runs first, the lux-package job runs after completion
+    if: ${{ always() }}
+    needs: tag-version
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: ${{ github.head_ref }}
+          fetch-depth: 2
+      - name: compute tag name
+        shell: bash
+        run: |
+          branch=$([[ $(git log --pretty="%p" -n 1 | wc -w) -gt 1 ]] \
+          && echo $(git log -n 1 --pretty="%s" | sed "s|.*Geoportail-Luxembourg/\(.*\)|\1|") \
+          || git branch --show-current)
+          echo $branch
+          echo "AUTO_TAG=${branch}_CI_$(git log -n 1 --pretty=%h)" >> $GITHUB_ENV
       - name: create release
         id: create_release
         uses: octokit/request-action@v2.x
@@ -16,11 +57,7 @@ jobs:
           route: POST /repos/{owner}/{repo}/releases
           owner: 'Geoportail-Luxembourg'
           repo: 'luxembourg-geoportail'
-          tag_name: ${{ github.ref }}
-      - uses: actions/checkout@v3
-        with:
-          persist-credentials: false
-          fetch-depth: 0
+          tag_name: ${{ github.ref_type == 'tag' && github.ref || env.AUTO_TAG }}
       - uses: actions/setup-node@v3
         with:
           node-version: 16
