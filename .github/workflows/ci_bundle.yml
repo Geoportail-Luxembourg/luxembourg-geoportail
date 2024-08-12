@@ -13,30 +13,15 @@ jobs:
     steps:
       - name: checkout ${{ github.head_ref }}
         uses: actions/checkout@v4
-      - name: check git
-        shell: bash
-        run: |
-          git version
-          git log --help | grep "%P" -C 5
-      - name: temporize
-        shell: bash
-        run: |
-          git log -n 1
-          git log -n 1 --parents
-      - name: temporize 2
-        shell: bash
-        run: |
-          git log -n 1
-          git log -n 1 --parents
-      - name: quit branch for detached head
-        shell: bash
-        run: |
-          git checkout cb5445b
+        with:
+          # default depth is 1, but we need the parent refs
+          fetch-depth: 2
       - name: check
         shell: bash
         run: |
           git log -n 1
           git log -n 1 --parents
+          git log -n 1 --pretty=%p
       - name: compute tag name
         shell: bash
         run: |
