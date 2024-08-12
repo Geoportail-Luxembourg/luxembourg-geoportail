@@ -39,13 +39,15 @@ jobs:
       - uses: actions/checkout@v4
         with:
           ref: ${{ github.head_ref }}
-          persist-credentials: false
-          fetch-depth: 0
+          fetch-depth: 2
       - name: compute tag name
         shell: bash
         run: |
-          at=$(git rev-parse --abbrev-ref HEAD)_CI_$(git rev-parse --short HEAD)
-          echo "AUTO_TAG=$at" >> $GITHUB_ENV
+          branch=$([[ $(git log --pretty="%p" -n 1 | wc -w) -gt 1 ]] \
+          && echo $(git log -n 1 --pretty="%s" | sed "s|.*Geoportail-Luxembourg/\(.*\)|\1|") \
+          || git branch --show-current)
+          echo $branch
+          echo "AUTO_TAG=${branch}_CI_$(git log -n 1 --pretty=%h)" >> $GITHUB_ENV
       - name: create release
         id: create_release
         uses: octokit/request-action@v2.x
@@ -55,7 +57,7 @@ jobs:
           route: POST /repos/{owner}/{repo}/releases
           owner: 'Geoportail-Luxembourg'
           repo: 'luxembourg-geoportail'
-          tag_name: ${{ github.event_name == 'push' && github.ref || env.AUTO_TAG }}
+          tag_name: ${{ github.ref_type == 'tag' && github.ref || env.AUTO_TAG }}
       - uses: actions/setup-node@v3
         with:
           node-version: 16
