@@ -13,6 +13,25 @@ jobs:
     steps:
       - name: checkout ${{ github.head_ref }}
         uses: actions/checkout@v4
+      - name: temporize
+        shell: bash
+        run: |
+          git log -n 1
+          git log -n 1 --parents
+      - name: temporize 2
+        shell: bash
+        run: |
+          git log -n 1
+          git log -n 1 --parents
+      - name: quit branch for detached head
+        shell: bash
+        run: |
+          git checkout $(git log -n 1 --pretty=%h)
+      - name: check
+        shell: bash
+        run: |
+          git log -n 1
+          git log -n 1 --parents
       - name: compute tag name
         shell: bash
         run: |
