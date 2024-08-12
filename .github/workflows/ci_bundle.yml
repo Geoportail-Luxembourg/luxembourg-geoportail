@@ -15,9 +15,13 @@ jobs:
       - name: compute tag name
         shell: bash
         run: |
+          echo $([[ $(git log --pretty="%p" -n 1 | wc -w) -gt 1 ]] \
+          echo "PR" \
+          echo "regular push"
           branch=$([[ $(git log --pretty="%p" -n 1 | wc -w) -gt 1 ]] \
           && echo $(git log -n 1 --pretty="%s" | sed "s|.*Geoportail-Luxembourg/\(.*\)|\1|") \
           || git branch --show-current)
+          echo branch
           echo "AUTO_TAG=${branch}_CI_$(git log -n 1 --pretty=%h)" >> $GITHUB_ENV
       - name: tag ${{ github.head_ref }}
         run: |
