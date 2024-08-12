@@ -3,6 +3,7 @@ on:
   push:
     branches:
       - 'dummy_main'
+      - 'dummy_main_PR_test'
     tags:
       - '*'
 jobs:
@@ -17,7 +18,7 @@ jobs:
         run: |
           echo $([[ $(git log --pretty="%p" -n 1 | wc -w) -gt 1 ]] \
           echo "PR" \
-          echo "regular push"
+          echo "regular push")
           branch=$([[ $(git log --pretty="%p" -n 1 | wc -w) -gt 1 ]] \
           && echo $(git log -n 1 --pretty="%s" | sed "s|.*Geoportail-Luxembourg/\(.*\)|\1|") \
           || git branch --show-current)
