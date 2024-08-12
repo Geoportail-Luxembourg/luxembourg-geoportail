@@ -1,16 +1,24 @@
 name: CI_package
 on:
-  pull_request:
+  push:
+    branches:
+      - 'dummy_main'
+    tags:
+      - '*'
 jobs:
   tag-version:
-    # if: github.event_name == 'pull_request'
+    if: github.ref_type != 'tag'
     runs-on: ubuntu-latest
     steps:
       - name: checkout ${{ github.head_ref }}
         uses: actions/checkout@v4
-        with:
-          # ref: ${{ github.head_ref }}
-          fetch-depth: 0
+      - name: compute tag name
+        shell: bash
+        run: |
+          branch=$([[ $(git log --pretty="%p" -n 1 | wc -w) -gt 1 ]] \
+          && echo $(git log -n 1 --pretty="%s" | sed "s|.*Geoportail-Luxembourg/\(.*\)|\1|") \
+          || git branch --show-current)
+          echo "AUTO_TAG=${branch}_CI_$(git log -n 1 --pretty=%h)" >> $GITHUB_ENV
       - name: tag ${{ github.head_ref }}
         run: |
           git tag ${{ github.head_ref }}_CI_$(git rev-parse --short HEAD)
