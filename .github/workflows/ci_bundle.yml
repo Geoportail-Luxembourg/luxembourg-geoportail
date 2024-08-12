@@ -18,6 +18,8 @@ jobs:
         run: |
           git log --pretty="%h" -n 1
           git log -n 1
+          git log -n 2
+          git log -n 2 --parents
           git log --pretty=%P -1 --merges
           git log --pretty=%P -1 --no-merges
           git log --pretty="%p" -n 1
