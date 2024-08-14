@@ -1,3 +1,6 @@
+import { Feature } from 'ol'
+import { Geometry } from 'ol/geom'
+
 export type DrawStateActive =
   | undefined
   | 'drawPoint'
@@ -12,4 +15,5 @@ export interface DrawFeature {
   label: string
   description: string
   geom: string
+  olFeature: Feature<Geometry>
 }

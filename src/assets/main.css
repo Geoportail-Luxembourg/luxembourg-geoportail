@@ -28,17 +28,33 @@
     @apply text-primary no-underline;
   }
 
+  /*********** Baseline, reset styles ***********/
+  input[type='range'] {
+    @apply cursor-pointer bg-transparent appearance-none;
+  }
+
+  /******** Chrome, Safari, Opera and Edge Chromium styles ********/
+  /* slider track */
+  input[type='range']::-webkit-slider-runnable-track {
+    @apply bg-white h-1 rounded-full;
+  }
+
+  /* slider thumb */
   input[type='range']::-webkit-slider-thumb {
-    @apply bg-tertiary h-4 w-4 rounded-full border-tertiary;
-    -webkit-appearance: none;
+    @apply appearance-none rounded-full w-4 h-4 bg-tertiary;
+    margin-top: -5.6px; /* Centers thumb on the track */
   }
 
+  /*********** Firefox styles ***********/
+  /* slider track */
+  input[type='range']::-moz-range-track {
+    @apply bg-white h-1 rounded-full;
+  }
+
+  /* slider thumb */
   input[type='range']::-moz-range-thumb {
-    @apply bg-tertiary h-3 w-3 rounded-full border-tertiary;
-  }
-
-  input[type='range']::-ms-thumb {
-    @apply bg-tertiary h-4 w-4 rounded-full border-tertiary;
+    @apply appearance-none rounded-full w-4 h-4 bg-tertiary;
+    border: none; /*Removes extra border that FF applies*/
   }
 }
 
@@ -378,6 +394,16 @@
     outline: 0;
     box-shadow: inset 0 1px 1px rgba(0, 0, 0, 0.075),
       0 0 8px rgba(102, 175, 233, 0.6);
+  }
+
+  /* slider track */
+  .popup input[type='range']::-webkit-slider-runnable-track {
+    background-color: var(--color-secondary);
+  }
+
+  /* slider track */
+  .popup input[type='range']::-moz-range-track {
+    background-color: var(--color-secondary);
   }
 }
 

@@ -70,6 +70,7 @@ function onClickDelete() {
   <!-- Drawing details -->
   <FeatureSubWrapper
     v-if="isOpen"
+    :feature="feature"
     :isDocked="isDocked"
     @closePopup="() => emit('toggleDock')"
   >

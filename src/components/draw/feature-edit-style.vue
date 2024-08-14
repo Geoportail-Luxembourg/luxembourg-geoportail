@@ -181,3 +181,5 @@ function onClickChangeOrientation() {}
 
   <slot name="footer"></slot>
 </template>
+
+<style></style>

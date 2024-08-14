@@ -1,10 +1,41 @@
 <script setup lang="ts">
+import { onMounted, ref, shallowRef, watchEffect } from 'vue'
+import { Coordinate } from 'ol/coordinate'
+import Overlay from 'ol/Overlay'
+
+import useMap from '@/composables/map/map.composable'
+
+const props = defineProps<{
+  anchor: Coordinate | undefined
+}>()
 const emit = defineEmits(['closePopup'])
+const map = useMap()
+const popupContainer = ref(null)
+const overlay = shallowRef(
+  new Overlay({
+    autoPan: {
+      animation: {
+        duration: 250,
+      },
+    },
+  })
+)
+
+onMounted(() => {
+  if (popupContainer.value) {
+    overlay.value.setElement(popupContainer.value)
+    map.getOlMap().addOverlay(overlay.value)
+  }
+})
+
+watchEffect(() => {
+  overlay.value.setPosition(props.anchor)
+})
 </script>
 
 <template>
   <Teleport to="body">
-    <div class="popup">
+    <div ref="popupContainer" class="popup">
       <button
         class="fa-sharp fa-solid fa-close float-right mt-2 hover:text-primary"
         @click="() => emit('closePopup')"
@@ -16,10 +47,8 @@ const emit = defineEmits(['closePopup'])
 
 <style>
 .popup {
-  @apply absolute bg-white px-2 rounded-lg;
+  @apply absolute bg-white px-2 rounded-lg bottom-3 -left-12;
   filter: drop-shadow(0 1px 4px rgba(0, 0, 0, 0.2));
-  top: 50%;
-  left: 50%;
   min-width: 340px;
 }
 .popup:after,
