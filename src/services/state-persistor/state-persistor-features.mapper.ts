@@ -1,6 +1,7 @@
 import { Collection, Feature } from 'ol'
 import { Geometry } from 'ol/geom'
 import featureHash from './utils/FeatureHash'
+import useMap from '@/composables/map/map.composable'
 
 class StorageFeaturesMapper {
   featuresToUrl(features: Collection<Feature<Geometry>> | null): string {
@@ -17,7 +18,11 @@ class StorageFeaturesMapper {
   }
 
   urlToFeatures(url: string | null): Feature<Geometry>[] {
-    return url ? featureHash.readFeatures(url) : []
+    const features = url ? featureHash.readFeatures(url) : []
+    features.forEach((f, i) => {
+      featureHash.decodeShortProperties(f, i, useMap().getOlMap())
+    })
+    return features
   }
 }
 

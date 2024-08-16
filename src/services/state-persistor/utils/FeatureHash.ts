@@ -2,6 +2,7 @@ import ngeoFormatFeatureProperties from './FeatureProperties'
 import { rgbArrayToHex } from './utils'
 
 import olFeature from 'ol/Feature.js'
+import olMap from 'ol/Map.js'
 import { includes as arrayIncludes } from 'ol/array.js'
 import { asArray as colorAsArray } from 'ol/color.js'
 import { ReadOptions, transformGeometryWithOptions } from 'ol/format/Feature.js'
@@ -32,6 +33,7 @@ import Text from 'ol/style/Text.js'
 import Stroke from 'ol/style/Stroke.js'
 import Fill from 'ol/style/Fill.js'
 import Style from 'ol/style/Style.js'
+import { createStyleFunction } from '@/composables/draw/draw-utils'
 
 const GeometryTypeValues = {
   LineString: 'LineString',
@@ -360,6 +362,50 @@ class FeatureHash extends TextFeature {
     this.prevX_ = 0
     this.prevY_ = 0
     return geometryReader.call(this, text)
+  }
+
+  decodeShortProperties(feature: Feature, defaultOrder: number, map: olMap) {
+    const properties = feature.getProperties()
+    for (const key in SHORT_PARAM_) {
+      if (properties[SHORT_PARAM_[key as ShortParamKeys]]) {
+        feature.set(key, properties[SHORT_PARAM_[key as ShortParamKeys]])
+        feature.unset(SHORT_PARAM_[key as ShortParamKeys])
+      }
+    }
+    const order = feature.get('display_order') || defaultOrder
+    feature.set('order', +order)
+
+    let opacity = /** @type {string} */ feature.get('opacity')
+    if (opacity === undefined) {
+      opacity = 0
+    }
+
+    feature.set('opacity', +opacity)
+    let stroke = /** @type {string} */ feature.get('stroke')
+    if (isNaN(stroke)) {
+      stroke = 2
+    }
+    feature.set('stroke', +stroke)
+    let size = /** @type {string} */ feature.get('size')
+    if (isNaN(size)) {
+      size = 10
+    }
+    feature.set('size', +size)
+
+    let angle = /** @type {string} */ feature.get('angle')
+    if (isNaN(angle)) {
+      angle = 0
+    }
+    feature.set('angle', +angle)
+    const isLabel = /** @type {string} */ feature.get('isLabel')
+    feature.set('isLabel', isLabel === 'true')
+    const isCircle = /** @type {string} */ feature.get('isCircle')
+    feature.set('isCircle', isCircle === 'true')
+    const showOrientation = /** @type {string} */ feature.get('showOrientation')
+    feature.set('showOrientation', showOrientation === 'true')
+
+    feature.set('__map_id__', undefined)
+    feature.setStyle(createStyleFunction(map))
   }
 
   /**
