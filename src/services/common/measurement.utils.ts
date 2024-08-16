@@ -5,7 +5,7 @@ import { getDistance as haversineDistance, getArea } from 'ol/sphere'
 const getFormattedLength = function (
   lineString: LineString,
   projection: Projection,
-  precision: number | undefined
+  precision?: number
 ): string {
   let length = 0
   const coordinates = lineString.getCoordinates()
@@ -16,9 +16,10 @@ const getFormattedLength = function (
   }
   let output
   if (length > 1000) {
-    output = parseFloat((length / 1000).toPrecision(precision)) + ' ' + 'km'
+    output =
+      parseFloat((length / 1000).toPrecision(precision || 3)) + ' ' + 'km'
   } else {
-    output = parseFloat(length.toPrecision(precision)) + ' ' + 'm'
+    output = parseFloat(length.toPrecision(precision || 3)) + ' ' + 'm'
   }
   return output
 }
