@@ -4,6 +4,7 @@ import { storeToRefs } from 'pinia'
 
 import useSortable from '@/composables/sortable'
 import { useDrawStore } from '@/stores/draw.store'
+import { DrawFeature } from '@/stores/draw.store.model'
 
 import FeatureItem from './feature-item.vue'
 
@@ -53,7 +54,7 @@ onMounted(() => {
         :isDocked="featureEditionDocked"
         :isEditing="currentEditingFeature === feature.id"
         :isOpen="currentOpenedFeature === feature.id"
-        :feature="feature"
+        :feature="<DrawFeature>feature"
         @toggleFeatureSub="onToggleFeatureSub"
         @toggleFeatureEdit="onToggleFeatureEdit"
         @toggleDock="() => (featureEditionDocked = !featureEditionDocked)"
