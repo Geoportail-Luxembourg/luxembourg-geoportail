@@ -61,11 +61,10 @@ describe('Catalogue', () => {
       cy.get('[data-cy="catalog"]')
         .find('[data-cy="parentLayerLabel-248"]')
         .click()
-      // deactivate for testing
-      // cy.window().then(window => {
-      //   const layers = (<AUTWindowOlMap>window).olMap.getLayers().getArray()
-      //   expect(layers[0].get('id')).to.eq(556)
-      // })
+      cy.window().then(window => {
+        const layers = (<AUTWindowOlMap>window).olMap.getLayers().getArray()
+        expect(layers[0].get('id')).to.eq(556)
+      })
       cy.get('[data-cy="catalog"]').find('[data-cy="layerLabel-359"]').click()
       cy.get('[data-cy="catalog"]').find('[data-cy="layerLabel-353"]').click()
       // BG deactivated due to layer exclusion
