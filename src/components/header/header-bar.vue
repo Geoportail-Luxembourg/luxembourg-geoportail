@@ -10,8 +10,7 @@ import { themeSelectorService } from '../theme-selector/theme-selector.service'
 
 const { t } = useTranslation()
 const appStore = useAppStore()
-const { layersOpen, myLayersTabOpen, themeGridOpen } = storeToRefs(appStore)
-const { setLayersOpen, setMyLayersTabOpen, setThemeGridOpen } = appStore
+const { toggleThemeGrid } = appStore
 const themeStore = useThemeStore()
 const { theme } = storeToRefs(themeStore)
 
@@ -26,18 +25,21 @@ watch(
 )
 
 function onClick() {
-  if (!layersOpen.value) {
-    setLayersOpen(true)
-    myLayersTabOpen.value && setMyLayersTabOpen(false)
-    setThemeGridOpen(true)
-  } else if (layersOpen.value) {
-    if (themeGridOpen.value) {
-      setLayersOpen(false)
-    } else {
-      myLayersTabOpen.value && setMyLayersTabOpen(false)
-      setThemeGridOpen(true)
-    }
-  }
+  // if (!layersOpen.value) {
+  //   setLayersOpen(true)
+  //   myLayersTabOpen.value && setMyLayersTabOpen(false)
+  //   setThemeGridOpen(true)
+  //   myMapsOpen.value = false
+  // } else if (layersOpen.value) {
+  //   if (themeGridOpen.value) {
+  //     setLayersOpen(false)
+  //   } else {
+  //     myLayersTabOpen.value && setMyLayersTabOpen(false)
+  //     setThemeGridOpen(true)
+  //   }
+  // }
+
+  toggleThemeGrid()
 }
 </script>
 

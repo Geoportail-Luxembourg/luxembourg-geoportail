@@ -8,9 +8,15 @@ import { useTranslation } from 'i18next-vue'
 import { useAppStore } from '@/stores/app.store'
 
 const { t, i18next } = useTranslation()
-const { setLayersOpen, setDrawToolbarOpen, toggleMyMapsOpen } = useAppStore()
-const { layersOpen, drawToolbarOpen, styleEditorOpen, myMapsOpen } =
-  storeToRefs(useAppStore())
+const appStore = useAppStore()
+const { setLayersOpen, setDrawToolbarOpen, toggleMyMapsOpen } = appStore
+const {
+  layersOpen,
+  drawToolbarOpen,
+  styleEditorOpen,
+  myMapsOpen,
+  themeGridOpen,
+} = storeToRefs(appStore)
 
 function onClickLayersIcon() {
   const open = !layersOpen.value
@@ -20,6 +26,8 @@ function onClickLayersIcon() {
     styleEditorOpen.value = false
     myMapsOpen.value = false
   }
+
+  themeGridOpen.value = false
 }
 </script>
 <template>

@@ -1,8 +1,9 @@
-import { useDrawStore } from '@/stores/draw.store'
 import { watch } from 'vue'
-import useDrawInteraction from './draw-interaction.composable'
-import Draw from 'ol/interaction/Draw'
 import { storeToRefs } from 'pinia'
+import Draw from 'ol/interaction/Draw'
+
+import { useDrawStore } from '@/stores/draw.store'
+import useDrawInteraction from './draw-interaction.composable'
 
 type DrawInteractions = {
   drawPoint: Draw

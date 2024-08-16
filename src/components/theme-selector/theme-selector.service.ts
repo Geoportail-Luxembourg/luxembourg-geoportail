@@ -1,7 +1,7 @@
 export class ThemeSelectorService {
   setCurrentThemeColors(themeName: string) {
     const root = document.querySelector(':root') as HTMLElement
-    const colors = ['primary', 'secondary', 'tertiary']
+    const colors = ['primary', 'secondary', 'tertiary', 'quaternary']
     colors.forEach(colorTone => {
       const color = getComputedStyle(root).getPropertyValue(
         `--${themeName}-${colorTone}`

@@ -1,0 +1,77 @@
+<script setup lang="ts">
+import { storeToRefs } from 'pinia'
+import { useTranslation } from 'i18next-vue'
+
+import MenuPopup from '@/components/common/menu-popup/menu-popup.vue'
+import MenuPopupItem from '@/components/common/menu-popup/menu-popup-item.vue'
+import { useDrawStore } from '@/stores/draw.store'
+
+import DrawPanelFeatures from './draw-panel-features.vue'
+
+const { t } = useTranslation()
+
+const drawStore = useDrawStore()
+const { drawFeatures: features } = storeToRefs(drawStore)
+const drawingMenuOptions = [
+  {
+    label: 'Copier dans ma carte',
+    action: () => alert('TODO: Draw feature click drawingMenuOptions'),
+  },
+  {
+    label: 'Effacer tous les dessins',
+    action: () => alert('TODO: Draw feature click drawingMenuOptions'),
+  },
+  {
+    label: 'Créer une nouvelle carte à partir de ces dessins',
+    action: () => alert('TODO: Draw feature click drawingMenuOptions'),
+  },
+  {
+    label: 'Fusionner des lignes',
+    action: () => alert('TODO: Draw feature click drawingMenuOptions'),
+  },
+  {
+    label: 'Couper une ligne',
+    action: () => alert('TODO: Draw feature click drawingMenuOptions'),
+  },
+]
+</script>
+
+<template>
+  <template v-if="features.length > 0">
+    <hr class="separator my-5" />
+
+    <!-- Title and caret dropdown menu -->
+    <div class="lux-draw-panel absolute w-[93%]" data-cy="drawPanel">
+      <div class="lux-draw-panel-title flex">
+        <h5 class="grow">{{ t('Dessins') }}</h5>
+
+        <!-- Dropdown menu -->
+        <MenuPopup
+          :items="drawingMenuOptions"
+          :direction="'down'"
+          :ariaLabel="t('Drawings menu')"
+        >
+          <i class="fa-solid fa-square-caret-down hover:text-tertiary"></i>
+          <template #item="{ item }">
+            <MenuPopupItem
+              :item="item"
+              @click="() => item.action && item.action()"
+            >
+              {{ t(item.label) }}
+            </MenuPopupItem>
+          </template>
+        </MenuPopup>
+      </div>
+
+      <!-- Drawings/Features list -->
+      <DrawPanelFeatures />
+    </div>
+  </template>
+</template>
+
+<style scoped>
+.separator {
+  margin-left: -10px;
+  margin-right: -10px;
+}
+</style>

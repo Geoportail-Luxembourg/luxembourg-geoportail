@@ -8,7 +8,7 @@
 
   .ol-btn {
     @apply bg-white border text-primary py-[6px] px-[12px] hover:bg-primary hover:text-white leading-snug focus:bg-[#e6e6e6] focus:border-[#8c8c8c] focus:[color:var(--color-primary)] focus:ol-outlined;
-    border: 1px solid var(--button-bg-color);
+    border: 1px solid var(--color-gray);
   }
 
   .ol-control {
@@ -16,7 +16,7 @@
   }
 
   .ol-control button {
-    @apply w-10 h-10 text-xl text-center font-normal indent-0 block ol-btn m-[-1px] p-0 border-[1px] border-[color:var(--color-btn-ol)];
+    @apply w-10 h-10 text-xl text-center font-normal indent-0 block ol-btn m-[-1px] p-0 border-[1px] border-[color:var(--color-border-default)];
     font-family: 'geoportail-icons-wc';
   }
 
@@ -37,7 +37,7 @@
   }
 
   .lux-control {
-    @apply p-0 right-2 z-[2] border-[color:var(--color-btn-ol)] border-[1px];
+    @apply p-0 right-2 z-[2] border-[color:var(--color-border-default)] border-[1px];
   }
 
   .geoportailv3-attribution {

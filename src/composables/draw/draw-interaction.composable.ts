@@ -1,4 +1,4 @@
-import { listen } from 'ol/events.js'
+import { listen } from 'ol/events'
 import Draw, { DrawEvent, Options } from 'ol/interaction/Draw'
 import useMap from '@/composables/map/map.composable'
 import useDrawnFeatures from './drawn-features.composable'
