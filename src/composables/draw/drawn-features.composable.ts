@@ -40,6 +40,7 @@ export default function useDrawnFeatures() {
     feature.set('linestyle', 'plain')
     feature.set('shape', 'circle')
     feature.set('isLabel', drawStateActive.value === 'drawLabel')
+    feature.set('isCircle', drawStateActive.value === 'drawCircle')
     feature.setStyle(createStyleFunction(map))
     feature.set('display_order', nbFeatures)
     // TODO Mymaps
@@ -76,7 +77,11 @@ export default function useDrawnFeatures() {
         // TODO: improve feat. creation, move this creation elsewhere
         id: Math.floor(Math.random() * Date.now()),
         label: `${geomType as string} ${drawFeatures.value.length + 1}`,
-        geom: geomType,
+        featureType: feature.get('isCircle')
+          ? 'drawnCircle'
+          : feature.get('isLabel')
+          ? 'drawnLabel'
+          : `drawn${geomType.replace('String', '')}`,
         olFeature: feature,
       } as unknown as DrawFeature
       drawFeatures.value = [...drawFeatures.value, newFeature]
