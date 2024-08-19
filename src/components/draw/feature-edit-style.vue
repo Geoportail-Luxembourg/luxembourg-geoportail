@@ -24,20 +24,20 @@ const styleComponents = {
 //   ref(undefined)
 
 const currentStyleComponent = computed(() => {
-  const geomType = props.feature.geom
-  if (geomType === 'Point') {
+  const featureType = props.feature.featureType
+  if (featureType === 'drawnPoint') {
     return 'FeatureEditStylePoint'
   }
 
-  if (geomType === 'Circle') {
+  if (featureType === 'drawnCircle') {
     return 'FeatureEditStyleCircle'
   }
 
-  if (geomType === 'LineString') {
+  if (featureType === 'drawnLine') {
     return 'FeatureEditStyleLine'
   }
 
-  if (geomType === 'Polygon') {
+  if (featureType === 'drawnPolygon') {
     return 'FeatureEditStylePolygon'
   }
 
