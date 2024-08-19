@@ -48,7 +48,7 @@ class StatePersistorFeaturesService implements StatePersistorService {
       const geomType = f.getGeometry()?.getType()
       const newFeature = {
         id: Math.floor(Math.random() * Date.now()),
-        label: `${geomType as string} ${drawFeatures.value.length + 1}`,
+        label: f.get('name'),
         featureType: f.get('isCircle')
           ? 'drawnCircle'
           : f.get('isLabel')
