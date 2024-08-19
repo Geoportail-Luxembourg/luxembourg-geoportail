@@ -56,9 +56,11 @@ function onClickDelete() {
     <span
       class="lux-icon"
       :class="{
-        point: feature.label === 'Point',
-        line: feature.label === 'LineString',
-        polygon: feature.label === 'Polygon' || feature.label === 'Circle',
+        point: feature.featureType === 'drawnPoint',
+        line: feature.featureType === 'drawnLine',
+        polygon:
+          feature.featureType === 'drawnPolygon' ||
+          feature.featureType === 'drawnCircle',
       }"
     ></span>
     <!-- Feature label -->

@@ -9,11 +9,18 @@ export type DrawStateActive =
   | 'drawCircle'
   | 'drawPolygon'
 
+export type DrawnFeatureType =
+  | 'drawnPoint'
+  | 'drawnLabel'
+  | 'drawnLine'
+  | 'drawnCircle'
+  | 'drawnPolygon'
+
 export interface DrawFeature {
   // TODO: to improve
   id: number
   label: string
   description: string
-  geom: string
+  featureType: DrawnFeatureType
   olFeature: Feature<Geometry>
 }
