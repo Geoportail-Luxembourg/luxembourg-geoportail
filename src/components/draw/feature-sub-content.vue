@@ -8,6 +8,7 @@ import FeatureMenuPopup from './feature-menu-popup.vue'
 import FeatureConfirmDelete from './feature-confirm-delete.vue'
 import FeatureEditInfo from './feature-edit-info.vue'
 import FeatureEditStyle from './feature-edit-style.vue'
+import FeatureConcentricCircle from './feature-concentric-circle.vue'
 import FeatureMeasurements from './feature-measurements.vue'
 
 const props = defineProps<{
@@ -19,6 +20,7 @@ const emit = defineEmits(['toggleEditFeature', 'toggleDock', 'clickDelete'])
 const { t } = useTranslation()
 
 const editComponents = {
+  FeatureConcentricCircle,
   FeatureEditInfo,
   FeatureEditStyle,
   FeatureConfirmDelete,

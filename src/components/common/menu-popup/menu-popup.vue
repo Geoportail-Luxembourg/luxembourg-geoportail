@@ -9,8 +9,10 @@ import {
   watch,
 } from 'vue'
 
+import { type MenuPopupItem } from './menu-popup.d'
+
 const props = defineProps<{
-  items: { label: string; action?: (event?: MouseEvent) => any }[]
+  items: MenuPopupItem[]
   direction?: 'up' | 'down'
   ariaLabel?: string
   ariaLabelledby?: string
