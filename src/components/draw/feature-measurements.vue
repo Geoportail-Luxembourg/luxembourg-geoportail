@@ -9,41 +9,57 @@ const { t } = useTranslation()
 
 const props = defineProps<{
   feature: DrawFeature
+  isEditingFeature?: boolean
 }>()
-
-const featLenght = computed(() => props.feature.id + ' [TODO featLenght]') // TODO
+const geomType = props.feature.geom
+const featLength = computed(() => props.feature.id + ' [TODO featLenght]') // TODO update condition
 const featArea = computed(() => props.feature.id + ' [TODO featArea]') // TODO
-const featRayon = computed(() => props.feature.id + ' [TODO featRayon]') // TODO
-const featElevation = computed(() => props.feature.id + ' [TODO featElevation]') // TODO
+const featRadius = computed(() => props.feature.id + ' [TODO featRayon]') // TODO
+const featElevation = computed(() => props.feature.id) // TODO
+
+function onClickValidateRadius() {
+  alert('TODO: validate /save radius')
+}
 </script>
 
 <template>
-  <!-- Feature length, for LineString, Circle, Polygon -->
-  <div>
-    <span>{{ t('Length:') }}</span> <span>{{ featLenght }}</span>
-  </div>
+  <div class="lux-drawing-item-measurements">
+    <!-- Feature length, for LineString, Circle, Polygon -->
+    <div v-if="['LineString', 'Polygon', 'Circle'].includes(geomType)">
+      <span>{{ t('Length:') }}</span> <span>{{ featLength }}</span>
+    </div>
 
-  <!-- Feature area, for Circle, Polygon -->
-  <div>
-    <span>{{ t('Area:') }}</span> <span>{{ featArea }}</span>
-  </div>
+    <!-- Feature area, for Circle, Polygon -->
+    <div v-if="['Polygon', 'Circle'].includes(geomType)">
+      <span>{{ t('Area:') }}</span> <span>{{ featArea }}</span>
+    </div>
 
-  <!-- Feature radius, for Circle -->
-  <div>
-    <span>{{ t('Rayon:') }}</span> <span>{{ featRayon }}</span>
-  </div>
+    <!-- Feature radius, for Circle -->
+    <div v-if="geomType === 'Circle'" class="flex items-center">
+      <span>{{ t('Rayon:') }}</span>
+      <span v-if="!isEditingFeature">{{ featRadius }}</span>
+      <!-- Radius is editable when edition mode is on -->
+      <div v-else class="flex">
+        <input class="form-control block" type="text" />
+        <button class="lux-btn-primary" @click="onClickValidateRadius">
+          {{ t('Valider') }}
+        </button>
+      </div>
+    </div>
 
-  <!-- Feature elevation, for Point, LineString -->
-  <div>
-    <span>{{
-      t('Elevation: \{\{ ctrl.featureElevation \}\}', {
-        'ctrl.featureElevation': featElevation,
-      })
-    }}</span>
-  </div>
+    <!-- Feature elevation, for Point, LineString -->
+    <div v-if="geomType === 'Point'">
+      <span>{{
+        t('Elevation: \{\{ ctrl.featureElevation \}\}', {
+          'ctrl.featureElevation': featElevation,
+        })
+      }}</span>
+    </div>
 
-  <!-- Feature elevation profile LineString -->
-  <div>
-    <FeatureMeasurementsProfile :feature="feature" />
+    <!-- Feature elevation profile LineString -->
+    <FeatureMeasurementsProfile
+      v-if="geomType === 'LineString'"
+      :feature="feature"
+    />
   </div>
 </template>

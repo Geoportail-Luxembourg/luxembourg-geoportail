@@ -3,7 +3,7 @@ import { computed } from 'vue'
 import { useTranslation } from 'i18next-vue'
 
 import { DrawFeature } from '@/stores/draw.store.model'
-import D3GraphElevation from '@/components/common/graph/d3-graph-elevation.vue'
+// import D3GraphElevation from '@/components/common/graph/d3-graph-elevation.vue'
 
 const { t } = useTranslation()
 
@@ -45,6 +45,6 @@ function exportCSV() {
           : t('Draw a line on the map to display an elevation profile.')
       }}
     </div>
-    <D3GraphElevation />
+    <!-- <D3GraphElevation /> -->
   </div>
 </template>

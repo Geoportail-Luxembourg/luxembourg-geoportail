@@ -61,7 +61,10 @@ function onClickSearch() {
     <!-- Spacer -->
     <div class="min-h-3"></div>
 
-    <FeatureMeasurements :feature="feature" />
+    <FeatureMeasurements
+      :feature="feature"
+      :isEditingFeature="isEditingFeature"
+    />
 
     <!-- Default display feature options -->
     <div class="flex justify-between items-center mt-1">
@@ -79,20 +82,31 @@ function onClickSearch() {
         <!-- List of actions on the current feature -->
         <div class="flex text-primary items-center gap-1">
           <!-- Fit view on current feature -->
-          <button @click="onClickSearch"><i class="fa fa-search"></i></button>
+          <button class="hover:text-tertiary" @click="onClickSearch">
+            <i class="fa fa-search"></i>
+          </button>
 
           <!-- Edit current feature -->
-          <button @click="() => (currentEditCompKey = 'FeatureEditInfo')">
+          <button
+            class="hover:text-tertiary"
+            @click="() => (currentEditCompKey = 'FeatureEditInfo')"
+          >
             <i class="fa fa-pencil"></i>
           </button>
 
           <!-- Edit current feature style -->
-          <button @click="() => (currentEditCompKey = 'FeatureEditStyle')">
+          <button
+            class="hover:text-tertiary"
+            @click="() => (currentEditCompKey = 'FeatureEditStyle')"
+          >
             <i class="fa fa-paint-brush"></i>
           </button>
 
           <!-- Remove feature from the map -->
-          <button @click="() => (currentEditCompKey = 'FeatureConfirmDelete')">
+          <button
+            class="hover:text-tertiary"
+            @click="() => (currentEditCompKey = 'FeatureConfirmDelete')"
+          >
             <i class="fa fa-trash"></i>
           </button>
 

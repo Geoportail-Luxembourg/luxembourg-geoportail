@@ -409,6 +409,10 @@
   .popup input[type='range']::-moz-range-track {
     background-color: var(--color-secondary);
   }
+
+  .popup .lux-drawing-item-measurements {
+    @apply text-gray-500;
+  }
 }
 
 .fa-solid {
