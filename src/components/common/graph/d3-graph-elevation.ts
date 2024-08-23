@@ -8,11 +8,12 @@ import {
   select,
   selectAll,
   Selection,
+  KeyType,
 } from 'd3-selection' // nb. pointer has replaced mouse in last version of d3
 import { area, line } from 'd3-shape'
 import * as olObj from 'ol/obj'
 
-import { Elevations, Poi, ProfileOptions } from './d3-graph-elevation'
+import { Elevations, Poi, ProfileOptions } from './d3-graph-elevation.d'
 
 const d3 = {
   bisector,
@@ -135,19 +136,16 @@ export default function D3GraphElevation(options: ProfileOptions) {
   const poiLabelAngle =
     options.poiLabelAngle !== undefined ? options.poiLabelAngle : -60
 
-  const i18n = options.i18n || {}
-  const xAxisLabel = i18n.xAxis || 'Distance'
-  const yAxisLabel = i18n.yAxis || 'Elevation'
+  const xAxisLabel = options.i18n?.xAxis || 'Distance'
+  const yAxisLabel = options.i18n?.yAxis || 'Elevation'
 
   const formatter = {
     xhover: (distance: number, units = DEFAULT_GRAPH_UNIT) =>
       `${parseFloat(distance.toPrecision(3))} ${units}`,
     yhover: (elevation: number, units = DEFAULT_GRAPH_UNIT) =>
       elevation !== null ? `${Math.round(elevation)} ${units}` : '',
-    // eslint-disable-next-line @typescript-eslint/no-unused-vars
-    xtick: (distance: number, units = DEFAULT_GRAPH_UNIT) => String(distance),
-    // eslint-disable-next-line @typescript-eslint/no-unused-vars
-    ytick: (elevation: number, units = DEFAULT_GRAPH_UNIT) => String(elevation),
+    xtick: (distance: number) => String(distance),
+    ytick: (elevation: number) => String(elevation),
   }
 
   if (typeof options.formatter !== 'undefined') {
@@ -158,7 +156,7 @@ export default function D3GraphElevation(options: ProfileOptions) {
     options.lightXAxis !== undefined ? options.lightXAxis : false
 
   // Objects shared with the showPois function
-  let svg: Selection<BaseType, any, any, unknown> //Selection<SVGSVGElement, any, HTMLElement, any>
+  let svg: Selection<BaseType, any, any, unknown>
 
   /**
    * D3 x scale.
@@ -175,7 +173,7 @@ export default function D3GraphElevation(options: ProfileOptions) {
    */
   const scaleModifier = options.scaleModifier
 
-  let g: Selection<SVGGElement, any, SVGSVGElement, any>
+  let g: Selection<BaseType, any, any, unknown>
 
   /**
    * Height of the chart in pixels
@@ -205,9 +203,7 @@ export default function D3GraphElevation(options: ProfileOptions) {
   const profile = (
     selection: Selection<SVGElement, Iterable<any>, HTMLElement, any>
   ) => {
-    // TODO: update any
     selection.each(function (data) {
-      // TODO: update any
       d3.select(this).selectAll('svg').remove()
       if (data === undefined) {
         return
@@ -394,12 +390,12 @@ export default function D3GraphElevation(options: ProfileOptions) {
       }
 
       if (!light) {
-        xAxis.tickFormat(d => formatter.xtick(<number>d / xFactor, xUnits))
+        xAxis.tickFormat(d => formatter.xtick(<number>d / xFactor))
         if (lightXAxis) {
           xAxis.tickValues([0, x.domain()[1]])
         }
 
-        yAxis.tickFormat(d => formatter.ytick(d, DEFAULT_GRAPH_UNIT))
+        yAxis.tickFormat(d => formatter.ytick(<number>d))
 
         g.select('.x.axis')
           .transition()
@@ -422,7 +418,7 @@ export default function D3GraphElevation(options: ProfileOptions) {
 
       g.select('.grid-y')
         .transition()
-        .call(<any>yAxis.tickSize(-width).tickFormat(null)) // TODO: find better typing than any
+        .call(<any>yAxis.tickSize(-width).tickFormat(() => ''))
         .selectAll('.tick line')
         .style('stroke', '#ccc')
         .style('opacity', 0.7)
@@ -439,18 +435,14 @@ export default function D3GraphElevation(options: ProfileOptions) {
         .style('stroke', '#222')
         .style('opacity', 0.8)
 
-      g.select('.overlay').on('mouseout', mouseout).on('mousemove', mousemove)
+      g.select('.overlay')
+        .on('mouseout', () => profile.clearHighlight())
+        .on('mousemove', event => {
+          const [mouseX] = d3.pointer(event)
+          const x0 = x.invert(mouseX)
 
-      function mousemove(this: BaseType) {
-        const mouseX = d3.pointer(this)[0]
-        const x0 = x.invert(mouseX)
-
-        profile.highlight(x0)
-      }
-
-      function mouseout() {
-        profile.clearHighlight()
-      }
+          profile.highlight(x0)
+        })
     })
   }
 
@@ -471,6 +463,7 @@ export default function D3GraphElevation(options: ProfileOptions) {
   profile.highlight = (distance: number) => {
     const data = svg.datum()
     const i = bisectDistance(data, distance)
+
     if (i >= data.length) {
       return
     }
@@ -550,7 +543,7 @@ export default function D3GraphElevation(options: ProfileOptions) {
     const p = ps.selectAll('.poi').data(pois, d => {
       const i = bisectDistance(
         profileData,
-        Math.round(pe.dist(<Poi>d) * 10) / 10,
+        pe ? Math.round(pe.dist(<Poi>d) * 10) / 10 : undefined,
         1
       )
       const point = profileData[i]
@@ -561,9 +554,9 @@ export default function D3GraphElevation(options: ProfileOptions) {
           elevations.push(linesConfiguration[lineName].zExtractor(point))
         }
         const z = Math.max.apply(null, elevations)
-        pe.z(<Poi>d, z)
+        pe?.z(<Poi>d, z)
       }
-      return pe.id(<Poi>d)
+      return <KeyType>pe?.id(<Poi>d)
     })
 
     const poiEnterG = p.enter().append('g').attr('class', 'poi')
@@ -587,23 +580,22 @@ export default function D3GraphElevation(options: ProfileOptions) {
       .selectAll('text')
       .attr('transform', d =>
         light
-          ? [`translate(${x(pe.dist(<Poi>d))},${y(pe.z(<Poi>d)) - 10})`]
+          ? [`translate(${x(pe!.dist(<Poi>d))},${y(pe!.z(<Poi>d)) - 10})`]
           : [
-              `translate(${x(pe.dist(<Poi>d))},${
-                y(pe.z(<Poi>d)) - 20
+              `translate(${x(pe!.dist(<Poi>d))},${
+                y(pe!.z(<Poi>d)) - 20
               }) rotate(${poiLabelAngle})`,
             ]
       )
-      .text(d => pe.sort(<Poi>d) + (light ? '' : ` - ${pe.title(<Poi>d)}`))
+      .text(d => pe!.sort(<Poi>d) + (light ? '' : ` - ${pe!.title(<Poi>d)}`))
 
     poiEnterG
       .selectAll('line')
       .style('stroke', 'grey')
-      .attr('x1', d => x(pe.dist(<Poi>d)))
-      // eslint-disable-next-line @typescript-eslint/no-unused-vars
-      .attr('y1', d => y(y.domain()[0]))
-      .attr('x2', d => x(pe.dist(<Poi>d)))
-      .attr('y2', d => y(pe.z(<Poi>d)))
+      .attr('x1', d => x(pe!.dist(<Poi>d)))
+      .attr('y1', () => y(y.domain()[0]))
+      .attr('x2', d => x(pe!.dist(<Poi>d)))
+      .attr('y2', d => y(pe!.z(<Poi>d)))
 
     // remove unused pois
     poiEnterG.exit().remove()

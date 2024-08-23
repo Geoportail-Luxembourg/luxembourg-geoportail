@@ -9,7 +9,7 @@ export const useMapStore = defineStore('map', () => {
   const layersService = useLayers()
   const map: Ref<MapContext> = ref({})
   const layers: ShallowRef<Layer[]> = shallowRef([])
-  const layers3d: ShallowRef<any[]> = shallowRef([])
+  const layers3d: ShallowRef<Layer[]> = shallowRef([])
   const is3dActive: Ref<boolean> = ref(false)
   const is3dMesh: Ref<boolean> = ref(false)
   const bgLayer: Ref<Layer | undefined | null> = ref(undefined) // undefined => at start app | null => blank bgLayer

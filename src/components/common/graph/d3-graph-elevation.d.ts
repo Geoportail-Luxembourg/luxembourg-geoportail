@@ -65,22 +65,22 @@ export interface ProfileFormatter {
   /**
    * Format the xhover distance.
    */
-  xhover: (val: number, pattern: string) => string
+  xhover: (val: number, units: string) => string
 
   /**
    *  Format the yhover elevation.
    */
-  yhover: (val: number, pattern: string) => string
+  yhover: (val: number, units: string) => string
 
   /**
    * Format the xtick, for graduating the x axis.
    */
-  xtick: (val: number, pattern: string) => string | number
+  xtick?: (val: number, units: string) => string | number
 
   /**
    * Format the ytick, for graduating the y axis.
    */
-  ytick: (val: number, pattern: string) => string | number
+  ytick?: (val: number, units: string) => string | number
 }
 
 export interface ProfileOptions {
@@ -109,7 +109,7 @@ export interface ProfileOptions {
   /**
    * Extractor for parsing POI data.
    */
-  poiExtractor: PoiExtractor
+  poiExtractor?: PoiExtractor
 
   /**
    *  Whether the simplified profile should be shown.
@@ -146,5 +146,5 @@ export interface ProfileOptions {
    */
   outCallback?: () => void
 
-  i18n: { xAxis: string | undefined; yAxis: string | undefined }
+  i18n?: { xAxis: string | undefined; yAxis: string | undefined }
 }
