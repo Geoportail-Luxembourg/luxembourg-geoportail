@@ -1,4 +1,4 @@
 export type MenuPopupItem = {
   label: string
-  action?: (event?: MouseEvent) => any
+  action?: (event?: MouseEvent) => void
 }

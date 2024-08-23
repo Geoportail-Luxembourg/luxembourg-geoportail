@@ -175,7 +175,7 @@ export default function useMap() {
     // the utility function traverseLayer is used as a workaround until OL is updated to 6.15
     // then the function getAllLayers below (added in OL v.6.10.0) can be used
     // map.getAllLayers().forEach(layer => {
-    traverseLayer(map.getLayerGroup(), [], (layer: any) => {
+    traverseLayer(map.getLayerGroup(), [], <T>(layer: T) => {
       if (layer instanceof MapLibreLayer) {
         ;(layer as MapLibreLayer).getMapLibreMap().resize()
       }

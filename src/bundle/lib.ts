@@ -46,13 +46,17 @@ import MapLibreLayer from '@/lib/ol-mapbox-layer'
 import StyleSelector from '@/components/style-selector/style-selector.vue'
 import { clearLayersCache } from '@/stores/layers.cache'
 
-import i18next from 'i18next'
+import i18next, { InitOptions } from 'i18next'
 import backend from 'i18next-http-backend'
 import I18NextVue from 'i18next-vue'
 
 import App from '../App.vue'
 
-export default function useLuxLib(options: any) {
+type LuxLibOptions = {
+  i18nextConfig?: InitOptions
+}
+
+export default function useLuxLib(options: LuxLibOptions) {
   const i18nextConfig = options.i18nextConfig ?? {
     lng: 'fr',
     debug: false,
