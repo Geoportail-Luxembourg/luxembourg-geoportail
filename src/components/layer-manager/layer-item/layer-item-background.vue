@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { computed } from 'vue'
+import { SetupContext, computed } from 'vue'
 
 import { useLayer } from '@/composables/layer'
 import { Layer } from '@/stores/map.store.model'
@@ -14,7 +14,7 @@ const emit = defineEmits<{
   (e: 'clickEdit'): void
   (e: 'clickInfo'): void
 }>()
-const { t, onClickInfo } = useLayer(props.layer, { emit })
+const { t, onClickInfo } = useLayer(props.layer, <SetupContext>{ emit })
 
 const txtTitleLabel = computed(() =>
   t('Display informations for "{{layerName}}"', {

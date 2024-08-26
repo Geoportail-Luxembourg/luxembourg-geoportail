@@ -7,7 +7,7 @@ import * as olEvents from 'ol/events'
 
 import { debounce } from '@/services/utils'
 import D3GraphElevation from './d3-graph-elevation'
-import { ProfileOptions } from './d3-graph-elevation.d'
+import { Profile, ProfileOptions } from './d3-graph-elevation.d'
 import { dataset } from './d3-graph-elevation.fixtures' // TODO: Remove dataset from fixtures and use api instead
 
 const d3 = { select }
@@ -46,7 +46,7 @@ function removeMeasureTooltip() {
 // this.map_.addOverlay(this.measureTooltip_);
 // }
 
-let profile: any, elevationData: any, poiData: any
+let profile: Profile, elevationData: any, poiData: any
 let selection: Selection<any, unknown, null, undefined>
 let hoverCallback = () =>
   // point: any,

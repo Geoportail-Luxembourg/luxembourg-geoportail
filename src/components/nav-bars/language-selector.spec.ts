@@ -22,7 +22,9 @@ describe('LanguageSelector', () => {
 
   it('languages are in the right order: en, de, fr, lb', () => {
     expect(
-      (wrapper.vm as any).availableLanguages.map(
+      (
+        wrapper as VueWrapper<typeof LanguageSelector>
+      ).vm.availableLanguages.map(
         (lang: { [key: string]: string }) => lang.value
       )
     ).toStrictEqual(['en', 'de', 'fr', 'lb'])

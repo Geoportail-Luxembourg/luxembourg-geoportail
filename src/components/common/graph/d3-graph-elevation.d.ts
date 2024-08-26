@@ -1,8 +1,15 @@
 import { ScaleLinear } from 'd3-scale'
 
+export type Profile = {
+  (selection: Selection<SVGElement, Iterable<any>, HTMLElement, any>): void
+  clearHighlight(): void
+  highlight(distance: number): void
+  showPois(pois: Poi[]): void
+}
+
 export type PointData = {
   dist: number
-  values: any[]
+  values: number[]
   x: number
   y: number
 }
@@ -31,7 +38,7 @@ export interface LineConfiguration {
   /**
    * Extract the elevation of a point (an item of the elevation data array).
    */
-  zExtractor: (obj: any) => number // TODO: replace any
+  zExtractor: (obj: NumberValue) => number // TODO: replace any
 }
 
 export interface PoiExtractor {
@@ -99,7 +106,7 @@ export interface ProfileOptions {
   /**
    * Extract the distance from origin of a point (an item of the elevation data array)
    */
-  distanceExtractor: (obj: any) => number // TODO: better signature
+  distanceExtractor: (obj: NumberValue) => number // TODO: better signature
 
   /**
    * Configuration object for the profile's lines. The key string of each object is used as class for its respective svg line.

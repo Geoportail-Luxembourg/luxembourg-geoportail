@@ -1,12 +1,11 @@
 <script setup lang="ts">
-import { ref } from 'vue'
+import { ref, onMounted } from 'vue'
 import { useTranslation } from 'i18next-vue'
 import { CLASS_CONTROL, CLASS_UNSELECTABLE } from 'ol/css'
-
 import Control from 'ol/control/Control'
-import useControl from '@/composables/control/control.composable'
-import { onMounted } from 'vue'
+import { Options } from 'ol/control/Control'
 
+import useControl from '@/composables/control/control.composable'
 import { useMapStore } from '@/stores/map.store'
 
 const mapStore = useMapStore()
@@ -26,7 +25,10 @@ const props = withDefaults(
 const controlElement = ref(null)
 
 onMounted(() =>
-  useControl(Control, { ...props, ...{ target: controlElement } })
+  useControl(Control, {
+    ...props,
+    ...{ target: controlElement },
+  } as unknown as Options)
 )
 
 const toggle3d = () => {
