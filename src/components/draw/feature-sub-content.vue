@@ -52,6 +52,7 @@ function onClickSearch() {
   <template v-if="!currentEditCompKey">
     <!-- Icon to attach this UI in a popup under the feature on the map -->
     <i
+      data-cy="featItemDock"
       v-if="!isDocked"
       class="fa fa-object-ungroup float-right"
       role="button"
@@ -73,6 +74,7 @@ function onClickSearch() {
       <div>
         <!-- Button edit feature: EDIT/END EDITION -->
         <button
+          data-cy="featItemToggleEdit"
           class="lux-btn-primary"
           @click="emit('toggleEditFeature', props.feature)"
         >
@@ -80,16 +82,21 @@ function onClickSearch() {
         </button>
       </div>
 
-      <div>
+      <div data-cy="featItemActions">
         <!-- List of actions on the current feature -->
         <div class="flex text-primary items-center gap-1">
           <!-- Fit view on current feature -->
-          <button class="hover:text-tertiary" @click="onClickSearch">
+          <button
+            data-cy="featItemActionSearch"
+            class="hover:text-tertiary"
+            @click="onClickSearch"
+          >
             <i class="fa fa-search"></i>
           </button>
 
           <!-- Edit current feature -->
           <button
+            data-cy="featItemActionEdit"
             class="hover:text-tertiary"
             @click="() => (currentEditCompKey = 'FeatureEditInfo')"
           >
@@ -98,6 +105,7 @@ function onClickSearch() {
 
           <!-- Edit current feature style -->
           <button
+            data-cy="featItemActionStyle"
             class="hover:text-tertiary"
             @click="() => (currentEditCompKey = 'FeatureEditStyle')"
           >
@@ -106,6 +114,7 @@ function onClickSearch() {
 
           <!-- Remove feature from the map -->
           <button
+            data-cy="featItemActionDelete"
             class="hover:text-tertiary"
             @click="() => (currentEditCompKey = 'FeatureConfirmDelete')"
           >

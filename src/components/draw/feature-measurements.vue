@@ -25,17 +25,24 @@ function onClickValidateRadius() {
 <template>
   <div class="lux-drawing-item-measurements">
     <!-- Feature length, for LineString, Circle, Polygon -->
-    <div v-if="['LineString', 'Polygon', 'Circle'].includes(geomType)">
+    <div
+      data-cy="featItemLength"
+      v-if="['LineString', 'Polygon', 'Circle'].includes(geomType)"
+    >
       <span>{{ t('Length:') }}</span> <span>{{ featLength }}</span>
     </div>
 
     <!-- Feature area, for Circle, Polygon -->
-    <div v-if="['Polygon', 'Circle'].includes(geomType)">
+    <div data-cy="featItemArea" v-if="['Polygon', 'Circle'].includes(geomType)">
       <span>{{ t('Area:') }}</span> <span>{{ featArea }}</span>
     </div>
 
     <!-- Feature radius, for Circle -->
-    <div v-if="geomType === 'Circle'" class="flex items-center">
+    <div
+      data-cy="featItemRadius"
+      v-if="geomType === 'Circle'"
+      class="flex items-center"
+    >
       <span>{{ t('Rayon:') }}</span>
       <span v-if="!isEditingFeature">{{ featRadius }}</span>
       <!-- Radius is editable when edition mode is on -->
@@ -47,8 +54,8 @@ function onClickValidateRadius() {
       </div>
     </div>
 
-    <!-- Feature elevation, for Point, LineString -->
-    <div v-if="geomType === 'Point'">
+    <!-- Feature elevation, for Point -->
+    <div data-cy="featItemElevation" v-if="geomType === 'Point'">
       <span>{{
         t('Elevation: \{\{ ctrl.featureElevation \}\}', {
           'ctrl.featureElevation': featElevation,

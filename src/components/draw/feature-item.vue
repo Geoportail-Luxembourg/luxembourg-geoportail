@@ -43,6 +43,7 @@ function onClickDelete() {
 <template>
   <!-- Drawing type and title -->
   <button
+    data-cy="featItemName"
     class="lux-drawing-item-label flex items-center gap-1"
     :aria-expanded="isOpen"
     :aria-controls="`drawing-item-content-${feature.id}`"

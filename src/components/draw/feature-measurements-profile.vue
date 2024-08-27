@@ -23,7 +23,7 @@ function exportCSV() {
 </script>
 
 <template>
-  <div class="lux-profile relative mb-2">
+  <div data-cy="featItemProfile" class="lux-profile relative mb-2">
     <div class="flex justify-between">
       <div>
         <label>&Delta; +</label><span>{{ elevationGain }}</span
@@ -32,6 +32,7 @@ function exportCSV() {
         ><span>{{ cumulativeElevation }}</span>
       </div>
       <button
+        data-cy="featItemProfileCSV"
         class="profile-export no-print text-secondary hover:underline"
         v-if="profileData"
         @click="() => exportCSV()"

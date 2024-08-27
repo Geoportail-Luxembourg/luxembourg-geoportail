@@ -35,7 +35,7 @@ watchEffect(() => {
 
 <template>
   <Teleport to="body">
-    <div ref="popupContainer" class="popup">
+    <div ref="popupContainer" data-cy="mapPopup" class="popup">
       <button
         class="fa-sharp fa-solid fa-close float-right mt-2 hover:text-primary"
         @click="() => emit('closePopup')"

@@ -57,6 +57,7 @@ if (props.feature.geom === 'Circle') {
 
 <template>
   <MenuPopup
+    data-cy="featMenuPopup"
     :items="drawingMenuOptions"
     :direction="'up'"
     :ariaLabel="t('Drawings menu')"
@@ -65,7 +66,11 @@ if (props.feature.geom === 'Circle') {
     <i class="fa-solid fa-square-caret-down hover:text-tertiary"></i>
     <!-- Loop through items for the menu -->
     <template #item="{ item }">
-      <MenuPopupItem :item="item" @click="() => item.action && item.action()">
+      <MenuPopupItem
+        data-cy="featMenuPopupItem"
+        :item="item"
+        @click="() => item.action && item.action()"
+      >
         {{ t(item.label) }}
       </MenuPopupItem>
     </template>
