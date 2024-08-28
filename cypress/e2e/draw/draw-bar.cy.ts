@@ -27,7 +27,7 @@ describe('Map controls', () => {
 
     describe('When drawing the point on the map', () => {
       beforeEach(() => {
-        cy.get('div.ol-viewport').click(100, 100)
+        cy.get('div.ol-viewport').click(100, 100, { force: true })
       })
 
       it('displays the draw Panel', () => {
@@ -57,7 +57,7 @@ describe('Map controls', () => {
 
     describe('When drawing the label on the map', () => {
       beforeEach(() => {
-        cy.get('div.ol-viewport').click(100, 100)
+        cy.get('div.ol-viewport').click(100, 100, { force: true })
       })
 
       it('displays the draw Panel', () => {
@@ -86,16 +86,16 @@ describe('Map controls', () => {
     })
 
     it('displays a tooltip when clicking on the map and hides it on draw end (second point double click)', () => {
-      cy.get('div.ol-viewport').click(100, 100)
+      cy.get('div.ol-viewport').click(100, 100, { force: true })
       cy.get('div.lux-tooltip').should('exist')
-      cy.get('div.ol-viewport').dblclick(200, 200)
+      cy.get('div.ol-viewport').dblclick(200, 200, { force: true })
       cy.get('div.lux-tooltip').should('not.exist')
     })
 
     describe('When drawing the line on the map', () => {
       beforeEach(() => {
-        cy.get('div.ol-viewport').click(100, 100)
-        cy.get('div.ol-viewport').dblclick(200, 200)
+        cy.get('div.ol-viewport').click(100, 100, { force: true })
+        cy.get('div.ol-viewport').dblclick(200, 200, { force: true })
       })
 
       it('displays the draw Panel', () => {
@@ -120,18 +120,18 @@ describe('Map controls', () => {
     })
 
     it('displays a tooltip when clicking on the map and hides it on draw end (third point double click)', () => {
-      cy.get('div.ol-viewport').click(100, 100)
+      cy.get('div.ol-viewport').click(100, 100, { force: true })
       cy.get('div.lux-tooltip').should('exist')
-      cy.get('div.ol-viewport').click(100, 200)
-      cy.get('div.ol-viewport').dblclick(200, 200)
+      cy.get('div.ol-viewport').click(100, 200, { force: true })
+      cy.get('div.ol-viewport').dblclick(200, 200, { force: true })
       cy.get('div.lux-tooltip').should('not.exist')
     })
 
     describe('When drawing the polygon on the map', () => {
       beforeEach(() => {
-        cy.get('div.ol-viewport').click(100, 100)
-        cy.get('div.ol-viewport').click(100, 200)
-        cy.get('div.ol-viewport').dblclick(200, 200)
+        cy.get('div.ol-viewport').click(100, 100, { force: true })
+        cy.get('div.ol-viewport').click(100, 200, { force: true })
+        cy.get('div.ol-viewport').dblclick(200, 200, { force: true })
       })
 
       it('displays the draw Panel', () => {

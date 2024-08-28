@@ -31,6 +31,7 @@ function onEnter(el: Element, done: () => void) {
     @after-leave="$emit('close')"
   >
     <div
+      data-cy="notification"
       v-if="show"
       v-dompurify-html="props.notification.message"
       class="lux-alert"
