@@ -70,7 +70,7 @@ function onClickSearch() {
     />
 
     <!-- Default display feature options -->
-    <div class="flex justify-between items-center mt-1">
+    <div class="flex justify-between items-center mt-1 gap-2">
       <div>
         <!-- Button edit feature: EDIT/END EDITION -->
         <button
