@@ -14,8 +14,8 @@ describe('Draw "Line"', () => {
     cy.visit('/')
     cy.get('button[data-cy="drawButton"]').click()
     cy.get('button[data-cy="drawLineButton"]').click()
-    cy.get('div.ol-viewport').click(100, 100)
-    cy.get('div.ol-viewport').dblclick(200, 200)
+    cy.get('div.ol-viewport').click(100, 100, { force: true })
+    cy.get('div.ol-viewport').dblclick(200, 200, { force: true })
   })
 
   describe('When clicking button to draw Line', () => {
