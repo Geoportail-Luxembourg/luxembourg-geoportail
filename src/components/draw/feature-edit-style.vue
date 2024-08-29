@@ -20,8 +20,6 @@ const styleComponents = {
   FeatureEditStylePoint,
   FeatureEditStylePolygon,
 }
-// const currentStyleComponent: Ref<keyof typeof styleComponents | undefined> =
-//   ref(undefined)
 
 const currentStyleComponent = computed(() => {
   const geomType = props.feature.geom

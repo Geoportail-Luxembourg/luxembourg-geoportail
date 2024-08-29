@@ -1,6 +1,6 @@
 <script setup lang="ts">
 const props = defineProps<{
-  item: { label: string; action?: (event?: MouseEvent) => any }
+  item: { label: string; action?: (event?: MouseEvent) => void }
 }>()
 const emit = defineEmits(['click'])
 

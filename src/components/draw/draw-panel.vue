@@ -47,6 +47,7 @@ const drawingMenuOptions = [
 
         <!-- Dropdown menu -->
         <MenuPopup
+          data-cy="drawPanelMenuPopup"
           :items="drawingMenuOptions"
           :direction="'down'"
           :ariaLabel="t('Drawings menu')"
@@ -54,6 +55,7 @@ const drawingMenuOptions = [
           <i class="fa-solid fa-square-caret-down hover:text-tertiary"></i>
           <template #item="{ item }">
             <MenuPopupItem
+              data-cy="drawPanelMenuPopupItem"
               :item="item"
               @click="() => item.action && item.action()"
             >

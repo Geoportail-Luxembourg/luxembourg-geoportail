@@ -64,7 +64,7 @@ function onKeyDownEsc() {
 }
 
 onMounted(() => {
-  sliderElement.value?.focus({ focusVisible: true } as any) // TODO: FocusOptions
+  sliderElement.value?.focus(<FocusOptions>{ focusVisible: true })
 })
 
 onUnmounted(() => {

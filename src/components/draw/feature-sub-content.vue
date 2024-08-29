@@ -8,6 +8,7 @@ import FeatureMenuPopup from './feature-menu-popup.vue'
 import FeatureConfirmDelete from './feature-confirm-delete.vue'
 import FeatureEditInfo from './feature-edit-info.vue'
 import FeatureEditStyle from './feature-edit-style.vue'
+import FeatureConcentricCircle from './feature-concentric-circle.vue'
 import FeatureMeasurements from './feature-measurements.vue'
 
 const props = defineProps<{
@@ -19,6 +20,7 @@ const emit = defineEmits(['toggleEditFeature', 'toggleDock', 'clickDelete'])
 const { t } = useTranslation()
 
 const editComponents = {
+  FeatureConcentricCircle,
   FeatureEditInfo,
   FeatureEditStyle,
   FeatureConfirmDelete,
@@ -50,6 +52,7 @@ function onClickSearch() {
   <template v-if="!currentEditCompKey">
     <!-- Icon to attach this UI in a popup under the feature on the map -->
     <i
+      data-cy="featItemDock"
       v-if="!isDocked"
       class="fa fa-object-ungroup float-right"
       role="button"
@@ -61,13 +64,17 @@ function onClickSearch() {
     <!-- Spacer -->
     <div class="min-h-3"></div>
 
-    <FeatureMeasurements :feature="feature" />
+    <FeatureMeasurements
+      :feature="feature"
+      :isEditingFeature="isEditingFeature"
+    />
 
     <!-- Default display feature options -->
-    <div class="flex justify-between items-center mt-1">
+    <div class="flex justify-between items-center mt-1 gap-2">
       <div>
         <!-- Button edit feature: EDIT/END EDITION -->
         <button
+          data-cy="featItemToggleEdit"
           class="lux-btn-primary"
           @click="emit('toggleEditFeature', props.feature)"
         >
@@ -75,24 +82,42 @@ function onClickSearch() {
         </button>
       </div>
 
-      <div>
+      <div data-cy="featItemActions">
         <!-- List of actions on the current feature -->
         <div class="flex text-primary items-center gap-1">
           <!-- Fit view on current feature -->
-          <button @click="onClickSearch"><i class="fa fa-search"></i></button>
+          <button
+            data-cy="featItemActionSearch"
+            class="hover:text-tertiary"
+            @click="onClickSearch"
+          >
+            <i class="fa fa-search"></i>
+          </button>
 
           <!-- Edit current feature -->
-          <button @click="() => (currentEditCompKey = 'FeatureEditInfo')">
+          <button
+            data-cy="featItemActionEdit"
+            class="hover:text-tertiary"
+            @click="() => (currentEditCompKey = 'FeatureEditInfo')"
+          >
             <i class="fa fa-pencil"></i>
           </button>
 
           <!-- Edit current feature style -->
-          <button @click="() => (currentEditCompKey = 'FeatureEditStyle')">
+          <button
+            data-cy="featItemActionStyle"
+            class="hover:text-tertiary"
+            @click="() => (currentEditCompKey = 'FeatureEditStyle')"
+          >
             <i class="fa fa-paint-brush"></i>
           </button>
 
           <!-- Remove feature from the map -->
-          <button @click="() => (currentEditCompKey = 'FeatureConfirmDelete')">
+          <button
+            data-cy="featItemActionDelete"
+            class="hover:text-tertiary"
+            @click="() => (currentEditCompKey = 'FeatureConfirmDelete')"
+          >
             <i class="fa fa-trash"></i>
           </button>
 

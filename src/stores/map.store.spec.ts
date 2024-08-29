@@ -186,7 +186,7 @@ describe('Map Store', () => {
       return {
         default: () => {
           return {
-            findById: (id: any, node?: any): any => {
+            findById: <T>(id: string | number, node?: T) => {
               expect(node).toBeUndefined()
               if (id === 2) return layer2
               if (id === 3) return layer3

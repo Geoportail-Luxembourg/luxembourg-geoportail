@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import Zoom from 'ol/control/Zoom'
+import { Options } from 'ol/control/Control'
 import useControl from '@/composables/control/control.composable'
 
 const props = withDefaults(
@@ -14,7 +15,7 @@ const props = withDefaults(
   }
 )
 
-useControl(Zoom, props)
+useControl(Zoom, <Options>props)
 </script>
 
 <template>

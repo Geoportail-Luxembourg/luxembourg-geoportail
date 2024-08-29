@@ -1,11 +1,11 @@
 <script setup lang="ts">
-import { ref } from 'vue'
+import { ref, onMounted } from 'vue'
 import { useTranslation } from 'i18next-vue'
 import { CLASS_CONTROL, CLASS_UNSELECTABLE } from 'ol/css'
-
 import Control from 'ol/control/Control'
+import { Options } from 'ol/control/Control'
+
 import useControl from '@/composables/control/control.composable'
-import { onMounted } from 'vue'
 
 const { t } = useTranslation()
 const props = withDefaults(
@@ -110,7 +110,10 @@ function handleCenterToLocation() {
 // }
 
 onMounted(() =>
-  useControl(Control, { ...props, ...{ target: controlElement } })
+  useControl(Control, {
+    ...props,
+    ...{ target: controlElement },
+  } as unknown as Options)
 )
 </script>
 

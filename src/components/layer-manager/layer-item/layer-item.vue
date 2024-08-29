@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { computed } from 'vue'
+import { SetupContext, computed } from 'vue'
 
 import { useLayer } from '@/composables/layer'
 import { Layer } from '@/stores/map.store.model'
@@ -25,7 +25,7 @@ const emit = defineEmits<{
   (e: 'changeOpacity', layer: Layer, opacity: number): void
   (e: 'changeTime', dateStart?: string, dateEnd?: string): void
 }>()
-const { t, onClickInfo } = useLayer(props.layer, { emit })
+const { t, onClickInfo } = useLayer(props.layer, <SetupContext>{ emit })
 const layersService = useLayers()
 const layerLabel = computed(() =>
   t(layersService.getLayerCurrentLabel(props.layer), { ns: 'client' })
