@@ -7,8 +7,8 @@ import Notification from './notification-item.vue'
 const alertNotificationsStore = useAlertNotificationsStore()
 const { notifications } = storeToRefs(alertNotificationsStore)
 
-function onClose(index: number) {
-  alertNotificationsStore.removeNotification(index)
+function onClose(uuid: string) {
+  alertNotificationsStore.removeNotification(uuid)
 }
 </script>
 
@@ -23,7 +23,7 @@ function onClose(index: number) {
         v-for="(notification, index) in notifications"
         :key="index"
         :notification="notification"
-        @close="() => onClose(index)"
+        @close="() => onClose(notification.uuid)"
       />
     </div>
   </Teleport>
