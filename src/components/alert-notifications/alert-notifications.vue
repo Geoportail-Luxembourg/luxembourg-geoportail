@@ -2,6 +2,7 @@
 import { storeToRefs } from 'pinia'
 
 import { useAlertNotificationsStore } from '@/stores/alert-notifications.store'
+import { AlertNotification } from '@/stores/alert-notifications.store.model'
 import Notification from './notification-item.vue'
 
 const alertNotificationsStore = useAlertNotificationsStore()
@@ -22,7 +23,7 @@ function onClose(uuid: string) {
       <Notification
         v-for="(notification, index) in notifications"
         :key="index"
-        :notification="notification"
+        :notification="<AlertNotification>notification"
         @close="() => onClose(notification.uuid)"
       />
     </div>
