@@ -4,6 +4,7 @@ import Draw from 'ol/interaction/Draw'
 
 import { useDrawStore } from '@/stores/draw.store'
 import useDrawInteraction from './draw-interaction.composable'
+import useDrawNotifications from './draw-notifications.composable'
 
 type DrawInteractions = {
   drawPoint: Draw
@@ -23,15 +24,16 @@ export default function useDraw() {
     drawPolygon: useDrawInteraction({ type: 'Polygon' }).drawInteraction,
   } as DrawInteractions
 
-  watch(drawStateActive, () => {
+  useDrawNotifications()
+
+  watch(drawStateActive, drawStateActive => {
     Object.keys(drawInteractions).forEach(key => {
-      if (`${[key as keyof DrawInteractions]}` === `${drawStateActive.value}`) {
+      if (`${[key as keyof DrawInteractions]}` === `${drawStateActive}`) {
         drawInteractions[key as keyof DrawInteractions].setActive(true)
       } else {
         drawInteractions[key as keyof DrawInteractions].setActive(false)
       }
     })
-    // todo: set messages from DrawController.onChangeActive_ here and implement modal to display them
   })
 
   return {}

@@ -21,14 +21,19 @@ describe('AlertNotifications Store', () => {
   describe('#removeNotification', () => {
     it('removes the notification at given index', () => {
       const alertNotifications = useAlertNotificationsStore()
-      alertNotifications.addNotification('Adding test message 1')
+      const notif1ID = alertNotifications.addNotification(
+        'Adding test message 1'
+      )
       alertNotifications.addNotification('Adding test message 2')
       alertNotifications.addNotification('Adding test message 3')
+      const spy = vi.spyOn(alertNotifications.notifications[0], 'cancel')
+
       expect(alertNotifications.notifications.length).toBe(3)
       expect(alertNotifications.notifications[1].message).toBe(
         'Adding test message 2'
       )
-      alertNotifications.removeNotification(1)
+      alertNotifications.removeNotification(notif1ID)
+      expect(spy).toHaveBeenCalledTimes(1)
       expect(alertNotifications.notifications.length).toBe(2)
       expect(alertNotifications.notifications[1].message).toBe(
         'Adding test message 3'

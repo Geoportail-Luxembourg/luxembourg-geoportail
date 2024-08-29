@@ -1,13 +1,13 @@
 <script setup lang="ts">
 import { ShallowRef, shallowRef } from 'vue'
-import { AlertNotificationModel } from '@/stores/alert-notifications.store.model'
+import { AlertNotification } from '@/stores/alert-notifications.store.model'
 
 defineEmits<{
   (e: 'close'): void
 }>()
 
 const props = defineProps<{
-  notification: AlertNotificationModel
+  notification: AlertNotification
 }>()
 const show: ShallowRef<boolean> = shallowRef(true)
 
@@ -31,6 +31,7 @@ function onEnter(el: Element, done: () => void) {
     @after-leave="$emit('close')"
   >
     <div
+      data-cy="notification"
       v-if="show"
       v-dompurify-html="props.notification.message"
       class="lux-alert"
