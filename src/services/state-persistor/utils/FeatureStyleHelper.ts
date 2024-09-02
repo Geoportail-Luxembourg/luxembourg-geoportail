@@ -36,10 +36,6 @@ class FeatureStyleHelper {
   private pointFilterFn_: Function | null = null
   private pointFilterArgs_: number[][] = []
 
-  /**
-   * @param {!ol.proj.Projection} projection Projection.
-   * @export
-   */
   public setProjection(projection: olProj.Projection) {
     this.projection_ = projection
   }
@@ -49,10 +45,6 @@ class FeatureStyleHelper {
   /**
    * Set the style of a feature using its inner properties and depending on
    * its geometry type.
-   * @param {!ol.Feature} feature Feature.
-   * @param {boolean=} opt_select Whether the feature should be rendered as
-   *     selected, which includes additional vertex and halo styles.
-   * @export
    */
   public setStyle(feature: Feature, opt_select: boolean) {
     const styles = this.getStyle(feature)
@@ -69,9 +61,6 @@ class FeatureStyleHelper {
   /**
    * Create and return a style object from a given feature using its inner
    * properties and depending on its geometry type.
-   * @param {!ol.Feature} feature Feature.
-   * @return {!Array.<!ol.style.Style>} The style object.
-   * @export
    */
   public getStyle(feature: Feature) {
     const type = this.getType(feature)
@@ -100,7 +89,7 @@ class FeatureStyleHelper {
 
     let styles
     if (style instanceof Array) {
-      styles = /** @type {!Array.<!ol.style.Style>}*/ style
+      styles = style
     } else {
       styles = [style]
     }
@@ -108,11 +97,6 @@ class FeatureStyleHelper {
     return styles
   }
 
-  /**
-   * @param {!ol.Feature} feature Feature with linestring geometry.
-   * @return {!Array.<!ol.style.Style>} Style.
-   * @private
-   */
   public getLineStringStyle_(feature: Feature) {
     const strokeWidth = this.getStrokeProperty(feature)
     const showLabel = this.getShowLabelProperty(feature)
@@ -149,11 +133,6 @@ class FeatureStyleHelper {
     return styles
   }
 
-  /**
-   * @param {!ol.Feature} feature Feature with point geometry.
-   * @return {!Array.<!ol.style.Style>} Style.
-   * @private
-   */
   public getPointStyle_(feature: Feature) {
     const size = this.getSizeProperty(feature)
     const color = this.getRGBAColorProperty(feature)
@@ -203,9 +182,6 @@ class FeatureStyleHelper {
   /**
    * Get an optional number feature attribute.
    *
-   * @param {!ol.Feature} feature Feature.
-   * @param {string} attrib The attribute name.
-   * @return {number|undefined}, The attribute value
    */
   public optNumber(feature: Feature, attrib: string) {
     const value = feature.get(attrib)
@@ -224,9 +200,6 @@ class FeatureStyleHelper {
   /**
    * Get a number feature attribute.
    *
-   * @param {!ol.Feature} feature Feature.
-   * @param {string} attrib The attribute name.
-   * @return {number}, The attribute value
    */
   public getNumber(feature: Feature, attrib: string) {
     const value = feature.get(attrib)
@@ -238,11 +211,6 @@ class FeatureStyleHelper {
     }
   }
 
-  /**
-   * @param {!ol.Feature} feature Feature with polygon geometry.
-   * @return {!Array.<!ol.style.Style>} Style.
-   * @private
-   */
   public getPolygonStyle_(feature: Feature) {
     const strokeWidth = this.getStrokeProperty(feature)
     const opacity = this.getOpacityProperty(feature)
@@ -341,11 +309,6 @@ class FeatureStyleHelper {
     return styles
   }
 
-  /**
-   * @param {!ol.Feature} feature Feature with point geometry, rendered as text.
-   * @return {!ol.style.Style} Style.
-   * @private
-   */
   public getTextStyle_(feature: Feature) {
     return new olStyleStyle({
       text: this.createTextStyle_({
@@ -358,11 +321,6 @@ class FeatureStyleHelper {
     })
   }
 
-  /**
-   * @param {!ol.Feature} feature Feature to create the editing styles with.
-   * @return {!Array.<!ol.style.Style>} List of style.
-   * @export
-   */
   public createEditingStyles(feature: Feature) {
     // (1) Style definition depends on geometry type
     const white = [255, 255, 255, 1]
@@ -431,14 +389,12 @@ class FeatureStyleHelper {
 
   /**
    * Create and return a style object to be used for vertex.
-   * @param {boolean=} opt_incGeomFunc Whether to include the geometry function
+   * opt_incGeomFunc: Whether to include the geometry function
    *     or not. One wants to use the geometry function when you want to draw
    *     the vertex of features that don't have point geometries. One doesn't
    *     want to include the geometry function if you just want to have the
    *     style object itself to be used to draw features that have point
    *     geometries. Defaults to `true`.
-   * @return {!ol.style.Style} Style.
-   * @export
    */
   public getVertexStyle(opt_incGeomFunc?: boolean) {
     const incGeomFunc = opt_incGeomFunc !== undefined ? opt_incGeomFunc : true
@@ -499,11 +455,6 @@ class FeatureStyleHelper {
     return new olStyleStyle(options)
   }
 
-  /**
-   * @param {!ol.Feature} feature Feature.
-   * @return {boolean} Whether the feature supports vertex or not.
-   * @private
-   */
   public supportsVertex_(feature: Feature) {
     const supported = [
       ngeoGeometryType.LINE_STRING,
@@ -514,11 +465,6 @@ class FeatureStyleHelper {
     return olArray.includes(supported, type)
   }
 
-  /**
-   * @param {!ol.Feature} feature Feature.
-   * @return {!ol.style.Style} Style.
-   * @private
-   */
   public getHaloStyle_(feature: Feature) {
     const type = this.getType(feature)
     let style
@@ -583,24 +529,12 @@ class FeatureStyleHelper {
   //   return properties;
   // };
 
-  /**
-   * @param {ol.Feature} feature Feature.
-   * @return {number} Angle.
-   * @export
-   */
   public getAngleProperty(feature: Feature) {
-    const angle = +(
-      /** @type {string} */ feature.get(luxFormatFeatureProperties.ANGLE)
-    )
+    const angle = +feature.get(luxFormatFeatureProperties.ANGLE)
     console.assert(typeof angle === 'number')
     return angle
   }
 
-  /**
-   * @param {!ol.Feature} feature Feature.
-   * @return {string} Color.
-   * @export
-   */
   public getColorProperty(feature: Feature) {
     const color = feature.get(luxFormatFeatureProperties.COLOR)
 
@@ -609,40 +543,20 @@ class FeatureStyleHelper {
     return color
   }
 
-  /**
-   * @param {!ol.Feature} feature Feature.
-   * @return {ol.Color} Color.
-   * @export
-   */
   public getRGBAColorProperty(feature: Feature) {
     return olColor.fromString(this.getColorProperty(feature))
   }
 
-  /**
-   * @param {!ol.Feature} feature Feature.
-   * @return {string} Name.
-   * @export
-   */
   public getNameProperty(feature: Feature) {
     const name = feature.get(luxFormatFeatureProperties.NAME)
     console.assert(typeof name === 'string')
     return name
   }
 
-  /**
-   * @param {!ol.Feature} feature Feature.
-   * @return {number} Opacity.
-   * @export
-   */
   public getOpacityProperty(feature: Feature) {
     return this.getNumber(feature, luxFormatFeatureProperties.OPACITY)
   }
 
-  /**
-   * @param {!ol.Feature} feature Feature.
-   * @return {boolean} Show measure.
-   * @export
-   */
   public getShowMeasureProperty(feature: Feature) {
     let showMeasure = feature.get(luxFormatFeatureProperties.SHOW_MEASURE)
     if (showMeasure === undefined) {
@@ -654,11 +568,6 @@ class FeatureStyleHelper {
     return showMeasure
   }
 
-  /**
-   * @param {!ol.Feature} feature Feature.
-   * @return {boolean} Show feature label.
-   * @export
-   */
   public getShowLabelProperty(feature: Feature) {
     let showLabel = feature.get(luxFormatFeatureProperties.SHOW_LABEL)
     if (showLabel === undefined) {
@@ -670,31 +579,16 @@ class FeatureStyleHelper {
     return showLabel
   }
 
-  /**
-   * @param {!ol.Feature} feature Feature.
-   * @return {number} Size.
-   * @export
-   */
   public getSizeProperty(feature: Feature) {
     return this.getNumber(feature, luxFormatFeatureProperties.SIZE)
   }
 
-  /**
-   * @param {!ol.Feature} feature Feature.
-   * @return {number} Stroke.
-   * @export
-   */
   public getStrokeProperty(feature: Feature) {
     return this.getNumber(feature, luxFormatFeatureProperties.STROKE)
   }
 
   // === OTHER UTILITY METHODS ===
 
-  /**
-   * @param {!ngeox.style.TextOptions} options Options.
-   * @return {!ol.style.Text} Style.
-   * @private
-   */
   public createTextStyle_(options: { [key: string]: any }) {
     if (options.angle) {
       const angle = options.angle !== undefined ? options.angle : 0
@@ -723,9 +617,6 @@ class FeatureStyleHelper {
    * Get the measure of the given feature as a string. For points, you can format
    * the result by setting a filter to apply on the coordinate with the function
    * {@link ngeo.misc.FeatureHelper.prototype.setPointFilterFn}.
-   * @param {!ol.Feature} feature Feature.
-   * @return {string} Measure.
-   * @export
    */
   public getMeasure(feature: Feature) {
     const geometry = feature.getGeometry()
@@ -772,9 +663,6 @@ class FeatureStyleHelper {
   /**
    * Return the type of geometry of a feature using its geometry property and
    * some inner properties.
-   * @param {!ol.Feature} feature Feature.
-   * @return {string} The type of geometry.
-   * @export
    */
   public getType(feature: Feature) {
     const geometry = feature.getGeometry()
@@ -815,10 +703,6 @@ class FeatureStyleHelper {
    * This method first checks if a feature's extent intersects with the map view
    * extent. If it doesn't, then the view gets recentered with an animation to
    * the center of the feature.
-   * @param {!ol.Feature} feature Feature.
-   * @param {!ol.Map} map Map.
-   * @param {number=} opt_panDuration Pan animation duration. Defaults to `250`.
-   * @export
    */
   public panMapToFeature(feature: Feature, map: Map, opt_panDuration?: number) {
     const panDuration = opt_panDuration !== undefined ? opt_panDuration : 250
@@ -859,9 +743,6 @@ class FeatureStyleHelper {
   /**
    * This method generates a line string geometry that represents the radius for
    * a given azimut. It expects the input geometry to be a circle.
-   * @param {!ol.Feature} feature Feature.
-   * @param {number} azimut Azimut in degrees.
-   * @return {!ol.geom.LineString} The line geometry.
    */
   public getRadiusLine(feature: Feature, azimut: number) {
     const geometry = feature.getGeometry()
@@ -879,9 +760,6 @@ class FeatureStyleHelper {
 
   /**
    * Return the properties of a feature, with the exception of the geometry.
-   * @param {!ol.Feature} feature Feature.
-   * @return {!Object.<string, *>} Object.
-   * @export
    */
   public getNonSpatialProperties(feature: Feature) {
     const geometryName = feature.getGeometryName()
@@ -897,8 +775,6 @@ class FeatureStyleHelper {
 
   /**
    * Clear all properties of a feature, with the exception of the geometry.
-   * @param {!ol.Feature} feature Feature.
-   * @export
    */
   public clearNonSpatialProperties(feature: Feature) {
     const geometryName = feature.getGeometryName()

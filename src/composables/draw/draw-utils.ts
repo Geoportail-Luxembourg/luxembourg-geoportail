@@ -44,8 +44,9 @@ function convertCircleToPolygon(
   feature: Feature<Geometry>,
   featureType: String
 ) {
-  if (featureType == 'drawnCircle') {
-    feature.setGeometry(fromCircle(feature.getGeometry() as Circle, 64))
+  const geom = feature.getGeometry()
+  if (featureType == 'drawnCircle' && geom?.getType() == 'Circle') {
+    feature.setGeometry(fromCircle(geom as Circle, 64))
   }
 }
 

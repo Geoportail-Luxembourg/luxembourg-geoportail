@@ -48,19 +48,11 @@ const GeometryTypeValues = {
 
 type GeometryType = keyof typeof GeometryTypeValues
 
-/**
- * @enum {string}
- */
 const FeatureHashStyleType = {
   LINE_STRING: 'LineString',
   POINT: 'Point',
   POLYGON: 'Polygon',
 }
-
-/**
- * @type {Object.<ol.geom.GeometryType, FeatureHashStyleType>}
- * @private
- */
 
 const FeatureHashStyleTypes = {
   LineString: FeatureHashStyleType.LINE_STRING,
@@ -71,10 +63,6 @@ const FeatureHashStyleTypes = {
   MultiPolygon: FeatureHashStyleType.POLYGON,
 }
 
-/**
- * @type {Object.<string, string>}
- * @private
- */
 let FeatureHashLegacyProperties: any = {}
 
 function colorZeroPadding(hex: string) {
@@ -103,75 +91,27 @@ class FeatureHash extends TextFeature {
   setStyle_: boolean
   prevX_: number
   prevY_: number
-  /**
-   * @classdesc
-   * Provide an OpenLayers format for encoding and decoding features for use
-   * in permalinks.
-   *
-   * The code is based on Stéphane Brunner's URLCompressed format.
-   *
-   * TODOs:
-   *
-   * - The OpenLayers-URLCompressed format has options where the user
-   *   can define attribute and style transformers. This is currently
-   *   not supported by this format.
-   * - The OpenLayers-URLCompressed format has a "simplify" option.
-   *   This format does not have it.
-   * - ol.style.Icon styles are not supported.
-   * - Transformation of coordinates during encoding and decoding is
-   *   not supported.
-   *
-   * @see https://github.com/sbrunner/OpenLayers-URLCompressed
-   * @constructor
-   * @struct
-   * @extends {ol.format.TextFeature}
-   * @param {ngeox.format.FeatureHashOptions=} opt_options Options.
-   * @export
-   */
+
   constructor(opt_options: any) {
     super()
 
     const options = opt_options !== undefined ? opt_options : {}
 
-    /**
-     * @type {number}
-     * @private
-     */
     this.accuracy_ =
       options.accuracy !== undefined ? options.accuracy : ACCURACY_
 
-    /**
-     * @type {boolean}
-     * @private
-     */
     this.encodeStyles_ =
       options.encodeStyles !== undefined ? options.encodeStyles : true
 
-    /**
-     * @type {function(ol.Feature):Object.<string, (string|number)>}
-     * @private
-     */
     this.propertiesFunction_ =
       options.properties !== undefined
         ? options.properties
         : defaultPropertiesFunction_
 
-    /**
-     * @type {boolean}
-     * @private
-     */
     this.setStyle_ = options.setStyle !== undefined ? options.setStyle : true
 
-    /**
-     * @type {number}
-     * @private
-     */
     this.prevX_ = 0
 
-    /**
-     * @type {number}
-     * @private
-     */
     this.prevY_ = 0
 
     FeatureHashLegacyProperties =
@@ -179,50 +119,10 @@ class FeatureHash extends TextFeature {
   }
 
   /**
-   * @inheritDoc
-   * @export
-   */
-  //readFeature;
-
-  /**
-   * @inheritDoc
-   * @export
-   */
-  //readFeatures;
-
-  /**
-   * @inheritDoc
-   * @export
-   */
-  //readGeometry;
-
-  /**
-   * @inheritDoc
-   * @export
-   */
-  //writeFeature;
-
-  /**
-   * @inheritDoc
-   * @export
-   */
-  //writeFeatures;
-
-  /**
-   * @inheritDoc
-   * @export
-   */
-  //writeGeometry;
-
-  /**
    * Read a logical sequence of characters and return (or complet then return)
    * an array of numbers. The coordinates are assumed to be in
    * two dimensions and in latitude, longitude order.
    * corresponding to a geometry's coordinates.
-   * @param {string} text Text.
-   * @param {Array.<number>=} opt_flatCoordinates Flat coordinates array.
-   * @return {Array.<number>} Flat coordinates.
-   * @private
    */
   decodeCoordinates_(text: string, opt_flatCoordinates: number[]) {
     const len = text.length
@@ -260,12 +160,6 @@ class FeatureHash extends TextFeature {
    * Encode an array of number (corresponding to some coordinates) into a
    * logical sequence of characters. The coordinates are assumed to be in
    * two dimensions and in latitude, longitude order.
-   * @param {Array.<number>} flatCoordinates Flat coordinates.
-   * @param {number} stride Stride.
-   * @param {number} offset Offset.
-   * @param {number} end End.
-   * @return {string} String.
-   * @private
    */
   encodeCoordinates_(
     flatCoordinates: number[],
@@ -290,11 +184,6 @@ class FeatureHash extends TextFeature {
 
   /**
    * Read a feature from a logical sequence of characters.
-   * @param {string} text Text.
-   * @param {olx.format.ReadOptions=} opt_options Read options.
-   * @return {ol.Feature} Feature.
-   * @override
-   * @protected
    */
   readFeatureFromText(text: string /*, opt_options: any*/) {
     console.assert(text.length > 2)
@@ -343,15 +232,9 @@ class FeatureHash extends TextFeature {
 
   /**
    * Read multiple features from a logical sequence of characters.
-   * @param {string} text Text.
-   * @param {olx.format.ReadOptions=} opt_options Read options.
-   * @return {Array.<ol.Feature>} Features.
-   * @override
-   * @protected
    */
   readFeaturesFromText(text: string /*, opt_options: any*/) {
     console.assert(text[0] === 'F')
-    /** @type {Array.<ol.Feature>} */
     const features = []
     text = text.substring(1)
     while (text.length > 0) {
@@ -369,11 +252,6 @@ class FeatureHash extends TextFeature {
 
   /**
    * Read a geometry from a logical sequence of characters.
-   * @param {string} text Text.
-   * @param {olx.format.ReadOptions=} opt_options Read options.
-   * @return {ol.geom.Geometry} Geometry.
-   * @override
-   * @protected
    */
   readGeometryFromText(text: string /*, opt_options: any*/) {
     const geometryReader: any = GEOMETRY_READERS_[text[0] as GeometryReaderKeys]
@@ -394,33 +272,33 @@ class FeatureHash extends TextFeature {
     const order = feature.get('display_order') || defaultOrder
     feature.set('order', +order)
 
-    let opacity = /** @type {string} */ feature.get('opacity')
+    let opacity = feature.get('opacity')
     if (opacity === undefined) {
       opacity = 0
     }
 
     feature.set('opacity', +opacity)
-    let stroke = /** @type {string} */ feature.get('stroke')
+    let stroke = feature.get('stroke')
     if (isNaN(stroke)) {
       stroke = 2
     }
     feature.set('stroke', +stroke)
-    let size = /** @type {string} */ feature.get('size')
+    let size = feature.get('size')
     if (isNaN(size)) {
       size = 10
     }
     feature.set('size', +size)
 
-    let angle = /** @type {string} */ feature.get('angle')
+    let angle = feature.get('angle')
     if (isNaN(angle)) {
       angle = 0
     }
     feature.set('angle', +angle)
-    const isLabel = /** @type {string} */ feature.get('isLabel')
+    const isLabel = feature.get('isLabel')
     feature.set('isLabel', isLabel === 'true')
-    const isCircle = /** @type {string} */ feature.get('isCircle')
+    const isCircle = feature.get('isCircle')
     feature.set('isCircle', isCircle === 'true')
-    const showOrientation = /** @type {string} */ feature.get('showOrientation')
+    const showOrientation = feature.get('showOrientation')
     feature.set('showOrientation', showOrientation === 'true')
 
     feature.set('__map_id__', undefined)
@@ -429,14 +307,9 @@ class FeatureHash extends TextFeature {
 
   /**
    * Encode a feature into a logical sequence of characters.
-   * @param {ol.Feature} feature Feature.
-   * @param {olx.format.ReadOptions=} opt_options Read options.
-   * @return {string} Encoded feature.
-   * @override
-   * @protected
    */
   writeFeatureText(feature: Feature, opt_options: any) {
-    const /** @type {Array.<string>} */ encodedParts = []
+    const encodedParts: String[] = []
 
     // encode geometry
 
@@ -456,10 +329,6 @@ class FeatureHash extends TextFeature {
     // encode properties
 
     const encodedProperties: string[] = []
-    /**
-     * @param {*} value Value.
-     * @param {string} key Key.
-     */
     const f = function (value: any, key: string) {
       if (key !== feature.getGeometryName()) {
         if (encodedProperties.length !== 0) {
@@ -515,11 +384,6 @@ class FeatureHash extends TextFeature {
 
   /**
    * Encode an array of features into a logical sequence of characters.
-   * @param {Array.<ol.Feature>} features Feature.
-   * @param {olx.format.ReadOptions=} opt_options Read options.
-   * @return {string} Encoded features.
-   * @override
-   * @protected
    */
   writeFeaturesText(features: Feature[], opt_options: ReadOptions) {
     const textArray = []
@@ -534,11 +398,6 @@ class FeatureHash extends TextFeature {
 
   /**
    * Encode a geometry into a logical sequence of characters.
-   * @param {ol.geom.Geometry} geometry Geometry.
-   * @param {olx.format.ReadOptions=} opt_options Read options.
-   * @return {string} Encoded geometry.
-   * @override
-   * @protected
    */
   writeGeometryText(geometry: Geometry, opt_options: ReadOptions) {
     const geometryWriter = GEOMETRY_WRITERS_[geometry.getType() as GeometryType]
@@ -558,24 +417,14 @@ class FeatureHash extends TextFeature {
  * Characters used to encode the coordinates. The characters "~", "'", "("
  * and ")" are not part of this character set, and used as separators (for
  * example to separate the coordinates from the feature properties).
- * @const
- * @private
  */
 const CHAR64_ =
   '.-_!*ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789abcdefghjkmnpqrstuvwxyz'
 
-/**
- * @const
- * @private
- */
 const ACCURACY_ = 1
 
 /**
  * Get features's properties.
- * @param {ol.Feature} feature Feature.
- * @return {Object.<string, (string|number)>} The feature properties to
- * serialize.
- * @private
  */
 function defaultPropertiesFunction_(feature: Feature) {
   return feature.getProperties()
@@ -583,9 +432,6 @@ function defaultPropertiesFunction_(feature: Feature) {
 
 /**
  * Sign then encode a number.
- * @param {number} num Number.
- * @return {string} String.
- * @private
  */
 function encodeSignedNumber_(num: number) {
   let signedNum = num << 1
@@ -597,9 +443,6 @@ function encodeSignedNumber_(num: number) {
 
 /**
  * Transform a number into a logical sequence of characters.
- * @param {number} num Number.
- * @return {string} String.
- * @private
  */
 function encodeNumber_(num: number) {
   let encodedNumber = ''
@@ -615,10 +458,6 @@ function encodeNumber_(num: number) {
  * For a type of geometry, transforms an array of {@link ol.style.Style} into
  * a logical sequence of characters and put the result into the given encoded
  * styles's array.
- * @param {Array.<ol.style.Style>} styles Styles.
- * @param {ol.geom.GeometryType} geometryType Geometry type.
- * @param {Array.<string>} encodedStyles Encoded styles array.
- * @private
  */
 function encodeStyles_(
   styles: Style[],
@@ -655,9 +494,6 @@ function encodeStyles_(
 /**
  * Transform an {@link ol.style.Stroke} into a logical sequence of
  * characters and put the result into the given encoded styles's array.
- * @param {ol.style.Stroke} strokeStyle Stroke style.
- * @param {Array.<string>} encodedStyles Encoded styles array.
- * @private
  */
 function encodeStyleLine_(strokeStyle: Stroke, encodedStyles: string[]) {
   encodeStyleStroke_(strokeStyle, encodedStyles)
@@ -666,9 +502,6 @@ function encodeStyleLine_(strokeStyle: Stroke, encodedStyles: string[]) {
 /**
  * Transform an {@link ol.style.Circle} into a logical sequence of
  * characters and put the result into the given encoded styles's array.
- * @param {ol.style.Image} imageStyle Image style.
- * @param {Array.<string>} encodedStyles Encoded styles array.
- * @private
  */
 function encodeStylePoint_(imageStyle: any, encodedStyles: string[]) {
   if (imageStyle instanceof olStyleCircle) {
@@ -692,10 +525,6 @@ function encodeStylePoint_(imageStyle: any, encodedStyles: string[]) {
  * Transform an {@link ol.style.Fill} and an {@link ol.style.Stroke} into
  * a logical sequence of characters and put the result into the given
  * encoded styles's array.
- * @param {ol.style.Fill} fillStyle Fill style.
- * @param {ol.style.Stroke} strokeStyle Stroke style.
- * @param {Array.<string>} encodedStyles Encoded styles array.
- * @private
  */
 function encodeStylePolygon_(
   fillStyle: Fill,
@@ -712,10 +541,6 @@ function encodeStylePolygon_(
  * Transform an {@link ol.style.Fill} and optionally its properties into
  * a logical sequence of characters and put the result into the given encoded
  * styles's array.
- * @param {ol.style.Fill} fillStyle Fill style.
- * @param {Array.<string>} encodedStyles Encoded styles array.
- * @param {string=} opt_propertyName Property name.
- * @private
  */
 function encodeStyleFill_(
   fillStyle: Fill,
@@ -740,9 +565,6 @@ function encodeStyleFill_(
 /**
  * Transform an {@link ol.style.Stroke} into a logical sequence of
  * characters and put the result into the given encoded styles's array.
- * @param {ol.style.Stroke} strokeStyle Stroke style.
- * @param {Array.<string>} encodedStyles Encoded styles array.
- * @private
  */
 function encodeStyleStroke_(strokeStyle: Stroke, encodedStyles: string[]) {
   const strokeColor = strokeStyle.getColor()
@@ -753,9 +575,7 @@ function encodeStyleStroke_(strokeStyle: Stroke, encodedStyles: string[]) {
       Array.isArray(strokeColorRgba),
       'only supporting stroke colors'
     )
-    const strokeColorHex = rgbArrayToHex(
-      /** @type {!Array<number>} */ strokeColorRgba
-    )
+    const strokeColorHex = rgbArrayToHex(strokeColorRgba)
     if (encodedStyles.length > 0) {
       encodedStyles.push("'")
     }
@@ -773,9 +593,6 @@ function encodeStyleStroke_(strokeStyle: Stroke, encodedStyles: string[]) {
 /**
  * Transform an {@link ol.style.Text} into a logical sequence of characters and
  * put the result into the given encoded styles's array.
- * @param {ol.style.Text} textStyle Text style.
- * @param {Array.<string>} encodedStyles Encoded styles array.
- * @private
  */
 function encodeStyleText_(textStyle: Text, encodedStyles: string[]) {
   const fontStyle = textStyle.getFont()
@@ -797,10 +614,6 @@ function encodeStyleText_(textStyle: Text, encodedStyles: string[]) {
 /**
  * Read a logical sequence of characters and return a corresponding
  * {@link ol.geom.LineString}.
- * @param {string} text Text.
- * @return {ol.geom.LineString} Line string.
- * @this {FeatureHash}
- * @private
  */
 function readLineStringGeometry_(this: FeatureHash, text: string) {
   console.assert(text.substring(0, 2) === 'l(')
@@ -813,10 +626,6 @@ function readLineStringGeometry_(this: FeatureHash, text: string) {
 /**
  * Read a logical sequence of characters and return a corresponding
  * {@link ol.geom.MultiLineString}.
- * @param {string} text Text.
- * @return {ol.geom.MultiLineString} Line string.
- * @this {FeatureHash}
- * @private
  */
 function readMultiLineStringGeometry_(this: FeatureHash, text: string) {
   console.assert(text.substring(0, 2) === 'L(')
@@ -842,10 +651,6 @@ function readMultiLineStringGeometry_(this: FeatureHash, text: string) {
 /**
  * Read a logical sequence of characters and return a corresponding
  * {@link ol.geom.Point}.
- * @param {string} text Text.
- * @return {ol.geom.Point} Point.
- * @this {FeatureHash}
- * @private
  */
 function readPointGeometry_(this: FeatureHash, text: string) {
   console.assert(text.substring(0, 2) === 'p(')
@@ -859,10 +664,6 @@ function readPointGeometry_(this: FeatureHash, text: string) {
 /**
  * Read a logical sequence of characters and return a corresponding
  * {@link ol.geom.MultiPoint}.
- * @param {string} text Text.
- * @return {ol.geom.MultiPoint} MultiPoint.
- * @this {FeatureHash}
- * @private
  */
 function readMultiPointGeometry_(this: FeatureHash, text: string) {
   console.assert(text.substring(0, 2) === 'P(')
@@ -875,10 +676,6 @@ function readMultiPointGeometry_(this: FeatureHash, text: string) {
 /**
  * Read a logical sequence of characters and return a corresponding
  * {@link ol.geom.Polygon}.
- * @param {string} text Text.
- * @return {ol.geom.Polygon} Polygon.
- * @this {FeatureHash}
- * @private
  */
 function readPolygonGeometry_(this: FeatureHash, text: string) {
   console.assert(text.substring(0, 2) === 'a(')
@@ -908,10 +705,6 @@ function readPolygonGeometry_(this: FeatureHash, text: string) {
 /**
  * Read a logical sequence of characters and return a corresponding
  * {@link ol.geom.MultiPolygon}.
- * @param {string} text Text.
- * @return {ol.geom.MultiPolygon} MultiPolygon.
- * @this {FeatureHash}
- * @private
  */
 function readMultiPolygonGeometry_(this: FeatureHash, text: string) {
   console.assert(text.substring(0, 2) === 'A(')
@@ -948,9 +741,6 @@ function readMultiPolygonGeometry_(this: FeatureHash, text: string) {
  *
  * Read a logical sequence of characters and apply the decoded style on the
  * given feature.
- * @param {string} text Text.
- * @param {ol.Feature} feature Feature.
- * @private
  */
 function setStyleInFeature_(text: string, feature: Feature) {
   if (text == '') {
@@ -967,20 +757,20 @@ function setStyleInFeature_(text: string, feature: Feature) {
   let fillStyle = undefined
   if (fillColor !== undefined) {
     fillStyle = new olStyleFill({
-      color: /** @type {Array<number>|string} */ fillColor,
+      color: fillColor,
     })
   }
   let strokeStyle = undefined
   if (strokeColor !== undefined && strokeWidth !== undefined) {
     strokeStyle = new olStyleStroke({
-      color: /** @type {Array<number>|string} */ strokeColor,
-      width: /** @type {number} */ strokeWidth,
+      color: strokeColor,
+      width: strokeWidth,
     })
   }
   let imageStyle = undefined
   if (pointRadius !== undefined) {
     imageStyle = new olStyleCircle({
-      radius: /** @type {number} */ pointRadius,
+      radius: pointRadius,
       fill: fillStyle,
       stroke: strokeStyle,
     })
@@ -991,7 +781,7 @@ function setStyleInFeature_(text: string, feature: Feature) {
     textStyle = new olStyleText({
       font: fontSize + ' sans-serif',
       fill: new olStyleFill({
-        color: /** @type {Array<number>|string} */ fontColor,
+        color: fontColor,
       }),
     })
   }
@@ -1008,9 +798,6 @@ function setStyleInFeature_(text: string, feature: Feature) {
  * Read a logical sequence of characters and apply the decoded result as
  * style properties for the feature. Legacy keys are converted to the new ones
  * for compatibility.
- * @param {string} text Text.
- * @param {ol.Feature} feature Feature.
- * @private
  */
 function setStyleProperties_(text: string, feature: Feature) {
   const properties = getStyleProperties_(text /*feature*/)
@@ -1062,10 +849,6 @@ function setStyleProperties_(text: string, feature: Feature) {
 
 /**
  * Cast values in the correct type depending on the property.
- * @param {string} key Key.
- * @param {string} value Value.
- * @return {number|boolean|string} The casted value corresponding to the key.
- * @private
  */
 function castValue_(key: string, value: string) {
   const numProperties = [
@@ -1101,11 +884,6 @@ function castValue_(key: string, value: string) {
  * style properties for a feature. The values are cast in the correct type
  * depending on the property. Some properties are also deleted when they don't
  * match the geometry of the feature.
- * @param {string} text Text.
- * @param {ol.Feature} feature Feature.
- * @return {Object.<string, boolean|number|string>} The style properties for
- *     the feature.
- * @private
  */
 function getStyleProperties_(text: string /*feature: Feature*/) {
   const parts = text.split("'")
@@ -1127,10 +905,6 @@ function getStyleProperties_(text: string /*feature: Feature*/) {
 /**
  * Encode a {@link ol.geom.LineString} geometry into a logical sequence of
  * characters.
- * @param {ol.geom.Geometry} geometry Geometry.
- * @return {string} Encoded geometry.
- * @this {FeatureHash}
- * @private
  */
 function writeLineStringGeometry_(
   this: FeatureHash,
@@ -1151,10 +925,6 @@ function writeLineStringGeometry_(
 /**
  * Encode a {@link ol.geom.MultiLineString} geometry into a logical sequence
  * of characters.
- * @param {ol.geom.Geometry} geometry Geometry.
- * @return {string} Encoded geometry.
- * @this {FeatureHash}
- * @private
  */
 function writeMultiLineStringGeometry_(
   this: FeatureHash,
@@ -1189,10 +959,6 @@ function writeMultiLineStringGeometry_(
 /**
  * Encode a {@link ol.geom.Point} geometry into a logical sequence of
  * characters.
- * @param {ol.geom.Geometry} geometry Geometry.
- * @return {string} Encoded geometry.
- * @this {FeatureHash}
- * @private
  */
 function writePointGeometry_(this: FeatureHash, geometry: Geometry): string {
   console.assert(geometry instanceof olGeomPoint)
@@ -1210,10 +976,6 @@ function writePointGeometry_(this: FeatureHash, geometry: Geometry): string {
 /**
  * Encode an {@link ol.geom.MultiPoint} geometry into a logical sequence
  * of characters.
- * @param {ol.geom.Geometry} geometry Geometry.
- * @return {string} Encoded geometry.
- * @this {FeatureHash}
- * @private
  */
 function writeMultiPointGeometry_(
   this: FeatureHash,
@@ -1233,14 +995,6 @@ function writeMultiPointGeometry_(
 
 /**
  * Helper to encode an {@link ol.geom.Polygon} geometry.
- * @param {Array.<number>} flatCoordinates Flat coordinates.
- * @param {number} stride Stride.
- * @param {number} offset Offset.
- * @param {Array.<number>} ends Ends.
- * @param {Array.<string>} textArray Text array.
- * @return {number} The new offset.
- * @this {app.draw.FeatureHash}
- * @private
  */
 function encodeRings_(
   this: FeatureHash,
@@ -1272,10 +1026,6 @@ function encodeRings_(
 /**
  * Encode an {@link ol.geom.Polygon} geometry into a logical sequence
  * of characters.
- * @param {ol.geom.Geometry} geometry Geometry.
- * @return {string} Encoded geometry.
- * @this {FeatureHash}
- * @private
  */
 function writePolygonGeometry_(this: FeatureHash, geometry: Geometry): string {
   console.assert(geometry instanceof olGeomPolygon)
@@ -1293,10 +1043,6 @@ function writePolygonGeometry_(this: FeatureHash, geometry: Geometry): string {
 /**
  * Encode an {@link ol.geom.MultiPoligon} geometry into a logical sequence of
  * characters.
- * @param {ol.geom.Geometry} geometry Geometry.
- * @return {string} Encoded geometry.
- * @this {FeatureHash}
- * @private
  */
 function writeMultiPolygonGeometry_(
   this: FeatureHash,
@@ -1327,11 +1073,7 @@ function writeMultiPolygonGeometry_(
 }
 
 type GeometryReaderKeys = 'P' | 'L' | 'A' | 'l' | 'p' | 'a'
-/**
- * @const
- * @private
- * @type {Object.<string, function(string):ol.geom.Geometry>}
- */
+
 const GEOMETRY_READERS_: {
   [key in GeometryReaderKeys]: (this: FeatureHash, text: string) => any
 } = {
@@ -1343,11 +1085,6 @@ const GEOMETRY_READERS_: {
   a: readPolygonGeometry_,
 }
 
-/**
- * @const
- * @private
- * @type {Object.<string, function(ol.geom.Geometry):string>}
- */
 const GEOMETRY_WRITERS_ = {
   MultiLineString: writeMultiLineStringGeometry_,
   MultiPoint: writeMultiPointGeometry_,
@@ -1388,31 +1125,26 @@ const SHORT_PARAM_: { [key in ShortParamKeys]: string } = {
 
 const featureHash = new FeatureHash({
   encodeStyles: false,
-  properties:
-    /**
-     * @param {ol.Feature} feature Feature.
-     * @return {Object.<string, (string|number)>} Properties to encode.
-     */
-    function (feature: Feature) {
-      // Do not encode the __editable__ and __selected__ properties.
-      const properties = feature.getProperties()
-      delete properties['__editable__']
-      delete properties['__selected__']
-      delete properties['__map_id__']
-      delete properties['__saving__'] // ugly hack?
-      for (const key in properties) {
-        if (properties[key] === null || properties[key] === undefined) {
+  properties: function (feature: Feature) {
+    // Do not encode the __editable__ and __selected__ properties.
+    const properties = feature.getProperties()
+    delete properties['__editable__']
+    delete properties['__selected__']
+    delete properties['__map_id__']
+    delete properties['__saving__'] // ugly hack?
+    for (const key in properties) {
+      if (properties[key] === null || properties[key] === undefined) {
+        delete properties[key]
+      } else {
+        if (SHORT_PARAM_[key as ShortParamKeys]) {
+          const value = properties[key]
           delete properties[key]
-        } else {
-          if (SHORT_PARAM_[key as ShortParamKeys]) {
-            const value = properties[key]
-            delete properties[key]
-            properties[SHORT_PARAM_[key as ShortParamKeys]] = value
-          }
+          properties[SHORT_PARAM_[key as ShortParamKeys]] = value
         }
       }
-      return properties
-    },
+    }
+    return properties
+  },
 })
 
 export default featureHash
