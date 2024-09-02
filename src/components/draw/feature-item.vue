@@ -54,10 +54,13 @@ function onClickDelete() {
       class="sortable-handle drag-handle fa fa-reorder ui-sortable-handle cursor-move"
     ></span>
     <!-- Type of feat. icon -->
+    <!-- TODO: create icons for label and circle -->
     <span
       class="lux-icon"
       :class="{
-        point: feature.featureType === 'drawnPoint',
+        point:
+          feature.featureType === 'drawnPoint' ||
+          feature.featureType === 'drawnLabel',
         line: feature.featureType === 'drawnLine',
         polygon:
           feature.featureType === 'drawnPolygon' ||

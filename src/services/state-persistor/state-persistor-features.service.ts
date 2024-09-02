@@ -30,7 +30,7 @@ class StatePersistorFeaturesService implements StatePersistorService {
           storageFeaturesMapper.featuresToUrl
         )
       },
-      { immediate: true, deep: true } // deep: true is necessary for Collection in Ref
+      { immediate: true }
     )
   }
 

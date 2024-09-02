@@ -1,26 +1,26 @@
 // !!! This is a file ported from v3 and not completely refactored, we accept some linter warnings //
 /* eslint-disable @typescript-eslint/no-explicit-any */
 
-import Feature from 'ol/Feature.js'
-import Map from 'ol/Map.js'
-import { Coordinate } from 'ol/coordinate.js'
+import Feature from 'ol/Feature'
+import Map from 'ol/Map'
+import { Coordinate } from 'ol/coordinate'
 import luxFormatFeatureProperties from './FeatureProperties'
-import * as olArray from 'ol/array.js'
-import * as olColor from 'ol/color.js'
-import * as olExtent from 'ol/extent.js'
-import olGeomLineString from 'ol/geom/LineString.js'
-import olGeomMultiLineString from 'ol/geom/MultiLineString.js'
-import olGeomMultiPoint from 'ol/geom/MultiPoint.js'
-import olGeomPoint from 'ol/geom/Point.js'
-import olGeomPolygon from 'ol/geom/Polygon.js'
-import olGeomMultiPolygon from 'ol/geom/MultiPolygon.js'
-import olStyleCircle from 'ol/style/Circle.js'
-import olStyleFill from 'ol/style/Fill.js'
-import olStyleRegularShape from 'ol/style/RegularShape.js'
-import olStyleStroke from 'ol/style/Stroke.js'
-import olStyleStyle from 'ol/style/Style.js'
-import olStyleText from 'ol/style/Text.js'
-import * as olProj from 'ol/proj.js'
+import * as olArray from 'ol/array'
+import * as olColor from 'ol/color'
+import * as olExtent from 'ol/extent'
+import olGeomLineString from 'ol/geom/LineString'
+import olGeomMultiLineString from 'ol/geom/MultiLineString'
+import olGeomMultiPoint from 'ol/geom/MultiPoint'
+import olGeomPoint from 'ol/geom/Point'
+import olGeomPolygon from 'ol/geom/Polygon'
+import olGeomMultiPolygon from 'ol/geom/MultiPolygon'
+import olStyleCircle from 'ol/style/Circle'
+import olStyleFill from 'ol/style/Fill'
+import olStyleRegularShape from 'ol/style/RegularShape'
+import olStyleStroke from 'ol/style/Stroke'
+import olStyleStyle from 'ol/style/Style'
+import olStyleText from 'ol/style/Text'
+import * as olProj from 'ol/proj'
 import {
   getFormattedLength,
   getFormattedArea,
@@ -521,24 +521,6 @@ class FeatureStyleHelper {
 
     return style
   }
-
-  // === PROPERTY GETTERS ===
-
-  // /**
-  //  * Delete the unwanted ol3 properties from the current feature then return the
-  //  * properties.
-  //  * Also delete the 'ngeo_feature_type_' from the ngeo query system.
-  //  * @param {!ol.Feature} feature Feature.
-  //  * @return {!Object.<string, *>} Filtered properties of the current feature.
-  //  * @export
-  //  */
-  // exports.getFilteredFeatureValues(feature: Feature) {
-  //   const properties = feature.getProperties();
-  //   delete properties['boundedBy'];
-  //   delete properties[feature.getGeometryName()];
-  //   delete properties['ngeo_feature_type_'];
-  //   return properties;
-  // };
 
   public getAngleProperty(feature: Feature) {
     const angle = +feature.get(luxFormatFeatureProperties.ANGLE)

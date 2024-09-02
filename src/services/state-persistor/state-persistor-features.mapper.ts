@@ -16,20 +16,19 @@ class StorageFeaturesMapper {
   featuresToUrl(features: DrawnFeature[] | null): string {
     if (!features) return ''
     const featureArray = features.map(f => drawnFeatureToFeature(f))
-    const featuresToEncode = featureArray.filter(function (feature) {
-      return !feature.get('__map_id__')
-    })
-    if (featuresToEncode.length > 0) {
-      return featureHash.writeFeatures(featuresToEncode)
-    } else {
-      return ''
-    }
+    const featuresToEncode = featureArray.filter(
+      feature => !feature.get('__map_id__')
+    )
+    return featuresToEncode.length > 0
+      ? featureHash.writeFeatures(featuresToEncode)
+      : ''
   }
 
   urlToFeatures(url: string | null): Feature<Geometry>[] {
     const features = url ? featureHash.readFeatures(url) : []
+    const olMap = useMap().getOlMap()
     features.forEach((f, i) => {
-      featureHash.decodeShortProperties(f, i, useMap().getOlMap())
+      featureHash.decodeShortProperties(f, i, olMap)
     })
     return features
   }
