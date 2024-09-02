@@ -1,12 +1,21 @@
-import { Collection, Feature } from 'ol'
+import { Feature } from 'ol'
 import { Geometry } from 'ol/geom'
 import featureHash from './utils/FeatureHash'
 import useMap from '@/composables/map/map.composable'
+import { DrawnFeature } from '@/stores/draw.store.model'
+
+const drawnFeatureToFeature = function (
+  drawnFeature: DrawnFeature
+): Feature<Geometry> {
+  const olFeature = drawnFeature.olFeature
+  olFeature.set('name', drawnFeature.label)
+  return olFeature
+}
 
 class StorageFeaturesMapper {
-  featuresToUrl(features: Collection<Feature<Geometry>> | null): string {
+  featuresToUrl(features: DrawnFeature[] | null): string {
     if (!features) return ''
-    const featureArray = features.getArray()
+    const featureArray = features.map(f => drawnFeatureToFeature(f))
     const featuresToEncode = featureArray.filter(function (feature) {
       return !feature.get('__map_id__')
     })

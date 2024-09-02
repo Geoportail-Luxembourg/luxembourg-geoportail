@@ -1,5 +1,8 @@
 import type BaseLayer from 'ol/layer/Base'
 import type OlMap from 'ol/Map'
+import VectorLayer from 'ol/layer/Vector'
+import VectorSource from 'ol/source/Vector'
+import { DrawnFeature } from '@/stores/draw.store.model'
 
 import { layersCache } from '@/stores/layers.cache'
 import type { Layer, LayerId } from '@/stores/map.store.model'
@@ -9,6 +12,7 @@ import { statePersistorStyleService } from '@/services/state-persistor/state-per
 import { olLayerFactoryService } from '@/services/ol-layer/ol-layer-factory.service'
 import { olLayerTimeService } from '@/services/ol-layer/ol-layer-time.service'
 import { OlLayer } from '@/services/ol-layer/ol-layer.model'
+import useMap from './map.composable'
 
 const DEFAULT_BGZINDEX = -200 // Value comming  from legacy
 
@@ -146,6 +150,32 @@ export default function useOpenLayers() {
     }
   }
 
+  function addFeatures(features: DrawnFeature[], olMap: OlMap) {
+    const mapLayers = olMap.getLayers()
+    const drawLayer = mapLayers
+      .getArray()
+      .find(
+        layer => layer.get('featureID') === 'featureLayer'
+      ) as VectorLayer<VectorSource>
+    if (!drawLayer) {
+      useMap().addDrawLayer()
+    } else {
+      drawLayer.getSource()?.addFeatures(features.map(f => f.olFeature))
+    }
+  }
+
+  function removeFeatures(features: DrawnFeature[], olMap: OlMap) {
+    const mapLayers = olMap.getLayers()
+    const drawLayer = mapLayers
+      .getArray()
+      .find(
+        layer => layer.get('featureID') === 'featureLayer'
+      ) as VectorLayer<VectorSource>
+    features.forEach(f => {
+      drawLayer.getSource()?.removeFeature(f.olFeature)
+    })
+  }
+
   return {
     addLayer,
     findLayer,
@@ -157,5 +187,7 @@ export default function useOpenLayers() {
     getLayerFromCache,
     setBgLayer,
     applyOnBgLayer,
+    addFeatures,
+    removeFeatures,
   }
 }

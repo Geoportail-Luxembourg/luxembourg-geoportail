@@ -17,7 +17,7 @@ import VectorLayer from 'ol/layer/Vector'
 import VectorSource from 'ol/source/Vector'
 import { storeToRefs } from 'pinia'
 import { useDrawStore } from '@/stores/draw.store'
-import { Collection, Feature } from 'ol'
+import { Feature } from 'ol'
 import { Geometry } from 'ol/geom'
 
 export const PROJECTION_WEBMERCATOR = 'EPSG:3857'
@@ -193,8 +193,8 @@ export default function useMap() {
   }
 
   function addDrawLayer() {
-    const { drawnFeatures } = storeToRefs(useDrawStore())
-    const features = drawnFeatures.value as Collection<Feature<Geometry>>
+    const { drawnOlFeatures } = storeToRefs(useDrawStore())
+    const features = drawnOlFeatures.value as Feature<Geometry>[] // as Collection<Feature<Geometry>>
     const drawLayer = new VectorLayer({
       source: new VectorSource({
         features,
@@ -202,6 +202,7 @@ export default function useMap() {
       zIndex: DEFAULT_DRAW_ZINDEX,
       // altitudeMode: 'clampToGround', //used in v3, but causes type error
     })
+    drawLayer.set('featureID', 'featureLayer')
     map.addLayer(drawLayer)
   }
 

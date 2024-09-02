@@ -9,7 +9,7 @@ import { DrawFeature } from '@/stores/draw.store.model'
 import FeatureItem from './feature-item.vue'
 
 const drawStore = useDrawStore()
-const { drawFeatures: features, featureEditionDocked } = storeToRefs(drawStore)
+const { drawnFeatures: features, featureEditionDocked } = storeToRefs(drawStore)
 const currentOpenedFeature: Ref<number | undefined> = ref(undefined)
 const currentEditingFeature: Ref<number | undefined> = ref(undefined)
 

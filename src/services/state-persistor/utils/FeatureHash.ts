@@ -1,5 +1,7 @@
+// !!! This is a file ported from v3 and not completely refactored, we accept some linter warnings //
+/* eslint-disable @typescript-eslint/no-explicit-any */
+
 import luxFormatFeatureProperties from './LuxFeatureProperties'
-import { rgbArrayToHex } from './utils'
 
 import olFeature from 'ol/Feature.js'
 import olMap from 'ol/Map.js'
@@ -74,6 +76,23 @@ const FeatureHashStyleTypes = {
  * @private
  */
 let FeatureHashLegacyProperties: any = {}
+
+function colorZeroPadding(hex: string) {
+  return hex.length == 1 ? `0${hex}` : hex
+}
+
+function rgbArrayToHex(rgb: number[]) {
+  const r = rgb[0]
+  const g = rgb[1]
+  const b = rgb[2]
+  if (r != (r & 255) || g != (g & 255) || b != (b & 255)) {
+    throw Error(`"(${r},${g},${b})" is not a valid RGB color`)
+  }
+  const hexR = colorZeroPadding(r.toString(16))
+  const hexG = colorZeroPadding(g.toString(16))
+  const hexB = colorZeroPadding(b.toString(16))
+  return `#${hexR}${hexG}${hexB}`
+}
 
 class FeatureHash extends TextFeature {
   accuracy_: number

@@ -16,7 +16,7 @@ export type DrawnFeatureType =
   | 'drawnCircle'
   | 'drawnPolygon'
 
-export interface DrawFeature {
+export interface DrawnFeature {
   // TODO: to improve
   id: number
   label: string

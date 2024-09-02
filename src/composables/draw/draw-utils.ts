@@ -1,8 +1,9 @@
+import { t } from 'i18next'
 import OlMap from 'ol/Map'
-import LineString from 'ol/geom/LineString.js'
+import { Point, Circle, Geometry, LineString } from 'ol/geom'
 import MultiPoint from 'ol/geom/MultiPoint.js'
 import Polygon from 'ol/geom/Polygon.js'
-import Point from 'ol/geom/Point.js'
+import { fromCircle } from 'ol/geom/Polygon'
 import StyleCircle, { Options as CircleOptions } from 'ol/style/Circle.js'
 import StyleFill from 'ol/style/Fill.js'
 import StyleIcon from 'ol/style/Icon.js'
@@ -13,6 +14,11 @@ import StyleText from 'ol/style/Text.js'
 import StyleStroke from 'ol/style/Stroke.js'
 import StyleStyle, { StyleLike } from 'ol/style/Style.js'
 import { Feature } from 'ol'
+
+import { useDrawStore } from '@/stores/draw.store'
+import { storeToRefs } from 'pinia'
+import { DrawnFeature } from '@/stores/draw.store.model'
+
 // TODO 3D
 // import { transform } from 'ol/proj'
 // import olcsCore from 'olcs/core.js';
@@ -23,7 +29,48 @@ const ARROW_URL = MYMAPS_URL + '/getarrow'
 // TODO 3D
 // const ARROW_MODEL_URL = import.meta.env.VITE_ARROW_MODEL_URL
 
-export function createStyleFunction(curMap: OlMap) {
+function getName(feature: Feature<Geometry>) {
+  const geomType = feature.getGeometry()?.getType()
+  if (geomType) {
+    return feature.get('isCircle')
+      ? 'drawnCircle'
+      : feature.get('isLabel')
+      ? 'drawnLabel'
+      : `drawn${geomType.replace('String', '')}`
+  }
+}
+
+function convertCircleToPolygon(
+  feature: Feature<Geometry>,
+  featureType: String
+) {
+  if (featureType == 'drawnCircle') {
+    feature.setGeometry(fromCircle(feature.getGeometry() as Circle, 64))
+  }
+}
+
+function createDrawnFeature(feature: Feature<Geometry>) {
+  const { drawnFeatures } = storeToRefs(useDrawStore())
+  const featureType = getName(feature)
+
+  if (featureType) {
+    convertCircleToPolygon(feature, featureType)
+    const newFeature = {
+      // TODO: improve feat. creation, move this creation elsewhere
+      id: Math.floor(Math.random() * Date.now()),
+      label:
+        feature.get('name') ||
+        `${t(featureType.replace('drawn', ''))} ${
+          drawnFeatures.value.length + 1
+        }`,
+      featureType,
+      olFeature: feature,
+    } as unknown as DrawnFeature
+    return newFeature
+  }
+}
+
+function createStyleFunction(curMap: OlMap) {
   const styles = new Array<StyleStyle>()
 
   const vertexStyle = new StyleStyle({
@@ -292,3 +339,5 @@ export function createStyleFunction(curMap: OlMap) {
     return styles
   } as StyleLike
 }
+
+export { createDrawnFeature, createStyleFunction }

@@ -1,22 +1,19 @@
 import { storeToRefs } from 'pinia'
-import { t } from 'i18next'
-import { Collection, Feature } from 'ol'
+import { Feature } from 'ol'
 import { Point, Circle, Geometry, LineString } from 'ol/geom'
-import Polygon, { fromCircle } from 'ol/geom/Polygon'
-import { storeToRefs } from 'pinia'
+import Polygon from 'ol/geom/Polygon'
 import { useDrawStore } from '@/stores/draw.store'
 import { createStyleFunction } from './draw-utils'
 import { useAppStore } from '@/stores/app.store'
 import { screenSizeIsAtLeast } from '@/services/common/device.utils'
 
-import { useDrawStore } from '@/stores/draw.store'
-import { DrawFeature } from '@/stores/draw.store.model'
+import { createDrawnFeature } from '@/composables/draw/draw-utils'
+import { DrawnFeature } from '@/stores/draw.store.model'
 
 import useMap from '../map/map.composable'
 import { Coordinate } from 'ol/coordinate'
 
 export default function useDrawnFeatures() {
-  const drawStore = useDrawStore()
   const map = useMap().getOlMap()
   const { drawStateActive, drawnFeatures } = storeToRefs(useDrawStore())
   const { addDrawnFeature } = useDrawStore()
@@ -24,12 +21,12 @@ export default function useDrawnFeatures() {
     storeToRefs(useAppStore())
   const { toggleMyMapsOpen } = useAppStore()
 
-  const features = drawnFeatures.value as Collection<Feature<Geometry>>
+  const features = drawnFeatures.value as DrawnFeature[]
 
   function addFeature(feature: Feature<Geometry>) {
-    const name = getName(feature)
-    const nbFeatures = features.getLength()
-    feature.set('name', name + ' ' + (nbFeatures + 1))
+    //const name = getName(feature)
+    const nbFeatures = features.length
+    // feature.set('name', name + ' ' + (nbFeatures + 1))
     feature.set('description', '')
     feature.set('__editable__', true)
     feature.set('color', '#ed1c24')
@@ -49,7 +46,7 @@ export default function useDrawnFeatures() {
     // } else {
     //   feature.set('__map_id__', undefined);
     // }
-    addDrawnFeature(feature)
+    addDrawnFeature(createDrawnFeature(feature)!)
     // TODO Update Profile: v3 sets attribute for watcher
     // feature.set('__refreshProfile__', true)
     // TODO Select feature
@@ -68,24 +65,26 @@ export default function useDrawnFeatures() {
       toggleMyMapsOpen(true)
     }
 
-    // TODO: to improve saving
-    const geomType = feature.getGeometry()?.getType()
+    // // TODO: to improve saving
+    // const geomType = feature.getGeometry()?.getType()
 
-    if (geomType) {
-      const { drawFeatures } = storeToRefs(drawStore)
-      const newFeature = {
-        // TODO: improve feat. creation, move this creation elsewhere
-        id: Math.floor(Math.random() * Date.now()),
-        label: `${geomType as string} ${drawFeatures.value.length + 1}`,
-        featureType: feature.get('isCircle')
-          ? 'drawnCircle'
-          : feature.get('isLabel')
-          ? 'drawnLabel'
-          : `drawn${geomType.replace('String', '')}`,
-        olFeature: feature,
-      } as unknown as DrawFeature
-      drawFeatures.value = [...drawFeatures.value, newFeature]
-    }
+    // const newFeature = createDrawnFeature(feature)
+
+    // // if (geomType) {
+    // //   const newFeature = {
+    // //     // TODO: improve feat. creation, move this creation elsewhere
+    // //     id: Math.floor(Math.random() * Date.now()),
+    // //     label: `${geomType as string} ${drawnFeatures.value.length + 1}`,
+    // //     featureType: feature.get('isCircle')
+    // //       ? 'drawnCircle'
+    // //       : feature.get('isLabel')
+    // //       ? 'drawnLabel'
+    // //       : `drawn${geomType.replace('String', '')}`,
+    // //     olFeature: feature,
+    // //   } as unknown as DrawFeature
+    // if (newFeature) {
+    //   drawnFeatures.value = [...drawnFeatures.value, newFeature]
+    // }
   }
 
   /**
@@ -117,64 +116,66 @@ export default function useDrawnFeatures() {
     return coordinates
   }
 
-  function getName(feature: Feature<Geometry>) {
-    if (feature?.getGeometry()?.getType() === 'Circle') {
-      const featureGeom = feature.getGeometry() as Circle
-      feature.set('isCircle', true)
-      feature.setGeometry(fromCircle(featureGeom, 64))
-    }
+  // TODO: some geometry validity checks have not been ported to draw-utils
 
-    let name
-    switch (feature.getGeometry()?.getType()) {
-      case 'Point': {
-        if (drawStateActive.value === 'drawLabel') {
-          name = t('Label', { ns: 'client' })
-        } else {
-          name = t('Point', { ns: 'client' })
-        }
-        break
-      }
-      case 'LineString': {
-        const curLineStringGeom = feature.getGeometry() as LineString
-        const curLineStringCooridnates = curLineStringGeom.getCoordinates()
-        if (curLineStringCooridnates.length < 2) {
-          return
-        }
-        const prevCoord =
-          curLineStringCooridnates[curLineStringCooridnates.length - 1]
-        const antePrevCoord =
-          curLineStringCooridnates[curLineStringCooridnates.length - 2]
-        if (
-          prevCoord[0] === antePrevCoord[0] &&
-          prevCoord[1] === antePrevCoord[1]
-        ) {
-          curLineStringCooridnates.pop()
-          if (curLineStringCooridnates.length < 2) {
-            return
-          }
-          curLineStringGeom.setCoordinates(curLineStringCooridnates)
-        }
-        name = t('LineString', { ns: 'client' })
-        break
-      }
-      case 'Polygon': {
-        if (feature.get('isCircle')) {
-          name = t('Circle', { ns: 'client' })
-        } else {
-          const featureGeom = feature.getGeometry() as Polygon
-          if (featureGeom.getLinearRing(0)!.getCoordinates().length < 4) {
-            return
-          }
-          name = t('Polygon', { ns: 'client' })
-        }
-        break
-      }
-      default:
-        name = feature.getGeometry()?.getType()
-        break
-    }
-    return name
-  }
+  // function getName(feature: Feature<Geometry>) {
+  //   if (feature?.getGeometry()?.getType() === 'Circle') {
+  //     const featureGeom = feature.getGeometry() as Circle
+  //     feature.set('isCircle', true)
+  //     feature.setGeometry(fromCircle(featureGeom, 64))
+  //   }
+
+  //   let name
+  //   switch (feature.getGeometry()?.getType()) {
+  //     case 'Point': {
+  //       if (drawStateActive.value === 'drawLabel') {
+  //         name = t('Label', { ns: 'client' })
+  //       } else {
+  //         name = t('Point', { ns: 'client' })
+  //       }
+  //       break
+  //     }
+  //     case 'LineString': {
+  //       const curLineStringGeom = feature.getGeometry() as LineString
+  //       const curLineStringCooridnates = curLineStringGeom.getCoordinates()
+  //       if (curLineStringCooridnates.length < 2) {
+  //         return
+  //       }
+  //       const prevCoord =
+  //         curLineStringCooridnates[curLineStringCooridnates.length - 1]
+  //       const antePrevCoord =
+  //         curLineStringCooridnates[curLineStringCooridnates.length - 2]
+  //       if (
+  //         prevCoord[0] === antePrevCoord[0] &&
+  //         prevCoord[1] === antePrevCoord[1]
+  //       ) {
+  //         curLineStringCooridnates.pop()
+  //         if (curLineStringCooridnates.length < 2) {
+  //           return
+  //         }
+  //         curLineStringGeom.setCoordinates(curLineStringCooridnates)
+  //       }
+  //       name = t('LineString', { ns: 'client' })
+  //       break
+  //     }
+  //     case 'Polygon': {
+  //       if (feature.get('isCircle')) {
+  //         name = t('Circle', { ns: 'client' })
+  //       } else {
+  //         const featureGeom = feature.getGeometry() as Polygon
+  //         if (featureGeom.getLinearRing(0)!.getCoordinates().length < 4) {
+  //           return
+  //         }
+  //         name = t('Polygon', { ns: 'client' })
+  //       }
+  //       break
+  //     }
+  //     default:
+  //       name = feature.getGeometry()?.getType()
+  //       break
+  //   }
+  //   return name
+  // }
 
   // function saveFeature(feature: Feature) {
   //   // TODO Mymaps: saveFeatureInMymaps_
