@@ -9,13 +9,13 @@ import { DrawFeature } from '@/stores/draw.store.model'
 import FeatureItem from './feature-item.vue'
 
 const drawStore = useDrawStore()
-const { drawFeatures: features, featureEditionDocked } = storeToRefs(drawStore)
+const { activeFeatureId, drawFeatures: features, featureEditionDocked } = storeToRefs(drawStore)
 const currentOpenedFeature: Ref<number | undefined> = ref(undefined)
 const currentEditingFeature: Ref<number | undefined> = ref(undefined)
 
 function onToggleFeatureSub(featureId: number, isOpen: boolean) {
   // Only one feature details is displayed at once
-  currentOpenedFeature.value = isOpen ? featureId : undefined
+  activeFeatureId.value = isOpen ? featureId : undefined
   currentEditingFeature.value = undefined
 }
 
@@ -31,7 +31,7 @@ watch(
     if (oldFeatures === undefined || newFeatures.length > oldFeatures.length) {
       const currentFeature =
         newFeatures[oldFeatures === undefined ? 0 : newFeatures.length - 1]
-      currentOpenedFeature.value = currentEditingFeature.value =
+      // currentOpenedFeature.value = currentEditingFeature.value =
         currentFeature.id
     }
   },
@@ -53,7 +53,7 @@ onMounted(() => {
       <FeatureItem
         :isDocked="featureEditionDocked"
         :isEditing="currentEditingFeature === feature.id"
-        :isOpen="currentOpenedFeature === feature.id"
+        :isOpen="activeFeatureId === feature.olFeature.ol_uid"
         :feature="<DrawFeature>feature"
         @toggleFeatureSub="onToggleFeatureSub"
         @toggleFeatureEdit="onToggleFeatureEdit"

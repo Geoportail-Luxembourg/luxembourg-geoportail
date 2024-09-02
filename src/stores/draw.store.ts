@@ -6,6 +6,7 @@ import { ShallowRef, ref } from 'vue'
 import { DrawFeature, DrawStateActive } from './draw.store.model'
 
 export const useDrawStore = defineStore('draw', () => {
+  const activeFeatureId = ref(undefined)
   const drawStateActive = ref<DrawStateActive>(undefined)
   // no immutable changes on drawnFeatures in functions bellow,
   // but keep same Collection for sync with ol source (map)
@@ -44,6 +45,7 @@ export const useDrawStore = defineStore('draw', () => {
   }
 
   return {
+    activeFeatureId,
     drawFeatures,
     drawStateActive,
     drawnFeatures,
