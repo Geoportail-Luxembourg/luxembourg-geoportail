@@ -1,7 +1,7 @@
 import Feature from 'ol/Feature.js'
 import Map from 'ol/Map.js'
 import { Coordinate } from 'ol/coordinate.js'
-import ngeoFormatFeatureProperties from './FeatureProperties'
+import luxFormatFeatureProperties from './FeatureProperties'
 import ngeoGeometryType from './GeometryTypes'
 import * as olArray from 'ol/array.js'
 import * as olColor from 'ol/color.js'
@@ -251,7 +251,7 @@ class FeatureStyleHelper {
     const fillColor = color.slice()
     fillColor[3] = opacity
 
-    const azimut = this.optNumber(feature, ngeoFormatFeatureProperties.AZIMUT)
+    const azimut = this.optNumber(feature, luxFormatFeatureProperties.AZIMUT)
 
     const styles = [
       new olStyleStyle({
@@ -587,7 +587,7 @@ class FeatureStyleHelper {
    */
   public getAngleProperty(feature: Feature) {
     const angle = +(
-      /** @type {string} */ feature.get(ngeoFormatFeatureProperties.ANGLE)
+      /** @type {string} */ feature.get(luxFormatFeatureProperties.ANGLE)
     )
     console.assert(typeof angle === 'number')
     return angle
@@ -599,7 +599,7 @@ class FeatureStyleHelper {
    * @export
    */
   public getColorProperty(feature: Feature) {
-    const color = feature.get(ngeoFormatFeatureProperties.COLOR)
+    const color = feature.get(luxFormatFeatureProperties.COLOR)
 
     console.assert(typeof color === 'string')
 
@@ -621,7 +621,7 @@ class FeatureStyleHelper {
    * @export
    */
   public getNameProperty(feature: Feature) {
-    const name = feature.get(ngeoFormatFeatureProperties.NAME)
+    const name = feature.get(luxFormatFeatureProperties.NAME)
     console.assert(typeof name === 'string')
     return name
   }
@@ -632,7 +632,7 @@ class FeatureStyleHelper {
    * @export
    */
   public getOpacityProperty(feature: Feature) {
-    return this.getNumber(feature, ngeoFormatFeatureProperties.OPACITY)
+    return this.getNumber(feature, luxFormatFeatureProperties.OPACITY)
   }
 
   /**
@@ -641,7 +641,7 @@ class FeatureStyleHelper {
    * @export
    */
   public getShowMeasureProperty(feature: Feature) {
-    let showMeasure = feature.get(ngeoFormatFeatureProperties.SHOW_MEASURE)
+    let showMeasure = feature.get(luxFormatFeatureProperties.SHOW_MEASURE)
     if (showMeasure === undefined) {
       showMeasure = false
     } else if (typeof showMeasure === 'string') {
@@ -657,7 +657,7 @@ class FeatureStyleHelper {
    * @export
    */
   public getShowLabelProperty(feature: Feature) {
-    let showLabel = feature.get(ngeoFormatFeatureProperties.SHOW_LABEL)
+    let showLabel = feature.get(luxFormatFeatureProperties.SHOW_LABEL)
     if (showLabel === undefined) {
       showLabel = false
     } else if (typeof showLabel === 'string') {
@@ -673,7 +673,7 @@ class FeatureStyleHelper {
    * @export
    */
   public getSizeProperty(feature: Feature) {
-    return this.getNumber(feature, ngeoFormatFeatureProperties.SIZE)
+    return this.getNumber(feature, luxFormatFeatureProperties.SIZE)
   }
 
   /**
@@ -682,7 +682,7 @@ class FeatureStyleHelper {
    * @export
    */
   public getStrokeProperty(feature: Feature) {
-    return this.getNumber(feature, ngeoFormatFeatureProperties.STROKE)
+    return this.getNumber(feature, luxFormatFeatureProperties.STROKE)
   }
 
   // === OTHER UTILITY METHODS ===
@@ -734,7 +734,7 @@ class FeatureStyleHelper {
       if (this.getType(feature) === ngeoGeometryType.CIRCLE) {
         const azimut = this.optNumber(
           feature,
-          ngeoFormatFeatureProperties.AZIMUT
+          luxFormatFeatureProperties.AZIMUT
         )
         console.assert(typeof azimut === 'number')
         const line = this.getRadiusLine(feature, azimut || 10)
@@ -780,7 +780,7 @@ class FeatureStyleHelper {
     let type
 
     if (geometry instanceof olGeomPoint) {
-      if (feature.get(ngeoFormatFeatureProperties.IS_TEXT)) {
+      if (feature.get(luxFormatFeatureProperties.IS_TEXT)) {
         type = ngeoGeometryType.TEXT
       } else {
         type = ngeoGeometryType.POINT
@@ -788,9 +788,9 @@ class FeatureStyleHelper {
     } else if (geometry instanceof olGeomMultiPoint) {
       type = ngeoGeometryType.MULTI_POINT
     } else if (geometry instanceof olGeomPolygon) {
-      if (feature.get(ngeoFormatFeatureProperties.IS_CIRCLE)) {
+      if (feature.get(luxFormatFeatureProperties.IS_CIRCLE)) {
         type = ngeoGeometryType.CIRCLE
-      } else if (feature.get(ngeoFormatFeatureProperties.IS_RECTANGLE)) {
+      } else if (feature.get(luxFormatFeatureProperties.IS_RECTANGLE)) {
         type = ngeoGeometryType.RECTANGLE
       } else {
         type = ngeoGeometryType.POLYGON

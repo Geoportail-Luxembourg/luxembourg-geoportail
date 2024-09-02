@@ -1,4 +1,4 @@
-import ngeoFormatFeatureProperties from './FeatureProperties'
+import luxFormatFeatureProperties from './LuxFeatureProperties'
 import { rgbArrayToHex } from './utils'
 
 import olFeature from 'ol/Feature.js'
@@ -1001,7 +1001,7 @@ function setStyleProperties_(text: string, feature: Feature) {
   if (geometry instanceof olGeomPoint) {
     if (
       properties['isLabel'] ||
-      properties[ngeoFormatFeatureProperties.IS_TEXT]
+      properties[luxFormatFeatureProperties.IS_TEXT]
     ) {
       delete properties['strokeColor']
       delete properties['fillColor']
@@ -1050,18 +1050,18 @@ function setStyleProperties_(text: string, feature: Feature) {
  */
 function castValue_(key: string, value: string) {
   const numProperties = [
-    ngeoFormatFeatureProperties.ANGLE,
-    ngeoFormatFeatureProperties.OPACITY,
-    ngeoFormatFeatureProperties.SIZE,
-    ngeoFormatFeatureProperties.STROKE,
+    luxFormatFeatureProperties.ANGLE,
+    luxFormatFeatureProperties.OPACITY,
+    luxFormatFeatureProperties.SIZE,
+    luxFormatFeatureProperties.STROKE,
     'pointRadius',
     'strokeWidth',
   ]
   const boolProperties = [
-    ngeoFormatFeatureProperties.IS_CIRCLE,
-    ngeoFormatFeatureProperties.IS_RECTANGLE,
-    ngeoFormatFeatureProperties.IS_TEXT,
-    ngeoFormatFeatureProperties.SHOW_MEASURE,
+    luxFormatFeatureProperties.IS_CIRCLE,
+    luxFormatFeatureProperties.IS_RECTANGLE,
+    luxFormatFeatureProperties.IS_TEXT,
+    luxFormatFeatureProperties.SHOW_MEASURE,
     'isCircle',
     'isRectangle',
     'isLabel',
