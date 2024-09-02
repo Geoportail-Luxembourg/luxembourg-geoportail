@@ -5,7 +5,6 @@ import Feature from 'ol/Feature.js'
 import Map from 'ol/Map.js'
 import { Coordinate } from 'ol/coordinate.js'
 import luxFormatFeatureProperties from './FeatureProperties'
-import ngeoGeometryType from './GeometryTypes'
 import * as olArray from 'ol/array.js'
 import * as olColor from 'ol/color.js'
 import * as olExtent from 'ol/extent.js'
@@ -28,6 +27,18 @@ import {
   getFormattedAzimutRadius,
   getFormattedPoint,
 } from '@/services/common/measurement.utils'
+
+const styleGeometryType = {
+  CIRCLE: 'Circle',
+  LINE_STRING: 'LineString',
+  MULTI_LINE_STRING: 'MultiLineString',
+  MULTI_POINT: 'MultiPoint',
+  MULTI_POLYGON: 'MultiPolygon',
+  POINT: 'Point',
+  POLYGON: 'Polygon',
+  RECTANGLE: 'Rectangle',
+  TEXT: 'Text',
+}
 
 class FeatureStyleHelper {
   private precision_: number | undefined = undefined
@@ -67,18 +78,18 @@ class FeatureStyleHelper {
     let style
 
     switch (type) {
-      case ngeoGeometryType.LINE_STRING:
+      case styleGeometryType.LINE_STRING:
         style = this.getLineStringStyle_(feature)
         break
-      case ngeoGeometryType.POINT:
+      case styleGeometryType.POINT:
         style = this.getPointStyle_(feature)
         break
-      case ngeoGeometryType.CIRCLE:
-      case ngeoGeometryType.POLYGON:
-      case ngeoGeometryType.RECTANGLE:
+      case styleGeometryType.CIRCLE:
+      case styleGeometryType.POLYGON:
+      case styleGeometryType.RECTANGLE:
         style = this.getPolygonStyle_(feature)
         break
-      case ngeoGeometryType.TEXT:
+      case styleGeometryType.TEXT:
         style = this.getTextStyle_(feature)
         break
       default:
@@ -457,9 +468,9 @@ class FeatureStyleHelper {
 
   public supportsVertex_(feature: Feature) {
     const supported = [
-      ngeoGeometryType.LINE_STRING,
-      ngeoGeometryType.POLYGON,
-      ngeoGeometryType.RECTANGLE,
+      styleGeometryType.LINE_STRING,
+      styleGeometryType.POLYGON,
+      styleGeometryType.RECTANGLE,
     ]
     const type = this.getType(feature)
     return olArray.includes(supported, type)
@@ -471,7 +482,7 @@ class FeatureStyleHelper {
     const haloSize = 3
 
     switch (type) {
-      case ngeoGeometryType.POINT:
+      case styleGeometryType.POINT:
         style = new olStyleStyle({
           image: new olStyleCircle({
             radius: this.getSizeProperty(feature) + haloSize,
@@ -481,10 +492,10 @@ class FeatureStyleHelper {
           }),
         })
         break
-      case ngeoGeometryType.LINE_STRING:
-      case ngeoGeometryType.CIRCLE:
-      case ngeoGeometryType.POLYGON:
-      case ngeoGeometryType.RECTANGLE:
+      case styleGeometryType.LINE_STRING:
+      case styleGeometryType.CIRCLE:
+      case styleGeometryType.POLYGON:
+      case styleGeometryType.RECTANGLE:
         style = new olStyleStyle({
           stroke: new olStyleStroke({
             color: [255, 255, 255, 1],
@@ -492,7 +503,7 @@ class FeatureStyleHelper {
           }),
         })
         break
-      case ngeoGeometryType.TEXT:
+      case styleGeometryType.TEXT:
         style = new olStyleStyle({
           text: this.createTextStyle_({
             text: this.getNameProperty(feature),
@@ -625,7 +636,7 @@ class FeatureStyleHelper {
     let measure = ''
 
     if (geometry instanceof olGeomPolygon) {
-      if (this.getType(feature) === ngeoGeometryType.CIRCLE) {
+      if (this.getType(feature) === styleGeometryType.CIRCLE) {
         const azimut = this.optNumber(
           feature,
           luxFormatFeatureProperties.AZIMUT
@@ -672,26 +683,26 @@ class FeatureStyleHelper {
 
     if (geometry instanceof olGeomPoint) {
       if (feature.get(luxFormatFeatureProperties.IS_TEXT)) {
-        type = ngeoGeometryType.TEXT
+        type = styleGeometryType.TEXT
       } else {
-        type = ngeoGeometryType.POINT
+        type = styleGeometryType.POINT
       }
     } else if (geometry instanceof olGeomMultiPoint) {
-      type = ngeoGeometryType.MULTI_POINT
+      type = styleGeometryType.MULTI_POINT
     } else if (geometry instanceof olGeomPolygon) {
       if (feature.get(luxFormatFeatureProperties.IS_CIRCLE)) {
-        type = ngeoGeometryType.CIRCLE
+        type = styleGeometryType.CIRCLE
       } else if (feature.get(luxFormatFeatureProperties.IS_RECTANGLE)) {
-        type = ngeoGeometryType.RECTANGLE
+        type = styleGeometryType.RECTANGLE
       } else {
-        type = ngeoGeometryType.POLYGON
+        type = styleGeometryType.POLYGON
       }
     } else if (geometry instanceof olGeomMultiPolygon) {
-      type = ngeoGeometryType.MULTI_POLYGON
+      type = styleGeometryType.MULTI_POLYGON
     } else if (geometry instanceof olGeomLineString) {
-      type = ngeoGeometryType.LINE_STRING
+      type = styleGeometryType.LINE_STRING
     } else if (geometry instanceof olGeomMultiLineString) {
-      type = ngeoGeometryType.MULTI_LINE_STRING
+      type = styleGeometryType.MULTI_LINE_STRING
     }
 
     console.assert(type, 'Type should be thruthy')
