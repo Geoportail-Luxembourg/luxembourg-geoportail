@@ -30,9 +30,7 @@ describe('useDrawnFeatures', () => {
 
     const drawStore = useDrawStore()
     expect(drawStore.drawnFeatures.length).toBe(1)
-    expect(drawStore.drawnFeatures[0].olFeature.getGeometry()?.getType()).toBe(
-      'Point'
-    )
+    expect(drawStore.drawnFeatures[0].getGeometry()?.getType()).toBe('Point')
   })
 
   it('should correctly get coordinates of Point geometry', () => {

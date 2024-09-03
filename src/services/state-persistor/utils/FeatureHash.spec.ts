@@ -8,31 +8,31 @@ describe('read and decode features', () => {
   it('test decoding', () => {
     expect(true)
     const features = featureHash.readFeatures(url)
-    features.forEach((f, i) => {
+    const drawnFeatures = features.map((f, i) =>
       featureHash.decodeShortProperties(f, i)
-    })
-    expect(features.length).to.equal(6)
-    const circles = features.filter(f => f.get('isCircle'))
+    )
+    expect(drawnFeatures.length).to.equal(6)
+    const circles = drawnFeatures.filter(f => f.featureType === 'drawnCircle')
     expect(circles.length).to.equal(1)
-    expect(circles[0].get('color')).to.equal('#ed1c24')
+    expect(circles[0].featureStyle.color).to.equal('#ed1c24')
     expect(
-      features.find(f => f.get('name') === 'Polygone 1')?.get('color')
+      drawnFeatures.find(f => f.label === 'Polygone 1')?.featureStyle.color
     ).to.equal('#ed1c24')
     expect(
-      features.find(f => f.get('name') === 'Polygone 2')?.get('color')
+      drawnFeatures.find(f => f.label === 'Polygone 2')?.featureStyle.color
     ).to.equal('#1dcaed')
-    const p3 = features.find(f => f.get('name') === 'Polygone 3')
-    expect(p3?.get('color')).to.equal('#2a1ded')
-    expect(p3?.get('stroke')).to.equal(4)
-    expect(p3?.get('opacity')).to.equal(0.48)
+    const p3 = drawnFeatures.find(f => f.label === 'Polygone 3')
+    expect(p3?.featureStyle.color).to.equal('#2a1ded')
+    expect(p3?.featureStyle.stroke).to.equal(4)
+    expect(p3?.featureStyle.opacity).to.equal(0.48)
 
-    const labels = features.filter(f => f.get('geometry') instanceof Point)
+    const labels = drawnFeatures.filter(f => f.get('geometry') instanceof Point)
     expect(labels.length).to.equal(2)
-    expect(labels.find(f => f.get('angle') == 0)?.get('color')).to.equal(
-      '#ed1c24'
-    )
-    expect(labels.find(f => f.get('angle') < 0)?.get('color')).to.equal(
-      '#1ded2a'
-    )
+    expect(
+      labels.find(f => f.featureStyle.angle == 0)?.featureStyle.color
+    ).to.equal('#ed1c24')
+    expect(
+      labels.find(f => f.featureStyle.angle < 0)?.featureStyle.color
+    ).to.equal('#1ded2a')
   })
 })

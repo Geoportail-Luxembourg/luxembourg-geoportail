@@ -875,6 +875,7 @@ function castValue_(key: string, value: string) {
     luxFormatFeatureProperties.STROKE,
     'pointRadius',
     'strokeWidth',
+    'stroke',
     'angle',
     'opacity',
     'size',
