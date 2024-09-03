@@ -1,20 +1,20 @@
 <script setup lang="ts">
-import { onMounted, Ref, ref, watch } from 'vue'
+import { onMounted, Ref, ref } from 'vue'
 import { storeToRefs } from 'pinia'
 
 import useSortable from '@/composables/sortable'
 import { useDrawStore } from '@/stores/draw.store'
-import { DrawFeature } from '@/stores/draw.store.model'
+import { DrawnFeature } from '@/services/draw/drawn-feature'
 
 import FeatureItem from './feature-item.vue'
 
 const drawStore = useDrawStore()
-<<<<<<< HEAD
-const { drawnFeatures: features, featureEditionDocked } = storeToRefs(drawStore)
-=======
-const { activeFeatureId, drawFeatures: features, featureEditionDocked } = storeToRefs(drawStore)
->>>>>>> 1c5d414... draft version of selection state and sync between mymaps and canvas features
-const currentOpenedFeature: Ref<number | undefined> = ref(undefined)
+const {
+  activeFeatureId,
+  drawnFeatures: features,
+  featureEditionDocked,
+} = storeToRefs(drawStore)
+/* const currentOpenedFeature: Ref<number | undefined> = ref(undefined)*/
 const currentEditingFeature: Ref<number | undefined> = ref(undefined)
 
 function onToggleFeatureSub(featureId: number, isOpen: boolean) {
@@ -28,20 +28,21 @@ function onToggleFeatureEdit(featureId: number, isEditing: boolean) {
   // TODO: continue...
 }
 
-watch(
-  features,
-  (newFeatures, oldFeatures) => {
-    // Last added feature is unfold by default
-    if (oldFeatures === undefined || newFeatures.length > oldFeatures.length) {
-      const currentFeature =
-        newFeatures[oldFeatures === undefined ? 0 : newFeatures.length - 1]
-      // currentOpenedFeature.value = currentEditingFeature.value =
-        currentFeature.id
-    }
-  },
-  { immediate: true }
-)
-
+// opening the last item is directly done in addDrawnFeature in draw store via activeFeatureId
+/* watch(
+ *   features,
+ *   (newFeatures, oldFeatures) => {
+ *     // Last added feature is unfold by default
+ *     if (oldFeatures === undefined || newFeatures.length > oldFeatures.length) {
+ *       const currentFeature =
+ *         newFeatures[oldFeatures === undefined ? 0 : newFeatures.length - 1]
+ *       // currentOpenedFeature.value = currentEditingFeature.value =
+ *       currentFeature.id
+ *     }
+ *   },
+ *   { immediate: true }
+ * )
+ * */
 onMounted(() => {
   useSortable(<HTMLElement>document.querySelector('.sortable-features'))
 })
@@ -57,8 +58,13 @@ onMounted(() => {
       <FeatureItem
         :isDocked="featureEditionDocked"
         :isEditing="currentEditingFeature === feature.id"
+<<<<<<< HEAD
+        :isOpen="currentOpenedFeature === feature.id"
+        :feature="<DrawnFeature>feature"
+=======
         :isOpen="activeFeatureId === feature.olFeature.ol_uid"
         :feature="<DrawFeature>feature"
+>>>>>>> 1f8961f... draft version of selection state and sync between mymaps and canvas features
         @toggleFeatureSub="onToggleFeatureSub"
         @toggleFeatureEdit="onToggleFeatureEdit"
         @toggleDock="() => (featureEditionDocked = !featureEditionDocked)"

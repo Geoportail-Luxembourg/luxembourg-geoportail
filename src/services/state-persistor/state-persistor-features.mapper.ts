@@ -1,14 +1,6 @@
 import featureHash from './utils/FeatureHash'
 import { DrawnFeature } from '@/services/draw/drawn-feature'
 
-// const drawnFeatureToFeature = function (
-//   drawnFeature: DrawnFeature
-// ): Feature<Geometry> {
-//   const olFeature = drawnFeature.olFeature
-//   olFeature.set('name', drawnFeature.label)
-//   return olFeature
-// }
-
 class StorageFeaturesMapper {
   featuresToUrl(features: DrawnFeature[] | null): string {
     if (!features) return ''
