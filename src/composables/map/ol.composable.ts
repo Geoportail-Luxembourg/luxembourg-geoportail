@@ -2,7 +2,7 @@ import type BaseLayer from 'ol/layer/Base'
 import type OlMap from 'ol/Map'
 import VectorLayer from 'ol/layer/Vector'
 import VectorSource from 'ol/source/Vector'
-import { DrawnFeature } from '@/stores/draw.store.model'
+import { DrawnFeature } from '@/services/draw/drawn-feature'
 
 import { layersCache } from '@/stores/layers.cache'
 import type { Layer, LayerId } from '@/stores/map.store.model'
@@ -160,7 +160,7 @@ export default function useOpenLayers() {
     if (!drawLayer) {
       useMap().addDrawLayer()
     } else {
-      drawLayer.getSource()?.addFeatures(features.map(f => f.olFeature))
+      drawLayer.getSource()?.addFeatures(features)
     }
   }
 
@@ -172,7 +172,7 @@ export default function useOpenLayers() {
         layer => layer.get('featureID') === 'featureLayer'
       ) as VectorLayer<VectorSource>
     features.forEach(f => {
-      drawLayer.getSource()?.removeFeature(f.olFeature)
+      drawLayer.getSource()?.removeFeature(f)
     })
   }
 

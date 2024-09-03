@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { DrawnFeature } from '@/stores/draw.store.model'
+import { DrawnFeature } from '@/services/draw/drawn-feature'
 
 import FeatureSubContent from './feature-sub-content.vue'
 import FeatureSubWrapper from './feature-sub-wrapper.vue'

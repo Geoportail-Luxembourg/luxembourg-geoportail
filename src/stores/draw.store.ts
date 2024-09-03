@@ -1,18 +1,14 @@
-import { Feature } from 'ol'
-import { Geometry } from 'ol/geom'
 import { defineStore } from 'pinia'
-import { ref, computed } from 'vue'
+import { ref } from 'vue'
 
-import { DrawnFeature, DrawStateActive } from './draw.store.model'
+import { DrawStateActive } from './draw.store.model'
+import { DrawnFeature } from '@/services/draw/drawn-feature'
 
 export const useDrawStore = defineStore('draw', () => {
   const drawStateActive = ref<DrawStateActive>(undefined)
   // no immutable changes on drawnFeatures in functions bellow,
   // but keep same Collection for sync with ol source (map)
   const drawnFeatures = ref<DrawnFeature[]>([])
-  const drawnOlFeatures = computed(() =>
-    drawnFeatures.value.map(f => f.olFeature as any as Feature<Geometry>)
-  )
   const featureEditionDocked = ref(false)
 
   function toggleActiveState(newState: DrawStateActive) {
@@ -40,7 +36,6 @@ export const useDrawStore = defineStore('draw', () => {
   return {
     drawStateActive,
     drawnFeatures,
-    drawnOlFeatures,
     featureEditionDocked,
     removeFeature,
     toggleActiveState,

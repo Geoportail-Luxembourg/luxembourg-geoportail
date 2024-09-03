@@ -12,7 +12,7 @@ import useMvtStyles from '@/composables/mvt-styles/mvt-styles.composable'
 import useMap from '@/composables/map/map.composable'
 import useOffline from '@/composables/offline/offline.composable'
 import { MutationTypeValue } from './map.model'
-import { DrawnFeature } from '@/stores/draw.store.model'
+import { DrawnFeature } from '@/services/draw/drawn-feature'
 
 export class OlSynchronizer {
   timeoutID: NodeJS.Timeout

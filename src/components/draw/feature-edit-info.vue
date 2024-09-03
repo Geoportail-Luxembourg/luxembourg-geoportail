@@ -2,7 +2,7 @@
 import { ref } from 'vue'
 import { useTranslation } from 'i18next-vue'
 
-import { DrawnFeature } from '@/stores/draw.store.model'
+import { DrawnFeature } from '@/services/draw/drawn-feature'
 
 const { t } = useTranslation()
 const props = defineProps<{

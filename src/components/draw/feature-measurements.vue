@@ -2,7 +2,7 @@
 import { computed } from 'vue'
 import { useTranslation } from 'i18next-vue'
 
-import { DrawnFeature } from '@/stores/draw.store.model'
+import { DrawnFeature } from '@/services/draw/drawn-feature'
 import FeatureMeasurementsProfile from './feature-measurements-profile.vue'
 
 const { t } = useTranslation()

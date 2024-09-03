@@ -2,7 +2,7 @@
 import { Ref, ref } from 'vue'
 import { useTranslation } from 'i18next-vue'
 
-import { DrawnFeature } from '@/stores/draw.store.model'
+import { DrawnFeature } from '@/services/draw/drawn-feature'
 
 import FeatureMenuPopup from './feature-menu-popup.vue'
 import FeatureConfirmDelete from './feature-confirm-delete.vue'

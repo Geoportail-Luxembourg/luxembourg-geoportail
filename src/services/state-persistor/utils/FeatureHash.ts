@@ -4,7 +4,6 @@
 import luxFormatFeatureProperties from './LuxFeatureProperties'
 
 import olFeature from 'ol/Feature'
-import olMap from 'ol/Map'
 import { includes as arrayIncludes } from 'ol/array'
 import { asArray as colorAsArray } from 'ol/color'
 import { ReadOptions, transformGeometryWithOptions } from 'ol/format/Feature'
@@ -35,7 +34,9 @@ import Text from 'ol/style/Text'
 import Stroke from 'ol/style/Stroke'
 import Fill from 'ol/style/Fill'
 import Style from 'ol/style/Style'
-import { createStyleFunction } from '@/composables/draw/draw-utils'
+import { DrawnFeature } from '@/services/draw/drawn-feature'
+import { DrawnFeatureStyle } from '@/stores/draw.store.model'
+import { convertCircleToPolygon } from '@/composables/draw/draw-utils'
 
 const GeometryTypeValues = {
   LineString: 'LineString',
@@ -261,48 +262,64 @@ class FeatureHash extends TextFeature {
     return geometryReader.call(this, text)
   }
 
-  decodeShortProperties(feature: Feature, defaultOrder: number, map: olMap) {
-    const properties = feature.getProperties()
-    for (const key in SHORT_PARAM_) {
-      if (properties[SHORT_PARAM_[key as ShortParamKeys]]) {
-        feature.set(key, properties[SHORT_PARAM_[key as ShortParamKeys]])
-        feature.unset(SHORT_PARAM_[key as ShortParamKeys])
+  getCastShortProperty(feature: Feature, shortParamKey: ShortParamKeys) {
+    const shortParam = SHORT_PARAM_[shortParamKey]
+    return castValue_(shortParamKey, feature.get(shortParam))
+  }
+
+  decodeShortProperties(feature: Feature, defaultOrder: number): DrawnFeature {
+    const geomType = feature.getGeometry()?.getType()
+    const featureType = this.getCastShortProperty(feature, 'isCircle')
+      ? 'drawnCircle'
+      : this.getCastShortProperty(feature, 'isLabel')
+      ? 'drawnLabel'
+      : `drawn${geomType?.replace('String', '')}`
+
+    const drawnFeatureStyle = Object.assign(
+      {
+        showOrientation: false,
+      },
+      Object.fromEntries(
+        STYLE_KEYS_.map(k => [k, this.getCastShortProperty(feature, k)])
+      )
+    ) as unknown as DrawnFeatureStyle
+
+    const name = feature.get(SHORT_PARAM_['name'])
+    const description = feature.get(SHORT_PARAM_['description'])
+
+    // clear short params
+    Object.values(SHORT_PARAM_).forEach(k => feature.unset(k))
+
+    const drawnFeature: DrawnFeature = Object.assign(
+      new DrawnFeature(),
+      feature,
+      {
+        id: Math.floor(Math.random() * Date.now()),
+        label: name,
+        description,
+        editable: true,
+        display_order: defaultOrder,
+        selected: false,
+        map_id: undefined, // ??? TODO : check use of this param
+        saving: false,
+        featureType,
+        featureStyle: drawnFeatureStyle,
       }
-    }
-    const order = feature.get('display_order') || defaultOrder
-    feature.set('order', +order)
+    )
+    convertCircleToPolygon(drawnFeature, featureType)
+    drawnFeature.testMyClass()
+    return drawnFeature
 
-    let opacity = feature.get('opacity')
-    if (opacity === undefined) {
-      opacity = 0
-    }
-
-    feature.set('opacity', +opacity)
-    let stroke = feature.get('stroke')
-    if (isNaN(stroke)) {
-      stroke = 2
-    }
-    feature.set('stroke', +stroke)
-    let size = feature.get('size')
-    if (isNaN(size)) {
-      size = 10
-    }
-    feature.set('size', +size)
-
-    let angle = feature.get('angle')
-    if (isNaN(angle)) {
-      angle = 0
-    }
-    feature.set('angle', +angle)
-    const isLabel = feature.get('isLabel')
-    feature.set('isLabel', isLabel === 'true')
-    const isCircle = feature.get('isCircle')
-    feature.set('isCircle', isCircle === 'true')
-    const showOrientation = feature.get('showOrientation')
-    feature.set('showOrientation', showOrientation === 'true')
-
-    feature.set('__map_id__', undefined)
-    feature.setStyle(createStyleFunction(map))
+    // TODO check defaults:
+    // order: defaultOrder
+    // opacity: 0
+    // stroke: 2
+    // size: 10
+    // angle: 0
+    // isLabel: true ???
+    // isCircle: true ???
+    // showOrientation: true ???
+    // __map_id__: undefined
   }
 
   /**
@@ -858,6 +875,9 @@ function castValue_(key: string, value: string) {
     luxFormatFeatureProperties.STROKE,
     'pointRadius',
     'strokeWidth',
+    'angle',
+    'opacity',
+    'size',
   ]
   const boolProperties = [
     luxFormatFeatureProperties.IS_CIRCLE,
@@ -868,6 +888,7 @@ function castValue_(key: string, value: string) {
     'isRectangle',
     'isLabel',
     'showMeasure',
+    'showOrientation',
   ]
 
   if (arrayIncludes(numProperties, key)) {
@@ -1123,15 +1144,22 @@ const SHORT_PARAM_: { [key in ShortParamKeys]: string } = {
   isCircle: 'u',
 }
 
+const STYLE_KEYS_: ShortParamKeys[] = [
+  'angle',
+  'color',
+  'stroke',
+  'linestyle',
+  'opacity',
+  'showOrientation',
+  'shape',
+  'size',
+]
+
 const featureHash = new FeatureHash({
   encodeStyles: false,
-  properties: function (feature: Feature) {
+  properties: function (feature: DrawnFeature) {
     // Do not encode the __editable__ and __selected__ properties.
-    const properties = feature.getProperties()
-    delete properties['__editable__']
-    delete properties['__selected__']
-    delete properties['__map_id__']
-    delete properties['__saving__'] // ugly hack?
+    const properties: any = feature.toProperties()
     for (const key in properties) {
       if (properties[key] === null || properties[key] === undefined) {
         delete properties[key]

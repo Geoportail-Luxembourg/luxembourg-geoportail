@@ -2,7 +2,7 @@
 import { computed } from 'vue'
 import { useTranslation } from 'i18next-vue'
 
-import { DrawnFeature } from '@/stores/draw.store.model'
+import { DrawnFeature } from '@/services/draw/drawn-feature'
 
 import FeatureEditStyleCircle from './feature-edit-style-circle.vue'
 import FeatureEditStylePoint from './feature-edit-style-point.vue'

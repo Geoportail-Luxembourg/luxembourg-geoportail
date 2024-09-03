@@ -4,8 +4,7 @@ import { SP_KEY_FEATURES, StatePersistorService } from './state-persistor.model'
 import { storageHelper } from './storage/storage.helper'
 import { storageFeaturesMapper } from './state-persistor-features.mapper'
 import { useDrawStore } from '@/stores/draw.store'
-import { DrawnFeature } from '@/stores/draw.store.model'
-import { createDrawnFeature } from '@/composables/draw/draw-utils'
+import { DrawnFeature } from '@/services/draw/drawn-feature'
 
 class StatePersistorFeaturesService implements StatePersistorService {
   bootstrap() {
@@ -41,9 +40,9 @@ class StatePersistorFeaturesService implements StatePersistorService {
       SP_KEY_FEATURES,
       storageFeaturesMapper.urlToFeatures
     )
-    const newFeatures = features
-      .map(f => createDrawnFeature(f))
-      .filter(f => f != undefined) as any as DrawnFeature[]
+    const newFeatures = features.filter(
+      f => f != undefined
+    ) as any as DrawnFeature[]
     drawnFeatures.value = [...drawnFeatures.value, ...newFeatures]
   }
 }

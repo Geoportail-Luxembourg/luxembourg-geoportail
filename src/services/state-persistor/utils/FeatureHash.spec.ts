@@ -1,7 +1,6 @@
 import Point from 'ol/geom/Point.js'
 
 import featureHash from './FeatureHash'
-import useMap from '@/composables/map/map.composable'
 
 describe('read and decode features', () => {
   const url =
@@ -10,7 +9,7 @@ describe('read and decode features', () => {
     expect(true)
     const features = featureHash.readFeatures(url)
     features.forEach((f, i) => {
-      featureHash.decodeShortProperties(f, i, useMap().getOlMap())
+      featureHash.decodeShortProperties(f, i)
     })
     expect(features.length).to.equal(6)
     const circles = features.filter(f => f.get('isCircle'))

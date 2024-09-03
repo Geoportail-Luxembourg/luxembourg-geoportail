@@ -193,8 +193,8 @@ export default function useMap() {
   }
 
   function addDrawLayer() {
-    const { drawnOlFeatures } = storeToRefs(useDrawStore())
-    const features = drawnOlFeatures.value as Feature<Geometry>[] // as Collection<Feature<Geometry>>
+    const { drawnFeatures } = storeToRefs(useDrawStore())
+    const features = drawnFeatures.value as unknown as Feature<Geometry>[] // as Collection<Feature<Geometry>>
     const drawLayer = new VectorLayer({
       source: new VectorSource({
         features,

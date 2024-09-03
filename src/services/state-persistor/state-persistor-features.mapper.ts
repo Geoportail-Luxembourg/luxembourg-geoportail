@@ -1,36 +1,34 @@
-import { Feature } from 'ol'
-import { Geometry } from 'ol/geom'
 import featureHash from './utils/FeatureHash'
-import useMap from '@/composables/map/map.composable'
-import { DrawnFeature } from '@/stores/draw.store.model'
+import { DrawnFeature } from '@/services/draw/drawn-feature'
 
-const drawnFeatureToFeature = function (
-  drawnFeature: DrawnFeature
-): Feature<Geometry> {
-  const olFeature = drawnFeature.olFeature
-  olFeature.set('name', drawnFeature.label)
-  return olFeature
-}
+// const drawnFeatureToFeature = function (
+//   drawnFeature: DrawnFeature
+// ): Feature<Geometry> {
+//   const olFeature = drawnFeature.olFeature
+//   olFeature.set('name', drawnFeature.label)
+//   return olFeature
+// }
 
 class StorageFeaturesMapper {
   featuresToUrl(features: DrawnFeature[] | null): string {
     if (!features) return ''
-    const featureArray = features.map(f => drawnFeatureToFeature(f))
-    const featuresToEncode = featureArray.filter(
-      feature => !feature.get('__map_id__')
-    )
+    // const featureArray = features.map(f => drawnFeatureToFeature(f))
+    const featuresToEncode = features.filter(feature => !feature.map_id)
+    // todo: implement and call encoding
+    // featuresToEncode.forEach(f => featureHash.setShortProperties(f))
+    // for now just transmit name
+    featuresToEncode.forEach(f => f.set('name', f.label))
     return featuresToEncode.length > 0
       ? featureHash.writeFeatures(featuresToEncode)
       : ''
   }
 
-  urlToFeatures(url: string | null): Feature<Geometry>[] {
+  urlToFeatures(url: string | null): DrawnFeature[] {
     const features = url ? featureHash.readFeatures(url) : []
-    const olMap = useMap().getOlMap()
-    features.forEach((f, i) => {
-      featureHash.decodeShortProperties(f, i, olMap)
-    })
-    return features
+    const drawnFeatures = features.map((f, i) =>
+      featureHash.decodeShortProperties(f, i)
+    )
+    return drawnFeatures
   }
 }
 

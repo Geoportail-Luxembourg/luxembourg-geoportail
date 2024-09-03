@@ -4,7 +4,7 @@ import { storeToRefs } from 'pinia'
 
 import useSortable from '@/composables/sortable'
 import { useDrawStore } from '@/stores/draw.store'
-import { DrawnFeature } from '@/stores/draw.store.model'
+import { DrawnFeature } from '@/services/draw/drawn-feature'
 
 import FeatureItem from './feature-item.vue'
 
