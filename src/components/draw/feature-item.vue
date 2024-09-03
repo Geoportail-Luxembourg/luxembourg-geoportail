@@ -26,7 +26,7 @@ const emit = defineEmits([
 ])
 
 function onToggleFeatureSub() {
-  emit('toggleFeatureSub', props.feature.id, !props.isOpen)
+  emit('toggleFeatureSub', props.feature.olFeature.ol_uid, !props.isOpen)
 }
 
 function onToggleEditFeature() {
