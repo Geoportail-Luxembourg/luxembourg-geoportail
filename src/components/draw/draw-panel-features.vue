@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { onMounted, Ref, ref } from 'vue'
+import { onMounted } from 'vue'
 import { storeToRefs } from 'pinia'
 
 import useSortable from '@/composables/sortable'
@@ -11,20 +11,19 @@ import FeatureItem from './feature-item.vue'
 const drawStore = useDrawStore()
 const {
   activeFeatureId,
+  editingFeatureId,
   drawnFeatures: features,
   featureEditionDocked,
 } = storeToRefs(drawStore)
-/* const currentOpenedFeature: Ref<number | undefined> = ref(undefined)*/
-const currentEditingFeature: Ref<number | undefined> = ref(undefined)
 
 function onToggleFeatureSub(featureId: number, isOpen: boolean) {
   // Only one feature details is displayed at once
   activeFeatureId.value = isOpen ? featureId : undefined
-  currentEditingFeature.value = undefined
+  editingFeatureId.value = undefined
 }
 
 function onToggleFeatureEdit(featureId: number, isEditing: boolean) {
-  currentEditingFeature.value = isEditing ? featureId : undefined
+  editingFeatureId.value = isEditing ? featureId : undefined
   // TODO: continue...
 }
 
@@ -57,7 +56,7 @@ onMounted(() => {
     >
       <FeatureItem
         :isDocked="featureEditionDocked"
-        :isEditing="currentEditingFeature === feature.id"
+        :isEditing="editingFeatureId === feature.ol_uid"
         :isOpen="activeFeatureId === feature.ol_uid"
         :feature="<DrawnFeature>feature"
         @toggleFeatureSub="onToggleFeatureSub"

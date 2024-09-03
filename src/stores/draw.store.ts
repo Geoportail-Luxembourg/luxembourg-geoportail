@@ -6,6 +6,7 @@ import { DrawnFeature } from '@/services/draw/drawn-feature'
 
 export const useDrawStore = defineStore('draw', () => {
   const activeFeatureId = ref(undefined)
+  const editingFeatureId = ref(undefined)
   const drawStateActive = ref<DrawStateActive>(undefined)
   // no immutable changes on drawnFeatures in functions bellow,
   // but keep same Collection for sync with ol source (map)
@@ -23,6 +24,7 @@ export const useDrawStore = defineStore('draw', () => {
   function addDrawnFeature(feature: DrawnFeature) {
     drawnFeatures.value = [...drawnFeatures.value, feature]
     activeFeatureId.value = feature.ol_uid
+    editingFeatureId.value = feature.ol_uid
   }
 
   function setDrawnFeatures(features: DrawnFeature[]) {
@@ -37,6 +39,7 @@ export const useDrawStore = defineStore('draw', () => {
 
   return {
     activeFeatureId,
+    editingFeatureId,
     drawStateActive,
     drawnFeatures,
     featureEditionDocked,
