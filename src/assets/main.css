@@ -387,6 +387,14 @@
     @apply bg-white border border-black p-1;
   }
 
+  .lux-tab {
+    @apply text-secondary text-2xl pt-2 pb-1 px-3 mr-2 hover:text-white hover:bg-primary cursor-pointer text-center uppercase bg-tertiary;
+  }
+
+  .lux-tab.active {
+    @apply text-white bg-primary cursor-default;
+  }
+
   .form-control {
     border: 1px solid var(--color-gray);
     box-shadow: inset 0 1px 1px rgba(0, 0, 0, 0.075);

@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { Ref, ref } from 'vue'
+import { inject, provide, Ref, ref } from 'vue'
 import { useTranslation } from 'i18next-vue'
 
 import { DrawnFeature } from '@/services/draw/drawn-feature'
@@ -10,23 +10,27 @@ import FeatureEditInfo from './feature-edit-info.vue'
 import FeatureEditStyle from './feature-edit-style.vue'
 import FeatureConcentricCircle from './feature-concentric-circle.vue'
 import FeatureMeasurements from './feature-measurements.vue'
+import FeatureEditSymbol from './feature-edit-symbol.vue'
 
-const props = defineProps<{
+defineProps<{
   isDocked: boolean
   isEditingFeature: boolean
-  feature: DrawnFeature
 }>()
 const emit = defineEmits(['toggleEditFeature', 'toggleDock', 'clickDelete'])
 const { t } = useTranslation()
+const feature: DrawnFeature | undefined = inject('feature')
 
 const editComponents = {
   FeatureConcentricCircle,
   FeatureEditInfo,
   FeatureEditStyle,
   FeatureConfirmDelete,
+  FeatureEditSymbol,
 }
 const currentEditCompKey: Ref<keyof typeof editComponents | undefined> =
   ref(undefined)
+
+provide('currentEditCompKey', currentEditCompKey)
 
 function onClickCancel() {
   currentEditCompKey.value = undefined
@@ -59,7 +63,7 @@ function onClickSearch() {
       @click="() => emit('toggleDock')"
     ></i>
 
-    <h6 v-if="isDocked">{{ feature.label }}</h6>
+    <h6 v-if="isDocked">{{ feature?.label }}</h6>
 
     <!-- Spacer -->
     <div class="min-h-3"></div>
@@ -76,7 +80,7 @@ function onClickSearch() {
         <button
           data-cy="featItemToggleEdit"
           class="lux-btn-primary"
-          @click="emit('toggleEditFeature', props.feature)"
+          @click="emit('toggleEditFeature', feature)"
         >
           {{ isEditingFeature ? t('Terminer édition') : t("Editer l'objet") }}
         </button>

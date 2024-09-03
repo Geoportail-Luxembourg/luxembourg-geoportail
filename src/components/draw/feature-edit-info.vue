@@ -1,14 +1,11 @@
 <script setup lang="ts">
-import { ref } from 'vue'
+import { inject } from 'vue'
 import { useTranslation } from 'i18next-vue'
 
 import { DrawnFeature } from '@/services/draw/drawn-feature'
 
 const { t } = useTranslation()
-const props = defineProps<{
-  feature: DrawnFeature
-}>()
-const feat = ref(props.feature)
+const feature: DrawnFeature | undefined = inject('feature')
 </script>
 
 <template>
@@ -16,12 +13,14 @@ const feat = ref(props.feature)
   <input
     type="text"
     class="form-control block mt-2 mb-4"
-    v-model="feat.label"
+    v-if="feature"
+    v-model="feature.label"
   />
   <textarea
     rows="3"
     class="form-control block w-full"
-    v-model="feat.description"
+    v-if="feature"
+    v-model="feature.description"
   ></textarea>
 
   <slot name="footer"></slot>

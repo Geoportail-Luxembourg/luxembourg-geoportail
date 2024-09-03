@@ -1,4 +1,5 @@
 <script setup lang="ts">
+import { inject } from 'vue'
 import { useTranslation } from 'i18next-vue'
 
 import { type MenuPopupItem as MenuPopupItemType } from '@/components/common/menu-popup/menu-popup.d'
@@ -6,10 +7,8 @@ import MenuPopup from '@/components/common/menu-popup/menu-popup.vue'
 import MenuPopupItem from '@/components/common/menu-popup/menu-popup-item.vue'
 import { DrawnFeature } from '@/services/draw/drawn-feature'
 
-const props = defineProps<{
-  feature: DrawnFeature
-}>()
 const { t } = useTranslation()
+const feature: DrawnFeature | undefined = inject('feature')
 
 let drawingMenuOptions = <MenuPopupItemType[]>[
   {
@@ -26,7 +25,7 @@ let drawingMenuOptions = <MenuPopupItemType[]>[
   },
 ]
 
-if (props.feature.featureType === 'drawnLine') {
+if (feature?.featureType === 'drawnLine') {
   drawingMenuOptions = [
     ...drawingMenuOptions,
     ...[
@@ -42,7 +41,7 @@ if (props.feature.featureType === 'drawnLine') {
   ]
 }
 
-if (props.feature.featureType === 'drawnCircle') {
+if (feature?.featureType === 'drawnCircle') {
   drawingMenuOptions = [
     ...drawingMenuOptions,
     ...[

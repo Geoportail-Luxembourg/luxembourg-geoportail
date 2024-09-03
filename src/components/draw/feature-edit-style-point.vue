@@ -4,4 +4,5 @@
   <slot name="color"></slot>
   <slot name="symbole"></slot>
   <slot name="size"></slot>
+  <slot name="angle"></slot>
 </template>

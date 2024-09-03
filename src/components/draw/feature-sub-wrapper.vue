@@ -1,17 +1,17 @@
 <script setup lang="ts">
-import { computed } from 'vue'
+import { inject } from 'vue'
 
 import MapPopup from '@/components/map/map-popup.vue'
 import useDrawnFeatures from '@/composables/draw/drawn-features.composable'
 import { DrawnFeature } from '@/services/draw/drawn-feature'
 
-const props = defineProps<{
+defineProps<{
   isDocked: boolean
-  feature: DrawnFeature
 }>()
 const { getFeatCoordinates } = useDrawnFeatures()
 const emit = defineEmits(['closePopup'])
-const popupAnchor = computed(() => getFeatCoordinates(props.feature))
+const feature: DrawnFeature | undefined = inject('feature')
+const popupAnchor = feature ? getFeatCoordinates(feature) : undefined
 
 function onClosePopup() {
   emit('closePopup')

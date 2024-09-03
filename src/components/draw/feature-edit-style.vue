@@ -1,19 +1,19 @@
 <script setup lang="ts">
-import { computed } from 'vue'
+import { computed, inject } from 'vue'
 import { useTranslation } from 'i18next-vue'
 
 import { DrawnFeature } from '@/services/draw/drawn-feature'
+import RangeInput from '@/components/common/range-input/range-input.vue'
 
 import FeatureEditStyleCircle from './feature-edit-style-circle.vue'
 import FeatureEditStylePoint from './feature-edit-style-point.vue'
 import FeatureEditStyleLine from './feature-edit-style-line.vue'
 import FeatureEditStylePolygon from './feature-edit-style-polygon.vue'
 import FeatureEditStyleLabel from './feature-edit-style-label.vue'
+import FeatureEditStyleSymbole from './feature-edit-style-symbole.vue'
 
 const { t } = useTranslation()
-const props = defineProps<{
-  feature: DrawnFeature
-}>()
+const feature: DrawnFeature | undefined = inject('feature')
 
 const styleComponents = {
   FeatureEditStyleCircle,
@@ -24,10 +24,16 @@ const styleComponents = {
 }
 
 const currentStyleComponent = computed(() =>
-  props.feature.featureType.replace('drawn', 'FeatureEditStyle')
+  feature?.featureType.replace('drawn', 'FeatureEditStyle')
 )
 
-function onClickChangeOrientation() {}
+function onClickChangeOrientation() {
+  alert('onClickChangeOrientation TODO') // TODO:
+}
+
+function onClickChangeLineStyle(style: string) {
+  alert('onClickChangeOrientation TODO' + style) // TODO:
+}
 </script>
 
 <template>
@@ -43,7 +49,12 @@ function onClickChangeOrientation() {}
           {{ t('Color') }}
         </label>
         <div class="md:w-2/3">
-          <input class="cursor-pointer" type="color" value="" />
+          <input
+            class="cursor-pointer"
+            type="color"
+            value=""
+            data-cy="featStyleColor"
+          />
         </div>
       </div>
     </template>
@@ -53,16 +64,7 @@ function onClickChangeOrientation() {}
         <label class="font-bold block" for="inline-full-name">
           {{ t('Size') }}
         </label>
-        <div class="md:w-2/3">
-          <input
-            type="range"
-            min="0"
-            max="10"
-            step="1"
-            class="m-2.5 w-16 h-[5px] rounded-lg appearance-none cursor-pointer"
-          />
-          <input class="w-[50px]" type="number" min="0" max="40" step="1" />
-        </div>
+        <RangeInput class="md:w-2/3" :max="900" data-cy="featStyleSize" />
       </div>
     </template>
 
@@ -71,39 +73,45 @@ function onClickChangeOrientation() {}
         <label class="font-bold block" for="inline-full-name">
           {{ t('Angle') }}
         </label>
-        <div class="md:w-2/3">
-          <input
-            type="range"
-            min="0"
-            max="10"
-            step="1"
-            class="m-2.5 w-16 h-[5px] rounded-lg appearance-none cursor-pointer"
-          />
-          <input class="w-[50px]" type="number" min="0" max="40" step="1" />
-        </div>
+        <RangeInput
+          class="md:w-2/3"
+          :min="-180"
+          :max="180"
+          data-cy="featStyleAngle"
+        />
       </div>
     </template>
 
     <!-- Symbole for Point -->
     <template v-slot:symbole>
-      <div class="flex gap-1 items-center mt-1 mb-2">
-        <label class="font-bold block" for="inline-full-name">
-          {{ t('Style') }}
-        </label>
-        <div>
-          <span>label style todo</span>
-        </div>
-      </div>
+      <FeatureEditStyleSymbole :feature="feature" data-cy="featStyleSymbol" />
     </template>
 
     <!-- Style for line -->
     <template v-slot:style>
-      <div class="flex gap-1 items-center mt-1 mb-2">
+      <div
+        class="flex gap-1 items-center mt-1 mb-2"
+        data-cy="featStyleLineStyle"
+      >
         <label class="font-bold block" for="inline-full-name">
           {{ t('Style') }}
         </label>
-        <div>
-          <span>label style todo</span>
+        <div class="flex gap-1">
+          <button class="lux-btn-grey" @click="onClickChangeLineStyle('plain')">
+            {{ t('Plain') }}
+          </button>
+          <button
+            class="lux-btn-grey"
+            @click="onClickChangeLineStyle('dashed')"
+          >
+            {{ t('Dashed') }}
+          </button>
+          <button
+            class="lux-btn-grey"
+            @click="onClickChangeLineStyle('dotted')"
+          >
+            {{ t('Dotted') }}
+          </button>
         </div>
       </div>
     </template>
@@ -113,16 +121,7 @@ function onClickChangeOrientation() {}
         <label class="font-bold block" for="inline-full-name">
           {{ t('Stroke width') }}
         </label>
-        <div>
-          <input
-            type="range"
-            min="0"
-            max="10"
-            step="1"
-            class="m-2.5 w-16 h-[5px] rounded-lg appearance-none cursor-pointer"
-          />
-          <input type="number" min="0" max="40" step="1" />
-        </div>
+        <RangeInput data-cy="featStyleLineWidth" />
       </div>
     </template>
 
@@ -131,27 +130,16 @@ function onClickChangeOrientation() {}
         <label class="font-bold block" for="inline-full-name">
           {{ t('Transparence') }}
         </label>
-        <div>
-          <input
-            type="range"
-            min="0"
-            max="10"
-            step="1"
-            class="m-2.5 w-16 h-[5px] rounded-lg appearance-none cursor-pointer"
-          />
-          <input type="number" min="0" max="40" step="1" />
-        </div>
+        <RangeInput :max="100" />
       </div>
     </template>
 
     <template v-slot:orientation>
-      <div class="flex gap-1 items-center mt-1 mb-2">
-        <label class="font-bold block" for="inline-full-name">
+      <div class="flex gap-2 items-center mt-1 mb-2">
+        <label class="font-bold block" for="showOrientation">
           {{ t('Show orientation') }}
         </label>
-        <div>
-          <input type="checkbox" />
-        </div>
+        <input type="checkbox" id="showOrientation" />
       </div>
 
       <div class="flex gap-1 items-center mt-1 mb-2">
