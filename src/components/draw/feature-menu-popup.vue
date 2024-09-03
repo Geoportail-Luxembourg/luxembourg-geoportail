@@ -26,7 +26,7 @@ let drawingMenuOptions = <MenuPopupItemType[]>[
   },
 ]
 
-if (props.feature.geom === 'LineString') {
+if (props.feature.olFeature.geom === 'LineString') {
   drawingMenuOptions = [
     ...drawingMenuOptions,
     ...[
@@ -42,7 +42,7 @@ if (props.feature.geom === 'LineString') {
   ]
 }
 
-if (props.feature.geom === 'Circle') {
+if (props.feature.olFeature.geom === 'Circle') {
   drawingMenuOptions = [
     ...drawingMenuOptions,
     ...[
