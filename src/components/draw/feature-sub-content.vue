@@ -2,7 +2,7 @@
 import { Ref, ref } from 'vue'
 import { useTranslation } from 'i18next-vue'
 
-import { DrawFeature } from '@/stores/draw.store.model'
+import { DrawnFeature } from '@/stores/draw.store.model'
 
 import FeatureMenuPopup from './feature-menu-popup.vue'
 import FeatureConfirmDelete from './feature-confirm-delete.vue'
@@ -14,7 +14,7 @@ import FeatureMeasurements from './feature-measurements.vue'
 const props = defineProps<{
   isDocked: boolean
   isEditingFeature: boolean
-  feature: DrawFeature
+  feature: DrawnFeature
 }>()
 const emit = defineEmits(['toggleEditFeature', 'toggleDock', 'clickDelete'])
 const { t } = useTranslation()

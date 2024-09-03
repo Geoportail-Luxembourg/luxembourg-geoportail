@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { DrawFeature } from '@/stores/draw.store.model'
+import { DrawnFeature } from '@/stores/draw.store.model'
 
 import FeatureSubContent from './feature-sub-content.vue'
 import FeatureSubWrapper from './feature-sub-wrapper.vue'
@@ -9,7 +9,7 @@ const props = withDefaults(
     isDocked?: boolean
     isEditing?: boolean
     isOpen?: boolean
-    feature: DrawFeature
+    feature: DrawnFeature
   }>(),
   {
     isDocked: false,

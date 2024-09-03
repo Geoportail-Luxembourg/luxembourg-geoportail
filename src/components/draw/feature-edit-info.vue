@@ -2,11 +2,11 @@
 import { ref } from 'vue'
 import { useTranslation } from 'i18next-vue'
 
-import { DrawFeature } from '@/stores/draw.store.model'
+import { DrawnFeature } from '@/stores/draw.store.model'
 
 const { t } = useTranslation()
 const props = defineProps<{
-  feature: DrawFeature
+  feature: DrawnFeature
 }>()
 const feat = ref(props.feature)
 </script>

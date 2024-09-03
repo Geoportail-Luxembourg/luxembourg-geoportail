@@ -4,7 +4,7 @@
 import Feature from 'ol/Feature'
 import Map from 'ol/Map'
 import { Coordinate } from 'ol/coordinate'
-import luxFormatFeatureProperties from './FeatureProperties'
+import luxFormatFeatureProperties from './LuxFeatureProperties'
 import * as olArray from 'ol/array'
 import * as olColor from 'ol/color'
 import * as olExtent from 'ol/extent'

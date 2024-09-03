@@ -2,13 +2,13 @@
 import { computed } from 'vue'
 import { useTranslation } from 'i18next-vue'
 
-import { DrawFeature } from '@/stores/draw.store.model'
+import { DrawnFeature } from '@/stores/draw.store.model'
 import FeatureMeasurementsProfile from './feature-measurements-profile.vue'
 
 const { t } = useTranslation()
 
 const props = defineProps<{
-  feature: DrawFeature
+  feature: DrawnFeature
   isEditingFeature?: boolean
 }>()
 const featureType = props.feature.featureType

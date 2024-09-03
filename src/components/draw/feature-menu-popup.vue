@@ -4,10 +4,10 @@ import { useTranslation } from 'i18next-vue'
 import { type MenuPopupItem as MenuPopupItemType } from '@/components/common/menu-popup/menu-popup.d'
 import MenuPopup from '@/components/common/menu-popup/menu-popup.vue'
 import MenuPopupItem from '@/components/common/menu-popup/menu-popup-item.vue'
-import { DrawFeature } from '@/stores/draw.store.model'
+import { DrawnFeature } from '@/stores/draw.store.model'
 
 const props = defineProps<{
-  feature: DrawFeature
+  feature: DrawnFeature
 }>()
 const { t } = useTranslation()
 
