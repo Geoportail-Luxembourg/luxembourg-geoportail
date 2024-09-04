@@ -307,7 +307,6 @@ class FeatureHash extends TextFeature {
       }
     )
     convertCircleToPolygon(drawnFeature, featureType)
-    drawnFeature.testMyClass()
     return drawnFeature
 
     // TODO check defaults:
