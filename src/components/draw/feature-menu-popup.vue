@@ -26,7 +26,7 @@ let drawingMenuOptions = <MenuPopupItemType[]>[
   },
 ]
 
-if (props.feature.getGeometry()?.getType() === 'LineString') {
+if (props.feature.featureType === 'drawnLine') {
   drawingMenuOptions = [
     ...drawingMenuOptions,
     ...[
@@ -42,7 +42,7 @@ if (props.feature.getGeometry()?.getType() === 'LineString') {
   ]
 }
 
-if (props.feature.getGeometry()?.getType() === 'Circle') {
+if (props.feature.featureType === 'drawnCircle') {
   drawingMenuOptions = [
     ...drawingMenuOptions,
     ...[

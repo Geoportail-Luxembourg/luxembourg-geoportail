@@ -19,7 +19,10 @@ describe('Background selector', () => {
 
   it('has the default background layer on the map', () => {
     cy.window().then(window => {
-      const layers = (<AUTWindowOlMap>window).olMap.getLayers().getArray()
+      const layers = (<AUTWindowOlMap>window).olMap
+        .getLayers()
+        .getArray()
+        .filter((l: any) => l.get('featureID') != 'featureLayer')
       expect(layers[0].get('id')).to.eq(556)
     })
 
@@ -46,7 +49,10 @@ describe('Background selector', () => {
         .should('be.visible')
 
       cy.window().then(window => {
-        const layers = (<AUTWindowOlMap>window).olMap.getLayers().getArray()
+        const layers = (<AUTWindowOlMap>window).olMap
+          .getLayers()
+          .getArray()
+          .filter((l: any) => l.get('featureID') != 'featureLayer')
         expect(layers[0].get('id')).to.eq(502)
       })
     })
