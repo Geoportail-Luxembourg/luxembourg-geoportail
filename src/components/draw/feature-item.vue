@@ -1,4 +1,5 @@
 <script setup lang="ts">
+import { getUid } from 'ol/util'
 import { DrawnFeature } from '@/services/draw/drawn-feature'
 
 import FeatureSubContent from './feature-sub-content.vue'
@@ -26,11 +27,11 @@ const emit = defineEmits([
 ])
 
 function onToggleFeatureSub() {
-  emit('toggleFeatureSub', props.feature.ol_uid, !props.isOpen)
+  emit('toggleFeatureSub', getUid(props.feature), !props.isOpen)
 }
 
 function onToggleEditFeature() {
-  emit('toggleFeatureEdit', props.feature.ol_uid, !props.isEditing)
+  emit('toggleFeatureEdit', getUid(props.feature), !props.isEditing)
 
   alert('TODO: Toggle edition mode')
 }

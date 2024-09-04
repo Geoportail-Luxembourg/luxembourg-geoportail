@@ -4,6 +4,7 @@ import { storeToRefs } from 'pinia'
 import useMap from '@/composables/map/map.composable'
 import { listen } from 'ol/events'
 import * as olArray from 'ol/array.js'
+import { getUid } from 'ol/util'
 import { useDrawStore } from '@/stores/draw.store'
 import { useAppStore } from '@/stores/app.store'
 
@@ -16,13 +17,13 @@ export default function useDrawSelect() {
 
   watch(activeFeatureId, (newId, oldId) => {
     drawnFeatures.value
-      .filter(f => f.ol_uid == oldId)
+      .filter(f => getUid(f) == oldId)
       .forEach(oldFeature => {
         oldFeature.selected = false
         oldFeature.changed()
       })
     drawnFeatures.value
-      .filter(f => f.ol_uid == newId)
+      .filter(f => getUid(f) == newId)
       .forEach(newFeature => {
         newFeature.selected = true
         newFeature.changed()
@@ -38,7 +39,7 @@ export default function useDrawSelect() {
         const featureMatch = olArray.includes(drawnFeatures.value, feature)
         if (featureMatch) {
           appStore.toggleMyMapsOpen(true)
-          activeFeatureId.value = (feature as any).ol_uid
+          activeFeatureId.value = getUid(feature)
 
           return
         }

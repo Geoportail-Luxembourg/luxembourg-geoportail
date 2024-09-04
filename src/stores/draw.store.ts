@@ -1,12 +1,13 @@
 import { defineStore } from 'pinia'
-import { ref } from 'vue'
+import { ref, Ref } from 'vue'
 
+import { getUid } from 'ol/util'
 import { DrawStateActive } from './draw.store.model'
 import { DrawnFeature } from '@/services/draw/drawn-feature'
 
 export const useDrawStore = defineStore('draw', () => {
-  const activeFeatureId = ref(undefined)
-  const editingFeatureId = ref(undefined)
+  const activeFeatureId: Ref<String | undefined> = ref(undefined)
+  const editingFeatureId: Ref<String | undefined> = ref(undefined)
   const drawStateActive = ref<DrawStateActive>(undefined)
   // no immutable changes on drawnFeatures in functions bellow,
   // but keep same Collection for sync with ol source (map)
@@ -23,8 +24,8 @@ export const useDrawStore = defineStore('draw', () => {
 
   function addDrawnFeature(feature: DrawnFeature) {
     drawnFeatures.value = [...drawnFeatures.value, feature]
-    activeFeatureId.value = feature.ol_uid
-    editingFeatureId.value = feature.ol_uid
+    activeFeatureId.value = getUid(feature)
+    editingFeatureId.value = getUid(feature)
   }
 
   function setDrawnFeatures(features: DrawnFeature[]) {
