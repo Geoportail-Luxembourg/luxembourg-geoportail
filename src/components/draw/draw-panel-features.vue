@@ -28,21 +28,6 @@ function onToggleFeatureEdit(featureId: String, isEditing: boolean) {
   // TODO: continue...
 }
 
-// opening the last item is directly done in addDrawnFeature in draw store via activeFeatureId
-/* watch(
- *   features,
- *   (newFeatures, oldFeatures) => {
- *     // Last added feature is unfold by default
- *     if (oldFeatures === undefined || newFeatures.length > oldFeatures.length) {
- *       const currentFeature =
- *         newFeatures[oldFeatures === undefined ? 0 : newFeatures.length - 1]
- *       // currentOpenedFeature.value = currentEditingFeature.value =
- *       currentFeature.id
- *     }
- *   },
- *   { immediate: true }
- * )
- * */
 onMounted(() => {
   useSortable(<HTMLElement>document.querySelector('.sortable-features'))
 })
