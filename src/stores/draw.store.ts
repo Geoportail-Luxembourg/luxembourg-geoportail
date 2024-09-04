@@ -1,16 +1,14 @@
 import { defineStore } from 'pinia'
-import { ShallowRef, ref } from 'vue'
+import { ref } from 'vue'
 
-import { DrawFeature, DrawStateActive } from './draw.store.model'
+import { DrawStateActive } from './draw.store.model'
+import { DrawnFeature } from '@/services/draw/drawn-feature'
 
 export const useDrawStore = defineStore('draw', () => {
   const drawStateActive = ref<DrawStateActive>(undefined)
-  const drawFeatures: ShallowRef<DrawFeature[]> = ref([
-    // 'Point',
-    // 'Polygon',
-    // 'LineString',
-    // 'Circle',
-  ]) // TODO improve typing in an other PR
+  // no immutable changes on drawnFeatures in functions bellow,
+  // but keep same Collection for sync with ol source (map)
+  const drawnFeatures = ref<DrawnFeature[]>([])
   const featureEditionDocked = ref(false)
 
   function toggleActiveState(newState: DrawStateActive) {
@@ -21,17 +19,27 @@ export const useDrawStore = defineStore('draw', () => {
     }
   }
 
+  function addDrawnFeature(feature: DrawnFeature) {
+    drawnFeatures.value = [...drawnFeatures.value, feature]
+  }
+
+  function setDrawnFeatures(features: DrawnFeature[]) {
+    drawnFeatures.value = features
+  }
+
   function removeFeature(featureId: number) {
-    drawFeatures.value = drawFeatures.value.filter(
+    drawnFeatures.value = drawnFeatures.value.filter(
       feature => feature.id !== featureId
     )
   }
 
   return {
-    drawFeatures,
     drawStateActive,
+    drawnFeatures,
     featureEditionDocked,
     removeFeature,
     toggleActiveState,
+    addDrawnFeature,
+    setDrawnFeatures,
   }
 })

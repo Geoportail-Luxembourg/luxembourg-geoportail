@@ -2,16 +2,16 @@
 import { computed } from 'vue'
 import { useTranslation } from 'i18next-vue'
 
-import { DrawFeature } from '@/stores/draw.store.model'
+import { DrawnFeature } from '@/services/draw/drawn-feature'
 import FeatureMeasurementsProfile from './feature-measurements-profile.vue'
 
 const { t } = useTranslation()
 
 const props = defineProps<{
-  feature: DrawFeature
+  feature: DrawnFeature
   isEditingFeature?: boolean
 }>()
-const geomType = props.feature.geom
+const featureType = props.feature.featureType
 const featLength = computed(() => props.feature.id + ' [TODO featLenght]') // TODO update condition
 const featArea = computed(() => props.feature.id + ' [TODO featArea]') // TODO
 const featRadius = computed(() => props.feature.id + ' [TODO featRayon]') // TODO
@@ -27,20 +27,23 @@ function onClickValidateRadius() {
     <!-- Feature length, for LineString, Circle, Polygon -->
     <div
       data-cy="featItemLength"
-      v-if="['LineString', 'Polygon', 'Circle'].includes(geomType)"
+      v-if="['drawnLine', 'drawnCircle', 'drawnPolygon'].includes(featureType)"
     >
       <span>{{ t('Length:') }}</span> <span>{{ featLength }}</span>
     </div>
 
     <!-- Feature area, for Circle, Polygon -->
-    <div data-cy="featItemArea" v-if="['Polygon', 'Circle'].includes(geomType)">
+    <div
+      data-cy="featItemArea"
+      v-if="['drawnPolygon', 'drawnCircle'].includes(featureType)"
+    >
       <span>{{ t('Area:') }}</span> <span>{{ featArea }}</span>
     </div>
 
     <!-- Feature radius, for Circle -->
     <div
       data-cy="featItemRadius"
-      v-if="geomType === 'Circle'"
+      v-if="featureType === 'drawnCircle'"
       class="flex items-center"
     >
       <span>{{ t('Rayon:') }}</span>
@@ -55,7 +58,7 @@ function onClickValidateRadius() {
     </div>
 
     <!-- Feature elevation, for Point -->
-    <div data-cy="featItemElevation" v-if="geomType === 'Point'">
+    <div data-cy="featItemElevation" v-if="featureType === 'drawnPoint'">
       <span>{{
         t('Elevation: \{\{ ctrl.featureElevation \}\}', {
           'ctrl.featureElevation': featElevation,
@@ -65,7 +68,7 @@ function onClickValidateRadius() {
 
     <!-- Feature elevation profile LineString -->
     <FeatureMeasurementsProfile
-      v-if="geomType === 'LineString'"
+      v-if="featureType === 'drawnLine'"
       :feature="feature"
     />
   </div>

@@ -66,18 +66,18 @@ onUnmounted(() => window.removeEventListener('resize', map.resize))
         <!-- Layer panel -->
         <div
           v-if="layersOpen && !styleEditorOpen"
-          class="w-full sm:w-80 bg-secondary z-10"
+          class="w-full md:w-80 bg-secondary z-10"
         >
           <layer-panel />
         </div>
 
         <!-- Style editor -->
-        <div v-if="styleEditorOpen" class="w-full sm:w-80 bg-secondary z-10">
+        <div v-if="styleEditorOpen" class="w-full md:w-80 bg-secondary z-10">
           <style-panel />
         </div>
 
         <!-- MyMaps panel -->
-        <div v-if="myMapsOpen" class="w-full sm:w-80 bg-secondary z-10">
+        <div v-if="myMapsOpen" class="w-full md:w-80 bg-secondary z-10">
           <my-maps-panel />
         </div>
 

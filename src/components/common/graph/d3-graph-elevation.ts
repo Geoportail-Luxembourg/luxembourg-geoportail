@@ -1,3 +1,6 @@
+// !!! This is a file ported from v3 and not completely refactored, we accept some linter warnings //
+/* eslint-disable @typescript-eslint/no-explicit-any */
+
 import 'd3-transition'
 import { bisector, extent } from 'd3-array'
 import { axisBottom, axisLeft } from 'd3-axis'

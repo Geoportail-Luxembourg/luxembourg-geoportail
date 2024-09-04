@@ -11,7 +11,7 @@ import DrawPanelFeatures from './draw-panel-features.vue'
 const { t } = useTranslation()
 
 const drawStore = useDrawStore()
-const { drawFeatures: features } = storeToRefs(drawStore)
+const { drawnFeatures: features } = storeToRefs(drawStore)
 const drawingMenuOptions = [
   {
     label: 'Copier dans ma carte',

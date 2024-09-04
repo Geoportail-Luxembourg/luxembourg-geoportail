@@ -61,15 +61,22 @@ describe('Catalogue', () => {
       cy.get('[data-cy="catalog"]')
         .find('[data-cy="parentLayerLabel-248"]')
         .click()
+      // get layer stack and filter featureLayer
       cy.window().then(window => {
-        const layers = (<AUTWindowOlMap>window).olMap.getLayers().getArray()
+        const layers = (<AUTWindowOlMap>window).olMap
+          .getLayers()
+          .getArray()
+          .filter((l: any) => l.get('featureID') != 'featureLayer')
         expect(layers[0].get('id')).to.eq(556)
       })
       cy.get('[data-cy="catalog"]').find('[data-cy="layerLabel-359"]').click()
       cy.get('[data-cy="catalog"]').find('[data-cy="layerLabel-353"]').click()
       // BG deactivated due to layer exclusion
       cy.window().then(window => {
-        const layers = (<AUTWindowOlMap>window).olMap.getLayers().getArray()
+        const layers = (<AUTWindowOlMap>window).olMap
+          .getLayers()
+          .getArray()
+          .filter((l: any) => l.get('featureID') != 'featureLayer')
         expect(layers[0].get('id')).to.eq(359)
         expect(layers[1].get('id')).to.eq(353)
       })

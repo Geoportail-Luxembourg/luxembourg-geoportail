@@ -6,17 +6,20 @@ import useOpenLayers from './ol.composable'
 
 import { useMapStore } from '@/stores/map.store'
 import { useStyleStore } from '@/stores/style.store'
+import { useDrawStore } from '@/stores/draw.store'
 import { StyleSpecification } from '@/composables/mvt-styles/mvt-styles.model'
 import useMvtStyles from '@/composables/mvt-styles/mvt-styles.composable'
 import useMap from '@/composables/map/map.composable'
 import useOffline from '@/composables/offline/offline.composable'
 import { MutationTypeValue } from './map.model'
+import { DrawnFeature } from '@/services/draw/drawn-feature'
 
 export class OlSynchronizer {
   timeoutID: NodeJS.Timeout
   constructor(map: OlMap) {
     const mapStore = useMapStore()
     const styleStore = useStyleStore()
+    const drawStore = useDrawStore()
     const mapService = useMap()
     const styleService = useMvtStyles()
     const openLayers = useOpenLayers()
@@ -159,6 +162,24 @@ export class OlSynchronizer {
               openLayers.setBgLayer(map, mapStore?.bgLayer, newVectorSources)
             }
           }
+        }
+      }
+    )
+
+    watch(
+      () => drawStore.drawnFeatures,
+      (newFeatures, oldFeatures) => {
+        const addedFeatures = newFeatures.filter(
+          f => !oldFeatures.some(fo => fo.id == f.id)
+        )
+        if (addedFeatures.length > 0) {
+          openLayers.addFeatures(addedFeatures as DrawnFeature[], map)
+        }
+        const removedFeatures = oldFeatures.filter(
+          f => !newFeatures.some(fnew => fnew.id == f.id)
+        )
+        if (removedFeatures.length > 0) {
+          openLayers.removeFeatures(removedFeatures as DrawnFeature[], map)
         }
       }
     )

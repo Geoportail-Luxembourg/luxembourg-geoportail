@@ -3,15 +3,15 @@ import { computed } from 'vue'
 
 import MapPopup from '@/components/map/map-popup.vue'
 import useDrawnFeatures from '@/composables/draw/drawn-features.composable'
-import { DrawFeature } from '@/stores/draw.store.model'
+import { DrawnFeature } from '@/services/draw/drawn-feature'
 
 const props = defineProps<{
   isDocked: boolean
-  feature: DrawFeature
+  feature: DrawnFeature
 }>()
 const { getFeatCoordinates } = useDrawnFeatures()
 const emit = defineEmits(['closePopup'])
-const popupAnchor = computed(() => getFeatCoordinates(props.feature.olFeature))
+const popupAnchor = computed(() => getFeatCoordinates(props.feature))
 
 function onClosePopup() {
   emit('closePopup')

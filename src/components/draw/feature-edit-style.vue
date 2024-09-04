@@ -2,7 +2,7 @@
 import { computed } from 'vue'
 import { useTranslation } from 'i18next-vue'
 
-import { DrawFeature } from '@/stores/draw.store.model'
+import { DrawnFeature } from '@/services/draw/drawn-feature'
 
 import FeatureEditStyleCircle from './feature-edit-style-circle.vue'
 import FeatureEditStylePoint from './feature-edit-style-point.vue'
@@ -11,7 +11,7 @@ import FeatureEditStylePolygon from './feature-edit-style-polygon.vue'
 
 const { t } = useTranslation()
 const props = defineProps<{
-  feature: DrawFeature
+  feature: DrawnFeature
 }>()
 
 const styleComponents = {
@@ -22,20 +22,20 @@ const styleComponents = {
 }
 
 const currentStyleComponent = computed(() => {
-  const geomType = props.feature.geom
-  if (geomType === 'Point') {
+  const featureType = props.feature.featureType
+  if (featureType === 'drawnPoint') {
     return 'FeatureEditStylePoint'
   }
 
-  if (geomType === 'Circle') {
+  if (featureType === 'drawnCircle') {
     return 'FeatureEditStyleCircle'
   }
 
-  if (geomType === 'LineString') {
+  if (featureType === 'drawnLine') {
     return 'FeatureEditStyleLine'
   }
 
-  if (geomType === 'Polygon') {
+  if (featureType === 'drawnPolygon') {
     return 'FeatureEditStylePolygon'
   }
 

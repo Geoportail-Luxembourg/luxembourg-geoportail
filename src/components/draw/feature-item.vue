@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { DrawFeature } from '@/stores/draw.store.model'
+import { DrawnFeature } from '@/services/draw/drawn-feature'
 
 import FeatureSubContent from './feature-sub-content.vue'
 import FeatureSubWrapper from './feature-sub-wrapper.vue'
@@ -9,7 +9,7 @@ const props = withDefaults(
     isDocked?: boolean
     isEditing?: boolean
     isOpen?: boolean
-    feature: DrawFeature
+    feature: DrawnFeature
   }>(),
   {
     isDocked: false,
@@ -54,12 +54,17 @@ function onClickDelete() {
       class="sortable-handle drag-handle fa fa-reorder ui-sortable-handle cursor-move"
     ></span>
     <!-- Type of feat. icon -->
+    <!-- TODO: create icons for label and circle -->
     <span
       class="lux-icon"
       :class="{
-        point: feature.label === 'Point',
-        line: feature.label === 'LineString',
-        polygon: feature.label === 'Polygon' || feature.label === 'Circle',
+        point:
+          feature.featureType === 'drawnPoint' ||
+          feature.featureType === 'drawnLabel',
+        line: feature.featureType === 'drawnLine',
+        polygon:
+          feature.featureType === 'drawnPolygon' ||
+          feature.featureType === 'drawnCircle',
       }"
     ></span>
     <!-- Feature label -->

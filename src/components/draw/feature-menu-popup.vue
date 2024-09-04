@@ -4,10 +4,10 @@ import { useTranslation } from 'i18next-vue'
 import { type MenuPopupItem as MenuPopupItemType } from '@/components/common/menu-popup/menu-popup.d'
 import MenuPopup from '@/components/common/menu-popup/menu-popup.vue'
 import MenuPopupItem from '@/components/common/menu-popup/menu-popup-item.vue'
-import { DrawFeature } from '@/stores/draw.store.model'
+import { DrawnFeature } from '@/services/draw/drawn-feature'
 
 const props = defineProps<{
-  feature: DrawFeature
+  feature: DrawnFeature
 }>()
 const { t } = useTranslation()
 
@@ -26,7 +26,7 @@ let drawingMenuOptions = <MenuPopupItemType[]>[
   },
 ]
 
-if (props.feature.geom === 'LineString') {
+if (props.feature.featureType === 'drawnLine') {
   drawingMenuOptions = [
     ...drawingMenuOptions,
     ...[
@@ -42,7 +42,7 @@ if (props.feature.geom === 'LineString') {
   ]
 }
 
-if (props.feature.geom === 'Circle') {
+if (props.feature.featureType === 'drawnCircle') {
   drawingMenuOptions = [
     ...drawingMenuOptions,
     ...[

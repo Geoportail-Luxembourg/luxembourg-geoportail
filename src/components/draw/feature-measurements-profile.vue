@@ -2,13 +2,13 @@
 import { computed } from 'vue'
 import { useTranslation } from 'i18next-vue'
 
-import { DrawFeature } from '@/stores/draw.store.model'
+import { DrawnFeature } from '@/services/draw/drawn-feature'
 import ElevationProfile from '@/components/common/graph/elevation-profile.vue'
 
 const { t } = useTranslation()
 
 defineProps<{
-  feature: DrawFeature
+  feature: DrawnFeature
 }>()
 const isLoading = computed(() => false) // TODO:
 const isDrawing = computed(() => false) // TODO:
