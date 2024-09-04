@@ -58,40 +58,16 @@ export default function useDrawnFeatures() {
       editable: true,
       selected: false,
       map_id: undefined, // mymap uuid
+      // TODO Mymaps
+      // map_id: this.appMymaps_.isEditable() ? this.appMymaps_.getMapId() : undefined,
       saving: false,
       featureType,
       featureStyle,
     })
     convertCircleToPolygon(drawnFeature, featureType)
 
-    // feature.set('description', '')
-    // feature.set('__editable__', true)
-    // feature.set('color', '#ed1c24')
-    // feature.set('opacity', 0.2)
-    // feature.set('stroke', 1.25)
-    // feature.set('size', 10)
-    // feature.set('angle', 0)
-    // feature.set('linestyle', 'plain')
-    // feature.set('shape', 'circle')
-    // feature.set('isLabel', drawStateActive.value === 'drawLabel')
-    // feature.set('isCircle', drawStateActive.value === 'drawCircle')
-    // feature.setStyle(createStyleFunction(map))
-    // feature.set('display_order', nbFeatures)
-    // // TODO Mymaps
-    // // if (this.appMymaps_.isEditable()) {
-    // //   feature.set('__map_id__', this.appMymaps_.getMapId());
-    // // } else {
-    // //   feature.set('__map_id__', undefined);
-    // // }
     addDrawnFeature(drawnFeature)
-    // TODO Update Profile: v3 sets attribute for watcher
-    // feature.set('__refreshProfile__', true)
-    // TODO Select feature
-    // this.selectedFeatures_.clear()
-    // this.selectedFeatures_.push(feature)
-    // saveFeature(feature)
-    // TODO Modify: Activate
-    // this.drawnFeatures_.activateModifyIfNeeded(event.feature)
+
     if (
       screenSizeIsAtLeast('md') &&
       feedbackOpen.value !== true &&
@@ -101,27 +77,6 @@ export default function useDrawnFeatures() {
     ) {
       toggleMyMapsOpen(true)
     }
-
-    // // TODO: to improve saving
-    // const geomType = feature.getGeometry()?.getType()
-
-    // const newFeature = createDrawnFeature(feature)
-
-    // // if (geomType) {
-    // //   const newFeature = {
-    // //     // TODO: improve feat. creation, move this creation elsewhere
-    // //     id: Math.floor(Math.random() * Date.now()),
-    // //     label: `${geomType as string} ${drawnFeatures.value.length + 1}`,
-    // //     featureType: feature.get('isCircle')
-    // //       ? 'drawnCircle'
-    // //       : feature.get('isLabel')
-    // //       ? 'drawnLabel'
-    // //       : `drawn${geomType.replace('String', '')}`,
-    // //     olFeature: feature,
-    // //   } as unknown as DrawFeature
-    // if (newFeature) {
-    //   drawnFeatures.value = [...drawnFeatures.value, newFeature]
-    // }
   }
 
   /**
