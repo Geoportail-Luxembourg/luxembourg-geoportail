@@ -178,6 +178,8 @@ export default function useDrawnFeatures() {
   //       if (curLineStringCooridnates.length < 2) {
   //         return
   //       }
+
+  // TODO remove duplicate geometry end point ?
   //       const prevCoord =
   //         curLineStringCooridnates[curLineStringCooridnates.length - 1]
   //       const antePrevCoord =
