@@ -8,6 +8,7 @@ import FeatureEditStyleCircle from './feature-edit-style-circle.vue'
 import FeatureEditStylePoint from './feature-edit-style-point.vue'
 import FeatureEditStyleLine from './feature-edit-style-line.vue'
 import FeatureEditStylePolygon from './feature-edit-style-polygon.vue'
+import FeatureEditStyleLabel from './feature-edit-style-label.vue'
 
 const { t } = useTranslation()
 const props = defineProps<{
@@ -19,28 +20,12 @@ const styleComponents = {
   FeatureEditStyleLine,
   FeatureEditStylePoint,
   FeatureEditStylePolygon,
+  FeatureEditStyleLabel,
 }
 
-const currentStyleComponent = computed(() => {
-  const featureType = props.feature.featureType
-  if (featureType === 'drawnPoint') {
-    return 'FeatureEditStylePoint'
-  }
-
-  if (featureType === 'drawnCircle') {
-    return 'FeatureEditStyleCircle'
-  }
-
-  if (featureType === 'drawnLine') {
-    return 'FeatureEditStyleLine'
-  }
-
-  if (featureType === 'drawnPolygon') {
-    return 'FeatureEditStylePolygon'
-  }
-
-  return undefined
-})
+const currentStyleComponent = computed(() =>
+  props.feature.featureType.replace('drawn', 'FeatureEditStyle')
+)
 
 function onClickChangeOrientation() {}
 </script>

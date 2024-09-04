@@ -31,10 +31,6 @@ export class DrawnFeature extends Feature {
   featureStyle: DrawnFeatureStyle
   map = useMap().getOlMap()
 
-  testMyClass() {
-    console.log('test')
-  }
-
   toProperties() {
     return {
       angle: this.featureStyle.angle,

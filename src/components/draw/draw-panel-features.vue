@@ -1,6 +1,7 @@
 <script setup lang="ts">
-import { onMounted, Ref, ref, watch } from 'vue'
+import { onMounted } from 'vue'
 import { storeToRefs } from 'pinia'
+import { getUid } from 'ol/util'
 
 import useSortable from '@/composables/sortable'
 import { useDrawStore } from '@/stores/draw.store'
@@ -9,34 +10,23 @@ import { DrawnFeature } from '@/services/draw/drawn-feature'
 import FeatureItem from './feature-item.vue'
 
 const drawStore = useDrawStore()
-const { drawnFeatures: features, featureEditionDocked } = storeToRefs(drawStore)
-const currentOpenedFeature: Ref<number | undefined> = ref(undefined)
-const currentEditingFeature: Ref<number | undefined> = ref(undefined)
+const {
+  activeFeatureId,
+  editingFeatureId,
+  drawnFeatures: features,
+  featureEditionDocked,
+} = storeToRefs(drawStore)
 
-function onToggleFeatureSub(featureId: number, isOpen: boolean) {
+function onToggleFeatureSub(featureId: String, isOpen: boolean) {
   // Only one feature details is displayed at once
-  currentOpenedFeature.value = isOpen ? featureId : undefined
-  currentEditingFeature.value = undefined
+  activeFeatureId.value = isOpen ? featureId : undefined
+  editingFeatureId.value = undefined
 }
 
-function onToggleFeatureEdit(featureId: number, isEditing: boolean) {
-  currentEditingFeature.value = isEditing ? featureId : undefined
+function onToggleFeatureEdit(featureId: String, isEditing: boolean) {
+  editingFeatureId.value = isEditing ? featureId : undefined
   // TODO: continue...
 }
-
-watch(
-  features,
-  (newFeatures, oldFeatures) => {
-    // Last added feature is unfold by default
-    if (oldFeatures === undefined || newFeatures.length > oldFeatures.length) {
-      const currentFeature =
-        newFeatures[oldFeatures === undefined ? 0 : newFeatures.length - 1]
-      currentOpenedFeature.value = currentEditingFeature.value =
-        currentFeature.id
-    }
-  },
-  { immediate: true }
-)
 
 onMounted(() => {
   useSortable(<HTMLElement>document.querySelector('.sortable-features'))
@@ -52,8 +42,8 @@ onMounted(() => {
     >
       <FeatureItem
         :isDocked="featureEditionDocked"
-        :isEditing="currentEditingFeature === feature.id"
-        :isOpen="currentOpenedFeature === feature.id"
+        :isEditing="editingFeatureId === getUid(feature)"
+        :isOpen="activeFeatureId === getUid(feature)"
         :feature="<DrawnFeature>feature"
         @toggleFeatureSub="onToggleFeatureSub"
         @toggleFeatureEdit="onToggleFeatureEdit"
