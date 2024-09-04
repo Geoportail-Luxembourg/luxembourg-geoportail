@@ -96,7 +96,7 @@ class FeatureStyleHelper {
         break
     }
 
-    console.assert(style, 'Style should be thruthy')
+    // console.assert(style, 'Style should be thruthy')
 
     let styles
     if (style instanceof Array) {
@@ -200,7 +200,7 @@ class FeatureStyleHelper {
       if (typeof value == 'string') {
         return +value
       } else {
-        console.assert(typeof value === 'number')
+        // console.assert(typeof value === 'number')
         return value
       }
     } else {
@@ -217,7 +217,7 @@ class FeatureStyleHelper {
     if (typeof value == 'string') {
       return +value
     } else {
-      console.assert(typeof value === 'number')
+      // console.assert(typeof value === 'number')
       return value
     }
   }
@@ -340,7 +340,7 @@ class FeatureStyleHelper {
     const styles = []
 
     const geom = feature.getGeometry()
-    console.assert(geom)
+    // console.assert(geom)
     const type = geom!.getType()
 
     if (type === 'Point') {
@@ -517,21 +517,21 @@ class FeatureStyleHelper {
         break
     }
 
-    console.assert(style, 'Style should be thruthy')
+    // console.assert(style, 'Style should be thruthy')
 
     return style
   }
 
   public getAngleProperty(feature: Feature) {
     const angle = +feature.get(luxFormatFeatureProperties.ANGLE)
-    console.assert(typeof angle === 'number')
+    // console.assert(typeof angle === 'number')
     return angle
   }
 
   public getColorProperty(feature: Feature) {
     const color = feature.get(luxFormatFeatureProperties.COLOR)
 
-    console.assert(typeof color === 'string')
+    // console.assert(typeof color === 'string')
 
     return color
   }
@@ -542,7 +542,7 @@ class FeatureStyleHelper {
 
   public getNameProperty(feature: Feature) {
     const name = feature.get(luxFormatFeatureProperties.NAME)
-    console.assert(typeof name === 'string')
+    // console.assert(typeof name === 'string')
     return name
   }
 
@@ -557,7 +557,7 @@ class FeatureStyleHelper {
     } else if (typeof showMeasure === 'string') {
       showMeasure = showMeasure === 'true' ? true : false
     }
-    console.assert(typeof showMeasure === 'boolean')
+    // console.assert(typeof showMeasure === 'boolean')
     return showMeasure
   }
 
@@ -568,7 +568,7 @@ class FeatureStyleHelper {
     } else if (typeof showLabel === 'string') {
       showLabel = showLabel === 'true' ? true : false
     }
-    console.assert(typeof showLabel === 'boolean')
+    // console.assert(typeof showLabel === 'boolean')
     return showLabel
   }
 
@@ -613,7 +613,7 @@ class FeatureStyleHelper {
    */
   public getMeasure(feature: Feature) {
     const geometry = feature.getGeometry()
-    console.assert(geometry, 'Geometry should be truthy')
+    // console.assert(geometry, 'Geometry should be truthy')
 
     let measure = ''
 
@@ -623,7 +623,7 @@ class FeatureStyleHelper {
           feature,
           luxFormatFeatureProperties.AZIMUT
         )
-        console.assert(typeof azimut === 'number')
+        // console.assert(typeof azimut === 'number')
         const line = this.getRadiusLine(feature, azimut || 10)
 
         measure = getFormattedAzimutRadius(
@@ -659,7 +659,7 @@ class FeatureStyleHelper {
    */
   public getType(feature: Feature) {
     const geometry = feature.getGeometry()
-    console.assert(geometry, 'Geometry should be thruthy')
+    // console.assert(geometry, 'Geometry should be thruthy')
 
     let type
 
@@ -687,7 +687,7 @@ class FeatureStyleHelper {
       type = styleGeometryType.MULTI_LINE_STRING
     }
 
-    console.assert(type, 'Type should be thruthy')
+    // console.assert(type, 'Type should be thruthy')
 
     return type
   }
@@ -700,14 +700,14 @@ class FeatureStyleHelper {
   public panMapToFeature(feature: Feature, map: Map, opt_panDuration?: number) {
     const panDuration = opt_panDuration !== undefined ? opt_panDuration : 250
     const size = map.getSize()
-    console.assert(size instanceof Array)
+    // console.assert(size instanceof Array)
     const view = map.getView()
     const extent = view.calculateExtent(size)
     const geometry = feature.getGeometry()
 
     if (!geometry!.intersectsExtent(extent)) {
       const mapCenter = view.getCenter()
-      console.assert(mapCenter instanceof Array)
+      // console.assert(mapCenter instanceof Array)
 
       let featureCenter
       if (geometry instanceof olGeomLineString) {

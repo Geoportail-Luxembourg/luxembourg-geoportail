@@ -187,9 +187,9 @@ class FeatureHash extends TextFeature {
    * Read a feature from a logical sequence of characters.
    */
   readFeatureFromText(text: string /*, opt_options: any*/) {
-    console.assert(text.length > 2)
-    console.assert(text[1] === '(')
-    console.assert(text[text.length - 1] === ')')
+    // console.assert(text.length > 2)
+    // console.assert(text[1] === '(')
+    // console.assert(text[text.length - 1] === ')')
     let splitIndex = text.indexOf('~')
     const geometryText =
       splitIndex >= 0 ? text.substring(0, splitIndex) + ')' : text
@@ -210,7 +210,7 @@ class FeatureHash extends TextFeature {
         for (let i = 0; i < parts.length; ++i) {
           const part = parts[i]
           const keyVal = part.split('*')
-          console.assert(keyVal.length === 2)
+          // console.assert(keyVal.length === 2)
           let key = keyVal[0]
           const value = keyVal[1]
           if (!this.setStyle_ && FeatureHashLegacyProperties[key]) {
@@ -235,12 +235,12 @@ class FeatureHash extends TextFeature {
    * Read multiple features from a logical sequence of characters.
    */
   readFeaturesFromText(text: string /*, opt_options: any*/) {
-    console.assert(text[0] === 'F')
+    // console.assert(text[0] === 'F')
     const features = []
     text = text.substring(1)
     while (text.length > 0) {
       const index = text.indexOf(')')
-      console.assert(index >= 0)
+      // console.assert(index >= 0)
       const feature = this.readFeatureFromText(
         text.substring(0, index + 1)
         /*,opt_options*/
@@ -256,7 +256,7 @@ class FeatureHash extends TextFeature {
    */
   readGeometryFromText(text: string /*, opt_options: any*/) {
     const geometryReader: any = GEOMETRY_READERS_[text[0] as GeometryReaderKeys]
-    console.assert(geometryReader !== undefined)
+    // console.assert(geometryReader !== undefined)
     this.prevX_ = 0
     this.prevY_ = 0
     return geometryReader.call(this, text)
@@ -338,7 +338,7 @@ class FeatureHash extends TextFeature {
 
     if (encodedGeometry.length > 0) {
       // remove the final bracket
-      console.assert(encodedGeometry[encodedGeometry.length - 1] === ')')
+      // console.assert(encodedGeometry[encodedGeometry.length - 1] === ')')
       encodedGeometry = encodedGeometry.substring(0, encodedGeometry.length - 1)
       encodedParts.push(encodedGeometry)
     }
@@ -418,7 +418,7 @@ class FeatureHash extends TextFeature {
    */
   writeGeometryText(geometry: Geometry, opt_options: ReadOptions) {
     const geometryWriter = GEOMETRY_WRITERS_[geometry.getType() as GeometryType]
-    console.assert(geometryWriter !== undefined)
+    // console.assert(geometryWriter !== undefined)
     const transformedGeometry = transformGeometryWithOptions(
       geometry,
       true,
@@ -482,7 +482,7 @@ function encodeStyles_(
   encodedStyles: string[]
 ) {
   const styleType = FeatureHashStyleTypes[geometryType]
-  console.assert(styleType !== undefined)
+  // console.assert(styleType !== undefined)
   for (let i = 0; i < styles.length; ++i) {
     const style = styles[i]
     const fillStyle = style.getFill()
@@ -568,9 +568,9 @@ function encodeStyleFill_(
     opt_propertyName !== undefined ? opt_propertyName : 'fillColor'
   const fillColor = fillStyle.getColor()
   if (fillColor !== null) {
-    console.assert(Array.isArray(fillColor), 'only supporting fill colors')
+    // console.assert(Array.isArray(fillColor), 'only supporting fill colors')
     const fillColorRgba = colorAsArray(fillColor as number[])
-    console.assert(Array.isArray(fillColorRgba), 'fill color must be an array')
+    // console.assert(Array.isArray(fillColorRgba), 'fill color must be an array')
     const fillColorHex = rgbArrayToHex(fillColorRgba as number[])
     if (encodedStyles.length > 0) {
       encodedStyles.push("'")
@@ -586,12 +586,12 @@ function encodeStyleFill_(
 function encodeStyleStroke_(strokeStyle: Stroke, encodedStyles: string[]) {
   const strokeColor = strokeStyle.getColor()
   if (strokeColor !== null) {
-    console.assert(Array.isArray(strokeColor))
+    // console.assert(Array.isArray(strokeColor))
     const strokeColorRgba = colorAsArray(strokeColor as number[])
-    console.assert(
-      Array.isArray(strokeColorRgba),
-      'only supporting stroke colors'
-    )
+    // console.assert(
+    //   Array.isArray(strokeColorRgba),
+    //   'only supporting stroke colors'
+    // )
     const strokeColorHex = rgbArrayToHex(strokeColorRgba)
     if (encodedStyles.length > 0) {
       encodedStyles.push("'")
@@ -633,8 +633,8 @@ function encodeStyleText_(textStyle: Text, encodedStyles: string[]) {
  * {@link ol.geom.LineString}.
  */
 function readLineStringGeometry_(this: FeatureHash, text: string) {
-  console.assert(text.substring(0, 2) === 'l(')
-  console.assert(text[text.length - 1] == ')')
+  // console.assert(text.substring(0, 2) === 'l(')
+  // console.assert(text[text.length - 1] == ')')
   text = text.substring(2, text.length - 1)
   const flatCoordinates = (this as any)?.decodeCoordinates_(text)
   return new olGeomLineString(flatCoordinates, olGeomGeometryLayout.XY)
@@ -645,8 +645,8 @@ function readLineStringGeometry_(this: FeatureHash, text: string) {
  * {@link ol.geom.MultiLineString}.
  */
 function readMultiLineStringGeometry_(this: FeatureHash, text: string) {
-  console.assert(text.substring(0, 2) === 'L(')
-  console.assert(text[text.length - 1] == ')')
+  // console.assert(text.substring(0, 2) === 'L(')
+  // console.assert(text[text.length - 1] == ')')
   text = text.substring(2, text.length - 1)
   let flatCoordinates: number[] = []
   const ends = []
@@ -670,11 +670,11 @@ function readMultiLineStringGeometry_(this: FeatureHash, text: string) {
  * {@link ol.geom.Point}.
  */
 function readPointGeometry_(this: FeatureHash, text: string) {
-  console.assert(text.substring(0, 2) === 'p(')
-  console.assert(text[text.length - 1] == ')')
+  // console.assert(text.substring(0, 2) === 'p(')
+  // console.assert(text[text.length - 1] == ')')
   text = text.substring(2, text.length - 1)
   const flatCoordinates = (this as any)?.decodeCoordinates_(text)
-  console.assert(flatCoordinates.length === 2)
+  // console.assert(flatCoordinates.length === 2)
   return new olGeomPoint(flatCoordinates, olGeomGeometryLayout.XY)
 }
 
@@ -683,8 +683,8 @@ function readPointGeometry_(this: FeatureHash, text: string) {
  * {@link ol.geom.MultiPoint}.
  */
 function readMultiPointGeometry_(this: FeatureHash, text: string) {
-  console.assert(text.substring(0, 2) === 'P(')
-  console.assert(text[text.length - 1] == ')')
+  // console.assert(text.substring(0, 2) === 'P(')
+  // console.assert(text[text.length - 1] == ')')
   text = text.substring(2, text.length - 1)
   const flatCoordinates = (this as any)?.decodeCoordinates_(text)
   return new olGeomMultiPoint(flatCoordinates, olGeomGeometryLayout.XY)
@@ -695,8 +695,8 @@ function readMultiPointGeometry_(this: FeatureHash, text: string) {
  * {@link ol.geom.Polygon}.
  */
 function readPolygonGeometry_(this: FeatureHash, text: string) {
-  console.assert(text.substring(0, 2) === 'a(')
-  console.assert(text[text.length - 1] == ')')
+  // console.assert(text.substring(0, 2) === 'a(')
+  // console.assert(text[text.length - 1] == ')')
   text = text.substring(2, text.length - 1)
   let flatCoordinates: number[] = []
   const ends = []
@@ -724,8 +724,8 @@ function readPolygonGeometry_(this: FeatureHash, text: string) {
  * {@link ol.geom.MultiPolygon}.
  */
 function readMultiPolygonGeometry_(this: FeatureHash, text: string) {
-  console.assert(text.substring(0, 2) === 'A(')
-  console.assert(text[text.length - 1] == ')')
+  // console.assert(text.substring(0, 2) === 'A(')
+  // console.assert(text[text.length - 1] == ')')
   text = text.substring(2, text.length - 1)
   let flatCoordinates: number[] = []
   const endss = []
@@ -914,7 +914,7 @@ function getStyleProperties_(text: string /*feature: Feature*/) {
   for (let i = 0; i < parts.length; ++i) {
     const part = parts[i]
     const keyVal = part.split('*')
-    console.assert(keyVal.length === 2)
+    // console.assert(keyVal.length === 2)
     const key = keyVal[0]
     const val = keyVal[1]
 
@@ -932,7 +932,7 @@ function writeLineStringGeometry_(
   this: FeatureHash,
   geometry: Geometry
 ): string {
-  console.assert(geometry instanceof olGeomLineString)
+  // console.assert(geometry instanceof olGeomLineString)
   const lineString = geometry as LineString
   const flatCoordinates = lineString.getFlatCoordinates()
   const stride = lineString.getStride()
@@ -952,7 +952,7 @@ function writeMultiLineStringGeometry_(
   this: FeatureHash,
   geometry: Geometry
 ): string {
-  console.assert(geometry instanceof olGeomMultiLineString)
+  // console.assert(geometry instanceof olGeomMultiLineString)
   const multiLineString = geometry as MultiLineString
   const ends = multiLineString.getEnds()
   const lineStringCount = ends.length
@@ -983,7 +983,7 @@ function writeMultiLineStringGeometry_(
  * characters.
  */
 function writePointGeometry_(this: FeatureHash, geometry: Geometry): string {
-  console.assert(geometry instanceof olGeomPoint)
+  // console.assert(geometry instanceof olGeomPoint)
   const point = geometry as Point
   const flatCoordinates = point.getFlatCoordinates()
   const stride = point.getStride()
@@ -1003,7 +1003,7 @@ function writeMultiPointGeometry_(
   this: FeatureHash,
   geometry: Geometry
 ): string {
-  console.assert(geometry instanceof olGeomMultiPoint)
+  // console.assert(geometry instanceof olGeomMultiPoint)
   const multiPoint = geometry as MultiPoint
   const flatCoordinates = multiPoint.getFlatCoordinates()
   const stride = multiPoint.getStride()
@@ -1050,7 +1050,7 @@ function encodeRings_(
  * of characters.
  */
 function writePolygonGeometry_(this: FeatureHash, geometry: Geometry): string {
-  console.assert(geometry instanceof olGeomPolygon)
+  // console.assert(geometry instanceof olGeomPolygon)
   const polygon = geometry as Polygon
   const flatCoordinates = polygon.getFlatCoordinates()
   const stride = polygon.getStride()
@@ -1070,7 +1070,7 @@ function writeMultiPolygonGeometry_(
   this: FeatureHash,
   geometry: Geometry
 ): string {
-  console.assert(geometry instanceof olGeomMultiPolygon)
+  // console.assert(geometry instanceof olGeomMultiPolygon)
   const multiPolygon = geometry as MultiPolygon
   const flatCoordinates = multiPolygon.getFlatCoordinates()
   const stride = multiPolygon.getStride()
