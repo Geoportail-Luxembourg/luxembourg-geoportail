@@ -30,7 +30,7 @@ function onToggleFeatureSub() {
 }
 
 function onToggleEditFeature() {
-  emit('toggleFeatureEdit', props.feature.ol_uid, !props.isEditing)
+  emit('toggleFeatureEdit', props.feature.olFeature.ol_uid, !props.isEditing)
 
   alert('TODO: Toggle edition mode')
 }
