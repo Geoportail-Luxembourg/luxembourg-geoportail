@@ -23,14 +23,15 @@ const inputValue = ref(props.value)
   <div class="flex">
     <input
       type="range"
+      class="m-2.5 w-16 h-[5px] rounded-lg appearance-none cursor-pointer"
       :min="min"
       :max="max"
       :step="step"
-      class="m-2.5 w-16 h-[5px] rounded-lg appearance-none cursor-pointer"
       v-model="inputValue"
     />
     <input
       type="number"
+      class="w-12"
       :min="min"
       :max="max"
       :step="step"
