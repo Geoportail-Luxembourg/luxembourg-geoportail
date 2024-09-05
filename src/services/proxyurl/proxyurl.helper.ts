@@ -12,14 +12,14 @@ class ProxyUrlHelper {
 
   public get wmsProxyUrl() {
     if (this._wmsProxyUrl === undefined) {
-      console.warn('Warning: proxyWmsUrl is not set.')
+      console.warn('Warning: proxyWmsUrl is not set.') // eslint-disable-line no-console
     }
     return this._wmsProxyUrl
   }
 
   public get remoteProxyUrl() {
     if (this._remoteProxyUrl === undefined) {
-      console.warn('Warning: remoteProxy is not set.')
+      console.warn('Warning: remoteProxy is not set.') // eslint-disable-line no-console
     }
     return this._remoteProxyUrl
   }
@@ -65,6 +65,7 @@ class ProxyUrlHelper {
     }
 
     if (import.meta.env.MODE !== 'prod') {
+      // eslint-disable-next-line no-console
       console.warn(
         'Deprecated: ProxyUrlHelper.init_v3() is meant to be removed when v4 is fully operational'
       )

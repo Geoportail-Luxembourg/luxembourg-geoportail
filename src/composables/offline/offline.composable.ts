@@ -25,6 +25,7 @@ export default function useOffline() {
     localforage_v3 = localforage
 
     if (import.meta.env.MODE !== 'prod') {
+      // eslint-disable-next-line no-console
       console.warn(
         'Deprecated: useOffline.initLocalforage_v3() is meant to be removed when v4 is fully operational'
       )

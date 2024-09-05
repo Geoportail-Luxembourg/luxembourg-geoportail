@@ -3,8 +3,6 @@ import WmtsSource from 'ol/source/WMTS'
 import WmtsTileGrid from 'ol/tilegrid/WMTS'
 
 import { OffLineLayerOptions } from '@/composables/offline/offline.model'
-import { Layer } from '@/stores/map.store.model'
-
 import { OlLayerTileOfflineHelper } from './ol-layer-offline-tile'
 
 class OlLayerWmtsOfflineHelper extends OlLayerTileOfflineHelper {
@@ -23,11 +21,7 @@ class OlLayerWmtsOfflineHelper extends OlLayerTileOfflineHelper {
     return <Options<WmtsSource>>options
   }
 
-  serializeTileLayer(options: Layer): string {
-    console.log(
-      'OlLayerWmtsOfflineHelper::serializeTileLayer() options=',
-      options
-    )
+  serializeTileLayer(/*options: Layer*/): string {
     throw new Error('Method not implemented.')
   }
 }

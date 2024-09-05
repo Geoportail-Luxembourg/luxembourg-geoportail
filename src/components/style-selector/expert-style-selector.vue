@@ -31,9 +31,6 @@ function setCustomStyle(styleEvent: Event) {
   }
   const file = files[0]
 
-  const myFile: File = new File([], './text.txt')
-  myFile.text().then(res => console.log(res))
-
   if (file.type !== 'application/json') {
     return
   }
