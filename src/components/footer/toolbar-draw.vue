@@ -2,17 +2,19 @@
 import { useTranslation } from 'i18next-vue'
 import { storeToRefs } from 'pinia'
 
-import useDraw from '@/composables/draw/draw.composable'
 import { useDrawStore } from '@/stores/draw.store'
 
 import ButtonText from './button-text.vue'
+import { onBeforeUnmount } from 'vue'
 
 const { t } = useTranslation()
 const drawStore = useDrawStore()
 const { toggleActiveState } = drawStore
 const { drawStateActive } = storeToRefs(drawStore)
-// keep logic in composable
-useDraw()
+
+onBeforeUnmount(() => {
+  toggleActiveState(undefined)
+})
 </script>
 <template>
   <div data-cy="toolbarDraw">

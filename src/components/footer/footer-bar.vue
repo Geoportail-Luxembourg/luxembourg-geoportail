@@ -6,6 +6,7 @@ import ButtonLink from './button-link.vue'
 import ToolbarDraw from './toolbar-draw.vue'
 import { useTranslation } from 'i18next-vue'
 import { useAppStore } from '@/stores/app.store'
+import useDraw from '@/composables/draw/draw.composable'
 
 const { t, i18next } = useTranslation()
 const appStore = useAppStore()
@@ -29,6 +30,8 @@ function onClickLayersIcon() {
 
   themeGridOpen.value = false
 }
+//init draw interactions in parent of toolbar-draw to allow deactivation when toolbar is closed
+useDraw()
 </script>
 <template>
   <footer
