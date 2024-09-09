@@ -46,10 +46,6 @@ function onClickValidate() {
     alert('TODO: Draw feature click onClickValidate()')
   }
 }
-
-function onClickSearch() {
-  alert('TODO: Draw feature click onClickSearch()')
-}
 </script>
 
 <template>
@@ -93,7 +89,7 @@ function onClickSearch() {
           <button
             data-cy="featItemActionSearch"
             class="hover:text-tertiary"
-            @click="onClickSearch"
+            @click="() => feature?.fit()"
           >
             <i class="fa fa-search"></i>
           </button>

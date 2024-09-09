@@ -1,9 +1,5 @@
 import { Feature } from 'ol'
-import { DrawnFeatureType, DrawnFeatureStyle } from '@/stores/draw.store.model'
-import useMap from '@/composables/map/map.composable'
-
 import { Point, LineString, MultiPoint, Polygon } from 'ol/geom'
-
 import StyleStyle, { StyleLike, StyleFunction } from 'ol/style/Style'
 import StyleRegularShape, {
   Options as RegularShapeOptions,
@@ -13,6 +9,10 @@ import StyleFill from 'ol/style/Fill'
 import StyleStroke from 'ol/style/Stroke'
 import StyleIcon from 'ol/style/Icon'
 import StyleText from 'ol/style/Text'
+import { Extent } from 'ol/extent'
+
+import { DrawnFeatureType, DrawnFeatureStyle } from '@/stores/draw.store.model'
+import useMap from '@/composables/map/map.composable'
 
 const MYMAPS_URL = import.meta.env.VITE_MYMAPS_URL
 const MYMAPS_SYMBOL_URL = MYMAPS_URL + '/symbol/'
@@ -30,6 +30,13 @@ export class DrawnFeature extends Feature {
   featureType: DrawnFeatureType
   featureStyle: DrawnFeatureStyle
   map = useMap().getOlMap()
+
+  fit() {
+    const size = this.map.getSize()
+    const extent = <Extent>this.getGeometry()?.getExtent()
+
+    this.map.getView().fit(extent, { size })
+  }
 
   toProperties() {
     return {
