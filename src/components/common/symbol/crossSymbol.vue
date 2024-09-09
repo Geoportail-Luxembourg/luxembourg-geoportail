@@ -17,6 +17,6 @@ withDefaults(
 
 <template>
   <svg :height="height" :width="width">
-    <text x="0" :y="height + 1" :font-size="fontSize" :fill="fillColor">+</text>
+    <text x="1" :y="height + 2" :font-size="fontSize" :fill="fillColor">+</text>
   </svg>
 </template>
