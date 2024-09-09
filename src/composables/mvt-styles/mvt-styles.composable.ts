@@ -20,7 +20,7 @@ import {
   SP_KEY_EMBEDDED_SERVER,
   SP_KEY_EMBEDDED_SERVER_PROTOCOL,
   SP_KEY_SERIAL,
-  SP_KEY_SERIAL_LAYERS,
+  // SP_KEY_SERIAL_LAYERS,
 } from '@/services/state-persistor/state-persistor.model'
 
 export default function useMvtStyles() {
@@ -37,11 +37,11 @@ export default function useMvtStyles() {
     return `${styleUrlHelper.vectortilesUrl}/styles/${label}/{z}/{x}/{y}.png`
   }
 
-  function isValidSerial(serial: string) {
-    const isValidUUIDv4Regex =
-      /^[0-9A-F]{8}-[0-9A-F]{4}-4[0-9A-F]{3}-[89AB][0-9A-F]{3}-[0-9A-F]{12}$/gi
-    return isValidUUIDv4Regex.test(serial)
-  }
+  // function isValidSerial(serial: string) {
+  //   const isValidUUIDv4Regex =
+  //     /^[0-9A-F]{8}-[0-9A-F]{4}-4[0-9A-F]{3}-[89AB][0-9A-F]{3}-[0-9A-F]{12}$/gi
+  //   return isValidUUIDv4Regex.test(serial)
+  // }
 
   function setCustomStyleSerial(
     bgLayer: Layer | undefined | null,
@@ -87,12 +87,12 @@ export default function useMvtStyles() {
     }
 
     const serial = urlStorage.getItem(SP_KEY_SERIAL)
-    const serialLayer = urlStorage.getItem(SP_KEY_SERIAL_LAYERS)
+    // const serialLayer = urlStorage.getItem(SP_KEY_SERIAL_LAYERS)
 
     if (serial) {
-      if (isValidSerial(serial)) {
-        console.log(serialLayer) // TODO: -CLEAN STYLE- why console log?
-      } // TODO: -CLEAN STYLE- clean comments...
+      // if (isValidSerial(serial)) {
+      //   console.log(serialLayer) // TODO: -CLEAN STYLE- why console log?
+      // } // TODO: -CLEAN STYLE- clean comments...
       // // if serial is number id, retrieve style form it
       // if (isValidSerial(serial)) {
       //     // if label and serialLayer are equal, or fallback to roadmap layer if serialLayer is null
@@ -233,6 +233,7 @@ export default function useMvtStyles() {
     return !styleId
       ? Promise.resolve()
       : fetch(`${styleUrlHelper.mvtStylesDeleteUrl}?id=${styleId}`).catch(
+          // eslint-disable-next-line no-console
           console.warn
         )
   }
@@ -252,10 +253,13 @@ export default function useMvtStyles() {
       body: formData,
     }
 
-    return fetch(styleUrlHelper.mvtStylesUploadUrl, options)
-      .then(response => response.json())
-      .then(result => result.id)
-      .catch(console.warn)
+    return (
+      fetch(styleUrlHelper.mvtStylesUploadUrl, options)
+        .then(response => response.json())
+        .then(result => result.id)
+        // eslint-disable-next-line no-console
+        .catch(console.warn)
+    )
   }
 
   function applyConsolidatedStyle(

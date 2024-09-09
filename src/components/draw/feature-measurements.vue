@@ -1,21 +1,22 @@
 <script setup lang="ts">
-import { computed } from 'vue'
+import { inject } from 'vue'
 import { useTranslation } from 'i18next-vue'
 
 import { DrawnFeature } from '@/services/draw/drawn-feature'
 import FeatureMeasurementsProfile from './feature-measurements-profile.vue'
 
-const { t } = useTranslation()
-
-const props = defineProps<{
-  feature: DrawnFeature
+defineProps<{
   isEditingFeature?: boolean
 }>()
-const featureType = props.feature.featureType
-const featLength = computed(() => props.feature.id + ' [TODO featLenght]') // TODO update condition
-const featArea = computed(() => props.feature.id + ' [TODO featArea]') // TODO
-const featRadius = computed(() => props.feature.id + ' [TODO featRayon]') // TODO
-const featElevation = computed(() => props.feature.id) // TODO
+
+const { t } = useTranslation()
+
+const feature: DrawnFeature | undefined = inject('feature')
+const featureType = feature?.featureType || ''
+const featLength = feature?.id + ' [TODO featLenght]' // TODO update condition
+const featArea = feature?.id + ' [TODO featArea]' // TODO
+const featRadius = feature?.id + ' [TODO featRayon]' // TODO
+const featElevation = feature?.id // TODO
 
 function onClickValidateRadius() {
   alert('TODO: validate /save radius')

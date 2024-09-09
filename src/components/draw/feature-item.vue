@@ -1,5 +1,7 @@
 <script setup lang="ts">
+import { provide } from 'vue'
 import { getUid } from 'ol/util'
+
 import { DrawnFeature } from '@/services/draw/drawn-feature'
 
 import FeatureSubContent from './feature-sub-content.vue'
@@ -25,6 +27,8 @@ const emit = defineEmits([
   'toggleFeatureEdit',
   'toggleDock',
 ])
+
+provide('feature', props.feature)
 
 function onToggleFeatureSub() {
   emit('toggleFeatureSub', getUid(props.feature), !props.isOpen)

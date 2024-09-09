@@ -8,7 +8,6 @@ export class WmtsHelper extends OwsHelper {
     url: string,
     layerName: string
   ) {
-    console.assert(serviceType === REMOTE_SERVICE_TYPE.WMTS)
     const wmtsEndpoint = remoteLayersService.getWmtsEndpoint(url)
     await wmtsEndpoint.isReady()
     const service = wmtsEndpoint?.getServiceInfo()

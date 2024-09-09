@@ -11,28 +11,28 @@ class StyleUrlHelper {
 
   public get vectortilesUrl() {
     if (this._vectortilesUrl === undefined) {
-      console.warn('Warning: vectortilesUrl is not set.')
+      console.warn('Warning: vectortilesUrl is not set.') // eslint-disable-line no-console
     }
     return this._vectortilesUrl
   }
 
   public get mvtStylesGetUrl() {
     if (this._mvtStylesGetUrl === undefined) {
-      console.warn('Warning: mvtStylesGetUrl is not set.')
+      console.warn('Warning: mvtStylesGetUrl is not set.') // eslint-disable-line no-console
     }
     return this._mvtStylesGetUrl
   }
 
   public get mvtStylesUploadUrl() {
     if (this._mvtStylesUploadUrl === undefined) {
-      console.warn('Warning: mvtStylesUploadUrl is not set.')
+      console.warn('Warning: mvtStylesUploadUrl is not set.') // eslint-disable-line no-console
     }
     return this._mvtStylesUploadUrl
   }
 
   public get mvtStylesDeleteUrl() {
     if (this._mvtStylesDeleteUrl === undefined) {
-      console.warn('Warning: mvtStylesDeleteUrl is not set.')
+      console.warn('Warning: mvtStylesDeleteUrl is not set.') // eslint-disable-line no-console
     }
     return this._mvtStylesDeleteUrl
   }
@@ -60,6 +60,7 @@ class StyleUrlHelper {
     }
 
     if (import.meta.env.MODE !== 'prod') {
+      // eslint-disable-next-line no-console
       console.warn(
         'Deprecated: StylesUrlHelper.setRegisterUrl_v3() is meant to be removed when v4 is fully operational'
       )

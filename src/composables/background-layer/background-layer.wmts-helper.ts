@@ -12,9 +12,7 @@ import type { Layer } from '@/stores/map.store.model'
 // TODO: factory(requestScheme, wmtsUrl)
 export function createBgWmtsLayer(layer: Layer): TileLayer<WMTS> {
   function getImageExtension_(imageType: string) {
-    console.assert(imageType.indexOf('/'))
     const imageExt = imageType.split('/')[1]
-    console.assert(imageExt == 'png' || imageExt == 'jpeg')
     return imageExt
   }
   const imageExt = getImageExtension_(layer.imageType)

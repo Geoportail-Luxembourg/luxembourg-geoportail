@@ -8,6 +8,17 @@ function testFeatItemMeasurements() {
   cy.get('*[data-cy="featItemProfile"]').should('not.exist')
 }
 
+function testFeatStyleEditionTabContent() {
+  cy.get('*[data-cy="featStyleColor"]').should('exist')
+  cy.get('*[data-cy="featStyleSize"]').should('exist')
+  cy.get('*[data-cy="featStyleAngle"]').should('not.exist')
+  cy.get('*[data-cy="featStyleSymbol"]').should('exist')
+  cy.get('*[data-cy="featStyleLineStyle"]').should('not.exist')
+  cy.get('*[data-cy="featStyleLineWidth"]').should('not.exist')
+  cy.get('*[data-cy="featStyleOpacity"]').should('not.exist')
+  cy.get('*[data-cy="featStyleOrientation"]').should('not.exist')
+}
+
 describe('Draw "Point"', () => {
   beforeEach(() => {
     cy.visit('/')
@@ -47,6 +58,52 @@ describe('Draw "Point"', () => {
       cy.get('@menuItem').eq(0).should('contain.text', 'Exporter un GPX')
       cy.get('@menuItem').eq(1).should('contain.text', 'Exporter un KML')
       cy.get('@menuItem').eq(2).should('contain.text', 'Exporter un Shapefile')
+    })
+  })
+
+  describe('When editing feature style', () => {
+    beforeEach(() => {
+      cy.get('*[data-cy="featItemActionStyle"]').click()
+    })
+
+    it('displays the style edition tab for "Point"', () => {
+      testFeatStyleEditionTabContent()
+    })
+
+    describe('When editing symbol', () => {
+      beforeEach(() => {
+        cy.get('[data-cy="featStyleSymbolEdit"]').click()
+      })
+
+      it('displays the symbol edition tab', () => {
+        cy.get('[data-cy="featStyleColor"]').should('exist')
+        cy.get('[data-cy="featStyleSymbol"]').should('have.length', 4)
+      })
+
+      describe('When browsing public symbols', () => {
+        beforeEach(() => {
+          cy.get('[data-cy="featStyleSymbolTab"]').eq(1).click()
+        })
+
+        it('displays the public symbol list', () => {
+          cy.get('[data-cy="featStyleSymbolFilterList"]').should('exist')
+          cy.get('[data-cy="featStyleSymbolIcon"]').should('have.length', 81)
+        })
+
+        describe('When filtering public symbols', () => {
+          it('displays the public symbol list', () => {
+            cy.get('[data-cy="featStyleSymbolFilterList"]').type('pin1')
+            cy.get('[data-cy="featStyleSymbolIcon"]').should('have.length', 2)
+          })
+        })
+      })
+
+      describe('When clicking close button', () => {
+        it('returns to style edition tab', () => {
+          cy.get('[data-cy="featStyleNavBack"]').click()
+          testFeatStyleEditionTabContent()
+        })
+      })
     })
   })
 })

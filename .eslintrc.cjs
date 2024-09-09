@@ -27,6 +27,7 @@ module.exports = {
     'no-unused-vars': 'off',
     '@typescript-eslint/no-unused-vars': ['error'],
     'import/no-unresolved': 'off',
+    'no-console': 'error',
   },
   parserOptions: {
     ecmaVersion: 'latest',

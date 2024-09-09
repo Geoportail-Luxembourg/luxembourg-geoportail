@@ -18,7 +18,6 @@ class DrawTooltip {
   public add(map: OlMap, event: DrawEvent) {
     this.createMeasureTooltip(map)
     const geometry = event.feature.getGeometry()
-    console.assert(geometry !== undefined)
     if (geometry === undefined) return
     const proj = map.getView().getProjection()
 

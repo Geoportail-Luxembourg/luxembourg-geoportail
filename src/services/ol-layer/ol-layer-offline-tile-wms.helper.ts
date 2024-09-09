@@ -3,8 +3,6 @@ import TileWMS from 'ol/source/TileWMS'
 import TileGrid from 'ol/tilegrid/TileGrid'
 
 import { OffLineLayerOptions } from '@/composables/offline/offline.model'
-import { Layer } from '@/stores/map.store.model'
-
 import { OlLayerTileOfflineHelper } from './ol-layer-offline-tile'
 
 class OlLayerTileWmsOfflineHelper extends OlLayerTileOfflineHelper {
@@ -24,11 +22,7 @@ class OlLayerTileWmsOfflineHelper extends OlLayerTileOfflineHelper {
     return <Options<TileWMS>>options
   }
 
-  serializeTileLayer(options: Layer): string {
-    console.log(
-      'OlLayerTileWmsOfflineHelper::serializeTileLayer() options=',
-      options
-    )
+  serializeTileLayer(/*options: Layer*/): string {
     throw new Error('Method not implemented.')
   }
 }
