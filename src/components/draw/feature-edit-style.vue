@@ -32,7 +32,7 @@ function onClickChangeOrientation() {
 }
 
 function onClickChangeLineStyle(style: string) {
-  alert('onClickChangeOrientation TODO' + style) // TODO:
+  alert('onClickChangeLineStyle TODO' + style) // TODO:
 }
 </script>
 

@@ -11,7 +11,7 @@ function testFeatItemMeasurements() {
 function testFeatStyleEditionTabContent() {
   cy.get('*[data-cy="featStyleColor"]').should('exist')
   cy.get('*[data-cy="featStyleSize"]').should('exist')
-  cy.get('*[data-cy="featStyleAngle"]').should('exist')
+  cy.get('*[data-cy="featStyleAngle"]').should('not.exist')
   cy.get('*[data-cy="featStyleSymbol"]').should('exist')
   cy.get('*[data-cy="featStyleLineStyle"]').should('not.exist')
   cy.get('*[data-cy="featStyleLineWidth"]').should('not.exist')
