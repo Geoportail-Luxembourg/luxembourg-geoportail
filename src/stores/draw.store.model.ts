@@ -5,6 +5,11 @@ export type DrawStateActive =
   | 'drawLine'
   | 'drawCircle'
   | 'drawPolygon'
+  | 'editPoint'
+  | 'editLabel'
+  | 'editLine'
+  | 'editCircle'
+  | 'editPolygon'
 
 export type DrawnFeatureType =
   | 'drawnPoint'

@@ -32,8 +32,6 @@ function onToggleFeatureSub() {
 
 function onToggleEditFeature() {
   emit('toggleFeatureEdit', getUid(props.feature), !props.isEditing)
-
-  alert('TODO: Toggle edition mode')
 }
 
 function onClickDelete() {

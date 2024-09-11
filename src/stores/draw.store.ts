@@ -15,17 +15,44 @@ export const useDrawStore = defineStore('draw', () => {
   const featureEditionDocked = ref(false)
 
   function toggleActiveState(newState: DrawStateActive) {
-    if (drawStateActive.value === newState) {
+    if (
+      drawStateActive.value?.startsWith('edit') &&
+      newState?.startsWith('draw')
+    ) {
+      drawStateActive.value = undefined
+      editingFeatureId.value = undefined
+    } else if (drawStateActive.value === newState) {
       drawStateActive.value = undefined
     } else {
       drawStateActive.value = newState
     }
   }
 
+  function setActiveState(newState: DrawStateActive) {
+    drawStateActive.value = newState
+    if (!newState) editingFeatureId.value = undefined
+  }
+
   function addDrawnFeature(feature: DrawnFeature) {
     drawnFeatures.value = [...drawnFeatures.value, feature]
     activeFeatureId.value = getUid(feature)
     editingFeatureId.value = getUid(feature)
+    drawStateActive.value = drawStateActive.value?.replace(
+      'draw',
+      'edit'
+    ) as DrawStateActive
+    console.log(drawStateActive.value)
+  }
+
+  function updateDrawnFeature(feature: DrawnFeature) {
+    const index = drawnFeatures.value.findIndex(
+      drawnFeature => drawnFeature.id === feature.id
+    )
+    if (index !== -1) {
+      drawnFeatures.value[index] = feature
+    }
+    //affect immutable value to trigger reactivity
+    drawnFeatures.value = [...drawnFeatures.value]
   }
 
   function setDrawnFeatures(features: DrawnFeature[]) {
@@ -46,7 +73,9 @@ export const useDrawStore = defineStore('draw', () => {
     featureEditionDocked,
     removeFeature,
     toggleActiveState,
+    setActiveState,
     addDrawnFeature,
+    updateDrawnFeature,
     setDrawnFeatures,
   }
 })

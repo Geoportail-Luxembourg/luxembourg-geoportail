@@ -9,11 +9,11 @@ import { onBeforeUnmount } from 'vue'
 
 const { t } = useTranslation()
 const drawStore = useDrawStore()
-const { toggleActiveState } = drawStore
+const { toggleActiveState, setActiveState } = drawStore
 const { drawStateActive } = storeToRefs(drawStore)
 
 onBeforeUnmount(() => {
-  toggleActiveState(undefined)
+  setActiveState(undefined)
 })
 </script>
 <template>
@@ -24,7 +24,9 @@ onBeforeUnmount(() => {
       <li>
         <button-text
           :label="t('Draw Point', { ns: 'client' })"
-          :active="drawStateActive === 'drawPoint'"
+          :active="
+            drawStateActive === 'drawPoint' || drawStateActive === 'editPoint'
+          "
           @click="() => toggleActiveState('drawPoint')"
           data-cy="drawPointButton"
         >
@@ -33,7 +35,9 @@ onBeforeUnmount(() => {
       <li>
         <button-text
           :label="t('Label', { ns: 'client' })"
-          :active="drawStateActive === 'drawLabel'"
+          :active="
+            drawStateActive === 'drawLabel' || drawStateActive === 'editLabel'
+          "
           @click="() => toggleActiveState('drawLabel')"
           data-cy="drawLabelButton"
         >
@@ -42,7 +46,9 @@ onBeforeUnmount(() => {
       <li>
         <button-text
           :label="t('Line', { ns: 'client' })"
-          :active="drawStateActive === 'drawLine'"
+          :active="
+            drawStateActive === 'drawLine' || drawStateActive === 'editLine'
+          "
           @click="() => toggleActiveState('drawLine')"
           data-cy="drawLineButton"
         >
@@ -51,7 +57,10 @@ onBeforeUnmount(() => {
       <li>
         <button-text
           :label="t('Polygon', { ns: 'client' })"
-          :active="drawStateActive === 'drawPolygon'"
+          :active="
+            drawStateActive === 'drawPolygon' ||
+            drawStateActive === 'editPolygon'
+          "
           @click="() => toggleActiveState('drawPolygon')"
           data-cy="drawPolygonButton"
         >
@@ -60,7 +69,9 @@ onBeforeUnmount(() => {
       <li>
         <button-text
           :label="t('Circle', { ns: 'client' })"
-          :active="drawStateActive === 'drawCircle'"
+          :active="
+            drawStateActive === 'drawCircle' || drawStateActive === 'editCircle'
+          "
           @click="() => toggleActiveState('drawCircle')"
           data-cy="drawCircleButton"
         >
@@ -69,7 +80,7 @@ onBeforeUnmount(() => {
     </ul>
     <ul
       class="absolute bottom-full top-auto z-10 pl-[130px] pb-16 w-[326px]"
-      v-if="drawStateActive === 'drawLine'"
+      v-if="drawStateActive === 'drawLine' || drawStateActive === 'editLine'"
       data-cy="followRoads"
     >
       <li
