@@ -15,10 +15,7 @@ import { MutationTypeValue } from './map.model'
 import { transformExtent } from 'ol/proj'
 import VectorLayer from 'ol/layer/Vector'
 import VectorSource from 'ol/source/Vector'
-import { storeToRefs } from 'pinia'
-import { useDrawStore } from '@/stores/draw.store'
-import { Feature } from 'ol'
-import { Geometry } from 'ol/geom'
+import { DrawnFeature } from '@/services/draw/drawn-feature'
 
 export const PROJECTION_WEBMERCATOR = 'EPSG:3857'
 export const PROJECTION_WGS84 = 'EPSG:4326'
@@ -193,8 +190,7 @@ export default function useMap() {
   }
 
   function addDrawLayer() {
-    const { drawnFeatures } = storeToRefs(useDrawStore())
-    const features = drawnFeatures.value as unknown as Feature<Geometry>[] // as Collection<Feature<Geometry>>
+    const features: DrawnFeature[] = []
     const drawLayer = new VectorLayer({
       source: new VectorSource({
         features,

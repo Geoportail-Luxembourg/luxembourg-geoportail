@@ -150,7 +150,7 @@ export default function useOpenLayers() {
     }
   }
 
-  function addFeatures(features: DrawnFeature[], olMap: OlMap) {
+  function setDrawnFeatures(features: DrawnFeature[], olMap: OlMap) {
     const mapLayers = olMap.getLayers()
     const drawLayer = mapLayers
       .getArray()
@@ -160,20 +160,9 @@ export default function useOpenLayers() {
     if (!drawLayer) {
       useMap().addDrawLayer()
     } else {
+      drawLayer.getSource()?.clear()
       drawLayer.getSource()?.addFeatures(features)
     }
-  }
-
-  function removeFeatures(features: DrawnFeature[], olMap: OlMap) {
-    const mapLayers = olMap.getLayers()
-    const drawLayer = mapLayers
-      .getArray()
-      .find(
-        layer => layer.get('featureID') === 'featureLayer'
-      ) as VectorLayer<VectorSource>
-    features.forEach(f => {
-      drawLayer.getSource()?.removeFeature(f)
-    })
   }
 
   return {
@@ -187,7 +176,6 @@ export default function useOpenLayers() {
     getLayerFromCache,
     setBgLayer,
     applyOnBgLayer,
-    addFeatures,
-    removeFeatures,
+    setDrawnFeatures,
   }
 }

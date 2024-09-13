@@ -168,19 +168,8 @@ export class OlSynchronizer {
 
     watch(
       () => drawStore.drawnFeatures,
-      (newFeatures, oldFeatures) => {
-        const addedFeatures = newFeatures.filter(
-          f => !oldFeatures.some(fo => fo.id == f.id)
-        )
-        if (addedFeatures.length > 0) {
-          openLayers.addFeatures(addedFeatures as DrawnFeature[], map)
-        }
-        const removedFeatures = oldFeatures.filter(
-          f => !newFeatures.some(fnew => fnew.id == f.id)
-        )
-        if (removedFeatures.length > 0) {
-          openLayers.removeFeatures(removedFeatures as DrawnFeature[], map)
-        }
+      drawnFeatures => {
+        openLayers.setDrawnFeatures(drawnFeatures as DrawnFeature[], map)
       }
     )
   }
