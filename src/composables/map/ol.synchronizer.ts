@@ -6,20 +6,17 @@ import useOpenLayers from './ol.composable'
 
 import { useMapStore } from '@/stores/map.store'
 import { useStyleStore } from '@/stores/style.store'
-import { useDrawStore } from '@/stores/draw.store'
 import { StyleSpecification } from '@/composables/mvt-styles/mvt-styles.model'
 import useMvtStyles from '@/composables/mvt-styles/mvt-styles.composable'
 import useMap from '@/composables/map/map.composable'
 import useOffline from '@/composables/offline/offline.composable'
 import { MutationTypeValue } from './map.model'
-import { DrawnFeature } from '@/services/draw/drawn-feature'
 
 export class OlSynchronizer {
   timeoutID: NodeJS.Timeout
   constructor(map: OlMap) {
     const mapStore = useMapStore()
     const styleStore = useStyleStore()
-    const drawStore = useDrawStore()
     const mapService = useMap()
     const styleService = useMvtStyles()
     const openLayers = useOpenLayers()
@@ -163,13 +160,6 @@ export class OlSynchronizer {
             }
           }
         }
-      }
-    )
-
-    watch(
-      () => drawStore.drawnFeatures,
-      drawnFeatures => {
-        openLayers.setDrawnFeatures(drawnFeatures as DrawnFeature[], map)
       }
     )
   }
