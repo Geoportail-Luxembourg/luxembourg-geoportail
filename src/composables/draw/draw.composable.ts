@@ -68,6 +68,8 @@ export default function useDraw() {
         'edit'
       ) as DrawStateActive
       setActiveState(editState)
+      feature.editable = true
+      feature.changed()
       editingFeatures.push(feature)
     }
   })
