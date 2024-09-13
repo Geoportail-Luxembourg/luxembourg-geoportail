@@ -2,46 +2,58 @@ import { defineStore } from 'pinia'
 import { ref, Ref } from 'vue'
 
 import { getUid } from 'ol/util'
-import { DrawStateActive } from './draw.store.model'
+import { DrawStateActive, EditStateActive } from './draw.store.model'
 import { DrawnFeature } from '@/services/draw/drawn-feature'
 
 export const useDrawStore = defineStore('draw', () => {
   const activeFeatureId: Ref<String | undefined> = ref(undefined)
   const editingFeatureId: Ref<String | undefined> = ref(undefined)
   const drawStateActive = ref<DrawStateActive>(undefined)
+  const editStateActive = ref<EditStateActive>(undefined)
   // no immutable changes on drawnFeatures in functions bellow,
   // but keep same Collection for sync with ol source (map)
   const drawnFeatures = ref<DrawnFeature[]>([])
   const featureEditionDocked = ref(false)
 
-  function toggleActiveState(newState: DrawStateActive) {
-    if (
-      drawStateActive.value?.startsWith('edit') &&
-      newState?.startsWith('draw')
-    ) {
+  function toggleDrawActiveState(newState: DrawStateActive) {
+    // allow draw of different geom type after edit, but not same type
+    if (editStateActive.value?.slice(4) === newState?.slice(4)) {
       drawStateActive.value = undefined
+      editStateActive.value = undefined
       editingFeatureId.value = undefined
     } else if (drawStateActive.value === newState) {
       drawStateActive.value = undefined
     } else {
-      drawStateActive.value = newState
+      setDrawActiveState(newState)
     }
   }
 
-  function setActiveState(newState: DrawStateActive) {
+  function setDrawActiveState(newState: DrawStateActive) {
+    if (newState) {
+      editStateActive.value = undefined
+      editingFeatureId.value = undefined
+    }
     drawStateActive.value = newState
-    if (!newState) editingFeatureId.value = undefined
+  }
+
+  function setEditActiveState(newState: EditStateActive) {
+    if (newState) {
+      drawStateActive.value = undefined
+    } else {
+      editingFeatureId.value = undefined
+    }
+    editStateActive.value = newState
   }
 
   function addDrawnFeature(feature: DrawnFeature) {
     drawnFeatures.value = [...drawnFeatures.value, feature]
     activeFeatureId.value = getUid(feature)
     editingFeatureId.value = getUid(feature)
-    drawStateActive.value = drawStateActive.value?.replace(
-      'draw',
+    editStateActive.value = feature.featureType.replace(
+      'drawn',
       'edit'
-    ) as DrawStateActive
-    console.log(drawStateActive.value)
+    ) as EditStateActive
+    drawStateActive.value = undefined
   }
 
   function updateDrawnFeature(feature: DrawnFeature) {
@@ -69,11 +81,13 @@ export const useDrawStore = defineStore('draw', () => {
     activeFeatureId,
     editingFeatureId,
     drawStateActive,
+    editStateActive,
     drawnFeatures,
     featureEditionDocked,
     removeFeature,
-    toggleActiveState,
-    setActiveState,
+    toggleDrawActiveState,
+    setDrawActiveState,
+    setEditActiveState,
     addDrawnFeature,
     updateDrawnFeature,
     setDrawnFeatures,

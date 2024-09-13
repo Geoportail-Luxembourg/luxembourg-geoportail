@@ -5,6 +5,9 @@ export type DrawStateActive =
   | 'drawLine'
   | 'drawCircle'
   | 'drawPolygon'
+
+export type EditStateActive =
+  | undefined
   | 'editPoint'
   | 'editLabel'
   | 'editLine'

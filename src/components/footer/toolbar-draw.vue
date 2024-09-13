@@ -9,11 +9,11 @@ import { onBeforeUnmount } from 'vue'
 
 const { t } = useTranslation()
 const drawStore = useDrawStore()
-const { toggleActiveState, setActiveState } = drawStore
-const { drawStateActive } = storeToRefs(drawStore)
+const { toggleDrawActiveState, setDrawActiveState } = drawStore
+const { drawStateActive, editStateActive } = storeToRefs(drawStore)
 
 onBeforeUnmount(() => {
-  setActiveState(undefined)
+  setDrawActiveState(undefined)
 })
 </script>
 <template>
@@ -25,9 +25,9 @@ onBeforeUnmount(() => {
         <button-text
           :label="t('Draw Point', { ns: 'client' })"
           :active="
-            drawStateActive === 'drawPoint' || drawStateActive === 'editPoint'
+            drawStateActive === 'drawPoint' || editStateActive === 'editPoint'
           "
-          @click="() => toggleActiveState('drawPoint')"
+          @click="() => toggleDrawActiveState('drawPoint')"
           data-cy="drawPointButton"
         >
         </button-text>
@@ -36,9 +36,9 @@ onBeforeUnmount(() => {
         <button-text
           :label="t('Label', { ns: 'client' })"
           :active="
-            drawStateActive === 'drawLabel' || drawStateActive === 'editLabel'
+            drawStateActive === 'drawLabel' || editStateActive === 'editLabel'
           "
-          @click="() => toggleActiveState('drawLabel')"
+          @click="() => toggleDrawActiveState('drawLabel')"
           data-cy="drawLabelButton"
         >
         </button-text>
@@ -47,9 +47,9 @@ onBeforeUnmount(() => {
         <button-text
           :label="t('Line', { ns: 'client' })"
           :active="
-            drawStateActive === 'drawLine' || drawStateActive === 'editLine'
+            drawStateActive === 'drawLine' || editStateActive === 'editLine'
           "
-          @click="() => toggleActiveState('drawLine')"
+          @click="() => toggleDrawActiveState('drawLine')"
           data-cy="drawLineButton"
         >
         </button-text>
@@ -59,9 +59,9 @@ onBeforeUnmount(() => {
           :label="t('Polygon', { ns: 'client' })"
           :active="
             drawStateActive === 'drawPolygon' ||
-            drawStateActive === 'editPolygon'
+            editStateActive === 'editPolygon'
           "
-          @click="() => toggleActiveState('drawPolygon')"
+          @click="() => toggleDrawActiveState('drawPolygon')"
           data-cy="drawPolygonButton"
         >
         </button-text>
@@ -70,9 +70,9 @@ onBeforeUnmount(() => {
         <button-text
           :label="t('Circle', { ns: 'client' })"
           :active="
-            drawStateActive === 'drawCircle' || drawStateActive === 'editCircle'
+            drawStateActive === 'drawCircle' || editStateActive === 'editCircle'
           "
-          @click="() => toggleActiveState('drawCircle')"
+          @click="() => toggleDrawActiveState('drawCircle')"
           data-cy="drawCircleButton"
         >
         </button-text>
@@ -80,7 +80,7 @@ onBeforeUnmount(() => {
     </ul>
     <ul
       class="absolute bottom-full top-auto z-10 pl-[130px] pb-16 w-[326px]"
-      v-if="drawStateActive === 'drawLine' || drawStateActive === 'editLine'"
+      v-if="drawStateActive === 'drawLine' || editStateActive === 'editLine'"
       data-cy="followRoads"
     >
       <li
