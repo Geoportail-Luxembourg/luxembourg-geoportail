@@ -6,11 +6,13 @@ import { useDrawStore } from '@/stores/draw.store'
 import useDrawInteraction from './draw-interaction.composable'
 import useDrawNotifications from './draw-notifications.composable'
 import { noModifierKeys, singleClick } from 'ol/events/condition'
-import { Collection, getUid } from 'ol'
+import { getUid } from 'ol'
 import useMap from '../map/map.composable'
 import { DrawnFeature } from '@/services/draw/drawn-feature'
 import { listen } from 'ol/events'
 import { EditStateActive } from '@/stores/draw.store.model'
+import VectorLayer from 'ol/layer/Vector'
+import VectorSource from 'ol/source/Vector'
 
 type DrawInteractions = {
   drawPoint: Draw
@@ -54,12 +56,24 @@ export default function useDraw() {
     }
   })
 
-  const editingFeatures = new Collection<DrawnFeature>()
+  const editSource = new VectorSource({
+    features: [] as DrawnFeature[],
+  })
+
+  const editLayer = new VectorLayer({
+    source: editSource,
+  })
 
   //listener on editingFeatureId to set stores editing states
   watch(editingFeatureId, editingFeatureId => {
-    if (!editingFeatureId) setEditActiveState(undefined)
-    editingFeatures.clear()
+    if (!editingFeatureId) {
+      setEditActiveState(undefined)
+      editSource.getFeatures().forEach(feature => {
+        ;(feature as DrawnFeature).editable = false
+        feature.changed()
+      })
+    }
+    editSource.clear()
     const feature = drawnFeatures.value.find(
       feature => getUid(feature) === editingFeatureId
     ) as DrawnFeature
@@ -71,12 +85,12 @@ export default function useDraw() {
       setEditActiveState(editState)
       feature.editable = true
       feature.changed()
-      editingFeatures.push(feature)
+      editSource.addFeature(feature)
     }
   })
 
   const modifyInteraction = new Modify({
-    features: editingFeatures,
+    source: editSource,
     pixelTolerance: 20,
     deleteCondition: function (event) {
       return noModifierKeys(event) && singleClick(event)
@@ -86,6 +100,7 @@ export default function useDraw() {
 
   const map = useMap().getOlMap()
   map.addInteraction(modifyInteraction)
+  map.addLayer(editLayer)
 
   listen(modifyInteraction, 'modifyend', event => {
     const feature = (event as ModifyEvent).features.getArray()[0]
