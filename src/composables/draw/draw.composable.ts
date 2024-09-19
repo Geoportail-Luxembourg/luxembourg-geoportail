@@ -13,6 +13,9 @@ import { listen } from 'ol/events'
 import { EditStateActive } from '@/stores/draw.store.model'
 import VectorLayer from 'ol/layer/Vector'
 import VectorSource from 'ol/source/Vector'
+import OlMap from 'ol/Map'
+
+const DEFAULT_DRAW_ZINDEX = 1000
 
 type DrawInteractions = {
   drawPoint: Draw
@@ -89,6 +92,31 @@ export default function useDraw() {
     }
   })
 
+  const drawLayer = new VectorLayer({
+    source: new VectorSource({
+      features: [] as DrawnFeature[],
+    }),
+    zIndex: DEFAULT_DRAW_ZINDEX,
+  })
+  const drawStore = useDrawStore()
+
+  watch(
+    () => drawStore.drawnFeatures,
+    drawnFeatures => {
+      setDrawnFeatures(drawnFeatures as DrawnFeature[])
+    }
+  )
+
+  function addDrawLayer(map: OlMap) {
+    drawLayer.set('featureID', 'featureLayer')
+    map.addLayer(drawLayer)
+  }
+
+  function setDrawnFeatures(features: DrawnFeature[]) {
+    drawLayer.getSource()?.clear()
+    drawLayer.getSource()?.addFeatures(features)
+  }
+
   const modifyInteraction = new Modify({
     source: editSource,
     pixelTolerance: 20,
@@ -107,5 +135,7 @@ export default function useDraw() {
     updateDrawnFeature(feature as DrawnFeature)
   })
 
-  return {}
+  return {
+    addDrawLayer,
+  }
 }
