@@ -10,8 +10,6 @@ export const useDrawStore = defineStore('draw', () => {
   const editingFeatureId: Ref<String | undefined> = ref(undefined)
   const drawStateActive = ref<DrawStateActive>(undefined)
   const editStateActive = ref<EditStateActive>(undefined)
-  // no immutable changes on drawnFeatures in functions bellow,
-  // but keep same Collection for sync with ol source (map)
   const drawnFeatures = ref<DrawnFeature[]>([])
   const featureEditionDocked = ref(false)
 
@@ -63,7 +61,7 @@ export const useDrawStore = defineStore('draw', () => {
     if (index !== -1) {
       drawnFeatures.value[index] = feature
     }
-    //affect immutable value to trigger reactivity
+    //affect immutable value to trigger reactivity for state persistor
     drawnFeatures.value = [...drawnFeatures.value]
   }
 
