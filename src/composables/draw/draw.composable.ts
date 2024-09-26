@@ -10,7 +10,8 @@ import VectorSource from 'ol/source/Vector'
 import OlMap from 'ol/Map'
 import useEdit from './edit.composable'
 
-const DEFAULT_DRAW_ZINDEX = 1000
+export const DEFAULT_DRAW_ZINDEX = 1000
+export const FEATURE_LAYER_TYPE = 'featureLayer'
 
 type DrawInteractions = {
   drawPoint: Draw
@@ -51,6 +52,7 @@ export default function useDraw() {
     }),
     zIndex: DEFAULT_DRAW_ZINDEX,
   })
+  drawLayer.set('cyLayerType', FEATURE_LAYER_TYPE)
 
   watch(
     () => drawnFeatures.value,
@@ -60,7 +62,6 @@ export default function useDraw() {
   )
 
   function addDrawLayer(map: OlMap) {
-    drawLayer.set('featureID', 'featureLayer')
     map.addLayer(drawLayer)
   }
 
