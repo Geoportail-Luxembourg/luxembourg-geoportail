@@ -1,3 +1,5 @@
+import { checkModifyInteractionActive, testFeatItem } from './draw-feat.utils'
+
 describe('Draw panel', () => {
   beforeEach(() => {
     cy.visit('/')
@@ -31,6 +33,18 @@ describe('Draw panel', () => {
         )
       cy.get('@menuItem').eq(3).should('contain.text', 'Fusionner des lignes')
       cy.get('@menuItem').eq(4).should('contain.text', 'Couper une ligne')
+    })
+  })
+
+  describe('When clicking toggle edit button', () => {
+    it('should toggle edit in panel and on map (ol modify interaction)', () => {
+      checkModifyInteractionActive(true)
+      testFeatItem()
+      cy.get('*[data-cy="featItemToggleEdit"]').click()
+      checkModifyInteractionActive(false)
+      cy.get('*[data-cy="featItemToggleEdit"]').click()
+      checkModifyInteractionActive(true)
+      testFeatItem()
     })
   })
 })

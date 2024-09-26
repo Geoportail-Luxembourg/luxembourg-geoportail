@@ -1,3 +1,9 @@
+import {
+  checkDrawInteractionActive,
+  checkModifyInteractionActive,
+  testFeatItem,
+} from './draw-feat.utils'
+
 describe('Map controls', () => {
   beforeEach(() => {
     cy.visit('/')
@@ -10,19 +16,26 @@ describe('Map controls', () => {
     })
   })
 
-  describe('when clicking button to draw point', () => {
-    beforeEach(() => {
+  describe('When clicking button to close draw tools', () => {
+    it('should deactivate active ol draw interaction', () => {
       cy.get('button[data-cy="drawPointButton"]').click()
-    })
-
-    it('activates ol Draw interaction in mode Point', () => {
+      checkDrawInteractionActive('Point')
+      cy.get('button[data-cy="drawButton"]').click()
       cy.getDrawInteractions().then(drawInteractions => {
         const activeInteractions = drawInteractions.filter(interaction => {
           return interaction.getActive() === true
         })
-        expect(activeInteractions).to.have.length(1)
-        expect(activeInteractions[0].mode_).to.be.equal('Point')
+        expect(activeInteractions).to.have.length(0)
       })
+    })
+  })
+
+  describe('when clicking button to draw point', () => {
+    beforeEach(() => {
+      cy.get('button[data-cy="drawPointButton"]').click()
+    })
+    it('activates ol Draw interaction in mode Point', () => {
+      checkDrawInteractionActive('Point')
     })
 
     describe('When drawing the point on the map', () => {
@@ -32,6 +45,11 @@ describe('Map controls', () => {
 
       it('displays the draw Panel', () => {
         cy.get('div[data-cy="drawPanel"]').should('exist')
+      })
+
+      it('activates edition in panel and on map (ol modify interaction)', () => {
+        checkModifyInteractionActive(true)
+        testFeatItem()
       })
 
       it('does not display a tooltip overlay when clicking on the map', () => {
@@ -46,13 +64,7 @@ describe('Map controls', () => {
     })
 
     it('activates ol Draw interaction in mode Point', () => {
-      cy.getDrawInteractions().then(drawInteractions => {
-        const activeInteractions = drawInteractions.filter(interaction => {
-          return interaction.getActive() === true
-        })
-        expect(activeInteractions).to.have.length(1)
-        expect(activeInteractions[0].mode_).to.be.equal('Point')
-      })
+      checkDrawInteractionActive('Point')
     })
 
     describe('When drawing the label on the map', () => {
@@ -62,6 +74,11 @@ describe('Map controls', () => {
 
       it('displays the draw Panel', () => {
         cy.get('div[data-cy="drawPanel"]').should('exist')
+      })
+
+      it('activates edition in panel and on map (ol modify interaction)', () => {
+        checkModifyInteractionActive(true)
+        testFeatItem()
       })
 
       it('does not display a tooltip overlay when clicking on the map', () => {
@@ -76,13 +93,7 @@ describe('Map controls', () => {
     })
 
     it('activates ol Draw interaction in mode LineString', () => {
-      cy.getDrawInteractions().then(drawInteractions => {
-        const activeInteractions = drawInteractions.filter(interaction => {
-          return interaction.getActive() === true
-        })
-        expect(activeInteractions).to.have.length(1)
-        expect(activeInteractions[0].mode_).to.be.equal('LineString')
-      })
+      checkDrawInteractionActive('LineString')
     })
 
     it('displays a tooltip when clicking on the map and hides it on draw end (second point double click)', () => {
@@ -101,6 +112,11 @@ describe('Map controls', () => {
       it('displays the draw Panel', () => {
         cy.get('div[data-cy="drawPanel"]').should('exist')
       })
+
+      it('activates edition in panel and on map (ol modify interaction)', () => {
+        checkModifyInteractionActive(true)
+        testFeatItem()
+      })
     })
   })
 
@@ -110,13 +126,7 @@ describe('Map controls', () => {
     })
 
     it('activates ol Draw interaction in mode Polygon', () => {
-      cy.getDrawInteractions().then(drawInteractions => {
-        const activeInteractions = drawInteractions.filter(interaction => {
-          return interaction.getActive() === true
-        })
-        expect(activeInteractions).to.have.length(1)
-        expect(activeInteractions[0].mode_).to.be.equal('Polygon')
-      })
+      checkDrawInteractionActive('Polygon')
     })
 
     it('displays a tooltip when clicking on the map and hides it on draw end (third point double click)', () => {
@@ -137,6 +147,11 @@ describe('Map controls', () => {
       it('displays the draw Panel', () => {
         cy.get('div[data-cy="drawPanel"]').should('exist')
       })
+
+      it('activates edition in panel and on map (ol modify interaction)', () => {
+        checkModifyInteractionActive(true)
+        testFeatItem()
+      })
     })
   })
 
@@ -146,13 +161,7 @@ describe('Map controls', () => {
     })
 
     it('activates ol Draw interaction in mode Circle', () => {
-      cy.getDrawInteractions().then(drawInteractions => {
-        const activeInteractions = drawInteractions.filter(interaction => {
-          return interaction.getActive() === true
-        })
-        expect(activeInteractions).to.have.length(1)
-        expect(activeInteractions[0].mode_).to.be.equal('Circle')
-      })
+      checkDrawInteractionActive('Circle')
     })
 
     it('displays a tooltip when clicking on the map and hides it on draw end (second point simple click)', () => {
@@ -170,6 +179,11 @@ describe('Map controls', () => {
 
       it('displays the draw Panel', () => {
         cy.get('div[data-cy="drawPanel"]').should('exist')
+      })
+
+      it('activates edition in panel and on map (ol modify interaction)', () => {
+        checkModifyInteractionActive(true)
+        testFeatItem()
       })
     })
   })
