@@ -50,6 +50,7 @@ onMounted(() => {
         @toggleDock="() => (featureEditionDocked = !featureEditionDocked)"
         @closePopup="() => (featureEditionDocked = false)"
         @clickDelete="featureId => drawStore.removeFeature(featureId)"
+        @submitEditInfo="feature => drawStore.updateDrawnFeature(feature)"
       />
     </li>
   </ul>

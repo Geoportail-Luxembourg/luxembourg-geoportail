@@ -11,6 +11,7 @@ const feature: DrawnFeature | undefined = inject('feature')
 <template>
   {{ t('Modification des informations') }}
   <input
+    data-cy="featureLabelEdit"
     type="text"
     class="form-control block mt-2 mb-4"
     v-if="feature"

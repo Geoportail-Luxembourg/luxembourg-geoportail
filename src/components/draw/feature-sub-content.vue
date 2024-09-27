@@ -16,7 +16,12 @@ defineProps<{
   isDocked: boolean
   isEditingFeature: boolean
 }>()
-const emit = defineEmits(['toggleEditFeature', 'toggleDock', 'clickDelete'])
+const emit = defineEmits([
+  'toggleEditFeature',
+  'toggleDock',
+  'clickDelete',
+  'submitEditInfo',
+])
 const { t } = useTranslation()
 const feature: DrawnFeature | undefined = inject('feature')
 
@@ -42,9 +47,12 @@ function onClickValidate() {
 
   if (currentComponent === FeatureConfirmDelete) {
     emit('clickDelete')
+  } else if (currentComponent === FeatureEditInfo) {
+    emit('submitEditInfo')
   } else {
     alert('TODO: Draw feature click onClickValidate()')
   }
+  currentEditCompKey.value = undefined
 }
 
 function onClickSearch() {
@@ -144,11 +152,19 @@ function onClickSearch() {
     <!-- Customise footer with Cancel and Validate btns -->
     <template v-slot:footer>
       <div class="mt-3 text-right">
-        <button class="lux-btn mr-2" @click="onClickCancel">
+        <button
+          data-cy="featureEditCancel"
+          class="lux-btn mr-2"
+          @click="onClickCancel"
+        >
           {{ t('Cancel') }}
         </button>
 
-        <button class="lux-btn-primary" @click="onClickValidate">
+        <button
+          data-cy="featureEditValidate"
+          class="lux-btn-primary"
+          @click="onClickValidate"
+        >
           {{ t('Validate') }}
         </button>
       </div>
