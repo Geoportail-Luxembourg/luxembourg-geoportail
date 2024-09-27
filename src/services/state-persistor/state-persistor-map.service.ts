@@ -1,5 +1,4 @@
 import * as olEvents from 'ol/events'
-import { toDegrees } from 'ol/math'
 import { getTransform, ProjectionLike, transform } from 'ol/proj'
 import { Coordinate } from 'ol/coordinate'
 import ObjectEventType from 'ol/ObjectEventType'
@@ -49,7 +48,7 @@ class StatePersistorMapService implements StatePersistorService {
   persistRotation() {
     const view = useMap().getOlMap().getView()
     const fnStorageSetValueRotation = () => {
-      const rotation = Math.round(toDegrees(view.getRotation()))
+      const rotation = view.getRotation()
       storageHelper.setValue(SP_KEY_ROTATION, rotation || 0)
     }
 
