@@ -66,7 +66,7 @@ describe('Catalogue', () => {
         const layers = (<AUTWindowOlMap>window).olMap
           .getLayers()
           .getArray()
-          .filter((l: any) => l.get('featureID') != 'featureLayer')
+          .filter((l: any) => l.get('cyLayerType') !== 'featureLayer')
         expect(layers[0].get('id')).to.eq(556)
       })
       cy.get('[data-cy="catalog"]').find('[data-cy="layerLabel-359"]').click()
@@ -76,7 +76,7 @@ describe('Catalogue', () => {
         const layers = (<AUTWindowOlMap>window).olMap
           .getLayers()
           .getArray()
-          .filter((l: any) => l.get('featureID') != 'featureLayer')
+          .filter((l: any) => l.get('cyLayerType') !== 'featureLayer')
         expect(layers[0].get('id')).to.eq(359)
         expect(layers[1].get('id')).to.eq(353)
       })

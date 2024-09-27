@@ -11,7 +11,9 @@ import { useAppStore } from '@/stores/app.store'
 export default function useDrawSelect() {
   const map = useMap().getOlMap()
   const appStore = useAppStore()
-  const { activeFeatureId, drawnFeatures } = storeToRefs(useDrawStore())
+  const { activeFeatureId, editingFeatureId, drawnFeatures } = storeToRefs(
+    useDrawStore()
+  )
 
   listen(map, 'click', event => handleClick(event))
 
@@ -26,6 +28,7 @@ export default function useDrawSelect() {
       .filter(f => getUid(f) == newId)
       .forEach(newFeature => {
         newFeature.selected = true
+        newFeature.editable = false
         newFeature.changed()
       })
   })
@@ -40,6 +43,7 @@ export default function useDrawSelect() {
         if (featureMatch) {
           appStore.toggleMyMapsOpen(true)
           activeFeatureId.value = getUid(feature)
+          editingFeatureId.value = undefined
 
           return
         }

@@ -14,6 +14,7 @@ import Map3dControl from '../map-controls/map-3d.vue'
 import FullscreenControl from '../map-controls/fullscreen-control.vue'
 import ZoomControl from '../map-controls/zoom-control.vue'
 import ZoomToExtentControl from '../map-controls/zoom-to-extent-control.vue'
+import useDraw from '@/composables/draw/draw.composable'
 
 const appStore = useAppStore()
 const { embedded } = storeToRefs(appStore)
@@ -21,7 +22,8 @@ const map = useMap()
 const mapContainer = ref(null)
 const olMap = map.createMap()
 // add draw layer after map init to allow restoring draw features
-map.addDrawLayer()
+const draw = useDraw()
+draw.addDrawLayer(olMap)
 
 withDefaults(
   defineProps<{

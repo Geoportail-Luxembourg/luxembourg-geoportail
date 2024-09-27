@@ -13,19 +13,12 @@ import type {
 } from '@/stores/map.store.model'
 import { MutationTypeValue } from './map.model'
 import { transformExtent } from 'ol/proj'
-import VectorLayer from 'ol/layer/Vector'
-import VectorSource from 'ol/source/Vector'
-import { storeToRefs } from 'pinia'
-import { useDrawStore } from '@/stores/draw.store'
-import { Feature } from 'ol'
-import { Geometry } from 'ol/geom'
 
 export const PROJECTION_WEBMERCATOR = 'EPSG:3857'
 export const PROJECTION_WGS84 = 'EPSG:4326'
 export const PROJECTION_LUX = 'EPSG:2169'
 const MAX_EXTENT = JSON.parse(import.meta.env.VITE_DEFAULT_MAX_EXTENT)
 const DEFAULT_VIEW_ZOOM = parseInt(import.meta.env.VITE_DEFAULT_VIEW_ZOOM, 10)
-const DEFAULT_DRAW_ZINDEX = 1000
 
 let map: OlMap
 const olMap: ShallowRef<OlMap | undefined> = shallowRef()
@@ -192,20 +185,6 @@ export default function useMap() {
     // TODO: Add slide effect and do this update after slide animation ends
   }
 
-  function addDrawLayer() {
-    const { drawnFeatures } = storeToRefs(useDrawStore())
-    const features = drawnFeatures.value as unknown as Feature<Geometry>[] // as Collection<Feature<Geometry>>
-    const drawLayer = new VectorLayer({
-      source: new VectorSource({
-        features,
-      }),
-      zIndex: DEFAULT_DRAW_ZINDEX,
-      // altitudeMode: 'clampToGround', //used in v3, but causes type error
-    })
-    drawLayer.set('featureID', 'featureLayer')
-    map.addLayer(drawLayer)
-  }
-
   return {
     olMap,
     getOlMap,
@@ -219,6 +198,5 @@ export default function useMap() {
     getMutatedLayers,
     getMutationType,
     resize,
-    addDrawLayer,
   }
 }

@@ -6,6 +6,14 @@ export type DrawStateActive =
   | 'drawCircle'
   | 'drawPolygon'
 
+export type EditStateActive =
+  | undefined
+  | 'editPoint'
+  | 'editLabel'
+  | 'editLine'
+  | 'editCircle'
+  | 'editPolygon'
+
 export type DrawnFeatureType =
   | 'drawnPoint'
   | 'drawnLabel'

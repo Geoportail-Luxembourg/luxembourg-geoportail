@@ -16,3 +16,25 @@ export function testFeatItemDocking() {
   cy.get('*[data-cy="featItemDock"]').click()
   cy.get('*[data-cy="mapPopup"]').should('exist')
 }
+
+export function checkDrawInteractionActive(
+  type: 'Point' | 'LineString' | 'Polygon' | 'Circle'
+) {
+  cy.getDrawInteractions().then(drawInteractions => {
+    const activeInteractions = drawInteractions.filter(interaction => {
+      return interaction.getActive() === true
+    })
+    expect(activeInteractions).to.have.length(1)
+    expect(activeInteractions[0].mode_).to.be.equal(type)
+  })
+}
+
+export function checkModifyInteractionActive(exists: boolean) {
+  cy.getModifyInteraction().then(modifyInteraction => {
+    if (exists) {
+      expect(modifyInteraction).to.exist
+    } else {
+      expect(modifyInteraction).to.equal(undefined)
+    }
+  })
+}

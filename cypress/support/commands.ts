@@ -36,7 +36,7 @@ Cypress.Commands.add('getDrawInteractions', () => {
       .getInteractions()
       .getArray()
       .filter(interaction => {
-        // workaround for 'instance of Draw' not working with Draw2 class
+        // workaround for 'instance of Draw' not working (with Draw2 class?)
         return (
           'finishDrawing' in interaction &&
           typeof interaction.finishDrawing === 'function'
@@ -45,10 +45,27 @@ Cypress.Commands.add('getDrawInteractions', () => {
   })
 })
 
+Cypress.Commands.add('getModifyInteraction', () => {
+  cy.window().then(win => {
+    const map = win.olMap
+    const modifyInteraction = map
+      .getInteractions()
+      .getArray()
+      .find(interaction => {
+        return (
+          'removePoint' in interaction &&
+          typeof interaction.removePoint === 'function'
+        )
+      })
+    cy.wrap(modifyInteraction)
+  })
+})
+
 declare global {
   namespace Cypress {
     interface Chainable {
       getDrawInteractions(): Chainable<Array<Interaction>>
+      getModifyInteraction(): Chainable<Interaction>
       // login(email: string, password: string): Chainable<void>
       // drag(subject: string, options?: Partial<TypeOptions>): Chainable<Element>
       // dismiss(subject: string, options?: Partial<TypeOptions>): Chainable<Element>
