@@ -28,6 +28,7 @@ export default function useDrawSelect() {
       .filter(f => getUid(f) == newId)
       .forEach(newFeature => {
         newFeature.selected = true
+        newFeature.editable = false
         newFeature.changed()
       })
   })
