@@ -26,6 +26,7 @@ const emit = defineEmits([
   'toggleFeatureSub',
   'toggleFeatureEdit',
   'toggleDock',
+  'submitEditInfo',
 ])
 
 provide('feature', props.feature)
@@ -40,6 +41,10 @@ function onToggleEditFeature() {
 
 function onClickDelete() {
   emit('clickDelete', props.feature.id)
+}
+
+function onSubmitEditInfo() {
+  emit('submitEditInfo', props.feature)
 }
 </script>
 
@@ -94,6 +99,7 @@ function onClickDelete() {
         @toggleEditFeature="onToggleEditFeature"
         @toggleDock="() => emit('toggleDock')"
         @clickDelete="onClickDelete"
+        @submitEditInfo="onSubmitEditInfo"
       />
     </div>
   </FeatureSubWrapper>

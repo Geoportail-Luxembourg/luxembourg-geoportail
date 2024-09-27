@@ -47,4 +47,29 @@ describe('Draw panel', () => {
       testFeatItem()
     })
   })
+
+  describe('When clicking edit pencil button', () => {
+    beforeEach(() => {
+      cy.get('*[data-cy="featItemActionEdit"]').click()
+    })
+    it('should open the edit panel', () => {
+      cy.get('*[data-cy="featureLabelEdit"]').should('exist')
+    })
+    it('should update the feature label on submit', () => {
+      cy.get('*[data-cy="featureLabelEdit"]').clear()
+      cy.get('*[data-cy="featureLabelEdit"]').type('New label')
+      cy.get('*[data-cy="featureEditValidate"]').click()
+      cy.reload()
+      cy.get('*[data-cy="mymapsOpenClose"]').click()
+      cy.get('*[data-cy="featItemName"]').should('have.text', 'New label')
+    })
+    it('should NOT update the feature label on cancel', () => {
+      cy.get('*[data-cy="featureLabelEdit"]').clear()
+      cy.get('*[data-cy="featureLabelEdit"]').type('New label')
+      cy.get('*[data-cy="featureEditCancel"]').click()
+      cy.reload()
+      cy.get('*[data-cy="mymapsOpenClose"]').click()
+      cy.get('*[data-cy="featItemName"]').should('have.text', 'Nom 1')
+    })
+  })
 })
