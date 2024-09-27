@@ -18,6 +18,7 @@ export default function useEdit() {
   )
   const { updateDrawnFeature, setEditActiveState } = useDrawStore()
 
+  let modifyInteraction: Modify
   const map = useMap().getOlMap()
   const editSource = new VectorSource({
     features: [] as DrawnFeature[],
@@ -31,9 +32,9 @@ export default function useEdit() {
 
   watch(editStateActive, editStateActive => {
     if (editStateActive) {
-      modifyInteraction.setActive(true)
+      createModifyInteraction()
     } else {
-      modifyInteraction.setActive(false)
+      map.removeInteraction(modifyInteraction)
     }
   })
 
@@ -62,18 +63,22 @@ export default function useEdit() {
     }
   })
 
-  const modifyInteraction = new Modify({
-    source: editSource,
-    pixelTolerance: 20,
-    deleteCondition: function (event) {
-      return noModifierKeys(event) && singleClick(event)
-    },
-  })
-  modifyInteraction.setActive(false)
-  map.addInteraction(modifyInteraction)
+  function createModifyInteraction() {
+    if (modifyInteraction) {
+      map.removeInteraction(modifyInteraction)
+    }
+    modifyInteraction = new Modify({
+      source: editSource,
+      pixelTolerance: 20,
+      deleteCondition: function (event) {
+        return noModifierKeys(event) && singleClick(event)
+      },
+    })
+    map.addInteraction(modifyInteraction)
 
-  listen(modifyInteraction, 'modifyend', event => {
-    const feature = (event as ModifyEvent).features.getArray()[0]
-    updateDrawnFeature(feature as DrawnFeature)
-  })
+    listen(modifyInteraction, 'modifyend', event => {
+      const feature = (event as ModifyEvent).features.getArray()[0]
+      updateDrawnFeature(feature as DrawnFeature)
+    })
+  }
 }

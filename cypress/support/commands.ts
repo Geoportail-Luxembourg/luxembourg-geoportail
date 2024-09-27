@@ -48,15 +48,16 @@ Cypress.Commands.add('getDrawInteractions', () => {
 Cypress.Commands.add('getModifyInteraction', () => {
   cy.window().then(win => {
     const map = win.olMap
-    return map
+    const modifyInteraction = map
       .getInteractions()
       .getArray()
-      .filter(interaction => {
+      .find(interaction => {
         return (
           'removePoint' in interaction &&
           typeof interaction.removePoint === 'function'
         )
-      })[0]
+      })
+    cy.wrap(modifyInteraction)
   })
 })
 

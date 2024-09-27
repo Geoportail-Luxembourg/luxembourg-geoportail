@@ -29,8 +29,12 @@ export function checkDrawInteractionActive(
   })
 }
 
-export function checkModifyInteractionActive(active: boolean) {
+export function checkModifyInteractionActive(exists: boolean) {
   cy.getModifyInteraction().then(modifyInteraction => {
-    expect(modifyInteraction.getActive()).to.equal(active)
+    if (exists) {
+      expect(modifyInteraction).to.exist
+    } else {
+      expect(modifyInteraction).to.equal(undefined)
+    }
   })
 }
