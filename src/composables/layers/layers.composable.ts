@@ -12,9 +12,9 @@ import { useAlertNotificationsStore } from '@/stores/alert-notifications.store'
 import useThemes from '@/composables/themes/themes.composable'
 import { AlertNotificationType } from '@/stores/alert-notifications.store.model'
 
-const themes = useThemes()
-
 export default function useLayers() {
+  const themes = useThemes()
+
   function hasIntersect(exclusionA: string, exclusionB: string) {
     try {
       const concat = JSON.parse(exclusionA).concat(JSON.parse(exclusionB))

@@ -10,6 +10,7 @@ import useMap, {
 } from '@/composables/map/map.composable'
 import {
   SP_KEY_ZOOM,
+  SP_KEY_ROTATION,
   SP_KEY_X,
   SP_KEY_Y,
   SP_KEY_SRS,
@@ -44,6 +45,22 @@ class StatePersistorMapService implements StatePersistorService {
     )
   }
 
+  persistRotation() {
+    const view = useMap().getOlMap().getView()
+    const fnStorageSetValueRotation = () => {
+      const rotation = view.getRotation()
+      storageHelper.setValue(SP_KEY_ROTATION, rotation || 0)
+    }
+
+    fnStorageSetValueRotation()
+
+    olEvents.listen(
+      view,
+      'change:rotation',
+      debounce(fnStorageSetValueRotation, 300)
+    )
+  }
+
   persistXY() {
     const view = useMap().getOlMap().getView()
     const fnStorageSetValueXY = () => {
@@ -64,6 +81,7 @@ class StatePersistorMapService implements StatePersistorService {
   persist() {
     this.persistXY()
     this.persistZoom()
+    this.persistRotation()
   }
 
   /**
@@ -75,6 +93,7 @@ class StatePersistorMapService implements StatePersistorService {
   restore() {
     const view = useMap().getOlMap().getView()
     const zoom = storageHelper.getValue(SP_KEY_ZOOM, stringToNumber)
+    const rotation = storageHelper.getValue(SP_KEY_ROTATION, stringToNumber)
     const version = storageHelper.getInitialVersion()
     const x = storageHelper.getValue(SP_KEY_X, stringToNumber)
     const y = storageHelper.getValue(SP_KEY_Y, stringToNumber)
@@ -117,6 +136,7 @@ class StatePersistorMapService implements StatePersistorService {
 
     view.setCenter(viewCenter)
     view.setZoom(viewZoom)
+    view.setRotation(rotation || 0)
   }
 }
 

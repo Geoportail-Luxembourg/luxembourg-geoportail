@@ -1,6 +1,9 @@
-import type { ThemeNodeModel } from './themes.model'
+import type { Metadata, ThemeNodeModel } from './themes.model'
 import { useThemeStore } from '@/stores/config.store'
+import { useMapStore } from '@/stores/map.store'
 import { LayerId } from '@/stores/map.store.model'
+import { storeToRefs } from 'pinia'
+import { DEFAULT_VIEW_ZOOM_MAX } from '@/composables/map/map.model'
 
 export default function useThemes() {
   function findById(
@@ -54,10 +57,29 @@ export default function useThemes() {
     return bgLayers.find(l => l.name === name)
   }
 
+  /**
+   * Switch theme and set max zoom
+   * @param name The theme's name eg. "main"
+   */
   function setTheme(name: string) {
     const { setTheme } = useThemeStore()
 
     setTheme(name)
+    setThemeZooms(name)
+  }
+
+  /**
+   * Set the max zoom according to the theme's metadata resolutions (if any).
+   * Only the max zoom is set, min zoom is by default always 8.
+   * @param name The theme's name eg. "main"
+   */
+  function setThemeZooms(name: string) {
+    // TODO: deactivate setThemeZooms in v3 and use this one instead
+    const { maxZoom } = storeToRefs(useMapStore())
+    const theme = findByName(name)
+    const { resolutions } = <Metadata>theme?.metadata || {}
+
+    maxZoom.value = resolutions ? resolutions.length + 7 : DEFAULT_VIEW_ZOOM_MAX
   }
 
   return {
