@@ -10,12 +10,14 @@ import {
 } from '@/services/common/measurement.utils'
 import { Polygon } from 'ol/geom'
 import { Projection } from 'ol/proj'
+import useMap from '@/composables/map/map.composable'
 
 defineProps<{
   isEditingFeature?: boolean
 }>()
 
 const { t } = useTranslation()
+const mapProjection: Projection = useMap().getOlMap().getView().getProjection()
 
 const feature: DrawnFeature | undefined = inject('feature')
 const featureType = feature?.featureType || ''
@@ -24,7 +26,7 @@ const featureGeometry = feature?.getGeometry()
 const featLength = computed(() =>
   featureGeometry &&
   ['drawnLine', 'drawnCircle', 'drawnPolygon'].includes(featureType)
-    ? getFormattedLength(featureGeometry, new Projection({ code: 'EPSG:3857' }))
+    ? getFormattedLength(featureGeometry, mapProjection)
     : undefined
 )
 const featArea = computed(() =>
