@@ -84,7 +84,6 @@ function onSubmitEditInfo() {
   <!-- Drawing details -->
   <FeatureSubWrapper
     v-if="isOpen"
-    :feature="feature"
     :isDocked="isDocked"
     @closePopup="() => emit('toggleDock')"
   >
@@ -95,7 +94,6 @@ function onSubmitEditInfo() {
       <FeatureSubContent
         :isDocked="isDocked"
         :isEditingFeature="isEditing"
-        :feature="feature"
         @toggleEditFeature="onToggleEditFeature"
         @toggleDock="() => emit('toggleDock')"
         @clickDelete="onClickDelete"
