@@ -1,6 +1,7 @@
 /// <reference types="cypress" />
 
 import type { Interaction } from 'ol/interaction'
+import 'cypress-real-events/support'
 
 // ***********************************************
 // This example commands.ts shows you how to
@@ -61,11 +62,21 @@ Cypress.Commands.add('getModifyInteraction', () => {
   })
 })
 
+Cypress.Commands.add('dragVertexOnMap', (originX, originY, x, y) => {
+  cy.get('div.ol-viewport').realMouseDown({
+    x: originX,
+    y: originY,
+  })
+  cy.get('div.ol-viewport').realMouseMove(x, y)
+  cy.get('div.ol-viewport').realMouseUp()
+})
+
 declare global {
   namespace Cypress {
     interface Chainable {
       getDrawInteractions(): Chainable<Array<Interaction>>
       getModifyInteraction(): Chainable<Interaction>
+      dragVertexOnMap(): Chainable<void>
       // login(email: string, password: string): Chainable<void>
       // drag(subject: string, options?: Partial<TypeOptions>): Chainable<Element>
       // dismiss(subject: string, options?: Partial<TypeOptions>): Chainable<Element>
