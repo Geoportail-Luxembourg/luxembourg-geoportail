@@ -89,7 +89,7 @@ class DrawTooltip {
       }
     }
     if (this.measureTooltipElement) {
-      this.measureTooltipElement.innerHTML = output
+      this.measureTooltipElement.innerText = output
       this.measureTooltipOverlay?.setPosition(coord)
     }
   }

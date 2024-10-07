@@ -1,9 +1,15 @@
 <script setup lang="ts">
-import { inject } from 'vue'
+import { computed, inject } from 'vue'
 import { useTranslation } from 'i18next-vue'
 
 import { DrawnFeature } from '@/services/draw/drawn-feature'
 import FeatureMeasurementsProfile from './feature-measurements-profile.vue'
+import {
+  getFormattedArea,
+  getFormattedLength,
+} from '@/services/common/measurement.utils'
+import { Polygon } from 'ol/geom'
+import { Projection } from 'ol/proj'
 
 defineProps<{
   isEditingFeature?: boolean
@@ -13,8 +19,21 @@ const { t } = useTranslation()
 
 const feature: DrawnFeature | undefined = inject('feature')
 const featureType = feature?.featureType || ''
-const featLength = feature?.id + ' [TODO featLenght]' // TODO update condition
-const featArea = feature?.id + ' [TODO featArea]' // TODO
+const featureGeometry = feature?.getGeometry()
+
+const featLength = computed(() =>
+  featureGeometry &&
+  ['drawnLine', 'drawnCircle', 'drawnPolygon'].includes(featureType)
+    ? getFormattedLength(featureGeometry, new Projection({ code: 'EPSG:3857' }))
+    : undefined
+)
+const featArea = computed(() =>
+  featureGeometry && ['drawnPolygon', 'drawnCircle'].includes(featureType)
+    ? getFormattedArea(featureGeometry as Polygon)
+    : undefined
+)
+// TODO: implement once circle is kept as a circle geometry,
+// also adapt length and area calculation for circle then
 const featRadius = feature?.id + ' [TODO featRayon]' // TODO
 const featElevation = feature?.id // TODO
 
@@ -26,18 +45,12 @@ function onClickValidateRadius() {
 <template>
   <div class="lux-drawing-item-measurements">
     <!-- Feature length, for LineString, Circle, Polygon -->
-    <div
-      data-cy="featItemLength"
-      v-if="['drawnLine', 'drawnCircle', 'drawnPolygon'].includes(featureType)"
-    >
+    <div data-cy="featItemLength" v-if="featLength">
       <span>{{ t('Length:') }}</span> <span>{{ featLength }}</span>
     </div>
 
     <!-- Feature area, for Circle, Polygon -->
-    <div
-      data-cy="featItemArea"
-      v-if="['drawnPolygon', 'drawnCircle'].includes(featureType)"
-    >
+    <div data-cy="featItemArea" v-if="featArea">
       <span>{{ t('Area:') }}</span> <span>{{ featArea }}</span>
     </div>
 
