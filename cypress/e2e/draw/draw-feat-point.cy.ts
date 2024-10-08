@@ -21,6 +21,32 @@ function testFeatStyleEditionTabContent() {
 
 describe('Draw "Point"', () => {
   beforeEach(() => {
+    // mocks for 100x100, 200x200, 300x300 clicks
+    cy.intercept(
+      'GET',
+      '/raster?lon=-25877.619036593664&lat=154433.4715351454',
+      {
+        statusCode: 200,
+        body: {
+          dhm: null,
+        },
+      }
+    )
+    cy.intercept('GET', '/raster?lon=51966.98676810359&lat=74839.09999860045', {
+      statusCode: 200,
+      body: {
+        dhm: 333.13,
+      },
+    }).as('getElevation200x200')
+    cy.intercept(
+      'GET',
+      '/raster?lon=12756.103097272688&lat=114635.74032468312',
+      {
+        statusCode: 500,
+        body: {},
+      }
+    ).as('getElevation300x300')
+
     cy.visit('/')
     cy.get('button[data-cy="drawButton"]').click()
     cy.get('button[data-cy="drawPointButton"]').click()
@@ -34,6 +60,19 @@ describe('Draw "Point"', () => {
 
     it('displays measurements for Point', () => {
       testFeatItemMeasurements()
+    })
+
+    it('displays and updates elevation for Point (handling null values and error codes as well)', () => {
+      cy.get('*[data-cy="featItemElevation"]').should('contain.text', 'N/A')
+      cy.dragVertexOnMap(100, 100, 300, 300)
+      cy.wait('@getElevation200x200')
+      cy.get('*[data-cy="featItemElevation"]').should(
+        'contain.text',
+        '333.13 m'
+      )
+      cy.dragVertexOnMap(300, 300, 200, 200)
+      cy.wait('@getElevation300x300')
+      cy.get('*[data-cy="featItemElevation"]').should('contain.text', 'N/A')
     })
 
     it('displays the possible actions for the feature', () => {

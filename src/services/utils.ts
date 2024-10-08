@@ -12,6 +12,28 @@ export function debounce<T extends (...args: any[]) => any>(
   }
 }
 
+export const debounceAsync = <T extends (...args: any[]) => Promise<any>>(
+  fn: T,
+  delay: number
+) => {
+  let timeout: ReturnType<typeof setTimeout> | null = null
+  return (...args: Parameters<T>): Promise<ReturnType<T>> => {
+    return new Promise((resolve, reject) => {
+      if (timeout) {
+        clearTimeout(timeout)
+      }
+      timeout = setTimeout(async () => {
+        try {
+          const result = await fn(...args)
+          resolve(result)
+        } catch (error) {
+          reject(error)
+        }
+      }, delay)
+    })
+  }
+}
+
 export function stringToNumber(text: string | null): number | undefined {
   return text?.trim() && !isNaN(Number(text)) ? Number(text) : undefined
 }
