@@ -26,6 +26,10 @@ export function stringToHtml(str: string): HTMLElement {
 export function getMetadataLinks(link: string | string[]): string[] {
   const links: string[] = []
   function splitLink(link: string) {
+    if (!link) {
+      return
+    }
+
     const currentLink = link.split('|')
     if (
       currentLink[3] === 'WWW:LINK-1.0-http--link' &&

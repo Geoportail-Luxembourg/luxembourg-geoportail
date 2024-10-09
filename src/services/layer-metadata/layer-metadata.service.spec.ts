@@ -70,8 +70,8 @@ const metadataMock = {
   serviceDescription:
     'Toutes les données publiées à travers ce service sont licencées sous CC0 ou CC-BY selon la couche',
 }
-
-const legendMock = document.createElement('body')
+const legendMock = document.createElement('h4')
+legendMock.textContent = 'The mocked legend'
 
 describe('LayerMetadataService', () => {
   let spyLocalMetadata
@@ -174,7 +174,8 @@ describe('LayerMetadataService', () => {
       expect(metadata).toEqual({
         title: '3d buildings',
         description: '',
-        hasLegend: false,
+        hasLegend: true,
+        legendHtml: legendMock,
         keywords: [],
         accessConstraints: 'none',
         serviceDescription:

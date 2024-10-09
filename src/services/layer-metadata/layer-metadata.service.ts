@@ -28,31 +28,30 @@ export class LayerMetadataService {
       const localMetadata = layer.metadata
       const metadataId = localMetadata?.metadata_id
 
-      const metadata =
-        metadataId &&
-        (await this.getLocalMetadata(
-          GET_METADATA_URL,
-          metadataId,
-          currentLanguage
-        ))
+      const metadata = metadataId
+        ? await this.getLocalMetadata(
+            GET_METADATA_URL,
+            metadataId,
+            currentLanguage
+          )
+        : { isError: true }
       const title = layer.name
 
       const legendName = localMetadata?.legend_name || ''
       const layerId = layer?.id
-      const legendHtml =
-        legendName &&
-        (await this.getLegendHtml(
-          GET_LEGENDS_URL,
-          legendName,
-          layerId,
-          currentLanguage
-        ))
+      const legendHtml = await this.getLegendHtml(
+        GET_LEGENDS_URL,
+        legendName,
+        layerId,
+        currentLanguage
+      )
+      const hasLegend = !!legendHtml && legendHtml.hasChildNodes()
 
       return {
         ...metadata,
         title,
-        hasLegend: !!legendHtml,
-        ...(legendHtml && { legendHtml }),
+        hasLegend,
+        ...(hasLegend && { legendHtml }),
       } as LayerMetadataModel
     } else {
       // External layers (which have no theme node in theme service)
@@ -93,9 +92,7 @@ export class LayerMetadataService {
           isError: false,
         }
       })
-      .catch(() => {
-        return { isError: true }
-      })
+      .catch(() => ({ isError: true }))
   }
 
   getLegendHtml(
@@ -114,7 +111,7 @@ export class LayerMetadataService {
       ...(legendName && { name: legendName }),
       ...(layerId && { id: layerId.toString() }),
     }
-    if (queryParams.name && queryParams.lang) {
+    if (queryParams.lang) {
       // handle high resolution screens
       if (window.devicePixelRatio > 1) {
         queryParams.dpi = (window.devicePixelRatio * 96).toString()
@@ -130,9 +127,7 @@ export class LayerMetadataService {
           const legendString = await response.text()
           return legendString ? stringToHtml(legendString) : undefined
         })
-        .catch(() => {
-          return undefined
-        })
+        .catch(() => undefined)
     }
   }
 }

@@ -421,6 +421,22 @@
   .popup .lux-drawing-item-measurements {
     @apply text-gray-500;
   }
+
+  .lux-legend h1 {
+    @apply text-4xl;
+  }
+
+  .lux-legend h2 {
+    @apply text-3xl;
+  }
+
+  .lux-legend h3 {
+    @apply text-2xl;
+  }
+
+  .lux-legend h4 {
+    @apply text-xl;
+  }
 }
 
 .fa-solid {
