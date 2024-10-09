@@ -41,11 +41,11 @@ describe('Draw "Point"', () => {
           dhm: 333.13,
         },
       }
-    ).as('getElevation200x200')
+    )
     cy.intercept('GET', '/raster?lon=51966.98676810359&lat=74839.09999860045', {
       statusCode: 500,
       body: {},
-    }).as('getElevation300x300')
+    })
 
     cy.visit('/')
     cy.get('button[data-cy="drawButton"]').click()
@@ -62,16 +62,24 @@ describe('Draw "Point"', () => {
       testFeatItemMeasurements()
     })
 
-    it('displays and updates elevation for Point (handling null values and error codes as well)', () => {
+    it('displays N/A elevation for Point if data is null', () => {
       cy.get('*[data-cy="featItemElevation"]').should('contain.text', 'N/A')
-      cy.dragVertexOnMap(100, 100, 200, 200)
-      cy.wait('@getElevation200x200')
+    })
+
+    it('displays elevation for new Point', () => {
+      cy.get('button[data-cy="drawPointButton"]').click()
+      cy.get('button[data-cy="drawPointButton"]').click()
+      cy.get('div.ol-viewport').click(200, 200)
       cy.get('*[data-cy="featItemElevation"]').should(
         'contain.text',
         '333.13 m'
       )
-      cy.dragVertexOnMap(200, 200, 300, 300)
-      cy.wait('@getElevation300x300')
+    })
+
+    it('displays N/A elevation for new Point if response has error', () => {
+      cy.get('button[data-cy="drawPointButton"]').click()
+      cy.get('button[data-cy="drawPointButton"]').click()
+      cy.get('div.ol-viewport').click(300, 300)
       cy.get('*[data-cy="featItemElevation"]').should('contain.text', 'N/A')
     })
 
