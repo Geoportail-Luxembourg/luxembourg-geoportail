@@ -2,34 +2,34 @@ describe('Permalink/State persistor - Layer comparator (lc & sliderRatio)', () =
   beforeEach(() => {
     cy.visit('/')
     cy.get('[data-cy="catalogButton"]').click()
-    cy.get('[data-cy="catalog"]').find('button').first().click()
-    cy.get('[data-cy="catalog"]').find('button').eq(1).click()
-    cy.get('[data-cy="catalog"]').find('button').eq(3).click()
-    cy.get('[data-cy="catalog"]').find('button').eq(5).click()
-    cy.get('[data-cy="catalog"]').find('button').eq(7).click()
+    cy.get('[data-cy="parentLayerLabel-242"]').find('button').first().click()
+    cy.get('[data-cy="parentLayerLabel-309"]').click()
+    cy.get('[data-cy^="layerLabel-269"]').click()
+    cy.get('[data-cy^="layerLabel-349"]').click()
+    cy.get('[data-cy^="layerLabel-329"]').click()
     cy.get('[data-cy="myLayersButton"]').click()
   })
 
   describe('initial state', () => {
     it('updates the permalink parameter "lc"', () => {
-      cy.get('button[data-cy="myLayerItemLabel-346"]').click()
+      cy.get('button[data-cy="myLayerItemLabel-329"]').click()
       cy.url().should('not.contain', 'lc=true')
-      cy.get('#layer-manager-item-content-346 button:last-child').click()
+      cy.get('#layer-manager-item-content-329 button:last-child').click()
       cy.url().should('contains', 'lc=true')
     })
 
     it('updates the permalink parameter "sliderRatio" with default value 0.5', () => {
-      cy.get('button[data-cy="myLayerItemLabel-346"]').click()
+      cy.get('button[data-cy="myLayerItemLabel-329"]').click()
       cy.url().should('not.contain', 'sliderRatio')
-      cy.get('#layer-manager-item-content-346 button:last-child').click()
+      cy.get('#layer-manager-item-content-329 button:last-child').click()
       cy.url().should('contains', 'sliderRatio=0.5')
     })
   })
 
   describe('when splitter element is moved or closed', () => {
     beforeEach(() => {
-      cy.get('button[data-cy="myLayerItemLabel-346"]').click()
-      cy.get('#layer-manager-item-content-346 button:last-child').click()
+      cy.get('button[data-cy="myLayerItemLabel-329"]').click()
+      cy.get('#layer-manager-item-content-329 button:last-child').click()
       cy.get('button[data-cy="sliderElement"]').focus()
     })
 

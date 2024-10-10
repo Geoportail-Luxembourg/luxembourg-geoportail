@@ -66,6 +66,7 @@ function closeLayerMetadata() {
   >
     <template v-slot:content>
       <div
+        data-cy="metadata"
         class="grid gap-2 grid-cols-3 pt-3 text-[13px] font-arial break-words"
       >
         <!-- Layer name -->

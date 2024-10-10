@@ -60,7 +60,9 @@ describe('Background selector', () => {
     it('updates the attribution content', () => {
       cy.get('[data-cy="attributionControl"]')
         .should('be.visible')
-        .contains('© B&W custom attribution for test only')
+        .contains(
+          '© MapTiler © OpenStreetMap contributors for data outside of Luxembourg'
+        )
     })
   })
 

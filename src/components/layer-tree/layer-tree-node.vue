@@ -80,6 +80,7 @@ function toggleParent(node: LayerTreeNodeModel) {
   </div>
   <div v-else class="flex text-tertiary pr-2">
     <button
+      :data-cy="`layerMetadata-${node.id}`"
       class="self-start before:text-[.85rem] before:transform before:translate-y-[.1rem] before:inline-block before:content-['\f129'] fa-solid fa-fw fa-fh fa-info"
       @click="setMetadataId(node.id)"
     ></button>
