@@ -11,6 +11,7 @@ import { useDrawStore } from '@/stores/draw.store'
 import useMap from '../map/map.composable'
 import { EditStateActive } from '@/stores/draw.store.model'
 import { DEFAULT_DRAW_ZINDEX, FEATURE_LAYER_TYPE } from './draw.composable'
+import { Circle } from 'ol/geom'
 
 export default function useEdit() {
   const { editStateActive, editingFeatureId, drawnFeatures } = storeToRefs(
@@ -80,5 +81,17 @@ export default function useEdit() {
       const feature = (event as ModifyEvent).features.getArray()[0]
       updateDrawnFeature(feature as DrawnFeature)
     })
+  }
+
+  function setRadius(feature: DrawnFeature, radius: number) {
+    const geometry = feature.getGeometry()
+    if (geometry?.getType() === 'Circle') {
+      ;(geometry as Circle).setRadius(radius)
+      updateDrawnFeature(feature)
+    }
+  }
+
+  return {
+    setRadius,
   }
 }

@@ -8,13 +8,14 @@ import {
   getFormattedArea,
   getFormattedLength,
 } from '@/services/common/measurement.utils'
-import { Geometry, Point, Polygon } from 'ol/geom'
+import { Circle, Geometry, Point, Polygon } from 'ol/geom'
 import { Projection } from 'ol/proj'
 import useMap from '@/composables/map/map.composable'
 import {
   getDebouncedElevation,
   getElevation,
 } from './feature-measurements-helper'
+import useEdit from '@/composables/draw/edit.composable'
 
 defineProps<{
   isEditingFeature?: boolean
@@ -27,21 +28,26 @@ const feature = ref<DrawnFeature | undefined>(inject('feature'))
 const featureType = ref<string>(feature.value?.featureType || '')
 const featureGeometry = ref<Geometry | undefined>(feature.value?.getGeometry())
 
+//TODO: update for circle
 const featLength = computed(() =>
   featureGeometry.value &&
-  ['drawnLine', 'drawnCircle', 'drawnPolygon'].includes(featureType.value)
+  ['drawnLine', 'drawnPolygon'].includes(featureType.value)
     ? getFormattedLength(featureGeometry.value as Geometry, mapProjection)
     : undefined
 )
+//TODO: update for circle
 const featArea = computed(() =>
-  featureGeometry.value &&
-  ['drawnPolygon', 'drawnCircle'].includes(featureType.value)
+  featureGeometry.value && ['drawnPolygon'].includes(featureType.value)
     ? getFormattedArea(featureGeometry.value as Polygon)
     : undefined
 )
-// TODO: implement once circle is kept as a circle geometry,
-// also adapt length and area calculation for circle then
-const featRadius = feature.value?.id + ' [TODO featRayon]' // TODO
+const featRadius = computed(() =>
+  featureGeometry.value && featureType.value === 'drawnCircle'
+    ? (featureGeometry.value as Circle).getRadius().toFixed(2)
+    : // ? getCircleRadius(featureGeometry.value as Circle, mapProjection)
+      undefined
+)
+const inputRadius = ref<string>(featRadius.value || '')
 
 const featElevation = ref<number | undefined>()
 
@@ -58,8 +64,18 @@ watchEffect(async () => {
   }
 })
 
-function onClickValidateRadius() {
-  alert('TODO: validate /save radius')
+watchEffect(() => {
+  inputRadius.value = (featureGeometry.value as Circle).getRadius().toFixed(2)
+  // inputRadius.value = getCircleRadius(
+  //   featureGeometry.value as Circle,
+  //   mapProjection
+  // )
+})
+
+function onClickValidateRadius(radius: string) {
+  if (feature.value) {
+    useEdit().setRadius(feature.value as DrawnFeature, Number(radius))
+  }
 }
 </script>
 
@@ -85,8 +101,16 @@ function onClickValidateRadius() {
       <span v-if="!isEditingFeature">{{ featRadius }}</span>
       <!-- Radius is editable when edition mode is on -->
       <div v-else class="flex">
-        <input class="form-control block" type="text" />
-        <button class="lux-btn-primary" @click="onClickValidateRadius">
+        <input
+          class="form-control block"
+          type="text"
+          v-model="inputRadius"
+          @keyup.enter="onClickValidateRadius(inputRadius)"
+        />
+        <button
+          class="lux-btn-primary"
+          @click="onClickValidateRadius(inputRadius)"
+        >
           {{ t('Valider') }}
         </button>
       </div>

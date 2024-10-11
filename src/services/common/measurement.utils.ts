@@ -1,5 +1,5 @@
 import { Coordinate } from 'ol/coordinate'
-import { LineString, Polygon, Point, Geometry } from 'ol/geom'
+import { LineString, Polygon, Point, Geometry, Circle } from 'ol/geom'
 import { Projection, transform } from 'ol/proj'
 import { getDistance as haversineDistance, getArea } from 'ol/sphere'
 
@@ -49,14 +49,13 @@ const getFormattedArea = function (polygon: Polygon): string {
 //   return format(area, 'm²', 'square', precision)
 // }
 
-// TODO: migrate and use once circle is kept as a circle geometry
-// const getCircleRadius = function (circle: Circle, proj: Projection): string {
-//   const coord = circle.getLastCoordinate()
-//   const center = circle.getCenter()
-//   return center !== null && coord !== null
-//     ? getFormattedLength(new LineString([center, coord]), proj)
-//     : ''
-// }
+const getCircleRadius = function (circle: Circle, proj: Projection): string {
+  const coord = circle.getLastCoordinate()
+  const center = circle.getCenter()
+  return center !== null && coord !== null
+    ? getFormattedLength(new LineString([center, coord]), proj)
+    : ''
+}
 
 const getFormattedAzimutRadius = function (
   line: LineString,
@@ -96,4 +95,5 @@ export {
   getFormattedArea,
   getFormattedAzimutRadius,
   getFormattedPoint,
+  getCircleRadius,
 }
