@@ -6,6 +6,8 @@ import { DrawnFeature } from '@/services/draw/drawn-feature'
 import FeatureMeasurementsProfile from './feature-measurements-profile.vue'
 import {
   getFormattedArea,
+  getFormattedCircleArea,
+  getFormattedCircleLength,
   getFormattedLength,
 } from '@/services/common/measurement.utils'
 import { Circle, Geometry, Point, Polygon } from 'ol/geom'
@@ -28,19 +30,33 @@ const feature = ref<DrawnFeature | undefined>(inject('feature'))
 const featureType = ref<string>(feature.value?.featureType || '')
 const featureGeometry = ref<Geometry | undefined>(feature.value?.getGeometry())
 
-//TODO: update for circle
-const featLength = computed(() =>
-  featureGeometry.value &&
-  ['drawnLine', 'drawnPolygon'].includes(featureType.value)
-    ? getFormattedLength(featureGeometry.value as Geometry, mapProjection)
-    : undefined
-)
-//TODO: update for circle
-const featArea = computed(() =>
-  featureGeometry.value && ['drawnPolygon'].includes(featureType.value)
-    ? getFormattedArea(featureGeometry.value as Polygon)
-    : undefined
-)
+const featLength = computed(() => {
+  if (featureGeometry.value) {
+    if (['drawnLine', 'drawnPolygon'].includes(featureType.value)) {
+      return getFormattedLength(
+        featureGeometry.value as Geometry,
+        mapProjection
+      )
+    } else if (featureType.value === 'drawnCircle') {
+      return getFormattedCircleLength(featureGeometry.value as Circle)
+    } else {
+      return undefined
+    }
+  }
+  return undefined
+})
+const featArea = computed(() => {
+  if (featureGeometry.value) {
+    if (featureType.value === 'drawnPolygon') {
+      return getFormattedArea(featureGeometry.value as Polygon)
+    } else if (featureType.value === 'drawnCircle') {
+      return getFormattedCircleArea(featureGeometry.value as Circle)
+    } else {
+      return undefined
+    }
+  }
+  return undefined
+})
 const featRadius = computed(() =>
   featureGeometry.value && featureType.value === 'drawnCircle'
     ? (featureGeometry.value as Circle).getRadius().toFixed(2)
