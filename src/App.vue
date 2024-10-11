@@ -2,8 +2,8 @@
 import { onMounted, onUnmounted, watch } from 'vue'
 import { storeToRefs } from 'pinia'
 
-import HeaderBar from './components/header/header-bar.vue'
-import FooterBar from './components/footer/footer-bar.vue'
+import HeaderBar from '@/components/header-bar/header-bar.vue'
+import FooterBar from '@/components/footer/footer-bar.vue'
 
 import AlertNotifications from '@/components/alert-notifications/alert-notifications.vue'
 import RemoteLayers from '@/components/remote-layers/remote-layers.vue'

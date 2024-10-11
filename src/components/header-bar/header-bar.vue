@@ -3,10 +3,12 @@ import { watch } from 'vue'
 import { storeToRefs } from 'pinia'
 import { useTranslation } from 'i18next-vue'
 
-import LanguageSelector from '@/components/nav-bars/language-selector.vue'
 import { useAppStore } from '@/stores/app.store'
 import { useThemeStore } from '@/stores/config.store'
-import { themeSelectorService } from '../theme-selector/theme-selector.service'
+import { themeSelectorService } from '@/components/theme-selector/theme-selector.service'
+import AuthForm from '@/components/auth/auth-form.vue'
+import DropdownContent from '@/components/common/dropdown-content.vue'
+import LanguageSelector from '@/components/header-bar/language-selector.vue'
 
 const { t } = useTranslation()
 const appStore = useAppStore()
@@ -51,6 +53,7 @@ function onClick() {
     <div class="grow text-center">search</div>
     <div>
       <ul class="h-full flex">
+        <!-- Theme selector -->
         <li>
           <button
             class="flex items-center before:font-icons before:text-3xl before:w-16 text-primary uppercase h-full mr-3"
@@ -63,11 +66,24 @@ function onClick() {
             }}</span>
           </button>
         </li>
+
+        <!-- Language selector -->
         <li class="border-l-[1px] border-stone-300 h-full">
           <language-selector
             data-cy="langSelect"
             class="flex-none h-full"
           ></language-selector>
+        </li>
+
+        <!-- Auth -->
+        <li class="border-l-[1px] border-stone-300 h-full">
+          <dropdown-content
+            data-cy="authFormIcon"
+            class="lux-navbar-dropdown lux-navbar-dropdown-auth h-full"
+            :enableClickOutside="false"
+          >
+            <auth-form class="w-80" />
+          </dropdown-content>
         </li>
       </ul>
     </div>

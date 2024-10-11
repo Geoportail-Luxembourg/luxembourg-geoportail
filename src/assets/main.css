@@ -109,7 +109,7 @@
   }
 
   .lux-btn {
-    @apply bg-white border text-primary py-[6px] px-[12px] hover:bg-primary hover:text-white leading-snug focus:bg-[#e6e6e6] focus:border-[#8c8c8c] focus:[color:var(--color-primary)] focus:lux-outlined;
+    @apply cursor-pointer bg-white border text-primary py-[6px] px-[12px] hover:bg-primary hover:text-white leading-snug focus:bg-[#e6e6e6] focus:border-[#8c8c8c] focus:[color:var(--color-primary)] focus:lux-outlined;
     border: 1px solid var(--color-gray);
   }
 
@@ -202,6 +202,10 @@
       [&.expanded]:after:content-['\e02c'];
   }
 
+  .lux-navbar-dropdown-auth .lux-dropdown-btn {
+    @apply after:content-['\E02E'];
+  }
+
   .lux-navbar-dropdown .lux-dropdown-wrapper {
     @apply absolute w-full right-0;
   }
@@ -222,6 +226,10 @@
 
   .lux-remote-services-dropdown .lux-dropdown-wrapper {
     @apply fixed w-56;
+  }
+
+  .lux-navbar-dropdown .lux-dropdown-content {
+    @apply bg-transparent border-none gap-[1px] shadow-none m-0 py-0 float-right relative left-auto;
   }
 
   .lux-slider-line {
@@ -393,6 +401,22 @@
 
   .lux-tab.active {
     @apply text-white bg-primary cursor-default;
+  }
+
+  .lux-account-tab {
+    @apply ml-1 bg-primary text-white after:content-['\E02E'] after:font-icons after:text-3xl after:ml-4 w-20 px-2 pt-1;
+  }
+
+  .lux-account-content {
+    @apply bg-primary p-3;
+  }
+
+  .lux-account input[type='password'],
+  .lux-account input[type='text'] {
+    @apply border-none py-2;
+    background-color: rgba(46, 65, 78, 0.2);
+    -webkit-box-shadow: inset 0px 2px 4px -1px rgba(0, 57, 79, 0.25);
+    box-shadow: inset 0px 2px 4px -1px rgba(0, 57, 79, 0.25);
   }
 
   .form-control {
