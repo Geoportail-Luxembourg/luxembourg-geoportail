@@ -28,6 +28,7 @@ const inputValue = ref(props.value)
       :max="max"
       :step="step"
       v-model="inputValue"
+      @input="$emit('change', parseFloat(inputValue))"
     />
     <input
       type="number"

@@ -27,6 +27,31 @@ const currentStyleComponent = computed(() =>
   feature?.featureType.replace('drawn', 'FeatureEditStyle')
 )
 
+function onColorSelect(colorEvent) {
+  feature.featureStyle.color = colorEvent.target.value
+  feature.changed()
+}
+
+function onSizeChange(newSize) {
+  feature.featureStyle.size = newSize
+  feature.changed()
+}
+
+function onAngleChange(newAngle) {
+  feature.featureStyle.angle = (newAngle * Math.PI) / 180
+  feature.changed()
+}
+
+function onWidthChange(newWidth) {
+  feature.featureStyle.stroke = newWidth
+  feature.changed()
+}
+
+function onTransparencyChange(newTransparency) {
+  feature.featureStyle.opacity = (100 - newTransparency) / 100
+  feature.changed()
+}
+
 function onClickChangeOrientation() {
   alert('onClickChangeOrientation TODO') // TODO:
 }
@@ -52,19 +77,26 @@ function onClickChangeLineStyle(style: string) {
           <input
             class="cursor-pointer"
             type="color"
-            value=""
+            :value="feature.featureStyle.color"
+            @input="onColorSelect"
             data-cy="featStyleColor"
           />
         </div>
       </div>
     </template>
 
-    <template v-slot:size>
+    <template v-slot:size="slotProps">
       <div class="flex gap-1 items-center mt-1">
         <label class="font-bold block" for="inline-full-name">
           {{ t('Size') }}
         </label>
-        <RangeInput class="md:w-2/3" :max="900" data-cy="featStyleSize" />
+        <RangeInput
+          class="md:w-2/3"
+          :max="slotProps.maxsize"
+          :value="feature.featureStyle.size"
+          data-cy="featStyleSize"
+          @change="onSizeChange"
+        />
       </div>
     </template>
 
@@ -77,6 +109,12 @@ function onClickChangeLineStyle(style: string) {
           class="md:w-2/3"
           :min="-180"
           :max="180"
+          :value="
+            ((Math.round((feature.featureStyle.angle * 180) / Math.PI) + 180) %
+              360) -
+            180
+          "
+          @change="onAngleChange"
           data-cy="featStyleAngle"
         />
       </div>
@@ -121,7 +159,11 @@ function onClickChangeLineStyle(style: string) {
         <label class="font-bold block" for="inline-full-name">
           {{ t('Stroke width') }}
         </label>
-        <RangeInput data-cy="featStyleLineWidth" />
+        <RangeInput
+          data-cy="featStyleLineWidth"
+          :value="feature.featureStyle.stroke"
+          @change="onWidthChange"
+        />
       </div>
     </template>
 
@@ -130,7 +172,11 @@ function onClickChangeLineStyle(style: string) {
         <label class="font-bold block" for="inline-full-name">
           {{ t('Transparence') }}
         </label>
-        <RangeInput :max="100" />
+        <RangeInput
+          :max="100"
+          :value="100 - feature.featureStyle.opacity * 100"
+          @change="onTransparencyChange"
+        />
       </div>
     </template>
 

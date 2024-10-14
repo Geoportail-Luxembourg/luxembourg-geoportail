@@ -3,6 +3,7 @@ import { inject, provide, Ref, ref } from 'vue'
 import { useTranslation } from 'i18next-vue'
 
 import { DrawnFeature } from '@/services/draw/drawn-feature'
+import { DrawnFeatureStyle } from '@/stores/draw.store.model'
 
 import FeatureMenuPopup from './feature-menu-popup.vue'
 import FeatureConfirmDelete from './feature-confirm-delete.vue'
@@ -20,10 +21,16 @@ const emit = defineEmits([
   'toggleEditFeature',
   'toggleDock',
   'clickDelete',
-  'submitEditInfo',
+  'resetInfo',
+  'resetStyle',
+  'submitEditFeature',
 ])
 const { t } = useTranslation()
 const feature: DrawnFeature | undefined = inject('feature')
+let prevLabel = feature.label
+let prevDescription = feature.description
+// keep deep copy of previous style to be able to revert style on cancel
+const prevStyle: DrawnFeatureStyle = Object.assign({}, feature.featureStyle)
 
 const editComponents = {
   FeatureConcentricCircle,
@@ -38,6 +45,11 @@ const currentEditCompKey: Ref<keyof typeof editComponents | undefined> =
 provide('currentEditCompKey', currentEditCompKey)
 
 function onClickCancel() {
+  if (currentEditCompKey.value == 'FeatureEditStyle') {
+    emit('resetStyle', prevStyle)
+  } else if (currentEditCompKey.value == 'FeatureEditInfo') {
+    emit('resetInfo', prevLabel, prevDescription)
+  }
   currentEditCompKey.value = undefined
 }
 
@@ -45,10 +57,16 @@ function onClickValidate() {
   const currentComponent =
     editComponents[currentEditCompKey.value as keyof typeof editComponents]
 
+  prevLabel = feature.label
+  prevDescription = feature.description
+  Object.assign(prevStyle, feature.featureStyle)
   if (currentComponent === FeatureConfirmDelete) {
     emit('clickDelete')
-  } else if (currentComponent === FeatureEditInfo) {
-    emit('submitEditInfo')
+  } else if (
+    currentComponent === FeatureEditInfo ||
+    currentComponent === FeatureEditStyle
+  ) {
+    emit('submitEditFeature')
   } else {
     alert('TODO: Draw feature click onClickValidate()')
   }
