@@ -16,6 +16,7 @@ module.exports = {
       extends: ['plugin:cypress/recommended'],
     },
   ],
+  plugins: ['no-only-tests'],
   rules: {
     'no-prototype-builtins': 'off',
     '@typescript-eslint/ban-types': 'off',
@@ -28,6 +29,7 @@ module.exports = {
     '@typescript-eslint/no-unused-vars': ['error'],
     'import/no-unresolved': 'off',
     'no-console': 'error',
+    'no-only-tests/no-only-tests': 'error',
   },
   parserOptions: {
     ecmaVersion: 'latest',

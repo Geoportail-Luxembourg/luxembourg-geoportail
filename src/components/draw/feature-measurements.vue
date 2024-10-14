@@ -1,22 +1,62 @@
 <script setup lang="ts">
-import { inject } from 'vue'
+import { computed, inject, ref, watchEffect } from 'vue'
 import { useTranslation } from 'i18next-vue'
 
 import { DrawnFeature } from '@/services/draw/drawn-feature'
 import FeatureMeasurementsProfile from './feature-measurements-profile.vue'
+import {
+  getFormattedArea,
+  getFormattedLength,
+} from '@/services/common/measurement.utils'
+import { Geometry, Point, Polygon } from 'ol/geom'
+import { Projection } from 'ol/proj'
+import useMap from '@/composables/map/map.composable'
+import {
+  getDebouncedElevation,
+  getElevation,
+} from './feature-measurements-helper'
 
 defineProps<{
   isEditingFeature?: boolean
 }>()
 
 const { t } = useTranslation()
+const mapProjection: Projection = useMap().getOlMap().getView().getProjection()
 
-const feature: DrawnFeature | undefined = inject('feature')
-const featureType = feature?.featureType || ''
-const featLength = feature?.id + ' [TODO featLenght]' // TODO update condition
-const featArea = feature?.id + ' [TODO featArea]' // TODO
-const featRadius = feature?.id + ' [TODO featRayon]' // TODO
-const featElevation = feature?.id // TODO
+const feature = ref<DrawnFeature | undefined>(inject('feature'))
+const featureType = ref<string>(feature.value?.featureType || '')
+const featureGeometry = ref<Geometry | undefined>(feature.value?.getGeometry())
+
+const featLength = computed(() =>
+  featureGeometry.value &&
+  ['drawnLine', 'drawnCircle', 'drawnPolygon'].includes(featureType.value)
+    ? getFormattedLength(featureGeometry.value as Geometry, mapProjection)
+    : undefined
+)
+const featArea = computed(() =>
+  featureGeometry.value &&
+  ['drawnPolygon', 'drawnCircle'].includes(featureType.value)
+    ? getFormattedArea(featureGeometry.value as Polygon)
+    : undefined
+)
+// TODO: implement once circle is kept as a circle geometry,
+// also adapt length and area calculation for circle then
+const featRadius = feature.value?.id + ' [TODO featRayon]' // TODO
+
+const featElevation = ref<number | undefined>()
+
+watchEffect(async () => {
+  const coordinates = (featureGeometry.value as Point).getCoordinates()
+  if (featureGeometry.value && featureType.value === 'drawnPoint') {
+    if (!featElevation.value) {
+      featElevation.value = await getElevation(coordinates)
+    } else {
+      featElevation.value = await getDebouncedElevation(coordinates)
+    }
+  } else {
+    featElevation.value = undefined
+  }
+})
 
 function onClickValidateRadius() {
   alert('TODO: validate /save radius')
@@ -26,18 +66,12 @@ function onClickValidateRadius() {
 <template>
   <div class="lux-drawing-item-measurements">
     <!-- Feature length, for LineString, Circle, Polygon -->
-    <div
-      data-cy="featItemLength"
-      v-if="['drawnLine', 'drawnCircle', 'drawnPolygon'].includes(featureType)"
-    >
+    <div data-cy="featItemLength" v-if="featLength">
       <span>{{ t('Length:') }}</span> <span>{{ featLength }}</span>
     </div>
 
     <!-- Feature area, for Circle, Polygon -->
-    <div
-      data-cy="featItemArea"
-      v-if="['drawnPolygon', 'drawnCircle'].includes(featureType)"
-    >
+    <div data-cy="featItemArea" v-if="featArea">
       <span>{{ t('Area:') }}</span> <span>{{ featArea }}</span>
     </div>
 
@@ -59,12 +93,12 @@ function onClickValidateRadius() {
     </div>
 
     <!-- Feature elevation, for Point -->
-    <div data-cy="featItemElevation" v-if="featureType === 'drawnPoint'">
-      <span>{{
-        t('Elevation: \{\{ ctrl.featureElevation \}\}', {
-          'ctrl.featureElevation': featElevation,
-        })
-      }}</span>
+    <div v-if="featureType === 'drawnPoint'">
+      <span>{{ t('Elevation') }}: </span>
+      <span
+        data-cy="featItemElevation"
+        v-format-distance="featElevation"
+      ></span>
     </div>
 
     <!-- Feature elevation profile LineString -->

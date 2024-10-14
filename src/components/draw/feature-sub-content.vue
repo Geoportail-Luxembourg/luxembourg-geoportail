@@ -72,10 +72,7 @@ function onClickValidate() {
     <!-- Spacer -->
     <div class="min-h-3"></div>
 
-    <FeatureMeasurements
-      :feature="feature"
-      :isEditingFeature="isEditingFeature"
-    />
+    <FeatureMeasurements :isEditingFeature="isEditingFeature" />
 
     <!-- Default display feature options -->
     <div class="flex justify-between items-center mt-1 gap-2">

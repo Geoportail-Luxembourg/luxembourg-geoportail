@@ -48,7 +48,7 @@ export default defineConfig(({ command, mode }) => {
   }
 
   const env = loadEnv(mode, process.cwd(), '')
-  if (env.INSRUMENT_COVERAGE) {
+  if (env.INSTRUMENT_COVERAGE) {
     base.server = { hmr: false } // disable hot reload of files modified by coverage tests
     base.build = { sourcemap: 'hidden' } // disable warning which says coverage enabled by Istanbul
     base.plugins = [...(base.plugins || []), IstanbulPlugin()] // add Istanbul plugin for code instrumentation
