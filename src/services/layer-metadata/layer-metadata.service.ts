@@ -11,14 +11,11 @@ import { LayerId } from '@/stores/map.store.model'
 import { remoteMetadataHelper } from './remote-metadata.helper'
 import { REMOTE_SERVICE_TYPE } from '../remote-layers/remote-layers.model'
 
-export class LayerMetadataService {
-  // TODO: get urls from a config
-  private geonetworkBaseUrl =
-    'https://geocatalogue.geoportail.lu/geonetwork/srv'
-  private legendBaseUrl = 'https://map.geoportail.lu/legends/get_html'
-  // TODO: get from config or relative
-  private localMetadataBaseUrl = 'https://map.geoportail.lu/getMetadata'
+const GEONETWORK_URL = import.meta.env.VITE_GEONETWORK_URL
+const GET_LEGENDS_URL = import.meta.env.VITE_GET_LEGENDS_URL
+const GET_METADATA_URL = import.meta.env.VITE_GET_METADATA_URL
 
+export class LayerMetadataService {
   async getLayerMetadata(id: LayerId, currentLanguage: string) {
     const themesService = useThemes()
     const layer: ThemeNodeModel | undefined =
@@ -34,7 +31,7 @@ export class LayerMetadataService {
       const metadata =
         metadataId &&
         (await this.getLocalMetadata(
-          this.localMetadataBaseUrl,
+          GET_METADATA_URL,
           metadataId,
           currentLanguage
         ))
@@ -45,7 +42,7 @@ export class LayerMetadataService {
       const legendHtml =
         legendName &&
         (await this.getLegendHtml(
-          this.legendBaseUrl,
+          GET_LEGENDS_URL,
           legendName,
           layerId,
           currentLanguage
@@ -90,7 +87,7 @@ export class LayerMetadataService {
           responsibleParty: metadata.responsibleParty
             ? getResponsibleParty(metadata.responsibleParty)
             : undefined,
-          metadataLink: `${this.geonetworkBaseUrl}/${isoLang2To3(
+          metadataLink: `${GEONETWORK_URL}/${isoLang2To3(
             language
           )}/catalog.search#/metadata/${metadataUid}`,
           isError: false,
