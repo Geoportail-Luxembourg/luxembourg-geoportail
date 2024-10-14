@@ -3,6 +3,7 @@ import { provide } from 'vue'
 import { getUid } from 'ol/util'
 
 import { DrawnFeature } from '@/services/draw/drawn-feature'
+import { DrawnFeatureStyle } from '@/stores/draw.store.model'
 
 import FeatureSubContent from './feature-sub-content.vue'
 import FeatureSubWrapper from './feature-sub-wrapper.vue'
@@ -20,13 +21,17 @@ const props = withDefaults(
     isOpen: false,
   }
 )
+
+// should preform deep copy, nut then the updqte of the OL object on the canvas would not work ??
+const localFeature = props.feature
+
 const emit = defineEmits([
   'clickDelete',
   'closePopup',
   'toggleFeatureSub',
   'toggleFeatureEdit',
   'toggleDock',
-  'submitEditInfo',
+  'submitFeature',
 ])
 
 provide('feature', props.feature)
@@ -43,8 +48,20 @@ function onClickDelete() {
   emit('clickDelete', props.feature.id)
 }
 
-function onSubmitEditInfo() {
-  emit('submitEditInfo', props.feature)
+function onResetInfo(prevLabel: string, prevDescription: string) {
+  localFeature.label = prevLabel
+  localFeature.description = prevDescription
+  // emit('submitFeature', localFeature)
+}
+
+function onResetStyle(prevStyle: DrawnFeatureStyle) {
+  localFeature.featureStyle = Object.assign({}, prevStyle)
+  localFeature.value.changed()
+  // emit('submitFeature', localFeature)
+}
+
+function onSubmitEditFeature() {
+  emit('submitFeature', props.feature)
 }
 </script>
 
@@ -97,7 +114,9 @@ function onSubmitEditInfo() {
         @toggleEditFeature="onToggleEditFeature"
         @toggleDock="() => emit('toggleDock')"
         @clickDelete="onClickDelete"
-        @submitEditInfo="onSubmitEditInfo"
+        @resetInfo="onResetInfo"
+        @resetStyle="onResetStyle"
+        @submitEditFeature="onSubmitEditFeature"
       />
     </div>
   </FeatureSubWrapper>
