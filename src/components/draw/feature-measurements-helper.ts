@@ -1,7 +1,6 @@
 import { PointData } from '@/components/common/graph/d3-graph-elevation.d'
 import { Coordinate } from 'ol/coordinate'
 import { transform } from 'ol/proj'
-import i18next from 'i18next'
 import { debounceAsync } from '@/services/utils'
 
 const ELEVATION_URL = import.meta.env.VITE_ELEVATION_URL
@@ -17,25 +16,20 @@ export function downloadCsv(profileData: PointData[]) {
   }
 }
 
-export function getElevation(coordinate: Coordinate) {
+export const getElevation = async (coordinate: Coordinate) => {
   const lonlat = transform(coordinate, MAP_CRS, ELEVATION_CRS)
-  return fetch(`${ELEVATION_URL}?lon=${lonlat[0]}&lat=${lonlat[1]}`).then(
-    async response => {
-      const resp = (await response.json()).dhm
-      let text = i18next.t('N/A', { ns: 'client' })
-      if (resp) {
-        text = `${Number(resp).toFixed(2)} m`
-      }
-      return { formattedElevation: text, rawElevation: resp }
+  try {
+    const response = await fetch(
+      `${ELEVATION_URL}?lon=${lonlat[0]}&lat=${lonlat[1]}`
+    )
+    if (!response.ok) {
+      throw new Error('Network response was not ok')
     }
-  )
+    const data = await response.json()
+    return data.dhm
+  } catch (error) {
+    return null //return null on error, like API when no data
+  }
 }
 
-export const getFormattedElevation = async (coordinates: number[]) => {
-  return (await getElevation(coordinates)).formattedElevation
-}
-
-export const getDebouncedFormattedElevation = debounceAsync(
-  getFormattedElevation,
-  300
-)
+export const getDebouncedElevation = debounceAsync(getElevation, 300)

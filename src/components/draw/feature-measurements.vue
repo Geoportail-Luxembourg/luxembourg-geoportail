@@ -12,8 +12,8 @@ import { Geometry, Point, Polygon } from 'ol/geom'
 import { Projection } from 'ol/proj'
 import useMap from '@/composables/map/map.composable'
 import {
-  getDebouncedFormattedElevation,
-  getFormattedElevation,
+  getDebouncedElevation,
+  getElevation,
 } from './feature-measurements-helper'
 
 defineProps<{
@@ -43,15 +43,15 @@ const featArea = computed(() =>
 // also adapt length and area calculation for circle then
 const featRadius = feature.value?.id + ' [TODO featRayon]' // TODO
 
-const featElevation = ref<string | undefined>()
+const featElevation = ref<number | undefined>()
 
 watchEffect(async () => {
   const coordinates = (featureGeometry.value as Point).getCoordinates()
   if (featureGeometry.value && featureType.value === 'drawnPoint') {
     if (!featElevation.value) {
-      featElevation.value = await getFormattedElevation(coordinates)
+      featElevation.value = await getElevation(coordinates)
     } else {
-      featElevation.value = await getDebouncedFormattedElevation(coordinates)
+      featElevation.value = await getDebouncedElevation(coordinates)
     }
   } else {
     featElevation.value = undefined
@@ -93,13 +93,12 @@ function onClickValidateRadius() {
     </div>
 
     <!-- Feature elevation, for Point -->
-    <div data-cy="featItemElevation" v-if="featElevation">
-      <span>{{
-        t('Elevation: \{\{ ctrl.featureElevation \}\}', {
-          'ctrl.featureElevation': featElevation,
-          interpolation: { escapeValue: false },
-        })
-      }}</span>
+    <div v-if="featureType === 'drawnPoint'">
+      <span>{{ t('Elevation') }}: </span>
+      <span
+        data-cy="featItemElevation"
+        v-format-distance="featElevation"
+      ></span>
     </div>
 
     <!-- Feature elevation profile LineString -->

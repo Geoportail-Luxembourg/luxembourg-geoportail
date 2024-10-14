@@ -9,6 +9,7 @@ import { createPinia } from 'pinia'
 import { initProjections } from '@/services/projection.utils'
 import { useThemeStore } from './stores/config.store'
 import { themesApiFixture } from './__fixtures__/themes.api.fixture'
+import formatDistanceDirective from './directives/format-distance.directive'
 
 import App from './App.vue'
 
@@ -37,6 +38,7 @@ const app = createApp(App)
 app.use(createPinia())
 app.use(I18NextVue, { i18next })
 app.use(VueDOMPurifyHTML)
+app.use(formatDistanceDirective)
 
 app.mount('#app')
 
