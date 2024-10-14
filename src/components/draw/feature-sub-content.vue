@@ -26,7 +26,7 @@ const emit = defineEmits([
   'submitEditFeature',
 ])
 const { t } = useTranslation()
-const feature: DrawnFeature | undefined = inject('feature')
+const feature: DrawnFeature = inject('feature')!
 let prevLabel = feature.label
 let prevDescription = feature.description
 // keep deep copy of previous style to be able to revert style on cancel

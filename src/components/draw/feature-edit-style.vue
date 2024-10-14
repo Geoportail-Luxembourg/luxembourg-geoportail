@@ -13,7 +13,7 @@ import FeatureEditStyleLabel from './feature-edit-style-label.vue'
 import FeatureEditStyleSymbole from './feature-edit-style-symbole.vue'
 
 const { t } = useTranslation()
-const feature: DrawnFeature | undefined = inject('feature')
+const feature: DrawnFeature = inject('feature')!
 
 const styleComponents = {
   FeatureEditStyleCircle,
@@ -27,28 +27,29 @@ const currentStyleComponent = computed(() =>
   feature?.featureType.replace('drawn', 'FeatureEditStyle')
 )
 
-function onColorSelect(colorEvent) {
-  feature.featureStyle.color = colorEvent.target.value
+function onColorSelect(colorEvent: Event) {
+  feature.featureStyle.color = (colorEvent.target as HTMLInputElement).value
   feature.changed()
 }
 
-function onSizeChange(newSize) {
-  feature.featureStyle.size = newSize
+function onSizeChange(newSize: string | number) {
+  feature.featureStyle.size = parseFloat(newSize as string)
   feature.changed()
 }
 
-function onAngleChange(newAngle) {
-  feature.featureStyle.angle = (newAngle * Math.PI) / 180
+function onAngleChange(newAngle: string | number) {
+  feature.featureStyle.angle = (parseFloat(newAngle as string) * Math.PI) / 180
   feature.changed()
 }
 
-function onWidthChange(newWidth) {
-  feature.featureStyle.stroke = newWidth
+function onWidthChange(newWidth: string | number) {
+  feature.featureStyle.stroke = parseFloat(newWidth as string)
   feature.changed()
 }
 
-function onTransparencyChange(newTransparency) {
-  feature.featureStyle.opacity = (100 - newTransparency) / 100
+function onTransparencyChange(newTransparency: string | number) {
+  feature.featureStyle.opacity =
+    (100 - parseFloat(newTransparency as string)) / 100
   feature.changed()
 }
 
