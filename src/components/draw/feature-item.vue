@@ -56,7 +56,7 @@ function onResetInfo(prevLabel: string, prevDescription: string) {
 
 function onResetStyle(prevStyle: DrawnFeatureStyle) {
   localFeature.featureStyle = Object.assign({}, prevStyle)
-  localFeature.value.changed()
+  localFeature.changed()
   // emit('submitFeature', localFeature)
 }
 
