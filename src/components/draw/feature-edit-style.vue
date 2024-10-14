@@ -2,6 +2,8 @@
 import { computed, inject } from 'vue'
 import { useTranslation } from 'i18next-vue'
 
+import { LineString } from 'ol/geom'
+
 import { DrawnFeature } from '@/services/draw/drawn-feature'
 import RangeInput from '@/components/common/range-input/range-input.vue'
 
@@ -53,12 +55,24 @@ function onTransparencyChange(newTransparency: string | number) {
   feature.changed()
 }
 
+function onShowDirection(event: Event) {
+  feature.featureStyle.showOrientation = (
+    event.target as HTMLInputElement
+  ).checked
+  feature.changed()
+}
+
 function onClickChangeOrientation() {
-  alert('onClickChangeOrientation TODO') // TODO:
+  const coordinates = (feature.getGeometry() as LineString)
+    .getCoordinates()
+    .reverse()
+  const reversedGeometry = new LineString(coordinates)
+  feature.setGeometry(reversedGeometry)
 }
 
 function onClickChangeLineStyle(style: string) {
-  alert('onClickChangeLineStyle TODO' + style) // TODO:
+  feature.featureStyle.linestyle = style
+  feature.changed()
 }
 </script>
 
@@ -186,7 +200,7 @@ function onClickChangeLineStyle(style: string) {
         <label class="font-bold block" for="showOrientation">
           {{ t('Show orientation') }}
         </label>
-        <input type="checkbox" id="showOrientation" />
+        <input type="checkbox" id="showOrientation" @change="onShowDirection" />
       </div>
 
       <div class="flex gap-1 items-center mt-1 mb-2">
