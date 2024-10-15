@@ -45,14 +45,24 @@ export type Metadata = Partial<{
   time_layers: { [key: string]: string }
   ol3d_defaultlayer: boolean
   ol3d_options: {
-    heightOffset: number
+    heightOffset?: number
+    cesium3DTileStyle?: { show: string }
   }
-
   ol3d_type: string
   ogc_info_format: string
   ogc_info_srs: string
   ogc_query_layers: string[]
   hasRetina: boolean
+  geocatalog_open_data_last_update_date: string
+  geocatalog_open_data_only_add_gpkg: boolean
+  geocatalog_open_data_publish_flag: boolean
+  geocatalog_open_data_update_frequency:
+    | 'weekly'
+    | 'monthly'
+    | 'once'
+    | 'yearly'
+  geocatalog_open_data_uuid: string
+  return_clicked_point: string
 }>
 
 export enum LayerTypeValue {

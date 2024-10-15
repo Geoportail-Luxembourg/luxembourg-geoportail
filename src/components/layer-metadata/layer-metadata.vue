@@ -8,10 +8,12 @@ import { watch, Ref, ref, onMounted, computed } from 'vue'
 import { layerMetadataService } from '@/services/layer-metadata/layer-metadata.service'
 import { LayerMetadataModel } from '@/services/layer-metadata/layer-metadata.model'
 import ModalDialog from '@/components/common/modal-dialog.vue'
+import { useTranslateParser } from '@/composables/translateParser'
 
 const metadataStore = useMetadataStore()
 const { metadataId } = storeToRefs(metadataStore)
 const { t, i18next } = useTranslation()
+const { translate } = useTranslateParser()
 const layerMetadata: Ref<LayerMetadataModel | undefined> = ref()
 const displayFullDescription: Ref<boolean> = ref(true)
 const MAX_DESCRIPTION_LENGTH = 220
@@ -64,18 +66,24 @@ function closeLayerMetadata() {
   >
     <template v-slot:content>
       <div
+        data-cy="metadata"
         class="grid gap-2 grid-cols-3 pt-3 text-[13px] font-arial break-words"
       >
+        <!-- Layer name -->
         <layer-metadata-item
           v-if="layerMetadata.name"
           :label="t('Name')"
           :value="layerMetadata.name"
         ></layer-metadata-item>
+
+        <!-- Service Description -->
         <layer-metadata-item
           v-if="layerMetadata.serviceDescription"
           :label="t('Description du Service')"
           :value="layerMetadata.serviceDescription"
         ></layer-metadata-item>
+
+        <!-- Description -->
         <div
           v-if="layerMetadata.description"
           class="col-span-3 grid gap-2 grid-cols-3"
@@ -112,6 +120,8 @@ function closeLayerMetadata() {
             </button>
           </span>
         </div>
+
+        <!-- Legal -->
         <layer-metadata-item
           v-if="layerMetadata.legalConstraints"
           :label="t(`Contrainte d'utilisation`)"
@@ -134,16 +144,22 @@ function closeLayerMetadata() {
             </span>
           </div>
         </div>
+
+        <!-- Revision date -->
         <layer-metadata-item
           v-if="layerMetadata.revisionDate"
           :label="t('Revision date')"
           :value="formatDate(layerMetadata.revisionDate, i18next.language)"
         ></layer-metadata-item>
+
+        <!-- Keywords -->
         <layer-metadata-item
           v-if="layerMetadata.keyword"
           :label="t('Keywords')"
           :value="layerMetadata.keyword?.join(',')"
         ></layer-metadata-item>
+
+        <!-- Contact -->
         <div
           class="col-span-3 grid gap-2 grid-cols-3"
           v-if="layerMetadata.responsibleParty"
@@ -171,6 +187,8 @@ function closeLayerMetadata() {
             </p>
           </div>
         </div>
+
+        <!-- Link -->
         <div
           class="grid gap-2 grid-cols-3 col-span-3"
           v-if="layerMetadata.metadataLink"
@@ -185,12 +203,18 @@ function closeLayerMetadata() {
             >
           </span>
         </div>
+
+        <!-- Error, could not retrieve metadata -->
         <div v-if="layerMetadata.isError" class="col-span-3">
           {{ t('The metadata is right now not available') }}
         </div>
-        <div v-if="layerMetadata.legendHtml">
-          <h4 class="text-xl">{{ t('Legend') }}</h4>
-          <span v-dompurify-html="layerMetadata.legendHtml?.innerHTML"></span>
+
+        <!-- Legend -->
+        <div class="lux-legend mt-5 col-span-3" v-if="layerMetadata.legendHtml">
+          <h4>{{ t('Legend') }}</h4>
+          <div
+            v-dompurify-html="translate(layerMetadata.legendHtml?.innerHTML)"
+          ></div>
         </div>
         <div v-if="!layerMetadata.hasLegend" class="col-span-3">
           {{ t('The legend is not available for this layer') }}
