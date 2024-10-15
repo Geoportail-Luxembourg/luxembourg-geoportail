@@ -107,3 +107,29 @@ export const isIE = testUserAgent(
   /(?:Trident.*rv[ :]?11\.|msie|iemobile|Windows Phone)/i
 )
 export const isEdge = testUserAgent(/Edge/i)
+
+/**
+ * Sanitize filenames: replace white space with _ and strip any special character
+ * @param name The string to sanitize.
+ * @return The sanitized string.
+ */
+export function sanitizeFilename(filename: string) {
+  return filename.replace(/\s+/g, '_').replace(/[^a-z0-9\-_]/gi, '') || '_'
+}
+
+export function downloadFile(
+  filename: string,
+  content: BlobPart,
+  contentType = 'text/plain'
+) {
+  const blob = new Blob([content], { type: contentType })
+  const url = URL.createObjectURL(blob)
+  const a = document.createElement('a')
+  a.href = url
+  a.download = filename
+
+  document.body.appendChild(a)
+  a.click()
+  document.body.removeChild(a)
+  URL.revokeObjectURL(url)
+}

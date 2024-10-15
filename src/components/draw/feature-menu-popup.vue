@@ -6,22 +6,36 @@ import { type MenuPopupItem as MenuPopupItemType } from '@/components/common/men
 import MenuPopup from '@/components/common/menu-popup/menu-popup.vue'
 import MenuPopupItem from '@/components/common/menu-popup/menu-popup-item.vue'
 import { DrawnFeature } from '@/services/draw/drawn-feature'
+import {
+  exportFeatureService,
+  type exportFormat,
+} from '@/services/export-feature/export-feature.service'
 
 const { t } = useTranslation()
-const feature: DrawnFeature | undefined = inject('feature')
+const feature: DrawnFeature = inject('feature')!
+
+function download(format: exportFormat) {
+  exportFeatureService.export(
+    feature.map,
+    format,
+    [feature],
+    feature.label,
+    true
+  )
+}
 
 let drawingMenuOptions = <MenuPopupItemType[]>[
   {
     label: 'Exporter un GPX',
-    action: () => alert('TODO: Draw feature click drawingMenuOptions'),
+    action: () => download('gpx'),
   },
   {
     label: 'Exporter un KML',
-    action: () => alert('TODO: Draw feature click drawingMenuOptions'),
+    action: () => download('kml'),
   },
   {
     label: 'Exporter un Shapefile',
-    action: () => alert('TODO: Draw feature click drawingMenuOptions'),
+    action: () => download('shapefile'),
   },
 ]
 
