@@ -49,7 +49,7 @@ import { clearLayersCache } from '@/stores/layers.cache'
 import i18next, { InitOptions } from 'i18next'
 import backend from 'i18next-http-backend'
 import I18NextVue from 'i18next-vue'
-import formatDistanceDirective from './directives/format-distance.directive'
+import formatDistanceDirective from '@/directives/format-distance.directive'
 
 import App from '../App.vue'
 
