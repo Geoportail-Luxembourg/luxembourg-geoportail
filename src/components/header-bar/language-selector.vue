@@ -29,13 +29,11 @@ function changeLanguages(lang: string) {
 </script>
 
 <template>
-  <div>
-    <dropdown-list
-      class="lux-navbar-dropdown lux-dropdown-inline text-white h-full"
-      :options="availableLanguages"
-      :placeholder="placeholder"
-      v-model="lang"
-      @change="changeLanguages"
-    ></dropdown-list>
-  </div>
+  <dropdown-list
+    class="lux-navbar-dropdown lux-dropdown-inline text-white h-full"
+    :options="availableLanguages"
+    :placeholder="placeholder"
+    v-model="lang"
+    @change="changeLanguages"
+  ></dropdown-list>
 </template>
