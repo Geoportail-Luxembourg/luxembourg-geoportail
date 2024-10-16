@@ -5,10 +5,10 @@ import { useTranslation } from 'i18next-vue'
 import { DrawnFeature } from '@/services/draw/drawn-feature'
 import FeatureMeasurementsProfile from './feature-measurements-profile.vue'
 import {
-  getFormattedArea,
-  getFormattedCircleArea,
-  getFormattedCircleLength,
-  getFormattedLength,
+  getArea,
+  getCircleArea,
+  getCircleLength,
+  getLength,
 } from '@/services/common/measurement.utils'
 import { Circle, Geometry, Point, Polygon } from 'ol/geom'
 import { Projection } from 'ol/proj'
@@ -33,12 +33,9 @@ const featureGeometry = ref<Geometry | undefined>(feature.value?.getGeometry())
 const featLength = computed(() => {
   if (featureGeometry.value) {
     if (['drawnLine', 'drawnPolygon'].includes(featureType.value)) {
-      return getFormattedLength(
-        featureGeometry.value as Geometry,
-        mapProjection
-      )
+      return getLength(featureGeometry.value as Geometry, mapProjection)
     } else if (featureType.value === 'drawnCircle') {
-      return getFormattedCircleLength(featureGeometry.value as Circle)
+      return getCircleLength(featureGeometry.value as Circle)
     } else {
       return undefined
     }
@@ -48,9 +45,9 @@ const featLength = computed(() => {
 const featArea = computed(() => {
   if (featureGeometry.value) {
     if (featureType.value === 'drawnPolygon') {
-      return getFormattedArea(featureGeometry.value as Polygon)
+      return getArea(featureGeometry.value as Polygon)
     } else if (featureType.value === 'drawnCircle') {
-      return getFormattedCircleArea(featureGeometry.value as Circle)
+      return getCircleArea(featureGeometry.value as Circle)
     } else {
       return undefined
     }
@@ -59,11 +56,11 @@ const featArea = computed(() => {
 })
 const featRadius = computed(() =>
   featureGeometry.value && featureType.value === 'drawnCircle'
-    ? (featureGeometry.value as Circle).getRadius().toFixed(2)
+    ? (featureGeometry.value as Circle).getRadius()
     : // ? getCircleRadius(featureGeometry.value as Circle, mapProjection)
       undefined
 )
-const inputRadius = ref<string>(featRadius.value || '')
+const inputRadius = ref<string>(featRadius.value?.toString() || '')
 
 const featElevation = ref<number | undefined>()
 
@@ -81,7 +78,10 @@ watchEffect(async () => {
 })
 
 watchEffect(() => {
-  inputRadius.value = (featureGeometry.value as Circle).getRadius().toFixed(2)
+  inputRadius.value =
+    featureType.value === 'drawnCircle'
+      ? (featureGeometry.value as Circle).getRadius().toFixed(2)
+      : ''
   // inputRadius.value = getCircleRadius(
   //   featureGeometry.value as Circle,
   //   mapProjection
@@ -99,12 +99,12 @@ function onClickValidateRadius(radius: string) {
   <div class="lux-drawing-item-measurements">
     <!-- Feature length, for LineString, Circle, Polygon -->
     <div data-cy="featItemLength" v-if="featLength">
-      <span>{{ t('Length:') }}</span> <span>{{ featLength }}</span>
+      <span>{{ t('Length:') }}</span> <span v-format-length="featLength"></span>
     </div>
 
     <!-- Feature area, for Circle, Polygon -->
     <div data-cy="featItemArea" v-if="featArea">
-      <span>{{ t('Area:') }}</span> <span>{{ featArea }}</span>
+      <span>{{ t('Area:') }}</span> <span v-format-area="featArea"></span>
     </div>
 
     <!-- Feature radius, for Circle -->
@@ -113,8 +113,8 @@ function onClickValidateRadius(radius: string) {
       v-if="featureType === 'drawnCircle'"
       class="flex items-center"
     >
-      <span>{{ t('Rayon:') }}</span>
-      <span v-if="!isEditingFeature">{{ featRadius }}</span>
+      <span>{{ t('Rayon:') }} </span>
+      <span v-if="!isEditingFeature" v-format-length="featRadius"></span>
       <!-- Radius is editable when edition mode is on -->
       <div v-else class="flex">
         <input
@@ -135,10 +135,7 @@ function onClickValidateRadius(radius: string) {
     <!-- Feature elevation, for Point -->
     <div v-if="featureType === 'drawnPoint'">
       <span>{{ t('Elevation') }}: </span>
-      <span
-        data-cy="featItemElevation"
-        v-format-distance="featElevation"
-      ></span>
+      <span data-cy="featItemElevation" v-format-length="featElevation"></span>
     </div>
 
     <!-- Feature elevation profile LineString -->

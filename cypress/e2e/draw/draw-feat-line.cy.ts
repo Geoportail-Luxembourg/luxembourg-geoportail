@@ -28,9 +28,9 @@ describe('Draw "Line"', () => {
     })
 
     it('updates length measurement when editing geometry', () => {
-      cy.get('*[data-cy="featItemLength"]').should('contain.text', '55.4 km')
+      cy.get('*[data-cy="featItemLength"]').should('contain.text', '55.36 km')
       cy.dragVertexOnMap(200, 200, 300, 300)
-      cy.get('*[data-cy="featItemLength"]').should('contain.text', '111 km')
+      cy.get('*[data-cy="featItemLength"]').should('contain.text', '111.14 km')
     })
 
     it('displays the possible actions for the feature', () => {
