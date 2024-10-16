@@ -47,5 +47,33 @@ describe('Header bar', () => {
         cy.get('[data-cy="themeGrid"]').should('be.visible')
       })
     })
+
+    describe('When opening the language selector', () => {
+      it('hides the auth form', () => {
+        cy.get('[data-cy="authFormIcon"]').click()
+        cy.get('[data-cy="authForm"]').should('be.visible')
+
+        cy.get('[data-cy="langSelect"] .lux-dropdown-list').should(
+          'not.be.visible'
+        )
+        cy.get('[data-cy="langSelect"]').click()
+        cy.get('[data-cy="langSelect"] .lux-dropdown-list').should('be.visible')
+        cy.get('[data-cy="authForm"]').should('not.be.visible')
+      })
+    })
+
+    describe('When opening the authentication form', () => {
+      it('hides the language selector', () => {
+        cy.get('[data-cy="langSelect"]').click()
+        cy.get('[data-cy="langSelect"] .lux-dropdown-list').should('be.visible')
+
+        cy.get('[data-cy="authForm"]').should('not.be.visible')
+        cy.get('[data-cy="authFormIcon"]').click()
+        cy.get('[data-cy="authForm"]').should('be.visible')
+        cy.get('[data-cy="langSelect"] .lux-dropdown-list').should(
+          'not.be.visible'
+        )
+      })
+    })
   })
 })
