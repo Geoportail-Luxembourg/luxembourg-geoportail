@@ -33,6 +33,11 @@ export const useAppStore = defineStore(
       ref(undefined)
     const drawToolbarOpen = ref(false)
     const isOffLine = ref(false)
+    const isApp = ref(false) // Is the app displayed for Android or Ios?
+
+    function setIsApp(value: boolean) {
+      isApp.value = value
+    }
 
     function setLang(language: string) {
       lang.value = language
@@ -121,6 +126,9 @@ export const useAppStore = defineStore(
       styleEditorOpenedSection,
       remoteLayersOpen,
       drawToolbarOpen,
+      isOffLine,
+      isApp,
+      setIsApp,
       setLang,
       setLayersOpen,
       setMyLayersTabOpen,
@@ -130,7 +138,6 @@ export const useAppStore = defineStore(
       openStyleEditorPanel,
       closeStyleEditorPanel,
       setDrawToolbarOpen,
-      isOffLine,
       toggleMyMapsOpen,
       toggleThemeGrid,
     }
