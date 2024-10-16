@@ -419,6 +419,10 @@
     box-shadow: inset 0px 2px 4px -1px rgba(0, 57, 79, 0.25);
   }
 
+  .lux-account ::placeholder {
+    @apply text-gray-400;
+  }
+
   .form-control {
     border: 1px solid var(--color-gray);
     box-shadow: inset 0 1px 1px rgba(0, 0, 0, 0.075);

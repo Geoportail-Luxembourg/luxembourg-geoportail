@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { watch } from 'vue'
+import { ref, watch } from 'vue'
 import { storeToRefs } from 'pinia'
 import { useTranslation } from 'i18next-vue'
 
@@ -15,6 +15,8 @@ const appStore = useAppStore()
 const { toggleThemeGrid } = appStore
 const themeStore = useThemeStore()
 const { theme } = storeToRefs(themeStore)
+const isAuthFormOpened = ref(false)
+const isLangOpened = ref(false)
 
 watch(
   theme,
@@ -42,6 +44,22 @@ function onClick() {
   // }
 
   toggleThemeGrid()
+}
+
+function onToggleDropdownLang(isOpen: boolean) {
+  isLangOpened.value = isOpen
+
+  if (isOpen) {
+    isAuthFormOpened.value = false
+  }
+}
+
+function onToggleDropdownAuth(isOpen: boolean) {
+  isAuthFormOpened.value = isOpen
+
+  if (isOpen) {
+    isLangOpened.value = false
+  }
 }
 </script>
 
@@ -72,6 +90,8 @@ function onClick() {
           <language-selector
             data-cy="langSelect"
             class="flex-none h-full"
+            :isOpen="isLangOpened"
+            @toggleDropdown="onToggleDropdownLang"
           ></language-selector>
         </li>
 
@@ -81,6 +101,8 @@ function onClick() {
             data-cy="authFormIcon"
             class="lux-navbar-dropdown lux-navbar-dropdown-auth h-full"
             :enableClickOutside="false"
+            :isOpen="isAuthFormOpened"
+            @toggleDropdown="onToggleDropdownAuth"
           >
             <auth-form class="w-80" />
           </dropdown-content>

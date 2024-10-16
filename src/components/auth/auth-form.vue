@@ -34,7 +34,9 @@ function submit() {
 
 <template>
   <div data-cy="authForm" class="lux-account bg-secondary">
-    <h4 class="lux-panel-title pt-5 pl-5 h-16 shrink-0 flex justify-between">
+    <h4
+      class="lux-panel-title pt-5 mb-5 pl-5 h-16 shrink-0 flex justify-between"
+    >
       {{ t('My account') }}
     </h4>
 
@@ -45,10 +47,10 @@ function submit() {
         <!-- When user is not authenticated -->
         <template v-if="!isAuthenticated">
           <form @submit.prevent="submit">
-            <div class="flex flex-col gap-1 mb-2">
+            <div class="flex flex-col gap-2 mb-2">
               <div>
                 <input
-                  class="w-full lux-input"
+                  class="w-full lux-input h-11"
                   type="text"
                   name="userName"
                   v-model="userName"
@@ -57,7 +59,7 @@ function submit() {
               </div>
               <div>
                 <input
-                  class="w-full lux-input"
+                  class="w-full lux-input h-11"
                   type="password"
                   name="userPassword"
                   :placeholder="t('Password')"
@@ -66,7 +68,7 @@ function submit() {
             </div>
 
             <div class="flex mt-3 items-center">
-              <div class="grow">
+              <div class="grow leading-5">
                 <p>
                   <a
                     data-cy="authFormLostPwd"
@@ -87,7 +89,11 @@ function submit() {
                 </p>
               </div>
               <div>
-                <input class="lux-btn" type="submit" :value="t('Submit')" />
+                <input
+                  class="lux-btn h-11 w-24 text-white placeholder:italic bg-secondary border-none uppercase hover:text-primary hover:bg-secondary"
+                  type="submit"
+                  :value="t('Submit')"
+                />
               </div>
             </div>
           </form>

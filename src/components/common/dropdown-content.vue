@@ -1,19 +1,31 @@
 <script setup lang="ts">
-import { onMounted, onUnmounted, shallowRef, ShallowRef } from 'vue'
+import { onMounted, onUnmounted, shallowRef, ShallowRef, watch } from 'vue'
 
 const props = withDefaults(
   defineProps<{
     placeholder?: string
     enableClickOutside?: boolean
+    isOpen?: boolean
   }>(),
   {
     enableClickOutside: true,
+    isOpen: false,
   }
 )
-const isOpen: ShallowRef<boolean> = shallowRef(false)
+const emit = defineEmits(['toggleDropdown'])
+const localIsOpen: ShallowRef<boolean> = shallowRef(props.isOpen)
+
+watch(
+  () => props.isOpen,
+  isOpen => {
+    localIsOpen.value = isOpen
+  }
+)
 
 function toggleDropdown(forceOpen?: boolean) {
-  isOpen.value = forceOpen === void 0 ? !isOpen.value : forceOpen
+  localIsOpen.value = forceOpen === void 0 ? !localIsOpen.value : forceOpen
+
+  emit('toggleDropdown', localIsOpen.value)
 }
 
 function onClickOpenBtn(event: MouseEvent) {
@@ -43,8 +55,8 @@ onUnmounted(
       <button
         type="button"
         class="lux-btn lux-dropdown-btn"
-        :class="isOpen ? 'expanded' : ''"
-        :aria-expanded="isOpen"
+        :class="localIsOpen ? 'expanded' : ''"
+        :aria-expanded="localIsOpen"
         aria-haspopup="true"
         @click="onClickOpenBtn"
       >
@@ -55,7 +67,7 @@ onUnmounted(
     <div class="lux-dropdown-wrapper">
       <div
         class="lux-dropdown-content"
-        :class="isOpen ? '' : 'hidden'"
+        :class="localIsOpen ? '' : 'hidden'"
         tabindex="-1"
       >
         <slot></slot>
