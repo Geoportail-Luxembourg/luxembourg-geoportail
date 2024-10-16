@@ -1,11 +1,17 @@
 import { formatLength } from '@/directives/format-length.directive'
 import { Coordinate } from 'ol/coordinate'
 import { LineString, Polygon, Point, Geometry, Circle } from 'ol/geom'
-import { Projection, transform } from 'ol/proj'
+import {
+  getPointResolution,
+  METERS_PER_UNIT,
+  Projection,
+  transform,
+} from 'ol/proj'
 import {
   getDistance as haversineDistance,
   getArea as getOlArea,
 } from 'ol/sphere'
+import { Map } from 'ol'
 
 const getLength = function (geom: Geometry, projection: Projection): number {
   let length = 0
@@ -27,25 +33,31 @@ const getArea = function (polygon: Polygon): number {
   return Math.abs(getOlArea(polygon))
 }
 
-//TODO: handle projection ?
-const getCircleLength = function (circle: Circle): number {
-  const radius = circle.getRadius()
+const getCircleLength = function (circle: Circle, proj: Projection): number {
+  const radius = getCircleRadius(circle, proj)
   return 2 * Math.PI * radius
 }
 
-const getCircleArea = function (circle: Circle): number {
-  return Math.PI * Math.pow(circle.getRadius(), 2)
+const getCircleArea = function (circle: Circle, proj: Projection): number {
+  return Math.PI * Math.pow(getCircleRadius(circle, proj), 2)
 }
 
-const getCircleRadius = function (
-  circle: Circle,
-  proj: Projection
-): number | undefined {
+const getCircleRadius = function (circle: Circle, proj: Projection): number {
   const coord = circle.getLastCoordinate()
   const center = circle.getCenter()
   return center !== null && coord !== null
     ? getLength(new LineString([center, coord]), proj)
-    : undefined
+    : 0
+}
+
+const setCircleRadius = function (circle: Circle, radius: number, map: Map) {
+  const center = circle.getCenter()
+  const projection = map.getView().getProjection()
+  const resolution = map.getView().getResolution() || 0
+  const pointResolution = getPointResolution(projection, resolution, center)
+  const resolutionFactor = resolution / pointResolution
+  radius = (radius / METERS_PER_UNIT.m) * resolutionFactor
+  circle.setRadius(radius)
 }
 
 //The following functions still contain formatting logic as the returned values are not used in the DOM
@@ -86,6 +98,7 @@ export {
   getCircleLength,
   getCircleArea,
   getCircleRadius,
+  setCircleRadius,
   getFormattedAzimutRadius,
   getFormattedPoint,
 }

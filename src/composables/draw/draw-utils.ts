@@ -3,6 +3,9 @@ import Polygon, { fromCircle } from 'ol/geom/Polygon'
 import { getDistance } from 'ol/sphere'
 import { toLonLat } from 'ol/proj'
 import { DrawnFeature } from '@/services/draw/drawn-feature'
+import { setCircleRadius } from '@/services/common/measurement.utils'
+import useMap from '../map/map.composable'
+import { Map } from 'ol'
 
 // TODO 3D
 // import { transform } from 'ol/proj'
@@ -20,6 +23,7 @@ function convertCircleFeatureToPolygon(feature: DrawnFeature): DrawnFeature {
 }
 
 function convertPolygonFeatureToCircle(feature: DrawnFeature): DrawnFeature {
+  const map: Map = useMap().getOlMap()
   const polygon = feature.getGeometry() as Polygon
   if (
     feature.featureType === 'drawnCircle' &&
@@ -35,7 +39,8 @@ function convertPolygonFeatureToCircle(feature: DrawnFeature): DrawnFeature {
         maxDistance = distance
       }
     })
-    const circle = new Circle(centroid, maxDistance)
+    const circle = new Circle(centroid)
+    setCircleRadius(circle, maxDistance, map)
     feature.setGeometry(circle as Circle)
   }
   return feature

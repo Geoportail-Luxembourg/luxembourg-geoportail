@@ -8,6 +8,7 @@ import {
   getArea,
   getCircleArea,
   getCircleLength,
+  getCircleRadius,
   getLength,
 } from '@/services/common/measurement.utils'
 import { Circle, Geometry, Point, Polygon } from 'ol/geom'
@@ -35,7 +36,7 @@ const featLength = computed(() => {
     if (['drawnLine', 'drawnPolygon'].includes(featureType.value)) {
       return getLength(featureGeometry.value as Geometry, mapProjection)
     } else if (featureType.value === 'drawnCircle') {
-      return getCircleLength(featureGeometry.value as Circle)
+      return getCircleLength(featureGeometry.value as Circle, mapProjection)
     } else {
       return undefined
     }
@@ -47,7 +48,7 @@ const featArea = computed(() => {
     if (featureType.value === 'drawnPolygon') {
       return getArea(featureGeometry.value as Polygon)
     } else if (featureType.value === 'drawnCircle') {
-      return getCircleArea(featureGeometry.value as Circle)
+      return getCircleArea(featureGeometry.value as Circle, mapProjection)
     } else {
       return undefined
     }
@@ -56,9 +57,8 @@ const featArea = computed(() => {
 })
 const featRadius = computed(() =>
   featureGeometry.value && featureType.value === 'drawnCircle'
-    ? (featureGeometry.value as Circle).getRadius()
-    : // ? getCircleRadius(featureGeometry.value as Circle, mapProjection)
-      undefined
+    ? getCircleRadius(featureGeometry.value as Circle, mapProjection)
+    : undefined
 )
 const inputRadius = ref<string>(featRadius.value?.toString() || '')
 
@@ -80,12 +80,10 @@ watchEffect(async () => {
 watchEffect(() => {
   inputRadius.value =
     featureType.value === 'drawnCircle'
-      ? (featureGeometry.value as Circle).getRadius().toFixed(2)
+      ? getCircleRadius(featureGeometry.value as Circle, mapProjection).toFixed(
+          2
+        )
       : ''
-  // inputRadius.value = getCircleRadius(
-  //   featureGeometry.value as Circle,
-  //   mapProjection
-  // )
 })
 
 function onClickValidateRadius(radius: string) {
