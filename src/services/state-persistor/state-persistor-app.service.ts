@@ -2,7 +2,12 @@ import { watch, watchEffect, WatchStopHandle } from 'vue'
 import { storeToRefs } from 'pinia'
 
 import { useAppStore } from '@/stores/app.store'
-import { SP_KEY_EMBEDDED, SP_KEY_LAYERS_OPEN } from './state-persistor.model'
+import {
+  SP_KEY_APPLOGIN,
+  SP_KEY_EMBEDDED,
+  SP_KEY_LAYERS_OPEN,
+  SP_KEY_LOCALFORAGE,
+} from './state-persistor.model'
 import { storageHelper } from './storage/storage.helper'
 
 class StatePersistorAppService {
@@ -39,6 +44,7 @@ class StatePersistorAppService {
   restore() {
     this.restoreLayersOpen()
     this.restoreEmbeddedMode() // NB. don't persist embbeded mode, only do restore
+    this.restoreIsAppMode()
   }
 
   restoreEmbeddedMode() {
@@ -56,6 +62,16 @@ class StatePersistorAppService {
     )
     const { setLayersOpen } = useAppStore()
     setLayersOpen(layersOpen)
+  }
+
+  restoreIsAppMode() {
+    const { setIsApp } = useAppStore()
+    const isApp =
+      storageHelper.getValue(SP_KEY_LOCALFORAGE) === 'android' ||
+      storageHelper.getValue(SP_KEY_LOCALFORAGE) === 'ios' ||
+      storageHelper.getValue(SP_KEY_APPLOGIN) === 'yes'
+
+    setIsApp(isApp)
   }
 }
 
