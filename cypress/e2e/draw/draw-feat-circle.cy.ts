@@ -26,6 +26,24 @@ describe('Draw "Circle"', () => {
       testFeatItemMeasurements()
     })
 
+    it('updates length, area and radius measurements when editing geometry on map', () => {
+      cy.get('*[data-cy="featItemLength"]').should('contain.text', '346.59 km')
+      cy.get('*[data-cy="featItemArea"]').should('contain.text', '9559.11 km²')
+      cy.get('*[data-cy="featItemInputRadius"]').should(
+        'have.value',
+        '55161.21'
+      )
+      cy.dragVertexOnMap(200, 200, 300, 300)
+      cy.get('*[data-cy="featItemLength"]').should('contain.text', '693.17 km')
+      cy.get('*[data-cy="featItemArea"]').should('contain.text', '38235.40 km²')
+    })
+
+    it('updates length and area measurements when editing radius in panel', () => {
+      cy.get('*[data-cy="featItemInputRadius"]').type('{selectall}1000{enter}')
+      cy.get('*[data-cy="featItemLength"]').should('contain.text', '6.28 km')
+      cy.get('*[data-cy="featItemArea"]').should('contain.text', '3.13 km²')
+    })
+
     it('displays the possible actions for the feature', () => {
       testFeatItem()
     })

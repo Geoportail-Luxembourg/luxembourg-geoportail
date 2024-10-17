@@ -36,7 +36,6 @@ import Fill from 'ol/style/Fill'
 import Style from 'ol/style/Style'
 import { DrawnFeature } from '@/services/draw/drawn-feature'
 import { DrawnFeatureStyle } from '@/stores/draw.store.model'
-import { convertCircleToPolygon } from '@/composables/draw/draw-utils'
 
 const GeometryTypeValues = {
   LineString: 'LineString',
@@ -306,7 +305,6 @@ class FeatureHash extends TextFeature {
         featureStyle: drawnFeatureStyle,
       }
     )
-    convertCircleToPolygon(drawnFeature, featureType)
     return drawnFeature
 
     // TODO check defaults:

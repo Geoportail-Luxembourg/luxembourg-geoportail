@@ -76,6 +76,7 @@ export const useDrawStore = defineStore('draw', () => {
     drawnFeatures.value = drawnFeatures.value.filter(
       feature => feature.id !== featureId
     )
+    editingFeatureId.value = undefined
   }
 
   return {

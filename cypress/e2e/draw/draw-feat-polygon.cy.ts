@@ -28,11 +28,11 @@ describe('Draw "Polygon"', () => {
     })
 
     it('updates length and area measurements when editing geometry', () => {
-      cy.get('*[data-cy="featItemLength"]').should('contain.text', '134 km')
-      cy.get('*[data-cy="featItemArea"]').should('contain.text', '766 km²')
+      cy.get('*[data-cy="featItemLength"]').should('contain.text', '133.81 km')
+      cy.get('*[data-cy="featItemArea"]').should('contain.text', '766.33 km²')
       cy.dragVertexOnMap(200, 200, 300, 300)
-      cy.get('*[data-cy="featItemLength"]').should('contain.text', '238 km')
-      cy.get('*[data-cy="featItemArea"]').should('contain.text', '1530 km²')
+      cy.get('*[data-cy="featItemLength"]').should('contain.text', '238.47 km')
+      cy.get('*[data-cy="featItemArea"]').should('contain.text', '1532.65 km²')
     })
 
     it('displays the possible actions for the feature', () => {

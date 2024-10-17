@@ -4,7 +4,6 @@ import { Feature } from 'ol'
 import { Point, Circle, Geometry, LineString } from 'ol/geom'
 import Polygon from 'ol/geom/Polygon'
 import { useDrawStore } from '@/stores/draw.store'
-import { convertCircleToPolygon } from '@/composables/draw/draw-utils'
 import { useAppStore } from '@/stores/app.store'
 import { screenSizeIsAtLeast } from '@/services/common/device.utils'
 
@@ -64,7 +63,6 @@ export default function useDrawnFeatures() {
       featureType,
       featureStyle,
     })
-    convertCircleToPolygon(drawnFeature, featureType)
 
     addDrawnFeature(drawnFeature)
 
