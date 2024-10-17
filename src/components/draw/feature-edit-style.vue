@@ -2,6 +2,8 @@
 import { computed, inject } from 'vue'
 import { useTranslation } from 'i18next-vue'
 
+import { LineString } from 'ol/geom'
+
 import { DrawnFeature } from '@/services/draw/drawn-feature'
 import RangeInput from '@/components/common/range-input/range-input.vue'
 
@@ -13,7 +15,7 @@ import FeatureEditStyleLabel from './feature-edit-style-label.vue'
 import FeatureEditStyleSymbole from './feature-edit-style-symbole.vue'
 
 const { t } = useTranslation()
-const feature: DrawnFeature | undefined = inject('feature')
+const feature: DrawnFeature = inject('feature')!
 
 const styleComponents = {
   FeatureEditStyleCircle,
@@ -27,12 +29,50 @@ const currentStyleComponent = computed(() =>
   feature?.featureType.replace('drawn', 'FeatureEditStyle')
 )
 
+function onColorSelect(colorEvent: Event) {
+  feature.featureStyle.color = (colorEvent.target as HTMLInputElement).value
+  feature.changed()
+}
+
+function onSizeChange(newSize: string | number) {
+  feature.featureStyle.size = parseFloat(newSize as string)
+  feature.changed()
+}
+
+function onAngleChange(newAngle: string | number) {
+  feature.featureStyle.angle = (parseFloat(newAngle as string) * Math.PI) / 180
+  feature.changed()
+}
+
+function onWidthChange(newWidth: string | number) {
+  feature.featureStyle.stroke = parseFloat(newWidth as string)
+  feature.changed()
+}
+
+function onTransparencyChange(newTransparency: string | number) {
+  feature.featureStyle.opacity =
+    (100 - parseFloat(newTransparency as string)) / 100
+  feature.changed()
+}
+
+function onShowDirection(event: Event) {
+  feature.featureStyle.showOrientation = (
+    event.target as HTMLInputElement
+  ).checked
+  feature.changed()
+}
+
 function onClickChangeOrientation() {
-  alert('onClickChangeOrientation TODO') // TODO:
+  const coordinates = (feature.getGeometry() as LineString)
+    .getCoordinates()
+    .reverse()
+  const reversedGeometry = new LineString(coordinates)
+  feature.setGeometry(reversedGeometry)
 }
 
 function onClickChangeLineStyle(style: string) {
-  alert('onClickChangeLineStyle TODO' + style) // TODO:
+  feature.featureStyle.linestyle = style
+  feature.changed()
 }
 </script>
 
@@ -52,19 +92,26 @@ function onClickChangeLineStyle(style: string) {
           <input
             class="cursor-pointer"
             type="color"
-            value=""
+            :value="feature.featureStyle.color"
+            @input="onColorSelect"
             data-cy="featStyleColor"
           />
         </div>
       </div>
     </template>
 
-    <template v-slot:size>
+    <template v-slot:size="slotProps">
       <div class="flex gap-1 items-center mt-1">
         <label class="font-bold block" for="inline-full-name">
           {{ t('Size') }}
         </label>
-        <RangeInput class="md:w-2/3" :max="900" data-cy="featStyleSize" />
+        <RangeInput
+          class="md:w-2/3"
+          :max="slotProps.maxsize"
+          :value="feature.featureStyle.size"
+          data-cy="featStyleSize"
+          @change="onSizeChange"
+        />
       </div>
     </template>
 
@@ -77,6 +124,12 @@ function onClickChangeLineStyle(style: string) {
           class="md:w-2/3"
           :min="-180"
           :max="180"
+          :value="
+            ((Math.round((feature.featureStyle.angle * 180) / Math.PI) + 180) %
+              360) -
+            180
+          "
+          @change="onAngleChange"
           data-cy="featStyleAngle"
         />
       </div>
@@ -121,7 +174,11 @@ function onClickChangeLineStyle(style: string) {
         <label class="font-bold block" for="inline-full-name">
           {{ t('Stroke width') }}
         </label>
-        <RangeInput data-cy="featStyleLineWidth" />
+        <RangeInput
+          data-cy="featStyleLineWidth"
+          :value="feature.featureStyle.stroke"
+          @change="onWidthChange"
+        />
       </div>
     </template>
 
@@ -130,7 +187,11 @@ function onClickChangeLineStyle(style: string) {
         <label class="font-bold block" for="inline-full-name">
           {{ t('Transparence') }}
         </label>
-        <RangeInput :max="100" />
+        <RangeInput
+          :max="100"
+          :value="100 - feature.featureStyle.opacity * 100"
+          @change="onTransparencyChange"
+        />
       </div>
     </template>
 
@@ -139,7 +200,7 @@ function onClickChangeLineStyle(style: string) {
         <label class="font-bold block" for="showOrientation">
           {{ t('Show orientation') }}
         </label>
-        <input type="checkbox" id="showOrientation" />
+        <input type="checkbox" id="showOrientation" @change="onShowDirection" />
       </div>
 
       <div class="flex gap-1 items-center mt-1 mb-2">
