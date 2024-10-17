@@ -116,6 +116,7 @@ function onClickValidateRadius(radius: string) {
       <!-- Radius is editable when edition mode is on -->
       <div v-else class="flex">
         <input
+          data-cy="featItemInputRadius"
           class="form-control block"
           type="text"
           v-model="inputRadius"
