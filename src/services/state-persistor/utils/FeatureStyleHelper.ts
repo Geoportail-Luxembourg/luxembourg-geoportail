@@ -27,8 +27,7 @@ import {
   getFormattedAzimutRadius,
   getFormattedPoint,
 } from '@/services/common/measurement.utils'
-import { formatLength } from '@/directives/format-length.directive'
-import { formatArea } from '@/directives/format-area.directive'
+import { formatLength, formatArea } from '@/services/common/formatting.utils'
 
 const styleGeometryType = {
   CIRCLE: 'Circle',
@@ -634,10 +633,10 @@ class FeatureStyleHelper {
           this.decimals_
         )
       } else {
-        measure = formatArea(getArea(geometry)) //, this.projection_, this.precision_, this.unitPrefixFormat_);
+        measure = formatArea(getArea(geometry))
       }
     } else if (geometry instanceof olGeomLineString) {
-      measure = formatLength(getLength(geometry, this.projection_!)) //, this.precision_, this.unitPrefixFormat_);
+      measure = formatLength(getLength(geometry, this.projection_!))
     } else if (geometry instanceof olGeomPoint) {
       if (this.pointFilterFn_ === null) {
         measure = getFormattedPoint(geometry, this.decimals_)

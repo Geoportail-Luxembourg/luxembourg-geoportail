@@ -14,13 +14,26 @@ import { Map } from 'ol'
 // TODO 3D
 // const ARROW_MODEL_URL = import.meta.env.VITE_ARROW_MODEL_URL
 
+/**
+ * Note that feature.featureType and geom?.getType() values mostly correspond to each other.
+ * One exception are 'drawnCircle' featureTypes that are managed as 'Polygon' geometries within the URL and during export.
+ * (Another exception are 'drawnLabel' featureTypes that are managed as 'Point' geometries throughout the application.)
+ * @param feature Feature with a circle geometry
+ * @returns The same feature with a polygon geometry
+ */
 function convertCircleFeatureToPolygon(feature: DrawnFeature): DrawnFeature {
   const geom = feature.getGeometry()
-  if (feature.featureType == 'drawnCircle' && geom?.getType() == 'Circle') {
+  if (feature.featureType === 'drawnCircle' && geom?.getType() === 'Circle') {
     feature.setGeometry(fromCircle(geom as Circle, 64))
   }
   return feature
 }
+
+/**
+ *
+ * @param feature Feature with a polygon geometry
+ * @returns The same feature with a circle geometry
+ */
 
 function convertPolygonFeatureToCircle(feature: DrawnFeature): DrawnFeature {
   const map: Map = useMap().getOlMap()

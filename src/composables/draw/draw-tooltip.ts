@@ -6,8 +6,7 @@ import { Circle, Geometry, LineString, Polygon } from 'ol/geom'
 import OlMap from 'ol/Map'
 import { DrawEvent } from 'ol/interaction/Draw'
 import { getLength, getArea } from '@/services/common/measurement.utils'
-import { formatLength } from '@/directives/format-length.directive'
-import { formatArea } from '@/directives/format-area.directive'
+import { formatLength, formatArea } from '@/services/common/formatting.utils'
 
 class DrawTooltip {
   private measureTooltipElement: HTMLElement | null = null

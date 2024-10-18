@@ -1,4 +1,4 @@
-import { formatLength } from '@/directives/format-length.directive'
+import { formatLength } from './formatting.utils'
 import { Coordinate } from 'ol/coordinate'
 import { LineString, Polygon, Point, Geometry, Circle } from 'ol/geom'
 import {
@@ -12,6 +12,7 @@ import {
   getArea as getOlArea,
 } from 'ol/sphere'
 import { Map } from 'ol'
+import { PROJECTION_WGS84 } from '@/composables/map/map.composable'
 
 const getLength = function (geom: Geometry, projection: Projection): number {
   let length = 0
@@ -22,8 +23,8 @@ const getLength = function (geom: Geometry, projection: Projection): number {
     coordinates = (geom as LineString).getCoordinates() as Coordinate[]
   }
   for (let i = 0, ii = coordinates.length - 1; i < ii; ++i) {
-    const c1 = transform(coordinates[i], projection, 'EPSG:4326')
-    const c2 = transform(coordinates[i + 1], projection, 'EPSG:4326')
+    const c1 = transform(coordinates[i], projection, PROJECTION_WGS84)
+    const c2 = transform(coordinates[i + 1], projection, PROJECTION_WGS84)
     length += haversineDistance(c1, c2)
   }
   return length

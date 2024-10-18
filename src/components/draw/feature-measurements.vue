@@ -37,8 +37,6 @@ const featLength = computed(() => {
       return getLength(featureGeometry.value as Geometry, mapProjection)
     } else if (featureType.value === 'drawnCircle') {
       return getCircleLength(featureGeometry.value as Circle, mapProjection)
-    } else {
-      return undefined
     }
   }
   return undefined
@@ -49,8 +47,6 @@ const featArea = computed(() => {
       return getArea(featureGeometry.value as Polygon)
     } else if (featureType.value === 'drawnCircle') {
       return getCircleArea(featureGeometry.value as Circle, mapProjection)
-    } else {
-      return undefined
     }
   }
   return undefined
@@ -60,7 +56,7 @@ const featRadius = computed(() =>
     ? getCircleRadius(featureGeometry.value as Circle, mapProjection)
     : undefined
 )
-const inputRadius = ref<string>(featRadius.value?.toString() || '')
+const inputRadius = ref<number>(featRadius.value || 0)
 
 const featElevation = ref<number | undefined>()
 
@@ -80,13 +76,16 @@ watchEffect(async () => {
 watchEffect(() => {
   inputRadius.value =
     featureType.value === 'drawnCircle'
-      ? getCircleRadius(featureGeometry.value as Circle, mapProjection).toFixed(
-          2
+      ? parseFloat(
+          getCircleRadius(
+            featureGeometry.value as Circle,
+            mapProjection
+          ).toFixed(2)
         )
-      : ''
+      : 0
 })
 
-function onClickValidateRadius(radius: string) {
+function onClickValidateRadius(radius: number) {
   if (feature.value) {
     useEdit().setRadius(feature.value as DrawnFeature, Number(radius))
   }
@@ -117,8 +116,8 @@ function onClickValidateRadius(radius: string) {
       <div v-else class="flex">
         <input
           data-cy="featItemInputRadius"
-          class="form-control block"
-          type="text"
+          class="form-control block bg-secondary text-white border !border-gray-300"
+          type="number"
           v-model="inputRadius"
           @keyup.enter="onClickValidateRadius(inputRadius)"
         />
