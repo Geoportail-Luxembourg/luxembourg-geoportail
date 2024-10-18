@@ -1,73 +1,74 @@
+import { formatLength } from './formatting.utils'
 import { Coordinate } from 'ol/coordinate'
-import { LineString, Polygon, Point, Geometry } from 'ol/geom'
-import { Projection, transform } from 'ol/proj'
-import { getDistance as haversineDistance, getArea } from 'ol/sphere'
+import { LineString, Polygon, Point, Geometry, Circle } from 'ol/geom'
+import {
+  getPointResolution,
+  METERS_PER_UNIT,
+  Projection,
+  transform,
+} from 'ol/proj'
+import {
+  getDistance as haversineDistance,
+  getArea as getOlArea,
+} from 'ol/sphere'
+import { Map } from 'ol'
+import { PROJECTION_WGS84 } from '@/composables/map/map.composable'
 
-const getFormattedLength = function (
-  geom: Geometry,
-  projection: Projection,
-  precision?: number
-): string {
+const getLength = function (geom: Geometry, projection: Projection): number {
   let length = 0
-  let coordinates
+  let coordinates: Coordinate[] = []
   if (geom.getType() === 'Polygon') {
     coordinates = (geom as Polygon).getCoordinates()[0] as Coordinate[]
   } else if (geom.getType() === 'LineString') {
     coordinates = (geom as LineString).getCoordinates() as Coordinate[]
-  } else {
-    return ''
   }
   for (let i = 0, ii = coordinates.length - 1; i < ii; ++i) {
-    const c1 = transform(coordinates[i], projection, 'EPSG:4326')
-    const c2 = transform(coordinates[i + 1], projection, 'EPSG:4326')
+    const c1 = transform(coordinates[i], projection, PROJECTION_WGS84)
+    const c2 = transform(coordinates[i + 1], projection, PROJECTION_WGS84)
     length += haversineDistance(c1, c2)
   }
-  let output
-  if (length > 1000) {
-    output =
-      parseFloat((length / 1000).toPrecision(precision || 3)) + ' ' + 'km'
-  } else {
-    output = parseFloat(length.toPrecision(precision || 3)) + ' ' + 'm'
-  }
-  return output
+  return length
 }
 
-const getFormattedArea = function (polygon: Polygon): string {
-  const area = Math.abs(getArea(polygon))
-  let output = ''
-  if (area > 1000000) {
-    output = parseFloat((area / 1000000).toPrecision(3)) + ' ' + 'km²'
-  } else {
-    output = parseFloat(area.toPrecision(3)) + ' ' + 'm²'
-  }
-  return output
+const getArea = function (polygon: Polygon): number {
+  return Math.abs(getOlArea(polygon))
 }
 
-// TODO: migrate and use once circle is kept as a circle geometry
-// const getFormattedCircleArea = function (circle, precision, format) {
-//   const area = Math.PI * Math.pow(circle.getRadius(), 2)
-//   return format(area, 'm²', 'square', precision)
-// }
+const getCircleLength = function (circle: Circle, proj: Projection): number {
+  const radius = getCircleRadius(circle, proj)
+  return 2 * Math.PI * radius
+}
 
-// TODO: migrate and use once circle is kept as a circle geometry
-// const getCircleRadius = function (circle: Circle, proj: Projection): string {
-//   const coord = circle.getLastCoordinate()
-//   const center = circle.getCenter()
-//   return center !== null && coord !== null
-//     ? getFormattedLength(new LineString([center, coord]), proj)
-//     : ''
-// }
+const getCircleArea = function (circle: Circle, proj: Projection): number {
+  return Math.PI * Math.pow(getCircleRadius(circle, proj), 2)
+}
 
+const getCircleRadius = function (circle: Circle, proj: Projection): number {
+  const coord = circle.getLastCoordinate()
+  const center = circle.getCenter()
+  return center !== null && coord !== null
+    ? getLength(new LineString([center, coord]), proj)
+    : 0
+}
+
+const setCircleRadius = function (circle: Circle, radius: number, map: Map) {
+  const center = circle.getCenter()
+  const projection = map.getView().getProjection()
+  const resolution = map.getView().getResolution() || 0
+  const pointResolution = getPointResolution(projection, resolution, center)
+  const resolutionFactor = resolution / pointResolution
+  radius = (radius / METERS_PER_UNIT.m) * resolutionFactor
+  circle.setRadius(radius)
+}
+
+//The following functions still contain formatting logic as the returned values are not used in the DOM
 const getFormattedAzimutRadius = function (
   line: LineString,
   projection: Projection,
-  decimals: number,
-  precision: number
+  decimals: number
 ) {
   let output = getFormattedAzimut(line, decimals)
-
-  output += `, ${getFormattedLength(line, projection, precision)}`
-
+  output += `, ${formatLength(getLength(line, projection))}`
   return output
 }
 
@@ -91,9 +92,14 @@ const getFormattedPoint = function (point: Point, decimals: number) {
     .map(c => c.toPrecision(decimals))
     .join(' ')
 }
+
 export {
-  getFormattedLength,
-  getFormattedArea,
+  getLength,
+  getArea,
+  getCircleLength,
+  getCircleArea,
+  getCircleRadius,
+  setCircleRadius,
   getFormattedAzimutRadius,
   getFormattedPoint,
 }

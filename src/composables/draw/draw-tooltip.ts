@@ -5,10 +5,8 @@ import { unByKey } from 'ol/Observable'
 import { Circle, Geometry, LineString, Polygon } from 'ol/geom'
 import OlMap from 'ol/Map'
 import { DrawEvent } from 'ol/interaction/Draw'
-import {
-  getFormattedLength,
-  getFormattedArea,
-} from '@/services/common/measurement.utils'
+import { getLength, getArea } from '@/services/common/measurement.utils'
+import { formatLength, formatArea } from '@/services/common/formatting.utils'
 
 class DrawTooltip {
   private measureTooltipElement: HTMLElement | null = null
@@ -69,7 +67,7 @@ class DrawTooltip {
       const geom = geometry as LineString
       coord = geom.getLastCoordinate()
       if (coord !== null) {
-        output = getFormattedLength(geom, proj)
+        output = formatLength(getLength(geom, proj))
       }
     } else if (geometry.getType() === 'Polygon') {
       const geom = geometry as Polygon
@@ -78,14 +76,14 @@ class DrawTooltip {
         coord = geom.getInteriorPoint().getCoordinates()
       }
       if (coord !== null) {
-        output = getFormattedArea(geom)
+        output = formatArea(getArea(geom))
       }
     } else if (geometry.getType() === 'Circle') {
       const geom = geometry as Circle
       coord = geom.getLastCoordinate()
       const center = geom.getCenter()
       if (center !== null && coord !== null) {
-        output = getFormattedLength(new LineString([center, coord]), proj)
+        output = formatLength(getLength(new LineString([center, coord]), proj))
       }
     }
     if (this.measureTooltipElement) {

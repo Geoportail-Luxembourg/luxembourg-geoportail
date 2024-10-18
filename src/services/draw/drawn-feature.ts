@@ -31,6 +31,25 @@ export class DrawnFeature extends Feature {
   featureStyle: DrawnFeatureStyle
   map = useMap().getOlMap()
 
+  constructor(drawnFeature?: DrawnFeature) {
+    if (drawnFeature) {
+      super(drawnFeature.getGeometry())
+      this.label = drawnFeature.label
+      this.featureType = drawnFeature.featureType
+      this.map_id = drawnFeature.map_id
+      this.description = drawnFeature.description
+      this.display_order = drawnFeature.display_order
+      this.editable = drawnFeature.editable
+      this.selected = drawnFeature.selected
+      this.featureStyle = drawnFeature.featureStyle
+      this.id = drawnFeature.id
+      this.saving = drawnFeature.saving
+      this.setProperties(drawnFeature.getProperties())
+    } else {
+      super()
+    }
+  }
+
   fit() {
     const size = this.map.getSize()
     const extent = <Extent>this.getGeometry()?.getExtent()

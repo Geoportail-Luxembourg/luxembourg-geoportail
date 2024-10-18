@@ -5,16 +5,20 @@ import { useTranslation } from 'i18next-vue'
 import { DrawnFeature } from '@/services/draw/drawn-feature'
 import FeatureMeasurementsProfile from './feature-measurements-profile.vue'
 import {
-  getFormattedArea,
-  getFormattedLength,
+  getArea,
+  getCircleArea,
+  getCircleLength,
+  getCircleRadius,
+  getLength,
 } from '@/services/common/measurement.utils'
-import { Geometry, Point, Polygon } from 'ol/geom'
+import { Circle, Geometry, Point, Polygon } from 'ol/geom'
 import { Projection } from 'ol/proj'
 import useMap from '@/composables/map/map.composable'
 import {
   getDebouncedElevation,
   getElevation,
 } from './feature-measurements-helper'
+import useEdit from '@/composables/draw/edit.composable'
 
 defineProps<{
   isEditingFeature?: boolean
@@ -27,21 +31,32 @@ const feature = ref<DrawnFeature | undefined>(inject('feature'))
 const featureType = ref<string>(feature.value?.featureType || '')
 const featureGeometry = ref<Geometry | undefined>(feature.value?.getGeometry())
 
-const featLength = computed(() =>
-  featureGeometry.value &&
-  ['drawnLine', 'drawnCircle', 'drawnPolygon'].includes(featureType.value)
-    ? getFormattedLength(featureGeometry.value as Geometry, mapProjection)
+const featLength = computed(() => {
+  if (featureGeometry.value) {
+    if (['drawnLine', 'drawnPolygon'].includes(featureType.value)) {
+      return getLength(featureGeometry.value as Geometry, mapProjection)
+    } else if (featureType.value === 'drawnCircle') {
+      return getCircleLength(featureGeometry.value as Circle, mapProjection)
+    }
+  }
+  return undefined
+})
+const featArea = computed(() => {
+  if (featureGeometry.value) {
+    if (featureType.value === 'drawnPolygon') {
+      return getArea(featureGeometry.value as Polygon)
+    } else if (featureType.value === 'drawnCircle') {
+      return getCircleArea(featureGeometry.value as Circle, mapProjection)
+    }
+  }
+  return undefined
+})
+const featRadius = computed(() =>
+  featureGeometry.value && featureType.value === 'drawnCircle'
+    ? getCircleRadius(featureGeometry.value as Circle, mapProjection)
     : undefined
 )
-const featArea = computed(() =>
-  featureGeometry.value &&
-  ['drawnPolygon', 'drawnCircle'].includes(featureType.value)
-    ? getFormattedArea(featureGeometry.value as Polygon)
-    : undefined
-)
-// TODO: implement once circle is kept as a circle geometry,
-// also adapt length and area calculation for circle then
-const featRadius = feature.value?.id + ' [TODO featRayon]' // TODO
+const inputRadius = ref<number>(featRadius.value || 0)
 
 const featElevation = ref<number | undefined>()
 
@@ -58,8 +73,22 @@ watchEffect(async () => {
   }
 })
 
-function onClickValidateRadius() {
-  alert('TODO: validate /save radius')
+watchEffect(() => {
+  inputRadius.value =
+    featureType.value === 'drawnCircle'
+      ? parseFloat(
+          getCircleRadius(
+            featureGeometry.value as Circle,
+            mapProjection
+          ).toFixed(2)
+        )
+      : 0
+})
+
+function onClickValidateRadius(radius: number) {
+  if (feature.value) {
+    useEdit().setRadius(feature.value as DrawnFeature, Number(radius))
+  }
 }
 </script>
 
@@ -67,12 +96,12 @@ function onClickValidateRadius() {
   <div class="lux-drawing-item-measurements">
     <!-- Feature length, for LineString, Circle, Polygon -->
     <div data-cy="featItemLength" v-if="featLength">
-      <span>{{ t('Length:') }}</span> <span>{{ featLength }}</span>
+      <span>{{ t('Length:') }}</span> <span v-format-length="featLength"></span>
     </div>
 
     <!-- Feature area, for Circle, Polygon -->
     <div data-cy="featItemArea" v-if="featArea">
-      <span>{{ t('Area:') }}</span> <span>{{ featArea }}</span>
+      <span>{{ t('Area:') }}</span> <span v-format-area="featArea"></span>
     </div>
 
     <!-- Feature radius, for Circle -->
@@ -81,12 +110,21 @@ function onClickValidateRadius() {
       v-if="featureType === 'drawnCircle'"
       class="flex items-center"
     >
-      <span>{{ t('Rayon:') }}</span>
-      <span v-if="!isEditingFeature">{{ featRadius }}</span>
+      <span>{{ t('Rayon:') }} </span>
+      <span v-if="!isEditingFeature" v-format-length="featRadius"></span>
       <!-- Radius is editable when edition mode is on -->
       <div v-else class="flex">
-        <input class="form-control block" type="text" />
-        <button class="lux-btn-primary" @click="onClickValidateRadius">
+        <input
+          data-cy="featItemInputRadius"
+          class="form-control block bg-secondary text-white border !border-gray-300"
+          type="number"
+          v-model="inputRadius"
+          @keyup.enter="onClickValidateRadius(inputRadius)"
+        />
+        <button
+          class="lux-btn-primary"
+          @click="onClickValidateRadius(inputRadius)"
+        >
           {{ t('Valider') }}
         </button>
       </div>
@@ -95,10 +133,7 @@ function onClickValidateRadius() {
     <!-- Feature elevation, for Point -->
     <div v-if="featureType === 'drawnPoint'">
       <span>{{ t('Elevation') }}: </span>
-      <span
-        data-cy="featItemElevation"
-        v-format-distance="featElevation"
-      ></span>
+      <span data-cy="featItemElevation" v-format-length="featElevation"></span>
     </div>
 
     <!-- Feature elevation profile LineString -->

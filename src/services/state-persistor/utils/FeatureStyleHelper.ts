@@ -22,11 +22,12 @@ import olStyleStyle from 'ol/style/Style'
 import olStyleText from 'ol/style/Text'
 import * as olProj from 'ol/proj'
 import {
-  getFormattedLength,
-  getFormattedArea,
+  getLength,
+  getArea,
   getFormattedAzimutRadius,
   getFormattedPoint,
 } from '@/services/common/measurement.utils'
+import { formatLength, formatArea } from '@/services/common/formatting.utils'
 
 const styleGeometryType = {
   CIRCLE: 'Circle',
@@ -250,7 +251,7 @@ class FeatureStyleHelper {
       if (showMeasure && azimut !== undefined) {
         // Radius style:
         const line = this.getRadiusLine(feature, azimut)
-        const length = getFormattedLength(line, this.projection_!) //, this.precision_, this.unitPrefixFormat_);
+        const length = formatLength(getLength(line, this.projection_!)) //, this.precision_, this.unitPrefixFormat_);
 
         styles.push(
           new olStyleStyle({
@@ -629,14 +630,13 @@ class FeatureStyleHelper {
         measure = getFormattedAzimutRadius(
           line,
           this.projection_!,
-          this.decimals_,
-          this.precision_ || 3
+          this.decimals_
         )
       } else {
-        measure = getFormattedArea(geometry) //, this.projection_, this.precision_, this.unitPrefixFormat_);
+        measure = formatArea(getArea(geometry))
       }
     } else if (geometry instanceof olGeomLineString) {
-      measure = getFormattedLength(geometry, this.projection_!) //, this.precision_, this.unitPrefixFormat_);
+      measure = formatLength(getLength(geometry, this.projection_!))
     } else if (geometry instanceof olGeomPoint) {
       if (this.pointFilterFn_ === null) {
         measure = getFormattedPoint(geometry, this.decimals_)

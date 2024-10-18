@@ -4,6 +4,8 @@ import { Geometry, GeometryCollection, MultiLineString } from 'ol/geom'
 
 import { PROJECTION_WGS84 } from '@/composables/map/map.composable'
 import { downloadFile, sanitizeFilename } from '@/services/utils'
+import { convertCircleFeatureToPolygon } from '@/composables/draw/draw-utils'
+import { DrawnFeature } from '../draw/drawn-feature'
 
 export abstract class ExportFeature {
   encodeOptions: { dataProjection: string; featureProjection: Projection }
@@ -59,6 +61,11 @@ export abstract class ExportFeature {
           linestrings.forEach(geom =>
             explodedFeatures.push(this.cloneFeatureWithGeom(feature, geom))
           )
+          break
+        }
+        case 'Circle': {
+          const newFeature = new DrawnFeature(feature as DrawnFeature)
+          explodedFeatures.push(convertCircleFeatureToPolygon(newFeature))
           break
         }
         default:
