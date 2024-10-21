@@ -11,7 +11,6 @@ import FeatureEditInfo from './feature-edit-info.vue'
 import FeatureEditStyle from './feature-edit-style.vue'
 import FeatureConcentricCircle from './feature-concentric-circle.vue'
 import FeatureMeasurements from './feature-measurements.vue'
-import FeatureEditSymbol from './feature-edit-symbol.vue'
 
 defineProps<{
   isDocked: boolean
@@ -37,7 +36,6 @@ const editComponents = {
   FeatureEditInfo,
   FeatureEditStyle,
   FeatureConfirmDelete,
-  FeatureEditSymbol,
 }
 const currentEditCompKey: Ref<keyof typeof editComponents | undefined> =
   ref(undefined)

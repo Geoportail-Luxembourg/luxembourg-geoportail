@@ -3,16 +3,17 @@ import { Ref, ref, inject, watch } from 'vue'
 import { useTranslation } from 'i18next-vue'
 
 import Circle from '@/components/common/symbol/circleSymbol.vue'
-import Rectangle from '@/components/common/symbol/rectangleSymbol.vue'
+import Square from '@/components/common/symbol/squareSymbol.vue'
 import Cross from '@/components/common/symbol/crossSymbol.vue'
 import Triangle from '@/components/common/symbol/triangleSymbol.vue'
 import { getPublicSymbols, type Symbol } from '@/services/draw/draw.helper'
+import { DrawnFeature } from '@/services/draw/drawn-feature'
 
 import FeatureEditSymbolList from './feature-edit-symbol-list.vue'
 
 const { t } = useTranslation()
-const currentEditCompKey: Ref<'FeatureEditStyle' | undefined> | undefined =
-  inject('currentEditCompKey')
+const feature: DrawnFeature = inject('feature')!
+const popupOpen: Ref<boolean> = inject('popupOpen')!
 
 enum tabs {
   configurables = 'Configurables',
@@ -21,12 +22,12 @@ enum tabs {
 }
 const symbolComponents = {
   Circle,
-  Rectangle,
+  Square,
   Cross,
   Triangle,
 } as const
 const currentSymbolTab: Ref<tabs> = ref(tabs.configurables)
-const featureColor = 'red' // feature.olFeature.get('color') // TODO: to plug when feature ok
+// const featureColor = feature.featureStyle.color
 const fileInput: Ref<HTMLInputElement | undefined> = ref(undefined)
 const symbols: Ref<Symbol[]> = ref([])
 
@@ -47,23 +48,22 @@ function onClickSymbol(
   component: (typeof symbolComponents)[keyof typeof symbolComponents]
 ) {
   if (component === symbolComponents.Circle) {
-    alert('Choose Circle TODO') // TODO:
-  } else if (component === symbolComponents.Rectangle) {
-    alert('Choose Rectangle TODO') // TODO:
+    feature.featureStyle.shape = 'circle'
+  } else if (component === symbolComponents.Square) {
+    feature.featureStyle.shape = 'square'
   } else if (component === symbolComponents.Cross) {
-    alert('Choose Cross TODO') // TODO:
+    feature.featureStyle.shape = 'cross'
   } else if (component === symbolComponents.Triangle) {
-    alert('Choose Triangle TODO') // TODO:
+    feature.featureStyle.shape = 'triangle'
   }
+
+  feature.changed()
 
   backNavigation()
 }
 
 function backNavigation() {
-  // Back to Style edition menu in great grand parent component
-  if (currentEditCompKey) {
-    currentEditCompKey.value = 'FeatureEditStyle'
-  }
+  popupOpen.value = false
 }
 
 function onChangeSymbol(id: number) {
@@ -114,23 +114,14 @@ function onImportMySymbol() {
         @click="() => onClickSymbol(symbolComponent)"
         data-cy="featStyleSymbol"
       >
-        <component :is="symbolComponent" :fillColor="featureColor"></component>
+        <component
+          :is="symbolComponent"
+          :fillColor="feature.featureStyle.color"
+        ></component>
       </button>
     </div>
 
-    <div class="flex gap-1 items-center">
-      <label class="font-bold block" for="inline-full-name">
-        {{ t('Color') }}
-      </label>
-      <div class="md:w-2/3">
-        <input
-          class="cursor-pointer"
-          type="color"
-          value=""
-          data-cy="featStyleColor"
-        />
-      </div>
-    </div>
+    <slot name="symbolcolor"></slot>
   </template>
 
   <!-- List of public symbols and/or user's symbols -->
