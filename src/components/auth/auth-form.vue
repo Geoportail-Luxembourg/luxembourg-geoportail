@@ -117,7 +117,7 @@ function resetAuthForm() {
                 <p>
                   <a
                     data-cy="authFormLostPwd"
-                    class="text-secondary hover:underline"
+                    class="text-secondary hover:underline hover:text-white"
                     target="_blank"
                     :href="MYACCOUNT_RECOVER_URL"
                     >{{ t('I lost my password') }}</a
@@ -126,7 +126,7 @@ function resetAuthForm() {
                 <p>
                   <a
                     data-cy="authFormNewAccount"
-                    class="text-secondary hover:underline"
+                    class="text-secondary hover:underline hover:text-white"
                     target="_blank"
                     :href="MYACCOUNT_NEW_URL"
                     >{{ t('Create a new user account') }}</a
@@ -147,14 +147,14 @@ function resetAuthForm() {
         <!--User is authenticated -->
         <template v-else>
           <div>
-            <div class="flex flex-col gap-1 mb-2 text-white">
-              <div class="bg-secondary p-1">{{ currentUser?.login }}</div>
-              <div class="bg-secondary p-1">{{ currentUser?.mail }}</div>
+            <div class="flex flex-col gap-[1px] mb-2 text-white">
+              <div class="bg-secondary py-1 px-3">{{ currentUser?.login }}</div>
+              <div class="bg-secondary py-1 px-3">{{ currentUser?.mail }}</div>
             </div>
             <div class="flex items-center gap-3 justify-end">
               <div>
                 <a
-                  class="text-secondary hover:underline"
+                  class="text-secondary hover:underline hover:text-white"
                   target="_blank"
                   :href="`${MYACCOUNT_URL}?lang=${lang}`"
                   >{{ t('My account') }}</a
