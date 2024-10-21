@@ -2,20 +2,15 @@
 import { Ref, inject } from 'vue'
 import { useTranslation } from 'i18next-vue'
 
-// import { DrawFeature } from '@/stores/draw.store.model' // TODO:
+import { DrawnFeature } from '@/services/draw/drawn-feature'
 import Circle from '@/components/common/symbol/circleSymbol.vue'
-import Rectangle from '@/components/common/symbol/rectangleSymbol.vue'
+import Square from '@/components/common/symbol/squareSymbol.vue'
 import Cross from '@/components/common/symbol/crossSymbol.vue'
 import Triangle from '@/components/common/symbol/triangleSymbol.vue'
 
-type FeatureShape = 'circle' | 'square' | 'cross' | 'triangle'
-
 const { t } = useTranslation()
-const currentEditCompKey: Ref<'FeatureEditSymbol' | undefined> | undefined =
-  inject('currentEditCompKey')
-// const feature: DrawFeature | undefined = inject('feature') // TODO:
-const featureShape: FeatureShape = 'circle' // feature.olFeature.get('shape') // TODO: to plug when feature ok
-const featureColor = 'red' // feature.olFeature.get('color') // TODO: to plug when feature ok
+const feature: DrawnFeature = inject('feature')!
+const popupOpen: Ref<boolean> = inject('popupOpen')!
 </script>
 
 <template>
@@ -26,19 +21,25 @@ const featureColor = 'red' // feature.olFeature.get('color') // TODO: to plug wh
     <!-- Symbole button -->
     <button
       class="lux-btn flex gap-2 items-center"
-      @click="() => (currentEditCompKey = 'FeatureEditSymbol')"
+      @click="() => (popupOpen = true)"
       data-cy="featStyleSymbolEdit"
     >
       {{ t('Symbole') }}
-      <Circle v-if="featureShape === 'circle'" :fillColor="featureColor" />
-      <Rectangle
-        v-else-if="featureShape === 'square'"
-        :fillColor="featureColor"
+      <Circle
+        v-if="feature.featureStyle.shape === 'circle'"
+        :fillColor="feature.featureStyle.color"
       />
-      <Cross v-else-if="featureShape === 'cross'" :fillColor="featureColor" />
+      <Square
+        v-else-if="feature.featureStyle.shape === 'square'"
+        :fillColor="feature.featureStyle.color"
+      />
+      <Cross
+        v-else-if="feature.featureStyle.shape === 'cross'"
+        :fillColor="feature.featureStyle.color"
+      />
       <Triangle
-        v-else-if="featureShape === 'triangle'"
-        :fillColor="featureColor"
+        v-else-if="feature.featureStyle.shape === 'triangle'"
+        :fillColor="feature.featureStyle.color"
       />
     </button>
   </div>

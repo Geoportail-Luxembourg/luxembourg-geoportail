@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { computed, inject } from 'vue'
+import { computed, inject, provide, Ref, ref } from 'vue'
 import { useTranslation } from 'i18next-vue'
 
 import { LineString } from 'ol/geom'
@@ -16,6 +16,8 @@ import FeatureEditStyleSymbole from './feature-edit-style-symbole.vue'
 
 const { t } = useTranslation()
 const feature: DrawnFeature = inject('feature')!
+const popupOpen: Ref<boolean> = ref(false)
+provide('popupOpen', popupOpen)
 
 const styleComponents = {
   FeatureEditStyleCircle,
@@ -77,7 +79,9 @@ function onClickChangeLineStyle(style: string) {
 </script>
 
 <template>
-  {{ t('Style your drawing') }}
+  <template v-if="!popupOpen">
+    {{ t('Style your drawing') }}
+  </template>
 
   <component
     :is="styleComponents[currentStyleComponent as keyof typeof styleComponents]"
@@ -211,7 +215,9 @@ function onClickChangeLineStyle(style: string) {
     </template>
   </component>
 
-  <slot name="footer"></slot>
+  <template v-if="!popupOpen">
+    <slot name="footer"></slot>
+  </template>
 </template>
 
 <style></style>
