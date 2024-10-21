@@ -120,7 +120,10 @@ function onClickChangeLineStyle(style: string) {
     </template>
 
     <template v-slot:angle>
-      <div class="flex gap-1 items-center mt-1 mb-2">
+      <div
+        v-if="feature.featureStyle.shape !== 'circle'"
+        class="flex gap-1 items-center mt-1 mb-2"
+      >
         <label class="font-bold block" for="inline-full-name">
           {{ t('Angle') }}
         </label>
