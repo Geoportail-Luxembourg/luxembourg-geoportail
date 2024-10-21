@@ -2,6 +2,8 @@
 import { Ref, inject } from 'vue'
 import { useTranslation } from 'i18next-vue'
 
+import { SYMBOL_ICONS_URL } from '@/services/draw/draw.helper'
+
 import { DrawnFeature } from '@/services/draw/drawn-feature'
 import Circle from '@/components/common/symbol/circleSymbol.vue'
 import Square from '@/components/common/symbol/squareSymbol.vue'
@@ -20,27 +22,34 @@ const popupOpen: Ref<boolean> = inject('popupOpen')!
     </label>
     <!-- Symbole button -->
     <button
-      class="lux-btn flex gap-2 items-center"
+      class="lux-btn items-center"
       @click="() => (popupOpen = true)"
       data-cy="featStyleSymbolEdit"
     >
-      {{ t('Symbole') }}
-      <Circle
-        v-if="feature.featureStyle.shape === 'circle'"
-        :fillColor="feature.featureStyle.color"
+      <img
+        class="symbol-style"
+        v-if="!!feature.featureStyle.symbolId"
+        :src="`${SYMBOL_ICONS_URL}/symbol/${feature.featureStyle.symbolId}`"
       />
-      <Square
-        v-else-if="feature.featureStyle.shape === 'square'"
-        :fillColor="feature.featureStyle.color"
-      />
-      <Cross
-        v-else-if="feature.featureStyle.shape === 'cross'"
-        :fillColor="feature.featureStyle.color"
-      />
-      <Triangle
-        v-else-if="feature.featureStyle.shape === 'triangle'"
-        :fillColor="feature.featureStyle.color"
-      />
+      <span class="flex gap-2" v-if="!feature.featureStyle.symbolId">
+        {{ t('Symbole') }}
+        <Circle
+          v-if="feature.featureStyle.shape === 'circle'"
+          :fillColor="feature.featureStyle.color"
+        />
+        <Square
+          v-else-if="feature.featureStyle.shape === 'square'"
+          :fillColor="feature.featureStyle.color"
+        />
+        <Cross
+          v-else-if="feature.featureStyle.shape === 'cross'"
+          :fillColor="feature.featureStyle.color"
+        />
+        <Triangle
+          v-else-if="feature.featureStyle.shape === 'triangle'"
+          :fillColor="feature.featureStyle.color"
+        />
+      </span>
     </button>
   </div>
 </template>

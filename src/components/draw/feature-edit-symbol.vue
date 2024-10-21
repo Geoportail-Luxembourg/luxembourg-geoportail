@@ -56,19 +56,22 @@ function onClickSymbol(
   } else if (component === symbolComponents.Triangle) {
     feature.featureStyle.shape = 'triangle'
   }
+  feature.featureStyle.symbolId = undefined
 
   feature.changed()
 
-  backNavigation()
+  closePopup()
 }
 
-function backNavigation() {
+function closePopup() {
   popupOpen.value = false
 }
 
 function onChangeSymbol(id: number) {
-  alert('onChangeSymbol TODO' + id) // TODO:
-  backNavigation()
+  feature.featureStyle.shape = undefined
+  feature.featureStyle.symbolId = id
+  feature.changed()
+  closePopup()
 }
 
 function onImportMySymbol() {
@@ -134,7 +137,6 @@ function onImportMySymbol() {
     @change="onChangeSymbol"
   />
 
-  <!-- Back navigation button -->
   <div class="text-right mt-3">
     <template v-if="currentSymbolTab === tabs.mySymbols">
       <input ref="fileInput" type="file" id="input" multiple hidden />
@@ -143,11 +145,8 @@ function onImportMySymbol() {
       </button>
     </template>
 
-    <button
-      class="lux-btn"
-      @click="backNavigation()"
-      data-cy="featStyleNavBack"
-    >
+    <!-- Close popup button -->
+    <button class="lux-btn" @click="closePopup()" data-cy="featClosePopup">
       {{ t('Fermer') }}
     </button>
   </div>
