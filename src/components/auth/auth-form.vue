@@ -1,34 +1,76 @@
 <script setup lang="ts">
-import { ref } from 'vue'
+import { onMounted, ref, watch } from 'vue'
 import { useTranslation } from 'i18next-vue'
 import { storeToRefs } from 'pinia'
 
+import * as AuthService from '@/services/auth/auth.service'
+import { useAlertNotificationsStore } from '@/stores/alert-notifications.store'
+import { AlertNotificationType } from '@/stores/alert-notifications.store.model'
 import { useAppStore } from '@/stores/app.store'
+import { useUserManagerStore } from '@/stores/user-manager.store'
+import { User } from '@/stores/user-manager.store.model'
 
 const MYACCOUNT_URL = import.meta.env.VITE_MYACCOUNT_URL
 const MYACCOUNT_RECOVER_URL = import.meta.env.VITE_MYACCOUNT_RECOVER_URL
 const MYACCOUNT_NEW_URL = import.meta.env.VITE_MYACCOUNT_NEW_URL
 
 const { t } = useTranslation()
-const { lang } = storeToRefs(useAppStore())
-const isAuthenticated = ref(false)
-const email = ref('')
+const { addNotification } = useAlertNotificationsStore()
+const { lang, isApp } = storeToRefs(useAppStore())
+const userManagerStore = useUserManagerStore()
+const { setCurrentUser, clearUser } = userManagerStore
+const { authenticated, currentUser } = storeToRefs(userManagerStore)
 const userName = ref('')
+const userPassword = ref('')
+
+watch(authenticated, authenticated => {
+  if (authenticated) {
+    addNotification(t('Vous êtes maintenant correctement connecté.'))
+  }
+})
+
+onMounted(() => {
+  AuthService.getUserInfo()
+    .then(onAuthenticateSuccess)
+    .catch(() => {
+      // do nothing, don't display errors
+    })
+})
 
 function logout() {
-  alert('TODO: logout')
-  isAuthenticated.value = false
-
-  email.value = '' // TODO: remove when api ok
-  userName.value = '' // TODO: remove when api ok
+  AuthService.logout()
+    .then(() => clearUser())
+    .catch(() =>
+      addNotification(
+        t('Une erreur est survenue durant la déconnexion.'),
+        AlertNotificationType.ERROR
+      )
+    )
+  resetAuthForm()
 }
 
 function submit() {
-  alert('TODO: submit form')
-  isAuthenticated.value = true
+  AuthService.authenticate(userName.value, userPassword.value, isApp.value)
+    .then(onAuthenticateSuccess)
+    .catch(onAuthenticateFailure)
+  resetAuthForm()
+}
 
-  email.value = 'random email (todo)' // TODO: remove when api ok
-  userName.value = 'random user name (todo)' // TODO: remove when api ok
+function onAuthenticateSuccess(user: User) {
+  setCurrentUser(user)
+}
+
+function onAuthenticateFailure() {
+  addNotification(
+    t('Invalid username or password.'),
+    AlertNotificationType.WARNING
+  )
+  clearUser()
+}
+
+function resetAuthForm() {
+  userName.value = ''
+  userPassword.value = ''
 }
 </script>
 
@@ -45,7 +87,7 @@ function submit() {
 
       <div class="lux-account-content">
         <!-- When user is not authenticated -->
-        <template v-if="!isAuthenticated">
+        <template v-if="!authenticated">
           <form @submit.prevent="submit">
             <div class="flex flex-col gap-2 mb-2">
               <div>
@@ -55,6 +97,7 @@ function submit() {
                   name="userName"
                   v-model="userName"
                   :placeholder="t('Username')"
+                  required
                 />
               </div>
               <div>
@@ -62,7 +105,9 @@ function submit() {
                   class="w-full lux-input h-11"
                   type="password"
                   name="userPassword"
+                  v-model="userPassword"
                   :placeholder="t('Password')"
+                  required
                 />
               </div>
             </div>
@@ -72,7 +117,7 @@ function submit() {
                 <p>
                   <a
                     data-cy="authFormLostPwd"
-                    class="text-secondary hover:underline"
+                    class="text-secondary hover:underline hover:text-white"
                     target="_blank"
                     :href="MYACCOUNT_RECOVER_URL"
                     >{{ t('I lost my password') }}</a
@@ -81,7 +126,7 @@ function submit() {
                 <p>
                   <a
                     data-cy="authFormNewAccount"
-                    class="text-secondary hover:underline"
+                    class="text-secondary hover:underline hover:text-white"
                     target="_blank"
                     :href="MYACCOUNT_NEW_URL"
                     >{{ t('Create a new user account') }}</a
@@ -102,14 +147,14 @@ function submit() {
         <!--User is authenticated -->
         <template v-else>
           <div>
-            <div class="flex flex-col gap-1 mb-2 text-white">
-              <div class="bg-secondary p-1">{{ userName }}</div>
-              <div class="bg-secondary p-1">{{ email }}</div>
+            <div class="flex flex-col gap-[1px] mb-2 text-white">
+              <div class="bg-secondary py-1 px-3">{{ currentUser?.login }}</div>
+              <div class="bg-secondary py-1 px-3">{{ currentUser?.mail }}</div>
             </div>
             <div class="flex items-center gap-3 justify-end">
               <div>
                 <a
-                  class="text-secondary hover:underline"
+                  class="text-secondary hover:underline hover:text-white"
                   target="_blank"
                   :href="`${MYACCOUNT_URL}?lang=${lang}`"
                   >{{ t('My account') }}</a

@@ -5,6 +5,7 @@ import { useTranslation } from 'i18next-vue'
 
 import { useAppStore } from '@/stores/app.store'
 import { useThemeStore } from '@/stores/config.store'
+import { useUserManagerStore } from '@/stores/user-manager.store'
 import { themeSelectorService } from '@/components/theme-selector/theme-selector.service'
 import AuthForm from '@/components/auth/auth-form.vue'
 import DropdownContent from '@/components/common/dropdown-content.vue'
@@ -15,6 +16,7 @@ const appStore = useAppStore()
 const { toggleThemeGrid } = appStore
 const themeStore = useThemeStore()
 const { theme } = storeToRefs(themeStore)
+const { authenticated } = storeToRefs(useUserManagerStore())
 const isAuthFormOpened = ref(false)
 const isLangOpened = ref(false)
 
@@ -28,23 +30,11 @@ watch(
   { immediate: true }
 )
 
-function onClick() {
-  // if (!layersOpen.value) {
-  //   setLayersOpen(true)
-  //   myLayersTabOpen.value && setMyLayersTabOpen(false)
-  //   setThemeGridOpen(true)
-  //   myMapsOpen.value = false
-  // } else if (layersOpen.value) {
-  //   if (themeGridOpen.value) {
-  //     setLayersOpen(false)
-  //   } else {
-  //     myLayersTabOpen.value && setMyLayersTabOpen(false)
-  //     setThemeGridOpen(true)
-  //   }
-  // }
-
-  toggleThemeGrid()
-}
+// Close auth form dropdown when authentification done
+watch(
+  authenticated,
+  authenticated => authenticated && (isAuthFormOpened.value = false)
+)
 
 function onToggleDropdownLang(isOpen: boolean) {
   isLangOpened.value = isOpen
@@ -77,7 +67,7 @@ function onToggleDropdownAuth(isOpen: boolean) {
             class="flex items-center before:font-icons before:text-3xl before:w-16 text-primary uppercase h-full mr-3"
             :class="`before:content-${theme?.name}`"
             data-cy="selectedThemeIcon"
-            @click="onClick"
+            @click="toggleThemeGrid"
           >
             <span class="hidden lg:inline-block">{{
               t(`${theme?.name}`)
