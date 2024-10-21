@@ -68,8 +68,7 @@ function closePopup() {
 }
 
 function onChangeSymbol(id: number) {
-  feature.featureStyle.shape = undefined
-  feature.featureStyle.symbolId = id
+  feature.featureStyle.symbolId = `${id}`
   feature.changed()
   closePopup()
 }
