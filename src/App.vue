@@ -64,10 +64,7 @@ onUnmounted(() => window.removeEventListener('resize', map.resize))
 
       <main class="flex grow">
         <!-- Layer panel -->
-        <div
-          v-if="layersOpen && !styleEditorOpen"
-          class="w-full md:w-80 bg-secondary z-10"
-        >
+        <div v-if="layersOpen" class="w-full md:w-80 bg-secondary z-10">
           <layer-panel />
         </div>
 
