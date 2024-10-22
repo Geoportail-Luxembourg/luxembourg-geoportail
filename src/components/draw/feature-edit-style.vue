@@ -182,6 +182,7 @@ function onClickChangeLineStyle(style: string) {
           {{ t('Stroke width') }}
         </label>
         <RangeInput
+          class="md:w-2/3"
           data-cy="featStyleLineWidth"
           :value="feature.featureStyle.stroke"
           @change="onWidthChange"
@@ -195,6 +196,8 @@ function onClickChangeLineStyle(style: string) {
           {{ t('Transparence') }}
         </label>
         <RangeInput
+          class="md:w-2/3"
+          data-cy="featStyleTransparency"
           :max="100"
           :value="100 - feature.featureStyle.opacity * 100"
           @change="onTransparencyChange"

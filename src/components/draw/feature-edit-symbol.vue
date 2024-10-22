@@ -114,7 +114,7 @@ function onImportMySymbol() {
         :key="index"
         class="lux-btn p-2 rounded-sm border-gray-600"
         @click="() => onClickSymbol(symbolComponent)"
-        data-cy="featStyleSymbol"
+        :data-cy="`featStyleSymbol_${index}`"
       >
         <component
           :is="symbolComponent"

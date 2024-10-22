@@ -147,7 +147,7 @@ describe('Draw "Point"', () => {
 
       describe('When clicking close button', () => {
         it('returns to style edition tab', () => {
-          cy.get('[data-cy="featStyleNavBack"]').click()
+          cy.get('[data-cy="featClosePopup"]').click()
           testFeatStyleEditionTabContent()
         })
       })
