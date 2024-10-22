@@ -1175,4 +1175,8 @@ const featureHash = new FeatureHash({
   },
 })
 
+if (window['Cypress' as any]) {
+  window['featureHash' as any] = featureHash as any
+}
+
 export default featureHash
