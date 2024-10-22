@@ -43,7 +43,6 @@ import { proxyUrlHelper } from '@/services/proxyurl/proxyurl.helper'
 import { styleUrlHelper } from '@/services/styleurl/styleurl.helper'
 import { themeSelectorService } from '@/components/theme-selector/theme-selector.service'
 import MapLibreLayer from '@/lib/ol-mapbox-layer'
-import StyleSelector from '@/components/style-selector/style-selector.vue'
 import StylePanel from '@/components/style-selector/style-panel.vue'
 import { clearLayersCache } from '@/stores/layers.cache'
 
@@ -151,7 +150,6 @@ export {
   statePersistorMyMapService,
   themeSelectorService,
   MapLibreLayer,
-  StyleSelector,
   StylePanel,
   clearLayersCache,
 }
