@@ -17,7 +17,7 @@ import LayerItem from './layer-item/layer-item.vue'
 
 const { t } = useTranslation()
 
-const { setMetadataId } = useMetadataStore()
+const { setMetadataLayer } = useMetadataStore()
 const mapStore = useMapStore()
 const appStore = useAppStore()
 const styles = useMvtStyles()
@@ -106,7 +106,7 @@ function toggleLayerComparator() {
           @clickRemove="removeLayer"
           @clickToggle="toggleAccordionItem"
           @clickToggleLayerComparator="toggleLayerComparator"
-          @clickInfo="setMetadataId(layer.id)"
+          @clickInfo="setMetadataLayer(layer)"
           @changeOpacity="changeOpacityLayer"
           @changeTime="
             (dateStart, dateEnd) => changeTime(layer, dateStart, dateEnd)
@@ -133,7 +133,7 @@ function toggleLayerComparator() {
           @clickRemove="removeLayer"
           @clickToggle="toggleAccordionItem"
           @clickToggleLayerComparator="toggleLayerComparator"
-          @clickInfo="setMetadataId(layer.id)"
+          @clickInfo="setMetadataLayer(layer)"
           @changeOpacity="changeOpacityLayer"
           @changeTime="
             (dateStart, dateEnd) => changeTime(layer, dateStart, dateEnd)
@@ -146,7 +146,7 @@ function toggleLayerComparator() {
     <layer-item-background
       :layer="bgLayer || BLANK_BACKGROUNDLAYER"
       :showEditButton="bgLayerIsEditable"
-      @clickInfo="() => bgLayer && setMetadataId(bgLayer.id)"
+      @clickInfo="() => bgLayer && setMetadataLayer(bgLayer)"
       @clickEdit="openEditionLayer"
     >
     </layer-item-background>

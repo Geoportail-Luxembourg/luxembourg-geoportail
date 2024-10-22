@@ -1,24 +1,24 @@
 import { acceptHMRUpdate, defineStore } from 'pinia'
-import { ref, Ref } from 'vue'
-import { LayerId } from './map.store.model'
+import { shallowRef, ShallowRef } from 'vue'
+import { Layer } from './map.store.model'
 
 export const useMetadataStore = defineStore(
   'metadata',
   () => {
-    const metadataId: Ref<LayerId | undefined> = ref()
+    const metadataLayer: ShallowRef<Layer | undefined> = shallowRef()
 
-    function setMetadataId(id: LayerId) {
-      metadataId.value = id
+    function setMetadataLayer(layer: Layer) {
+      metadataLayer.value = layer
     }
 
-    function clearMetadataId() {
-      metadataId.value = undefined
+    function clearMetadataLayer() {
+      metadataLayer.value = undefined
     }
 
     return {
-      metadataId,
-      setMetadataId,
-      clearMetadataId,
+      metadataLayer,
+      setMetadataLayer,
+      clearMetadataLayer,
     }
   },
   {}

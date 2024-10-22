@@ -10,6 +10,7 @@ import RemoteLayers from '@/components/remote-layers/remote-layers.vue'
 import LayerMetadata from '@/components/layer-metadata/layer-metadata.vue'
 import BackgroundSelector from '@/components/background-selector/background-selector.vue'
 import LayerPanel from '@/components/layer-panel/layer-panel.vue'
+import LegendsPanel from '@/components/legends/legends-panel.vue'
 import StylePanel from '@/components/style-selector/style-panel.vue'
 import MyMapsPanel from '@/components/my-maps/my-maps-panel.vue'
 import MapContainer from '@/components/map/map-container.vue'
@@ -39,10 +40,11 @@ statePersistorStyleService.bootstrap()
 statePersistorBgLayerService.bootstrap()
 mvtStyleService.initBackgroundsConfigs()
 
-const { embedded, layersOpen, myMapsOpen, styleEditorOpen } =
+const { embedded, layersOpen, legendsOpen, myMapsOpen, styleEditorOpen } =
   storeToRefs(appStore)
 
 watch(layersOpen, timeoutResizeMap)
+watch(legendsOpen, timeoutResizeMap)
 watch(styleEditorOpen, timeoutResizeMap)
 watch(myMapsOpen, timeoutResizeMap)
 
@@ -66,6 +68,11 @@ onUnmounted(() => window.removeEventListener('resize', map.resize))
         <!-- Layer panel -->
         <div v-if="layersOpen" class="w-full md:w-80 bg-secondary z-10">
           <layer-panel />
+        </div>
+
+        <!-- Legends panel -->
+        <div v-if="legendsOpen" class="w-full md:w-80 bg-secondary z-10">
+          <legends-panel />
         </div>
 
         <!-- Style editor -->

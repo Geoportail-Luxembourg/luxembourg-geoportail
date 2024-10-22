@@ -9,9 +9,15 @@ import { useAppStore } from '@/stores/app.store'
 
 const { t, i18next } = useTranslation()
 const appStore = useAppStore()
-const { setLayersOpen, setDrawToolbarOpen, toggleMyMapsOpen } = appStore
+const {
+  setLayersOpen,
+  setDrawToolbarOpen,
+  toggleMyMapsOpen,
+  toggleLegendsOpen,
+} = appStore
 const {
   layersOpen,
+  legendsOpen,
   drawToolbarOpen,
   styleEditorOpen,
   myMapsOpen,
@@ -71,9 +77,10 @@ function onClickLayersIcon() {
       </li>
       <li>
         <button-icon
-          class="text-gray-300"
           :label="t('Legends', { ns: 'client' })"
           icon="legends"
+          :active="legendsOpen"
+          @click="() => toggleLegendsOpen()"
         >
         </button-icon>
       </li>

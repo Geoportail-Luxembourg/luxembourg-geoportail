@@ -1,7 +1,9 @@
 <script setup lang="ts">
-import { useTranslation } from 'i18next-vue'
 import { computed } from 'vue'
+import { useTranslation } from 'i18next-vue'
+
 import { useMetadataStore } from '@/stores/metadata.store'
+import { Layer } from '@/stores/map.store.model'
 import ExpandablePanel from '@/components/common/expandable-panel.vue'
 
 import type { LayerTreeNodeModel } from './layer-tree.model'
@@ -15,7 +17,7 @@ const emit = defineEmits<{
 }>()
 
 const { t } = useTranslation()
-const { setMetadataId } = useMetadataStore()
+const { setMetadataLayer } = useMetadataStore()
 const isParent = !!props.node.children
 const isRoot = props.node.depth === 0
 const isMaxDepth = props.node.depth >= 10
@@ -82,7 +84,7 @@ function toggleParent(node: LayerTreeNodeModel) {
     <button
       :data-cy="`layerMetadata-${node.id}`"
       class="self-start before:text-[.85rem] before:transform before:translate-y-[.1rem] before:inline-block before:content-['\f129'] fa-solid fa-fw fa-fh fa-info"
-      @click="setMetadataId(node.id)"
+      @click="setMetadataLayer(node as unknown as Layer)"
     ></button>
     <button
       class="w-full text-left"

@@ -1,26 +1,27 @@
 <script setup lang="ts">
-import { formatDate } from '@/services/common/formatting.utils'
-import { useTranslation } from 'i18next-vue'
-import LayerMetadataItem from './layer-metadata-item.vue'
-import { useMetadataStore } from '@/stores/metadata.store'
-import { storeToRefs } from 'pinia'
 import { watch, Ref, ref, onMounted, computed } from 'vue'
+import { storeToRefs } from 'pinia'
+import { useTranslation } from 'i18next-vue'
+
+import { useMetadataStore } from '@/stores/metadata.store'
+import { formatDate } from '@/services/common/formatting.utils'
 import { layerMetadataService } from '@/services/layer-metadata/layer-metadata.service'
 import { LayerMetadataModel } from '@/services/layer-metadata/layer-metadata.model'
 import ModalDialog from '@/components/common/modal-dialog.vue'
-import { useTranslateParser } from '@/composables/translateParser'
+import LegendItem from '@/components/legends/legend-item.vue'
+
+import LayerMetadataItem from './layer-metadata-item.vue'
 
 const metadataStore = useMetadataStore()
-const { metadataId } = storeToRefs(metadataStore)
+const { metadataLayer } = storeToRefs(metadataStore)
 const { t, i18next } = useTranslation()
-const { translate } = useTranslateParser()
 const layerMetadata: Ref<LayerMetadataModel | undefined> = ref()
 const displayFullDescription: Ref<boolean> = ref(true)
 const MAX_DESCRIPTION_LENGTH = 220
 
-watch(metadataId, async id => {
-  layerMetadata.value = id
-    ? await layerMetadataService.getLayerMetadata(id, i18next.language)
+watch(metadataLayer, async layer => {
+  layerMetadata.value = layer
+    ? await layerMetadataService.getLayerMetadata(layer.id, i18next.language)
     : undefined
   displayFullDescription.value =
     (layerMetadata.value?.description?.length || 0) < MAX_DESCRIPTION_LENGTH
@@ -28,9 +29,9 @@ watch(metadataId, async id => {
 
 onMounted(() => {
   i18next.on('languageChanged', async () => {
-    if (metadataId.value) {
+    if (metadataLayer.value) {
       layerMetadata.value = await layerMetadataService.getLayerMetadata(
-        metadataId.value,
+        metadataLayer.value.id,
         i18next.language
       )
     }
@@ -52,7 +53,7 @@ function hideFullDescription() {
 }
 
 function closeLayerMetadata() {
-  metadataStore.clearMetadataId()
+  metadataStore.clearMetadataLayer()
 }
 </script>
 
@@ -210,15 +211,12 @@ function closeLayerMetadata() {
         </div>
 
         <!-- Legend -->
-        <div class="lux-legend mt-5 col-span-3" v-if="layerMetadata.legendHtml">
-          <h4>{{ t('Legend') }}</h4>
-          <div
-            v-dompurify-html="translate(layerMetadata.legendHtml?.innerHTML)"
-          ></div>
-        </div>
-        <div v-if="!layerMetadata.hasLegend" class="col-span-3">
-          {{ t('The legend is not available for this layer') }}
-        </div>
+        <legend-item
+          v-else-if="metadataLayer"
+          class="mt-5 col-span-3"
+          :layer="metadataLayer"
+          :displayEmptyLegend="true"
+        />
       </div>
     </template>
   </ModalDialog>
