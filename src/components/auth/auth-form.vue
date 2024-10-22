@@ -20,18 +20,22 @@ const { lang, isApp } = storeToRefs(useAppStore())
 const userManagerStore = useUserManagerStore()
 const { setCurrentUser, clearUser } = userManagerStore
 const { authenticated, currentUser } = storeToRefs(userManagerStore)
+const autoAuthenticated = ref(false) // Will be set to true if user is authenticated via cookie on first call AuthService.getUserInfo()
 const userName = ref('')
 const userPassword = ref('')
 
 watch(authenticated, authenticated => {
-  if (authenticated) {
+  if (!autoAuthenticated.value && authenticated) {
     addNotification(t('Vous êtes maintenant correctement connecté.'))
   }
 })
 
 onMounted(() => {
   AuthService.getUserInfo()
-    .then(onAuthenticateSuccess)
+    .then(user => {
+      autoAuthenticated.value = true
+      onAuthenticateSuccess(user)
+    })
     .catch(() => {
       // do nothing, don't display errors
     })
@@ -51,7 +55,10 @@ function logout() {
 
 function submit() {
   AuthService.authenticate(userName.value, userPassword.value, isApp.value)
-    .then(onAuthenticateSuccess)
+    .then(user => {
+      autoAuthenticated.value = false
+      onAuthenticateSuccess(user)
+    })
     .catch(onAuthenticateFailure)
   resetAuthForm()
 }

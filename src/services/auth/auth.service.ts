@@ -1,5 +1,6 @@
 import { User, UserApi } from '@/stores/user-manager.store.model'
 
+const CREDENTIALS_ORIGIN = import.meta.env.VITE_CREDENTIALS_ORIGIN
 const LOGIN_URL = import.meta.env.VITE_LOGIN_URL
 const LOGOUT_URL = import.meta.env.VITE_LOGOUT_URL
 const USERINFO_URL = import.meta.env.VITE_USERINFO_URL
@@ -23,6 +24,7 @@ export async function authenticate(
   })
   const response = await fetch(LOGIN_URL, {
     method: 'POST',
+    credentials: CREDENTIALS_ORIGIN,
     headers: {
       'Content-Type': 'application/x-www-form-urlencoded',
     },
@@ -43,7 +45,9 @@ export async function authenticate(
  * @returns The api returns true if succeeded
  */
 export async function logout() {
-  const response = await fetch(LOGOUT_URL)
+  const response = await fetch(LOGOUT_URL, {
+    credentials: CREDENTIALS_ORIGIN,
+  })
 
   if (!response.ok) {
     throw new Error('Error while trying to logout user')
@@ -62,6 +66,7 @@ export async function getUserInfo() {
   const payload = new URLSearchParams({})
   const response = await fetch(USERINFO_URL, {
     method: 'POST',
+    credentials: CREDENTIALS_ORIGIN,
     headers: {
       'Content-Type': 'application/x-www-form-urlencoded',
     },

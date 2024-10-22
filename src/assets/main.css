@@ -404,7 +404,7 @@
   }
 
   .lux-account-tab {
-    @apply ml-1 bg-primary text-white after:content-['\E02E'] after:font-icons after:text-3xl after:ml-4 w-20 px-2 pt-1;
+    @apply ml-1 bg-primary text-white after:content-['\E02E'] after:font-icons after:text-3xl after:ml-4 w-20 px-2 pt-1 mb-0 border-none;
   }
 
   .lux-account-content {
