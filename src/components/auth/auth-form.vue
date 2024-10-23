@@ -3,7 +3,7 @@ import { onMounted, ref, watch } from 'vue'
 import { useTranslation } from 'i18next-vue'
 import { storeToRefs } from 'pinia'
 
-import * as AuthService from '@/services/auth/auth.service'
+import { authService } from '@/services/auth/auth.service'
 import { useAlertNotificationsStore } from '@/stores/alert-notifications.store'
 import { AlertNotificationType } from '@/stores/alert-notifications.store.model'
 import { useAppStore } from '@/stores/app.store'
@@ -31,7 +31,8 @@ watch(authenticated, authenticated => {
 })
 
 onMounted(() => {
-  AuthService.getUserInfo()
+  authService
+    .getUserInfo()
     .then(user => {
       autoAuthenticated.value = true
       onAuthenticateSuccess(user)
@@ -42,7 +43,8 @@ onMounted(() => {
 })
 
 function logout() {
-  AuthService.logout()
+  authService
+    .logout()
     .then(() => clearUser())
     .catch(() =>
       addNotification(
@@ -54,7 +56,8 @@ function logout() {
 }
 
 function submit() {
-  AuthService.authenticate(userName.value, userPassword.value, isApp.value)
+  authService
+    .authenticate(userName.value, userPassword.value, isApp.value)
     .then(user => {
       autoAuthenticated.value = false
       onAuthenticateSuccess(user)

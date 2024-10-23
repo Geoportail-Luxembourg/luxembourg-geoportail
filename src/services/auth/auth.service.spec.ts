@@ -1,6 +1,6 @@
 import { afterEach, describe, expect, it, MockedFunction, vi } from 'vitest'
 import { User, UserApi } from '@/stores/user-manager.store.model'
-import { authenticate, logout, getUserInfo } from './auth.service'
+import { authService } from './auth.service'
 
 global.fetch = vi.fn()
 
@@ -51,16 +51,16 @@ describe('Auth service', () => {
     it('should authenticate user successfully and return user info', async () => {
       mockFetchUserApiSuccess()
 
-      const result = await authenticate('the_user', 'the_password')
+      const result = await authService.authenticate('the_user', 'the_password')
       expect(result).toStrictEqual(resultUserInfo)
     })
 
     it('should throw error when authentication fails', async () => {
       mockFetchError()
 
-      await expect(authenticate('the_user', 'the_password')).rejects.toThrow(
-        'Error while trying to authenticate user'
-      )
+      await expect(
+        authService.authenticate('the_user', 'the_password')
+      ).rejects.toThrow('Error while trying to authenticate user')
     })
   })
 
@@ -71,14 +71,14 @@ describe('Auth service', () => {
         text: vi.fn().mockResolvedValue('success'),
       })
 
-      const result = await logout()
+      const result = await authService.logout()
       expect(result).toBe('success')
     })
 
     it('should throw error when logout fails', async () => {
       mockFetchError()
 
-      await expect(logout()).rejects.toThrow(
+      await expect(authService.logout()).rejects.toThrow(
         'Error while trying to logout user'
       )
     })
@@ -88,14 +88,14 @@ describe('Auth service', () => {
     it('should get the user info', async () => {
       mockFetchUserApiSuccess()
 
-      const result = await getUserInfo()
+      const result = await authService.getUserInfo()
       expect(result).toStrictEqual(resultUserInfo)
     })
 
     it('should throw error when getUserInfo fails', async () => {
       mockFetchError()
 
-      await expect(getUserInfo()).rejects.toThrow(
+      await expect(authService.getUserInfo()).rejects.toThrow(
         'Error while trying to get user info'
       )
     })

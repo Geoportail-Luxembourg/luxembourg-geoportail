@@ -2,7 +2,7 @@ import { shallowMount, VueWrapper } from '@vue/test-utils'
 import { createTestingPinia } from '@pinia/testing'
 
 import { useUserManagerStore } from '@/stores/user-manager.store'
-import * as AuthService from '@/services/auth/auth.service'
+import { authService } from '@/services/auth/auth.service'
 import AuthForm from './auth-form.vue'
 
 describe('AuthForm', () => {
@@ -44,7 +44,7 @@ describe('AuthForm', () => {
     })
 
     it('should call AuthService.authenticate on submit', async () => {
-      const authenticateMock = vi.spyOn(AuthService, 'authenticate')
+      const authenticateMock = vi.spyOn(authService, 'authenticate')
       const userNameInput = wrapper.find('input[name="userName"]')
       const userPasswordInput = wrapper.find('input[name="userPassword"]')
 
@@ -83,7 +83,7 @@ describe('AuthForm', () => {
     })
 
     it('should call AuthService.logout on logout', async () => {
-      const logoutMock = vi.spyOn(AuthService, 'logout')
+      const logoutMock = vi.spyOn(authService, 'logout')
 
       await wrapper.find('button').trigger('click')
 
