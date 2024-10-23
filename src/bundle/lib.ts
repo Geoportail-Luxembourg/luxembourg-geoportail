@@ -11,6 +11,7 @@ import './lib.css' // Tell Vite to build the css
 import '../assets/main.css' // Tell Vite to build the css
 
 import AlertNotifications from '@/components/alert-notifications/alert-notifications.vue'
+import AuthForm from '@/components/auth/auth-form.vue'
 import DropdownList from '@/components/common/dropdown-list.vue'
 import MapContainer from '@/components/map/map-container.vue'
 import BackgroundSelector from '@/components/background-selector/background-selector.vue'
@@ -33,6 +34,7 @@ import { useAppStore } from '@/stores/app.store'
 import { useMapStore } from '@/stores/map.store'
 import { useStyleStore } from '@/stores/style.store'
 import { useThemeStore } from '@/stores/config.store'
+import { useUserManagerStore } from '@/stores/user-manager.store'
 import { statePersistorBgLayerService } from '@/services/state-persistor/state-persistor-layer-background.service'
 import { statePersistorLayersService } from '@/services/state-persistor/state-persistor-layers.service'
 import { statePersistorThemeService } from '@/services/state-persistor/state-persistor-theme.service'
@@ -118,6 +120,7 @@ export {
   VueDOMPurifyHTML,
   I18NextVue,
   AlertNotifications,
+  AuthForm,
   DropdownList,
   MapContainer,
   BackgroundSelector,
@@ -142,6 +145,7 @@ export {
   useMapStore,
   useStyleStore,
   useThemeStore,
+  useUserManagerStore,
   statePersistorBgLayerService,
   statePersistorLayersService,
   statePersistorThemeService,

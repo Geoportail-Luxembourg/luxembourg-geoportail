@@ -3,7 +3,7 @@ import { onMounted, ref, watch } from 'vue'
 import { useTranslation } from 'i18next-vue'
 import { storeToRefs } from 'pinia'
 
-import * as AuthService from '@/services/auth/auth.service'
+import { authService } from '@/services/auth/auth.service'
 import { useAlertNotificationsStore } from '@/stores/alert-notifications.store'
 import { AlertNotificationType } from '@/stores/alert-notifications.store.model'
 import { useAppStore } from '@/stores/app.store'
@@ -20,25 +20,31 @@ const { lang, isApp } = storeToRefs(useAppStore())
 const userManagerStore = useUserManagerStore()
 const { setCurrentUser, clearUser } = userManagerStore
 const { authenticated, currentUser } = storeToRefs(userManagerStore)
+const autoAuthenticated = ref(false) // Will be set to true if user is authenticated via cookie on first call AuthService.getUserInfo()
 const userName = ref('')
 const userPassword = ref('')
 
 watch(authenticated, authenticated => {
-  if (authenticated) {
+  if (!autoAuthenticated.value && authenticated) {
     addNotification(t('Vous êtes maintenant correctement connecté.'))
   }
 })
 
 onMounted(() => {
-  AuthService.getUserInfo()
-    .then(onAuthenticateSuccess)
+  authService
+    .getUserInfo()
+    .then(user => {
+      autoAuthenticated.value = true
+      onAuthenticateSuccess(user)
+    })
     .catch(() => {
       // do nothing, don't display errors
     })
 })
 
 function logout() {
-  AuthService.logout()
+  authService
+    .logout()
     .then(() => clearUser())
     .catch(() =>
       addNotification(
@@ -50,8 +56,12 @@ function logout() {
 }
 
 function submit() {
-  AuthService.authenticate(userName.value, userPassword.value, isApp.value)
-    .then(onAuthenticateSuccess)
+  authService
+    .authenticate(userName.value, userPassword.value, isApp.value)
+    .then(user => {
+      autoAuthenticated.value = false
+      onAuthenticateSuccess(user)
+    })
     .catch(onAuthenticateFailure)
   resetAuthForm()
 }

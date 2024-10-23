@@ -41,6 +41,7 @@ export default defineConfig(({ mode }) => {
       entry: resolve(__dirname, 'src/bundle/lib.ts'),
       name: 'luxembourg-geoportail',
       fileName: 'lux.dist',
+      formats: ['es'], // outputs only bundle/lux.dist.mjs
     },
     commonjsOptions: {
       exclude: ['ol', 'mapbox-gl'],

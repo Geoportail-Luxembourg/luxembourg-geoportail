@@ -8,5 +8,11 @@
       }
     ]
   ],
+  "env": {
+    "dev": {
+      "compact": false,
+      "minified": false
+    }
+  },
   "compact": true
 }

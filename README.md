@@ -175,7 +175,7 @@ You can include the built lib multiple ways in the `package.json`:
 }
 ```
 
-### Develop on lib within geoportailv3 environnement
+### Develop on lib within geoportailv3 environment
 
 A simple way to develop on the lib and test it directly from within the geoportailv3 context is to map your `luxembourg-geoportal` repository as a volume to webpack_dev_server service of the docker composition:
 
@@ -267,3 +267,54 @@ To create custom components in the application using the lib, adapt the followin
 const LayerPanelElement = createElementInstance(LayerPanel, app)
 customElements.define('layer-panel', LayerPanelElement)
 ```
+
+## 🔒 Authenticate user
+
+To authenticate inside the v4 standalone app, you will need the v3 composition to be running at the same time and make some adjustement on both sides:
+
+- in v4, update `VITE_LOGIN_URL`, `VITE_LOGOUT_URL` and `VITE_USERINFO_URL` to point to your local v3 composition
+
+```bash
+# file: luxembourg-geoportail/.env.development
+VITE_LOGIN_URL="http://localhost:8080/login"
+VITE_LOGOUT_URL="http://localhost:8080/logout"
+VITE_USERINFO_URL="http://localhost:8080/getuserinfo"
+```
+
+- in v4, activate cross origin for GET/POST requests with a custom `VITE_CREDENTIALS_ORIGIN`.
+
+```bash
+# file: luxembourg-geoportail/.env.development
+VITE_CREDENTIALS_ORIGIN="include"
+# ⚠️ WARNING: don't use `"include"` value in production (but use `"same-origin"` instead).
+```
+
+- in v3, add a new env variable in `docker-compose.yaml`: `ALLOW_CORS`
+
+```yaml
+# file: geoportailv3/docker-compose.yaml
+geoportal:
+  extends: ...
+  volumes_from: ...
+  volumes: ...
+  environment: ...
+    - VECTORTILESURL
+    - ALLOW_CORS # <=== Add new var here!
+  ports:
+    - 8080:8080
+```
+
+- and set it to value = `1` in the `.env.project` file to allow cors and cross origin requests.
+
+```bash
+# file: geoportailv3/.env.project
+ALLOW_CORS=1 # ⚠️WARNING: don't use this value in production
+```
+
+## 🛡️ By pass CORS in dev mode
+
+Because v4 is a standalone app with no backend, it uses sometimes local v3's backend and sometimes migration platform https://migration.geoportail.lu to perform api calls (see dedicated `.env` files to check urls).
+
+To ignore CORS errors when performing these calls, it is mandatory to use a plugin in your web browser (such as Use Allow CORS plugin for Chrome: https://mybrowseraddon.com/access-control-allow-origin.html). Without the plugin functionnalities such as MyMaps, authentication, MySymbols, ... won't work.
+
+💡 NB. For e2e testing, CORS securities have been deactivated with the Cypress option: `chromeWebSecurity: false` (only avaialable for Chrome browser).
