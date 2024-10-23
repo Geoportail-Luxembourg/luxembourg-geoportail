@@ -57,6 +57,9 @@ export const useAppStore = defineStore(
 
     function setThemeGridOpen(open: boolean) {
       themeGridOpen.value = open
+      if (themeGridOpen.value) {
+        styleEditorOpen.value = false
+      }
     }
 
     function toggleThemeGrid() {
