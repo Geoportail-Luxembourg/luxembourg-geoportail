@@ -35,6 +35,19 @@ describe('Header bar', () => {
           cy.get('[data-cy="layerPanel"]').should('not.exist')
         })
       })
+
+      describe('When style panel is open', () => {
+        beforeEach(() => {
+          cy.get('[data-cy="myLayersButton"]').click()
+          cy.get('[data-cy="openStylePanel"]').click()
+          cy.get('[data-cy="selectedThemeIcon"]').click()
+        })
+
+        it('opens the theme grid and closes the style panel', () => {
+          cy.get('[data-cy="themeGrid"]').should('be.visible')
+          cy.get('[data-cy="stylePanel"]').should('not.exist')
+        })
+      })
     })
 
     describe('When side panel is NOT opened', () => {

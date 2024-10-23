@@ -68,6 +68,7 @@ export const useAppStore = defineStore(
         themeGridOpen.value = true
         layersOpen.value = true
         myMapsOpen.value = false
+        styleEditorOpen.value = false
         myLayersTabOpen.value && (myLayersTabOpen.value = false)
       }
     }
