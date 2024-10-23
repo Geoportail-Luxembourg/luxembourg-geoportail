@@ -289,7 +289,22 @@ VITE_CREDENTIALS_ORIGIN="include"
 # ⚠️ WARNING: don't use `"include"` value in production (but use `"same-origin"` instead).
 ```
 
-- in v3, add a new env variable in `docker-compose.yaml`: `ALLOW_CORS` and set it to value = `1` in the `.env.project` file to allow cors and cross origin requests.
+- in v3, add a new env variable in `docker-compose.yaml`: `ALLOW_CORS`
+
+```yaml
+# file: geoportailv3/docker-compose.yaml
+geoportal:
+  extends: ...
+  volumes_from: ...
+  volumes: ...
+  environment: ...
+    - VECTORTILESURL
+    - ALLOW_CORS # <=== Add new var here!
+  ports:
+    - 8080:8080
+```
+
+- and set it to value = `1` in the `.env.project` file to allow cors and cross origin requests.
 
 ```bash
 # file: geoportailv3/.env.project
