@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { onMounted, Ref, ref } from 'vue'
+import { onMounted, Ref, ref, watch } from 'vue'
 import { useTranslation } from 'i18next-vue'
 
 import { Layer } from '@/stores/map.store.model'
@@ -22,19 +22,24 @@ const props = withDefaults(
     displayEmptyLegend: false,
   }
 )
-
 const emit = defineEmits<{
   (e: 'hasLegend', hasLegend: boolean): void
 }>()
 
-onMounted(async () => {
+watch(
+  () => i18next.language,
+  () => getLayerLegend()
+)
+onMounted(() => getLayerLegend())
+
+async function getLayerLegend() {
   layerMetadata.value = await layerMetadataService.getLayerMetadata(
     props.layer.id,
     i18next.language
   )
 
   emit('hasLegend', !!layerMetadata.value?.hasLegend)
-})
+}
 </script>
 
 <template>

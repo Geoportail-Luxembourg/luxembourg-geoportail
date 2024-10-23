@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { computed } from 'vue'
+import { computed, watch } from 'vue'
 import { useTranslation } from 'i18next-vue'
 import { storeToRefs } from 'pinia'
 
@@ -7,6 +7,7 @@ import DropdownList from '@/components/common/dropdown-list.vue'
 
 import { useAppStore } from '@/stores/app.store'
 import { statePersistorLangService } from '@/services/state-persistor/state-persistor-lang.service'
+import { layersMetadataCache } from '@/services/layer-metadata/layer-metadata.cache'
 
 const { i18next, t } = useTranslation()
 const { setLang } = useAppStore()
@@ -21,6 +22,13 @@ const availableLanguages = computed(() =>
 const placeholder = t('Change language', { ns: 'app' })
 
 statePersistorLangService.bootstrap()
+
+watch(
+  () => i18next.language,
+  () => {
+    layersMetadataCache.clear()
+  }
+)
 
 function changeLanguages(lang: string) {
   i18next.changeLanguage(lang)

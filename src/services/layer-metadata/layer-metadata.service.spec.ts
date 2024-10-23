@@ -91,6 +91,7 @@ describe('LayerMetadataService', () => {
       .spyOn(layerMetadataService, 'getLegendHtml')
       .mockReturnValue(legendMock)
   })
+
   describe('#getLayerMetadata with internal layer', () => {
     let metadata
     beforeEach(async () => {

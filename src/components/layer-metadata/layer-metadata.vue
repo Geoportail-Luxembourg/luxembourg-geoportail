@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { watch, Ref, ref, onMounted, computed } from 'vue'
+import { watch, Ref, ref, computed } from 'vue'
 import { storeToRefs } from 'pinia'
 import { useTranslation } from 'i18next-vue'
 
@@ -27,16 +27,17 @@ watch(metadataLayer, async layer => {
     (layerMetadata.value?.description?.length || 0) < MAX_DESCRIPTION_LENGTH
 })
 
-onMounted(() => {
-  i18next.on('languageChanged', async () => {
+watch(
+  () => i18next.language,
+  async language => {
     if (metadataLayer.value) {
       layerMetadata.value = await layerMetadataService.getLayerMetadata(
         metadataLayer.value.id,
-        i18next.language
+        language
       )
     }
-  })
-})
+  }
+)
 
 const description = computed(() =>
   displayFullDescription.value

@@ -49,20 +49,22 @@ watchEffect(
 
         <!-- When some of the layers have legend -->
         <legend-item
-          class="pt-3"
           v-for="layer in layersReversed"
+          data-cy="legendLayer"
+          class="pt-3"
           :key="layer.id"
           :layer="layer"
           @has-legend="
-            hasLegend => layersLegendsStatus.set(layer.id, hasLegend)
+            (hasLegend: boolean) => layersLegendsStatus.set(layer.id, hasLegend)
           "
           @unmounted="layersLegendsStatus.delete(layer.id)"
         />
 
         <!-- Legend for background layer if any -->
         <legend-item
-          class="pt-3"
           v-if="bgLayer"
+          data-cy="legendBgLayer"
+          class="pt-3"
           :key="bgLayer.id"
           :layer="bgLayer"
         />

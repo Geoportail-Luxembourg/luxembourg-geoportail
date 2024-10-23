@@ -31,7 +31,8 @@ i18next.init({
   backend: {
     loadPath: `${import.meta.env.BASE_URL}assets/locales/{{ns}}.{{lng}}.json`, // ! use assets instead of ./assets because of theme path in url
   },
-  nsSeparator: '|', // ! force separator to '|' instead of ':' because some i18n keys have ':' (otherwise, i18next doesn't find the key)
+  nsSeparator: false, // ! force separator off because some i18n keys have ':' (otherwise, i18next doesn't find the key)
+  keySeparator: false,
 })
 
 const app = createApp(App)

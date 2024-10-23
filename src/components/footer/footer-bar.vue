@@ -75,7 +75,7 @@ function onClickLayersIcon() {
         >
         </button-icon>
       </li>
-      <li>
+      <li data-cy="legendsOpenClose">
         <button-icon
           :label="t('Legends', { ns: 'client' })"
           icon="legends"
