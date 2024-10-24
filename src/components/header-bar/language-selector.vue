@@ -6,8 +6,8 @@ import { storeToRefs } from 'pinia'
 import DropdownList from '@/components/common/dropdown-list.vue'
 
 import { useAppStore } from '@/stores/app.store'
+import { layerMetadataService } from '@/services/layer-metadata/layer-metadata.service'
 import { statePersistorLangService } from '@/services/state-persistor/state-persistor-lang.service'
-import { layersMetadataCache } from '@/services/layer-metadata/layer-metadata.cache'
 
 const { i18next, t } = useTranslation()
 const { setLang } = useAppStore()
@@ -26,7 +26,8 @@ statePersistorLangService.bootstrap()
 watch(
   () => i18next.language,
   () => {
-    layersMetadataCache.clear()
+    // Clear layers metadata cache, need to perform a new request to get metadata in the right language
+    layerMetadataService.clearCache()
   }
 )
 

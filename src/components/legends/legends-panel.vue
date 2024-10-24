@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { computed, Ref, ref, watchEffect } from 'vue'
+import { computed, onUnmounted, onActivated, Ref, ref, watchEffect } from 'vue'
 import { storeToRefs } from 'pinia'
 import { useTranslation } from 'i18next-vue'
 
@@ -25,6 +25,9 @@ watchEffect(
       ([layerId, hasLegend]) => hasLegend
     ))
 )
+
+onUnmounted(() => layersLegendsStatus.value.clear())
+onActivated(() => layersLegendsStatus.value.clear())
 </script>
 
 <template>
@@ -51,20 +54,20 @@ watchEffect(
         <legend-item
           v-for="layer in layersReversed"
           data-cy="legendLayer"
-          class="pt-3"
+          class="pt-10"
           :key="layer.id"
           :layer="layer"
           @has-legend="
             (hasLegend: boolean) => layersLegendsStatus.set(layer.id, hasLegend)
           "
-          @unmounted="layersLegendsStatus.delete(layer.id)"
+          @removed-legend="() => layersLegendsStatus.delete(layer.id)"
         />
 
         <!-- Legend for background layer if any -->
         <legend-item
           v-if="bgLayer"
           data-cy="legendBgLayer"
-          class="pt-3"
+          class="pt-10"
           :key="bgLayer.id"
           :layer="bgLayer"
         />

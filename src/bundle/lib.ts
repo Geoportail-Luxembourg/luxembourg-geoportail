@@ -36,6 +36,7 @@ import { useMapStore } from '@/stores/map.store'
 import { useStyleStore } from '@/stores/style.store'
 import { useThemeStore } from '@/stores/config.store'
 import { useUserManagerStore } from '@/stores/user-manager.store'
+import { layerMetadataService } from '@/services/layer-metadata/layer-metadata.service'
 import { statePersistorBgLayerService } from '@/services/state-persistor/state-persistor-layer-background.service'
 import { statePersistorLayersService } from '@/services/state-persistor/state-persistor-layers.service'
 import { statePersistorThemeService } from '@/services/state-persistor/state-persistor-theme.service'
@@ -149,6 +150,7 @@ export {
   useStyleStore,
   useThemeStore,
   useUserManagerStore,
+  layerMetadataService,
   statePersistorBgLayerService,
   statePersistorLayersService,
   statePersistorThemeService,

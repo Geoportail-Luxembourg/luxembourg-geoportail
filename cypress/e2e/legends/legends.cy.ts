@@ -77,4 +77,30 @@ describe('Legends', () => {
       cy.get('[data-cy="legendLayer"]').should('have.length', 2)
     })
   })
+
+  describe('When a layer with a legend is removed', () => {
+    beforeEach(() => {
+      cy.get('[data-cy="catalogButton"]').click()
+      cy.get('[data-cy^="layerLabel-262"]').click()
+
+      cy.get('[data-cy="legendsOpenClose"] > button').click()
+    })
+
+    it('displays a txt saying there are no legend to show', () => {
+      cy.get('[data-cy="legendLayer"]').should('have.length', 1)
+
+      cy.get('[data-cy="selectedBg"]').find('button').click()
+      cy.get('[data-cy="available-bgs"]')
+        .find('button')
+        .filter('[title*="Carte topographique"]')
+        .click()
+
+      cy.get('[data-cy="legendsPanel"]').should(
+        'contain.text',
+        "Aucune légende n'est disponible pour les couches sélectionnées."
+      )
+
+      cy.get('[data-cy="legendLayer"]').should('have.length', 0)
+    })
+  })
 })

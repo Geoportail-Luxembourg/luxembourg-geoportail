@@ -150,6 +150,14 @@ export class LayerMetadataService {
         .catch(() => undefined)
     }
   }
+
+  /**
+   * Clear layers metadata cache, eg. when language changed, we need to perform a new request
+   * to get the metadata and legends in the right language
+   */
+  clearCache() {
+    layersMetadataCache.clear()
+  }
 }
 
 export const layerMetadataService = new LayerMetadataService()
