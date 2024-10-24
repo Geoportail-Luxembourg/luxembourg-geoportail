@@ -58,6 +58,15 @@ export default function useThemes() {
   }
 
   /**
+   * Find layer in layers list or from background definition, or from 3d layers list
+   * @param id The layer id
+   * @returns The first layer (or bg layer, or 3d layer) with the given id
+   */
+  function findAnyLayerById(id: LayerId) {
+    return findBgLayerById(+id) || findById(+id) || find3dLayerById(+id)
+  }
+
+  /**
    * Switch theme and set max zoom
    * @param name The theme's name eg. "main"
    */
@@ -88,6 +97,7 @@ export default function useThemes() {
     find3dLayerById,
     findBgLayerById,
     findBgLayerByName,
+    findAnyLayerById,
     setTheme,
   }
 }

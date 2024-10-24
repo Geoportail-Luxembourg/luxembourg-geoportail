@@ -14,7 +14,7 @@ import BackgroundSelectorItem from './background-selector-item.vue'
 import { bgConfigFixture } from '@/__fixtures__/background.config.fixture'
 import { ThemeNodeModel } from '@/composables/themes/themes.model'
 
-const { t } = useTranslation()
+const { t, i18next } = useTranslation()
 const backgroundLayer = useBackgroundLayer()
 const mapStore = useMapStore()
 const themeStore = useThemeStore()
@@ -27,6 +27,7 @@ const props = defineProps({
   },
 })
 const isOpen = ref(props.isOpen)
+const autoBgLayerSet = ref(false)
 const bgLayers: Ref<IBackgroundLayer[]> = ref([])
 const activeLayerId = computed(
   () => (bgLayerContext.value?.id as number) ?? backgroundLayer.getNullId()
@@ -66,13 +67,22 @@ watch(
       backgroundLayer.setBgLayer(backgroundLayer.defaultSelectedBgId.value)
 
       if (bgLayerContext === null) {
-        useAlertNotificationsStore().addNotification(
-          t(
-            "Aucune couche n'étant définie pour cette carte, une couche de fond a automatiquement été ajoutée.",
-            { ns: 'client' }
-          )
-        )
+        autoBgLayerSet.value = true
       }
+    }
+  }
+)
+
+// Fix: after migration to i18next-vue v5.0.0, otherwise, i18next-vue returns empty string as it takes time to init
+watch(
+  [autoBgLayerSet, () => i18next.isInitialized],
+  ([autoBgLayerSet, isInitialized]) => {
+    if (autoBgLayerSet && isInitialized) {
+      useAlertNotificationsStore().addNotification(
+        t(
+          "Aucune couche n'étant définie pour cette carte, une couche de fond a automatiquement été ajoutée."
+        )
+      )
     }
   }
 )
