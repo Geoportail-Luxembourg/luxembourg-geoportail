@@ -57,6 +57,9 @@ export const useAppStore = defineStore(
 
     function setThemeGridOpen(open: boolean) {
       themeGridOpen.value = open
+      if (themeGridOpen.value) {
+        styleEditorOpen.value = false
+      }
     }
 
     function toggleThemeGrid() {
@@ -68,6 +71,7 @@ export const useAppStore = defineStore(
         themeGridOpen.value = true
         layersOpen.value = true
         myMapsOpen.value = false
+        styleEditorOpen.value = false
         myLayersTabOpen.value && (myLayersTabOpen.value = false)
       }
     }

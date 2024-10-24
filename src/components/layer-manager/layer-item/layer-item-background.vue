@@ -41,6 +41,7 @@ function getLabel() {
     <span class="flex-1 text-left cursor-default">{{ getLabel() }}</span>
     <button
       v-if="showEditButton"
+      data-cy="openStylePanel"
       class="fa fa-pencil"
       :aria-label="t('Open editor panel', { ns: 'app' })"
       :title="t('Open editor panel', { ns: 'app' })"
