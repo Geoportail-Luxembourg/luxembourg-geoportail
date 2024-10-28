@@ -4,15 +4,17 @@ import { storeToRefs } from 'pinia'
 import { useTranslation } from 'i18next-vue'
 
 import SidePanelLayout from '@/components/common/side-panel-layout.vue'
+import useLayers from '@/composables/layers/layers.composable'
 import { useAppStore } from '@/stores/app.store'
 import { useMapStore } from '@/stores/map.store'
+import { LayerId } from '@/stores/map.store.model'
 
 import LegendItem from './legend-item.vue'
-import { LayerId } from '@/stores/map.store.model'
 
 const { t } = useTranslation()
 const appStore = useAppStore()
 const mapStore = useMapStore()
+const layersService = useLayers()
 const { layers, bgLayer } = storeToRefs(mapStore)
 const layersReversed = computed(() => [...layers.value].reverse()) // copy layers for inversion in UI, otherwise will modify current array
 const layersLegendsStatus: Ref<Map<LayerId, boolean>> = ref(new Map())
@@ -61,7 +63,13 @@ onActivated(() => layersLegendsStatus.value.clear())
             (hasLegend: boolean) => layersLegendsStatus.set(layer.id, hasLegend)
           "
           @removed-legend="() => layersLegendsStatus.delete(layer.id)"
-        />
+        >
+          <template #title>
+            <h1 class="pb-5">
+              {{ t(layersService.getLayerCurrentLabel(layer)) }}
+            </h1>
+          </template>
+        </legend-item>
 
         <!-- Legend for background layer if any -->
         <legend-item
@@ -70,7 +78,13 @@ onActivated(() => layersLegendsStatus.value.clear())
           class="pt-10"
           :key="bgLayer.id"
           :layer="bgLayer"
-        />
+        >
+          <template #title>
+            <h1 class="pb-5">
+              {{ t(layersService.getLayerCurrentLabel(bgLayer)) }}
+            </h1>
+          </template>
+        </legend-item>
       </div>
     </template>
   </side-panel-layout>

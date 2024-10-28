@@ -217,7 +217,11 @@ function closeLayerMetadata() {
           class="mt-5 col-span-3"
           :layer="metadataLayer"
           :displayEmptyLegend="true"
-        />
+        >
+          <template #title>
+            <h4>{{ t('Legend') }}</h4>
+          </template>
+        </legend-item>
       </div>
     </template>
   </ModalDialog>

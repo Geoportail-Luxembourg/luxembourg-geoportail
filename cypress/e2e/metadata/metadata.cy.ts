@@ -9,7 +9,7 @@ describe('Metadata', () => {
       cy.get('[data-cy="layerMetadata-698"]').click()
     })
 
-    it('it show the popup with the layer metadata', () => {
+    it('it shows the popup with the layer metadata', () => {
       cy.get('[data-cy="metadata"]').find('span').eq(0).contains('Nom')
       cy.get('[data-cy="metadata"] .lux-legend')
         .find('h4')

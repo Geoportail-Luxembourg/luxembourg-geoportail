@@ -3,14 +3,12 @@ import { onMounted, onUnmounted, Ref, ref, watch } from 'vue'
 import { useTranslation } from 'i18next-vue'
 
 import { Layer } from '@/stores/map.store.model'
-import useLayers from '@/composables/layers/layers.composable'
 import { LayerMetadataModel } from '@/services/layer-metadata/layer-metadata.model'
 import { layerMetadataService } from '@/services/layer-metadata/layer-metadata.service'
 import { useTranslateParser } from '@/composables/translateParser'
 
 const { t, i18next } = useTranslation()
 const { translate } = useTranslateParser()
-const layersService = useLayers()
 const layerMetadata: Ref<LayerMetadataModel | undefined> = ref()
 
 const props = withDefaults(
@@ -50,9 +48,7 @@ async function getLayerLegend() {
     class="lux-legend"
     v-if="layerMetadata && layerMetadata.legendHtml?.innerHTML"
   >
-    <h1 class="pb-5">
-      {{ t(layersService.getLayerCurrentLabel(layer)) }}
-    </h1>
+    <slot name="title" />
     <div
       v-dompurify-html="translate(layerMetadata.legendHtml?.innerHTML)"
     ></div>
