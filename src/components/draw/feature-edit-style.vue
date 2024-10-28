@@ -36,24 +36,23 @@ function onColorSelect(colorEvent: Event) {
   feature.changed()
 }
 
-function onSizeChange(newSize: string | number) {
-  feature.featureStyle.size = parseFloat(newSize as string)
+function onSizeChange(newSize: number) {
+  feature.featureStyle.size = newSize
   feature.changed()
 }
 
-function onAngleChange(newAngle: string | number) {
-  feature.featureStyle.angle = (parseFloat(newAngle as string) * Math.PI) / 180
+function onAngleChange(newAngle: number) {
+  feature.featureStyle.angle = (newAngle * Math.PI) / 180
   feature.changed()
 }
 
-function onWidthChange(newWidth: string | number) {
-  feature.featureStyle.stroke = parseFloat(newWidth as string)
+function onWidthChange(newWidth: number) {
+  feature.featureStyle.stroke = newWidth
   feature.changed()
 }
 
-function onTransparencyChange(newTransparency: string | number) {
-  feature.featureStyle.opacity =
-    (100 - parseFloat(newTransparency as string)) / 100
+function onTransparencyChange(newTransparency: number) {
+  feature.featureStyle.opacity = (100 - newTransparency) / 100
   feature.changed()
 }
 

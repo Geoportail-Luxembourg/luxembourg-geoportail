@@ -22,7 +22,6 @@ const props = withDefaults(
   }
 )
 
-// should preform deep copy, nut then the updqte of the OL object on the canvas would not work ??
 const localFeature = props.feature
 
 const emit = defineEmits([
@@ -51,13 +50,11 @@ function onClickDelete() {
 function onResetInfo(prevLabel: string, prevDescription: string) {
   localFeature.label = prevLabel
   localFeature.description = prevDescription
-  // emit('submitFeature', localFeature)
 }
 
 function onResetStyle(prevStyle: DrawnFeatureStyle) {
-  localFeature.featureStyle = Object.assign({}, prevStyle)
+  localFeature.featureStyle = { ...prevStyle }
   localFeature.changed()
-  // emit('submitFeature', localFeature)
 }
 
 function onSubmitEditFeature() {

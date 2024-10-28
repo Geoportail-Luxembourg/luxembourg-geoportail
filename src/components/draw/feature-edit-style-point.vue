@@ -18,6 +18,6 @@ const popupOpen: Ref<boolean> = inject('popupOpen')!
     <slot name="color"></slot>
     <slot name="symbole"></slot>
     <slot name="size" :maxsize="900"></slot>
-    <slot name="angle" :maxsize="900"></slot>
+    <slot name="angle"></slot>
   </template>
 </template>

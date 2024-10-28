@@ -29,7 +29,7 @@ const feature: DrawnFeature = inject('feature')!
 let prevLabel = feature.label
 let prevDescription = feature.description
 // keep deep copy of previous style to be able to revert style on cancel
-const prevStyle: DrawnFeatureStyle = Object.assign({}, feature.featureStyle)
+const prevStyle: DrawnFeatureStyle = { ...feature.featureStyle }
 
 const editComponents = {
   FeatureConcentricCircle,
