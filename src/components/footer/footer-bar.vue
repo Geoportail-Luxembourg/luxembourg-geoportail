@@ -11,7 +11,7 @@ const { t, i18next } = useTranslation()
 const appStore = useAppStore()
 const {
   setLayersOpen,
-  setDrawToolbarOpen,
+  toggleDrawToolbarOpen,
   toggleMyMapsOpen,
   toggleLegendsOpen,
 } = appStore
@@ -103,7 +103,7 @@ function onClickLayersIcon() {
         :label="t('Dessin', { ns: 'client' })"
         icon="draw"
         :active="drawToolbarOpen"
-        @click="() => setDrawToolbarOpen(!drawToolbarOpen)"
+        @click="() => toggleDrawToolbarOpen()"
         data-cy="drawButton"
       >
       </button-icon>
