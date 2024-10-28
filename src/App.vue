@@ -38,13 +38,20 @@ statePersistorStyleService.bootstrap()
 statePersistorBgLayerService.bootstrap()
 mvtStyleService.initBackgroundsConfigs()
 
-const { embedded, layersOpen, legendsOpen, myMapsOpen, styleEditorOpen } =
-  storeToRefs(appStore)
+const {
+  embedded,
+  layersOpen,
+  legendsOpen,
+  myMapsOpen,
+  infoOpen,
+  styleEditorOpen,
+} = storeToRefs(appStore)
 
 watch(layersOpen, timeoutResizeMap)
 watch(legendsOpen, timeoutResizeMap)
 watch(styleEditorOpen, timeoutResizeMap)
 watch(myMapsOpen, timeoutResizeMap)
+watch(infoOpen, timeoutResizeMap)
 
 function timeoutResizeMap() {
   setTimeout(() => map.resize(), 50)

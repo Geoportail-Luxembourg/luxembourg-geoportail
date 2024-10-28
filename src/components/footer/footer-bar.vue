@@ -14,6 +14,7 @@ const {
   toggleDrawToolbarOpen,
   toggleMyMapsOpen,
   toggleLegendsOpen,
+  toggleInfoOpen,
 } = appStore
 const {
   layersOpen,
@@ -21,6 +22,7 @@ const {
   drawToolbarOpen,
   styleEditorOpen,
   myMapsOpen,
+  infoOpen,
   themeGridOpen,
 } = storeToRefs(appStore)
 
@@ -31,6 +33,7 @@ function onClickLayersIcon() {
   if (open) {
     styleEditorOpen.value = false
     myMapsOpen.value = false
+    infoOpen.value = false
   }
 
   themeGridOpen.value = false
@@ -67,11 +70,12 @@ function onClickLayersIcon() {
         >
         </button-icon>
       </li>
-      <li>
+      <li data-cy="infoOpenClose">
         <button-icon
-          class="text-gray-300"
-          :label="t('infos', { ns: 'client' })"
+          :label="t('Infos', { ns: 'client' })"
           icon="infos"
+          :active="infoOpen"
+          @click="() => toggleInfoOpen()"
         >
         </button-icon>
       </li>

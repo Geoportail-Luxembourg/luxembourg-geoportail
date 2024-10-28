@@ -49,5 +49,7 @@
   "Retry": "Von vorne anfangen",
   "small": "Klein",
   "Take measure": "Messen",
-  "Update offline data": "Offline-Daten updaten"
+  "Update offline data": "Offline-Daten updaten",
+  "A right click (tap and hold on mobile)...": "Durch Rechtsklick (tippen und halten auf Mobil) werden Informationen über den aktuellen Standort angezeigt",
+  "A short click (tap on mobile)...": "Durch Klick (tippen auf Mobil) auf einer Funktion wir diese Augewählt und weitere Informationen angezeigt"
 }

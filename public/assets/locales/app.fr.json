@@ -49,5 +49,7 @@
   "Retry": "Recommencez",
   "small": "Petite",
   "Take measure": "Mesurer",
-  "Update offline data": "Mettre à jour données hors connexion"
+  "Update offline data": "Mettre à jour données hors connexion",
+  "A right click (tap and hold on mobile)...": "Un clic droit (appuyez et maintenez sur mobile) affiche des informations sur l'emplacement actuel.",
+  "A short click (tap on mobile)...": "Un clic court (tap sur mobile) sur une caractéristique de la carte permet de sélectionner la caractéristique et de montrer plus d'informations"
 }

@@ -8,6 +8,7 @@ export const DEFAULT_LEGENDS_PANEL_OPENED = false
 export const DEFAULT_MY_LAYERS_TAB_OPENED = false
 export const DEFAULT_THEME_GRID_OPENED = false
 export const DEFAULT_MYMAPS_OPENED = false
+export const DEFAULT_INFO_OPENED = false
 export const DEFAULT_FEEDBACK_OPENED = false
 export const DEFAULT_FEEDBACKANF_OPENED = false
 export const DEFAULT_FEEDBACKAGE_OPENED = false
@@ -24,6 +25,7 @@ export const useAppStore = defineStore(
     const themeGridOpen = ref(DEFAULT_THEME_GRID_OPENED)
     const mapId: Ref<string | undefined> = ref() // => MyMaps map id
     const myMapsOpen = ref(DEFAULT_MYMAPS_OPENED)
+    const infoOpen = ref(DEFAULT_INFO_OPENED)
     const feedbackOpen = ref(DEFAULT_FEEDBACK_OPENED)
     const feedbackanfOpen = ref(DEFAULT_FEEDBACKANF_OPENED)
     const feedbackageOpen = ref(DEFAULT_FEEDBACKAGE_OPENED)
@@ -77,6 +79,7 @@ export const useAppStore = defineStore(
         layersOpen.value = true
         legendsOpen.value = false
         myMapsOpen.value = false
+        infoOpen.value = false
         styleEditorOpen.value = false
         myLayersTabOpen.value && (myLayersTabOpen.value = false)
       }
@@ -112,6 +115,10 @@ export const useAppStore = defineStore(
       legendsOpen.value = open ?? !legendsOpen.value
     }
 
+    function toggleInfoOpen(open?: boolean) {
+      infoOpen.value = open ?? !infoOpen.value
+    }
+
     return {
       embedded,
       lang,
@@ -121,6 +128,7 @@ export const useAppStore = defineStore(
       themeGridOpen,
       mapId,
       myMapsOpen,
+      infoOpen,
       feedbackOpen,
       feedbackanfOpen,
       feedbackageOpen,
@@ -142,6 +150,7 @@ export const useAppStore = defineStore(
       closeStyleEditorPanel,
       toggleDrawToolbarOpen,
       toggleMyMapsOpen,
+      toggleInfoOpen,
       toggleThemeGrid,
       toggleLegendsOpen,
     }
