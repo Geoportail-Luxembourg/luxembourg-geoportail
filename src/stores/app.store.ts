@@ -35,6 +35,7 @@ export const useAppStore = defineStore(
     const styleEditorOpenedSection: Ref<StyleSection | undefined> =
       ref(undefined)
     const drawToolbarOpen = ref(false)
+    const measureToolbarOpen = ref(false)
     const isOffLine = ref(false)
     const isApp = ref(false) // Is the app displayed for Android or Ios?
 
@@ -137,6 +138,7 @@ export const useAppStore = defineStore(
       styleEditorOpenedSection,
       remoteLayersOpen,
       drawToolbarOpen,
+      measureToolbarOpen,
       isOffLine,
       isApp,
       setIsApp,

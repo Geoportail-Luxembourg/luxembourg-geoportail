@@ -1,11 +1,13 @@
 <script setup lang="ts">
+import { watch } from 'vue'
 import { storeToRefs } from 'pinia'
+import { useTranslation } from 'i18next-vue'
 
+import { useAppStore } from '@/stores/app.store'
 import ButtonIcon from './button-icon.vue'
 import ButtonLink from './button-link.vue'
 import ToolbarDraw from './toolbar-draw.vue'
-import { useTranslation } from 'i18next-vue'
-import { useAppStore } from '@/stores/app.store'
+import ToolbarMeasure from './toolbar-measure.vue'
 
 const { t, i18next } = useTranslation()
 const appStore = useAppStore()
@@ -20,6 +22,7 @@ const {
   layersOpen,
   legendsOpen,
   drawToolbarOpen,
+  measureToolbarOpen,
   styleEditorOpen,
   myMapsOpen,
   infoOpen,
@@ -38,7 +41,11 @@ function onClickLayersIcon() {
 
   themeGridOpen.value = false
 }
+
+watch(drawToolbarOpen, isOpen => isOpen && (measureToolbarOpen.value = false))
+watch(measureToolbarOpen, isOpen => isOpen && (drawToolbarOpen.value = false))
 </script>
+
 <template>
   <footer
     class="flex flex-col w-12 justify-between bg-white z-5 shrink-0 sm:flex-row sm:w-full sm:h-14 sm:shadow-footer"
@@ -102,6 +109,7 @@ function onClickLayersIcon() {
     <div
       class="relative flex flex-col w-12 sm:w-64 sm:flex-row justify-start text-primary divide-y sm:divide-y-0 sm:divide-x divide-gray-400 divide-solid box-content border-y sm:border-y-0 border-x border-gray-400"
     >
+      <!-- Drawing tools -->
       <toolbar-draw v-if="drawToolbarOpen" />
       <button-icon
         :label="t('Dessin', { ns: 'client' })"
@@ -111,18 +119,26 @@ function onClickLayersIcon() {
         data-cy="drawButton"
       >
       </button-icon>
+
+      <!-- Measures tools -->
+      <toolbar-measure v-if="measureToolbarOpen" />
       <button-icon
-        class="text-gray-300 hidden sm:block"
         :label="t('Mesurer', { ns: 'client' })"
+        :active="measureToolbarOpen"
         icon="measure"
+        @click="() => (measureToolbarOpen = !measureToolbarOpen)"
       >
       </button-icon>
+
+      <!-- Print tools -->
       <button-icon
         class="text-gray-300 hidden sm:block"
         :label="t('Imprimer', { ns: 'client' })"
         icon="print"
       >
       </button-icon>
+
+      <!-- Social sharing tools -->
       <button-icon
         class="text-gray-300"
         :label="t('Partager', { ns: 'client' })"
@@ -131,7 +147,7 @@ function onClickLayersIcon() {
       </button-icon>
     </div>
 
-    <!-- right buttons -->
+    <!-- Right buttons (links) -->
     <div
       class="w-[466px] hidden sm:flex flex-row justify-end text-gray-500 whitespace-nowrap"
     >

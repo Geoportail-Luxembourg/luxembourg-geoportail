@@ -2,7 +2,7 @@ import useLayers from '@/composables/layers/layers.composable'
 import { VectorSourceDict } from '@/composables/mvt-styles/mvt-styles.model'
 import { OfflineLayerTypeValue } from '@/composables/offline/offline.model'
 import { LayerTypeValue } from '@/composables/themes/themes.model'
-import { Layer } from '@/stores/map.store.model'
+import { Layer, LayerFeature } from '@/stores/map.store.model'
 
 import {
   OLLAYER_PROP_CURRENT_TIME,
@@ -18,19 +18,25 @@ import olLayerWmsHelper from './ol-layer-wms.helper'
 import olLayerWmtsHelper from './ol-layer-wmts.helper'
 import olLayerVectorHelper from './ol-layer-vector.helper'
 import { olLayerOfflineFactoryService } from './ol-layer-offline-factory'
+import olLayerFeaturePositionHelper from './ol-layer-feature-position.helper'
 
 export class OlLayerFactoryService {
-  createOlLayer(layer: Layer, vectorSources?: VectorSourceDict): OlLayer {
+  createOlLayer(
+    layer: Layer | LayerFeature,
+    vectorSources?: VectorSourceDict
+  ): OlLayer {
     let olLayer: OlLayer | undefined
 
     if (vectorSources) {
       // Try to create vector layer from vector sources
-      olLayer = olLayerVectorHelper.createOlLayer(layer, vectorSources)
+      olLayer = olLayerVectorHelper.createOlLayer(<Layer>layer, vectorSources)
     }
 
     // If no vector layer has been created, add raster layer
     if (!olLayer) {
       switch (layer.type) {
+        case 'position':
+          return this.createOlLayerFeature(layer)
         case LayerTypeValue.WMS:
           olLayer = olLayerWmsHelper.createOlLayer(layer)
           break
@@ -47,6 +53,21 @@ export class OlLayerFactoryService {
       }
     }
 
+    this.setOlProps(<Layer>layer, olLayer)
+
+    return olLayer
+  }
+
+  createOlLayerFeature(layer: LayerFeature): OlLayer {
+    const olLayer = olLayerFeaturePositionHelper.createOlLayer()
+
+    olLayer.set(OLLAYER_PROP_ID, layer.id)
+    olLayer.set(OLLAYER_PROP_LABEL, layer.name)
+
+    return olLayer
+  }
+
+  setOlProps(layer: Layer, olLayer: OlLayer) {
     olLayer.set(OLLAYER_PROP_ID, layer.id)
     olLayer.set(OLLAYER_PROP_LABEL, layer.name)
     olLayer.set(OLLAYER_PROP_LAYER_NAME, layer.name) // for v3 compatibility (search)
@@ -58,8 +79,6 @@ export class OlLayerFactoryService {
     ) // Legacy for v3
     olLayer.set(OLLAYER_PROP_TIME, layer.time)
     olLayer.setOpacity(layer.opacity as number)
-
-    return olLayer
   }
 }
 

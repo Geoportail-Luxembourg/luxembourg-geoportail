@@ -69,25 +69,14 @@ export interface PoiExtractor {
 }
 
 export interface ProfileFormatter {
-  /**
-   * Format the xhover distance.
-   */
-  xhover: (val: number, units: string) => string
+  xhover: (val: number) => string
+  yhover: (val: number) => string
 
-  /**
-   *  Format the yhover elevation.
-   */
-  yhover: (val: number, units: string) => string
+  xtick?: (val: number) => string
+  ytick?: (val: number) => string
 
-  /**
-   * Format the xtick, for graduating the x axis.
-   */
-  xtick?: (val: number, units: string) => string | number
-
-  /**
-   * Format the ytick, for graduating the y axis.
-   */
-  ytick?: (val: number, units: string) => string | number
+  xlabel: (factor = 1) => string
+  ylabel: (factor = 1) => string
 }
 
 export interface ProfileOptions {
@@ -140,18 +129,10 @@ export interface ProfileOptions {
    * The point, an item of the elevation data array, is passed as the first
    * argument of the function.
    */
-  hoverCallback?: (
-    point,
-    dist: number,
-    xUnits: string,
-    elevations: Elevations,
-    yUnits: string
-  ) => void
+  hoverCallback?: (point, dist: number, elevations: Elevations) => void
 
   /**
    * A callback called from the profile when the mouse leaves the profile.
    */
   outCallback?: () => void
-
-  i18n?: { xAxis: string | undefined; yAxis: string | undefined }
 }

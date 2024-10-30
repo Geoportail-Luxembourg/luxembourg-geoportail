@@ -1,16 +1,19 @@
 import { Feature, Map } from 'ol'
+import { Geometry } from 'ol/geom'
 
 import { ExportFeatureGpx } from './export-feature-gpx'
 import { ExportFeatureKml } from './export-feature-kml'
 import { ExportFeatureShapefile } from './export-feature-shapefile'
+import { ExportFeatureProfileCsv } from './export-feature-profile-csv'
 
-export type exportFormat = 'kml' | 'gpx' | 'shapefile'
+export type exportFormat = 'kml' | 'gpx' | 'shapefile' | 'csv'
+export type TFeatExport = Feature<Geometry> & Feature<Geometry>[]
 
 export class ExportFeatureService {
   export(
     map: Map,
     format: exportFormat,
-    features: Feature[],
+    features: TFeatExport,
     fileName: string,
     isTrack = false
   ) {
@@ -25,6 +28,8 @@ export class ExportFeatureService {
         return new ExportFeatureKml(map)
       case 'shapefile':
         return new ExportFeatureShapefile(map)
+      case 'csv': // !!! CSV format exports profile from LineString geom only
+        return new ExportFeatureProfileCsv(map)
     }
   }
 }

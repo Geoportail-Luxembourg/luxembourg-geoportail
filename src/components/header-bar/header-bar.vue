@@ -56,7 +56,7 @@ function onToggleDropdownAuth(isOpen: boolean) {
 <template>
   <header class="w-full h-14 flex bg-white shadow-header z-10 shrink-0">
     <div class="flex-2 p-[5px]">
-      <img src="./../../assets/header/gov-light.8b5db4.png" />
+      <img src="@/assets/images/gov-light.png" />
     </div>
     <div class="grow text-center">search</div>
     <div>

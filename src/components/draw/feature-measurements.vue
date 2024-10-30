@@ -3,7 +3,7 @@ import { computed, inject, ref, watchEffect } from 'vue'
 import { useTranslation } from 'i18next-vue'
 
 import { DrawnFeature } from '@/services/draw/drawn-feature'
-import FeatureMeasurementsProfile from './feature-measurements-profile.vue'
+import FeatureElevationProfile from '@/components/feature-elevation-profile/feature-elevation-profile.vue'
 import {
   getArea,
   getCircleArea,
@@ -141,9 +141,10 @@ function onClickValidateRadius(radius: number) {
     </div>
 
     <!-- Feature elevation profile LineString -->
-    <FeatureMeasurementsProfile
+    <feature-elevation-profile
+      class="mb-2"
       v-if="featureType === 'drawnLine'"
-      :feature="feature"
+      :feature="<DrawnFeature>feature"
     />
   </div>
 </template>

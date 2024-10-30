@@ -5,7 +5,7 @@ import MultiLineString from 'ol/geom/MultiLineString'
 import { ExportFeature } from './export-feature'
 import { GPX } from './ol-format-gpx'
 
-export class ExportFeatureGpx extends ExportFeature {
+export class ExportFeatureGpx extends ExportFeature<Feature<Geometry>[]> {
   /**
    * Export a Gpx file
    * @param features The features to export
