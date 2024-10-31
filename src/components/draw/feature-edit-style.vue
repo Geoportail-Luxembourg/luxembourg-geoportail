@@ -120,7 +120,12 @@ function onClickChangeLineStyle(style: string) {
 
     <template v-slot:angle>
       <div
-        v-if="feature.featureStyle.shape !== 'circle'"
+        v-if="
+          !(
+            feature.featureType == 'drawnPoint' &&
+            feature.featureStyle.shape == 'circle'
+          )
+        "
         class="flex gap-1 items-center mt-1 mb-2"
       >
         <label class="font-bold block" for="inline-full-name">
