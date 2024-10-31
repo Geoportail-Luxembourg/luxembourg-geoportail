@@ -33,6 +33,7 @@ describe('Test style edition of Point feature', () => {
           cy.wrap(ff[0].get('t')).should('equal', '10')
         })
 
+      // URL is updated when clicking validation button
       cy.get('button[data-cy="featureEditValidate"]').click()
 
       cy.url().as('url')
@@ -44,7 +45,7 @@ describe('Test style edition of Point feature', () => {
           )!
           const ff = fh.readFeatures(features)
           cy.wrap(ff).its('length').should('equal', 1)
-          cy.log(JSON.stringify(ff[0].values_))
+
           cy.wrap(ff[0].getGeometry()?.getType()).should('equal', 'Point')
           // check color green
           cy.wrap(ff[0].get('c')).should('equal', '%2300ff00')
@@ -127,15 +128,8 @@ describe('Test style edition of Point feature', () => {
           const features = featureLayers
             .map((l: any) => l.getSource().getFeatures())
             .flat()
-          // if the edit mode stays active,  two features are created, so the length check fails
-          cy.log(
-            `${features.length} features found with names: ${features.map(
-              (f: any) => f.get('name')
-            )}`
-          )
-          // cy.wrap(features.length).should('equal', 1)
+          cy.wrap(features.length).should('equal', 1)
 
-          // const ff = features.find((f: any) => f.get('name') == 'Nom 1')
           const ff = features[0]
           // check size = 10
           cy.wrap(ff.featureStyle.size).should('equal', 10)
@@ -176,15 +170,8 @@ describe('Test style edition of Label feature', () => {
           const features = featureLayers
             .map((l: any) => l.getSource().getFeatures())
             .flat()
-          // if the edit mode stays active,  two features are created, so the length check fails
-          cy.log(
-            `${features.length} features found with names: ${features.map(f =>
-              f.get('name')
-            )}`
-          )
-          // cy.wrap(features.length).should('equal', 1)
+          cy.wrap(features.length).should('equal', 1)
 
-          // const ff = features.find((f: any) => f.get('name') == 'Étiquette 1')
           const ff = features[0]
           cy.wrap(ff.featureType).should('equal', 'drawnLabel')
           // check color green
@@ -235,15 +222,10 @@ describe('Test style edition of Line feature', () => {
             .getLayers()
             .getArray()
             .filter((l: any) => l.get('cyLayerType') == 'featureLayer')
-          cy.log(featureLayers.length)
           const features = featureLayers
             .map((l: any) => l.getSource().getFeatures())
             .flat()
-          cy.log(features.length)
-          cy.log(features.map(f => f.get('name')))
-          // if the edit mode stays active, two features are created, so the length check fails
-          // cy.wrap(features.length).should('equal', 1)
-          // const ff = features.find((f: any) => f.get('name') == 'Ligne 1')
+          cy.wrap(features.length).should('equal', 1)
           const ff = features[0]
           cy.wrap(ff.featureType).should('equal', 'drawnLine')
           // check color blue
@@ -288,15 +270,10 @@ describe('Test style edition of Polygon feature', () => {
             .getLayers()
             .getArray()
             .filter((l: any) => l.get('cyLayerType') == 'featureLayer')
-          cy.log(featureLayers.length)
           const features = featureLayers
             .map((l: any) => l.getSource().getFeatures())
             .flat()
-          cy.log(features.length)
-          cy.log(features.map(f => f.get('name')))
-          // if the edit mode stays active, two features are created, so the length check fails
-          // cy.wrap(features.length).should('equal', 1)
-          // const ff = features.find((f: any) => f.get('name') == 'Polygone 1')
+          cy.wrap(features.length).should('equal', 1)
           const ff = features[0]
           cy.wrap(ff.featureType).should('equal', 'drawnPolygon')
           // check color blue
@@ -340,15 +317,10 @@ describe('Test style edition of Circle feature', () => {
             .getLayers()
             .getArray()
             .filter((l: any) => l.get('cyLayerType') == 'featureLayer')
-          cy.log(featureLayers.length)
           const features = featureLayers
             .map((l: any) => l.getSource().getFeatures())
             .flat()
-          cy.log(features.length)
-          cy.log(features.map(f => f.get('name')))
-          // if the edit mode stays active, two features are created, so the length check fails
-          // cy.wrap(features.length).should('equal', 1)
-          // const ff = features.find((f: any) => f.get('name') == 'Cercle 1')
+          cy.wrap(features.length).should('equal', 1)
           const ff = features[0]
           cy.wrap(ff.featureType).should('equal', 'drawnCircle')
           // check color blue
