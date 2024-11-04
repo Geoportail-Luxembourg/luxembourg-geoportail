@@ -4,9 +4,9 @@ describe('Permalink/State persistor - Layer comparator (lc & sliderRatio)', () =
     cy.get('[data-cy="catalogButton"]').click()
     cy.get('[data-cy="parentLayerLabel-242"]').find('button').first().click()
     cy.get('[data-cy="parentLayerLabel-309"]').click()
-    cy.get('[data-cy^="layerLabel-269"]').click()
-    cy.get('[data-cy^="layerLabel-349"]').click()
-    cy.get('[data-cy^="layerLabel-329"]').click()
+    cy.get('[data-cy="layerLabel-269"]').click()
+    cy.get('[data-cy="layerLabel-349"]').click()
+    cy.get('[data-cy="layerLabel-329"]').click()
     cy.get('[data-cy="myLayersButton"]').click()
   })
 
