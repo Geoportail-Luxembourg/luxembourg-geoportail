@@ -450,10 +450,15 @@
     @apply text-gray-500;
   }
 
+  .lux-legend {
+    @apply text-black;
+  }
+
   .lux-legend h1 {
     @apply text-4xl;
   }
 
+  .lux-legends h2,
   .lux-legend h2 {
     @apply text-3xl;
   }
@@ -464,6 +469,19 @@
 
   .lux-legend h4 {
     @apply text-xl;
+  }
+
+  .lux-legend table {
+    @apply border-spacing-0;
+  }
+
+  .lux-legend table th,
+  .lux-legend table td {
+    @apply p-0 pr-3 text-left;
+  }
+
+  .lux-legend hr {
+    @apply my-2;
   }
 }
 

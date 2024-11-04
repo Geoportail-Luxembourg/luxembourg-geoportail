@@ -21,6 +21,7 @@ import HeaderBar from '@/components/header-bar/header-bar.vue'
 import FooterBar from '@/components/footer/footer-bar.vue'
 import ToolbarDraw from '@/components/footer/toolbar-draw.vue'
 import LayerPanel from '@/components/layer-panel/layer-panel.vue'
+import LegendsPanel from '@/components/legends/legends-panel.vue'
 import SliderComparator from '@/components/slider/slider-comparator.vue'
 import useBackgroundLayer from '@/composables/background-layer/background-layer.composable'
 import useLayers from '@/composables/layers/layers.composable'
@@ -35,6 +36,7 @@ import { useMapStore } from '@/stores/map.store'
 import { useStyleStore } from '@/stores/style.store'
 import { useThemeStore } from '@/stores/config.store'
 import { useUserManagerStore } from '@/stores/user-manager.store'
+import { layerMetadataService } from '@/services/layer-metadata/layer-metadata.service'
 import { statePersistorBgLayerService } from '@/services/state-persistor/state-persistor-layer-background.service'
 import { statePersistorLayersService } from '@/services/state-persistor/state-persistor-layers.service'
 import { statePersistorThemeService } from '@/services/state-persistor/state-persistor-theme.service'
@@ -71,7 +73,8 @@ export default function useLuxLib(options: LuxLibOptions) {
     backend: {
       loadPath: `/static-ngeo/web-components/assets/locales/{{ns}}.{{lng}}.json`,
     },
-    nsSeparator: '|', // ! force separator to '|' instead of ':' because some i18n keys have ':' (otherwise, i18next doesn't find the key)
+    nsSeparator: false, // ! force separator off because some i18n keys have ':' (otherwise, i18next doesn't find the key)
+    keySeparator: false,
   }
 
   i18next.use(backend)
@@ -130,6 +133,7 @@ export {
   FooterBar,
   ToolbarDraw,
   LayerPanel,
+  LegendsPanel,
   SliderComparator,
   proxyUrlHelper,
   styleUrlHelper,
@@ -146,6 +150,7 @@ export {
   useStyleStore,
   useThemeStore,
   useUserManagerStore,
+  layerMetadataService,
   statePersistorBgLayerService,
   statePersistorLayersService,
   statePersistorThemeService,

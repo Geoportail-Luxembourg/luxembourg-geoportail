@@ -9,9 +9,8 @@ import AlertNotifications from '@/components/alert-notifications/alert-notificat
 import RemoteLayers from '@/components/remote-layers/remote-layers.vue'
 import LayerMetadata from '@/components/layer-metadata/layer-metadata.vue'
 import BackgroundSelector from '@/components/background-selector/background-selector.vue'
-import LayerPanel from '@/components/layer-panel/layer-panel.vue'
-import StylePanel from '@/components/style-selector/style-panel.vue'
-import MyMapsPanel from '@/components/my-maps/my-maps-panel.vue'
+import SidePanel from '@/components/side-panel/side-panel.vue'
+
 import MapContainer from '@/components/map/map-container.vue'
 import SliderComparator from '@/components/slider/slider-comparator.vue'
 
@@ -39,10 +38,11 @@ statePersistorStyleService.bootstrap()
 statePersistorBgLayerService.bootstrap()
 mvtStyleService.initBackgroundsConfigs()
 
-const { embedded, layersOpen, myMapsOpen, styleEditorOpen } =
+const { embedded, layersOpen, legendsOpen, myMapsOpen, styleEditorOpen } =
   storeToRefs(appStore)
 
 watch(layersOpen, timeoutResizeMap)
+watch(legendsOpen, timeoutResizeMap)
 watch(styleEditorOpen, timeoutResizeMap)
 watch(myMapsOpen, timeoutResizeMap)
 
@@ -63,20 +63,8 @@ onUnmounted(() => window.removeEventListener('resize', map.resize))
       <header-bar />
 
       <main class="flex grow">
-        <!-- Layer panel -->
-        <div v-if="layersOpen" class="w-full md:w-80 bg-secondary z-10">
-          <layer-panel />
-        </div>
-
-        <!-- Style editor -->
-        <div v-if="styleEditorOpen" class="w-full md:w-80 bg-secondary z-10">
-          <style-panel />
-        </div>
-
-        <!-- MyMaps panel -->
-        <div v-if="myMapsOpen" class="w-full md:w-80 bg-secondary z-10">
-          <my-maps-panel />
-        </div>
+        <!-- Side panel containing, Layers catalog, MyMaps, Legends, ... -->
+        <side-panel />
 
         <!-- Map container and slider comparator -->
         <div class="map-wrapper grow bg-blue-100 relative">

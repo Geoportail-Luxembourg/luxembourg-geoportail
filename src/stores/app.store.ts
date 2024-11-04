@@ -1,10 +1,10 @@
 import { Ref, ref } from 'vue'
 import { acceptHMRUpdate, defineStore } from 'pinia'
 import { StyleSection } from '@/composables/mvt-styles/mvt-styles.model'
-import { screenSizeIsAtLeast } from '@/services/common/device.utils'
 
 export const DEFAULT_LANG = 'fr'
 export const DEFAULT_LAYER_PANEL_OPENED = true
+export const DEFAULT_LEGENDS_PANEL_OPENED = false
 export const DEFAULT_MY_LAYERS_TAB_OPENED = false
 export const DEFAULT_THEME_GRID_OPENED = false
 export const DEFAULT_MYMAPS_OPENED = false
@@ -19,6 +19,7 @@ export const useAppStore = defineStore(
     const embedded = ref(false)
     const lang = ref(DEFAULT_LANG)
     const layersOpen = ref(DEFAULT_LAYER_PANEL_OPENED)
+    const legendsOpen = ref(DEFAULT_LEGENDS_PANEL_OPENED)
     const myLayersTabOpen = ref(DEFAULT_MY_LAYERS_TAB_OPENED)
     const themeGridOpen = ref(DEFAULT_THEME_GRID_OPENED)
     const mapId: Ref<string | undefined> = ref() // => MyMaps map id
@@ -52,24 +53,29 @@ export const useAppStore = defineStore(
 
       if (myLayersTabOpen.value) {
         themeGridOpen.value = false
+        legendsOpen.value = false
       }
     }
 
     function setThemeGridOpen(open: boolean) {
       themeGridOpen.value = open
+
       if (themeGridOpen.value) {
         styleEditorOpen.value = false
+        legendsOpen.value = false
       }
     }
 
     function toggleThemeGrid() {
       if (themeGridOpen.value) {
         layersOpen.value = false
+        legendsOpen.value = false
         myMapsOpen.value = false
         themeGridOpen.value = false
       } else {
         themeGridOpen.value = true
         layersOpen.value = true
+        legendsOpen.value = false
         myMapsOpen.value = false
         styleEditorOpen.value = false
         myLayersTabOpen.value && (myLayersTabOpen.value = false)
@@ -94,30 +100,23 @@ export const useAppStore = defineStore(
       layersOpen.value = true
     }
 
-    function setDrawToolbarOpen(open: boolean) {
-      drawToolbarOpen.value = open
-
-      if (drawToolbarOpen.value && screenSizeIsAtLeast('md')) {
-        myMapsOpen.value = true
-        layersOpen.value = false
-        themeGridOpen.value = false
-      }
+    function toggleDrawToolbarOpen(open?: boolean) {
+      drawToolbarOpen.value = open ?? !drawToolbarOpen.value
     }
 
     function toggleMyMapsOpen(open?: boolean) {
       myMapsOpen.value = open ?? !myMapsOpen.value
+    }
 
-      if (myMapsOpen.value) {
-        styleEditorOpen.value = false
-        layersOpen.value = false
-        themeGridOpen.value = false
-      }
+    function toggleLegendsOpen(open?: boolean) {
+      legendsOpen.value = open ?? !legendsOpen.value
     }
 
     return {
       embedded,
       lang,
       layersOpen,
+      legendsOpen,
       myLayersTabOpen,
       themeGridOpen,
       mapId,
@@ -141,9 +140,10 @@ export const useAppStore = defineStore(
       setMapId,
       openStyleEditorPanel,
       closeStyleEditorPanel,
-      setDrawToolbarOpen,
+      toggleDrawToolbarOpen,
       toggleMyMapsOpen,
       toggleThemeGrid,
+      toggleLegendsOpen,
     }
   },
   {}

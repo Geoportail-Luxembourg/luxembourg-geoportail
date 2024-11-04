@@ -1,0 +1,78 @@
+<script setup lang="ts">
+import { watch } from 'vue'
+import { storeToRefs } from 'pinia'
+
+import LayerPanel from '@/components/layer-panel/layer-panel.vue'
+import LegendsPanel from '@/components/legends/legends-panel.vue'
+import StylePanel from '@/components/style-selector/style-panel.vue'
+import MyMapsPanel from '@/components/my-maps/my-maps-panel.vue'
+import { screenSizeIsAtLeast } from '@/services/common/device.utils'
+import { useAppStore } from '@/stores/app.store'
+
+const appStore = useAppStore()
+const {
+  layersOpen,
+  legendsOpen,
+  myMapsOpen,
+  styleEditorOpen,
+  themeGridOpen,
+  drawToolbarOpen,
+} = storeToRefs(appStore)
+
+watch(layersOpen, layersOpen => {
+  if (layersOpen) {
+    legendsOpen.value = myMapsOpen.value = styleEditorOpen.value = false
+  }
+})
+
+watch(myMapsOpen, myMapsOpen => {
+  if (myMapsOpen) {
+    styleEditorOpen.value =
+      layersOpen.value =
+      themeGridOpen.value =
+      legendsOpen.value =
+        false
+  }
+})
+
+watch(legendsOpen, legendsOpen => {
+  if (legendsOpen) {
+    myMapsOpen.value =
+      styleEditorOpen.value =
+      layersOpen.value =
+      themeGridOpen.value =
+        false
+  }
+})
+
+watch(drawToolbarOpen, drawToolbarOpen => {
+  if (drawToolbarOpen && screenSizeIsAtLeast('md')) {
+    myMapsOpen.value = true
+    layersOpen.value = false
+    legendsOpen.value = false
+    themeGridOpen.value = false
+  }
+})
+</script>
+
+<template>
+  <!-- Layer panel -->
+  <div v-if="layersOpen" class="w-full md:w-80 bg-secondary z-10">
+    <layer-panel />
+  </div>
+
+  <!-- Legends panel -->
+  <div v-if="legendsOpen" class="w-full md:w-80 bg-secondary z-10">
+    <legends-panel />
+  </div>
+
+  <!-- Style editor -->
+  <div v-if="styleEditorOpen" class="w-full md:w-80 bg-secondary z-10">
+    <style-panel />
+  </div>
+
+  <!-- MyMaps panel -->
+  <div v-if="myMapsOpen" class="w-full md:w-80 bg-secondary z-10">
+    <my-maps-panel />
+  </div>
+</template>

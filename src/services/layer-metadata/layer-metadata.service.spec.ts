@@ -1,7 +1,14 @@
+const findById = vi.fn(id => (id === 268 ? themeNodeMock : undefined))
+const findBgLayerById = vi.fn(id => (id === 556 ? bgNodeMock : undefined))
+const find3dLayerById = vi.fn(id => (id === 333 ? ol3dNodeMock : undefined))
+
 const useThemesMock = {
-  findById: vi.fn(id => (id === 268 ? themeNodeMock : undefined)),
-  findBgLayerById: vi.fn(id => (id === 556 ? bgNodeMock : undefined)),
-  find3dLayerById: vi.fn(id => (id === 333 ? ol3dNodeMock : undefined)),
+  findById,
+  findBgLayerById,
+  find3dLayerById,
+  findAnyLayerById: vi.fn(
+    id => findById(id) || findBgLayerById(id) || find3dLayerById(id)
+  ),
 }
 
 vi.mock('@/composables/themes/themes.composable', () => ({
@@ -84,15 +91,14 @@ describe('LayerMetadataService', () => {
       .spyOn(layerMetadataService, 'getLegendHtml')
       .mockReturnValue(legendMock)
   })
+
   describe('#getLayerMetadata with internal layer', () => {
     let metadata
     beforeEach(async () => {
       metadata = await layerMetadataService.getLayerMetadata(268, 'fr')
     })
-    it('should call getLocalMetadata', () => {
+    it('should call getLocalMetadata and getLegendHtml', () => {
       expect(spyLocalMetadata).toHaveBeenCalledTimes(1)
-    })
-    it('should call getLegendHtml', () => {
       expect(spyLegendHtml).toHaveBeenCalledTimes(1)
     })
     it('should get correct metadata', () => {
@@ -109,10 +115,8 @@ describe('LayerMetadataService', () => {
     beforeEach(async () => {
       metadata = await layerMetadataService.getLayerMetadata(556, 'fr')
     })
-    it('should call getLocalMetadata', () => {
+    it('should call getLocalMetadata and getLegendHtml', () => {
       expect(spyLocalMetadata).toHaveBeenCalledTimes(1)
-    })
-    it('should call getLegendHtml', () => {
       expect(spyLegendHtml).toHaveBeenCalledTimes(1)
     })
     it('should get correct metadata', () => {

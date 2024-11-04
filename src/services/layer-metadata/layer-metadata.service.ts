@@ -10,60 +10,80 @@ import useThemes from '@/composables/themes/themes.composable'
 import { LayerId } from '@/stores/map.store.model'
 import { remoteMetadataHelper } from './remote-metadata.helper'
 import { REMOTE_SERVICE_TYPE } from '../remote-layers/remote-layers.model'
+import { layersMetadataCache } from './layer-metadata.cache'
 
 const GEONETWORK_URL = import.meta.env.VITE_GEONETWORK_URL
 const GET_LEGENDS_URL = import.meta.env.VITE_GET_LEGENDS_URL
 const GET_METADATA_URL = import.meta.env.VITE_GET_METADATA_URL
 
 export class LayerMetadataService {
+  /**
+   * Fetches layer metadata (with legend), stores the Promise in cache and returns the Promise.
+   * @param id The layer id to get metadata for
+   * @param currentLanguage The current user language in wich the server should return the metadata and legend
+   * @returns If the Promise already exists in cache, returns it, otherwise, fetch data, caches the Promise and returns the Promise
+   */
   async getLayerMetadata(id: LayerId, currentLanguage: string) {
+    let metadataPromise: Promise<LayerMetadataModel>
     const themesService = useThemes()
-    const layer: ThemeNodeModel | undefined =
-      themesService.findBgLayerById(+id) ||
-      themesService.findById(+id) ||
-      themesService.find3dLayerById(+id)
+    const layer = themesService.findAnyLayerById(id)
+
+    if (layersMetadataCache.has(id)) {
+      return layersMetadataCache.get(id)
+    }
 
     if (layer) {
       // Internal layer
-      const localMetadata = layer.metadata
-      const metadataId = localMetadata?.metadata_id
-
-      const metadata = metadataId
-        ? await this.getLocalMetadata(
-            GET_METADATA_URL,
-            metadataId,
-            currentLanguage
-          )
-        : { isError: true }
-      const title = layer.name
-
-      const legendName = localMetadata?.legend_name || ''
-      const layerId = layer?.id
-      const legendHtml = await this.getLegendHtml(
-        GET_LEGENDS_URL,
-        legendName,
-        layerId,
-        currentLanguage
-      )
-      const hasLegend = !!legendHtml && legendHtml.hasChildNodes()
-
-      return {
-        ...metadata,
-        title,
-        hasLegend,
-        ...(hasLegend && { legendHtml }),
-      } as LayerMetadataModel
+      metadataPromise = this.getLayerMetadataLocal(layer, currentLanguage)
     } else {
       // External layers (which have no theme node in theme service)
-      const [serviceType, url, layerName] = String(id)
-        .split('%2D')
-        .join('-')
-        .split('||')
-      return remoteMetadataHelper.getMetadata(
-        serviceType as REMOTE_SERVICE_TYPE,
-        url,
-        layerName
-      )
+      metadataPromise = this.getLayerMetadataRemote(id)
+    }
+
+    layersMetadataCache.set(id, metadataPromise)
+
+    return metadataPromise
+  }
+
+  async getLayerMetadataRemote(layerId: LayerId) {
+    const [serviceType, url, layerName] = String(layerId)
+      .split('%2D')
+      .join('-')
+      .split('||')
+    return remoteMetadataHelper.getMetadata(
+      serviceType as REMOTE_SERVICE_TYPE,
+      url,
+      layerName
+    )
+  }
+
+  async getLayerMetadataLocal(layer: ThemeNodeModel, currentLanguage: string) {
+    const localMetadata = layer.metadata
+    const metadataId = localMetadata?.metadata_id
+
+    const metadata = metadataId
+      ? await this.getLocalMetadata(
+          GET_METADATA_URL,
+          metadataId,
+          currentLanguage
+        )
+      : { isError: true }
+    const title = layer.name
+    const legendName = localMetadata?.legend_name || ''
+    const layerId = layer?.id
+    const legendHtml = await this.getLegendHtml(
+      GET_LEGENDS_URL,
+      legendName,
+      layerId,
+      currentLanguage
+    )
+    const hasLegend = !!legendHtml && legendHtml.hasChildNodes()
+
+    return <LayerMetadataModel>{
+      ...metadata,
+      title,
+      hasLegend,
+      ...(hasLegend && { legendHtml }),
     }
   }
 
@@ -129,6 +149,14 @@ export class LayerMetadataService {
         })
         .catch(() => undefined)
     }
+  }
+
+  /**
+   * Clear layers metadata cache, eg. when language changed, we need to perform a new request
+   * to get the metadata and legends in the right language
+   */
+  clearCache() {
+    layersMetadataCache.clear()
   }
 }
 
