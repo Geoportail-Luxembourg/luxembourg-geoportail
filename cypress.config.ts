@@ -21,7 +21,6 @@ export default defineConfig({
       ].map(b => ({ ...b, name: 'my-chromium' }))
       config.experimentalRunAllSpecs = true
       // console.log(JSON.stringify(config, null, 4))
-      console.log(config.viewportWidth, config.viewportHeight) // eslint-disable-line no-console
       return config
     },
   },

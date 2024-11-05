@@ -35,7 +35,7 @@ describe('Draw "Polygon"', () => {
       // test of 2 possible measurements due to precision issues between local tests and CI
       cy.get('*[data-cy="featItemArea"]')
         .invoke('text')
-        .should('be.oneOf', ['Surface: 1532.66 km²', 'Surface: 1532.65 km²'])
+        .should('be.oneOf', ['Surface: 1532.65 km²'])
     })
 
     it('displays the possible actions for the feature', () => {
