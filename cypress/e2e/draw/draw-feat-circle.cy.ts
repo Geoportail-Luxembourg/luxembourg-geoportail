@@ -35,7 +35,10 @@ describe('Draw "Circle"', () => {
       )
       cy.dragVertexOnMap(200, 200, 300, 300)
       cy.get('*[data-cy="featItemLength"]').should('contain.text', '693.17 km')
-      cy.get('*[data-cy="featItemArea"]').should('contain.text', '38235.40 km²')
+      // test of 2 possible measurements due to precision issues between local tests and CI
+      cy.get('*[data-cy="featItemArea"]')
+        .invoke('text')
+        .should('be.oneOf', ['Surface: 38235.40 km²', 'Surface: 38235.43 km²'])
     })
 
     it('updates length and area measurements when editing radius in panel', () => {

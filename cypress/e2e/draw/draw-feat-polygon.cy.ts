@@ -32,7 +32,10 @@ describe('Draw "Polygon"', () => {
       cy.get('*[data-cy="featItemArea"]').should('contain.text', '766.33 km²')
       cy.dragVertexOnMap(200, 200, 300, 300)
       cy.get('*[data-cy="featItemLength"]').should('contain.text', '238.47 km')
-      cy.get('*[data-cy="featItemArea"]').should('contain.text', '1532.65 km²')
+      // test of 2 possible measurements due to precision issues between local tests and CI
+      cy.get('*[data-cy="featItemArea"]')
+        .invoke('text')
+        .should('be.oneOf', ['Surface: 1532.66 km²', 'Surface: 1532.65 km²'])
     })
 
     it('displays the possible actions for the feature', () => {
