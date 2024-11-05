@@ -69,7 +69,8 @@ describe('Catalogue', () => {
           .getArray()
           .filter(
             (l: any) =>
-              l.get('cyLayerType')?.replace('Edit', '') !== 'featureLayer'
+              // regex match
+              !/feature(Edit)?Layer/.exec(l.get('cyLayerType'))
           )
         expect(layers[0].get('id')).to.eq(556)
       })
@@ -86,7 +87,8 @@ describe('Catalogue', () => {
           .getArray()
           .filter(
             (l: any) =>
-              l.get('cyLayerType')?.replace('Edit', '') !== 'featureLayer'
+              // regex match
+              !/feature(Edit)?Layer/.exec(l.get('cyLayerType'))
           )
         expect(layers[0].get('id')).to.eq(359)
         expect(layers[1].get('id')).to.eq(353)
