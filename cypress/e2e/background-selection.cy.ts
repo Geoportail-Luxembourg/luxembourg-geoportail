@@ -22,7 +22,10 @@ describe('Background selector', () => {
       const layers = (<AUTWindowOlMap>window).olMap
         .getLayers()
         .getArray()
-        .filter((l: any) => l.get('cyLayerType') !== 'featureLayer')
+        .filter(
+          (l: any) =>
+            l.get('cyLayerType')?.replace('Edit', '') !== 'featureLayer'
+        )
       expect(layers[0].get('id')).to.eq(556)
     })
 
@@ -52,7 +55,10 @@ describe('Background selector', () => {
         const layers = (<AUTWindowOlMap>window).olMap
           .getLayers()
           .getArray()
-          .filter((l: any) => l.get('cyLayerType') !== 'featureLayer')
+          .filter(
+            (l: any) =>
+              l.get('cyLayerType')?.replace('Edit', '') !== 'featureLayer'
+          )
         expect(layers[0].get('id')).to.eq(502)
       })
     })
