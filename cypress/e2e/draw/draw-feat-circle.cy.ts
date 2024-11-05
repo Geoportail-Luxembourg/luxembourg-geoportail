@@ -37,8 +37,8 @@ describe('Draw "Circle"', () => {
       cy.get('*[data-cy="featItemLength"]').should('contain.text', '693.17 km')
       // test of 2 possible measurements due to precision issues between local tests and CI
       cy.get('*[data-cy="featItemArea"]')
-        .invoke('text')
-        .should('be.oneOf', ['Surface: 38235.40 km²', 'Surface: 38235.43 km²'])
+        .should('contain.text', 'Surface: 38235.')
+        .and('contain.text', ' km²')
     })
 
     it('updates length and area measurements when editing radius in panel', () => {
