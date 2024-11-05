@@ -13,6 +13,15 @@ export default defineConfig({
 
       // It's IMPORTANT to return the config object
       // with any changed environment variables
+      // console.log(JSON.stringify(config.browsers))
+      config.browsers = [
+        config.browsers.find(
+          b => b.name === 'chromium' || b.name === 'chrome'
+        )!,
+      ].map(b => ({ ...b, name: 'my-chromium' }))
+      config.experimentalRunAllSpecs = true
+      // console.log(JSON.stringify(config, null, 4))
+      console.log(config.viewportWidth, config.viewportHeight) // eslint-disable-line no-console
       return config
     },
   },
