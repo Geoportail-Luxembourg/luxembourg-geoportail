@@ -75,7 +75,7 @@ describe('Legends', () => {
 
     // add a longer timeout here because web request for the layers proved to be unstable in CI
     it('displays the legends for both layers having legend', () => {
-      cy.get('[data-cy="legendLayer"]', { timeout: 10000 }).should(
+      cy.get('[data-cy="legendLayer"]', { timeout: 15000 }).should(
         'have.length',
         2
       )
