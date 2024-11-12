@@ -28,7 +28,7 @@ export class DrawnFeature extends Feature {
   map_id: string | undefined // mymap uuid
   saving: boolean
   featureType: DrawnFeatureType
-  featureStyle: DrawnFeatureStyle
+  _featureStyle: DrawnFeatureStyle
   map = useMap().getOlMap()
 
   constructor(drawnFeature?: DrawnFeature) {
@@ -41,13 +41,22 @@ export class DrawnFeature extends Feature {
       this.display_order = drawnFeature.display_order
       this.editable = drawnFeature.editable
       this.selected = drawnFeature.selected
-      this.featureStyle = drawnFeature.featureStyle
+      this._featureStyle = drawnFeature.featureStyle
       this.id = drawnFeature.id
       this.saving = drawnFeature.saving
       this.setProperties(drawnFeature.getProperties())
     } else {
       super()
     }
+  }
+
+  public get featureStyle() {
+    return this._featureStyle
+  }
+
+  public set featureStyle(featureStyle: DrawnFeatureStyle) {
+    this._featureStyle = featureStyle
+    this.changed()
   }
 
   fit() {

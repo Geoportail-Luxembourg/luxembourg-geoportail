@@ -54,7 +54,6 @@ function onResetInfo(prevLabel: string, prevDescription: string) {
 
 function onResetStyle(prevStyle: DrawnFeatureStyle) {
   localFeature.featureStyle = { ...prevStyle }
-  localFeature.changed()
 }
 
 function onSubmitEditFeature() {

@@ -46,19 +46,21 @@ async function getSymbols(mySymbolsOnly = false) {
 function onClickSymbol(
   component: (typeof symbolComponents)[keyof typeof symbolComponents]
 ) {
+  let newShape = undefined
   if (component === symbolComponents.Circle) {
-    feature.featureStyle.shape = 'circle'
+    newShape = 'circle'
   } else if (component === symbolComponents.Square) {
-    feature.featureStyle.shape = 'square'
+    newShape = 'square'
   } else if (component === symbolComponents.Cross) {
-    feature.featureStyle.shape = 'cross'
+    newShape = 'cross'
   } else if (component === symbolComponents.Triangle) {
-    feature.featureStyle.shape = 'triangle'
+    newShape = 'triangle'
   }
-  feature.featureStyle.symbolId = undefined
-
-  feature.changed()
-
+  feature.featureStyle = {
+    ...feature.featureStyle,
+    shape: newShape,
+    symbolId: undefined,
+  }
   closePopup()
 }
 

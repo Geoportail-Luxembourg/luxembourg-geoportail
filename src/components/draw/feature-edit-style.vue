@@ -32,35 +32,39 @@ const currentStyleComponent = computed(() =>
 )
 
 function onColorSelect(colorEvent: Event) {
-  feature.featureStyle.color = (colorEvent.target as HTMLInputElement).value
-  feature.changed()
+  feature.featureStyle = {
+    ...feature.featureStyle,
+    color: (colorEvent.target as HTMLInputElement).value,
+  }
 }
 
 function onSizeChange(newSize: number) {
-  feature.featureStyle.size = newSize
-  feature.changed()
+  feature.featureStyle = { ...feature.featureStyle, size: newSize }
 }
 
 function onAngleChange(newAngle: number) {
-  feature.featureStyle.angle = (newAngle * Math.PI) / 180
-  feature.changed()
+  feature.featureStyle = {
+    ...feature.featureStyle,
+    angle: (newAngle * Math.PI) / 180,
+  }
 }
 
 function onWidthChange(newWidth: number) {
-  feature.featureStyle.stroke = newWidth
-  feature.changed()
+  feature.featureStyle = { ...feature.featureStyle, stroke: newWidth }
 }
 
 function onTransparencyChange(newTransparency: number) {
-  feature.featureStyle.opacity = (100 - newTransparency) / 100
-  feature.changed()
+  feature.featureStyle = {
+    ...feature.featureStyle,
+    opacity: (100 - newTransparency) / 100,
+  }
 }
 
 function onShowDirection(event: Event) {
-  feature.featureStyle.showOrientation = (
-    event.target as HTMLInputElement
-  ).checked
-  feature.changed()
+  feature.featureStyle = {
+    ...feature.featureStyle,
+    showOrientation: (event.target as HTMLInputElement).checked,
+  }
 }
 
 function onClickChangeOrientation() {
@@ -72,8 +76,7 @@ function onClickChangeOrientation() {
 }
 
 function onClickChangeLineStyle(style: string) {
-  feature.featureStyle.linestyle = style
-  feature.changed()
+  feature.featureStyle = { ...feature.featureStyle, linestyle: style }
 }
 </script>
 
