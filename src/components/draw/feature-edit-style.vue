@@ -122,8 +122,8 @@ function onClickChangeLineStyle(style: string) {
       <div
         v-if="
           !(
-            feature.featureType == 'drawnPoint' &&
-            feature.featureStyle.shape == 'circle'
+            feature.featureType === 'drawnPoint' &&
+            feature.featureStyle.shape === 'circle'
           )
         "
         class="flex gap-1 items-center mt-1 mb-2"

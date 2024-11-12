@@ -29,7 +29,7 @@ const feature: DrawnFeature = inject('feature')!
 let prevLabel = feature.label
 let prevDescription = feature.description
 // keep deep copy of previous style to be able to revert style on cancel
-const prevStyle: DrawnFeatureStyle = { ...feature.featureStyle }
+let prevStyle: DrawnFeatureStyle = { ...feature.featureStyle }
 
 const editComponents = {
   FeatureConcentricCircle,
@@ -43,9 +43,9 @@ const currentEditCompKey: Ref<keyof typeof editComponents | undefined> =
 provide('currentEditCompKey', currentEditCompKey)
 
 function onClickCancel() {
-  if (currentEditCompKey.value == 'FeatureEditStyle') {
+  if (currentEditCompKey.value === 'FeatureEditStyle') {
     emit('resetStyle', prevStyle)
-  } else if (currentEditCompKey.value == 'FeatureEditInfo') {
+  } else if (currentEditCompKey.value === 'FeatureEditInfo') {
     emit('resetInfo', prevLabel, prevDescription)
   }
   currentEditCompKey.value = undefined
@@ -57,7 +57,7 @@ function onClickValidate() {
 
   prevLabel = feature.label
   prevDescription = feature.description
-  Object.assign(prevStyle, feature.featureStyle)
+  prevStyle = { ...feature.featureStyle }
   if (currentComponent === FeatureConfirmDelete) {
     emit('clickDelete')
   } else if (

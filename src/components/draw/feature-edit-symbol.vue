@@ -27,7 +27,6 @@ const symbolComponents = {
   Triangle,
 } as const
 const currentSymbolTab: Ref<tabs> = ref(tabs.configurables)
-// const featureColor = feature.featureStyle.color
 const fileInput: Ref<HTMLInputElement | undefined> = ref(undefined)
 const symbols: Ref<Symbol[]> = ref([])
 

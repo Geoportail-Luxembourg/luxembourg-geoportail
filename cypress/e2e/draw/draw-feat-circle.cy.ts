@@ -35,7 +35,7 @@ describe('Draw "Circle"', () => {
       )
       cy.dragVertexOnMap(200, 200, 300, 300)
       cy.get('*[data-cy="featItemLength"]').should('contain.text', '693.17 km')
-      // test of 2 possible measurements due to precision issues between local tests and CI
+      // testing just integer part due to precision issues between local tests and CI
       cy.get('*[data-cy="featItemArea"]')
         .should('contain.text', 'Surface: 38235.')
         .and('contain.text', ' km²')
