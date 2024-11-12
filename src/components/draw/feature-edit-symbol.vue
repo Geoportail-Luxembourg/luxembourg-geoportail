@@ -46,7 +46,7 @@ async function getSymbols(mySymbolsOnly = false) {
 function onClickSymbol(
   component: (typeof symbolComponents)[keyof typeof symbolComponents]
 ) {
-  let newShape = undefined
+  let newShape: string
   if (component === symbolComponents.Circle) {
     newShape = 'circle'
   } else if (component === symbolComponents.Square) {
@@ -58,7 +58,7 @@ function onClickSymbol(
   }
   feature.featureStyle = {
     ...feature.featureStyle,
-    shape: newShape,
+    shape: newShape!,
     symbolId: undefined,
   }
   closePopup()
