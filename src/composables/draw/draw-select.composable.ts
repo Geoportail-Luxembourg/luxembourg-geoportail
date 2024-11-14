@@ -18,6 +18,7 @@ export default function useDrawSelect() {
   listen(map, 'click', event => handleClick(event))
 
   watch(activeFeatureId, (newId, oldId) => {
+    editingFeatureId.value = undefined
     drawnFeatures.value
       .filter(f => getUid(f) == oldId)
       .forEach(oldFeature => {
@@ -36,6 +37,7 @@ export default function useDrawSelect() {
   const handleClick = function (event: any) {
     const pixel = event.pixel
 
+    activeFeatureId.value = undefined
     const feature = map.forEachFeatureAtPixel(
       pixel,
       feature => {
@@ -43,7 +45,6 @@ export default function useDrawSelect() {
         if (featureMatch) {
           appStore.toggleMyMapsOpen(true)
           activeFeatureId.value = getUid(feature)
-          editingFeatureId.value = undefined
 
           return
         }

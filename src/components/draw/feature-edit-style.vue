@@ -14,6 +14,8 @@ import FeatureEditStylePolygon from './feature-edit-style-polygon.vue'
 import FeatureEditStyleLabel from './feature-edit-style-label.vue'
 import FeatureEditStyleSymbole from './feature-edit-style-symbole.vue'
 
+import FeatureEditLinestyleItem from './feature-edit-linestyle-item.vue'
+
 const { t } = useTranslation()
 const feature: DrawnFeature = inject('feature')!
 const popupOpen: Ref<boolean> = ref(false)
@@ -26,6 +28,8 @@ const styleComponents = {
   FeatureEditStylePolygon,
   FeatureEditStyleLabel,
 }
+
+const linestyles = ['plain', 'dashed', 'dotted']
 
 const currentStyleComponent = computed(() =>
   feature?.featureType.replace('drawn', 'FeatureEditStyle')
@@ -164,21 +168,13 @@ function onClickChangeLineStyle(style: string) {
           {{ t('Style') }}
         </label>
         <div class="flex gap-1">
-          <button class="lux-btn-grey" @click="onClickChangeLineStyle('plain')">
-            {{ t('Plain') }}
-          </button>
-          <button
-            class="lux-btn-grey"
-            @click="onClickChangeLineStyle('dashed')"
-          >
-            {{ t('Dashed') }}
-          </button>
-          <button
-            class="lux-btn-grey"
-            @click="onClickChangeLineStyle('dotted')"
-          >
-            {{ t('Dotted') }}
-          </button>
+          <FeatureEditLinestyleItem
+            v-for="(linestyle, i) in linestyles"
+            :key="i"
+            :linestyle="linestyle"
+            :feature="feature"
+            @changeLinestyle="onClickChangeLineStyle"
+          />
         </div>
       </div>
     </template>
@@ -189,7 +185,6 @@ function onClickChangeLineStyle(style: string) {
           {{ t('Stroke width') }}
         </label>
         <RangeInput
-          class="md:w-2/3"
           data-cy="featStyleLineWidth"
           :value="feature.featureStyle.stroke"
           @change="onWidthChange"
@@ -217,7 +212,12 @@ function onClickChangeLineStyle(style: string) {
         <label class="font-bold block" for="showOrientation">
           {{ t('Show orientation') }}
         </label>
-        <input type="checkbox" id="showOrientation" @change="onShowDirection" />
+        <input
+          type="checkbox"
+          id="showOrientation"
+          @change="onShowDirection"
+          :checked="feature.featureStyle.showOrientation"
+        />
       </div>
 
       <div class="flex gap-1 items-center mt-1 mb-2">
