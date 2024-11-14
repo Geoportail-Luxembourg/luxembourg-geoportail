@@ -5,12 +5,12 @@ import { DrawnFeature } from '@/services/draw/drawn-feature'
 const { t } = useTranslation()
 
 const props = defineProps<{
-  linestyle: String
+  linestyle: string
   feature: DrawnFeature
 }>()
 const emit = defineEmits(['changeLinestyle'])
 
-function onClickChangeLineStyle(linestyle) {
+function onClickChangeLineStyle(linestyle: string) {
   emit('changeLinestyle', linestyle)
 }
 </script>
