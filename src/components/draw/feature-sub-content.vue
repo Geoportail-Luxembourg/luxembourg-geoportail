@@ -44,6 +44,8 @@ provide('currentEditCompKey', currentEditCompKey)
 
 function onClickCancel() {
   if (currentEditCompKey.value === 'FeatureEditStyle') {
+    // reactivate highlighting of selected feature
+    feature.selected = true
     emit('resetStyle', prevStyle)
   } else if (currentEditCompKey.value === 'FeatureEditInfo') {
     emit('resetInfo', prevLabel, prevDescription)
@@ -64,11 +66,20 @@ function onClickValidate() {
     currentComponent === FeatureEditInfo ||
     currentComponent === FeatureEditStyle
   ) {
+    // reactivate highlighting of selected feature
+    feature.selected = true
     emit('submitEditFeature')
   } else {
     alert('TODO: Draw feature click onClickValidate()')
   }
   currentEditCompKey.value = undefined
+}
+
+function onClickEditStyle() {
+  // deactivate highlighting of selected feature
+  feature.selected = false
+  feature.changed()
+  currentEditCompKey.value = 'FeatureEditStyle'
 }
 </script>
 
@@ -128,7 +139,7 @@ function onClickValidate() {
           <button
             data-cy="featItemActionStyle"
             class="hover:text-tertiary"
-            @click="() => (currentEditCompKey = 'FeatureEditStyle')"
+            @click="onClickEditStyle()"
           >
             <i class="fa fa-paint-brush"></i>
           </button>
