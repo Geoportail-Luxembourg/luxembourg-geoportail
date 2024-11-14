@@ -26,6 +26,7 @@ const MYMAPS_SYMBOL_URL = import.meta.env.VITE_SYMBOLS_URL
 const ARROW_URL = MYMAPS_URL + '/getarrow'
 
 export class DrawnFeature extends Feature {
+  // TODO: refactor create a generic type that can be used by Infos panel, Draw, and Measures
   id: number
   label: string
   description: string
@@ -37,7 +38,7 @@ export class DrawnFeature extends Feature {
   featureType: DrawnFeatureType
   _featureStyle: DrawnFeatureStyle
   map = useMap().getOlMap()
-  profileData: ProfileData | undefined = undefined
+  profileData: ProfileData | undefined = undefined // Is used by linestring geom
 
   constructor(drawnFeature?: DrawnFeature) {
     if (drawnFeature) {
@@ -56,8 +57,6 @@ export class DrawnFeature extends Feature {
     } else {
       super()
     }
-
-    this.getGeometry()?.on('change', () => (this.profileData = undefined))
   }
 
   public get featureStyle() {

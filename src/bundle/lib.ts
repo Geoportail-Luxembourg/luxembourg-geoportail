@@ -18,6 +18,8 @@ import BackgroundSelector from '@/components/background-selector/background-sele
 import RemoteLayers from '@/components/remote-layers/remote-layers.vue'
 import LayerMetadata from '@/components/layer-metadata/layer-metadata.vue'
 import HeaderBar from '@/components/header-bar/header-bar.vue'
+import ProfileDraw from './components/profile_v3/profile-draw_v3.vue'
+import ProfileMeasures from './components/profile_v3/profile-measures_v3.vue'
 import FooterBar from '@/components/footer/footer-bar.vue'
 import ToolbarDraw from '@/components/footer/toolbar-draw.vue'
 import LayerPanel from '@/components/layer-panel/layer-panel.vue'
@@ -33,6 +35,9 @@ import useOffline from '@/composables/offline/offline.composable'
 import useOfflineLayers from '@/composables/offline/offline-layers.composable'
 import { useAppStore } from '@/stores/app.store'
 import { useMapStore } from '@/stores/map.store'
+import { useProfileDrawv3Store } from './stores/profile-draw_v3.store'
+import { useProfileMeasuresv3Store } from './stores/profile-measures_v3.store'
+import { useDrawStore } from '@/stores/draw.store'
 import { useStyleStore } from '@/stores/style.store'
 import { useThemeStore } from '@/stores/config.store'
 import { useUserManagerStore } from '@/stores/user-manager.store'
@@ -55,6 +60,7 @@ import backend from 'i18next-http-backend'
 import I18NextVue from 'i18next-vue'
 import formatLengthDirective from '@/directives/format-length.directive'
 import formatAreaDirective from '@/directives/format-area.directive'
+import formatMeasureDirective from '@/directives/format-measure.directive'
 
 import App from '../App.vue'
 
@@ -87,6 +93,7 @@ export default function useLuxLib(options: LuxLibOptions) {
   app.use(VueDOMPurifyHTML)
   app.use(formatLengthDirective)
   app.use(formatAreaDirective)
+  app.use(formatMeasureDirective)
 
   const createElementInstance = (component = {}, app = null) => {
     return defineCustomElement(
@@ -130,6 +137,8 @@ export {
   RemoteLayers,
   LayerMetadata,
   HeaderBar,
+  ProfileDraw,
+  ProfileMeasures,
   FooterBar,
   ToolbarDraw,
   LayerPanel,
@@ -147,6 +156,9 @@ export {
   useAppStore,
   useBackgroundLayer,
   useMapStore,
+  useProfileDrawv3Store,
+  useProfileMeasuresv3Store,
+  useDrawStore,
   useStyleStore,
   useThemeStore,
   useUserManagerStore,

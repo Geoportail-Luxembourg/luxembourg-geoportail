@@ -11,20 +11,23 @@ import {
   ShallowRef,
   shallowRef,
   watch,
+  watchEffect,
 } from 'vue'
 import { useTranslation } from 'i18next-vue'
 import { Feature } from 'ol'
 import { Geometry } from 'ol/geom'
 
-import { useProfilePositionStore } from '@/stores/profile-position.store'
 import ElevationProfile from '@/components/common/graph/elevation-profile.vue'
 import { ProfileData } from '@/components/common/graph/elevation-profile'
+import useProfilePosition from '@/composables/map/profile-position.composable'
+import { useProfilePositionStore } from '@/stores/profile-position.store'
 import { DrawnFeature } from '@/services/draw/drawn-feature'
 import {
   exportFeatureService,
   TFeatExport,
 } from '@/services/export-feature/export-feature.service'
-import useProfilePosition from '@/composables/map/profile-position.composable'
+import { transform } from 'ol/proj'
+import { PROJECTION_LUX } from '@/composables/map/map.composable'
 
 defineEmits<{
   (e: 'close'): void
@@ -34,7 +37,7 @@ const props = defineProps<{
   feature: DrawnFeature | undefined
 }>()
 
-const profilePosition = useProfilePosition()
+const profilePosition = useProfilePosition(undefined)
 const profilePositionStore = useProfilePositionStore()
 const { t } = useTranslation()
 
@@ -60,6 +63,24 @@ onMounted(() => {
 })
 
 watch(
+  () => props.feature,
+  (feature, featureOld) => {
+    profileData.value = undefined // Force refresh the graph
+
+    if (feature && feature !== featureOld) {
+      feature.getProfile().then(data => (profileData.value = data))
+    }
+  }
+)
+
+watchEffect(() => {
+  if (props.feature && !props.feature.profileData) {
+    profileData.value = undefined // Force refresh the graph
+    props.feature?.getProfile().then(data => (profileData.value = data))
+  }
+})
+
+watch(
   profileData,
   profileData => (profilePosition.profileData.value = profileData)
 )
@@ -75,7 +96,13 @@ function exportCSV() {
 }
 
 function onHoverProfile<T extends { x: number; y: number }>(point: T) {
-  profilePositionStore.setPosition(point.x, point.y)
+  const coords = transform(
+    [point.x, point.y],
+    PROJECTION_LUX,
+    props.feature?.map.getView().getProjection()
+  )
+
+  profilePositionStore.setPosition(coords[0], coords[1])
 }
 
 function onOutProfile() {
@@ -90,14 +117,15 @@ function onOutProfile() {
       <div class="grow cursor-default">
         <template v-if="profileData">
           <span>
-            &Delta; +<span v-format-measure.elevation>{{ elevationGain }}</span>
+            &Delta;+<span v-format-measure.elevation>{{ elevationGain }}</span>
           </span>
           <span>
-            &Delta; <span v-format-measure.elevation>{{ elevationLoss }}</span>
+            &Delta;<span v-format-measure.elevation>{{ elevationLoss }}</span>
           </span>
           <span>
-            &Delta;
-            <span v-format-measure.elevation>{{ cumulativeElevation }}</span>
+            &Delta;<span v-format-measure.elevation>{{
+              cumulativeElevation
+            }}</span>
           </span>
         </template>
       </div>

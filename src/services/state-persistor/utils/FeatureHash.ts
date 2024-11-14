@@ -186,9 +186,6 @@ class FeatureHash extends TextFeature {
    * Read a feature from a logical sequence of characters.
    */
   readFeatureFromText(text: string /*, opt_options: any*/) {
-    // console.assert(text.length > 2)
-    // console.assert(text[1] === '(')
-    // console.assert(text[text.length - 1] === ')')
     let splitIndex = text.indexOf('~')
     const geometryText =
       splitIndex >= 0 ? text.substring(0, splitIndex) + ')' : text
@@ -209,7 +206,6 @@ class FeatureHash extends TextFeature {
         for (let i = 0; i < parts.length; ++i) {
           const part = parts[i]
           const keyVal = part.split('*')
-          // console.assert(keyVal.length === 2)
           let key = keyVal[0]
           const value = keyVal[1]
           if (!this.setStyle_ && FeatureHashLegacyProperties[key]) {

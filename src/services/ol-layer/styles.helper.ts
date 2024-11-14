@@ -5,13 +5,15 @@ import Style from 'ol/style/Style'
 
 export function getStyleFeaturePosition() {
   return new Style({
-    image: new CircleStyle({
-      radius: 6,
-      fill: new Fill({ color: 'red' }),
-      stroke: new Stroke({
-        color: 'white',
-        width: 2,
-      }),
-    }),
+    image: geoMarkerStyle,
   })
 }
+
+const geoMarkerStyle = new CircleStyle({
+  radius: 4,
+  fill: new Fill({ color: 'white' }),
+  stroke: new Stroke({
+    color: 'white',
+    width: 1,
+  }),
+})

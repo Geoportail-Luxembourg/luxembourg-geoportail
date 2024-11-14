@@ -5,8 +5,7 @@ import { acceptHMRUpdate, defineStore } from 'pinia'
  * State of position for profile.
  * Can be set by the profile graph component or by the 'pointermove' event on the map in composable.
  *
- * NB.  Stored as 'PROJECTION_LUX' x, y values
- * and may need convertion for some cases before using them.
+ * NB.  Stored as 'PROJECTION_WGS84' x, y values
  */
 export const useProfilePositionStore = defineStore(
   'profile-position',

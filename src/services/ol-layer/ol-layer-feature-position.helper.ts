@@ -3,17 +3,11 @@ import VectorLayer from 'ol/layer/Vector'
 import { Options } from 'ol/layer/BaseVector'
 import VectorSource from 'ol/source/Vector'
 import Feature from 'ol/Feature'
-import { transform } from 'ol/proj'
-import { Coordinate } from 'ol/coordinate'
 
-import {
-  PROJECTION_LUX,
-  PROJECTION_WEBMERCATOR,
-} from '@/composables/map/map.composable'
 import { OlLayer } from './ol-layer.model'
 import { getStyleFeaturePosition } from './styles.helper'
 
-export const DEFAULT_LAYER_ZINDEX = 1000
+export const DEFAULT_LAYER_ZINDEX = 10000
 export const FEATURE_LAYER_TYPE = 'featurePositionLayer'
 
 export class PositionVectorLayer extends VectorLayer<VectorSource<Geometry>> {
@@ -35,11 +29,7 @@ export class PositionVectorLayer extends VectorLayer<VectorSource<Geometry>> {
       this.createGeomarker()
     }
 
-    this.geoMarker
-      ?.getGeometry()
-      ?.setCoordinates(
-        transform(<Coordinate>[x, y], PROJECTION_LUX, PROJECTION_WEBMERCATOR)
-      )
+    this.geoMarker?.getGeometry()?.setCoordinates([x, y])
   }
 
   createGeomarker() {

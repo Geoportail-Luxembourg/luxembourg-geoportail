@@ -36,6 +36,33 @@ export const debounceAsync = <T extends (...args: any[]) => Promise<any>>(
   }
 }
 
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+export function throttle<T extends (...args: any[]) => void>(
+  fn: T,
+  limit: number
+) {
+  let lastFunc: ReturnType<typeof setTimeout>
+  let lastRan: number
+
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  return function (this: any, ...args: Parameters<T>) {
+    const context = this
+
+    if (!lastRan) {
+      fn.apply(context, args)
+      lastRan = Date.now()
+    } else {
+      clearTimeout(lastFunc)
+      lastFunc = setTimeout(function () {
+        if (Date.now() - lastRan >= limit) {
+          fn.apply(context, args)
+          lastRan = Date.now()
+        }
+      }, limit - (Date.now() - lastRan))
+    }
+  }
+}
+
 export function stringToNumber(text: string | null): number | undefined {
   return text?.trim() && !isNaN(Number(text)) ? Number(text) : undefined
 }

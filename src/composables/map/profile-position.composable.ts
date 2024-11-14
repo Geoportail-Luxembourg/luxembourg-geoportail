@@ -14,6 +14,7 @@ import { useProfilePositionStore } from '@/stores/profile-position.store'
 import { LayerFeature } from '@/stores/map.store.model'
 import { useDrawStore } from '@/stores/draw.store'
 import { PositionVectorLayer } from '@/services/ol-layer/ol-layer-feature-position.helper'
+import { throttle } from '@/services/utils'
 
 let overlay: PositionVectorLayer | undefined // Shared overlay between all profile position markers
 
@@ -101,7 +102,7 @@ export default function useProfilePosition(dataset?: ProfileData) {
       listenerIdPointerMove = listen(
         map,
         'pointermove',
-        <ListenerFunction>onPointerMove
+        <ListenerFunction>throttle(evt => onPointerMove(evt), 25)
       )
     }
   }
@@ -144,18 +145,13 @@ export default function useProfilePosition(dataset?: ProfileData) {
 
     if (pixelDist < 64) {
       // Cursor is close enough: display marker (if not edition line mode)
-      const newCoords = transform(
-        <Coordinate>[closestPoint[0], closestPoint[1]],
-        map.getView().getProjection(),
-        PROJECTION_LUX
-      )
       highlightDistance.value = closestPoint[2]
       displayGeoMarker.value = editStateActive.value !== 'editLine'
-      newXGeomarker = newCoords[0]
-      newYGeomarker = newCoords[1]
+      newXGeomarker = closestPoint[0]
+      newYGeomarker = closestPoint[1]
     } else {
       highlightDistance.value = -1
-      displayGeoMarker.value = true // true => to restore default
+      displayGeoMarker.value = true // true => to restore default, this will display the marker if it is a hover on the chart
       newXGeomarker = undefined
       newYGeomarker = undefined
     }

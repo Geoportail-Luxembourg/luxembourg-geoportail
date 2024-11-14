@@ -82,6 +82,7 @@ export default function useEdit() {
 
     listen(modifyInteraction, 'modifyend', event => {
       const feature = (event as ModifyEvent).features.getArray()[0]
+      ;(feature as DrawnFeature).profileData = undefined // Reset the graph
       updateDrawnFeature(feature as DrawnFeature)
     })
   }

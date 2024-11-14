@@ -75,8 +75,8 @@ export interface ProfileFormatter {
   xtick?: (val: number) => string
   ytick?: (val: number) => string
 
-  xlabel: (factor = 1) => string
-  ylabel: (factor = 1) => string
+  xlabel: (factor?: number) => string
+  ylabel: (factor?: number) => string
 }
 
 export interface ProfileOptions {
