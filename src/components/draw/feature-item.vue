@@ -3,6 +3,7 @@ import { provide } from 'vue'
 import { getUid } from 'ol/util'
 
 import { DrawnFeature } from '@/services/draw/drawn-feature'
+import { DrawnFeatureStyle } from '@/stores/draw.store.model'
 
 import FeatureSubContent from './feature-sub-content.vue'
 import FeatureSubWrapper from './feature-sub-wrapper.vue'
@@ -20,13 +21,16 @@ const props = withDefaults(
     isOpen: false,
   }
 )
+
+const localFeature = props.feature
+
 const emit = defineEmits([
   'clickDelete',
   'closePopup',
   'toggleFeatureSub',
   'toggleFeatureEdit',
   'toggleDock',
-  'submitEditInfo',
+  'submitFeature',
 ])
 
 provide('feature', props.feature)
@@ -40,11 +44,20 @@ function onToggleEditFeature() {
 }
 
 function onClickDelete() {
-  emit('clickDelete', props.feature.id)
+  emit('clickDelete', getUid(props.feature))
 }
 
-function onSubmitEditInfo() {
-  emit('submitEditInfo', props.feature)
+function onResetInfo(prevLabel: string, prevDescription: string) {
+  localFeature.label = prevLabel
+  localFeature.description = prevDescription
+}
+
+function onResetStyle(prevStyle: DrawnFeatureStyle) {
+  localFeature.featureStyle = { ...prevStyle }
+}
+
+function onSubmitEditFeature() {
+  emit('submitFeature', props.feature)
 }
 </script>
 
@@ -97,7 +110,9 @@ function onSubmitEditInfo() {
         @toggleEditFeature="onToggleEditFeature"
         @toggleDock="() => emit('toggleDock')"
         @clickDelete="onClickDelete"
-        @submitEditInfo="onSubmitEditInfo"
+        @resetInfo="onResetInfo"
+        @resetStyle="onResetStyle"
+        @submitEditFeature="onSubmitEditFeature"
       />
     </div>
   </FeatureSubWrapper>

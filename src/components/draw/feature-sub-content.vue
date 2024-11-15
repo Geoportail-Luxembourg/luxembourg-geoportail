@@ -3,6 +3,7 @@ import { inject, provide, Ref, ref } from 'vue'
 import { useTranslation } from 'i18next-vue'
 
 import { DrawnFeature } from '@/services/draw/drawn-feature'
+import { DrawnFeatureStyle } from '@/stores/draw.store.model'
 
 import FeatureMenuPopup from './feature-menu-popup.vue'
 import FeatureConfirmDelete from './feature-confirm-delete.vue'
@@ -10,7 +11,6 @@ import FeatureEditInfo from './feature-edit-info.vue'
 import FeatureEditStyle from './feature-edit-style.vue'
 import FeatureConcentricCircle from './feature-concentric-circle.vue'
 import FeatureMeasurements from './feature-measurements.vue'
-import FeatureEditSymbol from './feature-edit-symbol.vue'
 
 defineProps<{
   isDocked: boolean
@@ -20,17 +20,22 @@ const emit = defineEmits([
   'toggleEditFeature',
   'toggleDock',
   'clickDelete',
-  'submitEditInfo',
+  'resetInfo',
+  'resetStyle',
+  'submitEditFeature',
 ])
 const { t } = useTranslation()
-const feature: DrawnFeature | undefined = inject('feature')
+const feature: DrawnFeature = inject('feature')!
+let prevLabel = feature.label
+let prevDescription = feature.description
+// keep deep copy of previous style to be able to revert style on cancel
+let prevStyle: DrawnFeatureStyle = { ...feature.featureStyle }
 
 const editComponents = {
   FeatureConcentricCircle,
   FeatureEditInfo,
   FeatureEditStyle,
   FeatureConfirmDelete,
-  FeatureEditSymbol,
 }
 const currentEditCompKey: Ref<keyof typeof editComponents | undefined> =
   ref(undefined)
@@ -38,6 +43,13 @@ const currentEditCompKey: Ref<keyof typeof editComponents | undefined> =
 provide('currentEditCompKey', currentEditCompKey)
 
 function onClickCancel() {
+  if (currentEditCompKey.value === 'FeatureEditStyle') {
+    // reactivate highlighting of selected feature
+    feature.selected = true
+    emit('resetStyle', prevStyle)
+  } else if (currentEditCompKey.value === 'FeatureEditInfo') {
+    emit('resetInfo', prevLabel, prevDescription)
+  }
   currentEditCompKey.value = undefined
 }
 
@@ -45,14 +57,29 @@ function onClickValidate() {
   const currentComponent =
     editComponents[currentEditCompKey.value as keyof typeof editComponents]
 
+  prevLabel = feature.label
+  prevDescription = feature.description
+  prevStyle = { ...feature.featureStyle }
   if (currentComponent === FeatureConfirmDelete) {
     emit('clickDelete')
-  } else if (currentComponent === FeatureEditInfo) {
-    emit('submitEditInfo')
+  } else if (
+    currentComponent === FeatureEditInfo ||
+    currentComponent === FeatureEditStyle
+  ) {
+    // reactivate highlighting of selected feature
+    feature.selected = true
+    emit('submitEditFeature')
   } else {
     alert('TODO: Draw feature click onClickValidate()')
   }
   currentEditCompKey.value = undefined
+}
+
+function onClickEditStyle() {
+  // deactivate highlighting of selected feature
+  feature.selected = false
+  feature.changed()
+  currentEditCompKey.value = 'FeatureEditStyle'
 }
 </script>
 
@@ -112,7 +139,7 @@ function onClickValidate() {
           <button
             data-cy="featItemActionStyle"
             class="hover:text-tertiary"
-            @click="() => (currentEditCompKey = 'FeatureEditStyle')"
+            @click="onClickEditStyle()"
           >
             <i class="fa fa-paint-brush"></i>
           </button>

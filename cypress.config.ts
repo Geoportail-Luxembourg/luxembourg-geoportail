@@ -13,6 +13,12 @@ export default defineConfig({
 
       // It's IMPORTANT to return the config object
       // with any changed environment variables
+      config.browsers = [
+        config.browsers.find(
+          b => b.name === 'chromium' || b.name === 'chrome'
+        )!,
+      ].map(b => ({ ...b, name: 'my-chromium' }))
+      config.experimentalRunAllSpecs = true
       return config
     },
   },

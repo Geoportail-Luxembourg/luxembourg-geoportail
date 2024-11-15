@@ -130,6 +130,11 @@
     color: rgb(51, 51, 51);
   }
 
+  .lux-btn-grey.pressed {
+    background-color: rgb(133, 168, 233);
+    color: rgb(51, 51, 181);
+  }
+
   .lux-close-cross {
     @apply after:content-['\e02c'];
   }

@@ -10,9 +10,9 @@ import { DrawnFeature } from '@/services/draw/drawn-feature'
 import { useDrawStore } from '@/stores/draw.store'
 import useMap from '../map/map.composable'
 import { EditStateActive } from '@/stores/draw.store.model'
-import { DEFAULT_DRAW_ZINDEX, FEATURE_LAYER_TYPE } from './draw.composable'
-import { Circle } from 'ol/geom'
-import { setCircleRadius } from '@/services/common/measurement.utils'
+
+const DEFAULT_DRAW_EDIT_ZINDEX = 1001
+const FEATURE_EDIT_LAYER_TYPE = 'featureEditLayer'
 
 export default function useEdit() {
   const { editStateActive, editingFeatureId, drawnFeatures } = storeToRefs(
@@ -27,9 +27,9 @@ export default function useEdit() {
   })
   const editLayer = new VectorLayer({
     source: editSource,
-    zIndex: DEFAULT_DRAW_ZINDEX,
+    zIndex: DEFAULT_DRAW_EDIT_ZINDEX,
   })
-  editLayer.set('cyLayerType', FEATURE_LAYER_TYPE)
+  editLayer.set('cyLayerType', FEATURE_EDIT_LAYER_TYPE)
   map.addLayer(editLayer)
 
   watch(editStateActive, editStateActive => {
@@ -44,9 +44,11 @@ export default function useEdit() {
   watch(editingFeatureId, editingFeatureId => {
     if (!editingFeatureId) {
       setEditActiveState(undefined)
-      editSource.getFeatures().forEach(feature => {
-        ;(feature as DrawnFeature).editable = false
-        feature.changed()
+      drawnFeatures.value.forEach(feature => {
+        if ((feature as DrawnFeature).editable) {
+          ;(feature as DrawnFeature).editable = false
+          feature.changed()
+        }
       })
     }
     editSource.clear()
@@ -84,15 +86,5 @@ export default function useEdit() {
     })
   }
 
-  function setRadius(feature: DrawnFeature, radius: number) {
-    const geometry = feature.getGeometry()
-    if (geometry?.getType() === 'Circle') {
-      setCircleRadius(geometry as Circle, radius, map)
-      updateDrawnFeature(feature)
-    }
-  }
-
-  return {
-    setRadius,
-  }
+  return {}
 }

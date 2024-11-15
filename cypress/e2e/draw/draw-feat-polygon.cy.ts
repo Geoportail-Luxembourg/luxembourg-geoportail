@@ -32,7 +32,12 @@ describe('Draw "Polygon"', () => {
       cy.get('*[data-cy="featItemArea"]').should('contain.text', '766.33 km²')
       cy.dragVertexOnMap(200, 200, 300, 300)
       cy.get('*[data-cy="featItemLength"]').should('contain.text', '238.47 km')
-      cy.get('*[data-cy="featItemArea"]').should('contain.text', '1532.65 km²')
+      // there is a strange behaviour in CI:
+      // - chrome and chromium browsers give different decimals in measurements
+      // - therefore only the int part of the surface is checked
+      cy.get('*[data-cy="featItemArea"]')
+        .should('contain.text', 'Surface: 1532.')
+        .and('contain.text', ' km²')
     })
 
     it('displays the possible actions for the feature', () => {

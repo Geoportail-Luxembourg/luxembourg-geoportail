@@ -20,6 +20,7 @@ export default function useDrawInteraction(options: Options) {
   function onDrawEnd(event: DrawEvent) {
     drawTooltip.remove()
     addFeature(event.feature)
+    event.stopPropagation()
   }
 
   return {

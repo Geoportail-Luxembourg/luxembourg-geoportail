@@ -27,7 +27,8 @@ const inputValue = ref(props.value)
       :min="min"
       :max="max"
       :step="step"
-      v-model="inputValue"
+      v-model.number="inputValue"
+      @input="$emit('change', inputValue)"
     />
     <input
       type="number"

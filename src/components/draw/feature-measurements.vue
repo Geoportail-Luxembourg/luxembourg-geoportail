@@ -18,14 +18,17 @@ import {
   getDebouncedElevation,
   getElevation,
 } from './feature-measurements-helper'
-import useEdit from '@/composables/draw/edit.composable'
+import { useDrawStore } from '@/stores/draw.store'
+import { setRadius } from '@/services/draw/draw.helper'
 
 defineProps<{
   isEditingFeature?: boolean
 }>()
 
 const { t } = useTranslation()
-const mapProjection: Projection = useMap().getOlMap().getView().getProjection()
+const drawStore = useDrawStore()
+const map = useMap().getOlMap()
+const mapProjection: Projection = map.getView().getProjection()
 
 const feature = ref<DrawnFeature | undefined>(inject('feature'))
 const featureType = ref<string>(feature.value?.featureType || '')
@@ -87,7 +90,8 @@ watchEffect(() => {
 
 function onClickValidateRadius(radius: number) {
   if (feature.value) {
-    useEdit().setRadius(feature.value as DrawnFeature, Number(radius))
+    /* useEdit().setRadius(feature.value as DrawnFeature, Number(radius))*/
+    setRadius(feature.value as DrawnFeature, Number(radius), map, drawStore)
   }
 }
 </script>
