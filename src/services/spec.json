@@ -1,0 +1,43 @@
+{
+  "attributes": {
+    "map": {
+      "dpi": 127,
+      "rotation": 0,
+      "center": [663829, 6394482],
+      "projection": "EPSG:3857",
+      "scale": 618438.9386881099,
+      "layers": [
+        {
+          "baseURL": "https://wms.geoportail.lu/vectortiles_wms_4_print/service",
+          "imageFormat": "image/png",
+          "layers": ["roadmap"],
+          "customParams": {
+            "TRANSPARENT": true,
+            "MAP_RESOLUTION": 127
+          },
+          "type": "wms",
+          "opacity": 1,
+          "version": "1.1.1",
+          "useNativeAngle": true
+        }
+      ]
+    },
+    "disclaimer": "www.geoportail.lu est un portail d'accès aux informations géolocalisées, données et services qui sont mis à disposition par les administrations publiques luxembourgeoises. Responsabilité: Malgré la grande attention qu’elles portent à la justesse des informations diffusées sur ce site, les autorités ne peuvent endosser aucune responsabilité quant à la fidélité, à l’exactitude, à l’actualité, à la fiabilité et à l’intégralité de ces informations. Information dépourvue de foi publique. \nDroits d'auteur: Administration du Cadastre et de la Topographie. http://g-o.lu/copyright",
+    "scaleTitle": "Echelle approximative 1:",
+    "appTitle": "Le géoportail national du Grand-Duché du Luxembourg",
+    "scale": 400000,
+    "name": "",
+    "url": "http://g-o.lu/3/34Ay",
+    "qrimage": "https://map.geoportail.lu/qr?url=http://g-o.lu/3/34Ay",
+    "lang": "fr",
+    "legend": null,
+    "scalebar": {
+      "geodetic": true
+    },
+    "dataOwner": "&copy; <a href='https://www.maptiler.com/copyright/'>MapTiler</a> &copy; <a href=\"https://openstreetmap.org/copyright\">OpenStreetMap</a> contributors for data outside of Luxembourg",
+    "dateText": "Date d'impression: ",
+    "queryResults": null
+  },
+  "format": "pdf",
+  "layout": "A4 landscape"
+}

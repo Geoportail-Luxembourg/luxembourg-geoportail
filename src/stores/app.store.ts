@@ -36,6 +36,7 @@ export const useAppStore = defineStore(
       ref(undefined)
     const drawToolbarOpen = ref(false)
     const measureToolbarOpen = ref(false)
+    const printToolbarOpen = ref(false)
     const isOffLine = ref(false)
     const isApp = ref(false) // Is the app displayed for Android or Ios?
 
@@ -120,6 +121,10 @@ export const useAppStore = defineStore(
       infoOpen.value = open ?? !infoOpen.value
     }
 
+    function togglePrintToolbarOpen(open?: boolean) {
+      printToolbarOpen.value = open ?? !printToolbarOpen.value
+    }
+
     return {
       embedded,
       lang,
@@ -142,6 +147,7 @@ export const useAppStore = defineStore(
       isOffLine,
       isApp,
       setIsApp,
+      printToolbarOpen,
       setLang,
       setLayersOpen,
       setMyLayersTabOpen,
@@ -151,6 +157,7 @@ export const useAppStore = defineStore(
       openStyleEditorPanel,
       closeStyleEditorPanel,
       toggleDrawToolbarOpen,
+      togglePrintToolbarOpen,
       toggleMyMapsOpen,
       toggleInfoOpen,
       toggleThemeGrid,
