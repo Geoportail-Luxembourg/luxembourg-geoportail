@@ -72,11 +72,14 @@ export const useDrawStore = defineStore('draw', () => {
     drawnFeatures.value = features
   }
 
-  function removeFeature(featureId: number) {
+  function removeFeature(featureId: String | undefined) {
     drawnFeatures.value = drawnFeatures.value.filter(
-      feature => feature.id !== featureId
+      feature => getUid(feature) !== featureId
     )
-    editingFeatureId.value = undefined
+    if (activeFeatureId.value === featureId) {
+      activeFeatureId.value = undefined
+      editingFeatureId.value = undefined
+    }
   }
 
   return {

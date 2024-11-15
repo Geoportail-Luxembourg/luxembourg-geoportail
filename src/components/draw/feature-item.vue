@@ -44,7 +44,7 @@ function onToggleEditFeature() {
 }
 
 function onClickDelete() {
-  emit('clickDelete', props.feature.id)
+  emit('clickDelete', getUid(props.feature))
 }
 
 function onResetInfo(prevLabel: string, prevDescription: string) {

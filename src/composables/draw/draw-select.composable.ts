@@ -11,14 +11,20 @@ import { useAppStore } from '@/stores/app.store'
 export default function useDrawSelect() {
   const map = useMap().getOlMap()
   const appStore = useAppStore()
-  const { activeFeatureId, editingFeatureId, drawnFeatures } = storeToRefs(
-    useDrawStore()
-  )
+  const {
+    drawStateActive,
+    editStateActive,
+    activeFeatureId,
+    editingFeatureId,
+    drawnFeatures,
+  } = storeToRefs(useDrawStore())
 
   listen(map, 'click', event => handleClick(event))
 
   watch(activeFeatureId, (newId, oldId) => {
-    editingFeatureId.value = undefined
+    if (editingFeatureId.value !== newId) {
+      editingFeatureId.value = undefined
+    }
     drawnFeatures.value
       .filter(f => getUid(f) == oldId)
       .forEach(oldFeature => {
@@ -37,8 +43,14 @@ export default function useDrawSelect() {
   const handleClick = function (event: any) {
     const pixel = event.pixel
 
+    if (
+      drawStateActive.value !== undefined ||
+      editStateActive.value !== undefined
+    ) {
+      return true
+    }
     activeFeatureId.value = undefined
-    const feature = map.forEachFeatureAtPixel(
+    const featureFound = map.forEachFeatureAtPixel(
       pixel,
       feature => {
         const featureMatch = olArray.includes(drawnFeatures.value, feature)
@@ -46,7 +58,7 @@ export default function useDrawSelect() {
           appStore.toggleMyMapsOpen(true)
           activeFeatureId.value = getUid(feature)
 
-          return
+          return true
         }
       },
       {
@@ -54,8 +66,8 @@ export default function useDrawSelect() {
       }
     )
 
-    if (feature) {
-      return
+    if (featureFound) {
+      return false
     }
   }
 }
