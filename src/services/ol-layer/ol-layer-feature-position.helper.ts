@@ -14,14 +14,11 @@ export class PositionVectorLayer extends VectorLayer<VectorSource<Geometry>> {
   geoMarker: Feature<Point> | undefined
 
   constructor(options: Options<VectorSource<Geometry>>) {
-    const geoMarker = new Feature()
     const source = new VectorSource({
-      features: [geoMarker],
+      features: [], // geoMarker to be added here (@see createGeomarker())
     })
 
     super({ ...options, ...{ source } })
-
-    this.geoMarker = <Feature<Point>>geoMarker
   }
 
   moveGeoMarker(x: number, y: number) {
@@ -34,6 +31,7 @@ export class PositionVectorLayer extends VectorLayer<VectorSource<Geometry>> {
 
   createGeomarker() {
     this.geoMarker = new Feature({ geometry: new Point([0, 0]) })
+    this.getSource()?.clear()
     this.getSource()?.addFeature(this.geoMarker)
   }
 

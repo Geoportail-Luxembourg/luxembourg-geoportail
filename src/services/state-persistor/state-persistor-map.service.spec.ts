@@ -15,7 +15,7 @@ let fakeStorage: { [key: string]: string | number } = {}
 
 describe('StatePersistorMapService', () => {
   const map = useMap()
-  map.createMap('myMap')
+  map.createMap()
   const olMap = map.getOlMap()
   const view = useMap().getOlMap().getView()
 

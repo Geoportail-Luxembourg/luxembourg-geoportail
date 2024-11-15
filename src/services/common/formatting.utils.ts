@@ -13,6 +13,14 @@ export function formatDate(dateString: string, language: string = 'fr-FR') {
   return new Intl.DateTimeFormat(language).format(date)
 }
 
+/**
+ * Format a measure value, it can be formatted to "elevation" (always in m),
+ * length (in m and km if up to 1000) or area (in m² or km² if up to 1000000)
+ * @param value The value to format
+ * @param digits The digits to fixed
+ * @param type The formatter, can be: "elevation" | "length" | "area"
+ * @returns The formatted value, or the original value if invalid number
+ */
 export function formatMeasure(
   value: number | null,
   digits?: number,
@@ -33,14 +41,26 @@ export function formatMeasure(
   }
 }
 
+/**
+ * Format a value in meters (no km), 0 digit by default
+ * @param value The value (in m) to format
+ * @param digits The digits to fixed
+ * @returns The formatted value, or the original value if invalid number
+ */
 export function formatElevation(value: number | string, digits = 0): string {
   return <string>(
     (isNaN(+value) ? value : `${(<number>value).toFixed(digits)} m`)
   )
 }
 
+/**
+ * Format a value in meters (or km if up to 1000), 2 digits by default
+ * @param value The value (in m) to format
+ * @param digits The digits to fixed
+ * @returns The formatted value, or the original value if invalid number
+ */
 export function formatLength(value: number, digits = 2): string {
-  //null covers API errors or unavailable data (eg. elevation)
+  // null covers API errors or unavailable data (eg. elevation)
   if (value === null) {
     return i18next.t('N/A', { ns: 'client' })
   } else if (value < 1000) {
@@ -52,6 +72,12 @@ export function formatLength(value: number, digits = 2): string {
   }
 }
 
+/**
+ * Format a value in meters² (or km² if up to 1000000), 2 digits by default
+ * @param value The value (in m²) to format
+ * @param digits The digits to fixed
+ * @returns The formatted value, or the original value if invalid number
+ */
 export function formatArea(value: number, digits = 2): string {
   if (value === null) {
     return i18next.t('N/A', { ns: 'client' })

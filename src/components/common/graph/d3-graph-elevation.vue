@@ -7,7 +7,7 @@ import { debounce } from '@/services/utils'
 import D3GraphElevation from './d3-graph-elevation'
 import { Elevations, Profile, ProfileOptions } from './d3-graph-elevation.d'
 import { ProfileData } from './elevation-profile'
-// import { dataset } from './d3-graph-elevation.fixtures' // Use these fixtures instead of api if needed (for dev debug only)
+// import { dataset } from '@/__fixtures__/d3-graph-elevation.fixtures' // Use these fixtures instead of api if needed (for dev debug only)
 
 const emit = defineEmits<{
   (e: 'hover:profile', point: any, dist: number, elevations: Elevations): void

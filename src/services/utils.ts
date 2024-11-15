@@ -173,6 +173,11 @@ export function capitalize(str: string) {
 }
 
 export function colorStringToRgba(colorString: string, opacity = 1) {
+  const isValidHex = /^#[0-9A-Fa-f]{6}$/.test(colorString)
+  if (!isValidHex) {
+    throw new Error(`Invalid hex color string: ${colorString}`)
+  }
+
   const r = parseInt(colorString.slice(1, 3), 16)
   const g = parseInt(colorString.slice(3, 5), 16)
   const b = parseInt(colorString.slice(5, 7), 16)

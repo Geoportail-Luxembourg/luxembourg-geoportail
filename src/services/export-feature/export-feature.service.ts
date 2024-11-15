@@ -6,13 +6,13 @@ import { ExportFeatureKml } from './export-feature-kml'
 import { ExportFeatureShapefile } from './export-feature-shapefile'
 import { ExportFeatureProfileCsv } from './export-feature-profile-csv'
 
-export type exportFormat = 'kml' | 'gpx' | 'shapefile' | 'csv'
+export type TExportFormat = 'kml' | 'gpx' | 'shapefile' | 'csv'
 export type TFeatExport = Feature<Geometry> & Feature<Geometry>[]
 
 export class ExportFeatureService {
   export(
     map: Map,
-    format: exportFormat,
+    format: TExportFormat,
     features: TFeatExport,
     fileName: string,
     isTrack = false

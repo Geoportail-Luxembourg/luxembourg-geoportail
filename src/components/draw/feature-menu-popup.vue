@@ -11,13 +11,13 @@ import { DrawnFeature } from '@/services/draw/drawn-feature'
 import {
   exportFeatureService,
   TFeatExport,
-  type exportFormat,
+  type TExportFormat,
 } from '@/services/export-feature/export-feature.service'
 
 const { t } = useTranslation()
 const feature: DrawnFeature = inject('feature')!
 
-function download(format: exportFormat) {
+function download(format: TExportFormat) {
   exportFeatureService.export(
     feature.map,
     format,
