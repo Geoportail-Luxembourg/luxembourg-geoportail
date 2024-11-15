@@ -28,8 +28,15 @@ function onToggleFeatureEdit(featureId: String, isEditing: boolean) {
   // TODO: continue...
 }
 
+function sortFunction(elements: HTMLCollection) {
+  const featureIds = [...elements].map(val => val.id)
+  drawStore.reorderFeatures(featureIds)
+}
+
 onMounted(() => {
-  useSortable(<HTMLElement>document.querySelector('.sortable-features'))
+  useSortable(<HTMLElement>document.querySelector('.sortable-features'), {
+    onSort: sortFunction,
+  })
 })
 </script>
 
@@ -38,6 +45,7 @@ onMounted(() => {
     <li
       class="lux-drawing-item"
       v-for="(feature, index) in features"
+      :id="`f-${getUid(feature)}`"
       :key="index"
     >
       <FeatureItem

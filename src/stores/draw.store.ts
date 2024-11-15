@@ -82,6 +82,12 @@ export const useDrawStore = defineStore('draw', () => {
     }
   }
 
+  function reorderFeatures(featuresId: String[]) {
+    drawnFeatures.value = drawnFeatures.value.map(f =>
+      Object.assign(f, { display_order: featuresId.indexOf(`f-${getUid(f)}`) })
+    )
+  }
+
   return {
     activeFeatureId,
     editingFeatureId,
@@ -90,6 +96,7 @@ export const useDrawStore = defineStore('draw', () => {
     drawnFeatures,
     featureEditionDocked,
     removeFeature,
+    reorderFeatures,
     toggleDrawActiveState,
     setDrawActiveState,
     setEditActiveState,
