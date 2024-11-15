@@ -16,6 +16,7 @@ import ZoomControl from '../map-controls/zoom-control.vue'
 import ZoomToExtentControl from '../map-controls/zoom-to-extent-control.vue'
 import useDraw from '@/composables/draw/draw.composable'
 import useDrawSelect from '@/composables/draw/draw-select.composable'
+import useFeatureInfo from '../info/feature-info.composable'
 
 const appStore = useAppStore()
 const { embedded } = storeToRefs(appStore)
@@ -33,12 +34,14 @@ const props = withDefaults(
 )
 
 // add draw layer after map init to allow restoring draw features (not in v3 for now)
-// TODO: remove v4_standalone condition once v4 draw is used in v3
+// TODO: remove v4_standalone condition or move calls outside of it, once v4 draw or feature info is used in v3
 if (props.v4_standalone) {
   const draw = useDraw()
   draw.addDrawLayer(olMap)
   // initialise map listeners for feature selection
   useDrawSelect()
+  const featureInfo = useFeatureInfo()
+  featureInfo.init()
 }
 
 const DEFAULT_EXTENT = [
