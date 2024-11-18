@@ -114,7 +114,7 @@ function onOutProfile() {
   <div data-cy="featItemProfile" class="lux-profile relative">
     <!-- Top: elevation +- in meters, Export CSV button and close button -->
     <div class="flex justify-between w-full px-1 gap-3 whitespace-nowrap">
-      <div class="grow cursor-default">
+      <div class="grow cursor-default" data-cy="featItemProfileCumul">
         <template v-if="profileData">
           <span>
             &Delta;+<span v-format-measure.elevation>{{ elevationGain }}</span>

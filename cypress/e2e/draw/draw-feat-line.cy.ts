@@ -1,12 +1,12 @@
 import { testFeatItem, testFeatItemDocking } from './draw-feat.utils'
 
 function testFeatItemMeasurements() {
-  cy.get('*[data-cy="featItemLength"]').should('exist')
-  cy.get('*[data-cy="featItemArea"]').should('not.exist')
-  cy.get('*[data-cy="featItemRadius"]').should('not.exist')
-  cy.get('*[data-cy="featItemElevation"]').should('not.exist')
-  cy.get('*[data-cy="featItemProfile"]').should('exist')
-  cy.get('*[data-cy="featItemProfileCSV"]').should('exist')
+  cy.get('[data-cy="featItemLength"]').should('exist')
+  cy.get('[data-cy="featItemArea"]').should('not.exist')
+  cy.get('[data-cy="featItemRadius"]').should('not.exist')
+  cy.get('[data-cy="featItemElevation"]').should('not.exist')
+  cy.get('[data-cy="featItemProfile"]').should('exist')
+  cy.get('[data-cy="featItemProfileCSV"]').should('exist')
 }
 
 describe('Draw "Line"', () => {
@@ -14,23 +14,75 @@ describe('Draw "Line"', () => {
     cy.visit('/')
     cy.get('button[data-cy="drawButton"]').click()
     cy.get('button[data-cy="drawLineButton"]').click()
-    cy.get('div.ol-viewport').click(100, 100, { force: true })
-    cy.get('div.ol-viewport').dblclick(200, 200, { force: true })
+    cy.get('div.ol-viewport').click(320, 223, { force: true })
+    cy.get('div.ol-viewport').dblclick(389, 305, { force: true })
   })
 
-  describe('When clicking button to draw Line', () => {
+  describe('When drawing a line', () => {
     it('displays a new feature item in the draw panel', () => {
-      cy.get('*[data-cy="featItemName"]').should('exist')
+      cy.get('[data-cy="featItemName"]')
+        .should('exist')
+        .should('contain.text', 'Ligne 1')
     })
 
     it('displays measurements for Line', () => {
       testFeatItemMeasurements()
     })
 
+    it('displays the elevation profile for Line', () => {
+      cy.get('[data-cy="featItemProfileCumul"]').should(
+        'contain.text',
+        'Δ+964 m Δ-1105 m Δ-141 m'
+      )
+      cy.get('[data-cy="featItemProfile"] svg').should('exist')
+      cy.get('[data-cy="featItemProfile"] svg g.grid-y > g.tick').should(
+        'have.length',
+        7
+      )
+      cy.get('[data-cy="featItemProfile"] svg g.x.axis > g.tick').should(
+        'have.length',
+        9
+      )
+      cy.get('[data-cy="featItemProfile"] svg g.y.axis > g.tick')
+        .eq(6)
+        .find('text')
+        .should('have.text', '500')
+    })
+
+    describe('When editing the line', () => {
+      it('refreshes the elevation profile for Line', () => {
+        cy.dragVertexOnMap(320, 223, 305, 305)
+
+        cy.get('[data-cy="featItemProfileCumul"]').should(
+          'contain.text',
+          'Δ+429 m Δ-489 m Δ-61 m'
+        )
+
+        cy.get('[data-cy="featItemProfile"] svg g.y.axis > g.tick')
+          .eq(6)
+          .find('text')
+          .should('have.text', '380')
+      })
+    })
+
+    it('downloads the profile elevation', () => {
+      cy.get('[data-cy="featItemProfileCSV"]').click()
+
+      const downloadPath = 'cypress/downloads/Ligne_1.csv'
+      cy.readFile(downloadPath).should('exist')
+
+      cy.readFile(downloadPath).then(content => {
+        expect(content).to.contain(
+          'dist,MNT,y,x,lon,lat\n0,425.3,60019.883345295,105204.558805771,5.89013672441823,49.88086129777006\n423.7,446.6,60292.742941114775,104880.43553517274,5.893949526308415,49.87795628443879\n847.4,480.9,60565.60253693456,104556.31226457447,5.897761870512693,49.875051143511975\n'
+        )
+        // NB. This is the first lines of the file, not the full content
+      })
+    })
+
     it('updates length measurement when editing geometry', () => {
-      cy.get('*[data-cy="featItemLength"]').should('contain.text', '55.36 km')
-      cy.dragVertexOnMap(200, 200, 300, 300)
-      cy.get('*[data-cy="featItemLength"]').should('contain.text', '111.14 km')
+      cy.get('[data-cy="featItemLength"]').should('contain.text', '42.31 km')
+      cy.dragVertexOnMap(320, 223, 305, 305)
+      cy.get('[data-cy="featItemLength"]').should('contain.text', '33.26 km')
     })
 
     it('displays the possible actions for the feature', () => {
