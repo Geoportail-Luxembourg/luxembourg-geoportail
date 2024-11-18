@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import { useTranslation } from 'i18next-vue'
 import { DrawnFeature } from '@/services/draw/drawn-feature'
+import { upperCaseFirst } from '@/services/utils'
 
 const { t } = useTranslation()
 
@@ -17,11 +18,11 @@ function onClickChangeLineStyle(linestyle: string) {
 
 <template>
   <button
-    :class="`lux-btn-grey rounded${
+    :class="`lux-btn-grey${
       props.feature.featureStyle.linestyle === props.linestyle ? ' pressed' : ''
     }`"
     @click="onClickChangeLineStyle(props.linestyle)"
   >
-    {{ t(props.linestyle) }}
+    {{ t(upperCaseFirst(props.linestyle)) }}
   </button>
 </template>

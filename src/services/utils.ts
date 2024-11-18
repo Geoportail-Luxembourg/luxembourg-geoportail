@@ -133,3 +133,7 @@ export function downloadFile(
   document.body.removeChild(a)
   URL.revokeObjectURL(url)
 }
+
+export function upperCaseFirst(str: string) {
+  return str.charAt(0).toUpperCase() + str.slice(1)
+}
