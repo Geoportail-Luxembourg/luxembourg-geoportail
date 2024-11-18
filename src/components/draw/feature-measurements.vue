@@ -90,7 +90,6 @@ watchEffect(() => {
 
 function onClickValidateRadius(radius: number) {
   if (feature.value) {
-    /* useEdit().setRadius(feature.value as DrawnFeature, Number(radius))*/
     setRadius(feature.value as DrawnFeature, Number(radius), map, drawStore)
   }
 }
