@@ -18,6 +18,7 @@ defineProps({
   },
 })
 const { t } = useTranslation()
+// const currentUrl = window.location.href
 </script>
 <template>
   <div class="flex flex-col">
@@ -113,6 +114,12 @@ const { t } = useTranslation()
         </div>
         <!-- TODO: implement intepreting the URL (getFeatureInfoById)-->
         <div v-if="hasValidFID(feature)">
+          <!-- span for dev-->
+          <!-- <span
+            ><a :href="`${currentUrl}&fid=${feature.fid}`">{{
+              t('Lien direct vers cet objet')
+            }}</a></span
+          > -->
           <span
             ><a :href="`?fid=${feature.fid}`" target="_blank">{{
               t('Lien direct vers cet objet')

@@ -9,6 +9,8 @@ import Style from 'ol/style/Style.js'
 import { FeatureInfo } from './feature-info.model'
 import { Geometry } from 'ol/geom'
 import { FeatureLike } from 'ol/Feature'
+import useThemes from '@/composables/themes/themes.composable'
+import useLayers from '@/composables/layers/layers.composable'
 
 const INFO_SERVICE_URL = import.meta.env.VITE_GET_INFO_SERVICE_URL
 
@@ -95,66 +97,85 @@ export class FeatureInfoService {
     this.map.addLayer(this.featureLayer)
   }
 
-  // getFeatureInfoById(fid) {
-  //   const fids = fid.split(',')
-  //   fids.forEach(async curFid => {
-  //     const splittedFid = curFid.split('_')
-  //     const layersList = [splittedFid[0]]
-  //     const layerLabel = {}
+  async getFeatureInfoById(fid: string): Promise<FeatureInfo[] | undefined> {
+    const fids = fid.split(',')
+    for (const curFid of fids) {
+      const splittedFid = curFid.split('_')
+      const layersList = [splittedFid[0]]
+      const layerLabel: { [key: string]: string } = {}
 
-  //     try {
-  //       const flatCatalogue = await this.appThemes_.getFlatCatalog()
+      try {
+        // const flatCatalogue: FlatCatalogueItem[] =
+        //   await this.appThemes_.getFlatCatalog()
 
-  //       if (layersList.length > 0) {
-  //         this.isQuerying_ = true
-  //         this.map_.getViewport().style.cursor = 'wait'
-  //         this.content = []
+        if (layersList.length > 0) {
+          // this.isQuerying_ = true
+          this.map.getViewport().style.cursor = 'wait'
+          this.content = []
 
-  //         try {
-  //           const resp = await this.http_.get(this.getInfoServiceUrl_, {
-  //             params: { fid: curFid },
-  //           })
+          const url = new URL(INFO_SERVICE_URL)
+          url.searchParams.append('fid', curFid)
+          try {
+            const resp = await fetch(url.toString())
 
-  //           this.appSelector = this.QUERYPANEL_
-  //           let showInfo = false
-  //           if (!this.appGetDevice_.testEnv('xs')) {
-  //             showInfo = true
-  //             this.hiddenContent = false
-  //           } else {
-  //             this.hiddenContent = true
-  //           }
+            // this.appSelector = this.QUERYPANEL_
+            // let showInfo = false
+            // if (!this.appGetDevice_.testEnv('xs')) {
+            //   showInfo = true
+            //   this.hiddenContent = false
+            // } else {
+            //   this.hiddenContent = true
+            // }
 
-  //           const node = flatCatalogue.find(
-  //             catItem => catItem.id == splittedFid[0]
-  //           )
-  //           if (node !== undefined && node !== null) {
-  //             const layer = this.getLayerFunc_(node)
-  //             const foundLayer = this.map_
-  //               .getLayers()
-  //               .getArray()
-  //               .find(
-  //                 curLayer =>
-  //                   curLayer.get('queryable_id') === layer.get('queryable_id')
-  //               )
-  //             const idx = this.map_.getLayers().getArray().indexOf(foundLayer)
-  //             if (idx === -1) {
-  //               this.map_.addLayer(layer)
-  //             }
-  //             layerLabel[splittedFid[0]] = layer.get('label')
-  //           }
-  //           this.showInfo(true, resp, layerLabel, showInfo, true)
-  //         } catch (error) {
-  //           this.clearQueryResult(this.QUERYPANEL_)
-  //           this.infoOpen = false
-  //           this.map_.getViewport().style.cursor = ''
-  //           this.isQuerying_ = false
-  //         }
-  //       }
-  //     } catch (error) {
-  //       console.error('Error fetching flat catalog:', error)
-  //     }
-  //   })
-  // }
+            // const node = flatCatalogue.find(
+            //   catItem => catItem.id === splittedFid[0]
+            // )
+
+            const { findById } = useThemes()
+            const node = findById(splittedFid[0])
+
+            const { toggleLayer } = useLayers()
+
+            if (node !== undefined && node !== null) {
+              // const layer = this.getLayerFunc_(node)
+              // const foundLayer = this.map_
+              //   .getLayers()
+              //   .getArray()
+              //   .find(
+              //     (curLayer: Layer) =>
+              //       curLayer.get('queryable_id') === layer.get('queryable_id')
+              //   )
+              // const idx = this.map_.getLayers().getArray().indexOf(foundLayer)
+              // if (idx === -1) {
+              //   this.map_.addLayer(layer)
+              // }
+              // layerLabel[splittedFid[0]] = layer.get('label')
+              layerLabel[splittedFid[0]] = node.layers as string
+              toggleLayer(node.id, true, false)
+            }
+
+            if (resp.ok) {
+              const data = await resp.json()
+              if (data.length > 0) {
+                return this.showInfo(
+                  true,
+                  data,
+                  layerLabel /*, showInfo, true*/
+                )
+              }
+            }
+          } catch (error) {
+            // this.clearQueryResult(this.QUERYPANEL_)
+            // this.infoOpen = false
+            this.map.getViewport().style.cursor = ''
+            // this.isQuerying_ = false
+          }
+        }
+      } catch (error) {
+        // console.error('Error fetching flat catalog:', error)
+      }
+    }
+  }
 
   async singleclickEvent(
     evt: MapBrowserEvent<any>,

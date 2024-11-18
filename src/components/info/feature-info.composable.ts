@@ -5,11 +5,14 @@ import { FeatureInfoService } from './feature-info.service'
 import { useFeatureInfoStore } from '@/stores/feature-info.store'
 import { FeatureInfo } from './feature-info.model'
 import { MapBrowserEvent } from 'ol'
+import { watchEffect } from 'vue'
+import { storeToRefs } from 'pinia'
 
 export default function useFeatureInfo() {
   const map = useMap().getOlMap()
   const { toggleInfoOpen } = useAppStore()
   const { setContent } = useFeatureInfoStore()
+  const { fid } = storeToRefs(useFeatureInfoStore())
 
   function init() {
     const featureInfoService = new FeatureInfoService(map)
@@ -24,6 +27,19 @@ export default function useFeatureInfo() {
           toggleInfoOpen(true)
         }
       })()
+    })
+
+    watchEffect(() => {
+      if (fid.value) {
+        ;(async () => {
+          const content: FeatureInfo[] | undefined =
+            await featureInfoService.getFeatureInfoById(fid.value as string)
+          if (content) {
+            setContent(content)
+            toggleInfoOpen(true)
+          }
+        })()
+      }
     })
   }
 

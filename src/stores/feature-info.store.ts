@@ -6,6 +6,7 @@ export const useFeatureInfoStore = defineStore(
   'featureInfo',
   () => {
     const content: ShallowRef<FeatureInfo[] | undefined> = shallowRef()
+    const fid: ShallowRef<string | undefined> = shallowRef()
 
     function setContent(value: FeatureInfo[]) {
       if (!value || value.length === 0) {
@@ -19,9 +20,15 @@ export const useFeatureInfoStore = defineStore(
       content.value = undefined
     }
 
+    function setFid(value: string) {
+      fid.value = value
+    }
+
     return {
       content,
+      fid,
       setContent,
+      setFid,
       clearContent,
     }
   },
