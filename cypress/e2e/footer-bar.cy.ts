@@ -26,6 +26,13 @@ describe('Footer bar', () => {
       cy.get('button[data-cy="drawButton"]').click()
       cy.get('[data-cy="myMapsPanel"]').should('exist')
     })
+
+    it('closes the info panel', () => {
+      cy.get('[data-cy="infoOpenClose"]').find('button').click()
+      cy.get('[data-cy="infoPanel"]').should('exist')
+      cy.get('button[data-cy="drawButton"]').click()
+      cy.get('[data-cy="infoPanel"]').should('not.exist')
+    })
   })
 
   describe('Layers button', () => {
@@ -65,15 +72,43 @@ describe('Footer bar', () => {
       it('Other panels are closed', () => {
         cy.get('[data-cy="styleSelector"]').should('not.exist')
         cy.get('[data-cy="layerPanel"]').should('not.exist')
+        cy.get('[data-cy="infoPanel"]').should('not.exist')
       })
 
-      describe('When clicking on myMapsPanel button', () => {
+      describe('When clicking on layers panel button', () => {
         beforeEach(() => {
           cy.get('[data-cy="layersOpenClose"]').find('button').click()
         })
 
-        it('closes the left panel', () => {
+        it('closes the mymaps panel', () => {
           cy.get('[data-cy="myMapsPanel"]').should('not.exist')
+        })
+      })
+    })
+  })
+
+  describe('Info button', () => {
+    describe('When opening Info panel', () => {
+      beforeEach(() => {
+        cy.get('[data-cy="infoOpenClose"]').find('button').click()
+      })
+
+      it('Info panel is shown', () => {
+        cy.get('[data-cy="infoPanel"]').should('exist')
+      })
+
+      it('Other panels are closed', () => {
+        cy.get('[data-cy="styleSelector"]').should('not.exist')
+        cy.get('[data-cy="layerPanel"]').should('not.exist')
+      })
+
+      describe('When clicking on layers panel button', () => {
+        beforeEach(() => {
+          cy.get('[data-cy="layersOpenClose"]').find('button').click()
+        })
+
+        it('closes the info panel', () => {
+          cy.get('[data-cy="infoPanel"]').should('not.exist')
         })
       })
     })

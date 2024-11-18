@@ -6,6 +6,7 @@ import LayerPanel from '@/components/layer-panel/layer-panel.vue'
 import LegendsPanel from '@/components/legends/legends-panel.vue'
 import StylePanel from '@/components/style-selector/style-panel.vue'
 import MyMapsPanel from '@/components/my-maps/my-maps-panel.vue'
+import InfoPanel from '@/components/info/info-panel.vue'
 import { screenSizeIsAtLeast } from '@/services/common/device.utils'
 import { useAppStore } from '@/stores/app.store'
 
@@ -14,6 +15,7 @@ const {
   layersOpen,
   legendsOpen,
   myMapsOpen,
+  infoOpen,
   styleEditorOpen,
   themeGridOpen,
   drawToolbarOpen,
@@ -31,6 +33,7 @@ watch(myMapsOpen, myMapsOpen => {
       layersOpen.value =
       themeGridOpen.value =
       legendsOpen.value =
+      infoOpen.value =
         false
   }
 })
@@ -41,6 +44,7 @@ watch(legendsOpen, legendsOpen => {
       styleEditorOpen.value =
       layersOpen.value =
       themeGridOpen.value =
+      infoOpen.value =
         false
   }
 })
@@ -51,6 +55,18 @@ watch(drawToolbarOpen, drawToolbarOpen => {
     layersOpen.value = false
     legendsOpen.value = false
     themeGridOpen.value = false
+    infoOpen.value = false
+  }
+})
+
+watch(infoOpen, infoOpen => {
+  if (infoOpen) {
+    myMapsOpen.value =
+      styleEditorOpen.value =
+      layersOpen.value =
+      themeGridOpen.value =
+      legendsOpen.value =
+        false
   }
 })
 </script>
@@ -74,5 +90,10 @@ watch(drawToolbarOpen, drawToolbarOpen => {
   <!-- MyMaps panel -->
   <div v-if="myMapsOpen" class="w-full md:w-80 bg-secondary z-10">
     <my-maps-panel />
+  </div>
+
+  <!-- Info panel -->
+  <div v-if="infoOpen" class="w-full md:w-80 bg-secondary z-10">
+    <info-panel />
   </div>
 </template>

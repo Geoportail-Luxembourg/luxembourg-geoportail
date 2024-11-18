@@ -49,5 +49,7 @@
   "Retry": "Retry",
   "small": "small",
   "Take measure": "Take measure",
-  "Update offline data": "Update offline data"
+  "Update offline data": "Update offline data",
+  "A right click (tap and hold on mobile)...": "A right click (tap and hold on mobile) will display information about the current location.",
+  "A short click (tap on mobile)...": "A short click (tap on mobile) on a map feature will select the feature and show more information."
 }
