@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { inject } from 'vue'
+import { computed, inject } from 'vue'
 
 import MapPopup from '@/components/map/map-popup.vue'
 import useDrawnFeatures from '@/composables/draw/drawn-features.composable'
@@ -11,7 +11,9 @@ defineProps<{
 const { getFeatCoordinates } = useDrawnFeatures()
 const emit = defineEmits(['closePopup'])
 const feature: DrawnFeature | undefined = inject('feature')
-const popupAnchor = feature ? getFeatCoordinates(feature) : undefined
+const popupAnchor = computed(() =>
+  feature ? getFeatCoordinates(feature) : undefined
+)
 
 function onClosePopup() {
   emit('closePopup')
