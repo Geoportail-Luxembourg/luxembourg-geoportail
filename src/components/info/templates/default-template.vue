@@ -20,13 +20,13 @@ defineProps({
 const { t } = useTranslation()
 </script>
 <template>
-  <div class="row">
-    <div class="col-xs-12">
-      <h1>{{ t(`${layers.layerLabel}`) }}</h1>
+  <div class="flex flex-col">
+    <div>
+      <h1 class="lux-poi-title">{{ t(`${layers.layerLabel}`) }}</h1>
       <div
         v-for="feature in layers.features"
         :key="feature.id"
-        class="poi-feature"
+        class="lux-poi-feature"
       >
         <h4 v-if="feature.attributes.label">
           {{ t(`${feature.attributes.label}`) }}
@@ -114,12 +114,9 @@ const { t } = useTranslation()
         <!-- TODO: implement intepreting the URL (getFeatureInfoById)-->
         <div v-if="hasValidFID(feature)">
           <span
-            ><a
-              class="text-black underline"
-              :href="`?fid=${feature.fid}`"
-              target="_blank"
-              >{{ t('Lien direct vers cet objet') }}</a
-            ></span
+            ><a :href="`?fid=${feature.fid}`" target="_blank">{{
+              t('Lien direct vers cet objet')
+            }}</a></span
           >
         </div>
       </div>

@@ -485,6 +485,22 @@
   .lux-legend hr {
     @apply my-2;
   }
+
+  .lux-poi-title {
+    @apply text-title-xl mt-[22px] mb-[11px];
+  }
+  .lux-poi-feature {
+    @apply bg-white bg-opacity-50 m-[5px] p-[10px];
+  }
+  .lux-poi-feature h4 {
+    @apply my-[11px] text-[20px];
+  }
+  .lux-poi-feature label {
+    @apply font-bold mb-[5px];
+  }
+  .lux-poi-feature a {
+    @apply text-black underline;
+  }
 }
 
 .fa-solid {
