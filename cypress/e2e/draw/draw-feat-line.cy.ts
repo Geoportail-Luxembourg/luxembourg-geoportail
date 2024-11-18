@@ -61,4 +61,16 @@ describe('Draw "Line"', () => {
         .should('contain.text', 'Changer le sens de la ligne')
     })
   })
+
+  describe('When using Escape key when drawing a line', () => {
+    it('ends the drawing and adds a new line', () => {
+      cy.get('*[data-cy="featItemName"]').should('have.length', 1)
+      cy.get('button[data-cy="drawLineButton"]').click()
+      cy.get('button[data-cy="drawLineButton"]').click()
+      cy.get('div.ol-viewport').click(250, 250, { force: true })
+      cy.get('div.ol-viewport').click(300, 300, { force: true })
+      cy.get('body').type('{esc}')
+      cy.get('*[data-cy="featItemName"]').should('have.length', 2)
+    })
+  })
 })
