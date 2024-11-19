@@ -90,7 +90,7 @@ watchEffect(() => {
 
 function onClickValidateRadius(radius: number) {
   if (feature.value) {
-    setRadius(feature.value as DrawnFeature, Number(radius), map, drawStore)
+    setRadius(feature.value as DrawnFeature, radius, map, drawStore)
   }
 }
 </script>

@@ -1,15 +1,16 @@
 <script setup lang="ts">
+import { inject, Reactive } from 'vue'
 import { useTranslation } from 'i18next-vue'
 import { DrawnFeature } from '@/services/draw/drawn-feature'
 import { capitalize } from '@/services/utils'
 
-const { t } = useTranslation()
-
-const props = defineProps<{
+defineProps<{
   linestyle: string
-  feature: DrawnFeature
 }>()
+
+const { t } = useTranslation()
 const emit = defineEmits(['changeLinestyle'])
+const feature: Reactive<DrawnFeature> = inject('feature')!
 
 function onClickChangeLineStyle(linestyle: string) {
   emit('changeLinestyle', linestyle)
@@ -19,10 +20,10 @@ function onClickChangeLineStyle(linestyle: string) {
 <template>
   <button
     :class="`lux-btn-grey${
-      props.feature.featureStyle.linestyle === props.linestyle ? ' pressed' : ''
+      feature.featureStyle.linestyle === linestyle ? ' pressed' : ''
     }`"
-    @click="onClickChangeLineStyle(props.linestyle)"
+    @click="onClickChangeLineStyle(linestyle)"
   >
-    {{ t(capitalize(props.linestyle)) }}
+    {{ t(capitalize(linestyle)) }}
   </button>
 </template>

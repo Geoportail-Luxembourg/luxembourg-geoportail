@@ -7,12 +7,14 @@ const props = withDefaults(
     max?: number
     step?: number
     value?: number
+    name?: string
   }>(),
   {
     min: 0,
     max: 10,
     step: 1,
     value: 0,
+    name: 'range',
   }
 )
 defineEmits(['change'])
@@ -31,6 +33,7 @@ const inputValue = ref(props.value)
       @input="$emit('change', inputValue)"
     />
     <input
+      :name="name"
       type="number"
       class="w-12"
       :min="min"
