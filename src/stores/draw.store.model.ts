@@ -21,19 +21,26 @@ export type DrawnFeatureType =
   | 'drawnCircle'
   | 'drawnPolygon'
 
+export type DrawnFeatureStyleShape =
+  | 'circle'
+  | 'square'
+  | 'cross'
+  | 'triangle'
+  // | 'star' // TODO: see if star option is used (look like it is not...)
+  | undefined
+
+export type Symboltype = 'us' | 'public'
+
 export interface DrawnFeatureStyle {
   angle: number
   color: string
   arrowcolor: string | undefined
-  // description: string,
   stroke: number
-  // isLabel: boolean,
   linestyle: string
-  // name: string,
   opacity: number
   showOrientation: boolean
-  shape: string
+  shape: DrawnFeatureStyleShape
   symbolId: string | undefined
+  symboltype: Symboltype | undefined // Is the symbol private or public?
   size: number
-  // isCircle: boolean,
 }

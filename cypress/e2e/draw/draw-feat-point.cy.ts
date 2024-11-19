@@ -143,6 +143,15 @@ describe('Draw "Point"', () => {
             cy.get('[data-cy="featStyleSymbolIcon"]').should('have.length', 2)
           })
         })
+
+        describe('When choosing a symbol', () => {
+          it('should close the list', () => {
+            cy.get('[data-cy="featStyleSymbolFilterList"]').should('exist')
+            cy.get('[data-cy="featStyleSymbolIcon"]').eq(1).click()
+            cy.get('[data-cy="featStyleSymbolFilterList"]').should('not.exist')
+            testFeatStyleEditionTabContent()
+          })
+        })
       })
 
       describe('When clicking close button', () => {
