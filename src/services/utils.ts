@@ -134,6 +134,11 @@ export function downloadFile(
   URL.revokeObjectURL(url)
 }
 
-export function upperCaseFirst(str: string) {
+/**
+ * Capitalized (only) the first letter of the given string
+ * @param str The string to capitalize
+ * @returns The capitalized string
+ */
+export function capitalize(str: string) {
   return str.charAt(0).toUpperCase() + str.slice(1)
 }

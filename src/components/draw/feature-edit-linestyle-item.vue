@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { useTranslation } from 'i18next-vue'
 import { DrawnFeature } from '@/services/draw/drawn-feature'
-import { upperCaseFirst } from '@/services/utils'
+import { capitalize } from '@/services/utils'
 
 const { t } = useTranslation()
 
@@ -23,6 +23,6 @@ function onClickChangeLineStyle(linestyle: string) {
     }`"
     @click="onClickChangeLineStyle(props.linestyle)"
   >
-    {{ t(upperCaseFirst(props.linestyle)) }}
+    {{ t(capitalize(props.linestyle)) }}
   </button>
 </template>
