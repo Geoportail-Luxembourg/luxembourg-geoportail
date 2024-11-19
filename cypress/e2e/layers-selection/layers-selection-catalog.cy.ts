@@ -67,11 +67,7 @@ describe('Catalogue', () => {
         const layers = (<AUTWindowOlMap>window).olMap
           .getLayers()
           .getArray()
-          .filter(
-            (l: any) =>
-              // regex match
-              !/feature(Edit)?Layer/.exec(l.get('cyLayerType'))
-          )
+          .filter((l: any) => !/feature(Edit)?Layer/.exec(l.get('cyLayerType')))
         expect(layers[0].get('id')).to.eq(556)
       })
       cy.get('[data-cy="catalog"]')
@@ -85,11 +81,7 @@ describe('Catalogue', () => {
         const layers = (<AUTWindowOlMap>window).olMap
           .getLayers()
           .getArray()
-          .filter(
-            (l: any) =>
-              // regex match
-              !/feature(Edit)?Layer/.exec(l.get('cyLayerType'))
-          )
+          .filter((l: any) => !/feature(Edit)?Layer/.exec(l.get('cyLayerType')))
         expect(layers[0].get('id')).to.eq(359)
         expect(layers[1].get('id')).to.eq(353)
       })
