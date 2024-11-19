@@ -4,6 +4,7 @@ import SidePanelLayout from '@/components/common/side-panel-layout.vue'
 import { useAppStore } from '@/stores/app.store'
 import { useMapStore } from '@/stores/map.store'
 import { storeToRefs } from 'pinia'
+import LocationInfo from './location-info.vue'
 
 const { t } = useTranslation()
 const appStore = useAppStore()
@@ -22,21 +23,24 @@ const { locationInfo } = storeToRefs(useMapStore())
     </template>
 
     <template v-slot:content>
-      <div>
-        Coordinates:
-        {{ locationInfo ? locationInfo : 'no selection' }}
-      </div>
+      <template v-if="locationInfo">
+        <LocationInfo />
+      </template>
 
-      <div class="text-white">
-        <ul class="list-disc pl-10">
-          <li>
-            {{ t(`A right click (tap and hold on mobile)...`, { ns: 'app' }) }}
-          </li>
-          <li>
-            {{ t(`A short click (tap on mobile)...`, { ns: 'app' }) }}
-          </li>
-        </ul>
-      </div>
+      <template v-else>
+        <div class="text-white">
+          <ul class="list-disc pl-10">
+            <li>
+              {{
+                t(`A right click (tap and hold on mobile)...`, { ns: 'app' })
+              }}
+            </li>
+            <li>
+              {{ t(`A short click (tap on mobile)...`, { ns: 'app' }) }}
+            </li>
+          </ul>
+        </div>
+      </template>
     </template>
   </side-panel-layout>
 </template>

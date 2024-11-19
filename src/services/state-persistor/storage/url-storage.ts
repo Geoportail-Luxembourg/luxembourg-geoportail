@@ -18,6 +18,45 @@ export class UrlStorage implements Storage {
     throw new Error('Method key() not implemented. ' + index)
   }
 
+  getStrippedUrl(opt_coordinate: number[] | undefined) {
+    // stripped by embedded app parameters
+    const url = new URL(window.location.toString())
+    const params = new URLSearchParams(url.search)
+
+    if (opt_coordinate !== undefined) {
+      params.set('X', Math.round(opt_coordinate[0]).toString())
+      params.set('Y', Math.round(opt_coordinate[1]).toString())
+    }
+    params.delete('localforage')
+    params.delete('applogin')
+    params.delete('ipv6')
+    params.delete('embeddedserver')
+
+    url.search = params.toString()
+
+    return url.toString()
+  }
+
+  async getShortUrl(opt_coordinate: number[] | undefined) {
+    const strippedUrl = this.getStrippedUrl(opt_coordinate)
+
+    const data = new URLSearchParams()
+    data.set('url', strippedUrl.replace('5173', '8080'))
+
+    const response = await fetch(
+      'https://migration.geoportail.lu/short/create',
+      {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/x-www-form-urlencoded',
+        },
+        body: data.toString(),
+      }
+    )
+
+    return await response.json()
+  }
+
   getSnappedUrl() {
     return this.snappedUrl
   }

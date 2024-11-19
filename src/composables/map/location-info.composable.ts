@@ -46,35 +46,39 @@ export default function useLocationInfo() {
     }
   })
 
+  map
+    .getViewport()
+    .addEventListener('contextmenu', event => event.preventDefault())
+
   listen(map, 'pointerdown', event =>
     handleClick(event as MapBrowserEvent<PointerEvent>)
   )
 
-  const setClickCordinate = (event: MapBrowserEvent<PointerEvent>) => {
+  const getClickCoordinate = (event: MapBrowserEvent<PointerEvent>) => {
     return map.getEventCoordinate(event.originalEvent)
-    // TODO reproject ?
   }
 
   const handleClick = function (event: MapBrowserEvent<PointerEvent>) {
-    const pixel = event.pixel
-
-    if (event.originalEvent.button === 0) {
-      // if left mouse click
-      locationInfo.value = undefined
-    }
+    startPixel = event.pixel
     if (event.originalEvent.button === 2) {
       // if right mouse click
-      locationInfo.value = setClickCordinate(event)
+      locationInfo.value = getClickCoordinate(event)
     } else if (event.originalEvent.pointerType == 'touch') {
       window.clearTimeout(holdTimeoutId)
-      startPixel = pixel
       holdTimeoutId = window.setTimeout(() => {
-        locationInfo.value = setClickCordinate(event)
+        locationInfo.value = getClickCoordinate(event)
       })
     }
   }
 
-  listen(map, 'pointerup', () => {
+  listen(map, 'pointerup', (event: any) => {
+    if (
+      startPixel &&
+      (event as MapBrowserEvent<PointerEvent>).originalEvent.button === 0
+    ) {
+      // if left mouse click
+      locationInfo.value = undefined
+    }
     window.clearTimeout(holdTimeoutId)
     startPixel = null
   })
