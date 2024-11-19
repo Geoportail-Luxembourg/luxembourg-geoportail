@@ -5,6 +5,7 @@ import { useAppStore } from '@/stores/app.store'
 import { useMapStore } from '@/stores/map.store'
 import { storeToRefs } from 'pinia'
 import { useFeatureInfoStore } from '@/stores/feature-info.store'
+import LocationInfo from './location-info.vue'
 import FeatureInfo from '@/components/info/feature-info.vue'
 import { onUnmounted } from 'vue'
 
@@ -33,20 +34,24 @@ onUnmounted(() => {
     </template>
 
     <template v-slot:content>
-      <div>
-        Coordinates:
-        {{ locationInfo ? locationInfo : 'no selection' }}
-      </div>
+      <template v-if="locationInfo">
+        <LocationInfo />
+      </template>
 
-        <ul class="list-disc pl-10">
-          <li>
-            {{ t(`A right click (tap and hold on mobile)...`, { ns: 'app' }) }}
-          </li>
-          <li>
-            {{ t(`A short click (tap on mobile)...`, { ns: 'app' }) }}
-          </li>
-        </ul>
-      </div>
+      <template v-else>
+        <div class="text-white">
+          <ul class="list-disc pl-10">
+            <li>
+              {{
+                t(`A right click (tap and hold on mobile)...`, { ns: 'app' })
+              }}
+            </li>
+            <li>
+              {{ t(`A short click (tap on mobile)...`, { ns: 'app' }) }}
+            </li>
+          </ul>
+        </div>
+      </template>
       <feature-info
         v-if="featureInfoPanelContent && !isLoading"
         :content="featureInfoPanelContent"
