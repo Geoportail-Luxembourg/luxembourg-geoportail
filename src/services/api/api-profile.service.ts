@@ -23,7 +23,7 @@ export interface ProfileJsonEntry {
  * @param nbPoints Nb points for the profile (100 points => 101 entries)
  * @returns
  */
-export async function getProfileJson(
+export async function fetchProfileJson(
   geom: string,
   id?: string | number,
   layers = 'dhm',

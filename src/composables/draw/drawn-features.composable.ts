@@ -45,6 +45,7 @@ export default function useDrawnFeatures() {
       showOrientation: false,
       shape: 'circle',
       symbolId: undefined,
+      symboltype: undefined,
       size: 10,
     } as DrawnFeatureStyle
 

@@ -1,11 +1,11 @@
 <script setup lang="ts">
-import { inject } from 'vue'
+import { inject, Reactive } from 'vue'
 import { useTranslation } from 'i18next-vue'
 
 import { DrawnFeature } from '@/services/draw/drawn-feature'
 
 const { t } = useTranslation()
-const feature: DrawnFeature | undefined = inject('feature')
+const feature: Reactive<DrawnFeature> = inject('feature')!
 </script>
 
 <template>
