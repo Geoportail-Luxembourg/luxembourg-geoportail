@@ -2,9 +2,12 @@
 import { useTranslation } from 'i18next-vue'
 import SidePanelLayout from '@/components/common/side-panel-layout.vue'
 import { useAppStore } from '@/stores/app.store'
+import { useMapStore } from '@/stores/map.store'
+import { storeToRefs } from 'pinia'
 
 const { t } = useTranslation()
 const appStore = useAppStore()
+const { locationInfo } = storeToRefs(useMapStore())
 </script>
 
 <template>
@@ -19,6 +22,11 @@ const appStore = useAppStore()
     </template>
 
     <template v-slot:content>
+      <div>
+        Coordinates:
+        {{ locationInfo ? locationInfo : 'no selection' }}
+      </div>
+
       <div class="text-white">
         <ul class="list-disc pl-10">
           <li>
