@@ -4,6 +4,7 @@ import { ref, Ref, ShallowRef, shallowRef } from 'vue'
 import useLayers from '@/composables/layers/layers.composable'
 import { dateToISOString } from '@/services/time.utils'
 import { LayerId, Layer, MapContext } from './map.store.model'
+import { Coordinate } from 'ol/coordinate'
 
 export const useMapStore = defineStore('map', () => {
   const layersService = useLayers()
@@ -15,6 +16,7 @@ export const useMapStore = defineStore('map', () => {
   const bgLayer: Ref<Layer | undefined | null> = ref(undefined) // undefined => at start app | null => blank bgLayer
   const minZoom: Ref<number | undefined> = ref(undefined)
   const maxZoom: Ref<number | undefined> = ref(undefined)
+  const locationInfo: Ref<Coordinate | undefined> = ref(undefined)
 
   function setBgLayer(layer: Layer | null) {
     bgLayer.value = layer
@@ -123,6 +125,7 @@ export const useMapStore = defineStore('map', () => {
     setIs3dActive,
     setIs3dMesh,
     hasLayer,
+    locationInfo,
   }
 })
 

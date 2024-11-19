@@ -2,6 +2,7 @@
 import { useTranslation } from 'i18next-vue'
 import SidePanelLayout from '@/components/common/side-panel-layout.vue'
 import { useAppStore } from '@/stores/app.store'
+import { useMapStore } from '@/stores/map.store'
 import { storeToRefs } from 'pinia'
 import { useFeatureInfoStore } from '@/stores/feature-info.store'
 import FeatureInfo from '@/components/info/feature-info.vue'
@@ -10,6 +11,7 @@ import { onUnmounted } from 'vue'
 const { t } = useTranslation()
 const appStore = useAppStore()
 const { clearContent } = useFeatureInfoStore()
+const { locationInfo } = storeToRefs(useMapStore())
 const { featureInfoPanelContent, isLoading } = storeToRefs(
   useFeatureInfoStore()
 )
@@ -31,7 +33,11 @@ onUnmounted(() => {
     </template>
 
     <template v-slot:content>
-      <div v-if="!featureInfoPanelContent" class="text-white">
+      <div>
+        Coordinates:
+        {{ locationInfo ? locationInfo : 'no selection' }}
+      </div>
+
         <ul class="list-disc pl-10">
           <li>
             {{ t(`A right click (tap and hold on mobile)...`, { ns: 'app' }) }}

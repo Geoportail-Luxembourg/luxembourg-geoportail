@@ -8,6 +8,7 @@ import { OlSynchronizer } from '@/composables/map/ol.synchronizer'
 import { OlViewSynchronizer } from '@/composables/map/ol-view.synchronizer'
 import { statePersistorMapService } from '@/services/state-persistor/state-persistor-map.service'
 import { statePersistorFeaturesService } from '@/services/state-persistor/state-persistor-features.service'
+import { statePersistorLocationInfo } from '@/services/state-persistor/state-persistor-location-info'
 import AttributionControl from '../map-controls/attribution-control.vue'
 import LocationControl from '../map-controls/location-control.vue'
 import Map3dControl from '../map-controls/map-3d.vue'
@@ -54,6 +55,7 @@ onMounted(() => {
     new OlViewSynchronizer(olMap)
     statePersistorMapService.bootstrap()
     statePersistorFeaturesService.bootstrap()
+    statePersistorLocationInfo.bootstrap()
     olMap.setTarget(mapContainer.value)
 
     // Direct access to olMap for cypress
