@@ -35,6 +35,7 @@ function onCloseProfile() {
       v-if="showProfil"
       class="absolute bottom-full top-auto z-20 flex flex-row justify-start"
     >
+      <!-- NB. Elevation profile for Measure tools is not yet fully functional: waiting for measures tools to be implemented first -->
       <feature-elevation-profile
         class="w-[450px]"
         @close="onCloseProfile"
