@@ -6,7 +6,7 @@ import CircleStyle from 'ol/style/Circle.js'
 import Fill from 'ol/style/Fill.js'
 import Stroke from 'ol/style/Stroke.js'
 import Style from 'ol/style/Style.js'
-import { Feature, FeatureInfo } from './feature-info.model'
+import { FeatureJSON, FeatureInfoJSON } from './feature-info.model'
 import { Geometry, GeometryCollection } from 'ol/geom'
 import { FeatureLike } from 'ol/Feature'
 import useThemes from '@/composables/themes/themes.composable'
@@ -39,10 +39,10 @@ export class FeatureInfoService {
   }
   map: Map
   featureLayer: VectorLayer<VectorSource<Geometry>>
-  content: FeatureInfo[]
+  content: FeatureInfoJSON[]
   isQuerying = false
-  responses: FeatureInfo[] = []
-  lastHighlightedFeatures: Feature[] = []
+  responses: FeatureInfoJSON[] = []
+  lastHighlightedFeatures: FeatureJSON[] = []
 
   createFeatureLayer() {
     this.featureLayer = new VectorLayer({
@@ -102,7 +102,9 @@ export class FeatureInfoService {
     this.map.addLayer(this.featureLayer)
   }
 
-  async getFeatureInfoById(fid: string): Promise<FeatureInfo[] | undefined> {
+  async getFeatureInfoById(
+    fid: string
+  ): Promise<FeatureInfoJSON[] | undefined> {
     const fids = fid.split(',')
     for (const curFid of fids) {
       const splittedFid = curFid.split('_')
@@ -184,7 +186,7 @@ export class FeatureInfoService {
   async singleclickEvent(
     evt: MapBrowserEvent<any>,
     infoMymaps: boolean
-  ): Promise<FeatureInfo[] | undefined> {
+  ): Promise<FeatureInfoJSON[] | undefined> {
     const layers = this.map.getLayers().getArray()
     const layersList = []
     const layerLabel: { [key: string]: string } = {}
@@ -300,7 +302,7 @@ export class FeatureInfoService {
 
   showInfo(
     shiftKey: boolean,
-    data: FeatureInfo[],
+    data: FeatureInfoJSON[],
     layerLabel: { [key: string]: string },
     // openInfoPanel: boolean
     fit: boolean
@@ -388,7 +390,7 @@ export class FeatureInfoService {
     this.featureLayer.getSource()?.clear()
   }
 
-  highlightFeatures(features: Feature[], fit: boolean): void {
+  highlightFeatures(features: FeatureJSON[], fit: boolean): void {
     if (features !== undefined && features !== null) {
       if (this.map.getLayers().getArray().indexOf(this.featureLayer) === -1) {
         this.map.addLayer(this.featureLayer)
@@ -399,7 +401,7 @@ export class FeatureInfoService {
         featureProjection: this.map.getView().getProjection(),
       }
 
-      const jsonFeatures = new GeoJSON().readFeatures(
+      const olFeatures = new GeoJSON().readFeatures(
         {
           type: 'FeatureCollection',
           features: features,
@@ -407,11 +409,11 @@ export class FeatureInfoService {
         encOpt
       )
 
-      if (jsonFeatures.length > 0) {
-        let extent: Extent = jsonFeatures[0].getGeometry()?.getExtent() || [
+      if (olFeatures.length > 0) {
+        let extent: Extent = olFeatures[0].getGeometry()?.getExtent() || [
           0, 0, 0, 0,
         ]
-        for (const curFeature of jsonFeatures) {
+        for (const curFeature of olFeatures) {
           const curExtent = curFeature.getGeometry()?.getExtent() || [
             0, 0, 0, 0,
           ]

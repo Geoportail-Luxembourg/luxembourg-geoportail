@@ -1,18 +1,16 @@
-import { Geometry } from 'ol/geom'
-
-export interface Feature {
+export interface FeatureJSON {
   type: string
-  geometry: Geometry
+  geometry: GeometryJSON
   fid: string
   id: string
   attributes: Attributes
   alias: Record<string, unknown>
 }
 
-// interface Geometry {
-//   type: string
-//   coordinates: number[][][]
-// }
+interface GeometryJSON {
+  type: string
+  coordinates: number[][][]
+}
 
 export interface Attributes {
   name: string
@@ -25,8 +23,8 @@ export interface Attributes {
   value: string
 }
 
-export interface FeatureInfo {
-  features: Feature[]
+export interface FeatureInfoJSON {
+  features: FeatureJSON[]
   remote_template: boolean
   template: string
   layer: string

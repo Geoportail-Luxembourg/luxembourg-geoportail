@@ -1,4 +1,4 @@
-import { Feature } from '../feature-info.model'
+import { FeatureJSON } from '../feature-info.model'
 
 export function prefixKeys(
   attributes: { [key: string]: any },
@@ -12,7 +12,7 @@ export function prefixKeys(
     .map(([key, value]) => ({ key: prefix + key, value }))
 }
 
-export function hasAttributes(feature: Feature): boolean {
+export function hasAttributes(feature: FeatureJSON): boolean {
   return (
     feature.attributes !== undefined &&
     Object.keys(feature.attributes).length > 0

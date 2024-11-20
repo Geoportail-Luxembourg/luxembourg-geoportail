@@ -3,7 +3,7 @@ import useMap from '@/composables/map/map.composable'
 import { listen } from 'ol/events'
 import { FeatureInfoService } from './feature-info.service'
 import { useFeatureInfoStore } from '@/stores/feature-info.store'
-import { FeatureInfo } from './feature-info.model'
+import { FeatureInfoJSON } from './feature-info.model'
 import { MapBrowserEvent } from 'ol'
 import { watchEffect } from 'vue'
 import { storeToRefs } from 'pinia'
@@ -20,7 +20,7 @@ export default function useFeatureInfo() {
     listen(map, 'pointerup', event => {
       ;(async () => {
         const mapBrowserEvent = event as MapBrowserEvent<any>
-        const content: FeatureInfo[] | undefined =
+        const content: FeatureInfoJSON[] | undefined =
           await featureInfoService.singleclickEvent(mapBrowserEvent, false)
         if (content) {
           setContent(content)
@@ -32,7 +32,7 @@ export default function useFeatureInfo() {
     watchEffect(() => {
       if (fid.value) {
         ;(async () => {
-          const content: FeatureInfo[] | undefined =
+          const content: FeatureInfoJSON[] | undefined =
             await featureInfoService.getFeatureInfoById(fid.value as string)
           if (content) {
             setContent(content)

@@ -2,11 +2,11 @@
 import { defineProps } from 'vue'
 import DefaultTemplate from '@/components/info/templates/default-template.vue'
 import LignesBusTemplate from './templates/lignes-bus-template.vue'
-import { FeatureInfo } from './feature-info.model'
+import { FeatureInfoJSON } from './feature-info.model'
 
 defineProps({
   content: {
-    type: Array as () => FeatureInfo[],
+    type: Array as () => FeatureInfoJSON[],
     required: true,
   },
 })
