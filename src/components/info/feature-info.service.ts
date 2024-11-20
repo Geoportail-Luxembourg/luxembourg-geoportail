@@ -10,7 +10,6 @@ import { FeatureInfo } from './feature-info.model'
 import { Geometry } from 'ol/geom'
 import { FeatureLike } from 'ol/Feature'
 import useThemes from '@/composables/themes/themes.composable'
-import useLayers from '@/composables/layers/layers.composable'
 
 const INFO_SERVICE_URL = import.meta.env.VITE_GET_INFO_SERVICE_URL
 
@@ -134,8 +133,6 @@ export class FeatureInfoService {
             const { findById } = useThemes()
             const node = findById(splittedFid[0])
 
-            const { toggleLayer } = useLayers()
-
             if (node !== undefined && node !== null) {
               // const layer = this.getLayerFunc_(node)
               // const foundLayer = this.map_
@@ -151,7 +148,6 @@ export class FeatureInfoService {
               // }
               // layerLabel[splittedFid[0]] = layer.get('label')
               layerLabel[splittedFid[0]] = node.layers as string
-              toggleLayer(node.id, true, false)
             }
 
             if (resp.ok) {
