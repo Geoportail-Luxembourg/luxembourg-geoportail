@@ -2,13 +2,13 @@ import Layer from 'ol/layer/Layer.js'
 import { createCanvasContext2D } from 'ol/dom.js'
 import { toRadians } from 'ol/math.js'
 
-const INCHES_PER_METER_ = 39.37
-const DOTS_PER_INCH_ = 72
+const INCHES_PER_METER = 39.37
+const DOTS_PER_INCH = 72
 
 /**
  * @extends {Layer<any>}
  */
-export default class Mask extends Layer {
+class Mask extends Layer {
   constructor(options = {}) {
     super(options)
 
@@ -55,9 +55,9 @@ export default class Mask extends Layer {
     const resolution = frameState.viewState.resolution
 
     const extentHalfWidth =
-      ((width / DOTS_PER_INCH_ / INCHES_PER_METER_) * scale) / resolution / 2
+      ((width / DOTS_PER_INCH / INCHES_PER_METER) * scale) / resolution / 2
     const extentHalfHeight =
-      ((height / DOTS_PER_INCH_ / INCHES_PER_METER_) * scale) / resolution / 2
+      ((height / DOTS_PER_INCH / INCHES_PER_METER) * scale) / resolution / 2
 
     const rotation =
       this.getRotation() !== undefined ? toRadians(this.getRotation()) : 0
@@ -118,3 +118,5 @@ export default class Mask extends Layer {
     this.rotation = rotation
   }
 }
+
+export { Mask, DOTS_PER_INCH, INCHES_PER_METER }
