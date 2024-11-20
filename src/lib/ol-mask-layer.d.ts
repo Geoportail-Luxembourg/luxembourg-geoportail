@@ -1,6 +1,7 @@
 import Layer from 'ol/layer/Layer'
 
-export default Mask
+declare const DOTS_PER_INCH: number
+declare const INCHES_PER_METER: number
 
 declare type OptionType = {
   id: unknown
@@ -14,3 +15,5 @@ declare class Mask extends Layer {
   setScale(scale: number): void
   setRotation(rotation: number | undefined): void
 }
+
+export { Mask, DOTS_PER_INCH, INCHES_PER_METER }

@@ -1,6 +1,7 @@
 import { Metadata } from '@/composables/themes/themes.model'
 import { useThemeStore } from '@/stores/config.store'
 import spec from './spec.json' assert { type: 'json' }
+import { DOTS_PER_INCH, INCHES_PER_METER } from '@/lib/ol-mask-layer'
 
 const DEFAULT_MAP_SCALES = [
   1500, 2500, 5000, 10000, 15000, 20000, 25000, 50000, 80000, 100000, 125000,
@@ -45,6 +46,9 @@ export const enum PRINT_FORMAT {
 
 export const BASE_URL = 'http://localhost:8080'
 
+const getWidth = (scale: number, width: number, resolution: number): number =>
+  Math.round(((width / DOTS_PER_INCH / INCHES_PER_METER) * scale) / resolution)
+
 export class PrintService {
   getScales(): number[] {
     const metadata: Metadata | undefined = useThemeStore().theme?.metadata
@@ -88,9 +92,17 @@ export class PrintService {
     return MAP_SIZES_[LAYOUTS.indexOf(layout)]
   }
 
-  getNearestScale(scales: number[], scale: number): number {
-    return scales.reduce((prev, curr) =>
-      Math.abs(curr - scale) < Math.abs(prev - scale) ? curr : prev
+  getNearestScale(width: number, layout: string, resolution: number): number {
+    const scales = this.getScales()
+    const layoutWidth: number =
+      MAP_SIZES_[LAYOUTS.indexOf(layout)][0] || MAP_SIZES_[0][0]
+
+    return (
+      scales
+        .reverse()
+        .find(
+          (scale: number) => getWidth(scale, layoutWidth, resolution) < width
+        ) || scales[0]
     )
   }
 }

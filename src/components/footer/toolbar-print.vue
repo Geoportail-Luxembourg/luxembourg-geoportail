@@ -2,18 +2,19 @@
 import DropdownList from '@/components/common/dropdown-list.vue'
 import useMap from '@/composables/map/map.composable'
 import { useJobStatus } from '@/composables/print/jobStatus.composable'
-import Mask from '@/lib/ol-mask-layer'
+import { Mask } from '@/lib/ol-mask-layer'
 import { PRINT_FORMAT, printService } from '@/services/print.service'
 import { useTranslation } from 'i18next-vue'
 import { computed, onMounted, onUnmounted, ref } from 'vue'
 import { useAlertNotificationsStore } from '@/stores/alert-notifications.store'
 import { AlertNotificationType } from '@/stores/alert-notifications.store.model'
+import { v4 as uuidv4 } from 'uuid'
 
 const { startPolling } = useJobStatus()
 const { addNotification } = useAlertNotificationsStore()
 
 const { t } = useTranslation()
-const uuid = 'uuid' // FIXME AAT: replace with real uuid
+const uuid = uuidv4()
 
 const map = useMap().getOlMap()
 const mask = new Mask({ id: 'mask', opacity: 0 })
@@ -27,6 +28,7 @@ const layouts = computed(() =>
   }))
 )
 const changeLayout = (value: string) => {
+  layout.value = value
   layoutPlaceholder.value = value
   mask.setSize(printService.getSize(value))
   map.render()
@@ -60,13 +62,21 @@ const print = async (format: PRINT_FORMAT) => {
   }
 }
 
-// Initial values
-changeScale(scales.value[0].value.toString())
-changeLayout(layouts.value[0].value)
-
 onMounted(() => {
   map.addLayer(mask)
   mask.setOpacity(0.5)
+
+  // Initial values
+  changeLayout(layouts.value[0].value)
+  changeScale(
+    printService
+      .getNearestScale(
+        map.getSize()![0],
+        layout.value,
+        map.getView().getResolution()!
+      )
+      .toString()
+  )
 })
 onUnmounted(() => {
   map.removeLayer(mask)

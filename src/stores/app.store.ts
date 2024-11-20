@@ -123,6 +123,10 @@ export const useAppStore = defineStore(
 
     function togglePrintToolbarOpen(open?: boolean) {
       printToolbarOpen.value = open ?? !printToolbarOpen.value
+      if (printToolbarOpen.value) {
+        drawToolbarOpen.value = false
+        myMapsOpen.value = false
+      }
     }
 
     return {
