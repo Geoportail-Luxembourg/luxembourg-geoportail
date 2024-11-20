@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { defineProps } from 'vue'
-import { FeatureInfo } from '../feature-info.model'
+import { FeatureInfoJSON } from '../feature-info.model'
 import { useTranslation } from 'i18next-vue'
 import {
   hasAttributes,
@@ -13,7 +13,7 @@ import {
 import i18next from 'i18next'
 defineProps({
   layers: {
-    type: Object as () => FeatureInfo,
+    type: Object as () => FeatureInfoJSON,
     required: true,
   },
 })

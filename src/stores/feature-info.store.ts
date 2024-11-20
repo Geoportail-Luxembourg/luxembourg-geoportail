@@ -1,14 +1,14 @@
-import { FeatureInfo } from '@/components/info/feature-info.model'
+import { FeatureInfoJSON } from '@/components/info/feature-info.model'
 import { acceptHMRUpdate, defineStore } from 'pinia'
 import { shallowRef, ShallowRef } from 'vue'
 
 export const useFeatureInfoStore = defineStore(
   'featureInfo',
   () => {
-    const content: ShallowRef<FeatureInfo[] | undefined> = shallowRef()
+    const content: ShallowRef<FeatureInfoJSON[] | undefined> = shallowRef()
     const fid: ShallowRef<string | undefined> = shallowRef()
 
-    function setContent(value: FeatureInfo[]) {
+    function setContent(value: FeatureInfoJSON[]) {
       if (!value || value.length === 0) {
         content.value = undefined
       } else {
