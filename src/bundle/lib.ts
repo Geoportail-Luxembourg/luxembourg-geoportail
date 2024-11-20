@@ -58,8 +58,6 @@ import { clearLayersCache } from '@/stores/layers.cache'
 import i18next, { InitOptions } from 'i18next'
 import backend from 'i18next-http-backend'
 import I18NextVue from 'i18next-vue'
-import formatLengthDirective from '@/directives/format-length.directive'
-import formatAreaDirective from '@/directives/format-area.directive'
 import formatMeasureDirective from '@/directives/format-measure.directive'
 
 import App from '../App.vue'
@@ -91,8 +89,6 @@ export default function useLuxLib(options: LuxLibOptions) {
   app.use(createPinia())
   app.use(I18NextVue, { i18next })
   app.use(VueDOMPurifyHTML)
-  app.use(formatLengthDirective)
-  app.use(formatAreaDirective)
   app.use(formatMeasureDirective)
 
   const createElementInstance = (component = {}, app = null) => {

@@ -4,8 +4,9 @@ export type TFormatMeasureType = 'elevation' | 'length' | 'area'
 
 /**
  * Note: Formatting utils can be used via directives in HTML templates.
- * v-format-length="value"
- * v-format-area="value"
+ * <span v-format-measures.area="2">value</span>
+ * <span v-format-measures.length>value</span>
+ * <span v-format-measures.elevation>value</span>
  */
 
 export function formatDate(dateString: string, language: string = 'fr-FR') {
