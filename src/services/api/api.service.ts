@@ -6,14 +6,22 @@ export async function fetchApi(
   method: 'POST' | 'GET' | 'PUT' = 'GET',
   contentType = 'application/x-www-form-urlencoded'
 ) {
-  const body = new URLSearchParams(payload)
   const headers = { 'Content-Type': contentType }
-  const response = await fetch(url, {
+  const options: RequestInit = {
     method,
     credentials: CREDENTIALS_ORIGIN,
     headers,
-    body,
-  })
+  }
+  let endpoint = url
+
+  if (method === 'GET') {
+    const params = new URLSearchParams(payload)
+    endpoint = `${url}?${params.toString()}`
+  } else {
+    options.body = new URLSearchParams(payload)
+  }
+
+  const response = await fetch(endpoint, options)
 
   if (!response.ok) {
     throw new Error('Error while trying to call api')
