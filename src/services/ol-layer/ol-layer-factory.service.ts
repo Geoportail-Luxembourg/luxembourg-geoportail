@@ -36,7 +36,7 @@ export class OlLayerFactoryService {
     if (!olLayer) {
       switch (layer.type) {
         case 'position':
-          return this.createOlLayerFeature(layer)
+          return this.createOlLayerFeaturePosition(layer)
         case LayerTypeValue.WMS:
           olLayer = olLayerWmsHelper.createOlLayer(layer)
           break
@@ -58,7 +58,7 @@ export class OlLayerFactoryService {
     return olLayer
   }
 
-  createOlLayerFeature(layer: LayerFeature): OlLayer {
+  createOlLayerFeaturePosition(layer: LayerFeature): OlLayer {
     const olLayer = olLayerFeaturePositionHelper.createOlLayer()
 
     olLayer.set(OLLAYER_PROP_ID, layer.id)
