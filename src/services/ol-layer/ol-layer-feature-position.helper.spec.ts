@@ -11,7 +11,7 @@ vi.mock('./styles.helper', () => ({
 
 describe('PositionVectorLayer', () => {
   const layer = new PositionVectorLayer({})
-  layer.createGeomarker()
+  layer.createGeoMarker()
 
   it('should initialize with a geoMarker and a VectorSource', () => {
     const source = layer.getSource()
@@ -30,7 +30,7 @@ describe('PositionVectorLayer', () => {
   })
 
   it('should create a new geoMarker if none exists when moving', () => {
-    layer.removeGeomarker()
+    layer.removeGeoMarker()
     expect(layer.geoMarker).toBeUndefined()
 
     layer.moveGeoMarker(15, 25)
@@ -39,7 +39,7 @@ describe('PositionVectorLayer', () => {
   })
 
   it('should remove the geoMarker and clear the source', () => {
-    layer.removeGeomarker()
+    layer.removeGeoMarker()
 
     expect(layer.geoMarker).toBeUndefined()
     expect(layer.getSource()?.getFeatures().length).toBe(0)

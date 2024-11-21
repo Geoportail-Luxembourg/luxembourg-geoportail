@@ -58,7 +58,7 @@ export default function useProfilePosition(dataset?: ProfileData) {
     if (x && y && displayGeoMarker.value) {
       overlay?.moveGeoMarker(x, y)
     } else {
-      overlay?.removeGeomarker()
+      overlay?.removeGeoMarker()
     }
   })
 
