@@ -117,15 +117,15 @@ function onOutProfile() {
       <div class="grow cursor-default" data-cy="featItemProfileCumul">
         <template v-if="profileData">
           <span>
-            &Delta;+<span v-format-measure.elevation>{{ elevationGain }}</span>
+            &Delta;+<span v-format-measure.elevation="elevationGain"></span>
           </span>
           <span>
-            &Delta;<span v-format-measure.elevation>{{ elevationLoss }}</span>
+            &Delta;<span v-format-measure.elevation="elevationLoss"></span>
           </span>
           <span>
-            &Delta;<span v-format-measure.elevation>{{
-              cumulativeElevation
-            }}</span>
+            &Delta;<span
+              v-format-measure.elevation="cumulativeElevation"
+            ></span>
           </span>
         </template>
       </div>

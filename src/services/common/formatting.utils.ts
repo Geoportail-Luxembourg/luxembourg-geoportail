@@ -1,12 +1,12 @@
 import i18next from 'i18next'
 
-export type TFormatMeasureType = 'elevation' | 'length' | 'area'
+export type FormatMeasureType = 'elevation' | 'length' | 'area'
 
 /**
  * Note: Formatting utils can be used via directives in HTML templates.
- * <span v-format-measures.area="2">value</span>
- * <span v-format-measures.length>value</span>
- * <span v-format-measures.elevation>value</span>
+ * <span v-format-measure:2.area="value"></span>
+ * <span v-format-measure.length="value"></span>
+ * <span v-format-measure.elevation="value"></span>
  */
 
 export function formatDate(dateString: string, language: string = 'fr-FR') {
@@ -25,7 +25,7 @@ export function formatDate(dateString: string, language: string = 'fr-FR') {
 export function formatMeasure(
   value: number | null,
   digits?: number,
-  type?: TFormatMeasureType
+  type?: FormatMeasureType
 ) {
   if (value === null) {
     return i18next.t('N/A', { ns: 'client' })
@@ -50,7 +50,7 @@ export function formatMeasure(
  */
 export function formatElevation(value: number | string, digits = 0): string {
   return <string>(
-    (isNaN(+value) ? value : `${(<number>value).toFixed(digits)} m`)
+    (isNaN(+value) ? value : `${(<number>+value).toFixed(digits)} m`)
   )
 }
 

@@ -99,14 +99,14 @@ function onClickValidateRadius(radius: number) {
   <div class="lux-drawing-item-measurements">
     <!-- Feature length, for LineString, Circle, Polygon -->
     <div data-cy="featItemLength" v-if="featLength">
-      <span>{{ t('Length:') }}</span>
-      <span v-format-measures.length>{{ featLength }}</span>
+      <span class="mr-1">{{ t('Length:') }}</span>
+      <span v-format-measure.length="featLength"></span>
     </div>
 
     <!-- Feature area, for Circle, Polygon -->
     <div data-cy="featItemArea" v-if="featArea">
-      <span>{{ t('Area:') }}</span>
-      <span v-format-measures.area>{{ featArea }}</span>
+      <span class="mr-1">{{ t('Area:') }}</span>
+      <span v-format-measure.area="featArea"></span>
     </div>
 
     <!-- Feature radius, for Circle -->
@@ -115,10 +115,11 @@ function onClickValidateRadius(radius: number) {
       v-if="featureType === 'drawnCircle'"
       class="flex items-center"
     >
-      <span>{{ t('Rayon:') }} </span>
-      <span v-if="!isEditingFeature" v-format-measures.length>{{
-        featRadius
-      }}</span>
+      <span class="mr-1">{{ t('Rayon:') }} </span>
+      <span
+        v-if="!isEditingFeature"
+        v-format-measure.length="featRadius"
+      ></span>
       <!-- Radius is editable when edition mode is on -->
       <div v-else class="flex">
         <input
@@ -140,9 +141,10 @@ function onClickValidateRadius(radius: number) {
     <!-- Feature elevation, for Point -->
     <div v-if="featureType === 'drawnPoint'">
       <span>{{ t('Elevation') }}: </span>
-      <span data-cy="featItemElevation" v-format-measures.length>{{
-        featElevation
-      }}</span>
+      <span
+        data-cy="featItemElevation"
+        v-format-measure.elevation="featElevation"
+      ></span>
     </div>
 
     <!-- Feature elevation profile LineString -->

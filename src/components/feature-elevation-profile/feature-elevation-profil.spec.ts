@@ -78,7 +78,6 @@ describe('FeatureElevationProfile', () => {
       global,
     })
 
-    await nextTick() // wait for execution of `onMounted`
     await nextTick()
 
     expect(wrapper.text()).toContain('Δ+699')
