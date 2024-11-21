@@ -5,6 +5,7 @@ const POLLING_INTERVAL = 1000
 
 export function useJobStatus() {
   const jobStatus: Ref<string | null> = ref(null)
+  const url: Ref<string | null> = ref(null)
   let intervalId: number | null = null
 
   const pollJobStatus = async (jobId: string) => {
@@ -14,7 +15,7 @@ export function useJobStatus() {
       )
       jobStatus.value = status
       if (status === 'finished' && done && downloadURL) {
-        window.open(downloadURL, '_blank')
+        url.value = downloadURL
         clearPolling()
       }
     } catch (_error) {
@@ -37,5 +38,5 @@ export function useJobStatus() {
 
   onUnmounted(() => clearPolling())
 
-  return { jobStatus, startPolling }
+  return { jobStatus, url, startPolling }
 }
