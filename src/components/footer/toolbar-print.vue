@@ -4,13 +4,13 @@ import useMap from '@/composables/map/map.composable'
 import { useJobStatus } from '@/composables/print/jobStatus.composable'
 import { Mask } from '@/lib/ol-mask-layer'
 import { PRINT_FORMAT, printService } from '@/services/print.service'
-import { useTranslation } from 'i18next-vue'
-import { computed, onMounted, onUnmounted, ref } from 'vue'
 import { useAlertNotificationsStore } from '@/stores/alert-notifications.store'
 import { AlertNotificationType } from '@/stores/alert-notifications.store.model'
+import { useTranslation } from 'i18next-vue'
 import { v4 as uuidv4 } from 'uuid'
+import { computed, onMounted, onUnmounted, ref, watch } from 'vue'
 
-const { startPolling } = useJobStatus()
+const { url, startPolling } = useJobStatus()
 const { addNotification } = useAlertNotificationsStore()
 
 const { t } = useTranslation()
@@ -61,6 +61,8 @@ const print = async (format: PRINT_FORMAT) => {
     )
   }
 }
+
+watch(url, downloadURL => downloadURL && window.open(downloadURL, '_blank'))
 
 onMounted(() => {
   map.addLayer(mask)
