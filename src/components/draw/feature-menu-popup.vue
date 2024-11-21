@@ -10,18 +10,18 @@ import MenuPopupItem from '@/components/common/menu-popup/menu-popup-item.vue'
 import { DrawnFeature } from '@/services/draw/drawn-feature'
 import {
   exportFeatureService,
-  TFeatExport,
-  type TExportFormat,
+  FeatExport,
+  type ExportFormat,
 } from '@/services/export-feature/export-feature.service'
 
 const { t } = useTranslation()
 const feature: DrawnFeature = inject('feature')!
 
-function download(format: TExportFormat) {
+function download(format: ExportFormat) {
   exportFeatureService.export(
     feature.map,
     format,
-    <TFeatExport>[<Feature<Geometry>>feature],
+    <FeatExport>[<Feature<Geometry>>feature],
     feature.label,
     true
   )

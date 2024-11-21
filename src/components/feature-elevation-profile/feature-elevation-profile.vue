@@ -24,7 +24,7 @@ import { useProfilePositionStore } from '@/stores/profile-position.store'
 import { DrawnFeature } from '@/services/draw/drawn-feature'
 import {
   exportFeatureService,
-  TFeatExport,
+  FeatExport,
 } from '@/services/export-feature/export-feature.service'
 import { transform } from 'ol/proj'
 import { PROJECTION_LUX } from '@/composables/map/map.composable'
@@ -90,7 +90,7 @@ function exportCSV() {
     exportFeatureService.export(
       props.feature?.map,
       'csv',
-      <TFeatExport>(<Feature<Geometry>>props.feature),
+      <FeatExport>(<Feature<Geometry>>props.feature),
       props.feature.label
     )
 }
