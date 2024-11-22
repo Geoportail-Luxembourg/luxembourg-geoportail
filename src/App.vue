@@ -89,7 +89,7 @@ onUnmounted(() => window.removeEventListener('resize', map.resize))
         </div>
       </main>
 
-      <footer-bar class="fixed bottom-5 sm:static z-20" />
+      <footer-bar class="fixed bottom-5 sm:static" />
       <alert-notifications />
     </template>
 
