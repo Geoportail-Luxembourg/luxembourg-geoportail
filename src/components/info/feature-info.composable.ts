@@ -19,6 +19,7 @@ export default function useFeatureInfo() {
   const { fid } = storeToRefs(useFeatureInfoStore())
   const { toggleInfoOpen } = useAppStore()
   const { findById } = useThemes()
+  const responses = ref<FeatureInfoJSON[]>([])
   const lastHighlightedFeatures = ref<FeatureJSON[]>([])
   const featureInfoService = new FeatureInfoService(map)
 
@@ -26,32 +27,20 @@ export default function useFeatureInfo() {
     listen(map, 'pointerup', event => {
       ;(async () => {
         const mapBrowserEvent = event as MapBrowserEvent<any>
-        const content: FeatureInfoJSON[] | undefined = await singleclickEvent(
-          mapBrowserEvent,
-          false
-        )
-        if (content) {
-          setContent(content)
-        }
+        await singleclickEvent(mapBrowserEvent, false)
       })()
     })
 
     watchEffect(() => {
       if (fid.value) {
         ;(async () => {
-          const content: FeatureInfoJSON[] | undefined =
-            await getFeatureInfoById(fid.value as string)
-          if (content) {
-            setContent(content)
-          }
+          await getFeatureInfoById(fid.value as string)
         })()
       }
     })
   }
 
-  async function getFeatureInfoById(
-    fid: string
-  ): Promise<FeatureInfoJSON[] | undefined> {
+  async function getFeatureInfoById(fid: string): Promise<void> {
     const fids = fid.split(',')
     for (const curFid of fids) {
       const splittedFid = curFid.split('_')
@@ -84,14 +73,11 @@ export default function useFeatureInfo() {
             if (resp.ok) {
               const data = await resp.json()
               if (data.length > 0) {
-                return showInfo(true, data, layerLabel, openInfoPanel, true)
+                showInfo(true, data, layerLabel, openInfoPanel, true)
               }
             }
           } catch (error) {
-            clearQueryResult()
-            toggleInfoOpen(false)
-            setLoading(false)
-            map.getViewport().style.cursor = ''
+            reset()
           }
         }
       } catch (error) {
@@ -103,7 +89,7 @@ export default function useFeatureInfo() {
   async function singleclickEvent(
     evt: MapBrowserEvent<any>,
     infoMymaps: boolean
-  ): Promise<FeatureInfoJSON[] | undefined> {
+  ): Promise<void> {
     const layers = map.getLayers().getArray()
     const layersList = []
     const layerLabel: { [key: string]: string } = {}
@@ -177,22 +163,14 @@ export default function useFeatureInfo() {
         if (resp.ok) {
           const data = await resp.json()
           if (data.length > 0) {
-            return showInfo(
-              evt.originalEvent.shiftKey,
-              data,
-              layerLabel,
-              true,
-              false
-            )
+            showInfo(evt.originalEvent.shiftKey, data, layerLabel, true, false)
           } else {
-            setLoading(false)
-            map.getViewport().style.cursor = ''
             lastHighlightedFeatures.value = []
             featureInfoService.highlightFeatures(
               lastHighlightedFeatures.value,
               false
             )
-            clearQueryResult()
+            reset()
             // TODO: temporarily make work with v3 and migrate onse mymaps available
             // if (infoMymaps) {
             //   if (!this.selectMymapsFeature_(evt.pixel)) {
@@ -206,10 +184,8 @@ export default function useFeatureInfo() {
           throw new Error('Network response was not ok')
         }
       } catch (error) {
-        clearQueryResult()
-        toggleInfoOpen(false)
-        setLoading(false)
-        map.getViewport().style.cursor = ''
+        reset()
+
         // throw new Error('Some error occured')
       }
     } else {
@@ -226,51 +202,50 @@ export default function useFeatureInfo() {
     openInfoPanel: boolean,
     fit: boolean
   ) {
-    let responses: FeatureInfoJSON[] = []
     if (shiftKey) {
       data.forEach(item => {
         item['layerLabel'] = layerLabel[item.layer]
         let found = false
-        for (let iLayer = 0; iLayer < responses.length; iLayer++) {
-          if (responses[iLayer].layer == item.layer) {
+        for (let iLayer = 0; iLayer < responses.value.length; iLayer++) {
+          if (responses.value[iLayer].layer == item.layer) {
             found = true
             let removed = false
             for (let iItem = 0; iItem < item.features.length; iItem++) {
               for (
                 let iFeatures = 0;
-                iFeatures < responses[iLayer].features.length;
+                iFeatures < responses.value[iLayer].features.length;
                 iFeatures++
               ) {
                 if (
-                  responses[iLayer].features[iFeatures]['fid'] ==
+                  responses.value[iLayer].features[iFeatures]['fid'] ==
                   item.features[iItem]['fid']
                 ) {
                   removed = true
-                  responses[iLayer].features.splice(iFeatures, 1)
+                  responses.value[iLayer].features.splice(iFeatures, 1)
                   break
                 }
               }
               if (!removed) {
-                responses[iLayer].features = responses[iLayer].features.concat(
-                  item.features[iItem]
-                )
+                responses.value[iLayer].features = responses.value[
+                  iLayer
+                ].features.concat(item.features[iItem])
               }
             }
             break
           }
         }
         if (!found) {
-          responses.push(item)
+          responses.value.push(item)
         }
       })
     } else {
-      responses = data
-      responses.forEach(item => {
+      responses.value = data
+      responses.value.forEach(item => {
         item['layerLabel'] = layerLabel[item.layer]
       })
     }
 
-    responses.forEach(item => {
+    responses.value.forEach(item => {
       if (item['has_profile']) {
         // TODO: integrate profile
         // item.features.forEach(feature => {
@@ -286,26 +261,26 @@ export default function useFeatureInfo() {
       }
     })
 
-    clearQueryResult()
-    const content: FeatureInfoJSON[] = responses.filter(item => {
+    const content: FeatureInfoJSON[] = responses.value.filter(item => {
       return 'features' in item && item.features.length > 0
     })
 
-    const infoOpen = responses.length > 0 ? openInfoPanel : false
-    toggleInfoOpen(infoOpen)
-    setLoading(false)
-    map.getViewport().style.cursor = ''
+    const infoOpen = responses.value.length > 0 ? openInfoPanel : false
+    reset(infoOpen)
 
     lastHighlightedFeatures.value = []
-    for (let i = 0; i < responses.length; i++) {
-      lastHighlightedFeatures.value.push(...responses[i].features)
+    for (let i = 0; i < responses.value.length; i++) {
+      lastHighlightedFeatures.value.push(...responses.value[i].features)
     }
     featureInfoService.highlightFeatures(lastHighlightedFeatures.value, fit)
 
-    return content
+    setContent(content)
   }
 
-  function clearQueryResult() {
+  function reset(openPanel = false) {
+    toggleInfoOpen(openPanel)
+    setLoading(false)
+    map.getViewport().style.cursor = ''
     featureInfoService.clearFeatures()
   }
 
