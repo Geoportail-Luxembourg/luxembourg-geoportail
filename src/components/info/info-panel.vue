@@ -8,7 +8,7 @@ import FeatureInfo from '@/components/info/feature-info.vue'
 
 const { t } = useTranslation()
 const appStore = useAppStore()
-const { content } = storeToRefs(useFeatureInfoStore())
+const { content, isLoading } = storeToRefs(useFeatureInfoStore())
 </script>
 
 <template>
@@ -33,7 +33,7 @@ const { content } = storeToRefs(useFeatureInfoStore())
           </li>
         </ul>
       </div>
-      <div v-if="content">
+      <div v-if="content && !isLoading">
         <feature-info :content="content" />
       </div>
     </template>
