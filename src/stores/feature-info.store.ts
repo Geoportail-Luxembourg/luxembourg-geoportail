@@ -7,29 +7,45 @@ export const useFeatureInfoStore = defineStore(
   () => {
     const content: ShallowRef<FeatureInfoJSON[] | undefined> = shallowRef()
     const fid: ShallowRef<string | undefined> = shallowRef()
+    const isLoading: ShallowRef<boolean> = shallowRef(false)
+    const infoPanelHidden: ShallowRef<boolean> = shallowRef(false)
 
     function setContent(value: FeatureInfoJSON[]) {
       if (!value || value.length === 0) {
         content.value = undefined
       } else {
         content.value = [...value]
+        isLoading.value = false
       }
     }
 
     function clearContent() {
       content.value = undefined
+      isLoading.value = false
     }
 
     function setFid(value: string) {
       fid.value = value
     }
 
+    function setLoading(value: boolean) {
+      isLoading.value = value
+    }
+
+    function setInfoPanelHidden(value: boolean) {
+      infoPanelHidden.value = value
+    }
+
     return {
       content,
       fid,
+      isLoading,
+      infoPanelHidden,
       setContent,
-      setFid,
       clearContent,
+      setFid,
+      setLoading,
+      setInfoPanelHidden,
     }
   },
   {}

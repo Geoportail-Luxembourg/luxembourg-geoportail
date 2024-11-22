@@ -15,34 +15,26 @@ import GeoJSON from 'ol/format/GeoJSON'
 import { extend, Extent } from 'ol/extent'
 import { FitOptions } from 'ol/View'
 import { Size } from 'ol/size'
+import { useFeatureInfoStore } from '@/stores/feature-info.store'
+import { screenSizeIsAtLeast } from '@/services/common/device.utils'
+import { useAppStore } from '@/stores/app.store'
 
 const INFO_SERVICE_URL = import.meta.env.VITE_GET_INFO_SERVICE_URL
 
 export class FeatureInfoService {
-  constructor(
-    //   appThemes,
-    map: Map
-    //   http,
-    //   appGetDevice,
-    //   getLayerFunc,
-    //   getInfoServiceUrl
-  ) {
-    //   this.appThemes_ = appThemes
+  constructor(map: Map) {
     this.map = map
-    //   this.http_ = http
-    //   this.appGetDevice_ = appGetDevice
-    //   this.getLayerFunc_ = getLayerFunc
-    //   this.getInfoServiceUrl_ = getInfoServiceUrl
-    //   this.content = []
-    //   this.QUERYPANEL_ = 'queryPanel'
     this.createFeatureLayer()
   }
   map: Map
   featureLayer: VectorLayer<VectorSource<Geometry>>
   content: FeatureInfoJSON[]
-  isQuerying = false
   responses: FeatureInfoJSON[] = []
   lastHighlightedFeatures: FeatureJSON[] = []
+
+  setLoading = useFeatureInfoStore().setLoading
+  setInfoPanelHidden = useFeatureInfoStore().setInfoPanelHidden
+  toggleInfoOpen = useAppStore().toggleInfoOpen
 
   createFeatureLayer() {
     this.featureLayer = new VectorLayer({
@@ -112,11 +104,8 @@ export class FeatureInfoService {
       const layerLabel: { [key: string]: string } = {}
 
       try {
-        // const flatCatalogue: FlatCatalogueItem[] =
-        //   await this.appThemes_.getFlatCatalog()
-
         if (layersList.length > 0) {
-          // this.isQuerying_ = true
+          this.setLoading(true)
           this.map.getViewport().style.cursor = 'wait'
           this.content = []
 
@@ -125,56 +114,32 @@ export class FeatureInfoService {
           try {
             const resp = await fetch(url.toString())
 
-            // this.appSelector = this.QUERYPANEL_
-            // let showInfo = false
-            // if (!this.appGetDevice_.testEnv('xs')) {
-            //   showInfo = true
-            //   this.hiddenContent = false
-            // } else {
-            //   this.hiddenContent = true
-            // }
-
-            // const node = flatCatalogue.find(
-            //   catItem => catItem.id === splittedFid[0]
-            // )
+            let showInfo = false
+            if (screenSizeIsAtLeast('sm')) {
+              showInfo = true
+              this.setInfoPanelHidden(false)
+            } else {
+              this.setInfoPanelHidden(true)
+            }
 
             const { findById } = useThemes()
             const node = findById(splittedFid[0])
 
-            if (node !== undefined && node !== null) {
-              // const layer = this.getLayerFunc_(node)
-              // const foundLayer = this.map
-              //   .getLayers()
-              //   .getArray()
-              //   .find(
-              //     (curLayer: Layer) =>
-              //       curLayer.get('queryable_id') === layer.get('queryable_id')
-              //   )
-              // const idx = this.map.getLayers().getArray().indexOf(foundLayer)
-              // if (idx === -1) {
-              //   this.map.addLayer(layer)
-              // }
-              // layerLabel[splittedFid[0]] = layer.get('label')
+            if (node) {
               layerLabel[splittedFid[0]] = node.layers as string
             }
 
             if (resp.ok) {
               const data = await resp.json()
               if (data.length > 0) {
-                return this.showInfo(
-                  true,
-                  data,
-                  layerLabel,
-                  /*showInfo,*/
-                  true
-                )
+                return this.showInfo(true, data, layerLabel, showInfo, true)
               }
             }
           } catch (error) {
             this.clearQueryResult()
-            // this.infoOpen = false
+            this.toggleInfoOpen(false)
             this.map.getViewport().style.cursor = ''
-            // this.isQuerying_ = false
+            this.setLoading(false)
           }
         }
       } catch (error) {
@@ -229,7 +194,7 @@ export class FeatureInfoService {
         [point[0] + smallBuffer, point[1] - smallBuffer],
       ]
 
-      this.isQuerying = true
+      this.setLoading(true)
       this.map.getViewport().style.cursor = 'wait'
 
       this.content = []
@@ -267,15 +232,16 @@ export class FeatureInfoService {
               evt.originalEvent.shiftKey,
               data,
               layerLabel,
-              // true,
+              true,
               false
             )
           } else {
-            this.isQuerying = false
+            this.setLoading(false)
             this.map.getViewport().style.cursor = ''
             this.lastHighlightedFeatures = []
             this.highlightFeatures(this.lastHighlightedFeatures, false)
             this.clearQueryResult()
+            // TODO: temporarily make work with v3 and migrate onse mymaps available
             // if (infoMymaps) {
             //   if (!this.selectMymapsFeature_(evt.pixel)) {
             //     this['infoOpen'] = false
@@ -289,9 +255,10 @@ export class FeatureInfoService {
         }
       } catch (error) {
         this.clearQueryResult()
-        // this['infoOpen'] = false
-        // this.map.getViewport().style.cursor = ''
-        // this.isQuerying = false
+        this.toggleInfoOpen(false)
+        this.map.getViewport().style.cursor = ''
+        this.setLoading(false)
+        // throw new Error('Some error occured')
       }
     } else {
       if (infoMymaps) {
@@ -304,7 +271,7 @@ export class FeatureInfoService {
     shiftKey: boolean,
     data: FeatureInfoJSON[],
     layerLabel: { [key: string]: string },
-    // openInfoPanel: boolean
+    openInfoPanel: boolean,
     fit: boolean
   ) {
     if (shiftKey) {
@@ -372,14 +339,14 @@ export class FeatureInfoService {
       return 'features' in item && item.features.length > 0
     })
 
-    // this['infoOpen'] = this.responses.length > 0 ? openInfoPanel : false
-
+    const infoOpen = this.responses.length > 0 ? openInfoPanel : false
+    this.toggleInfoOpen(infoOpen)
     this.lastHighlightedFeatures = []
     for (let i = 0; i < this.responses.length; i++) {
       this.lastHighlightedFeatures.push(...this.responses[i].features)
     }
     this.highlightFeatures(this.lastHighlightedFeatures, fit)
-    this.isQuerying = false
+    this.setLoading(false)
     this.map.getViewport().style.cursor = ''
     //added return here
     return this.content
@@ -446,5 +413,3 @@ export class FeatureInfoService {
     }
   }
 }
-
-// export const featureInfoService = new FeatureInfoService()

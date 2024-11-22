@@ -4,6 +4,7 @@ import { storeToRefs } from 'pinia'
 import { useTranslation } from 'i18next-vue'
 
 import { useAppStore } from '@/stores/app.store'
+import { useFeatureInfoStore } from '@/stores/feature-info.store'
 import ButtonIcon from './button-icon.vue'
 import ButtonLink from './button-link.vue'
 import ToolbarDraw from './toolbar-draw.vue'
@@ -44,6 +45,15 @@ function onClickLayersIcon() {
 
 watch(drawToolbarOpen, isOpen => isOpen && (measureToolbarOpen.value = false))
 watch(measureToolbarOpen, isOpen => isOpen && (drawToolbarOpen.value = false))
+
+const featureInfoStore = useFeatureInfoStore()
+const { infoPanelHidden } = storeToRefs(featureInfoStore)
+const { setInfoPanelHidden } = featureInfoStore
+
+function onClickInfoIcon() {
+  toggleInfoOpen()
+  setInfoPanelHidden(false)
+}
 </script>
 
 <template>
@@ -82,7 +92,8 @@ watch(measureToolbarOpen, isOpen => isOpen && (drawToolbarOpen.value = false))
           :label="t('Infos', { ns: 'client' })"
           icon="infos"
           :active="infoOpen"
-          @click="() => toggleInfoOpen()"
+          :display-star="infoPanelHidden"
+          @click="onClickInfoIcon"
         >
         </button-icon>
       </li>

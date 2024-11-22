@@ -1,4 +1,3 @@
-import { useAppStore } from '@/stores/app.store'
 import useMap from '@/composables/map/map.composable'
 import { listen } from 'ol/events'
 import { FeatureInfoService } from './feature-info.service'
@@ -10,7 +9,6 @@ import { storeToRefs } from 'pinia'
 
 export default function useFeatureInfo() {
   const map = useMap().getOlMap()
-  const { toggleInfoOpen } = useAppStore()
   const { setContent } = useFeatureInfoStore()
   const { fid } = storeToRefs(useFeatureInfoStore())
 
@@ -24,7 +22,6 @@ export default function useFeatureInfo() {
           await featureInfoService.singleclickEvent(mapBrowserEvent, false)
         if (content) {
           setContent(content)
-          toggleInfoOpen(true)
         }
       })()
     })
@@ -36,7 +33,6 @@ export default function useFeatureInfo() {
             await featureInfoService.getFeatureInfoById(fid.value as string)
           if (content) {
             setContent(content)
-            toggleInfoOpen(true)
           }
         })()
       }
