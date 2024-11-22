@@ -24,11 +24,13 @@ const { locationInfo } = storeToRefs(useMapStore())
 
     <template v-slot:content>
       <template v-if="locationInfo">
-        <LocationInfo />
+        <div class="absolute">
+          <LocationInfo />
+        </div>
       </template>
 
       <template v-else>
-        <div class="text-white">
+        <div class="text-white absolute">
           <ul class="list-disc pl-10">
             <li>
               {{

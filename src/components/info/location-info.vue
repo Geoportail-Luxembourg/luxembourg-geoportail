@@ -14,6 +14,8 @@ import {
 } from '@/services/info/location-info'
 import { transform } from 'ol/proj'
 
+import StreetView from '@/components/info/street-view.vue'
+
 const { t } = useTranslation()
 const { locationInfo } = storeToRefs(useMapStore())
 
@@ -43,6 +45,32 @@ watch(locationInfo, async () => {
  * )
  * */
 const qrUrl = computed(() => getQRUrl(shortUrl.value))
+
+const isRapportForageVirtuelAvailable = computed(() => {
+  const userRole = 'ACT'
+  return userRole === 'ACT'
+})
+const downloadingRepport = ref(false)
+const isInBoxOfLidar = computed(() => true)
+const isCyclomediaAvailable = computed(() => true)
+const isImagesObliquesAvailable = computed(() => true)
+
+const getLidarUrl = () => 'bla'
+const getCyclomediaUrl = () => 'bla'
+const getImagesObliquesUrl = () => 'bla'
+
+const addRoutePoint = () => 'bla'
+
+const open = ref(true)
+const isStreetviewActive = ref(false)
+const toggleStreetview = () => {
+  isStreetviewActive.value = !isStreetviewActive.value
+}
+
+function downloadRapportForageVirtuel() {
+  downloadingRepport.value = true
+  setTimeout(() => (downloadingRepport.value = false), 2000)
+}
 
 watch(clickCoordinateLuref, async () => {
   elevation.value = await getElevation(clickCoordinateLuref.value!)
@@ -105,5 +133,72 @@ const formatted_coordinates = computed(() =>
         <td>{{ address?.distance }}</td>
       </tr>
     </table>
+  </div>
+  <div>
+    <div v-if="isRapportForageVirtuelAvailable">
+      <button
+        v-if="!downloadingRepport"
+        class="lux-btn mt-1"
+        @click="downloadRapportForageVirtuel()"
+      >
+        {{ t('Rapport forage virtuel') }}
+      </button>
+    </div>
+    <div class="flex flex-wrap mt-1 gap-x-1">
+      <a
+        v-if="isInBoxOfLidar"
+        class="lux-btn whitespace-nowrap"
+        :href="getLidarUrl()"
+        target="_geoportal_ext_lidar"
+      >
+        {{ t('Lien vers la démo lidar') }}
+      </a>
+      <a
+        v-if="isCyclomediaAvailable"
+        class="lux-btn whitespace-nowrap"
+        :href="getCyclomediaUrl()"
+        target="_geoportal_ext_cyclomedia"
+      >
+        {{ t('Lien vers Cyclomédia') }}
+      </a>
+      <a
+        v-if="isImagesObliquesAvailable"
+        class="lux-btn whitespace-nowrap"
+        :href="getImagesObliquesUrl()"
+        target="_geoportal_ext_obliques"
+      >
+        {{ t('Images obliques') }}
+      </a>
+    </div>
+    <div>
+      <button class="lux-btn mt-1" @click="addRoutePoint()">
+        <span class="create-itinerary-text">
+          {{ t('Ajouter étape à mon itinéraire') }}
+        </span>
+      </button>
+    </div>
+    <div v-if="isStreetviewActive">
+      <button class="lux-btn mt-3" @click="toggleStreetview()">
+        <span class="create-itinerary-text">
+          {{ t('Désactiver Google Streetview') }}
+        </span>
+      </button>
+    </div>
+  </div>
+  <div>
+    <StreetView v-if="isStreetviewActive" />
+    <div
+      v-if="!isStreetviewActive"
+      class="grid before:content-streetview before:col-start-1 before:row-start-1"
+    >
+      <div
+        class="col-start-1 row-start-1 text-center"
+        v-if="!(open && isStreetviewActive)"
+      >
+        <button class="lux-btn mt-3 no-print" @click="toggleStreetview()">
+          {{ t('Activer Google Streetview') }}
+        </button>
+      </div>
+    </div>
   </div>
 </template>
