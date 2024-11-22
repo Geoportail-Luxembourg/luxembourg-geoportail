@@ -15,7 +15,8 @@ const INFO_SERVICE_URL = import.meta.env.VITE_GET_INFO_SERVICE_URL
 
 export default function useFeatureInfo() {
   const map = useMap().getOlMap()
-  const { setContent, setLoading, setInfoPanelHidden } = useFeatureInfoStore()
+  const { setFeatureInfoPanelContent, setLoading, setInfoPanelHidden } =
+    useFeatureInfoStore()
   const { fid } = storeToRefs(useFeatureInfoStore())
   const { toggleInfoOpen } = useAppStore()
   const { findById } = useThemes()
@@ -274,7 +275,7 @@ export default function useFeatureInfo() {
     }
     featureInfoService.highlightFeatures(lastHighlightedFeatures.value, fit)
 
-    setContent(content)
+    setFeatureInfoPanelContent(content)
   }
 
   function reset(openPanel = false) {
