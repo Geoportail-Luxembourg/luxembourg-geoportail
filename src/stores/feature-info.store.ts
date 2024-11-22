@@ -5,22 +5,23 @@ import { shallowRef, ShallowRef } from 'vue'
 export const useFeatureInfoStore = defineStore(
   'featureInfo',
   () => {
-    const content: ShallowRef<FeatureInfoJSON[] | undefined> = shallowRef()
+    const featureInfoPanelContent: ShallowRef<FeatureInfoJSON[] | undefined> =
+      shallowRef()
     const fid: ShallowRef<string | undefined> = shallowRef()
     const isLoading: ShallowRef<boolean> = shallowRef(false)
     const infoPanelHidden: ShallowRef<boolean> = shallowRef(false)
 
-    function setContent(value: FeatureInfoJSON[]) {
+    function setFeatureInfoPanelContent(value: FeatureInfoJSON[]) {
       if (!value || value.length === 0) {
-        content.value = undefined
+        featureInfoPanelContent.value = undefined
       } else {
-        content.value = [...value]
+        featureInfoPanelContent.value = [...value]
         isLoading.value = false
       }
     }
 
     function clearContent() {
-      content.value = undefined
+      featureInfoPanelContent.value = undefined
       isLoading.value = false
     }
 
@@ -37,11 +38,11 @@ export const useFeatureInfoStore = defineStore(
     }
 
     return {
-      content,
+      featureInfoPanelContent,
       fid,
       isLoading,
       infoPanelHidden,
-      setContent,
+      setFeatureInfoPanelContent,
       clearContent,
       setFid,
       setLoading,

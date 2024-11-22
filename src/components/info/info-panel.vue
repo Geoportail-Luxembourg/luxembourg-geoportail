@@ -8,7 +8,9 @@ import FeatureInfo from '@/components/info/feature-info.vue'
 
 const { t } = useTranslation()
 const appStore = useAppStore()
-const { content, isLoading } = storeToRefs(useFeatureInfoStore())
+const { featureInfoPanelContent, isLoading } = storeToRefs(
+  useFeatureInfoStore()
+)
 </script>
 
 <template>
@@ -23,7 +25,7 @@ const { content, isLoading } = storeToRefs(useFeatureInfoStore())
     </template>
 
     <template v-slot:content>
-      <div v-if="!content" class="text-white">
+      <div v-if="!featureInfoPanelContent" class="text-white">
         <ul class="list-disc pl-10">
           <li>
             {{ t(`A right click (tap and hold on mobile)...`, { ns: 'app' }) }}
@@ -33,8 +35,8 @@ const { content, isLoading } = storeToRefs(useFeatureInfoStore())
           </li>
         </ul>
       </div>
-      <div v-if="content && !isLoading">
-        <feature-info :content="content" />
+      <div v-if="featureInfoPanelContent && !isLoading">
+        <feature-info :content="featureInfoPanelContent" />
       </div>
     </template>
   </side-panel-layout>
