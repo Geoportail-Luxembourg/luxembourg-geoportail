@@ -41,17 +41,13 @@ function format(
   let content = binding.value
   const digits = binding?.arg !== undefined ? +binding?.arg : undefined
 
-  if (content === null || isNaN(+content)) {
-    return
-  }
-
   try {
     type = <FormatMeasureType>Object.keys(binding.modifiers)[0]
   } catch (e) {
     // Do nothing...
   }
 
-  content = formatMeasure(+content, digits, type)
+  content = formatMeasure(content, digits, type)
 
   el.textContent = content
 }

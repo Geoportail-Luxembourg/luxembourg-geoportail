@@ -6,6 +6,10 @@ import {
   formatMeasure,
 } from './formatting.utils'
 
+vi.mock('i18next', () => ({
+  default: { t: vi.fn(key => key) },
+}))
+
 describe('Formatting utils', () => {
   describe('#formatDate', () => {
     it('formats date by default in fr-FR', () => {
@@ -34,9 +38,9 @@ describe('Formatting utils', () => {
       expect(val).toEqual('42.0006 km')
     })
 
-    it('returns empty string if given value is invalid number', () => {
+    it('returns "N/A" string if given value is invalid number', () => {
       const val = formatMeasure(<number>(<unknown>'test'), 4)
-      expect(val).toEqual('')
+      expect(val).toEqual('N/A')
     })
 
     it('formats value as elevation', () => {
@@ -54,13 +58,13 @@ describe('Formatting utils', () => {
       expect(val).toEqual('11000000.56 m')
     })
 
-    it('returns original value if given value is invalid number', () => {
+    it('returns "N/A" string if given value is invalid number', () => {
       const val = formatMeasure(
         <number>(<unknown>'wrong elevation'),
         4,
         'elevation'
       )
-      expect(val).toEqual('wrong elevation')
+      expect(val).toEqual('N/A')
     })
   })
 

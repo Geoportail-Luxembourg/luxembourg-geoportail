@@ -27,7 +27,7 @@ export function formatMeasure(
   digits?: number,
   type?: FormatMeasureType
 ) {
-  if (value === null) {
+  if (value == null || isNaN(value)) {
     return i18next.t('N/A', { ns: 'client' })
   }
 

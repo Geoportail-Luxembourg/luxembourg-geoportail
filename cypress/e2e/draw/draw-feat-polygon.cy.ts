@@ -36,7 +36,7 @@ describe('Draw "Polygon"', () => {
       // - chrome and chromium browsers give different decimals in measurements
       // - therefore only the int part of the surface is checked
       cy.get('*[data-cy="featItemArea"]')
-        .should('contain.text', 'Surface: 1532.')
+        .should('contain.text', 'Surface:\u00A01532.')
         .and('contain.text', ' km²')
     })
 

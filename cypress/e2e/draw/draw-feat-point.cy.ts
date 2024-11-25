@@ -124,7 +124,6 @@ describe('Draw "Point"', () => {
 
       it('displays the symbol edition tab', () => {
         cy.get('[data-cy="featStyleColor"]').should('exist')
-        // starting with featStyleSymbol_
         cy.get('[data-cy^="featStyleSymbol_"]').should('have.length', 4)
       })
 
