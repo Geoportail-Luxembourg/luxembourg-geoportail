@@ -58,22 +58,13 @@ const isLoading = computed(() => props.feature && !profileData.value)
 const isDrawing = computed(() => !props.feature)
 
 onMounted(() => {
+  // Force get profile data when mounted (eg. when user click on a another drawn line, must populate data)
   props.feature &&
     props.feature.getProfile().then(data => (profileData.value = data))
 })
 
-watch(
-  () => props.feature,
-  (feature, featureOld) => {
-    profileData.value = undefined // Force refresh the graph
-
-    if (feature && feature !== featureOld) {
-      feature.getProfile().then(data => (profileData.value = data))
-    }
-  }
-)
-
 watchEffect(() => {
+  // Watch update of feature geom to trigger update the profile
   if (props.feature && !props.feature.profileData) {
     profileData.value = undefined // Force refresh the graph
     props.feature?.getProfile().then(data => (profileData.value = data))
