@@ -16,9 +16,9 @@ class StorageFeaturesMapper {
     if (!features) return ''
     const featuresToEncode = features
       .filter(feature => !feature.map_id)
+      .sort((a, b) => a.display_order - b.display_order)
       .map(feature => {
-        const newFeature = new DrawnFeature(feature) //create new instance to avoid converting ol feature to polygon
-        // newFeature.set('name', newFeature.label) //is this still needed?
+        const newFeature = new DrawnFeature(feature) // create new instance to avoid converting ol feature to polygon
         return convertCircleFeatureToPolygon(newFeature)
       })
     return featuresToEncode.length > 0
