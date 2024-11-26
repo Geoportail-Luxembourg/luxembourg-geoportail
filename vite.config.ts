@@ -57,7 +57,6 @@ export default defineConfig(({ command, mode }) => {
   if (command === 'build') {
     base.build = {
       // assetsInlineLimit: 0, // Imported or referenced assets that are smaller than this threshold will be inlined as base64 URLs to avoid extra http requests. Set to 0 to disable inlining altogether.
-      assetsInlineLimit: path => !path.includes('/streetview/'),
       rollupOptions: {
         output: {
           assetFileNames: chunkInfo => {

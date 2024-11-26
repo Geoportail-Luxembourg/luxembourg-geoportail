@@ -132,7 +132,6 @@ module.exports = {
           "url('/src/assets/images/featureinfo/solarkataster_1.png')",
       },
       content: {
-        ...generateStreetViewIcons(),
         main: '"\\e02d"',
         tourisme: '"\\e04e"',
         emwelt: '"\\e04b"',
@@ -210,7 +209,6 @@ module.exports = {
     'hd:bg-hybrid_sm_hi',
     ...generateThemeSafelist(),
     ...generateIconSafelist(),
-    ...generateStreetViewContents(),
     {
       pattern: /ol-*/,
     },
@@ -249,25 +247,6 @@ function generateThemeColors() {
       [`${theme}-secondary`, `var(--${theme}-secondary)`],
       [`${theme}-tertiary`, `var(--${theme}-tertiary)`],
       [`${theme}-quaternary`, `var(--${theme}-quaternary)`],
-    ])
-  )
-}
-function generateStreetViewKeys() {
-  // all resources of type 'direction_sv_zl{i}_p{j}.png'
-  const z_seq_1_to_4 = [...Array(5).keys()].slice(1)
-  const p_seq_0_to_4 = [...Array(5).keys()]
-  return z_seq_1_to_4.flatMap(z =>
-    p_seq_0_to_4.map(p => `direction_sv_zl${z}${p < 4 ? '_p' + p : ''}`)
-  )
-}
-function generateStreetViewContents() {
-  return generateStreetViewKeys().map(k => `content-${k}`)
-}
-function generateStreetViewIcons() {
-  return Object.fromEntries(
-    generateStreetViewKeys().map(k => [
-      k,
-      `url('/src/assets/images/streetview/${k}.png')`,
     ])
   )
 }
