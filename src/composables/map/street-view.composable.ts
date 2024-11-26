@@ -30,6 +30,7 @@ export default function useStreeView() {
 
   const map = useMap().getOlMap()
 
+  let googleService: any = null
   let streetViewService: any = null
   let panorama: any = null
   let panoramaLinksListener: any = null
@@ -68,8 +69,8 @@ export default function useStreeView() {
     }
   }
 
-  function updatePanorama(data, status) {
-    if (status === google.maps.StreetViewStatus.OK) {
+  function updatePanorama(data: any, status: any) {
+    if (status === googleService?.maps.StreetViewStatus.OK) {
       noDataAtLocation.value = false
       panorama.setPosition(data.location.latLng)
       panorama.setVisible(true)
@@ -89,12 +90,16 @@ export default function useStreeView() {
   watch(isStreetviewActive, async act => {
     if (act) {
       await loadGoogleapis()
+      if (window.hasOwnProperty('google')) {
+        // @ts-ignore
+        googleService = window.google
+      }
       // todo PIWIK
       if (streetViewService === null) {
-        streetViewService = new google.maps.StreetViewService()
+        streetViewService = new googleService!.maps.StreetViewService()
       }
       if (panorama === null) {
-        panorama = new google.maps.StreetViewPanorama(
+        panorama = new googleService!.maps.StreetViewPanorama(
           document.getElementById('streetview-div'),
           {
             pov: {
@@ -108,14 +113,14 @@ export default function useStreeView() {
         )
       }
       if (panoramaLinksListener === null) {
-        panoramaLinksListener = google.maps.event.addListener(
+        panoramaLinksListener = googleService?.maps.event.addListener(
           panorama,
           'links_changed',
           handlePanoramaPositionChange
         )
       }
       if (panoramaPovListener === null) {
-        panoramaPovListener = google.maps.event.addListener(
+        panoramaPovListener = googleService?.maps.event.addListener(
           panorama,
           'pov_changed',
           handlePanoramaPositionChange
@@ -128,11 +133,11 @@ export default function useStreeView() {
       }
       svFeature.value = undefined
       if (panoramaPovListener) {
-        google.maps.event.removeListener(panoramaPovListener)
+        googleService?.maps.event.removeListener(panoramaPovListener)
         panoramaPovListener = null
       }
       if (panoramaLinksListener) {
-        google.maps.event.removeListener(panoramaLinksListener)
+        googleService?.maps.event.removeListener(panoramaLinksListener)
         panoramaLinksListener = null
       }
     }
