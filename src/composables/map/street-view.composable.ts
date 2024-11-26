@@ -4,7 +4,7 @@ import useMap from '@/composables/map/map.composable'
 import { useInfoStore } from '@/stores/info.store'
 import { Coordinate } from 'ol/coordinate'
 import { fromLonLat, toLonLat } from 'ol/proj'
-import { containsCoordinate } from 'ol/extent.js';
+import { containsCoordinate } from 'ol/extent.js'
 import { loadGoogleapis } from '@/services/info/street-view'
 import { SvCompassFeature } from '@/services/info/sv-compass-feature'
 import { SvDirectionFeature } from '@/services/info/sv-direction-feature'
@@ -20,8 +20,13 @@ export const SV_FEATURE_LAYER_TYPE = 'svFeatureLayer'
 const SV_RADIUS = 90
 
 export default function useStreeView() {
-
-  const { locationInfo, isStreetviewActive, noDataAtLocation, panoPositionChanging, svFeature } = storeToRefs(useInfoStore())
+  const {
+    locationInfo,
+    isStreetviewActive,
+    noDataAtLocation,
+    panoPositionChanging,
+    svFeature,
+  } = storeToRefs(useInfoStore())
 
   const map = useMap().getOlMap()
 
@@ -29,8 +34,8 @@ export default function useStreeView() {
   let panorama: any = null
   let panoramaLinksListener: any = null
   let panoramaPovListener: any = null
-  let svPoint = new Point([0, 0])
-  let svCompassFeature = new SvCompassFeature()
+  const svPoint = new Point([0, 0])
+  const svCompassFeature = new SvCompassFeature()
   svCompassFeature.setGeometry(svPoint)
 
   const svFeatureLayer = new VectorLayer({
@@ -45,17 +50,20 @@ export default function useStreeView() {
 
   // const handlePanoramaPositionChange = () => console.log('pano changed')
 
-  function setLocation(loc) {
+  function setLocation(loc: Coordinate | undefined) {
     if (panorama !== null) {
       if (loc && !panoPositionChanging.value) {
         const lonlat = toLonLat(loc, map.getView().getProjection())
-        streetViewService.getPanorama({
-          location: {
-            lat: lonlat[1],
-            lng: lonlat[0]
+        streetViewService.getPanorama(
+          {
+            location: {
+              lat: lonlat[1],
+              lng: lonlat[0],
+            },
+            radius: SV_RADIUS,
           },
-          radius: SV_RADIUS
-        }, updatePanorama)
+          updatePanorama
+        )
       }
     }
   }
@@ -92,10 +100,10 @@ export default function useStreeView() {
             pov: {
               heading: 0,
               pitch: 0,
-              zoom: 1
+              zoom: 1,
             },
             visible: false,
-            zoom: 1
+            zoom: 1,
           }
         )
       }
@@ -116,16 +124,16 @@ export default function useStreeView() {
       setLocation(locationInfo.value)
     } else {
       if (panorama !== null) {
-        panorama.setVisible(false);
+        panorama.setVisible(false)
       }
       svFeature.value = undefined
       if (panoramaPovListener) {
-        google.maps.event.removeListener(panoramaPovListener);
+        google.maps.event.removeListener(panoramaPovListener)
         panoramaPovListener = null
       }
       if (panoramaLinksListener) {
-        google.maps.event.removeListener(panoramaLinksListener);
-        panoramaLinksListener = null;
+        google.maps.event.removeListener(panoramaLinksListener)
+        panoramaLinksListener = null
       }
     }
   })
@@ -134,7 +142,9 @@ export default function useStreeView() {
     svFeatureLayer.getSource()?.clear()
     if (svf) {
       svFeatureLayer.getSource()?.addFeature(svf.compass)
-      svf.directions.forEach((f: SvDirectionFeature) => svFeatureLayer.getSource()?.addFeature(f))
+      svf.directions.forEach((f: SvDirectionFeature) =>
+        svFeatureLayer.getSource()?.addFeature(f)
+      )
     }
   })
 
@@ -149,7 +159,15 @@ export default function useStreeView() {
     const navigationLinks = panorama.getLinks() || []
     svFeature.value = {
       compass: svCompassFeature,
-      directions: navigationLinks.map((link: any) => new SvDirectionFeature(svPoint, link.heading, link.description, link.pano))
+      directions: navigationLinks.map(
+        (link: any) =>
+          new SvDirectionFeature(
+            svPoint,
+            link.heading,
+            link.description,
+            link.pano
+          )
+      ),
     }
   }
 
@@ -160,9 +178,12 @@ export default function useStreeView() {
     const loc = fromLonLat(panoLonLat)
     setSvFeatures(loc)
 
-    if (locationInfo.value && !containsCoordinate(map.getView().calculateExtent(map.getSize()), loc)) {
-      map.getView().setCenter(loc);
+    if (
+      locationInfo.value &&
+      !containsCoordinate(map.getView().calculateExtent(map.getSize()), loc)
+    ) {
+      map.getView().setCenter(loc)
     }
-    panoPositionChanging.value = false;
+    panoPositionChanging.value = false
   }
 }

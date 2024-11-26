@@ -117,22 +117,22 @@ const formatted_coordinates = computed(() =>
     </div>
     <table>
       <tbody>
-      <tr v-for="(coords, label) in formatted_coordinates" :key="label">
-        <th style="text-align: left">{{ t(label as string) }}</th>
-        <td>{{ coords }}</td>
-      </tr>
-      <tr>
-        <th style="text-align: left">{{ t('Elevation') }}</th>
-        <td>{{ elevation }}</td>
-      </tr>
-      <tr>
-        <th style="text-align: left">{{ t('Adresse la plus proche') }}</th>
-        <td>{{ address?.formattedAddress }}</td>
-      </tr>
-      <tr>
-        <th style="text-align: left">{{ t('Distance approximative') }}</th>
-        <td>{{ address?.distance }}</td>
-      </tr>
+        <tr v-for="(coords, label) in formatted_coordinates" :key="label">
+          <th style="text-align: left">{{ t(label as string) }}</th>
+          <td>{{ coords }}</td>
+        </tr>
+        <tr>
+          <th style="text-align: left">{{ t('Elevation') }}</th>
+          <td>{{ elevation }}</td>
+        </tr>
+        <tr>
+          <th style="text-align: left">{{ t('Adresse la plus proche') }}</th>
+          <td>{{ address?.formattedAddress }}</td>
+        </tr>
+        <tr>
+          <th style="text-align: left">{{ t('Distance approximative') }}</th>
+          <td>{{ address?.distance }}</td>
+        </tr>
       </tbody>
     </table>
   </div>
