@@ -2,13 +2,13 @@
 import { useTranslation } from 'i18next-vue'
 import SidePanelLayout from '@/components/common/side-panel-layout.vue'
 import { useAppStore } from '@/stores/app.store'
-import { useMapStore } from '@/stores/map.store'
+import { useInfoStore } from '@/stores/info.store'
 import { storeToRefs } from 'pinia'
 import LocationInfo from './location-info.vue'
 
 const { t } = useTranslation()
 const appStore = useAppStore()
-const { locationInfo } = storeToRefs(useMapStore())
+const { locationInfo } = storeToRefs(useInfoStore())
 </script>
 
 <template>

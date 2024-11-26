@@ -2,7 +2,7 @@
 import { computed, ref, watch } from 'vue'
 import { useTranslation } from 'i18next-vue'
 import { storeToRefs } from 'pinia'
-import { useMapStore } from '@/stores/map.store'
+import { useInfoStore } from '@/stores/info.store'
 import useMap from '@/composables/map/map.composable'
 import {
   create_short_url,
@@ -17,7 +17,7 @@ import { transform } from 'ol/proj'
 import StreetView from '@/components/info/street-view.vue'
 
 const { t } = useTranslation()
-const { locationInfo } = storeToRefs(useMapStore())
+const { locationInfo } = storeToRefs(useInfoStore())
 
 const map = useMap().getOlMap()
 
@@ -62,7 +62,7 @@ const getImagesObliquesUrl = () => 'bla'
 const addRoutePoint = () => 'bla'
 
 const open = ref(true)
-const isStreetviewActive = ref(false)
+const { isStreetviewActive } = storeToRefs(useInfoStore())
 const toggleStreetview = () => {
   isStreetviewActive.value = !isStreetviewActive.value
 }
@@ -116,6 +116,7 @@ const formatted_coordinates = computed(() =>
       <h3>{{ t('Location Coordinates', { ns: 'client' }) }}</h3>
     </div>
     <table>
+      <tbody>
       <tr v-for="(coords, label) in formatted_coordinates" :key="label">
         <th style="text-align: left">{{ t(label as string) }}</th>
         <td>{{ coords }}</td>
@@ -132,6 +133,7 @@ const formatted_coordinates = computed(() =>
         <th style="text-align: left">{{ t('Distance approximative') }}</th>
         <td>{{ address?.distance }}</td>
       </tr>
+      </tbody>
     </table>
   </div>
   <div>
@@ -186,7 +188,7 @@ const formatted_coordinates = computed(() =>
     </div>
   </div>
   <div>
-    <StreetView v-if="isStreetviewActive" />
+    <StreetView v-show="isStreetviewActive" />
     <div
       v-if="!isStreetviewActive"
       class="grid before:content-streetview before:col-start-1 before:row-start-1"
