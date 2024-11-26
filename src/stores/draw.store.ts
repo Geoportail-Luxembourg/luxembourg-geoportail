@@ -83,10 +83,9 @@ export const useDrawStore = defineStore('draw', () => {
   }
 
   function reorderFeatures(featuresId: String[]) {
-    drawnFeatures.value = drawnFeatures.value.map(f => ({
-      ...f,
-      display_order: featuresId.indexOf(`f-${getUid(f)}`),
-    }))
+    drawnFeatures.value = drawnFeatures.value.map(f =>
+      Object.assign(f, { display_order: featuresId.indexOf(`f-${getUid(f)}`) })
+    )
   }
 
   return {
