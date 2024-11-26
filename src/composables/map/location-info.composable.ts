@@ -13,8 +13,8 @@ import StyleStyle from 'ol/style/Style'
 import StyleCircle from 'ol/style/Circle'
 import StyleFill from 'ol/style/Fill'
 import StyleStroke from 'ol/style/Stroke'
-import { useMapStore } from '@/stores/map.store'
 import { useAppStore } from '@/stores/app.store'
+import { useInfoStore } from '@/stores/info.store'
 
 export const DEFAULT_INFO_ZINDEX = 1500
 export const INFO_FEATURE_LAYER_TYPE = 'infoFeatureLayer'
@@ -23,8 +23,8 @@ export default function useLocationInfo() {
   const map = useMap().getOlMap()
   let holdTimeoutId: number | undefined = undefined
   let startPixel: Coordinate | null = null
-  const { locationInfo } = storeToRefs(useMapStore())
   const { infoOpen } = storeToRefs(useAppStore())
+  const { locationInfo, panoPositionChanging } = storeToRefs(useInfoStore())
 
   const infoFeatureLayer = new VectorLayer({
     source: new VectorSource({

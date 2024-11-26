@@ -2,7 +2,7 @@
 import { useTranslation } from 'i18next-vue'
 import SidePanelLayout from '@/components/common/side-panel-layout.vue'
 import { useAppStore } from '@/stores/app.store'
-import { useMapStore } from '@/stores/map.store'
+import { useInfoStore } from '@/stores/info.store'
 import { storeToRefs } from 'pinia'
 import { useFeatureInfoStore } from '@/stores/feature-info.store'
 import LocationInfo from './location-info.vue'
@@ -11,8 +11,8 @@ import { onUnmounted } from 'vue'
 
 const { t } = useTranslation()
 const appStore = useAppStore()
+const { locationInfo } = storeToRefs(useInfoStore())
 const { clearContent } = useFeatureInfoStore()
-const { locationInfo } = storeToRefs(useMapStore())
 const { featureInfoPanelContent, isLoading } = storeToRefs(
   useFeatureInfoStore()
 )
