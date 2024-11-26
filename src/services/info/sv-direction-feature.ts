@@ -2,9 +2,7 @@ import { Feature } from 'ol'
 import { FeatureLike } from 'ol/Feature'
 import { Geometry } from 'ol/geom'
 import { Style, Icon } from 'ol/style'
-
-const SV_IMAGES_PATH = '/src/assets/images/streetview'
-const SV_ARROW_PATH = SV_IMAGES_PATH + '/arrow.png'
+import arrowUrl from '@/assets/images/streetview/arrow.png'
 
 export class SvDirectionFeature extends Feature {
   // heading: number
@@ -29,7 +27,7 @@ export class SvDirectionFeature extends Feature {
             anchor: [0.5, 50],
             anchorXUnits: 'fraction',
             anchorYUnits: 'pixels',
-            src: SV_ARROW_PATH,
+            src: arrowUrl,
             rotation: ((feature as SvDirectionFeature).heading * Math.PI) / 180,
           }),
         }),

@@ -1,8 +1,7 @@
 import { Feature } from 'ol'
 import { FeatureLike } from 'ol/Feature'
 import { Style, Icon } from 'ol/style'
-
-const SV_IMAGES_PATH = '/src/assets/images/streetview'
+import directionUrls from '@/services/info/sv-direction-urls'
 
 export class SvCompassFeature extends Feature {
   zoom: number
@@ -30,12 +29,12 @@ export class SvCompassFeature extends Feature {
       if (curPitch > 68) {
         pitch = 3
       }
-      const directionArrowPath: string = `${SV_IMAGES_PATH}/direction_sv_zl${curZoom}_p${pitch}.png`
+      const directionArrowKey: string = `direction_sv_zl${curZoom}_p${pitch}`
 
       return [
         new Style({
           image: new Icon({
-            src: directionArrowPath,
+            src: directionUrls[directionArrowKey],
             rotation: ((feature as SvCompassFeature).heading * Math.PI) / 180,
           }),
         }),
