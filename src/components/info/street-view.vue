@@ -16,6 +16,16 @@ const { isStreetviewActive, noDataAtLocation } = storeToRefs(useInfoStore())
   >
     bla
   </div>
+  <div class="h-0 w-0 overflow-hidden">
+    preload streetview icons
+    <div v-for="z in [...Array(5).keys()].slice(1)" :key="z">
+      <div
+        v-for="p in [...Array(4).keys()]"
+        :key="p"
+        :class="`content-direction_sv_zl${z}_p${p}`"
+      ></div>
+    </div>
+  </div>
   <div
     class="grid before:content-streetview before:col-start-1 before:row-start-1"
     v-if="isStreetviewActive && noDataAtLocation"
