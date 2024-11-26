@@ -6,7 +6,6 @@ import { useInfoStore } from '@/stores/info.store'
 const { t } = useTranslation()
 
 const { isStreetviewActive, noDataAtLocation } = storeToRefs(useInfoStore())
-
 </script>
 
 <template>

@@ -24,7 +24,7 @@ export default function useLocationInfo() {
   let holdTimeoutId: number | undefined = undefined
   let startPixel: Coordinate | null = null
   const { infoOpen } = storeToRefs(useAppStore())
-  const { locationInfo, panoPositionChanging } = storeToRefs(useInfoStore())
+  const { locationInfo } = storeToRefs(useInfoStore())
 
   const infoFeatureLayer = new VectorLayer({
     source: new VectorSource({
