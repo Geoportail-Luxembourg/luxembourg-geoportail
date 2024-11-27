@@ -24,7 +24,7 @@ export default function useLocationInfo() {
   let holdTimeoutId: number | undefined = undefined
   let startPixel: Coordinate | null = null
   const { infoOpen } = storeToRefs(useAppStore())
-  const { locationInfo, ignoreLeftClick } = storeToRefs(useInfoStore())
+  const { locationInfo, hidePointer } = storeToRefs(useInfoStore())
 
   const infoFeatureLayer = new VectorLayer({
     source: new VectorSource({
@@ -37,9 +37,20 @@ export default function useLocationInfo() {
   setInfoStyle(infoFeatureLayer)
   map.addLayer(infoFeatureLayer)
 
+  watch(hidePointer, doHide => {
+    if (doHide) {
+      infoFeatureLayer.getSource()?.clear()
+    } else {
+      if (locationInfo.value) {
+        const feature = new Feature(new Point(locationInfo.value))
+        infoFeatureLayer.getSource()?.addFeature(feature)
+      }
+    }
+  })
+
   watch(locationInfo, location => {
     infoFeatureLayer.getSource()?.clear()
-    if (location) {
+    if (location && !hidePointer.value) {
       infoOpen.value = true
       const feature = new Feature(new Point(location))
       infoFeatureLayer.getSource()?.addFeature(feature)
@@ -77,7 +88,7 @@ export default function useLocationInfo() {
       (event as MapBrowserEvent<PointerEvent>).originalEvent.button === 0
     ) {
       // if left mouse click
-      if (!ignoreLeftClick.value) {
+      if (!hidePointer.value) {
         locationInfo.value = undefined
       }
     }
