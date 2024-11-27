@@ -34,7 +34,7 @@ export class SvCompassFeature extends Feature {
       return [
         new Style({
           image: new Icon({
-            src: directionUrls[directionArrowKey],
+            src: directionUrls.get(directionArrowKey),
             rotation: ((feature as SvCompassFeature).heading * Math.PI) / 180,
           }),
         }),

@@ -27,7 +27,7 @@ import direction_sv_zl4 from '@/assets/images/streetview/direction_sv_zl4.png'
 
 // console.log(keys.join(',\n'))
 
-export default {
+const direction_dict = {
   direction_sv_zl1_p0,
   direction_sv_zl1_p1,
   direction_sv_zl1_p2,
@@ -49,3 +49,5 @@ export default {
   direction_sv_zl4_p3,
   direction_sv_zl4,
 }
+
+export default new Map(Object.entries(direction_dict))
