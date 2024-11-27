@@ -104,7 +104,7 @@ export default function useStreeView() {
 
   watch(locationInfo, loc => {
     if (loc) {
-      if (isStreetviewActive.value) {
+      if (isStreetviewActive.value && !panoPositionChanging.value) {
         setLocation(loc)
       }
     } else {
@@ -142,14 +142,14 @@ export default function useStreeView() {
         panoramaLinksListener = googleService?.maps.event.addListener(
           panorama,
           'links_changed',
-          handlePanoramaPositionChange
+          () => handlePanoramaPositionChange(true)
         )
       }
       if (panoramaPovListener === null) {
         panoramaPovListener = googleService?.maps.event.addListener(
           panorama,
           'pov_changed',
-          handlePanoramaPositionChange
+          () => handlePanoramaPositionChange(false)
         )
       }
       setLocation(locationInfo.value)
@@ -235,12 +235,16 @@ export default function useStreeView() {
     }
   }
 
-  function handlePanoramaPositionChange() {
+  function handlePanoramaPositionChange(updateLocation: boolean) {
     panoPositionChanging.value = true
     const position = panorama.getPosition()
     const panoLonLat = [position.lng(), position.lat()]
     const loc = fromLonLat(panoLonLat)
     setSvFeatures(loc)
+
+    if (updateLocation) {
+      locationInfo.value = loc
+    }
 
     if (
       locationInfo.value &&
@@ -248,6 +252,6 @@ export default function useStreeView() {
     ) {
       map.getView().setCenter(loc)
     }
-    panoPositionChanging.value = false
+    nextTick(() => (panoPositionChanging.value = false))
   }
 }
