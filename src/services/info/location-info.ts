@@ -13,6 +13,19 @@ export const INFO_PROJECTIONS = {
 
 const HEMISPHERES = ['EW', 'NS']
 
+export async function queryInfo(location: Coordinate, fromCrs: Projection) {
+  return {
+    shortUrl: await create_short_url(location),
+    clickCoordinateLuref: transform(location, fromCrs, 'EPSG:2169'),
+    formatted_coordinates: Object.fromEntries(
+      Object.entries(INFO_PROJECTIONS).map(([crs, label]) => [
+        label,
+        formatCoords(location, fromCrs, crs),
+      ])
+    ),
+  }
+}
+
 export function formatCoords(
   coords: Coordinate | undefined,
   fromCrs: Projection,

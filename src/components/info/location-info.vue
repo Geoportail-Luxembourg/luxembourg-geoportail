@@ -3,16 +3,14 @@ import { computed, ref, watch } from 'vue'
 import { useTranslation } from 'i18next-vue'
 import { storeToRefs } from 'pinia'
 import { useInfoStore } from '@/stores/info.store'
+import { Coordinate } from 'ol/coordinate'
 import useMap from '@/composables/map/map.composable'
 import {
-  create_short_url,
   getQRUrl,
   getElevation,
   getNearestAddress,
-  formatCoords,
-  INFO_PROJECTIONS,
+  queryInfo,
 } from '@/services/info/location-info'
-import { transform } from 'ol/proj'
 
 import StreetView from '@/components/info/street-view.vue'
 
@@ -22,29 +20,29 @@ const { locationInfo } = storeToRefs(useInfoStore())
 const map = useMap().getOlMap()
 
 const shortUrl = ref()
+const qrUrl = ref()
 const elevation = ref()
 const address = ref()
 const clickCoordinateLuref = ref()
+const formatted_coordinates = ref({})
 
-// const shortUrl = computed(async () => await create_short_url(locationInfo))
+// initial load of position infos if locationInfo is not initially undefined
+// async function, no need to await the completion, DOM will be updated via refs
+updateInfo(locationInfo.value)
 
-watch(locationInfo, async loc => {
-  if (!loc) {
-    return
+watch(locationInfo, updateInfo)
+
+async function updateInfo(location: Coordinate | undefined) {
+  if (location) {
+    const info = await queryInfo(location, map.getView().getProjection())
+    shortUrl.value = info.shortUrl
+    qrUrl.value = getQRUrl(info.shortUrl)
+    clickCoordinateLuref.value = info.clickCoordinateLuref
+    formatted_coordinates.value = info.formatted_coordinates
+    elevation.value = await getElevation(info.clickCoordinateLuref)
+    address.value = await getNearestAddress(info.clickCoordinateLuref)
   }
-  shortUrl.value = await create_short_url(loc)
-  clickCoordinateLuref.value = transform(
-    locationInfo.value!,
-    map.getView().getProjection(),
-    'EPSG:2169'
-  )
-})
-
-/* const clickCoordinateLuref = computed(() => locationInfo.value && transform(
- *   locationInfo.value, map.getView().getProjection(), 'EPSG:2169')
- * )
- * */
-const qrUrl = computed(() => getQRUrl(shortUrl.value))
+}
 
 const isRapportForageVirtuelAvailable = computed(() => {
   const userRole = 'ACT'
@@ -71,24 +69,6 @@ function downloadRapportForageVirtuel() {
   downloadingRepport.value = true
   setTimeout(() => (downloadingRepport.value = false), 2000)
 }
-
-watch(clickCoordinateLuref, async () => {
-  elevation.value = await getElevation(clickCoordinateLuref.value!)
-})
-watch(clickCoordinateLuref, async () => {
-  address.value = await getNearestAddress(clickCoordinateLuref.value!)
-})
-
-const formatted_coordinates = computed(() =>
-  locationInfo.value
-    ? Object.fromEntries(
-        Object.entries(INFO_PROJECTIONS).map(([crs, label]) => [
-          label,
-          formatCoords(locationInfo.value, map.getView().getProjection(), crs),
-        ])
-      )
-    : {}
-)
 </script>
 
 <template>
