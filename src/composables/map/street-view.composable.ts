@@ -1,8 +1,12 @@
 import { watch, nextTick } from 'vue'
 import { storeToRefs } from 'pinia'
 import useMap from '@/composables/map/map.composable'
+import { useAppStore } from '@/stores/app.store'
 import { useInfoStore } from '@/stores/info.store'
+import { MapBrowserEvent } from 'ol'
+import BaseEvent from 'ol/events/Event'
 import { Coordinate } from 'ol/coordinate'
+import { Select } from 'ol/interaction'
 import { fromLonLat, toLonLat } from 'ol/proj'
 import { containsCoordinate } from 'ol/extent.js'
 import { loadGoogleapis } from '@/services/info/street-view'
@@ -20,8 +24,10 @@ export const SV_FEATURE_LAYER_TYPE = 'svFeatureLayer'
 const SV_RADIUS = 90
 
 export default function useStreeView() {
+  const { infoOpen } = storeToRefs(useAppStore())
   const {
     locationInfo,
+    ignoreLeftClick,
     isStreetviewActive,
     noDataAtLocation,
     panoPositionChanging,
@@ -35,6 +41,11 @@ export default function useStreeView() {
   let panorama: any = null
   let panoramaLinksListener: any = null
   let panoramaPovListener: any = null
+  const selectFeature = new Select({
+    filter: (feature /*, layer*/) => feature instanceof SvDirectionFeature,
+  })
+  selectFeature.on('select', handleNavigate)
+
   const svPoint = new Point([0, 0])
   const svCompassFeature = new SvCompassFeature()
   svCompassFeature.setGeometry(svPoint)
@@ -81,6 +92,16 @@ export default function useStreeView() {
     }
   }
 
+  watch(infoOpen, open => {
+    if (open) {
+      if (isStreetviewActive.value && locationInfo.value) {
+        setSvFeatures(locationInfo.value)
+      }
+    } else {
+      svFeature.value = undefined
+    }
+  })
+
   watch(locationInfo, loc => {
     if (loc) {
       if (isStreetviewActive.value) {
@@ -88,6 +109,7 @@ export default function useStreeView() {
       }
     } else {
       svFeature.value = undefined
+      map.getViewport().style.cursor = ''
     }
   })
 
@@ -154,8 +176,41 @@ export default function useStreeView() {
       svf.directions.forEach((f: SvDirectionFeature) =>
         svFeatureLayer.getSource()?.addFeature(f)
       )
+      ignoreLeftClick.value = true
+      map.addInteraction(selectFeature)
+      map.on('pointermove', handleHover)
+    } else {
+      map.un('pointermove', handleHover)
+      map.removeInteraction(selectFeature)
+      ignoreLeftClick.value = false
     }
   })
+
+  function handleNavigate(evt: BaseEvent) {
+    if (evt.target.getFeatures().getLength() !== 0) {
+      const nextDirection = evt.target
+        .getFeatures()
+        .getArray()[0] as SvDirectionFeature
+      evt.target.getFeatures().clear()
+      panorama.setPano(nextDirection.pano)
+    }
+  }
+
+  function handleHover(event: MapBrowserEvent<PointerEvent>) {
+    if (isStreetviewActive.value) {
+      const hit = map.forEachFeatureAtPixel(
+        event.pixel,
+        function (feature /*, layer*/) {
+          if (feature instanceof SvDirectionFeature) {
+            return true
+            // TODO: maybe show description ??
+          }
+          return false
+        }
+      )
+      map.getViewport().style.cursor = hit ? 'pointer' : ''
+    }
+  }
 
   function setSvFeatures(loc: Coordinate) {
     svPoint.setCoordinates(loc)
