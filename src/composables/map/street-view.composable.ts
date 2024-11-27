@@ -27,7 +27,7 @@ export default function useStreeView() {
   const { infoOpen } = storeToRefs(useAppStore())
   const {
     locationInfo,
-    ignoreLeftClick,
+    hidePointer,
     isStreetviewActive,
     noDataAtLocation,
     panoPositionChanging,
@@ -176,13 +176,13 @@ export default function useStreeView() {
       svf.directions.forEach((f: SvDirectionFeature) =>
         svFeatureLayer.getSource()?.addFeature(f)
       )
-      ignoreLeftClick.value = true
+      hidePointer.value = true
       map.addInteraction(selectFeature)
       map.on('pointermove', handleHover)
     } else {
       map.un('pointermove', handleHover)
       map.removeInteraction(selectFeature)
-      ignoreLeftClick.value = false
+      hidePointer.value = false
     }
   })
 
