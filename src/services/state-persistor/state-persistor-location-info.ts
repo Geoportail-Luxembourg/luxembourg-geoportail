@@ -44,7 +44,7 @@ class StatePersistorLocationInfo implements StatePersistorService {
     // This represents the behaviour in V3, where restoring from permalink
     // always displays the info of the map center
     // This is not a very logical behaviour ??
-    if (location !== 'false') {
+    if (location && location !== 'false') {
       locationInfo.value = map.getView().getCenter()
     }
   }
