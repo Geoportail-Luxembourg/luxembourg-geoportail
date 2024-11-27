@@ -24,7 +24,7 @@ export default function useLocationInfo() {
   let holdTimeoutId: number | undefined = undefined
   let startPixel: Coordinate | null = null
   const { infoOpen } = storeToRefs(useAppStore())
-  const { locationInfo } = storeToRefs(useInfoStore())
+  const { locationInfo, ignoreLeftClick } = storeToRefs(useInfoStore())
 
   const infoFeatureLayer = new VectorLayer({
     source: new VectorSource({
@@ -77,7 +77,9 @@ export default function useLocationInfo() {
       (event as MapBrowserEvent<PointerEvent>).originalEvent.button === 0
     ) {
       // if left mouse click
-      locationInfo.value = undefined
+      if (!ignoreLeftClick.value) {
+        locationInfo.value = undefined
+      }
     }
     window.clearTimeout(holdTimeoutId)
     startPixel = null

@@ -5,6 +5,7 @@ import { Coordinate } from 'ol/coordinate'
 
 export const useInfoStore = defineStore('info', () => {
   const locationInfo: Ref<Coordinate | undefined> = ref(undefined)
+  const ignoreLeftClick: Ref<boolean> = ref(false)
   const isStreetviewActive: Ref<boolean> = ref(false)
   const noDataAtLocation = ref(true)
   const panoPositionChanging: Ref<boolean> = ref(false)
@@ -12,6 +13,7 @@ export const useInfoStore = defineStore('info', () => {
 
   return {
     locationInfo,
+    ignoreLeftClick,
     isStreetviewActive,
     noDataAtLocation,
     panoPositionChanging,
