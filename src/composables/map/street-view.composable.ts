@@ -1,4 +1,4 @@
-import { watch } from 'vue'
+import { watch, nextTick } from 'vue'
 import { storeToRefs } from 'pinia'
 import useMap from '@/composables/map/map.composable'
 import { useInfoStore } from '@/stores/info.store'
@@ -49,8 +49,6 @@ export default function useStreeView() {
   svFeatureLayer.set('cyLayerType', SV_FEATURE_LAYER_TYPE)
   map.addLayer(svFeatureLayer)
 
-  // const handlePanoramaPositionChange = () => console.log('pano changed')
-
   function setLocation(loc: Coordinate | undefined) {
     if (panorama !== null) {
       if (loc && !panoPositionChanging.value) {
@@ -72,11 +70,13 @@ export default function useStreeView() {
   function updatePanorama(data: any, status: any) {
     if (status === googleService?.maps.StreetViewStatus.OK) {
       noDataAtLocation.value = false
-      panorama.setPosition(data.location.latLng)
-      panorama.setVisible(true)
+      nextTick(() => {
+        panorama.setPosition(data.location.latLng)
+        panorama.setVisible(true)
+      })
     } else {
       noDataAtLocation.value = true
-      // this.features_.clear();
+      svFeature.value = undefined
       panorama.setVisible(false)
     }
   }
@@ -87,12 +87,6 @@ export default function useStreeView() {
         setLocation(loc)
       }
     } else {
-      svFeature.value = undefined
-    }
-  })
-
-  watch(noDataAtLocation, data => {
-    if (data) {
       svFeature.value = undefined
     }
   })
