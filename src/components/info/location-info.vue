@@ -28,11 +28,11 @@ const clickCoordinateLuref = ref()
 
 // const shortUrl = computed(async () => await create_short_url(locationInfo))
 
-watch(locationInfo, async () => {
-  if (!locationInfo) {
+watch(locationInfo, async loc => {
+  if (!loc) {
     return
   }
-  shortUrl.value = await create_short_url(locationInfo.value)
+  shortUrl.value = await create_short_url(loc)
   clickCoordinateLuref.value = transform(
     locationInfo.value!,
     map.getView().getProjection(),
@@ -80,12 +80,14 @@ watch(clickCoordinateLuref, async () => {
 })
 
 const formatted_coordinates = computed(() =>
-  Object.fromEntries(
-    Object.entries(INFO_PROJECTIONS).map(([crs, label]) => [
-      label,
-      formatCoords(locationInfo.value, map.getView().getProjection(), crs),
-    ])
-  )
+  locationInfo.value
+    ? Object.fromEntries(
+        Object.entries(INFO_PROJECTIONS).map(([crs, label]) => [
+          label,
+          formatCoords(locationInfo.value, map.getView().getProjection(), crs),
+        ])
+      )
+    : {}
 )
 </script>
 

@@ -81,9 +81,19 @@ export default function useStreeView() {
     }
   }
 
-  watch(locationInfo, async loc => {
-    if (isStreetviewActive.value) {
-      setLocation(loc)
+  watch(locationInfo, loc => {
+    if (loc) {
+      if (isStreetviewActive.value) {
+        setLocation(loc)
+      }
+    } else {
+      svFeature.value = undefined
+    }
+  })
+
+  watch(noDataAtLocation, data => {
+    if (data) {
+      svFeature.value = undefined
     }
   })
 
