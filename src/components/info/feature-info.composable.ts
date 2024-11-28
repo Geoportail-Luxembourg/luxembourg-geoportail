@@ -10,6 +10,10 @@ import { useAppStore } from '@/stores/app.store'
 import { screenSizeIsAtLeast } from '@/services/common/device.utils'
 import useThemes from '@/composables/themes/themes.composable'
 import { transform } from 'ol/proj'
+import { useDrawStore } from '@/stores/draw.store'
+import { FeatureLike } from 'ol/Feature'
+import { DrawnFeature } from '@/services/draw/drawn-feature'
+import { Pixel } from 'ol/pixel'
 
 const INFO_SERVICE_URL = import.meta.env.VITE_GET_INFO_SERVICE_URL
 
@@ -17,18 +21,95 @@ export default function useFeatureInfo() {
   const map = useMap().getOlMap()
   const { setFeatureInfoPanelContent, setLoading, setInfoPanelHidden } =
     useFeatureInfoStore()
-  const { fid } = storeToRefs(useFeatureInfoStore())
+  const { fid, isLoading } = storeToRefs(useFeatureInfoStore())
   const { toggleInfoOpen } = useAppStore()
+  const { layersOpen, myMapsOpen } = storeToRefs(useAppStore())
   const { findById } = useThemes()
+  const { drawStateActive, editStateActive, drawnFeatures } = storeToRefs(
+    useDrawStore()
+  )
   const responses = ref<FeatureInfoJSON[]>([])
   const lastHighlightedFeatures = ref<FeatureJSON[]>([])
   const featureInfoService = new FeatureInfoService(map)
+  const isLongPress = ref(false)
+  const startPixel = ref<number[] | null>([])
+  const stopPixel = ref<number[] | null>([])
+  const pointerDownTime = ref(0)
+  const pointerUpTime = ref(0)
+  const timeoutId = ref<number | null>(null)
 
   function init() {
+    listen(map, 'pointerdown', event => {
+      ;(() => {
+        isLongPress.value = false
+        startPixel.value = (event as MapBrowserEvent<any>).pixel
+        pointerDownTime.value = new Date().getTime()
+        if (timeoutId.value !== null) {
+          clearTimeout(timeoutId.value)
+        }
+      })()
+    })
+
     listen(map, 'pointerup', event => {
       ;(async () => {
-        const mapBrowserEvent = event as MapBrowserEvent<any>
-        await singleclickEvent(mapBrowserEvent, false)
+        const evt = event as MapBrowserEvent<any>
+        if (timeoutId.value !== null) {
+          clearTimeout(timeoutId.value)
+          timeoutId.value = null
+        }
+
+        const tempTime = new Date().getTime()
+        if (tempTime - pointerUpTime.value <= 499) {
+          return
+        }
+        pointerUpTime.value = tempTime
+        stopPixel.value = evt.pixel
+
+        if (!isLongPress.value && !(evt.originalEvent instanceof MouseEvent)) {
+          if (pointerUpTime.value - pointerDownTime.value > 499) {
+            isLongPress.value = true
+          }
+        }
+
+        if (isLongPress.value || evt.originalEvent.which === 3) {
+          isLongPress.value = false
+          return
+        }
+
+        if (
+          // TODO: integrate in v3 and migrate once available
+          // routingOpen ||
+          // lidarOpen ||
+          // appActivetool.value.isActive() || => corresponds to: measureActive, streetviewActive
+          drawStateActive.value ||
+          editStateActive.value ||
+          isLoading.value
+        ) {
+          return
+        }
+
+        timeoutId.value = window.setTimeout(() => {
+          let found = false
+
+          const isQueryMymaps =
+            (layersOpen.value || myMapsOpen.value) &&
+            drawnFeatures.value.length > 0
+
+          if (isQueryMymaps) {
+            featureInfoService.clearFeatures()
+            found = checkForMyMapsFeature(evt.pixel)
+          }
+
+          if (!found && startPixel.value && stopPixel.value) {
+            const deltaX = Math.abs(startPixel.value[0] - stopPixel.value[0])
+            const deltaY = Math.abs(startPixel.value[1] - stopPixel.value[1])
+            if (deltaX + deltaY < 6) {
+              singleclickEvent(evt, !isQueryMymaps)
+              startPixel.value = null
+              stopPixel.value = null
+            }
+          }
+        }, 500)
       })()
     })
 
@@ -283,6 +364,36 @@ export default function useFeatureInfo() {
     setLoading(false)
     map.getViewport().style.cursor = ''
     featureInfoService.clearFeatures()
+  }
+
+  function checkForMyMapsFeature(pixel: Pixel): boolean {
+    const selected: FeatureLike[] = []
+    // TODO: 3D
+    // const ol3dm = this.map.get('ol3dm')
+    // if (ol3dm.is3dEnabled()) {
+    //   const picked = ol3dm
+    //     .getCesiumScene()
+    //     .drillPick(new Cesium.Cartesian2(pixel[0], pixel[1]))
+    //   picked.forEach((pick: any) => {
+    //     if (pick && pick.primitive.olFeature) {
+    //       selected.push(pick.primitive.olFeature)
+    //     }
+    //   })
+    // } else {
+    map.forEachFeatureAtPixel(
+      pixel,
+      (feature: FeatureLike) => {
+        if (drawnFeatures.value.indexOf(feature as DrawnFeature) !== -1) {
+          selected.push(feature)
+          return false
+        }
+        return true
+      },
+      {
+        hitTolerance: 5,
+      }
+    )
+    return selected.length > 0 ? true : false
   }
 
   return { init }
