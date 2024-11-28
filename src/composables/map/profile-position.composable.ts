@@ -102,7 +102,7 @@ export default function useProfilePosition(dataset?: ProfileData) {
       listenerIdPointerMove = listen(
         map,
         'pointermove',
-        <ListenerFunction>throttle(evt => onPointerMove(evt), 25)
+        <ListenerFunction>throttle(evt => onPointerMove(evt), 10)
       )
     }
   }
