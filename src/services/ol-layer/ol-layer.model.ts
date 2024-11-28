@@ -3,14 +3,15 @@ import TileLayer from 'ol/layer/Tile'
 import ImageWMS from 'ol/source/ImageWMS'
 import WMTS from 'ol/source/WMTS'
 import TileSource from 'ol/source/Tile'
-
 import MapBoxLayer from '@/lib/ol-mapbox-layer'
+import { PositionVectorLayer } from './ol-layer-feature-position.helper'
 
 export type OlLayer =
   | ImageLayer<ImageWMS>
   | TileLayer<WMTS>
   | TileLayer<TileSource>
   | MapBoxLayer
+  | PositionVectorLayer // lux custom VectorLayer<VectorSource<Geometry>>
 
 export const OLLAYER_PROP_ID = 'id'
 export const OLLAYER_PROP_LABEL = 'label'

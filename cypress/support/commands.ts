@@ -76,7 +76,12 @@ declare global {
     interface Chainable {
       getDrawInteractions(): Chainable<Array<Interaction>>
       getModifyInteraction(): Chainable<Interaction>
-      dragVertexOnMap(): Chainable<void>
+      dragVertexOnMap(
+        originX: number,
+        originY: number,
+        x: number,
+        y: number
+      ): Chainable<void>
       // login(email: string, password: string): Chainable<void>
       // drag(subject: string, options?: Partial<TypeOptions>): Chainable<Element>
       // dismiss(subject: string, options?: Partial<TypeOptions>): Chainable<Element>

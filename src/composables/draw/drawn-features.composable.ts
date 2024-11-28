@@ -3,18 +3,18 @@ import { storeToRefs } from 'pinia'
 import { Feature } from 'ol'
 import { Point, Circle, Geometry, LineString } from 'ol/geom'
 import Polygon from 'ol/geom/Polygon'
+import { Coordinate } from 'ol/coordinate'
+
 import { useDrawStore } from '@/stores/draw.store'
 import { useAppStore } from '@/stores/app.store'
 import { screenSizeIsAtLeast } from '@/services/common/device.utils'
-
 import { DrawnFeature } from '@/services/draw/drawn-feature'
 import { DrawnFeatureType, DrawnFeatureStyle } from '@/stores/draw.store.model'
 
-import { Coordinate } from 'ol/coordinate'
-
 export default function useDrawnFeatures() {
-  const { drawStateActive, drawnFeatures } = storeToRefs(useDrawStore())
-  const { addDrawnFeature } = useDrawStore()
+  const drawStore = useDrawStore()
+  const { drawStateActive, drawnFeatures } = storeToRefs(drawStore)
+  const { addDrawnFeature } = drawStore
   const { feedbackOpen, feedbackanfOpen, feedbackageOpen, feedbackcruesOpen } =
     storeToRefs(useAppStore())
   const { toggleMyMapsOpen } = useAppStore()
@@ -23,7 +23,6 @@ export default function useDrawnFeatures() {
 
   function addFeature(feature: Feature<Geometry>) {
     const nbFeatures = features.length
-    // feature.set('name', name + ' ' + (nbFeatures + 1))
     const featureType = (
       drawStateActive.value === 'drawCircle'
         ? 'drawnCircle'

@@ -27,6 +27,12 @@ export interface Layer {
   currentTimeMaxValue?: string
 }
 
+export interface LayerFeature {
+  id?: LayerId
+  name?: string
+  type: 'position' | 'drawn'
+}
+
 export interface LayerSpec {
   id: LayerId
   name: string

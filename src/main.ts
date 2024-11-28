@@ -6,11 +6,10 @@ import { createApp } from 'vue'
 import VueDOMPurifyHTML from 'vue-dompurify-html'
 import { createPinia } from 'pinia'
 
+import formatMeasureDirective from '@/directives/format-measure.directive'
 import { initProjections } from '@/services/projection.utils'
-import { useThemeStore } from './stores/config.store'
+import { useThemeStore } from '@/stores/config.store'
 import { themesApiFixture } from './__fixtures__/themes.api.fixture'
-import formatLengthDirective from '@/directives/format-length.directive'
-import formatAreaDirective from '@/directives/format-area.directive'
 
 import App from './App.vue'
 
@@ -40,8 +39,7 @@ const app = createApp(App)
 app.use(createPinia())
 app.use(I18NextVue, { i18next })
 app.use(VueDOMPurifyHTML)
-app.use(formatLengthDirective)
-app.use(formatAreaDirective)
+app.use(formatMeasureDirective)
 
 app.mount('#app')
 

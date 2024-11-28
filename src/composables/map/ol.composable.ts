@@ -2,7 +2,7 @@ import type BaseLayer from 'ol/layer/Base'
 import type OlMap from 'ol/Map'
 
 import { layersCache } from '@/stores/layers.cache'
-import type { Layer, LayerId } from '@/stores/map.store.model'
+import type { Layer, LayerFeature, LayerId } from '@/stores/map.store.model'
 import useLayers from '@/composables/layers/layers.composable'
 import { VectorSourceDict } from '@/composables/mvt-styles/mvt-styles.model'
 import { statePersistorStyleService } from '@/services/state-persistor/state-persistor-bgstyle.service'
@@ -17,6 +17,15 @@ export default function useOpenLayers() {
     if (!layer) return
     const baseLayer = getOrCreateLayer(layer)
     olMap.addLayer(baseLayer)
+  }
+
+  function addFeatureLayer(olMap: OlMap, layer: LayerFeature) {
+    if (!layer) return
+
+    const olLayer = olLayerFactoryService.createOlLayer(layer)
+    olMap.addLayer(olLayer)
+
+    return olLayer
   }
 
   function findLayer(olMap: OlMap, layerId: LayerId) {
@@ -148,6 +157,7 @@ export default function useOpenLayers() {
 
   return {
     addLayer,
+    addFeatureLayer,
     findLayer,
     removeLayer,
     removeFromCache,

@@ -43,9 +43,7 @@ class StatePersistorFeaturesService implements StatePersistorService {
       SP_KEY_FEATURES,
       storageFeaturesMapper.urlToFeatures
     )
-    const newFeatures = features.filter(
-      f => f != undefined
-    ) as any as DrawnFeature[]
+    const newFeatures = features.filter(f => f != undefined) as DrawnFeature[]
     drawnFeatures.value = [...drawnFeatures.value, ...newFeatures]
   }
 }

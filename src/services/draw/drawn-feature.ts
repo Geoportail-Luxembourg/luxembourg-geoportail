@@ -1,6 +1,6 @@
 import { Feature } from 'ol'
 import { Point, LineString, MultiPoint, Polygon } from 'ol/geom'
-import StyleStyle, { StyleLike, StyleFunction } from 'ol/style/Style'
+import StyleStyle, { StyleFunction } from 'ol/style/Style'
 import StyleRegularShape, {
   Options as RegularShapeOptions,
 } from 'ol/style/RegularShape'
@@ -10,15 +10,23 @@ import StyleStroke from 'ol/style/Stroke'
 import StyleIcon from 'ol/style/Icon'
 import StyleText from 'ol/style/Text'
 import { Extent } from 'ol/extent'
+import olFormatGeoJSON from 'ol/format/GeoJSON'
 
 import { DrawnFeatureType, DrawnFeatureStyle } from '@/stores/draw.store.model'
-import useMap from '@/composables/map/map.composable'
+import useMap, {
+  PROJECTION_LUX,
+  PROJECTION_WEBMERCATOR,
+} from '@/composables/map/map.composable'
+import { getProfileJson } from '@/services/api/api-profile.service'
+import { colorStringToRgba } from '@/services/utils'
+import { ProfileData } from '@/components/common/graph/elevation-profile'
 
 const MYMAPS_URL = import.meta.env.VITE_MYMAPS_URL
-const MYMAPS_SYMBOL_URL = MYMAPS_URL + '/symbol/'
+const MYMAPS_SYMBOL_URL = import.meta.env.VITE_SYMBOLS_URL
 const ARROW_URL = MYMAPS_URL + '/getarrow'
 
 export class DrawnFeature extends Feature {
+  // TODO: refactor create a generic type that can be used by Infos panel, Draw, and Measures
   id: number
   label: string
   description: string
@@ -30,6 +38,7 @@ export class DrawnFeature extends Feature {
   featureType: DrawnFeatureType
   _featureStyle: DrawnFeatureStyle
   map = useMap().getOlMap()
+  profileData: ProfileData | undefined = undefined // Is used by linestring geom
 
   constructor(drawnFeature?: DrawnFeature) {
     if (drawnFeature) {
@@ -59,11 +68,76 @@ export class DrawnFeature extends Feature {
     this.changed()
   }
 
+  /**
+   * Fits the map view to the feature's extent
+   */
   fit() {
     const size = this.map.getSize()
     const extent = <Extent>this.getGeometry()?.getExtent()
 
     this.map.getView().fit(extent, { size })
+  }
+
+  /**
+   * Get the profile data (eg. to construct graph or download as a csv),
+   * first calls the api profile.json and caculates the cumulative loss/gain elevations
+   * for each point. Caches the result in profileData property so the api
+   * is called only once for the feature.
+   * @returns The calculated profile data
+   */
+  async getProfile() {
+    const geom = this.getGeometry()
+
+    if (geom?.getType() !== 'LineString') {
+      return
+    }
+
+    if (this.profileData === undefined) {
+      const encodeOptions = {
+        dataProjection: PROJECTION_LUX,
+        featureProjection: PROJECTION_WEBMERCATOR,
+      }
+      const geomJson = new olFormatGeoJSON().writeGeometry(
+        this.getGeometry()!,
+        encodeOptions
+      )
+
+      const profileData = await getProfileJson(geomJson, this.id)
+
+      let elevationGain = 0
+      let elevationLoss = 0
+      let cumulativeElevation = 0
+      let lastElevation: number | undefined
+
+      // Cache result
+      this.profileData = profileData.profile.map(d => {
+        const row = {
+          ...d,
+          cumulativeElevation: 0,
+          elevationGain: 0,
+          elevationLoss: 0,
+        }
+        const curElevation = row.values.dhm
+        if (lastElevation !== undefined) {
+          const elevation = curElevation - lastElevation
+          cumulativeElevation = cumulativeElevation + elevation
+          if (elevation > 0) {
+            elevationGain = elevationGain + elevation
+          } else {
+            elevationLoss = elevationLoss + elevation
+          }
+        }
+
+        row.cumulativeElevation = cumulativeElevation
+        row.elevationGain = elevationGain
+        row.elevationLoss = elevationLoss
+        lastElevation = curElevation
+
+        return row
+      })
+    }
+
+    return this.profileData
   }
 
   toProperties() {
@@ -72,20 +146,19 @@ export class DrawnFeature extends Feature {
       color: this.featureStyle.color,
       description: this.description,
       stroke: this.featureStyle.stroke,
-      isLabel: this.featureType == 'drawnLabel',
+      isLabel: this.featureType === 'drawnLabel',
       linestyle: this.featureStyle.linestyle,
       name: this.label,
       opacity: this.featureStyle.opacity,
       showOrientation: this.featureStyle.showOrientation,
       shape: this.featureStyle.shape,
       size: this.featureStyle.size,
-      isCircle: this.featureType == 'drawnCircle',
+      isCircle: this.featureType === 'drawnCircle',
     }
   }
 
   getStyleFunction(): StyleFunction {
-    const styles = new Array<StyleStyle>()
-
+    const styles: StyleStyle[] = []
     const vertexStyle = new StyleStyle({
       image: new StyleRegularShape({
         radius: 6,
@@ -119,12 +192,6 @@ export class DrawnFeature extends Feature {
     const arrowUrl = ARROW_URL
     // TODO 3D
     // const arrowModelUrl = ARROW_MODEL_URL
-    const colorStringToRgba = (colorString: string, opacity = 1) => {
-      const r = parseInt(colorString.substr(1, 2), 16)
-      const g = parseInt(colorString.substr(3, 2), 16)
-      const b = parseInt(colorString.substr(5, 2), 16)
-      return [r, g, b, opacity]
-    }
 
     const curMap = this.map
     return function (
@@ -196,13 +263,11 @@ export class DrawnFeature extends Feature {
               new StyleStyle({
                 geometry: arrowPoint,
                 zIndex: order,
-                image: new StyleIcon(
-                  /** @type {olx.style.IconOptions} */ {
-                    color: arrowColor,
-                    rotation,
-                    src,
-                  }
-                ),
+                image: new StyleIcon({
+                  color: arrowColor,
+                  rotation,
+                  src,
+                }),
               })
             )
             // TODO 3D
@@ -312,7 +377,7 @@ export class DrawnFeature extends Feature {
             radius2: featureSize,
           })
           image = new StyleRegularShape(imageOptions as RegularShapeOptions)
-        } else if (shape == 'cross') {
+        } else if (shape === 'cross') {
           Object.assign(imageOptions, {
             points: 4,
             angle: 0,
@@ -326,21 +391,19 @@ export class DrawnFeature extends Feature {
       if (feature.featureType === 'drawnLabel') {
         return [
           new StyleStyle({
-            text: new StyleText(
-              /** @type {olx.style.TextOptions} */ {
-                text: feature.label,
-                textAlign: 'left',
-                font: 'normal ' + featureSize + 'px Sans-serif',
-                rotation: feature.featureStyle.angle,
-                fill: new StyleFill({
-                  color: rgbColor,
-                }),
-                stroke: new StyleStroke({
-                  color: [255, 255, 255],
-                  width: 2,
-                }),
-              }
-            ),
+            text: new StyleText({
+              text: feature.label,
+              textAlign: 'left',
+              font: 'normal ' + featureSize + 'px Sans-serif',
+              rotation: feature.featureStyle.angle,
+              fill: new StyleFill({
+                color: rgbColor,
+              }),
+              stroke: new StyleStroke({
+                color: [255, 255, 255],
+                width: 2,
+              }),
+            }),
           }),
         ]
       } else {
@@ -356,7 +419,7 @@ export class DrawnFeature extends Feature {
         }
       }
 
-      return styles as StyleLike
+      return styles
     } as StyleFunction
   }
 }

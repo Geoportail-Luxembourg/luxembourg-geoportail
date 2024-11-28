@@ -1,6 +1,3 @@
-// !!! This is a file ported from v3 and not completely refactored, we accept some linter warnings //
-/* eslint-disable @typescript-eslint/no-explicit-any */
-
 import 'd3-transition'
 import { bisector, extent } from 'd3-array'
 import { axisBottom, axisLeft } from 'd3-axis'
@@ -14,7 +11,6 @@ import {
   KeyType,
 } from 'd3-selection' // nb. pointer has replaced mouse in last version of d3
 import { area, line } from 'd3-shape'
-import * as olObj from 'ol/obj'
 
 import { Elevations, Poi, ProfileOptions } from './d3-graph-elevation.d'
 
@@ -31,9 +27,6 @@ const d3 = {
   line,
 }
 
-const DEFAULT_GRAPH_UNIT = 'm'
-const DEFAULT_GRAPH_UNIT_1000 = 'km'
-
 /**
  * Provides a D3js composable to be used to draw an elevation profile chart.
  *
@@ -49,7 +42,7 @@ const DEFAULT_GRAPH_UNIT_1000 = 'km'
  *           zExtractor: function (item) {return item['values']['z2'];}
  *         }
  *       },
- *       hoverCallback: function(point, dist, xUnits, elevations, yUnits) {
+ *       hoverCallback: function(point, dist, elevations) {
  *         console.log(point.x, point.y);
  *       },
  *       outCallback: function() {
@@ -139,20 +132,17 @@ export default function D3GraphElevation(options: ProfileOptions) {
   const poiLabelAngle =
     options.poiLabelAngle !== undefined ? options.poiLabelAngle : -60
 
-  const xAxisLabel = options.i18n?.xAxis || 'Distance'
-  const yAxisLabel = options.i18n?.yAxis || 'Elevation'
-
+  const defaultFormatter = (val: number) => String(val)
   const formatter = {
-    xhover: (distance: number, units = DEFAULT_GRAPH_UNIT) =>
-      `${parseFloat(distance.toPrecision(3))} ${units}`,
-    yhover: (elevation: number, units = DEFAULT_GRAPH_UNIT) =>
-      elevation !== null ? `${Math.round(elevation)} ${units}` : '',
-    xtick: (distance: number) => String(distance),
-    ytick: (elevation: number) => String(elevation),
-  }
-
-  if (typeof options.formatter !== 'undefined') {
-    olObj.assign(formatter, options.formatter)
+    ...{
+      xhover: defaultFormatter,
+      yhover: defaultFormatter,
+      xtick: defaultFormatter,
+      ytick: defaultFormatter,
+      xlabel: () => 'Distance',
+      ylabel: () => 'Elevation',
+    },
+    ...options.formatter,
   }
 
   const lightXAxis =
@@ -192,11 +182,6 @@ export default function D3GraphElevation(options: ProfileOptions) {
    * Factor to determine whether to use 'm' or 'km'.
    */
   let xFactor: number
-
-  /**
-   * Distance units. Either 'm' or 'km'.
-   */
-  let xUnits: string
 
   /**
    * D3 extent of the distance.
@@ -285,7 +270,7 @@ export default function D3GraphElevation(options: ProfileOptions) {
           .attr('dy', '.75em')
           .attr('transform', 'rotate(-90)')
           .style('fill', 'grey')
-          .text(`${yAxisLabel} [m]`)
+          .text(formatter.ylabel())
 
         gEnter
           .append('g')
@@ -322,7 +307,7 @@ export default function D3GraphElevation(options: ProfileOptions) {
 
       // Return an array with the min and max value of the min/max values of
       // each lines.
-      const yDomain = (function () {
+      const yDomain = (() => {
         let elevationsValues: number[] = []
         // Get min/max values (extent) of each lines.
         for (const name in linesConfiguration) {
@@ -386,14 +371,12 @@ export default function D3GraphElevation(options: ProfileOptions) {
 
       if (xDomain[1] > 2000) {
         xFactor = 1000
-        xUnits = DEFAULT_GRAPH_UNIT_1000
       } else {
         xFactor = 1
-        xUnits = DEFAULT_GRAPH_UNIT
       }
 
       if (!light) {
-        xAxis.tickFormat(d => formatter.xtick(<number>d / xFactor))
+        xAxis.tickFormat(d => <string>formatter.xtick(<number>d / xFactor))
         if (lightXAxis) {
           xAxis.tickValues([0, x.domain()[1]])
         }
@@ -405,7 +388,7 @@ export default function D3GraphElevation(options: ProfileOptions) {
           .call(<any>xAxis)
 
         g.select('.x.label')
-          .text(`${xAxisLabel} [${xUnits}]`)
+          .text(formatter.xlabel(xFactor))
           .style('fill', 'grey')
           .style('shape-rendering', 'crispEdges')
 
@@ -510,30 +493,21 @@ export default function D3GraphElevation(options: ProfileOptions) {
     xtranslate += right ? -10 : 10
 
     g.select('.x.grid-hover text')
-      .text(formatter.xhover(dist / xFactor, xUnits))
+      .text(formatter.xhover(dist))
       .style('text-anchor', right ? 'end' : 'start')
       .attr('transform', `translate(${xtranslate},${height - 10})`)
 
-    const yUnits = DEFAULT_GRAPH_UNIT
     // Display altitude on guides only if there is one line.
     if (numberOfLines === 1) {
       const text =
-        elevations[0] === null
-          ? 'no value'
-          : formatter.yhover(elevations[0], DEFAULT_GRAPH_UNIT)
+        elevations[0] === null ? 'no value' : formatter.yhover(elevations[0])
       g.select('.y.grid-hover text')
         .text(text)
         .style('text-anchor', right ? 'end' : 'start')
         .attr('transform', `translate(${xtranslate},${y(elevations[0]) - 10})`)
     }
-    hoverCallback.call(
-      null,
-      point,
-      dist / xFactor,
-      xUnits,
-      elevationsRef,
-      yUnits
-    )
+
+    hoverCallback.call(null, point, dist, elevationsRef)
   }
 
   profile.showPois = (pois: Poi[]) => {

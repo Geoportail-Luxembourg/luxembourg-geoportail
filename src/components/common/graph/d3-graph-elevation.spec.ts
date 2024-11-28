@@ -9,6 +9,10 @@ describe('D3GraphElevation', () => {
   beforeEach(() => {
     wrapper = mount(D3GraphElevation, {
       props: {
+        labelXFormatter: () => '',
+        labelYFormatter: () => '',
+        xFormatter: (val: number) => val + '',
+        yFormatter: (val: number) => val + '',
         showTooltip: true,
       },
     })

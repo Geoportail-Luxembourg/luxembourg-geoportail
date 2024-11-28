@@ -1,4 +1,3 @@
-import { PointData } from '@/components/common/graph/d3-graph-elevation.d'
 import { Coordinate } from 'ol/coordinate'
 import { transform } from 'ol/proj'
 import { debounceAsync } from '@/services/utils'
@@ -6,15 +5,6 @@ import { debounceAsync } from '@/services/utils'
 const ELEVATION_URL = import.meta.env.VITE_ELEVATION_URL
 const MAP_CRS = 'EPSG:3857'
 const ELEVATION_CRS = 'EPSG:2169'
-/**
- * Request the csv profile with the current profile data.
- * @param profileData The current profile data
- */
-export function downloadCsv(profileData: PointData[]) {
-  if (profileData.length === 0) {
-    return
-  }
-}
 
 export const getElevation = async (coordinate: Coordinate) => {
   const lonlat = transform(coordinate, MAP_CRS, ELEVATION_CRS)

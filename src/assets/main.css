@@ -394,7 +394,7 @@
   }
 
   .lux-profile {
-    @apply bg-white border border-black p-1;
+    @apply w-full text-black bg-white border border-black p-1;
   }
 
   .lux-tab {
@@ -449,7 +449,7 @@
   }
 
   .popup .lux-drawing-item-measurements {
-    @apply text-gray-500;
+    @apply text-gray-500 w-[450px];
   }
 
   .lux-legend {

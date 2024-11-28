@@ -1,6 +1,8 @@
 <script setup lang="ts">
 import { inject } from 'vue'
 import { useTranslation } from 'i18next-vue'
+import { Feature } from 'ol'
+import { Geometry } from 'ol/geom'
 
 import { type MenuPopupItem as MenuPopupItemType } from '@/components/common/menu-popup/menu-popup.d'
 import MenuPopup from '@/components/common/menu-popup/menu-popup.vue'
@@ -8,17 +10,18 @@ import MenuPopupItem from '@/components/common/menu-popup/menu-popup-item.vue'
 import { DrawnFeature } from '@/services/draw/drawn-feature'
 import {
   exportFeatureService,
-  type exportFormat,
+  FeatExport,
+  type ExportFormat,
 } from '@/services/export-feature/export-feature.service'
 
 const { t } = useTranslation()
 const feature: DrawnFeature = inject('feature')!
 
-function download(format: exportFormat) {
+function download(format: ExportFormat) {
   exportFeatureService.export(
     feature.map,
     format,
-    [feature],
+    <FeatExport>[<Feature<Geometry>>feature],
     feature.label,
     true
   )
@@ -45,7 +48,10 @@ if (feature?.featureType === 'drawnLine') {
     ...[
       {
         label: 'Continuer la ligne',
-        action: () => alert('TODO: Draw feature click drawingMenuOptions'),
+        action: () =>
+          alert(
+            'TODO: Continuer la ligne (!!!ne pas oublier de unset profileData)'
+          ),
       },
       {
         label: 'Changer sens de la ligne',

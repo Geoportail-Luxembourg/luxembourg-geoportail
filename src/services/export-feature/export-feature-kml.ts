@@ -4,7 +4,7 @@ import { Geometry } from 'ol/geom'
 
 import { ExportFeature } from './export-feature'
 
-export class ExportFeatureKml extends ExportFeature {
+export class ExportFeatureKml extends ExportFeature<Feature<Geometry>[]> {
   /**
    * Export a Kml file
    * @param features The features to export

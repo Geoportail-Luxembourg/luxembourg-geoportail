@@ -97,7 +97,7 @@ function onClickEditStyle() {
     <h6 v-if="isDocked">{{ feature?.label }}</h6>
 
     <!-- Spacer -->
-    <div class="min-h-3"></div>
+    <div class="min-h-2"></div>
 
     <FeatureMeasurements :isEditingFeature="isEditingFeature" />
 

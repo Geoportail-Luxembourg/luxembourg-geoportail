@@ -3,7 +3,7 @@ import { computed, inject, ref, watchEffect } from 'vue'
 import { useTranslation } from 'i18next-vue'
 
 import { DrawnFeature } from '@/services/draw/drawn-feature'
-import FeatureMeasurementsProfile from './feature-measurements-profile.vue'
+import FeatureElevationProfile from '@/components/feature-elevation-profile/feature-elevation-profile.vue'
 import {
   getArea,
   getCircleArea,
@@ -90,7 +90,6 @@ watchEffect(() => {
 
 function onClickValidateRadius(radius: number) {
   if (feature.value) {
-    /* useEdit().setRadius(feature.value as DrawnFeature, Number(radius))*/
     setRadius(feature.value as DrawnFeature, Number(radius), map, drawStore)
   }
 }
@@ -100,12 +99,14 @@ function onClickValidateRadius(radius: number) {
   <div class="lux-drawing-item-measurements">
     <!-- Feature length, for LineString, Circle, Polygon -->
     <div data-cy="featItemLength" v-if="featLength">
-      <span>{{ t('Length:') }}</span> <span v-format-length="featLength"></span>
+      <span>{{ t('Length:') }}&nbsp;</span>
+      <span v-format-measure.length="featLength"></span>
     </div>
 
     <!-- Feature area, for Circle, Polygon -->
     <div data-cy="featItemArea" v-if="featArea">
-      <span>{{ t('Area:') }}</span> <span v-format-area="featArea"></span>
+      <span>{{ t('Area:') }}&nbsp;</span>
+      <span v-format-measure.area="featArea"></span>
     </div>
 
     <!-- Feature radius, for Circle -->
@@ -114,8 +115,11 @@ function onClickValidateRadius(radius: number) {
       v-if="featureType === 'drawnCircle'"
       class="flex items-center"
     >
-      <span>{{ t('Rayon:') }} </span>
-      <span v-if="!isEditingFeature" v-format-length="featRadius"></span>
+      <span>{{ t('Rayon:') }}&nbsp;</span>
+      <span
+        v-if="!isEditingFeature"
+        v-format-measure.length="featRadius"
+      ></span>
       <!-- Radius is editable when edition mode is on -->
       <div v-else class="flex">
         <input
@@ -136,14 +140,18 @@ function onClickValidateRadius(radius: number) {
 
     <!-- Feature elevation, for Point -->
     <div v-if="featureType === 'drawnPoint'">
-      <span>{{ t('Elevation') }}: </span>
-      <span data-cy="featItemElevation" v-format-length="featElevation"></span>
+      <span>{{ t('Elevation') }}:&nbsp;</span>
+      <span
+        data-cy="featItemElevation"
+        v-format-measure:2.elevation="featElevation"
+      ></span>
     </div>
 
     <!-- Feature elevation profile LineString -->
-    <FeatureMeasurementsProfile
+    <feature-elevation-profile
+      class="mb-2"
       v-if="featureType === 'drawnLine'"
-      :feature="feature"
+      :feature="<DrawnFeature>feature"
     />
   </div>
 </template>

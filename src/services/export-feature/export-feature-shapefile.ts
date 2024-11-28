@@ -8,7 +8,9 @@ import { PROJECTION_LUX } from '@/composables/map/map.composable'
 export const URL_MYMAPS_EXPORT_FILE = import.meta.env
   .VITE_URL_MYMAPS_EXPORT_FILE
 
-export class ExportFeatureShapefile extends ExportFeature {
+export class ExportFeatureShapefile extends ExportFeature<
+  Feature<Geometry> | Feature<Geometry>[]
+> {
   constructor(map: Map) {
     super(map)
 

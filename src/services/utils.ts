@@ -1,3 +1,4 @@
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
 export function debounce<T extends (...args: any[]) => any>(
   fn: T,
   delay: number
@@ -12,6 +13,7 @@ export function debounce<T extends (...args: any[]) => any>(
   }
 }
 
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
 export const debounceAsync = <T extends (...args: any[]) => Promise<any>>(
   fn: T,
   delay: number
@@ -31,6 +33,33 @@ export const debounceAsync = <T extends (...args: any[]) => Promise<any>>(
         }
       }, delay)
     })
+  }
+}
+
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+export function throttle<T extends (...args: any[]) => void>(
+  fn: T,
+  limit: number
+) {
+  let lastFunc: ReturnType<typeof setTimeout>
+  let lastRan: number
+
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  return function (this: any, ...args: Parameters<T>) {
+    const context = this
+
+    if (!lastRan) {
+      fn.apply(context, args)
+      lastRan = Date.now()
+    } else {
+      clearTimeout(lastFunc)
+      lastFunc = setTimeout(function () {
+        if (Date.now() - lastRan >= limit) {
+          fn.apply(context, args)
+          lastRan = Date.now()
+        }
+      }, limit - (Date.now() - lastRan))
+    }
   }
 }
 
@@ -141,4 +170,16 @@ export function downloadFile(
  */
 export function capitalize(str: string) {
   return str.charAt(0).toUpperCase() + str.slice(1)
+}
+
+export function colorStringToRgba(colorString: string, opacity = 1) {
+  const isValidHex = /^#[0-9A-Fa-f]{6}$/.test(colorString)
+  if (!isValidHex) {
+    throw new Error(`Invalid hex color string: ${colorString}`)
+  }
+
+  const r = parseInt(colorString.slice(1, 3), 16)
+  const g = parseInt(colorString.slice(3, 5), 16)
+  const b = parseInt(colorString.slice(5, 7), 16)
+  return [r, g, b, opacity]
 }

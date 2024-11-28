@@ -27,19 +27,19 @@ const resultUserInfo: User = {
   typeUtilisateur: 'prive',
 }
 
-const mockFetch = (response: any) => {
+const mockFetch = (response: Response) => {
   ;(fetch as MockedFunction<typeof fetch>).mockResolvedValueOnce(
     response as unknown as Response
   )
 }
 const mockFetchError = () =>
-  mockFetch({
+  mockFetch(<Response>{
     ok: false,
   })
 const mockFetchUserApiSuccess = () =>
-  mockFetch({
+  mockFetch(<Response>{
     ok: true,
-    json: vi.fn().mockResolvedValue(mockUserApi),
+    json: <() => Promise<unknown>>vi.fn().mockResolvedValue(mockUserApi),
   })
 
 describe('Auth service', () => {

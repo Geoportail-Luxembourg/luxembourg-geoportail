@@ -2,12 +2,14 @@ import { Feature, Map } from 'ol'
 import { Projection } from 'ol/proj'
 import { Geometry, GeometryCollection, MultiLineString } from 'ol/geom'
 
-import { PROJECTION_WGS84 } from '@/composables/map/map.composable'
-import { downloadFile, sanitizeFilename } from '@/services/utils'
 import { convertCircleFeatureToPolygon } from '@/composables/draw/draw-utils'
-import { DrawnFeature } from '../draw/drawn-feature'
+import { PROJECTION_WGS84 } from '@/composables/map/map.composable'
+import { DrawnFeature } from '@/services/draw/drawn-feature'
+import { downloadFile, sanitizeFilename } from '@/services/utils'
 
-export abstract class ExportFeature {
+export abstract class ExportFeature<
+  F extends Feature<Geometry> | Feature<Geometry>[]
+> {
   encodeOptions: { dataProjection: string; featureProjection: Projection }
 
   constructor(map: Map) {
@@ -17,11 +19,8 @@ export abstract class ExportFeature {
     }
   }
 
-  abstract export(features: Feature<Geometry>[], fileName: string): void
-  abstract generateContent(
-    features: Feature<Geometry>[],
-    fileName: string
-  ): void
+  abstract export(features: F, fileName: string): void
+  abstract generateContent(features: F, fileName: string): void
 
   download(
     fileName: string,
@@ -40,39 +39,41 @@ export abstract class ExportFeature {
    * @return The exploded features.
    * @private
    */
-  exploseFeatures(features: Feature<Geometry>[]) {
+  exploseFeatures(features: F) {
     const explodedFeatures: Feature<Geometry>[] = []
 
-    features.forEach(feature => {
-      switch (feature.getGeometry()?.getType()) {
-        case 'GeometryCollection': {
-          const geometries = (<GeometryCollection>(
-            feature.getGeometry()
-          )).getGeometriesArray()
-          geometries.forEach(geom =>
-            explodedFeatures.push(this.cloneFeatureWithGeom(feature, geom))
-          )
-          break
+    ;(Array.isArray(features) ? features : [features]).forEach(
+      (feature: Feature<Geometry>) => {
+        switch (feature.getGeometry()?.getType()) {
+          case 'GeometryCollection': {
+            const geometries = (<GeometryCollection>(
+              feature.getGeometry()
+            )).getGeometriesArray()
+            geometries.forEach(geom =>
+              explodedFeatures.push(this.cloneFeatureWithGeom(feature, geom))
+            )
+            break
+          }
+          case 'MultiLineString': {
+            const linestrings = (<MultiLineString>(
+              feature.getGeometry()
+            )).getLineStrings()
+            linestrings.forEach(geom =>
+              explodedFeatures.push(this.cloneFeatureWithGeom(feature, geom))
+            )
+            break
+          }
+          case 'Circle': {
+            const newFeature = new DrawnFeature(feature as DrawnFeature)
+            explodedFeatures.push(convertCircleFeatureToPolygon(newFeature))
+            break
+          }
+          default:
+            explodedFeatures.push(feature)
+            break
         }
-        case 'MultiLineString': {
-          const linestrings = (<MultiLineString>(
-            feature.getGeometry()
-          )).getLineStrings()
-          linestrings.forEach(geom =>
-            explodedFeatures.push(this.cloneFeatureWithGeom(feature, geom))
-          )
-          break
-        }
-        case 'Circle': {
-          const newFeature = new DrawnFeature(feature as DrawnFeature)
-          explodedFeatures.push(convertCircleFeatureToPolygon(newFeature))
-          break
-        }
-        default:
-          explodedFeatures.push(feature)
-          break
       }
-    })
+    )
 
     return explodedFeatures
   }
