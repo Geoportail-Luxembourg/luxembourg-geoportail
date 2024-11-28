@@ -72,36 +72,37 @@ function downloadRapportForageVirtuel() {
 </script>
 
 <template>
-  <div>
-    <div>
-      <h3>{{ t('Short Url', { ns: 'client' }) }}</h3>
-    </div>
-    <div>
+  <div class="flex flex-row">
+    <div class="grow-[2] flex flex-col content-end">
+      <div class="grow"></div>
+      <h3 class="text-3xl text-white">
+        {{ t('Short Url', { ns: 'client' }) }}
+      </h3>
       <input
         onclick="this.select();"
+        class="lux-input"
         type="text"
         :value="shortUrl"
         readonly="true"
       />
     </div>
-    <div>
-      <img
-        class="img-responsive"
-        style="margin-top: 22px"
-        v-if="qrUrl"
-        :src="qrUrl"
-      />
-    </div>
+    <img class="mx-5 mt-5" v-if="qrUrl" :src="qrUrl" />
   </div>
   <div>
-    <div>
-      <h3>{{ t('Location Coordinates', { ns: 'client' }) }}</h3>
+    <div class="mt-5">
+      <h3 class="text-3xl text-white">
+        {{ t('Location Coordinates', { ns: 'client' }) }}
+      </h3>
     </div>
     <table>
-      <tbody>
+      <tbody class="lux-info-table">
         <tr v-for="(coords, label) in formatted_coordinates" :key="label">
-          <th style="text-align: left">{{ t(label as string) }}</th>
+          <th>{{ t(label as string) }}</th>
           <td>{{ coords }}</td>
+          <!-- <tbody class="text-white">
+               <tr v-for="(coords, label) in formatted_coordinates" :key="label">
+               <th class="text-left text-sm p-0">{{ t(label as string) }}</th>
+               <td class="text-sm p-0">{{ coords }}</td> -->
         </tr>
         <tr>
           <th style="text-align: left">{{ t('Elevation') }}</th>
