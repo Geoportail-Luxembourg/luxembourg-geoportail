@@ -90,21 +90,19 @@ export default function useFeatureInfo() {
 
         timeoutId.value = window.setTimeout(() => {
           let found = false
-
-          const isQueryMymaps =
+          if (
             (layersOpen.value || myMapsOpen.value) &&
             drawnFeatures.value.length > 0
-
-          if (isQueryMymaps) {
-            featureInfoService.clearFeatures()
-            found = checkForMyMapsFeature(evt.pixel)
+          ) {
+            found = checkForDrawnFeature(evt.pixel)
           }
 
           if (!found && startPixel.value && stopPixel.value) {
+            featureInfoService.clearFeatures()
             const deltaX = Math.abs(startPixel.value[0] - stopPixel.value[0])
             const deltaY = Math.abs(startPixel.value[1] - stopPixel.value[1])
             if (deltaX + deltaY < 6) {
-              singleclickEvent(evt, !isQueryMymaps)
+              singleclickEvent(evt)
               startPixel.value = null
               stopPixel.value = null
             }
@@ -168,10 +166,7 @@ export default function useFeatureInfo() {
     }
   }
 
-  async function singleclickEvent(
-    evt: MapBrowserEvent<any>,
-    infoMymaps: boolean
-  ): Promise<void> {
+  async function singleclickEvent(evt: MapBrowserEvent<any>): Promise<void> {
     const layers = map.getLayers().getArray()
     const layersList = []
     const layerLabel: { [key: string]: string } = {}
@@ -253,14 +248,6 @@ export default function useFeatureInfo() {
               false
             )
             reset()
-            // TODO: temporarily make work with v3 and migrate onse mymaps available
-            // if (infoMymaps) {
-            //   if (!this.selectMymapsFeature_(evt.pixel)) {
-            //     this['infoOpen'] = false
-            //   }
-            // } else {
-            //   this['infoOpen'] = false
-            // }
           }
         } else {
           throw new Error('Network response was not ok')
@@ -269,10 +256,6 @@ export default function useFeatureInfo() {
         reset()
 
         // throw new Error('Some error occured')
-      }
-    } else {
-      if (infoMymaps) {
-        // this.selectMymapsFeature_(evt.pixel)
       }
     }
   }
@@ -366,7 +349,7 @@ export default function useFeatureInfo() {
     featureInfoService.clearFeatures()
   }
 
-  function checkForMyMapsFeature(pixel: Pixel): boolean {
+  function checkForDrawnFeature(pixel: Pixel): boolean {
     const selected: FeatureLike[] = []
     // TODO: 3D
     // const ol3dm = this.map.get('ol3dm')
