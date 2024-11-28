@@ -30,7 +30,7 @@ export default function useProfilePosition(dataset?: ProfileData) {
   const openLayers = useOpenLayers()
   const profilePositionStore = useProfilePositionStore()
   const drawStore = useDrawStore()
-  const { editStateActive } = storeToRefs(drawStore)
+  const { drawStateActive, editStateActive } = storeToRefs(drawStore)
   const { x, y } = storeToRefs(profilePositionStore)
   const profileData = shallowRef(dataset)
   const highlightDistance: ShallowRef<number | undefined> =
@@ -55,7 +55,7 @@ export default function useProfilePosition(dataset?: ProfileData) {
   })
 
   watch([x, y], ([x, y]) => {
-    if (x && y && displayGeoMarker.value) {
+    if (!drawStateActive.value && x && y && displayGeoMarker.value) {
       overlay?.moveGeoMarker(x, y)
     } else {
       overlay?.removeGeoMarker()
@@ -102,7 +102,7 @@ export default function useProfilePosition(dataset?: ProfileData) {
       listenerIdPointerMove = listen(
         map,
         'pointermove',
-        <ListenerFunction>throttle(evt => onPointerMove(evt), 10)
+        <ListenerFunction>throttle(evt => onPointerMove(evt), 20)
       )
     }
   }
@@ -113,6 +113,7 @@ export default function useProfilePosition(dataset?: ProfileData) {
   function detachPointerMove() {
     if (listenerIdPointerMove) {
       unlistenByKey(listenerIdPointerMove)
+      overlay?.removeGeoMarker()
     }
   }
 
@@ -130,6 +131,11 @@ export default function useProfilePosition(dataset?: ProfileData) {
       return
     }
 
+    // Ignore pointerMove for profile if user is drawing a new geom
+    if (drawStateActive.value) {
+      return
+    }
+
     let newXGeomarker: number | undefined
     let newYGeomarker: number | undefined
 
@@ -144,7 +150,7 @@ export default function useProfilePosition(dataset?: ProfileData) {
     const pixelDist = dist / (res * res)
 
     if (pixelDist < 64) {
-      // Cursor is close enough: display marker (if not edition line mode)
+      // Cursor is close enough: display our white marker (if not modifying line mode, otherwises, there is the natif ol cursor)
       highlightDistance.value = closestPoint[2]
       displayGeoMarker.value = editStateActive.value !== 'editLine'
       newXGeomarker = closestPoint[0]

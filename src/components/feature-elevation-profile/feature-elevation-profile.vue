@@ -8,6 +8,7 @@ import {
   computed,
   getCurrentInstance,
   onMounted,
+  onUnmounted,
   ShallowRef,
   shallowRef,
   watch,
@@ -16,6 +17,7 @@ import {
 import { useTranslation } from 'i18next-vue'
 import { Feature } from 'ol'
 import { Geometry } from 'ol/geom'
+import { transform } from 'ol/proj'
 
 import ElevationProfile from '@/components/common/graph/elevation-profile.vue'
 import { ProfileData } from '@/components/common/graph/elevation-profile'
@@ -26,7 +28,6 @@ import {
   exportFeatureService,
   FeatExport,
 } from '@/services/export-feature/export-feature.service'
-import { transform } from 'ol/proj'
 import { PROJECTION_LUX } from '@/composables/map/map.composable'
 
 defineEmits<{
@@ -61,6 +62,10 @@ onMounted(() => {
   // Force get profile data when mounted (eg. when user click on a another drawn line, must populate data)
   props.feature &&
     props.feature.getProfile().then(data => (profileData.value = data))
+})
+
+onUnmounted(() => {
+  profilePositionStore.setPosition(undefined, undefined)
 })
 
 watchEffect(() => {
