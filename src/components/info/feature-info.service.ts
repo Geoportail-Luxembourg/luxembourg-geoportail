@@ -15,13 +15,14 @@ import { FitOptions } from 'ol/View'
 import { Size } from 'ol/size'
 
 //TODO: potentially move to ol services
-export class FeatureInfoService {
-  constructor(map: Map) {
+class FeatureInfoService {
+  map: Map
+  featureLayer: VectorLayer<VectorSource<Geometry>>
+
+  init(map: Map) {
     this.map = map
     this.createFeatureLayer()
   }
-  map: Map
-  featureLayer: VectorLayer<VectorSource<Geometry>>
 
   createFeatureLayer() {
     this.featureLayer = new VectorLayer({
@@ -141,3 +142,4 @@ export class FeatureInfoService {
     this.featureLayer.getSource()?.clear()
   }
 }
+export const featureInfoService = new FeatureInfoService()

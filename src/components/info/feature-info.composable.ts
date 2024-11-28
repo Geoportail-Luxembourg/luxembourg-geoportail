@@ -1,6 +1,6 @@
 import useMap from '@/composables/map/map.composable'
 import { listen } from 'ol/events'
-import { FeatureInfoService } from './feature-info.service'
+import { featureInfoService } from './feature-info.service'
 import { useFeatureInfoStore } from '@/stores/feature-info.store'
 import { FeatureInfoJSON, FeatureJSON } from './feature-info.model'
 import { MapBrowserEvent } from 'ol'
@@ -30,7 +30,6 @@ export default function useFeatureInfo() {
   )
   const responses = ref<FeatureInfoJSON[]>([])
   const lastHighlightedFeatures = ref<FeatureJSON[]>([])
-  const featureInfoService = new FeatureInfoService(map)
   const isLongPress = ref(false)
   const startPixel = ref<number[] | null>([])
   const stopPixel = ref<number[] | null>([])
@@ -39,6 +38,7 @@ export default function useFeatureInfo() {
   const timeoutId = ref<number | null>(null)
 
   function init() {
+    featureInfoService.init(map)
     listen(map, 'pointerdown', event => {
       ;(() => {
         isLongPress.value = false

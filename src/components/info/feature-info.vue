@@ -1,14 +1,19 @@
 <script setup lang="ts">
-import { defineProps } from 'vue'
+import { defineProps, onUnmounted } from 'vue'
 import DefaultTemplate from '@/components/info/templates/default-template.vue'
 import LignesBusTemplate from './templates/lignes-bus-template.vue'
 import { FeatureInfoJSON } from './feature-info.model'
+import { featureInfoService } from './feature-info.service'
 
 defineProps({
   content: {
     type: Array as () => FeatureInfoJSON[],
     required: true,
   },
+})
+
+onUnmounted(() => {
+  featureInfoService.clearFeatures()
 })
 
 const getTemplateComponent = (template: string) => {
