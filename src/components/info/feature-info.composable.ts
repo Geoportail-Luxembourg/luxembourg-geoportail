@@ -111,6 +111,46 @@ export default function useFeatureInfo() {
       })()
     })
 
+    listen(map, 'pointermove', event => {
+      const evt = event as MapBrowserEvent<any>
+      if (evt.dragging || isLoading.value) {
+        return
+      }
+      if (
+        drawStateActive.value /*TODO: || measureActive || streetviewActive*/
+      ) {
+        map.getViewport().style.cursor = ''
+      } else {
+        const pixel = map.getEventPixel(evt.originalEvent)
+        let hit: boolean | undefined = false
+        try {
+          hit = map.forEachLayerAtPixel(
+            pixel,
+            layer => {
+              if (layer) {
+                const metadata = layer.get('metadata')
+                if (
+                  metadata &&
+                  metadata['is_queryable'] &&
+                  layer.getVisible() &&
+                  layer.getOpacity() > 0
+                ) {
+                  return true
+                }
+              }
+              return false
+            },
+            {
+              layerFilter: layer => !!layer.getSource(),
+            }
+          )
+        } catch (error) {
+          hit = false
+        }
+        map.getViewport().style.cursor = hit ? 'pointer' : ''
+      }
+    })
+
     watchEffect(() => {
       if (fid.value) {
         ;(async () => {
