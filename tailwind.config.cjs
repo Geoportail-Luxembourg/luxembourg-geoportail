@@ -128,6 +128,8 @@ module.exports = {
           "url('/src/assets/images/backgroundselector/orthophoto_sm_retina.png')",
         hybrid_sm_hi:
           "url('/src/assets/images/backgroundselector/hybrid_sm_retina.png')",
+        solarkataster:
+          "url('/src/assets/images/featureinfo/solarkataster_1.png')",
       },
       content: {
         main: '"\\e02d"',

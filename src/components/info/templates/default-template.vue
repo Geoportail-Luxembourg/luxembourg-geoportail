@@ -51,24 +51,36 @@ const currentUrl = window.location.href
                 v-if="!isLink(entry['value'])"
                 v-dompurify-html="entry['value']"
               ></span>
-              <!-- <a
-                ng-if="!(layers.layerLabel.startsWith('myenergy_solarkataster_luxemburg') || layers.layerLabel.startsWith('eau_new_Wasserstand'))&& ctrl.isLink(entry['value'])"
-                ng-href="{{entry['value']}}"
+              <a
+                v-if="
+                  !(
+                    layers.layerLabel.startsWith(
+                      'myenergy_solarkataster_luxemburg'
+                    ) || layers.layerLabel.startsWith('eau_new_Wasserstand')
+                  ) && isLink(entry['value'])
+                "
+                :href="`${entry['value']}`"
                 target="_blank"
                 >{{ t(`${entry['key']}`) }}</a
               >
               <a
-                ng-if="layers.layerLabel.startsWith('myenergy_solarkataster_luxemburg') && ctrl.isLink(entry['value']) && entry['key'] == 'f_href'"
-                ng-href="{{entry['value']}}"
+                v-if="
+                  layers.layerLabel.startsWith(
+                    'myenergy_solarkataster_luxemburg'
+                  ) &&
+                  isLink(entry['value']) &&
+                  entry['key'] == 'f_href'
+                "
+                :href="`${entry['value']}`"
                 target="_blank"
               >
-                <button class="solarkatasterbutton">
+                <button class="lux-solarkataster-button">
                   <span>{{
                     t("Lien direct vers le calculateur d'efficacité économique")
                   }}</span>
                 </button></a
               >
-              <span
+              <!-- <span
                 ng-if="ctrl.isLink(entry['value']) && entry['key'] == 'f_AudioURL'"
               >
                 <audio controls autoplay style="width: 260px; height: 50px">
@@ -112,7 +124,6 @@ const currentUrl = window.location.href
             t('Aucune information disponible pour cette couche')
           }}</span>
         </div>
-        <!-- TODO: implement intepreting the URL (getFeatureInfoById)-->
         <div v-if="hasValidFID(feature)">
           <span
             ><a :href="`${currentUrl}&fid=${feature.fid}`" target="_blank">{{

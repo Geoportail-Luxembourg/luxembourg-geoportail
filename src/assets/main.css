@@ -501,6 +501,10 @@
   .lux-poi-feature a {
     @apply text-black underline;
   }
+
+  .lux-solarkataster-button {
+    @apply bg-solarkataster w-[200px] h-[100px] bg-[length:196px_96px] bg-no-repeat;
+  }
 }
 
 .fa-solid {
