@@ -9,6 +9,7 @@ import {
   showAttributesByLang,
   hasValidFID,
   prefixKeys,
+  getTrustedUrl,
 } from './template-utilities'
 import i18next from 'i18next'
 defineProps({
@@ -34,10 +35,13 @@ const currentUrl = window.location.href
         </h4>
         <div v-if="hasAttributes(feature)">
           <div
-            v-for="entry in prefixKeys(feature.attributes, 'f_')"
+            v-for="entry in prefixKeys(feature.attributes, 'f_').sort(
+              (a, b) => {
+                return layers.ordered ? 0 : a.key.localeCompare(b.key)
+              }
+            )"
             :key="entry.key"
           >
-            <!-- | orderBy: (layers.ordered ? '' : 'key') -->
             <span
               v-if="
                 !isEmpty(entry['value']) &&
@@ -80,19 +84,24 @@ const currentUrl = window.location.href
                   }}</span>
                 </button></a
               >
-              <!-- <span
-                ng-if="ctrl.isLink(entry['value']) && entry['key'] == 'f_AudioURL'"
+              <span
+                v-if="isLink(entry['value']) && entry['key'] == 'f_AudioURL'"
               >
                 <audio controls autoplay style="width: 260px; height: 50px">
-                  <source src="{{entry['value']}}" type="audio/wav" />
+                  <source :src="`${entry['value']}`" type="audio/wav" />
                 </audio>
-              </span> -->
-              <!-- <iframe
+              </span>
+              <iframe
                 width="260px"
                 height="560px"
-                ng-if="layers.layerLabel.startsWith('eau_new_Wasserstand') && ctrl.isLink(entry['value']) && entry['key'] == 'f_Graph'"
-                ng-src="{{ctrl.getTrustedUrl(entry['value'])}}"
-              ></iframe> -->
+                v-if="
+                  layers.layerLabel.startsWith('eau_new_Wasserstand') &&
+                  isLink(entry['value']) &&
+                  entry['key'] == 'f_Graph'
+                "
+                :src="`${getTrustedUrl(entry['value'])}`"
+                title="water level graph"
+              ></iframe>
             </span>
           </div>
         </div>

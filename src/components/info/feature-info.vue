@@ -28,8 +28,8 @@ const getTemplateComponent = (template: string) => {
 }
 </script>
 <template>
-  <div class="layer-info-content printable">
-    <!-- <ngeo-modal ng-model="ctrl.preview">
+  <!-- TODO: migrate modal-->
+  <!-- <ngeo-modal ng-model="ctrl.preview">
   <div class="modal-header">
     <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
     <h4 class="modal-title" translate>Prévisualisation du mesurage</h4>
@@ -44,17 +44,12 @@ const getTemplateComponent = (template: string) => {
     <a ng-if="ctrl.isDownloadable" class="btn btn-default"  href="{{ctrl.getDownloadMeasurementUrl()}}?document_id={{ctrl.previewDocumentId}}" target="_blank" translate>Télécharger</a>
   </div>
   </ngeo-modal> -->
-
-    <div>
-      <!--ng-repeat="layers in ctrl.content"-->
-      <div v-if="content && content.length">
-        <component
-          v-for="(layers, index) in content"
-          :key="index"
-          :is="getTemplateComponent(layers.template)"
-          :layers="layers"
-        />
-      </div>
-    </div>
+  <div v-if="content && content.length" class="absolute">
+    <component
+      v-for="(layers, index) in content"
+      :key="index"
+      :is="getTemplateComponent(layers.template)"
+      :layers="layers"
+    />
   </div>
 </template>
