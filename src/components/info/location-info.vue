@@ -54,10 +54,18 @@ const isCyclomediaAvailable = computed(() => true)
 const isImagesObliquesAvailable = computed(() => true)
 
 const getLidarUrl = () => 'bla'
-const getCyclomediaUrl = () => 'bla'
-const getImagesObliquesUrl = () => 'bla'
+const cyclomediaUrl = computed(() =>
+  clickCoordinateLuref.value
+    ? `http://streetsmart.cyclomedia.com/streetsmart?q=${clickCoordinateLuref.value[0]};${clickCoordinateLuref.value[1]}`
+    : ''
+)
+const imagesObliquesUrl = computed(() =>
+  clickCoordinateLuref.value
+    ? `https://oblique.geoportail.lu/publication/viewer?x=${clickCoordinateLuref.value[0]}&y=${clickCoordinateLuref.value[1]}&crs=2169`
+    : ''
+)
 
-const addRoutePoint = () => 'bla'
+const addRoutePoint = () => '// TODO: add point to route'
 
 const open = ref(true)
 const { isStreetviewActive } = storeToRefs(useInfoStore())
@@ -99,10 +107,6 @@ function downloadRapportForageVirtuel() {
         <tr v-for="(coords, label) in formatted_coordinates" :key="label">
           <th>{{ t(label as string) }}</th>
           <td>{{ coords }}</td>
-          <!-- <tbody class="text-white">
-               <tr v-for="(coords, label) in formatted_coordinates" :key="label">
-               <th class="text-left text-sm p-0">{{ t(label as string) }}</th>
-               <td class="text-sm p-0">{{ coords }}</td> -->
         </tr>
         <tr>
           <th style="text-align: left">{{ t('Elevation') }}</th>
@@ -141,7 +145,7 @@ function downloadRapportForageVirtuel() {
       <a
         v-if="isCyclomediaAvailable"
         class="lux-btn whitespace-nowrap"
-        :href="getCyclomediaUrl()"
+        :href="cyclomediaUrl"
         target="_geoportal_ext_cyclomedia"
       >
         {{ t('Lien vers Cyclomédia') }}
@@ -149,7 +153,7 @@ function downloadRapportForageVirtuel() {
       <a
         v-if="isImagesObliquesAvailable"
         class="lux-btn whitespace-nowrap"
-        :href="getImagesObliquesUrl()"
+        :href="imagesObliquesUrl"
         target="_geoportal_ext_obliques"
       >
         {{ t('Images obliques') }}
