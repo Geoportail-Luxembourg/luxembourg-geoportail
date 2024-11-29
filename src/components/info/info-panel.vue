@@ -35,9 +35,10 @@ const { featureInfoPanelContent, isLoading } = storeToRefs(
           </li>
         </ul>
       </div>
-      <div v-if="featureInfoPanelContent && !isLoading">
-        <feature-info :content="featureInfoPanelContent" />
-      </div>
+      <feature-info
+        v-if="featureInfoPanelContent && !isLoading"
+        :content="featureInfoPanelContent"
+      />
     </template>
   </side-panel-layout>
 </template>

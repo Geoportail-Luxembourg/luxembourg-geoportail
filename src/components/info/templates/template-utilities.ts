@@ -1,4 +1,5 @@
 import { FeatureJSON } from '../feature-info.model'
+import { sanitizeUrl } from '@braintree/sanitize-url'
 
 export function prefixKeys(
   attributes: { [key: string]: any },
@@ -123,14 +124,11 @@ export function isFIDValid(fid: string | undefined): boolean {
   return fids.every(curFid => !!curFid && curFid.split('_').length >= 2)
 }
 
+// maybe move to generic utils?
+export function getTrustedUrl(url: string): string {
+  return sanitizeUrl(url)
+}
 // TODO: use vue utilities for this
-
-// export function trustAsHtml(content: string, sce: SceService): any {
-//   if (typeof content !== 'string') {
-//     return content
-//   }
-//   return sce.trustAsHtml(content)
-// }
 
 // export function getTrustedUrlByLang(
 //   urlFr: string,
