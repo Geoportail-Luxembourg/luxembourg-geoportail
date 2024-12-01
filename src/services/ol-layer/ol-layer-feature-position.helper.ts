@@ -7,7 +7,7 @@ import Feature from 'ol/Feature'
 import { OlLayer } from './ol-layer.model'
 import { getStyleFeaturePosition } from './styles.helper'
 
-export const DEFAULT_LAYER_ZINDEX = 10000
+export const DEFAULT_LAYER_ZINDEX = 1002
 export const FEATURE_LAYER_TYPE = 'featurePositionLayer'
 
 export class PositionVectorLayer extends VectorLayer<VectorSource<Geometry>> {
@@ -16,6 +16,7 @@ export class PositionVectorLayer extends VectorLayer<VectorSource<Geometry>> {
   constructor(options: Options<VectorSource<Geometry>>) {
     const source = new VectorSource({
       features: [], // geoMarker to be added here (@see createGeoMarker())
+      useSpatialIndex: false,
     })
 
     super({ ...options, ...{ source } })
@@ -45,8 +46,11 @@ class OlLayerFeaturePositionHelper {
   createOlLayer(): OlLayer {
     const style = getStyleFeaturePosition()
     const olLayer = new PositionVectorLayer({
+      declutter: true, // always on top, overpass zindex (needed in v3 for profile/routing)
       zIndex: DEFAULT_LAYER_ZINDEX,
       style,
+      updateWhileAnimating: true,
+      updateWhileInteracting: true,
     })
 
     olLayer.set('cyLayerType', FEATURE_LAYER_TYPE)

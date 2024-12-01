@@ -34,11 +34,22 @@ defineEmits<{
   (e: 'close'): void
 }>()
 
-const props = defineProps<{
-  feature: DrawnFeature | undefined
-}>()
+const props = withDefaults(
+  defineProps<{
+    feature: DrawnFeature | undefined
+    enableExportCSV?: boolean
+    activatePositioning?: boolean
+  }>(),
+  {
+    enableExportCSV: true,
+    activatePositioning: true,
+  }
+)
 
-const profilePosition = useProfilePosition(undefined)
+const profilePosition = useProfilePosition(
+  undefined,
+  () => props.activatePositioning
+)
 const profilePositionStore = useProfilePositionStore()
 const { t } = useTranslation()
 
@@ -125,14 +136,16 @@ function onOutProfile() {
           </span>
         </template>
       </div>
+
       <button
         data-cy="featItemProfileCSV"
         class="profile-export no-print text-secondary hover:underline"
-        v-if="profileData"
+        v-if="enableExportCSV && profileData"
         @click="() => exportCSV()"
       >
         {{ t('Export csv') }}
       </button>
+
       <!-- Display close button only if there is a listener "onClose" in the parent -->
       <button
         v-if="hasCloseListener"

@@ -1,4 +1,13 @@
-import { onMounted, onUnmounted, ref, ShallowRef, shallowRef, watch } from 'vue'
+import {
+  MaybeRefOrGetter,
+  onMounted,
+  onUnmounted,
+  ref,
+  ShallowRef,
+  shallowRef,
+  toValue,
+  watch,
+} from 'vue'
 import { storeToRefs } from 'pinia'
 import { Map, MapBrowserEvent } from 'ol'
 import { EventsKey, listen, ListenerFunction, unlistenByKey } from 'ol/events'
@@ -23,10 +32,14 @@ let overlay: PositionVectorLayer | undefined // Shared overlay between all profi
  *
  * NB.If edition mode is 'editLine', the marker is hidden because there is already a default blue marker
  * when modifying feature is active.
- * @param dataset
+ * @param dataset Profile data used to construct and handle the positioning (can be set afterwards by setting directly useProfilePosition().prfileData)
+ * @param activatePositioning Activate or deactivate positioning (show or hide geomarker), in some case, we need to hide temporarily the geomarker (because the profile line is hidden, or because user is starting a new drawing, etc...)
  * @returns
  */
-export default function useProfilePosition(dataset?: ProfileData) {
+export default function useProfilePosition(
+  dataset?: ProfileData,
+  activatePositioning: MaybeRefOrGetter<boolean | undefined> = true
+) {
   const openLayers = useOpenLayers()
   const profilePositionStore = useProfilePositionStore()
   const drawStore = useDrawStore()
@@ -37,6 +50,7 @@ export default function useProfilePosition(dataset?: ProfileData) {
     shallowRef(undefined) // The value to higlight on the graph
   const displayGeoMarker = ref(true) // deactivate geomarker when mode edition
   const virtualLineProfile = new LineString([0, 0], GeometryLayout.XYM) // don't add to the map, it is used to compute the distance between the user cursor and the feature (represented by the virtual line)
+  const activePositioning = ref(true)
 
   let map: Map
   let listenerIdPointerMove: EventsKey | undefined
@@ -47,6 +61,19 @@ export default function useProfilePosition(dataset?: ProfileData) {
   })
   onUnmounted(() => detachPointerMove())
 
+  watch(
+    () => toValue(activatePositioning),
+    active => {
+      activePositioning.value = active ?? true
+    }
+  )
+
+  watch(activePositioning, active => {
+    if (!active) {
+      overlay?.removeGeoMarker()
+    }
+  })
+
   watch(profileData, profileData => {
     if (profileData) {
       constructProfileLine(profileData)
@@ -55,7 +82,13 @@ export default function useProfilePosition(dataset?: ProfileData) {
   })
 
   watch([x, y], ([x, y]) => {
-    if (!drawStateActive.value && x && y && displayGeoMarker.value) {
+    if (
+      activePositioning.value &&
+      !drawStateActive.value &&
+      x &&
+      y &&
+      displayGeoMarker.value
+    ) {
       overlay?.moveGeoMarker(x, y)
     } else {
       overlay?.removeGeoMarker()
@@ -132,7 +165,7 @@ export default function useProfilePosition(dataset?: ProfileData) {
     }
 
     // Ignore pointerMove for profile if user is drawing a new geom
-    if (drawStateActive.value) {
+    if (drawStateActive.value || !activePositioning.value) {
       return
     }
 
