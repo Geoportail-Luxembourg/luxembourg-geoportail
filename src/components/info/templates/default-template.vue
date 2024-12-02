@@ -12,6 +12,8 @@ import {
   getTrustedUrl,
 } from './template-utilities'
 import i18next from 'i18next'
+import ProfileFeatureInfo from '@/components/info/profile-feature-info.vue'
+
 defineProps({
   layers: {
     type: Object as () => FeatureInfoJSON,
@@ -108,17 +110,12 @@ const currentUrl = window.location.href
             </span>
           </div>
         </div>
-
-        <!-- <div
+        <div
           class="query-profile"
-          ng-show="feature.attributes.showProfile.active"
+          v-if="feature.attributes.showProfile?.active"
         >
-          <app-profile
-            app-profile-data="feature.attributes.profile"
-            app-profile-map="::ctrl.map"
-            app-profile-interaction="feature.attributes.showProfile"
-          />
-        </div> -->
+          <profile-feature-info :feature="feature" />
+        </div>
         <div v-if="feature.attributes.showProfile?.active">
           <a
             class="lux-btn"
