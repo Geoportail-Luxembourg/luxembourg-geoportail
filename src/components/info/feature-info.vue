@@ -2,8 +2,17 @@
 import { defineProps, onUnmounted } from 'vue'
 import DefaultTemplate from '@/components/info/templates/default-template.vue'
 import LignesBusTemplate from './templates/lignes-bus-template.vue'
-import { FeatureInfoJSON } from './feature-info.model'
+import { FeatureInfoJSON, FeatureJSON } from './feature-info.model'
 import { featureInfoService } from './feature-info.service'
+import {
+  exportFeatureService,
+  ExportFormat,
+  FeatExport,
+} from '@/services/export-feature/export-feature.service'
+import { Feature } from 'ol'
+import { Geometry } from 'ol/geom'
+import GeoJSON from 'ol/format/GeoJSON'
+import useMap from '@/composables/map/map.composable'
 
 defineProps({
   content: {
@@ -11,6 +20,7 @@ defineProps({
     required: true,
   },
 })
+const map = useMap().getOlMap()
 
 onUnmounted(() => {
   featureInfoService.clearFeatures()
@@ -23,8 +33,25 @@ const getTemplateComponent = (template: string) => {
     case 'lignes_bus.html':
       return LignesBusTemplate
     default:
-      return 'div'
+      return DefaultTemplate
   }
+}
+
+function onExport(payload: { feature: FeatureJSON; format: ExportFormat }) {
+  if (payload.feature.attributes && !payload.feature.properties) {
+    payload.feature.properties = payload.feature.attributes
+  }
+  const olFeature = new GeoJSON().readFeature(payload.feature, {
+    dataProjection: 'EPSG:2169',
+    featureProjection: map.getView().getProjection(),
+  })
+  exportFeatureService.export(
+    map,
+    payload.format,
+    <FeatExport>[<Feature<Geometry>>olFeature],
+    payload.feature.attributes.name || payload.format,
+    true
+  )
 }
 </script>
 <template>
@@ -50,6 +77,7 @@ const getTemplateComponent = (template: string) => {
       :key="index"
       :is="getTemplateComponent(layers.template)"
       :layers="layers"
+      @export="onExport"
     />
   </div>
 </template>
