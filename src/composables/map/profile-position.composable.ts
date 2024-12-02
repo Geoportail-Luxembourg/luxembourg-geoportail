@@ -65,14 +65,12 @@ export default function useProfilePosition(
     () => toValue(activatePositioning),
     active => {
       activePositioning.value = active ?? true
+
+      if (!active) {
+        overlay?.removeGeoMarker()
+      }
     }
   )
-
-  watch(activePositioning, active => {
-    if (!active) {
-      overlay?.removeGeoMarker()
-    }
-  })
 
   watch(profileData, profileData => {
     if (profileData) {
