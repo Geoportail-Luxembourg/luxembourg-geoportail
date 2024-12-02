@@ -31,7 +31,7 @@ const expectedCsvContent =
 describe('ExportFeatureProfileCsv', () => {
   describe('#export', () => {
     it('Exports a profile into a CSV file', async () => {
-      const downloadSpy = vi.spyOn(exporter as any, 'download')
+      const downloadSpy = vi.spyOn(exporter, 'download')
 
       await exporter.export(mockFeatureWithData, 'test-profile')
 

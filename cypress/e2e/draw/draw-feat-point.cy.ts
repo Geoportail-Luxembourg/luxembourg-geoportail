@@ -8,10 +8,12 @@ function testFeatItemMeasurements() {
   cy.get('*[data-cy="featItemProfile"]').should('not.exist')
 }
 
-function testFeatStyleEditionTabContent() {
+function testFeatStyleEditionTabContent(withAngle: boolean) {
   cy.get('*[data-cy="featStyleColor"]').should('exist')
   cy.get('*[data-cy="featStyleSize"]').should('exist')
-  cy.get('*[data-cy="featStyleAngle"]').should('not.exist')
+  cy.get('*[data-cy="featStyleAngle"]').should(
+    withAngle ? 'exist' : 'not.exist'
+  )
   cy.get('*[data-cy="featStyleSymbol"]').should('exist')
   cy.get('*[data-cy="featStyleLineStyle"]').should('not.exist')
   cy.get('*[data-cy="featStyleLineWidth"]').should('not.exist')
@@ -114,7 +116,8 @@ describe('Draw "Point"', () => {
     })
 
     it('displays the style edition tab for "Point"', () => {
-      testFeatStyleEditionTabContent()
+      const withAngle = false
+      testFeatStyleEditionTabContent(withAngle)
     })
 
     describe('When editing symbol', () => {
@@ -143,12 +146,25 @@ describe('Draw "Point"', () => {
             cy.get('[data-cy="featStyleSymbolIcon"]').should('have.length', 2)
           })
         })
+
+        describe('When choosing a symbol', () => {
+          it('should close the list', () => {
+            cy.get('[data-cy="featStyleSymbolFilterList"]').should('exist')
+            cy.get('[data-cy="featStyleSymbolIcon"]').eq(1).click()
+            cy.get('[data-cy="featStyleSymbolFilterList"]').should('not.exist')
+
+            const withAngle = true
+            testFeatStyleEditionTabContent(withAngle)
+          })
+        })
       })
 
       describe('When clicking close button', () => {
         it('returns to style edition tab', () => {
           cy.get('[data-cy="featClosePopup"]').click()
-          testFeatStyleEditionTabContent()
+
+          const withAngle = false
+          testFeatStyleEditionTabContent(withAngle)
         })
       })
     })

@@ -1,3 +1,7 @@
+import { Geometry } from 'ol/geom'
+import { Layer } from 'ol/layer'
+import VectorSource from 'ol/source/Vector'
+
 beforeEach(() => {
   cy.visit('/')
 })
@@ -66,13 +70,14 @@ describe('Test style edition of Point feature', () => {
         const featureLayers = olMap
           .getLayers()
           .getArray()
-          .filter((l: any) => l.get('cyLayerType') === 'featureLayer')
+          .filter((l: Layer) => l.get('cyLayerType') === 'featureLayer')
         const features = featureLayers
-          .map((l: any) => l.getSource().getFeatures())
+          .map((l: Layer) =>
+            (l.getSource() as VectorSource<Geometry>)?.getFeatures()
+          )
           .flat()
         cy.wrap(features.length).should('equal', 1)
 
-        // const ff = features.find((f: any) => f.get('name') === 'Point 1')
         const ff = features[0]
         cy.wrap(ff.featureType).should('equal', 'drawnPoint')
         // check color green
@@ -97,9 +102,11 @@ describe('Test style edition of Point feature', () => {
         const featureLayers = olMap
           .getLayers()
           .getArray()
-          .filter((l: any) => l.get('cyLayerType') === 'featureLayer')
+          .filter((l: Layer) => l.get('cyLayerType') === 'featureLayer')
         const features = featureLayers
-          .map((l: any) => l.getSource().getFeatures())
+          .map((l: Layer) =>
+            (l.getSource() as VectorSource<Geometry>)?.getFeatures()
+          )
           .flat()
         cy.wrap(features.length).should('equal', 1)
         const ff = features[0]
@@ -133,9 +140,11 @@ describe('Test style edition of Label feature', () => {
         const featureLayers = olMap
           .getLayers()
           .getArray()
-          .filter((l: any) => l.get('cyLayerType') === 'featureLayer')
+          .filter((l: Layer) => l.get('cyLayerType') === 'featureLayer')
         const features = featureLayers
-          .map((l: any) => l.getSource().getFeatures())
+          .map((l: Layer) =>
+            (l.getSource() as VectorSource<Geometry>)?.getFeatures()
+          )
           .flat()
         cy.wrap(features.length).should('equal', 1)
 
@@ -184,9 +193,11 @@ describe('Test style edition of Line feature', () => {
         const featureLayers = olMap
           .getLayers()
           .getArray()
-          .filter((l: any) => l.get('cyLayerType') === 'featureLayer')
+          .filter((l: Layer) => l.get('cyLayerType') === 'featureLayer')
         const features = featureLayers
-          .map((l: any) => l.getSource().getFeatures())
+          .map((l: Layer) =>
+            (l.getSource() as VectorSource<Geometry>)?.getFeatures()
+          )
           .flat()
         cy.wrap(features.length).should('equal', 1)
         const ff = features[0]
@@ -230,9 +241,11 @@ describe('Test style edition of Polygon feature', () => {
         const featureLayers = olMap
           .getLayers()
           .getArray()
-          .filter((l: any) => l.get('cyLayerType') === 'featureLayer')
+          .filter((l: Layer) => l.get('cyLayerType') === 'featureLayer')
         const features = featureLayers
-          .map((l: any) => l.getSource().getFeatures())
+          .map((l: Layer) =>
+            (l.getSource() as VectorSource<Geometry>)?.getFeatures()
+          )
           .flat()
         cy.wrap(features.length).should('equal', 1)
         const ff = features[0]
@@ -275,9 +288,11 @@ describe('Test style edition of Circle feature', () => {
         const featureLayers = olMap
           .getLayers()
           .getArray()
-          .filter((l: any) => l.get('cyLayerType') === 'featureLayer')
+          .filter((l: Layer) => l.get('cyLayerType') === 'featureLayer')
         const features = featureLayers
-          .map((l: any) => l.getSource().getFeatures())
+          .map((l: Layer) =>
+            (l.getSource() as VectorSource<Geometry>)?.getFeatures()
+          )
           .flat()
         cy.wrap(features.length).should('equal', 1)
         const ff = features[0]
