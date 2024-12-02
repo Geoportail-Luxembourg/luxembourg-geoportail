@@ -1,4 +1,10 @@
-import { h, getCurrentInstance, createApp, watch } from 'vue'
+import {
+  h,
+  getCurrentInstance,
+  createApp,
+  watch,
+  // defineCustomElement, // TODO: Update vue package and use this defineCustomElement
+} from 'vue'
 import VueDOMPurifyHTML from 'vue-dompurify-html'
 import { createPinia, storeToRefs } from 'pinia'
 
@@ -20,6 +26,8 @@ import LayerMetadata from '@/components/layer-metadata/layer-metadata.vue'
 import HeaderBar from '@/components/header-bar/header-bar.vue'
 import ProfileDraw from './components/profile_v3/profile-draw_v3.vue'
 import ProfileMeasures from './components/profile_v3/profile-measures_v3.vue'
+import ProfileRouting from './components/profile_v3/profile-routing_v3.vue'
+import ProfileInfos from './components/profile_v3/profile-infos_v3.vue'
 import FooterBar from '@/components/footer/footer-bar.vue'
 import ToolbarDraw from '@/components/footer/toolbar-draw.vue'
 import LayerPanel from '@/components/layer-panel/layer-panel.vue'
@@ -37,6 +45,8 @@ import { useAppStore } from '@/stores/app.store'
 import { useMapStore } from '@/stores/map.store'
 import { useProfileDrawv3Store } from './stores/profile-draw_v3.store'
 import { useProfileMeasuresv3Store } from './stores/profile-measures_v3.store'
+import { useProfileRoutingv3Store } from './stores/profile-routing_v3.store'
+import { useProfileInfosv3Store } from './stores/profile-infos_v3.store'
 import { useDrawStore } from '@/stores/draw.store'
 import { useStyleStore } from '@/stores/style.store'
 import { useThemeStore } from '@/stores/config.store'
@@ -135,6 +145,8 @@ export {
   HeaderBar,
   ProfileDraw,
   ProfileMeasures,
+  ProfileRouting,
+  ProfileInfos,
   FooterBar,
   ToolbarDraw,
   LayerPanel,
@@ -154,6 +166,8 @@ export {
   useMapStore,
   useProfileDrawv3Store,
   useProfileMeasuresv3Store,
+  useProfileRoutingv3Store,
+  useProfileInfosv3Store,
   useDrawStore,
   useStyleStore,
   useThemeStore,
