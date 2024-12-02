@@ -32,7 +32,7 @@ let overlay: PositionVectorLayer | undefined // Shared overlay between all profi
  *
  * NB.If edition mode is 'editLine', the marker is hidden because there is already a default blue marker
  * when modifying feature is active.
- * @param dataset Profile data used to construct and handle the positioning (can be set afterwards by setting directly useProfilePosition().prfileData)
+ * @param dataset Profile data used to construct and handle the positioning (can be set afterwards by setting directly useProfilePosition().profileData)
  * @param activatePositioning Activate or deactivate positioning (show or hide geomarker), in some case, we need to hide temporarily the geomarker (because the profile line is hidden, or because user is starting a new drawing, etc...)
  * @returns
  */
