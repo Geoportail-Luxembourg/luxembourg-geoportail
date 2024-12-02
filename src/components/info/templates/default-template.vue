@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { defineProps } from 'vue'
-import { FeatureInfoJSON } from '../feature-info.model'
+import { FeatureInfoJSON, FeatureJSON } from '../feature-info.model'
 import { useTranslation } from 'i18next-vue'
 import {
   hasAttributes,
@@ -18,6 +18,9 @@ defineProps({
     required: true,
   },
 })
+defineEmits<{
+  (e: 'export', payload: { feature: FeatureJSON; format: 'kml' | 'gpx' }): void
+}>()
 const { t } = useTranslation()
 const currentUrl = window.location.href
 </script>
@@ -115,19 +118,19 @@ const currentUrl = window.location.href
             app-profile-map="::ctrl.map"
             app-profile-interaction="feature.attributes.showProfile"
           />
-        </div>
-        <div class="no-print" ng-show="feature.attributes.showProfile.active">
+        </div> -->
+        <div v-if="feature.attributes.showProfile?.active">
           <a
-            class="btn btn-default"
-            ng-click="ctrl.exportKml(feature, feature.attributes.name)"
+            class="lux-btn"
+            @click="$emit('export', { feature, format: 'kml' })"
             >{{ t('Exporter KMl') }}</a
           >
           &nbsp;<a
-            class="btn btn-default"
-            ng-click="ctrl.exportGpx(feature, feature.attributes.name, true)"
+            class="lux-btn"
+            @click="$emit('export', { feature, format: 'gpx' })"
             >{{ t('Exporter GPX') }}</a
           >
-        </div> -->
+        </div>
         <div v-if="!hasAttributes(feature)">
           <span>{{
             t('Aucune information disponible pour cette couche')

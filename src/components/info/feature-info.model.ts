@@ -5,6 +5,7 @@ export interface FeatureJSON {
   id: string
   attributes: Attributes
   alias: Record<string, unknown>
+  properties?: Record<string, unknown>
 }
 
 interface GeometryJSON {

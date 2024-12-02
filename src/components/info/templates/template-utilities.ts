@@ -151,39 +151,3 @@ export function getTrustedUrl(url: string): string {
 //       return sce.trustAsResourceUrl(urlFr)
 //   }
 // }
-
-// TODO: call v4 exports
-
-// export function exportGpx(
-//   feature: Feature,
-//   name: string | undefined,
-//   isTrack: boolean,
-//   map: MapService,
-//   appExport: ExportService
-// ): void {
-//   const encOpt: ExportOptions = {
-//     dataProjection: 'EPSG:2169',
-//     featureProjection: map.getView().getProjection(),
-//   }
-
-//   if (feature.attributes && !feature.properties) {
-//     feature.properties = feature.attributes
-//   }
-
-//   const activeFeature = new olFormatGeoJSON().readFeature(feature, encOpt)
-//   if (name === undefined) {
-//     name = 'kml'
-//   }
-//   appExport.exportGpx([activeFeature], name, isTrack)
-// }
-
-// export function exportKml(
-//   feature: Feature,
-//   name: string | undefined,
-//   appExport: ExportService
-// ): void {
-//   if (name === undefined) {
-//     name = 'kml'
-//   }
-//   appExport.exportKml(feature, name)
-// }
