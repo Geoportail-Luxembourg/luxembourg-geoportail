@@ -1,8 +1,11 @@
 import useMap from '@/composables/map/map.composable'
 import { listen } from 'ol/events'
-import { featureInfoService } from './feature-info.service'
+import { featureInfoLayerService } from '../../services/info/feature-info-layer.service'
 import { useFeatureInfoStore } from '@/stores/feature-info.store'
-import { FeatureInfoJSON, FeatureJSON } from './feature-info.model'
+import {
+  FeatureInfoJSON,
+  FeatureJSON,
+} from '../../services/info/feature-info.model'
 import { MapBrowserEvent } from 'ol'
 import { ref, watchEffect } from 'vue'
 import { storeToRefs } from 'pinia'
@@ -38,7 +41,7 @@ export default function useFeatureInfo() {
   const timeoutId = ref<number | null>(null)
 
   function init() {
-    featureInfoService.init(map)
+    featureInfoLayerService.init(map)
     listen(map, 'pointerdown', event => {
       ;(() => {
         isLongPress.value = false
@@ -98,7 +101,7 @@ export default function useFeatureInfo() {
           }
 
           if (!found && startPixel.value && stopPixel.value) {
-            featureInfoService.clearFeatures()
+            featureInfoLayerService.clearFeatures()
             const deltaX = Math.abs(startPixel.value[0] - stopPixel.value[0])
             const deltaY = Math.abs(startPixel.value[1] - stopPixel.value[1])
             if (deltaX + deltaY < 6) {
@@ -283,7 +286,7 @@ export default function useFeatureInfo() {
             showInfo(evt.originalEvent.shiftKey, data, layerLabel, true, false)
           } else {
             lastHighlightedFeatures.value = []
-            featureInfoService.highlightFeatures(
+            featureInfoLayerService.highlightFeatures(
               lastHighlightedFeatures.value,
               false
             )
@@ -377,7 +380,10 @@ export default function useFeatureInfo() {
     for (let i = 0; i < responses.value.length; i++) {
       lastHighlightedFeatures.value.push(...responses.value[i].features)
     }
-    featureInfoService.highlightFeatures(lastHighlightedFeatures.value, fit)
+    featureInfoLayerService.highlightFeatures(
+      lastHighlightedFeatures.value,
+      fit
+    )
 
     setFeatureInfoPanelContent(content)
   }
@@ -386,7 +392,7 @@ export default function useFeatureInfo() {
     toggleInfoOpen(openPanel)
     setLoading(false)
     map.getViewport().style.cursor = ''
-    featureInfoService.clearFeatures()
+    featureInfoLayerService.clearFeatures()
   }
 
   function checkForDrawnFeature(pixel: Pixel): boolean {

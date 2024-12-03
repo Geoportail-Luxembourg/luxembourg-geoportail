@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { computed } from 'vue'
 import FeatureElevationProfile from '@/components/feature-elevation-profile/feature-elevation-profile.vue'
-import { FeatureJSON } from './feature-info.model'
+import { FeatureJSON } from '../../services/info/feature-info.model'
 import GeoJSON from 'ol/format/GeoJSON'
 import useMap from '@/composables/map/map.composable'
 import { DrawnFeature } from '@/services/draw/drawn-feature'

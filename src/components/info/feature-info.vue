@@ -2,8 +2,11 @@
 import { defineProps, onUnmounted } from 'vue'
 import DefaultTemplate from '@/components/info/templates/default-template.vue'
 import LignesBusTemplate from './templates/lignes-bus-template.vue'
-import { FeatureInfoJSON, FeatureJSON } from './feature-info.model'
-import { featureInfoService } from './feature-info.service'
+import {
+  FeatureInfoJSON,
+  FeatureJSON,
+} from '../../services/info/feature-info.model'
+import { featureInfoLayerService } from '../../services/info/feature-info-layer.service'
 import {
   exportFeatureService,
   ExportFormat,
@@ -23,7 +26,7 @@ defineProps({
 const map = useMap().getOlMap()
 
 onUnmounted(() => {
-  featureInfoService.clearFeatures()
+  featureInfoLayerService.clearFeatures()
 })
 
 const getTemplateComponent = (template: string) => {
