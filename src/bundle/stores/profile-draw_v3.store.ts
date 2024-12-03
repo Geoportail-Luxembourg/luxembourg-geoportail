@@ -1,6 +1,6 @@
 import { Ref, ref } from 'vue'
 import { acceptHMRUpdate, defineStore } from 'pinia'
-import { Feature, Map } from 'ol'
+import { Map } from 'ol'
 
 import { DrawnFeature } from '@/services/draw/drawn-feature'
 import { ProfileData } from '@/components/common/graph/elevation-profile'
@@ -22,7 +22,7 @@ export const useProfileDrawv3Store = defineStore(
 
     function setProfileData(
       map: Map,
-      feature: Feature & DrawnFeature,
+      feature: DrawnFeature,
       profileData: ProfileData
     ) {
       feature_v3.value = undefined

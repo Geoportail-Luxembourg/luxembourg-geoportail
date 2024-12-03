@@ -84,6 +84,8 @@ watchEffect(() => {
   if (props.feature && !props.feature.profileData) {
     profileData.value = undefined // Force refresh the graph
     props.feature?.getProfile().then(data => (profileData.value = data))
+  } else {
+    profileData.value = undefined
   }
 })
 
