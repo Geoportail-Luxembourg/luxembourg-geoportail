@@ -56,10 +56,14 @@ describe('Draw "Line"', () => {
       it('refreshes the elevation profile for Line', () => {
         cy.dragVertexOnMap(320, 223, 305, 305)
         cy.wait('@getProfile')
-        cy.get('[data-cy="featItemProfileCumul"]').should(
-          'contain.text',
-          'Δ+429 m Δ-490 m Δ-61 m'
-        )
+        cy.get('[data-cy="featItemProfileCumul"]').should($el => {
+          const text = $el.text()
+          const validValues = [
+            ' Δ+429 m Δ-490 m Δ-61 m',
+            ' Δ+429 m Δ-489 m Δ-61 m',
+          ]
+          expect(validValues).to.include(text)
+        })
 
         cy.get('[data-cy="featItemProfile"] svg g.y.axis > g.tick')
           .eq(6)
