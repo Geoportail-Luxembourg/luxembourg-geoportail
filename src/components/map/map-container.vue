@@ -16,7 +16,7 @@ import ZoomControl from '../map-controls/zoom-control.vue'
 import ZoomToExtentControl from '../map-controls/zoom-to-extent-control.vue'
 import useDraw from '@/composables/draw/draw.composable'
 import useDrawSelect from '@/composables/draw/draw-select.composable'
-import useFeatureInfo from '../info/feature-info.composable'
+import useFeatureInfo from '@/composables/info/feature-info.composable'
 
 const appStore = useAppStore()
 const { embedded } = storeToRefs(appStore)

@@ -1,4 +1,4 @@
-import { FeatureJSON } from '../feature-info.model'
+import { FeatureJSON } from '../../../services/info/feature-info.model'
 import { sanitizeUrl } from '@braintree/sanitize-url'
 
 export function prefixKeys(

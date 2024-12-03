@@ -1,4 +1,4 @@
-import { FeatureInfoJSON } from '@/components/info/feature-info.model'
+import { FeatureInfoJSON } from '@/services/info/feature-info.model'
 import { acceptHMRUpdate, defineStore } from 'pinia'
 import { shallowRef, ShallowRef } from 'vue'
 

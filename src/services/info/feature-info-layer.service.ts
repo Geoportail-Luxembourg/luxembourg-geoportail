@@ -14,8 +14,7 @@ import { extend, Extent } from 'ol/extent'
 import { FitOptions } from 'ol/View'
 import { Size } from 'ol/size'
 
-//TODO: potentially move to ol services
-class FeatureInfoService {
+class FeatureInfoLayerService {
   map: Map
   featureLayer: VectorLayer<VectorSource<Geometry>>
 
@@ -142,4 +141,4 @@ class FeatureInfoService {
     this.featureLayer.getSource()?.clear()
   }
 }
-export const featureInfoService = new FeatureInfoService()
+export const featureInfoLayerService = new FeatureInfoLayerService()
