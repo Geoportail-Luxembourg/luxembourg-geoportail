@@ -1,3 +1,4 @@
+import { useTranslation } from 'i18next-vue'
 import { FeatureJSON } from '../../../services/info/feature-info.model'
 import { sanitizeUrl } from '@braintree/sanitize-url'
 
@@ -128,26 +129,24 @@ export function isFIDValid(fid: string | undefined): boolean {
 export function getTrustedUrl(url: string): string {
   return sanitizeUrl(url)
 }
-// TODO: use vue utilities for this
-
-// export function getTrustedUrlByLang(
-//   urlFr: string,
-//   urlDe: string | null | undefined,
-//   urlEn: string | null | undefined,
-//   urlLb: string | null | undefined,
-//   language: string,
-//   sce: SceService
-// ): any {
-//   switch (language) {
-//     case 'fr':
-//       return sce.trustAsResourceUrl(urlFr)
-//     case 'de':
-//       return sce.trustAsResourceUrl(urlDe ?? urlFr)
-//     case 'en':
-//       return sce.trustAsResourceUrl(urlEn ?? urlFr)
-//     case 'lb':
-//       return sce.trustAsResourceUrl(urlLb ?? urlFr)
-//     default:
-//       return sce.trustAsResourceUrl(urlFr)
-//   }
-// }
+// note: not used yet, available for bus templates
+export function getTrustedUrlByLang(
+  urlFr: string,
+  urlDe: string | null | undefined,
+  urlEn: string | null | undefined,
+  urlLb: string | null | undefined
+): string {
+  const { i18next } = useTranslation()
+  switch (i18next.language) {
+    case 'fr':
+      return sanitizeUrl(urlFr)
+    case 'de':
+      return sanitizeUrl(urlDe ?? urlFr)
+    case 'en':
+      return sanitizeUrl(urlEn ?? urlFr)
+    case 'lb':
+      return sanitizeUrl(urlLb ?? urlFr)
+    default:
+      return sanitizeUrl(urlFr)
+  }
+}
