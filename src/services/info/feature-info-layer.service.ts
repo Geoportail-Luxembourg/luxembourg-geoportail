@@ -14,6 +14,7 @@ import { extend, Extent } from 'ol/extent'
 import { FitOptions } from 'ol/View'
 import { Size } from 'ol/size'
 
+export const FEATURE_LAYER_TYPE = 'featureInfoLayer'
 class FeatureInfoLayerService {
   map: Map
   featureLayer: VectorLayer<VectorSource<Geometry>>
@@ -42,7 +43,7 @@ class FeatureInfoLayerService {
       fill: defaultFill,
       stroke: circleStroke,
     })
-
+    this.featureLayer.set('cyLayerType', FEATURE_LAYER_TYPE)
     this.featureLayer.setStyle(
       /**
        * @param {ol.Feature|ol.render.Feature} feature Feature.
