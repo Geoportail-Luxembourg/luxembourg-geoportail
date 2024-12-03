@@ -110,13 +110,10 @@ const currentUrl = window.location.href
             </span>
           </div>
         </div>
-        <div
-          class="query-profile"
-          v-if="feature.attributes.showProfile?.active"
-        >
+        <div class="query-profile" v-if="layers.has_profile">
           <profile-feature-info :feature="feature" />
         </div>
-        <div v-if="feature.attributes.showProfile?.active">
+        <div v-if="layers.has_profile">
           <a
             class="lux-btn"
             @click="$emit('export', { feature, format: 'kml' })"
