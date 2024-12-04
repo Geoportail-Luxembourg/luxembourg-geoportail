@@ -92,7 +92,12 @@ export function formatCoords(
 }
 
 export async function createShortUrl(optCoordinate: Coordinate | undefined) {
-  return (await urlStorage.getShortUrl(optCoordinate)).short_url
+  const shortUrl = (await urlStorage.getShortUrl(optCoordinate)).short_url
+  // workaround for incorrect route settings in migration
+  return shortUrl.replace(
+    'http://g-o.lu/migration/',
+    import.meta.env.VITE_HOST + 's/'
+  )
 }
 
 export function getQRUrl(shortUrl: string | undefined) {
