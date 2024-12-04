@@ -13,6 +13,7 @@ import GeoJSON from 'ol/format/GeoJSON'
 import { extend, Extent } from 'ol/extent'
 import { FitOptions } from 'ol/View'
 import { Size } from 'ol/size'
+import { PROJECTION_LUX } from '@/composables/map/map.composable'
 
 export const FEATURE_LAYER_TYPE = 'featureInfoLayer'
 class FeatureInfoLayerService {
@@ -89,7 +90,7 @@ class FeatureInfoLayerService {
       }
 
       const encOpt: ReadOptions = {
-        dataProjection: 'EPSG:2169',
+        dataProjection: PROJECTION_LUX,
         featureProjection: this.map.getView().getProjection(),
       }
 

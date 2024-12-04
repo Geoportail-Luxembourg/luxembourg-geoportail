@@ -15,7 +15,7 @@ import {
 import { Feature } from 'ol'
 import { Geometry } from 'ol/geom'
 import GeoJSON from 'ol/format/GeoJSON'
-import useMap from '@/composables/map/map.composable'
+import useMap, { PROJECTION_LUX } from '@/composables/map/map.composable'
 import { useFeatureInfoStore } from '@/stores/feature-info.store'
 
 defineProps({
@@ -48,7 +48,7 @@ function onExport(payload: { feature: FeatureJSON; format: ExportFormat }) {
     payload.feature.properties = payload.feature.attributes
   }
   const olFeature = new GeoJSON().readFeature(payload.feature, {
-    dataProjection: 'EPSG:2169',
+    dataProjection: PROJECTION_LUX,
     featureProjection: map.getView().getProjection(),
   })
   exportFeatureService.export(
