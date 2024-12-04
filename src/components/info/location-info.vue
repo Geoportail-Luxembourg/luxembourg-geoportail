@@ -8,7 +8,10 @@ import { Coordinate } from 'ol/coordinate'
 import useMap from '@/composables/map/map.composable'
 import useLocationInfo from '@/composables/map/location-info.composable'
 import { getQRUrl, queryInfos } from '@/services/info/location-info'
-import { formatLength } from '@/services/common/formatting.utils'
+import {
+  formatElevation,
+  formatLength,
+} from '@/services/common/formatting.utils'
 
 import StreetView from '@/components/info/street-view.vue'
 
@@ -39,7 +42,7 @@ async function updateInfo(location: Coordinate | undefined) {
     qrUrl.value = getQRUrl(infos.shortUrl)
     clickCoordinateLuref.value = infos.clickCoordinateLuref
     formattedCoordinates.value = infos.formattedCoordinates
-    elevation.value = formatLength(infos.elevation)
+    elevation.value = formatElevation(infos.elevation)
     address.value = infos.address
   }
 }

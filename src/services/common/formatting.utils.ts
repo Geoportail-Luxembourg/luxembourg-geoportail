@@ -60,7 +60,7 @@ export function formatElevation(value: number | string, digits = 0): string {
  * @param digits The digits to fixed
  * @returns The formatted value, or the original value if invalid number
  */
-export function formatLength(value: number, digits = 2): string {
+export function formatLength(value: number | null, digits = 2): string {
   // null covers API errors or unavailable data (eg. elevation)
   if (value === null) {
     return i18next.t('N/A', { ns: 'client' })
