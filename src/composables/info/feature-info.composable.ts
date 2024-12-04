@@ -207,7 +207,7 @@ export default function useFeatureInfo() {
           }
         }
       } catch (error) {
-        // console.error('Error fetching flat catalog:', error)
+        reset()
       }
     }
   }
@@ -300,8 +300,6 @@ export default function useFeatureInfo() {
         }
       } catch (error) {
         reset()
-
-        // throw new Error('Some error occured')
       }
     }
   }
@@ -355,23 +353,6 @@ export default function useFeatureInfo() {
         item['layerLabel'] = layerLabel[item.layer]
       })
     }
-
-    responses.value.forEach(item => {
-      if (item['has_profile']) {
-        // TODO: integrate profile
-        // item.features.forEach(feature => {
-        //   const validGeom = this.filterValidProfileFeatures_(feature)
-        //   if (validGeom.geom.getLineStrings().length > 0) {
-        //     feature['attributes']['showProfile'] = { active: true }
-        //     this.getProfile_(validGeom.geom, validGeom.id).then(profile => {
-        //       feature['attributes']['showProfile'] = { active: true }
-        //       feature['attributes']['profile'] = profile
-        //     })
-        //   }
-        // })
-      }
-    })
-
     const content: FeatureInfoJSON[] = responses.value.filter(item => {
       return 'features' in item && item.features.length > 0
     })
