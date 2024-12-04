@@ -1,4 +1,8 @@
 import i18next from 'i18next'
+import { AddressResult } from '@/stores/info.store.model'
+import { transform, toLonLat } from 'ol/proj'
+import { Coordinate } from 'ol/coordinate'
+import { Projection } from 'ol/proj'
 
 export type FormatMeasureType = 'elevation' | 'length' | 'area'
 
@@ -89,4 +93,70 @@ export function formatArea(value: number, digits = 2): string {
   } else {
     return ''
   }
+}
+export function formatAddress(address: AddressResult | undefined) {
+  if (address === undefined) {
+    return i18next.t('N/A', { ns: 'client' })
+  }
+  return `${address.number}, ${address.street}, ${address.postal_code} ${address.locality}`
+}
+// export coordinates in different CRS as an 'xxx E | yyy N' pair
+// known targets:
+// EPSG:2169, EPSG:4326, EPSG:3263* (UTM zones 31N and 32N)
+// EPSG:4326:DMS (degree, minute, second), EPSG:4326:DMm (degree, minute.minute_decimals)
+export function formatCoords(
+  coords: Coordinate,
+  fromCrs: Projection | string,
+  format: string
+) {
+  const lonLanFormat = format.split(':')[2]
+  let toCrs = format
+  let utmZone = undefined
+  if (lonLanFormat !== undefined) {
+    toCrs = format.slice(0, format.lastIndexOf(':'))
+  } else if (format.endsWith('*')) {
+    const lonlat = toLonLat(coords, fromCrs)
+    utmZone = lonlat[0] <= 6 ? 'UTM31N' : 'UTM32N'
+    toCrs = format.replace('3*', utmZone.slice(3, 5))
+  }
+  const projectedCoords = transform(coords, fromCrs, toCrs)
+  const isDegrees = toCrs === 'EPSG:4326'
+  const hemispheres = projectedCoords.map((coord: number, axis: number) => {
+    const axisNegative = (isDegrees ? normalizeDegrees(coord) : coord) < 0
+    return axisNegative ? 'WS'[axis] : 'EN'[axis]
+  })
+  const formattedCoords = projectedCoords.map(
+    (coord: number) =>
+      <string>(
+        (isDegrees
+          ? formatDegrees(coord, lonLanFormat)
+          : Math.abs(Math.round(coord)).toString())
+      )
+  )
+  const coordPair = formattedCoords
+    .map((coord: string, axis: number) => `${coord} ${hemispheres[axis]}`)
+    .join(' | ')
+  return utmZone === undefined ? coordPair : `${coordPair}  (${utmZone})`
+}
+export function normalizeDegrees(degrees: number) {
+  return ((degrees + 180) % 360) - 180
+}
+export function formatDegrees(degrees: number, format: string) {
+  const normalizedDegrees = ((degrees + 180) % 360) - 180
+  const absDegrees = Math.abs(normalizedDegrees)
+  if (format === undefined) {
+    return Math.round(absDegrees * 1e6) / 1e6
+  }
+  const intDegrees = Math.floor(absDegrees)
+  const minutes = (absDegrees % 1) * 60
+  if (format === 'DMm') {
+    const roundedMinutes = Math.round(minutes * 1e6) / 1e6
+    return `${intDegrees}\u00b0 ${roundedMinutes}\u2032`
+  }
+  if (format === 'DMS') {
+    const intMinutes = Math.floor(minutes)
+    const seconds = Math.round((minutes % 1) * 600) / 10
+    return `${intDegrees}\u00b0 ${intMinutes}\u2032 ${seconds}\u2033`
+  }
+  return 'N/A'
 }

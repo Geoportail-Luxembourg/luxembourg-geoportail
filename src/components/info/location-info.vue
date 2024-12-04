@@ -7,10 +7,16 @@ import { AddressResult } from '@/stores/info.store.model'
 import { Coordinate } from 'ol/coordinate'
 import useMap from '@/composables/map/map.composable'
 import useLocationInfo from '@/composables/map/location-info.composable'
-import { getQRUrl, queryInfos } from '@/services/info/location-info'
+import {
+  getQRUrl,
+  queryInfos,
+  INFO_PROJECTIONS,
+} from '@/services/info/location-info'
 import {
   formatElevation,
   formatLength,
+  formatAddress,
+  formatCoords,
 } from '@/services/common/formatting.utils'
 
 import StreetView from '@/components/info/street-view.vue'
@@ -41,8 +47,14 @@ async function updateInfo(location: Coordinate | undefined) {
     shortUrl.value = infos.shortUrl
     qrUrl.value = getQRUrl(infos.shortUrl)
     clickCoordinateLuref.value = infos.clickCoordinateLuref
-    formattedCoordinates.value = infos.formattedCoordinates
-    elevation.value = formatElevation(infos.elevation)
+    formattedCoordinates.value = Object.fromEntries(
+      Object.entries(INFO_PROJECTIONS).map(([crs, label]) => [
+        label,
+        formatCoords(location, map.getView().getProjection(), crs),
+      ])
+    )
+    elevation.value =
+      infos.elevation === null ? 'N/A' : formatElevation(infos.elevation)
     address.value = infos.address
   }
 }
@@ -120,7 +132,7 @@ function downloadRapportForageVirtuel() {
         </tr>
         <tr>
           <th style="text-align: left">{{ t('Adresse la plus proche') }}</th>
-          <td>{{ address?.formattedAddress }}</td>
+          <td>{{ formatAddress(address) }}</td>
         </tr>
         <tr>
           <th style="text-align: left">{{ t('Distance approximative') }}</th>

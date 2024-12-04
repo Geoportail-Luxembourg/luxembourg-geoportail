@@ -5,6 +5,8 @@ import {
   formatLength,
   formatMeasure,
 } from './formatting.utils'
+import { initProjections } from '@/services/projection.utils'
+import { formatCoords } from '@/services/common/formatting.utils'
 
 vi.mock('i18next', () => ({
   default: { t: vi.fn(key => key) },
@@ -136,6 +138,57 @@ describe('Formatting utils', () => {
     it('returns empty string if given area is not a valid number', () => {
       const val = formatArea(<number>(<unknown>'wrong area'))
       expect(val).toEqual('')
+    })
+  })
+  describe('#formatCoords', () => {
+    initProjections()
+    it('format basic lonlat coordinates', () => {
+      const formattedCoords = formatCoords(
+        [677840, 6390169],
+        'EPSG:3857',
+        'EPSG:4326'
+      )
+      expect(formattedCoords).toEqual('6.08914 E | 49.674932 N')
+    })
+    it('format DMS lonlat coordinates', () => {
+      const formattedCoords = formatCoords(
+        [677840, 6390169],
+        'EPSG:3857',
+        'EPSG:4326:DMS'
+      )
+      expect(formattedCoords).toEqual('6° 5′ 20.9″ E | 49° 40′ 29.8″ N')
+    })
+    it('format DMm lonlat coordinates', () => {
+      const formattedCoords = formatCoords(
+        [677840, 6390169],
+        'EPSG:3857',
+        'EPSG:4326:DMm'
+      )
+      expect(formattedCoords).toEqual('6° 5.348419′ E | 49° 40.495935′ N')
+    })
+    it('format basic lux coordinate', () => {
+      const formattedCoords = formatCoords(
+        [677840, 6390169],
+        'EPSG:3857',
+        'EPSG:2169'
+      )
+      expect(formattedCoords).toEqual('74299 E | 82266 N')
+    })
+    it('format UTM 31 coordinate', () => {
+      const formattedCoords = formatCoords(
+        [643596, 6390169],
+        'EPSG:3857',
+        'EPSG:3263*'
+      )
+      expect(formattedCoords).toEqual('700672 E | 5506204 N  (UTM31N)')
+    })
+    it('format UTM 32 coordinate', () => {
+      const formattedCoords = formatCoords(
+        [677840, 6390169],
+        'EPSG:3857',
+        'EPSG:3263*'
+      )
+      expect(formattedCoords).toEqual('289999 E | 5506558 N  (UTM32N)')
     })
   })
 })
