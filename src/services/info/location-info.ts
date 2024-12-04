@@ -3,6 +3,8 @@ import { transform } from 'ol/proj'
 import { Coordinate } from 'ol/coordinate'
 import { Projection } from 'ol/proj'
 
+import { getElevation } from '@/components/draw/feature-measurements-helper'
+
 export const INFO_PROJECTIONS = {
   'EPSG:2169': 'Luref',
   'EPSG:4326': 'Lon/Lat WGS84',
@@ -18,7 +20,7 @@ export async function queryInfos(location: Coordinate, fromCrs: Projection) {
   const [shortUrl, elevation, address] = (
     await Promise.allSettled([
       createShortUrl(location),
-      getElevation(clickCoordinateLuref),
+      getElevation(location),
       getNearestAddress(clickCoordinateLuref),
     ])
   ).map(r => (r.status === 'fulfilled' ? r.value : undefined))
@@ -94,26 +96,20 @@ export async function createShortUrl(optCoordinate: Coordinate | undefined) {
 }
 
 export function getQRUrl(shortUrl: string | undefined) {
-  return shortUrl && `https://migration.geoportail.lu/qr?url=${shortUrl}`
-}
-
-export async function getElevation(coords: Coordinate) {
-  const resp = await fetch(
-    `https://migration.geoportail.lu/raster?lat=${coords[1]}&lon=${coords[0]}`
-  )
-  const json = await resp.json()
-  return `${json.dhm} m`
+  return shortUrl && `${import.meta.env.VITE_QR_URL}?url=${shortUrl}`
 }
 
 export async function getNearestAddress(coords: Coordinate) {
   const resp = await fetch(
-    `https://migration.geoportail.lu/geocode/reverse?easting=${coords[0]}&northing=${coords[1]}`
+    `${import.meta.env.VITE_ADDRESS_URL}?easting=${coords[0]}&northing=${
+      coords[1]
+    }`
   )
   const json = await resp.json()
   const nearestAddress = json.results[0]
   const formattedAddress = `${nearestAddress.number}, ${nearestAddress.street}, ${nearestAddress.postal_code} ${nearestAddress.locality}`
   return {
     formattedAddress,
-    formattedDistance: `${Math.round(nearestAddress.distance * 100) / 100} m`,
+    distance: nearestAddress.distance,
   }
 }

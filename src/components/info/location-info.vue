@@ -6,12 +6,7 @@ import { useInfoStore } from '@/stores/info.store'
 import { AddressResult } from '@/stores/info.store.model'
 import { Coordinate } from 'ol/coordinate'
 import useMap from '@/composables/map/map.composable'
-import {
-  getQRUrl,
-  getElevation,
-  getNearestAddress,
-  queryInfos,
-} from '@/services/info/location-info'
+import { getQRUrl, queryInfos } from '@/services/info/location-info'
 
 import StreetView from '@/components/info/street-view.vue'
 
@@ -40,8 +35,8 @@ async function updateInfo(location: Coordinate | undefined) {
     qrUrl.value = getQRUrl(infos.shortUrl)
     clickCoordinateLuref.value = infos.clickCoordinateLuref
     formattedCoordinates.value = infos.formattedCoordinates
-    elevation.value = await getElevation(infos.clickCoordinateLuref)
-    address.value = await getNearestAddress(infos.clickCoordinateLuref)
+    elevation.value = infos.elevation
+    address.value = infos.address
   }
 }
 
@@ -58,12 +53,16 @@ const isImagesObliquesAvailable = computed(() => true)
 const getLidarUrl = () => 'bla'
 const cyclomediaUrl = computed(() =>
   clickCoordinateLuref.value
-    ? `http://streetsmart.cyclomedia.com/streetsmart?q=${clickCoordinateLuref.value[0]};${clickCoordinateLuref.value[1]}`
+    ? `${import.meta.env.VITE_CYCLOMEDIA_URL}?q=${
+        clickCoordinateLuref.value[0]
+      };${clickCoordinateLuref.value[1]}`
     : ''
 )
 const imagesObliquesUrl = computed(() =>
   clickCoordinateLuref.value
-    ? `https://oblique.geoportail.lu/publication/viewer?x=${clickCoordinateLuref.value[0]}&y=${clickCoordinateLuref.value[1]}&crs=2169`
+    ? `${import.meta.env.VITE_OBLIQUE_URL}?x=${
+        clickCoordinateLuref.value[0]
+      }&y=${clickCoordinateLuref.value[1]}&crs=2169`
     : ''
 )
 
@@ -111,7 +110,7 @@ function downloadRapportForageVirtuel() {
         </tr>
         <tr>
           <th style="text-align: left">{{ t('Elevation') }}</th>
-          <td>{{ elevation }}</td>
+          <td><span v-format-length="elevation"></span></td>
         </tr>
         <tr>
           <th style="text-align: left">{{ t('Adresse la plus proche') }}</th>
@@ -119,7 +118,7 @@ function downloadRapportForageVirtuel() {
         </tr>
         <tr>
           <th style="text-align: left">{{ t('Distance approximative') }}</th>
-          <td>{{ address?.formattedDistance }}</td>
+          <td><span v-format-length="address?.distance"></span></td>
         </tr>
       </tbody>
     </table>
