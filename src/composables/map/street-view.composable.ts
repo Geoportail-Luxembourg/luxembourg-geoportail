@@ -8,7 +8,7 @@ import BaseEvent from 'ol/events/Event'
 import { Coordinate } from 'ol/coordinate'
 import { Select } from 'ol/interaction'
 import { fromLonLat, toLonLat } from 'ol/proj'
-import { containsCoordinate } from 'ol/extent.js'
+import { containsCoordinate } from 'ol/extent'
 import { loadGoogleapis } from '@/services/info/street-view'
 import { SvCompassFeature } from '@/services/info/sv-compass-feature'
 import { SvDirectionFeature } from '@/services/info/sv-direction-feature'
@@ -61,20 +61,18 @@ export default function useStreeView() {
   map.addLayer(svFeatureLayer)
 
   function setLocation(loc: Coordinate | undefined) {
-    if (panorama !== null) {
-      if (loc && !panoPositionChanging.value) {
-        const lonlat = toLonLat(loc, map.getView().getProjection())
-        streetViewService.getPanorama(
-          {
-            location: {
-              lat: lonlat[1],
-              lng: lonlat[0],
-            },
-            radius: SV_RADIUS,
+    if (loc && panorama !== null && !panoPositionChanging.value) {
+      const lonlat = toLonLat(loc, map.getView().getProjection())
+      streetViewService.getPanorama(
+        {
+          location: {
+            lat: lonlat[1],
+            lng: lonlat[0],
           },
-          updatePanorama
-        )
-      }
+          radius: SV_RADIUS,
+        },
+        updatePanorama
+      )
     }
   }
 

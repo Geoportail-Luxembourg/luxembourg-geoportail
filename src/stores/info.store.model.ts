@@ -5,3 +5,8 @@ export interface SvFeature {
   compass: SvCompassFeature
   directions: SvDirectionFeature[]
 }
+
+export interface AddressResult {
+  formattedAddress: string
+  formattedDistance: string
+}

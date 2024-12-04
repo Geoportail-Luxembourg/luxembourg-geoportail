@@ -18,14 +18,14 @@ export class UrlStorage implements Storage {
     throw new Error('Method key() not implemented. ' + index)
   }
 
-  getStrippedUrl(opt_coordinate: number[] | undefined) {
+  getStrippedUrl(optCoordinate: number[] | undefined) {
     // stripped by embedded app parameters
     const url = new URL(window.location.toString())
     const params = new URLSearchParams(url.search)
 
-    if (opt_coordinate !== undefined) {
-      params.set('X', Math.round(opt_coordinate[0]).toString())
-      params.set('Y', Math.round(opt_coordinate[1]).toString())
+    if (optCoordinate !== undefined) {
+      params.set('X', Math.round(optCoordinate[0]).toString())
+      params.set('Y', Math.round(optCoordinate[1]).toString())
     }
     params.delete('localforage')
     params.delete('applogin')
@@ -37,8 +37,8 @@ export class UrlStorage implements Storage {
     return url.toString()
   }
 
-  async getShortUrl(opt_coordinate: number[] | undefined) {
-    const strippedUrl = this.getStrippedUrl(opt_coordinate)
+  async getShortUrl(optCoordinate: number[] | undefined) {
+    const strippedUrl = this.getStrippedUrl(optCoordinate)
 
     const data = new URLSearchParams()
     data.set('url', strippedUrl.replace('5173', '8080'))
