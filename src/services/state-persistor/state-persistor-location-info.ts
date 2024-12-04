@@ -2,6 +2,8 @@ import { watch, watchEffect, WatchStopHandle } from 'vue'
 import { storeToRefs } from 'pinia'
 import {
   SP_KEY_CROSSHAIR,
+  SP_KEY_X,
+  SP_KEY_Y,
   StatePersistorService,
 } from './state-persistor.model'
 import { storageHelper } from './storage/storage.helper'
@@ -28,6 +30,10 @@ class StatePersistorLocationInfo implements StatePersistorService {
       locationInfo,
       value => {
         storageHelper.setValue(SP_KEY_CROSSHAIR, value !== undefined)
+        if (value !== undefined) {
+          storageHelper.setValue(SP_KEY_X, value[0])
+          storageHelper.setValue(SP_KEY_Y, value[1])
+        }
       },
       { immediate: true }
     )
