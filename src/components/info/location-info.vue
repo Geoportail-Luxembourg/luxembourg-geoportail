@@ -19,7 +19,7 @@ const map = useMap().getOlMap()
 
 const shortUrl: Ref<string | undefined> = ref()
 const qrUrl: Ref<string | undefined> = ref()
-const elevation: Ref<number | undefined> = ref()
+const elevation: Ref<string | undefined> = ref()
 const address: Ref<AddressResult | undefined> = ref()
 const clickCoordinateLuref: Ref<Coordinate | undefined> = ref()
 const formattedCoordinates: Ref<{ [k: string]: string }> = ref({})
@@ -39,7 +39,7 @@ async function updateInfo(location: Coordinate | undefined) {
     qrUrl.value = getQRUrl(infos.shortUrl)
     clickCoordinateLuref.value = infos.clickCoordinateLuref
     formattedCoordinates.value = infos.formattedCoordinates
-    elevation.value = infos.elevation
+    elevation.value = formatLength(infos.elevation)
     address.value = infos.address
   }
 }
@@ -114,7 +114,7 @@ function downloadRapportForageVirtuel() {
         </tr>
         <tr>
           <th style="text-align: left">{{ t('Elevation') }}</th>
-          <td>{{ formatLength(elevation || null) }}</td>
+          <td>{{ elevation }}</td>
         </tr>
         <tr>
           <th style="text-align: left">{{ t('Adresse la plus proche') }}</th>
