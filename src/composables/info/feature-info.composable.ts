@@ -1,4 +1,7 @@
-import useMap from '@/composables/map/map.composable'
+import useMap, {
+  PROJECTION_LUX,
+  PROJECTION_WEBMERCATOR,
+} from '@/composables/map/map.composable'
 import { listen } from 'ol/events'
 import { featureInfoLayerService } from '../../services/info/feature-info-layer.service'
 import { useFeatureInfoStore } from '@/stores/feature-info.store'
@@ -241,7 +244,7 @@ export default function useFeatureInfo() {
       const point = transform(
         evt.coordinate,
         map.getView().getProjection(),
-        'EPSG:2169'
+        PROJECTION_LUX
       )
       const big_box = [
         [point[0] - bigBuffer, point[1] + bigBuffer],
@@ -262,7 +265,7 @@ export default function useFeatureInfo() {
         layers: layersList.join(),
         box1: big_box.join(),
         box2: small_box.join(),
-        srs: 'EPSG:3857',
+        srs: PROJECTION_WEBMERCATOR,
         zoom: map.getView().getZoom(),
         .../*(!map.get('ol3dm').is3dEnabled() &&*/ {
           BBOX: bbox,
