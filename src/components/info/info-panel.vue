@@ -1,5 +1,4 @@
 <script setup lang="ts">
-import { ref, watch } from 'vue'
 import { useTranslation } from 'i18next-vue'
 import SidePanelLayout from '@/components/common/side-panel-layout.vue'
 import { useAppStore } from '@/stores/app.store'
@@ -11,15 +10,7 @@ import LocationInfo from './location-info.vue'
 const { t } = useTranslation()
 const appStore = useAppStore()
 const { locationInfo } = storeToRefs(useInfoStore())
-const map = ref(useMap().getOlMap())
-
-watch(locationInfo, loc => {
-  if (loc) {
-    if (!map.value) {
-      map.value = useMap().getOlMap()
-    }
-  }
-})
+const map = useMap().olMap
 </script>
 
 <template>

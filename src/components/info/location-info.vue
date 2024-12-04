@@ -6,6 +6,7 @@ import { useInfoStore } from '@/stores/info.store'
 import { AddressResult } from '@/stores/info.store.model'
 import { Coordinate } from 'ol/coordinate'
 import useMap from '@/composables/map/map.composable'
+import useLocationInfo from '@/composables/map/location-info.composable'
 import { getQRUrl, queryInfos } from '@/services/info/location-info'
 
 import StreetView from '@/components/info/street-view.vue'
@@ -22,6 +23,8 @@ const address: Ref<AddressResult | undefined> = ref()
 const clickCoordinateLuref: Ref<Coordinate | undefined> = ref()
 const formattedCoordinates: Ref<{ [k: string]: string }> = ref({})
 
+// initialise map listeners for location info
+useLocationInfo()
 // initial load of position infos if locationInfo is not initially undefined
 // async function, no need to await the completion, DOM will be updated via refs
 updateInfo(locationInfo.value)
