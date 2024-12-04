@@ -8,5 +8,5 @@ export interface SvFeature {
 
 export interface AddressResult {
   formattedAddress: string
-  distance: string
+  distance: number
 }
