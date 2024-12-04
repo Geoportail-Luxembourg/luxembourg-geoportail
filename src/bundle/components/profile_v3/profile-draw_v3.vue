@@ -21,7 +21,5 @@ const activateProfile = computed(
 </script>
 
 <template>
-  <div ref="profileElement">
-    <feature-elevation-profile v-if="activateProfile" :feature="feature_v3" />
-  </div>
+  <feature-elevation-profile v-if="activateProfile" :feature="feature_v3" />
 </template>
