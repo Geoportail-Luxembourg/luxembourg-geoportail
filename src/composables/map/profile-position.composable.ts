@@ -10,7 +10,7 @@ import {
 } from 'vue'
 import { storeToRefs } from 'pinia'
 import { Map, MapBrowserEvent } from 'ol'
-import { EventsKey, listen, ListenerFunction, unlistenByKey } from 'ol/events'
+import { EventsKey, listen, unlistenByKey } from 'ol/events'
 import { LineString, Point } from 'ol/geom'
 import GeometryLayout from 'ol/geom/GeometryLayout'
 import { transform } from 'ol/proj'
@@ -51,6 +51,7 @@ export default function useProfilePosition(
   const displayGeoMarker = ref(true) // deactivate geomarker when mode edition
   const virtualLineProfile = new LineString([0, 0], GeometryLayout.XYM) // don't add to the map, it is used to compute the distance between the user cursor and the feature (represented by the virtual line)
   const activePositioning = ref(true)
+  const throttledPointerMove = throttle(evt => onPointerMove(evt), 15) // Keep fn def as const for unlisten
 
   let map: Map
   let listenerIdPointerMove: EventsKey | undefined
@@ -58,7 +59,9 @@ export default function useProfilePosition(
   onMounted(() => {
     map = useMap().getOlMap()
     createLayerFeaturePosition()
+    attachPointerMove()
   })
+
   onUnmounted(() => detachPointerMove())
 
   watch(
@@ -75,7 +78,6 @@ export default function useProfilePosition(
   watch(profileData, profileData => {
     if (profileData) {
       constructProfileLine(profileData)
-      attachPointerMove()
     }
   })
 
@@ -130,20 +132,18 @@ export default function useProfilePosition(
    */
   function attachPointerMove() {
     if (listenerIdPointerMove === undefined) {
-      listenerIdPointerMove = listen(
-        map,
-        'pointermove',
-        <ListenerFunction>throttle(evt => onPointerMove(evt), 20)
-      )
+      listenerIdPointerMove = listen(map, 'pointermove', throttledPointerMove)
     }
   }
 
   /**
-   * Unlisten 'pointermove' event on map
+   * Unlisten 'pointermove' event on map and remove geomarker
    */
   function detachPointerMove() {
     if (listenerIdPointerMove) {
       unlistenByKey(listenerIdPointerMove)
+      listenerIdPointerMove = undefined
+
       overlay?.removeGeoMarker()
     }
   }
