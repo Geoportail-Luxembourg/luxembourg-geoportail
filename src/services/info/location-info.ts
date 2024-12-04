@@ -13,11 +13,21 @@ export const INFO_PROJECTIONS = {
 
 const HEMISPHERES = ['EW', 'NS']
 
-export async function queryInfo(location: Coordinate, fromCrs: Projection) {
+export async function queryInfos(location: Coordinate, fromCrs: Projection) {
+  const clickCoordinateLuref = transform(location, fromCrs, 'EPSG:2169')
+  const [shortUrl, elevation, address] = (
+    await Promise.allSettled([
+      createShortUrl(location),
+      getElevation(clickCoordinateLuref),
+      getNearestAddress(clickCoordinateLuref),
+    ])
+  ).map(r => (r.status === 'fulfilled' ? r.value : undefined))
   return {
-    shortUrl: await create_short_url(location),
-    clickCoordinateLuref: transform(location, fromCrs, 'EPSG:2169'),
-    formatted_coordinates: Object.fromEntries(
+    shortUrl,
+    elevation,
+    address,
+    clickCoordinateLuref,
+    formattedCoordinates: Object.fromEntries(
       Object.entries(INFO_PROJECTIONS).map(([crs, label]) => [
         label,
         formatCoords(location, fromCrs, crs),
@@ -79,8 +89,8 @@ export function formatCoords(
     .join(' | ')
 }
 
-export async function create_short_url(opt_coordinate: Coordinate | undefined) {
-  return (await urlStorage.getShortUrl(opt_coordinate)).short_url
+export async function createShortUrl(optCoordinate: Coordinate | undefined) {
+  return (await urlStorage.getShortUrl(optCoordinate)).short_url
 }
 
 export function getQRUrl(shortUrl: string | undefined) {
@@ -104,6 +114,6 @@ export async function getNearestAddress(coords: Coordinate) {
   const formattedAddress = `${nearestAddress.number}, ${nearestAddress.street}, ${nearestAddress.postal_code} ${nearestAddress.locality}`
   return {
     formattedAddress,
-    distance: `${Math.round(nearestAddress.distance * 100) / 100} m`,
+    formattedDistance: `${Math.round(nearestAddress.distance * 100) / 100} m`,
   }
 }

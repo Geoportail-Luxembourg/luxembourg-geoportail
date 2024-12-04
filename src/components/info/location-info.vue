@@ -1,30 +1,31 @@
 <script setup lang="ts">
-import { computed, ref, watch } from 'vue'
+import { computed, Ref, ref, watch } from 'vue'
 import { useTranslation } from 'i18next-vue'
 import { storeToRefs } from 'pinia'
 import { useInfoStore } from '@/stores/info.store'
+import { AddressResult } from '@/stores/info.store.model'
 import { Coordinate } from 'ol/coordinate'
 import useMap from '@/composables/map/map.composable'
 import {
   getQRUrl,
   getElevation,
   getNearestAddress,
-  queryInfo,
+  queryInfos,
 } from '@/services/info/location-info'
 
 import StreetView from '@/components/info/street-view.vue'
 
 const { t } = useTranslation()
-const { locationInfo } = storeToRefs(useInfoStore())
+const { locationInfo, isStreetviewActive } = storeToRefs(useInfoStore())
 
 const map = useMap().getOlMap()
 
-const shortUrl = ref()
-const qrUrl = ref()
-const elevation = ref()
-const address = ref()
-const clickCoordinateLuref = ref()
-const formatted_coordinates = ref({})
+const shortUrl: Ref<string | undefined> = ref()
+const qrUrl: Ref<string | undefined> = ref()
+const elevation: Ref<string | undefined> = ref()
+const address: Ref<AddressResult | undefined> = ref()
+const clickCoordinateLuref: Ref<Coordinate | undefined> = ref()
+const formattedCoordinates: Ref<{ [k: string]: string }> = ref({})
 
 // initial load of position infos if locationInfo is not initially undefined
 // async function, no need to await the completion, DOM will be updated via refs
@@ -34,16 +35,17 @@ watch(locationInfo, updateInfo)
 
 async function updateInfo(location: Coordinate | undefined) {
   if (location) {
-    const info = await queryInfo(location, map.getView().getProjection())
-    shortUrl.value = info.shortUrl
-    qrUrl.value = getQRUrl(info.shortUrl)
-    clickCoordinateLuref.value = info.clickCoordinateLuref
-    formatted_coordinates.value = info.formatted_coordinates
-    elevation.value = await getElevation(info.clickCoordinateLuref)
-    address.value = await getNearestAddress(info.clickCoordinateLuref)
+    const infos = await queryInfos(location, map.getView().getProjection())
+    shortUrl.value = infos.shortUrl
+    qrUrl.value = getQRUrl(infos.shortUrl)
+    clickCoordinateLuref.value = infos.clickCoordinateLuref
+    formattedCoordinates.value = infos.formattedCoordinates
+    elevation.value = await getElevation(infos.clickCoordinateLuref)
+    address.value = await getNearestAddress(infos.clickCoordinateLuref)
   }
 }
 
+// TODO implement logics from user data
 const isRapportForageVirtuelAvailable = computed(() => {
   const userRole = 'ACT'
   return userRole === 'ACT'
@@ -68,8 +70,7 @@ const imagesObliquesUrl = computed(() =>
 const addRoutePoint = () => '// TODO: add point to route'
 
 const open = ref(true)
-const { isStreetviewActive } = storeToRefs(useInfoStore())
-const toggleStreetview = () => {
+function toggleStreetview() {
   isStreetviewActive.value = !isStreetviewActive.value
 }
 
@@ -104,7 +105,7 @@ function downloadRapportForageVirtuel() {
     </div>
     <table>
       <tbody class="lux-info-table">
-        <tr v-for="(coords, label) in formatted_coordinates" :key="label">
+        <tr v-for="(coords, label) in formattedCoordinates" :key="label">
           <th>{{ t(label as string) }}</th>
           <td>{{ coords }}</td>
         </tr>
@@ -118,7 +119,7 @@ function downloadRapportForageVirtuel() {
         </tr>
         <tr>
           <th style="text-align: left">{{ t('Distance approximative') }}</th>
-          <td>{{ address?.distance }}</td>
+          <td>{{ address?.formattedDistance }}</td>
         </tr>
       </tbody>
     </table>
