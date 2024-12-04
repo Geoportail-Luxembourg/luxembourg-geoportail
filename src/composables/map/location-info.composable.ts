@@ -37,25 +37,18 @@ export default function useLocationInfo() {
   setInfoStyle(infoFeatureLayer)
   map.addLayer(infoFeatureLayer)
 
-  watch(hidePointer, doHide => {
-    if (doHide) {
+  watch(
+    [locationInfo, hidePointer],
+    ([location, doHide]) => {
       infoFeatureLayer.getSource()?.clear()
-    } else {
-      if (locationInfo.value) {
-        const feature = new Feature(new Point(locationInfo.value))
+      if (location && !doHide) {
+        infoOpen.value = true
+        const feature = new Feature(new Point(location))
         infoFeatureLayer.getSource()?.addFeature(feature)
       }
-    }
-  })
-
-  watch(locationInfo, location => {
-    infoFeatureLayer.getSource()?.clear()
-    if (location && !hidePointer.value) {
-      infoOpen.value = true
-      const feature = new Feature(new Point(location))
-      infoFeatureLayer.getSource()?.addFeature(feature)
-    }
-  })
+    },
+    { immediate: true }
+  )
 
   map
     .getViewport()
@@ -65,16 +58,16 @@ export default function useLocationInfo() {
     handleClick(event as MapBrowserEvent<PointerEvent>)
   )
 
-  const getClickCoordinate = (event: MapBrowserEvent<PointerEvent>) => {
+  function getClickCoordinate(event: MapBrowserEvent<PointerEvent>) {
     return map.getEventCoordinate(event.originalEvent)
   }
 
-  const handleClick = function (event: MapBrowserEvent<PointerEvent>) {
+  function handleClick(event: MapBrowserEvent<PointerEvent>) {
     startPixel = event.pixel
     if (event.originalEvent.button === 2) {
       // if right mouse click
       locationInfo.value = getClickCoordinate(event)
-    } else if (event.originalEvent.pointerType == 'touch') {
+    } else if (event.originalEvent.pointerType === 'touch') {
       window.clearTimeout(holdTimeoutId)
       holdTimeoutId = window.setTimeout(() => {
         locationInfo.value = getClickCoordinate(event)

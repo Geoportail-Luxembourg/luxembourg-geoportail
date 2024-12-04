@@ -90,10 +90,11 @@ function downloadRapportForageVirtuel() {
   <div class="flex flex-row">
     <div class="grow-[2] flex flex-col content-end">
       <div class="grow"></div>
-      <h3 class="text-3xl text-white">
+      <h3 id="short_url_title" class="text-3xl text-white">
         {{ t('Short Url', { ns: 'client' }) }}
       </h3>
       <input
+        aria-labelledby="short_url_title"
         onclick="this.select();"
         class="lux-input"
         type="text"
@@ -104,11 +105,9 @@ function downloadRapportForageVirtuel() {
     <img class="mx-5 mt-5" v-if="qrUrl" :src="qrUrl" />
   </div>
   <div>
-    <div class="mt-5">
-      <h3 class="text-3xl text-white">
-        {{ t('Location Coordinates', { ns: 'client' }) }}
-      </h3>
-    </div>
+    <h3 class="mt-5 text-3xl text-white">
+      {{ t('Location Coordinates', { ns: 'client' }) }}
+    </h3>
     <table>
       <tbody class="lux-info-table">
         <tr v-for="(coords, label) in formattedCoordinates" :key="label">
@@ -116,7 +115,7 @@ function downloadRapportForageVirtuel() {
           <td>{{ coords }}</td>
         </tr>
         <tr>
-          <th style="text-align: left">{{ t('Elevation') }}</th>
+          <th>{{ t('Elevation') }}</th>
           <td>{{ elevation }}</td>
         </tr>
         <tr>
