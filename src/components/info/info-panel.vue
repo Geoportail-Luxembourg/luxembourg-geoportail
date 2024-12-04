@@ -1,5 +1,4 @@
 <script setup lang="ts">
-import { ref, watch } from 'vue'
 import { useTranslation } from 'i18next-vue'
 import SidePanelLayout from '@/components/common/side-panel-layout.vue'
 import { useAppStore } from '@/stores/app.store'
@@ -14,6 +13,7 @@ import { onUnmounted } from 'vue'
 const { t } = useTranslation()
 const appStore = useAppStore()
 const { locationInfo } = storeToRefs(useInfoStore())
+const map = useMap().olMap
 const { clearContent } = useFeatureInfoStore()
 const { featureInfoPanelContent, isLoading } = storeToRefs(
   useFeatureInfoStore()
@@ -21,15 +21,6 @@ const { featureInfoPanelContent, isLoading } = storeToRefs(
 
 onUnmounted(() => {
   clearContent()
-})
-const map = ref(useMap().getOlMap())
-
-watch(locationInfo, loc => {
-  if (loc) {
-    if (!map.value) {
-      map.value = useMap().getOlMap()
-    }
-  }
 })
 </script>
 

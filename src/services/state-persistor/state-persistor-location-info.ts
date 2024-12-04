@@ -7,8 +7,6 @@ import {
   StatePersistorService,
 } from './state-persistor.model'
 import { storageHelper } from './storage/storage.helper'
-import useLocationInfo from '@/composables/map/location-info.composable'
-import useStreetView from '@/composables/map/street-view.composable'
 import useMap from '@/composables/map/map.composable'
 import { useInfoStore } from '@/stores/info.store'
 
@@ -42,9 +40,6 @@ class StatePersistorLocationInfo implements StatePersistorService {
   restore() {
     const { locationInfo } = storeToRefs(useInfoStore())
     const map = useMap().getOlMap()
-    // initialise map listeners for location info
-    useLocationInfo()
-    useStreetView()
 
     const location = storageHelper.getValue(SP_KEY_CROSSHAIR)
     // This represents the behaviour in V3, where restoring from permalink

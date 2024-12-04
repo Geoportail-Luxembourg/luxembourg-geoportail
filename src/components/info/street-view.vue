@@ -2,10 +2,14 @@
 import { useTranslation } from 'i18next-vue'
 import { storeToRefs } from 'pinia'
 import { useInfoStore } from '@/stores/info.store'
+import useStreetView from '@/composables/map/street-view.composable'
 
 const { t } = useTranslation()
 
 const { isStreetviewActive, noDataAtLocation } = storeToRefs(useInfoStore())
+
+// launch streetView listeners
+useStreetView()
 </script>
 
 <template>
