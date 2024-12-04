@@ -8,6 +8,7 @@ import { Coordinate } from 'ol/coordinate'
 import useMap from '@/composables/map/map.composable'
 import useLocationInfo from '@/composables/map/location-info.composable'
 import { getQRUrl, queryInfos } from '@/services/info/location-info'
+import { formatLength } from '@/services/common/formatting.utils'
 
 import StreetView from '@/components/info/street-view.vue'
 
@@ -18,7 +19,7 @@ const map = useMap().getOlMap()
 
 const shortUrl: Ref<string | undefined> = ref()
 const qrUrl: Ref<string | undefined> = ref()
-const elevation: Ref<string | undefined> = ref()
+const elevation: Ref<number | undefined> = ref()
 const address: Ref<AddressResult | undefined> = ref()
 const clickCoordinateLuref: Ref<Coordinate | undefined> = ref()
 const formattedCoordinates: Ref<{ [k: string]: string }> = ref({})
@@ -113,7 +114,7 @@ function downloadRapportForageVirtuel() {
         </tr>
         <tr>
           <th style="text-align: left">{{ t('Elevation') }}</th>
-          <td><span v-format-length="elevation"></span></td>
+          <td>{{ formatLength(elevation || null) }}</td>
         </tr>
         <tr>
           <th style="text-align: left">{{ t('Adresse la plus proche') }}</th>
@@ -121,7 +122,7 @@ function downloadRapportForageVirtuel() {
         </tr>
         <tr>
           <th style="text-align: left">{{ t('Distance approximative') }}</th>
-          <td><span v-format-length="address?.distance"></span></td>
+          <td>{{ formatLength(address?.distance || null) }}</td>
         </tr>
       </tbody>
     </table>
