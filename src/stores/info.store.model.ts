@@ -9,4 +9,8 @@ export interface SvFeature {
 export interface AddressResult {
   formattedAddress: string
   distance: number
+  number: number
+  street: string
+  postal_code: number
+  locality: string
 }
