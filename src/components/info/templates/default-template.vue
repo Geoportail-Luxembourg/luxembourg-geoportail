@@ -32,7 +32,9 @@ const currentUrl = window.location.href
 <template>
   <div class="flex flex-col">
     <div>
-      <h1 class="lux-poi-title">{{ t(`${layers.layerLabel}`) }}</h1>
+      <h1 class="lux-poi-title" data-cy="defaultTemplateTitle">
+        {{ t(`${layers.layerLabel}`) }}
+      </h1>
       <div
         v-for="feature in layers.features"
         :key="feature.id"
@@ -41,7 +43,7 @@ const currentUrl = window.location.href
         <h4 v-if="feature.attributes.label">
           {{ t(`${feature.attributes.label}`) }}
         </h4>
-        <div v-if="hasAttributes(feature)">
+        <div data-cy="defaultTemplateAttributes" v-if="hasAttributes(feature)">
           <div
             v-for="entry in prefixKeys(feature.attributes, 'f_').sort(
               (a, b) => {
@@ -76,6 +78,7 @@ const currentUrl = window.location.href
                 >{{ t(`${entry['key']}`) }}</a
               >
               <a
+                data-cy="defaultTemplateSolarLink"
                 v-if="
                   layers.layerLabel.startsWith(
                     'myenergy_solarkataster_luxemburg'
@@ -135,9 +138,12 @@ const currentUrl = window.location.href
         </div>
         <div v-if="hasValidFID(feature)">
           <span
-            ><a :href="`${currentUrl}&fid=${feature.fid}`" target="_blank">{{
-              t('Lien direct vers cet objet')
-            }}</a></span
+            ><a
+              data-cy="defaultTemplateLink"
+              :href="`${currentUrl}&fid=${feature.fid}`"
+              target="_blank"
+              >{{ t('Lien direct vers cet objet') }}</a
+            ></span
           >
         </div>
       </div>
