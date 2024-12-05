@@ -6,6 +6,8 @@ import { useInfoStore } from '@/stores/info.store'
 import { useUserManagerStore } from '@/stores/user-manager.store'
 import { AddressResult } from '@/stores/info.store.model'
 import { Coordinate } from 'ol/coordinate'
+import { Feature } from 'ol'
+import { Point } from 'ol/geom'
 import useMap from '@/composables/map/map.composable'
 import useLocationInfo from '@/composables/map/location-info.composable'
 import {
@@ -23,7 +25,9 @@ import {
 import StreetView from '@/components/info/street-view.vue'
 
 const { t } = useTranslation()
-const { locationInfo, isStreetviewActive } = storeToRefs(useInfoStore())
+const { locationInfo, isStreetviewActive, routingFeatureTemp } = storeToRefs(
+  useInfoStore()
+)
 const { currentUser } = storeToRefs(useUserManagerStore())
 
 const map = useMap().getOlMap()
@@ -112,9 +116,16 @@ const imagesObliquesUrl = computed(() =>
     : ''
 )
 
-const addRoutePoint = () => '// TODO: add point to route'
+function addRoutePoint() {
+  const point = new Feature(new Point(locationInfo.value))
+  if (address.value?.distance <= 100) {
+    point.set('label', formatAddress(address.value))
+  } else {
+    point.set('label', formattedCoordinates.value['Luref'])
+  }
+  routingFeatureTemp.value = point
+}
 
-const open = ref(true)
 function toggleStreetview() {
   isStreetviewActive.value = !isStreetviewActive.value
 }
@@ -246,7 +257,7 @@ async function downloadRapportForageVirtuel() {
     >
       <div
         class="col-start-1 row-start-1 text-center"
-        v-if="!(open && isStreetviewActive)"
+        v-if="!isStreetviewActive"
       >
         <button class="lux-btn mt-3 no-print" @click="toggleStreetview()">
           {{ t('Activer Google Streetview') }}
