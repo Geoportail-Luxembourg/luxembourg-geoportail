@@ -37,6 +37,12 @@ export default function useLocationInfo() {
   setInfoStyle(infoFeatureLayer)
   map.addLayer(infoFeatureLayer)
 
+  watch(infoOpen, open => {
+    if (!open) {
+      locationInfo.value = undefined
+    }
+  })
+
   watch(
     [locationInfo, hidePointer],
     ([location, doHide]) => {
