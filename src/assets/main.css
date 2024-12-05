@@ -112,6 +112,14 @@
     @apply cursor-pointer bg-white border text-primary py-[6px] px-[12px] hover:bg-primary hover:text-white leading-snug focus:bg-[#e6e6e6] focus:border-[#8c8c8c] focus:[color:var(--color-primary)] focus:lux-outlined;
     border: 1px solid var(--color-gray);
   }
+  .lux-btn:disabled {
+    cursor: not-allowed;
+    opacity: 0.65;
+    filter: alpha(opacity=65);
+    -webkit-box-shadow: none;
+    -moz-box-shadow: none;
+    box-shadow: none;
+  }
 
   .lux-btn-primary {
     @apply lux-btn bg-primary text-white hover:bg-quaternary border-[1px] border-[color:var(--color-quaternary)];

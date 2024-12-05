@@ -133,10 +133,12 @@ export function formatCoords(
           : Math.abs(Math.round(coord)).toString())
       )
   )
-  const coordPair = formattedCoords
+  if (utmZone !== undefined) {
+    return `${formattedCoords.join(' | ')}  (${utmZone})`
+  }
+  return formattedCoords
     .map((coord: string, axis: number) => `${coord} ${hemispheres[axis]}`)
     .join(' | ')
-  return utmZone === undefined ? coordPair : `${coordPair}  (${utmZone})`
 }
 export function normalizeDegrees(degrees: number) {
   return ((degrees + 180) % 360) - 180
