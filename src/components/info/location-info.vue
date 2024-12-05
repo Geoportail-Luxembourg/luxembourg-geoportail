@@ -3,6 +3,7 @@ import { computed, Ref, ref, watch } from 'vue'
 import { useTranslation } from 'i18next-vue'
 import { storeToRefs } from 'pinia'
 import { useInfoStore } from '@/stores/info.store'
+import { useUserManagerStore } from '@/stores/user-manager.store'
 import { AddressResult } from '@/stores/info.store.model'
 import { Coordinate } from 'ol/coordinate'
 import useMap from '@/composables/map/map.composable'
@@ -23,6 +24,7 @@ import StreetView from '@/components/info/street-view.vue'
 
 const { t } = useTranslation()
 const { locationInfo, isStreetviewActive } = storeToRefs(useInfoStore())
+const { currentUser } = storeToRefs(useUserManagerStore())
 
 const map = useMap().getOlMap()
 
@@ -32,6 +34,10 @@ const elevation: Ref<string | undefined> = ref()
 const address: Ref<AddressResult | undefined> = ref()
 const clickCoordinateLuref: Ref<Coordinate | undefined> = ref()
 const formattedCoordinates: Ref<{ [k: string]: string }> = ref({})
+const downloadingRepport: Ref<boolean> = ref(false)
+const isInBoxOfLidar: Ref<boolean> = ref(false)
+const userRole: Ref<string> = ref('Tous Publics')
+const userType: Ref<string> = ref('base')
 
 // initialise map listeners for location info
 useLocationInfo()
@@ -56,20 +62,41 @@ async function updateInfo(location: Coordinate | undefined) {
     elevation.value =
       infos.elevation === null ? 'N/A' : formatElevation(infos.elevation)
     address.value = infos.address
+    isInBoxOfLidar.value = infos.isInBoxOfLidar
   }
 }
 
-// TODO implement logics from user data
-const isRapportForageVirtuelAvailable = computed(() => {
-  const userRole = 'ACT'
-  return userRole === 'ACT'
+watch(currentUser, user => {
+  userRole.value = user?.role || 'anonymous'
+  userType.value = user?.role || 'base'
 })
-const downloadingRepport = ref(false)
-const isInBoxOfLidar = computed(() => true)
-const isCyclomediaAvailable = computed(() => true)
+
+const isRapportForageVirtuelAvailable = computed(() => userRole.value === 'ACT')
+const isCyclomediaAvailable = computed(
+  () =>
+    userType.value === 'etat' ||
+    userType.value === 'commune' ||
+    userRole.value === 'MinTour'
+)
 const isImagesObliquesAvailable = computed(() => true)
 
-const getLidarUrl = () => 'bla'
+const lidarUrl = computed(() =>
+  clickCoordinateLuref.value
+    ? `${import.meta.env.VITE_LIDAR_URL}?COORD_X=${
+        clickCoordinateLuref.value[0]
+      }&COORD_Y=${clickCoordinateLuref.value[1]}&COORD_Z=${parseInt(
+        elevation.value || '0'
+      )}`
+    : ''
+)
+const forageUrl = computed(() =>
+  //  "http://172.20.0.3:3000/x/print_sync?pdf=A6")
+  clickCoordinateLuref.value
+    ? `${import.meta.env.VITE_FORAGE_URL}?x=${
+        clickCoordinateLuref.value[0]
+      }&y=${clickCoordinateLuref.value[1]}`
+    : ''
+)
 const cyclomediaUrl = computed(() =>
   clickCoordinateLuref.value
     ? `${import.meta.env.VITE_CYCLOMEDIA_URL}?q=${
@@ -92,9 +119,28 @@ function toggleStreetview() {
   isStreetviewActive.value = !isStreetviewActive.value
 }
 
-function downloadRapportForageVirtuel() {
+async function downloadRapportForageVirtuel() {
   downloadingRepport.value = true
-  setTimeout(() => (downloadingRepport.value = false), 2000)
+  map.getViewport().style.cursor = 'wait'
+  try {
+    const response = await fetch(forageUrl.value)
+    if (!response.ok) {
+      throw new Error()
+    }
+    const blob = await response.blob()
+    const downloadUrl = URL.createObjectURL(blob)
+    const anchor = document.createElement('a')
+    anchor.href = downloadUrl
+    anchor.download = ''
+    anchor.click()
+    URL.revokeObjectURL(downloadUrl)
+  } catch {
+    // TODO harmonize error
+    alert('Error downloading forage')
+  } finally {
+    map.getViewport().style.cursor = ''
+    downloadingRepport.value = false
+  }
 }
 </script>
 
@@ -144,7 +190,7 @@ function downloadRapportForageVirtuel() {
   <div>
     <div v-if="isRapportForageVirtuelAvailable">
       <button
-        v-if="!downloadingRepport"
+        :disabled="downloadingRepport"
         class="lux-btn mt-1"
         @click="downloadRapportForageVirtuel()"
       >
@@ -155,7 +201,7 @@ function downloadRapportForageVirtuel() {
       <a
         v-if="isInBoxOfLidar"
         class="lux-btn whitespace-nowrap"
-        :href="getLidarUrl()"
+        :href="lidarUrl"
         target="_geoportal_ext_lidar"
       >
         {{ t('Lien vers la démo lidar') }}

@@ -2,6 +2,7 @@ import { urlStorage } from '@/services/state-persistor/storage/url-storage'
 import { transform } from 'ol/proj'
 import { Coordinate } from 'ol/coordinate'
 import { Projection } from 'ol/proj'
+import { containsCoordinate } from 'ol/extent'
 
 import { getElevation } from '@/components/draw/feature-measurements-helper'
 
@@ -12,6 +13,9 @@ export const INFO_PROJECTIONS = {
   'EPSG:4326:DMm': 'Lon/Lat WGS84 DM',
   'EPSG:3263*': 'WGS84 UTM',
 }
+
+export const LIDAR_EXTENT = [46602, 53725, 106944, 141219]
+export const LIDAR_EXTENT_SRS = 'EPSG:2169'
 
 export async function queryInfos(location: Coordinate, fromCrs: Projection) {
   const clickCoordinateLuref = transform(location, fromCrs, 'EPSG:2169')
@@ -27,6 +31,7 @@ export async function queryInfos(location: Coordinate, fromCrs: Projection) {
     elevation,
     address,
     clickCoordinateLuref,
+    isInBoxOfLidar: containsCoordinate(LIDAR_EXTENT, clickCoordinateLuref),
   }
 }
 
