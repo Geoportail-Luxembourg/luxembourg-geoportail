@@ -117,6 +117,9 @@ const imagesObliquesUrl = computed(() =>
 )
 
 function addRoutePoint() {
+  if (!locationInfo.value) {
+    return
+  }
   const point = new Feature(new Point(locationInfo.value))
   if (address.value?.distance <= 100) {
     point.set('label', formatAddress(address.value))
