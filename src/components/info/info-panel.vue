@@ -37,7 +37,7 @@ onUnmounted(() => {
 
     <template v-slot:content>
       <template v-if="map">
-        <div v-show="locationInfo" class="absolute">
+        <div data-cy="locationInfo" v-show="locationInfo" class="absolute">
           <LocationInfo />
         </div>
       </template>
