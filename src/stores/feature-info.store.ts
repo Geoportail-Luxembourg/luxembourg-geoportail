@@ -9,7 +9,7 @@ export const useFeatureInfoStore = defineStore(
       shallowRef()
     const fid: ShallowRef<string | undefined> = shallowRef()
     const isLoading: ShallowRef<boolean> = shallowRef(false)
-    const infoPanelHidden: ShallowRef<boolean> = shallowRef(false)
+    const displayStarOnMobile: ShallowRef<boolean> = shallowRef(false)
 
     function setFeatureInfoPanelContent(value: FeatureInfoJSON[]) {
       if (!value || value.length === 0) {
@@ -33,20 +33,20 @@ export const useFeatureInfoStore = defineStore(
       isLoading.value = value
     }
 
-    function setInfoPanelHidden(value: boolean) {
-      infoPanelHidden.value = value
+    function setDisplayStarOnMobile(value: boolean) {
+      displayStarOnMobile.value = value
     }
 
     return {
       featureInfoPanelContent,
       fid,
       isLoading,
-      infoPanelHidden,
+      displayStarOnMobile,
       setFeatureInfoPanelContent,
       clearContent,
       setFid,
       setLoading,
-      setInfoPanelHidden,
+      setDisplayStarOnMobile,
     }
   },
   {}
