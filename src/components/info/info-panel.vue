@@ -2,9 +2,15 @@
 import { useTranslation } from 'i18next-vue'
 import SidePanelLayout from '@/components/common/side-panel-layout.vue'
 import { useAppStore } from '@/stores/app.store'
+import { useInfoStore } from '@/stores/info.store'
+import { storeToRefs } from 'pinia'
+import useMap from '@/composables/map/map.composable'
+import LocationInfo from './location-info.vue'
 
 const { t } = useTranslation()
 const appStore = useAppStore()
+const { locationInfo } = storeToRefs(useInfoStore())
+const map = useMap().olMap
 </script>
 
 <template>
@@ -19,16 +25,26 @@ const appStore = useAppStore()
     </template>
 
     <template v-slot:content>
-      <div class="text-white">
-        <ul class="list-disc pl-10">
-          <li>
-            {{ t(`A right click (tap and hold on mobile)...`, { ns: 'app' }) }}
-          </li>
-          <li>
-            {{ t(`A short click (tap on mobile)...`, { ns: 'app' }) }}
-          </li>
-        </ul>
-      </div>
+      <template v-if="map">
+        <div data-cy="locationInfo" v-show="locationInfo" class="absolute">
+          <LocationInfo />
+        </div>
+      </template>
+
+      <template v-if="!locationInfo">
+        <div class="text-white absolute">
+          <ul class="list-disc pl-10">
+            <li>
+              {{
+                t(`A right click (tap and hold on mobile)...`, { ns: 'app' })
+              }}
+            </li>
+            <li>
+              {{ t(`A short click (tap on mobile)...`, { ns: 'app' }) }}
+            </li>
+          </ul>
+        </div>
+      </template>
     </template>
   </side-panel-layout>
 </template>
