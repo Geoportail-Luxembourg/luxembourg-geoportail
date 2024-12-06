@@ -32,6 +32,7 @@ import FooterBar from '@/components/footer/footer-bar.vue'
 import ToolbarDraw from '@/components/footer/toolbar-draw.vue'
 import LayerPanel from '@/components/layer-panel/layer-panel.vue'
 import LegendsPanel from '@/components/legends/legends-panel.vue'
+import LocationInfoPanel from '@/components/info/location-info.vue'
 import SliderComparator from '@/components/slider/slider-comparator.vue'
 import useBackgroundLayer from '@/composables/background-layer/background-layer.composable'
 import useLayers from '@/composables/layers/layers.composable'
@@ -48,6 +49,7 @@ import { useProfileMeasuresv3Store } from './stores/profile-measures_v3.store'
 import { useProfileRoutingv3Store } from './stores/profile-routing_v3.store'
 import { useProfileInfosv3Store } from './stores/profile-infos_v3.store'
 import { useDrawStore } from '@/stores/draw.store'
+import { useInfoStore } from '@/stores/info.store'
 import { useStyleStore } from '@/stores/style.store'
 import { useThemeStore } from '@/stores/config.store'
 import { useUserManagerStore } from '@/stores/user-manager.store'
@@ -151,6 +153,7 @@ export {
   ToolbarDraw,
   LayerPanel,
   LegendsPanel,
+  LocationInfoPanel,
   SliderComparator,
   proxyUrlHelper,
   styleUrlHelper,
@@ -169,6 +172,7 @@ export {
   useProfileRoutingv3Store,
   useProfileInfosv3Store,
   useDrawStore,
+  useInfoStore,
   useStyleStore,
   useThemeStore,
   useUserManagerStore,

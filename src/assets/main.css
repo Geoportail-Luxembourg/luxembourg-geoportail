@@ -108,7 +108,8 @@
     content: '\E902';
   }
 
-  .lux-btn {
+  .lux-btn,
+  a.lux-btn {
     @apply cursor-pointer bg-white border text-primary py-[6px] px-[12px] hover:bg-primary hover:text-white leading-snug focus:bg-[#e6e6e6] focus:border-[#8c8c8c] focus:[color:var(--color-primary)] focus:lux-outlined;
     border: 1px solid var(--color-gray);
   }
