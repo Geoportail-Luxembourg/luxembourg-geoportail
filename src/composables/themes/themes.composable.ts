@@ -28,7 +28,7 @@ export default function useThemes() {
     const { themes } = useThemeStore()
 
     node = node || themes?.find(theme => findByIdOrName(id, name, theme))
-    if ((id && node?.id === id) || (name && node?.name === name)) {
+    if ((id && node?.id === +id) || (name && node?.name === name)) {
       return node
     } else if (node?.children) {
       for (const child of node.children) {

@@ -88,7 +88,10 @@ export class DrawnFeature extends Feature {
   async getProfile() {
     const geom = this.getGeometry()
 
-    if (geom?.getType() !== 'LineString') {
+    if (
+      geom?.getType() !== 'LineString' &&
+      geom?.getType() !== 'MultiLineString'
+    ) {
       return
     }
 
