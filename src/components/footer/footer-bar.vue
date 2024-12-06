@@ -89,10 +89,11 @@ function onClickInfoIcon() {
       </li>
       <li data-cy="infoOpenClose">
         <button-icon
-          :label="t('Infos', { ns: 'client' })"
+          :label="`${t('Infos', { ns: 'client' })}${
+            infoPanelHidden ? '(*)' : ''
+          }`"
           icon="infos"
           :active="infoOpen"
-          :display-star="infoPanelHidden"
           @click="onClickInfoIcon"
         >
         </button-icon>
