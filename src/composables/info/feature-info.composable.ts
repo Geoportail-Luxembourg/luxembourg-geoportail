@@ -203,11 +203,11 @@ export default function useFeatureInfo() {
               }
             }
           } catch (error) {
-            reset()
+            done()
           }
         }
       } catch (error) {
-        reset()
+        done()
       }
     }
   }
@@ -293,13 +293,13 @@ export default function useFeatureInfo() {
               lastHighlightedFeatures.value,
               false
             )
-            reset()
+            done()
           }
         } else {
           throw new Error('Network response was not ok')
         }
       } catch (error) {
-        reset()
+        done()
       }
     }
   }
@@ -358,7 +358,7 @@ export default function useFeatureInfo() {
     })
 
     const infoOpen = responses.value.length > 0 ? openInfoPanel : false
-    reset(infoOpen)
+    done(infoOpen)
 
     lastHighlightedFeatures.value = []
     for (let i = 0; i < responses.value.length; i++) {
@@ -372,7 +372,7 @@ export default function useFeatureInfo() {
     setFeatureInfoPanelContent(content)
   }
 
-  function reset(openPanel = false) {
+  function done(openPanel = false) {
     toggleInfoOpen(openPanel)
     setLoading(false)
     map.getViewport().style.cursor = ''
