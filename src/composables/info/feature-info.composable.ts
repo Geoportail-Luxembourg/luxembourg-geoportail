@@ -22,8 +22,7 @@ import { DrawnFeature } from '@/services/draw/drawn-feature'
 import { Pixel } from 'ol/pixel'
 import { throttle } from '@/services/utils'
 import { useMapStore } from '@/stores/map.store'
-
-const INFO_SERVICE_URL = import.meta.env.VITE_GET_INFO_SERVICE_URL
+import { getFeatureInfoJson } from '@/services/api/api-feature-info.service'
 
 export default function useFeatureInfo() {
   const map = useMap().getOlMap()
@@ -100,7 +99,7 @@ export default function useFeatureInfo() {
           const deltaX = Math.abs(startPixel.value[0] - stopPixel.value[0])
           const deltaY = Math.abs(startPixel.value[1] - stopPixel.value[1])
           if (deltaX + deltaY < 6) {
-            singleclickEvent(evt)
+            getFeatureInfoFromClick(evt)
             startPixel.value = null
             stopPixel.value = null
           }
@@ -158,10 +157,7 @@ export default function useFeatureInfo() {
           setLoading(true)
           map.getViewport().style.cursor = 'wait'
 
-          const url = new URL(INFO_SERVICE_URL)
-          url.searchParams.append('fid', curFid)
-
-          const resp = await fetch(url.toString())
+          const data = await getFeatureInfoJson({ fid: curFid })
 
           let openInfoPanel = false
           if (screenSizeIsAtLeast('sm')) {
@@ -176,11 +172,8 @@ export default function useFeatureInfo() {
             layerLabel[fId] = node.layers as string
           }
 
-          if (resp.ok) {
-            const data = await resp.json()
-            if (data.length > 0) {
-              showInfo(true, data, layerLabel, openInfoPanel, true)
-            }
+          if (data.length > 0) {
+            showInfo(true, data, layerLabel, openInfoPanel, true)
           }
         }
       } catch (error) {
@@ -189,7 +182,9 @@ export default function useFeatureInfo() {
     }
   }
 
-  async function singleclickEvent(evt: MapBrowserEvent<any>): Promise<void> {
+  async function getFeatureInfoFromClick(
+    evt: MapBrowserEvent<MouseEvent>
+  ): Promise<void> {
     const layers = map.getLayers().getArray()
     const layersList = []
     const layerLabel: { [key: string]: string } = {}
@@ -252,29 +247,18 @@ export default function useFeatureInfo() {
           Y: evt.pixel[1],
         },
       }
-
-      const url = new URL(INFO_SERVICE_URL)
-      Object.keys(params).forEach(key =>
-        url.searchParams.append(key, (params as Record<string, any>)[key])
-      )
-
       try {
-        const resp = await fetch(url.toString())
-        if (resp.ok) {
-          const data = await resp.json()
-          if (data.length > 0) {
-            showInfo(evt.originalEvent.shiftKey, data, layerLabel, true, false)
-          } else {
-            lastHighlightedFeatures.value = []
-            featureInfoLayerService.highlightFeatures(
-              lastHighlightedFeatures.value,
-              false,
-              maxZoom.value
-            )
-            done()
-          }
+        const data = await getFeatureInfoJson(params)
+        if (data.length > 0) {
+          showInfo(evt.originalEvent.shiftKey, data, layerLabel, true, false)
         } else {
-          throw new Error('Network response was not ok')
+          lastHighlightedFeatures.value = []
+          featureInfoLayerService.highlightFeatures(
+            lastHighlightedFeatures.value,
+            false,
+            maxZoom.value
+          )
+          done()
         }
       } catch (error) {
         done()
