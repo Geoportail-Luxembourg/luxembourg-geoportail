@@ -245,7 +245,11 @@ async function downloadRapportForageVirtuel() {
       </button>
     </div>
     <div v-if="isStreetviewActive">
-      <button class="lux-btn mt-3" @click="toggleStreetview()">
+      <button
+        data-cy="streetviewOff"
+        class="lux-btn mt-3"
+        @click="toggleStreetview()"
+      >
         <span class="create-itinerary-text">
           {{ t('Désactiver Google Streetview') }}
         </span>
@@ -262,7 +266,11 @@ async function downloadRapportForageVirtuel() {
         class="col-start-1 row-start-1 text-center"
         v-if="!isStreetviewActive"
       >
-        <button class="lux-btn mt-3 no-print" @click="toggleStreetview()">
+        <button
+          data-cy="streetviewOn"
+          class="lux-btn mt-3 no-print"
+          @click="toggleStreetview()"
+        >
           {{ t('Activer Google Streetview') }}
         </button>
       </div>
