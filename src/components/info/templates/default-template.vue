@@ -3,7 +3,7 @@ import { defineProps } from 'vue'
 import {
   FeatureInfoJSON,
   FeatureJSON,
-} from '../../../services/info/feature-info.model'
+} from '@/services/info/feature-info.model'
 import { useTranslation } from 'i18next-vue'
 import {
   hasAttributes,

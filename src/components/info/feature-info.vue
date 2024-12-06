@@ -5,8 +5,8 @@ import LignesBusTemplate from './templates/lignes-bus-template.vue'
 import {
   FeatureInfoJSON,
   FeatureJSON,
-} from '../../services/info/feature-info.model'
-import { featureInfoLayerService } from '../../services/info/feature-info-layer.service'
+} from '@/services/info/feature-info.model'
+import { featureInfoLayerService } from '@/services/info/feature-info-layer.service'
 import {
   exportFeatureService,
   ExportFormat,
