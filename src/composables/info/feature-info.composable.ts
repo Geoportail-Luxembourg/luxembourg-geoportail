@@ -25,7 +25,7 @@ const INFO_SERVICE_URL = import.meta.env.VITE_GET_INFO_SERVICE_URL
 
 export default function useFeatureInfo() {
   const map = useMap().getOlMap()
-  const { setFeatureInfoPanelContent, setLoading, setInfoPanelHidden } =
+  const { setFeatureInfoPanelContent, setLoading, setDisplayStarOnMobile } =
     useFeatureInfoStore()
   const { fid, isLoading } = storeToRefs(useFeatureInfoStore())
   const { toggleInfoOpen } = useAppStore()
@@ -186,9 +186,9 @@ export default function useFeatureInfo() {
             let openInfoPanel = false
             if (screenSizeIsAtLeast('sm')) {
               openInfoPanel = true
-              setInfoPanelHidden(false)
+              setDisplayStarOnMobile(false)
             } else {
-              setInfoPanelHidden(true)
+              setDisplayStarOnMobile(true)
             }
 
             const node = findById(splittedFid[0])

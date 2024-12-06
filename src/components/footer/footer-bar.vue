@@ -47,12 +47,12 @@ watch(drawToolbarOpen, isOpen => isOpen && (measureToolbarOpen.value = false))
 watch(measureToolbarOpen, isOpen => isOpen && (drawToolbarOpen.value = false))
 
 const featureInfoStore = useFeatureInfoStore()
-const { infoPanelHidden } = storeToRefs(featureInfoStore)
-const { setInfoPanelHidden } = featureInfoStore
+const { displayStarOnMobile } = storeToRefs(featureInfoStore)
+const { setDisplayStarOnMobile } = featureInfoStore
 
 function onClickInfoIcon() {
   toggleInfoOpen()
-  setInfoPanelHidden(false)
+  setDisplayStarOnMobile(false)
 }
 </script>
 
@@ -90,7 +90,7 @@ function onClickInfoIcon() {
       <li data-cy="infoOpenClose">
         <button-icon
           :label="`${t('Infos', { ns: 'client' })}${
-            infoPanelHidden ? '(*)' : ''
+            displayStarOnMobile ? '(*)' : ''
           }`"
           icon="infos"
           :active="infoOpen"
