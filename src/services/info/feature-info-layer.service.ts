@@ -16,6 +16,7 @@ import { Size } from 'ol/size'
 import { PROJECTION_LUX } from '@/composables/map/map.composable'
 
 export const FEATURE_LAYER_TYPE = 'featureInfoLayer'
+export const HIGHLIGHT_MAX_ZOOM = 17
 class FeatureInfoLayerService {
   map: Map
   featureLayer: VectorLayer<VectorSource<Geometry>>
@@ -75,7 +76,7 @@ class FeatureInfoLayerService {
         ]
 
         const geometryType = feature.getGeometry()?.getType()
-        return geometryType == 'Point' || geometryType == 'MultiPoint'
+        return geometryType === 'Point' || geometryType === 'MultiPoint'
           ? [new Style({ image: image })]
           : defaultStyle
       }
@@ -83,7 +84,11 @@ class FeatureInfoLayerService {
     this.map.addLayer(this.featureLayer)
   }
 
-  highlightFeatures(features: FeatureJSON[], fit: boolean): void {
+  highlightFeatures(
+    features: FeatureJSON[],
+    fit: boolean,
+    maxZoom: number | undefined
+  ): void {
     if (features !== undefined && features !== null) {
       if (this.map.getLayers().getArray().indexOf(this.featureLayer) === -1) {
         this.map.addLayer(this.featureLayer)
@@ -131,7 +136,7 @@ class FeatureInfoLayerService {
         if (fit && extent) {
           const fitOptions: FitOptions = {
             size: this.map.getSize() as Size,
-            maxZoom: 17,
+            maxZoom: maxZoom || HIGHLIGHT_MAX_ZOOM,
           }
           this.map.getView().fit(extent, fitOptions)
         }
