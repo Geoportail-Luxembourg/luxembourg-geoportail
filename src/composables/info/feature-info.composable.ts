@@ -21,6 +21,7 @@ import { FeatureLike } from 'ol/Feature'
 import { DrawnFeature } from '@/services/draw/drawn-feature'
 import { Pixel } from 'ol/pixel'
 import { throttle } from '@/services/utils'
+import { useMapStore } from '@/stores/map.store'
 
 const INFO_SERVICE_URL = import.meta.env.VITE_GET_INFO_SERVICE_URL
 
@@ -35,6 +36,8 @@ export default function useFeatureInfo() {
   const { drawStateActive, editStateActive, drawnFeatures } = storeToRefs(
     useDrawStore()
   )
+  const { maxZoom } = storeToRefs(useMapStore())
+
   const responses = ref<FeatureInfoJSON[]>([])
   const lastHighlightedFeatures = ref<FeatureJSON[]>([])
   const startPixel = ref<number[] | null>([])
@@ -265,7 +268,8 @@ export default function useFeatureInfo() {
             lastHighlightedFeatures.value = []
             featureInfoLayerService.highlightFeatures(
               lastHighlightedFeatures.value,
-              false
+              false,
+              maxZoom.value
             )
             done()
           }
@@ -340,7 +344,8 @@ export default function useFeatureInfo() {
     }
     featureInfoLayerService.highlightFeatures(
       lastHighlightedFeatures.value,
-      fit
+      fit,
+      maxZoom.value
     )
 
     setFeatureInfoPanelContent(content)
