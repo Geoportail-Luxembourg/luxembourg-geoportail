@@ -45,7 +45,8 @@ const getTemplateComponent = (template: string) => {
 
 function onExport(payload: { feature: FeatureJSON; format: ExportFormat }) {
   if (payload.feature.attributes && !payload.feature.properties) {
-    payload.feature.properties = payload.feature.attributes
+    payload.feature.properties = payload.feature
+      .attributes as unknown as Record<string, unknown>
   }
   const olFeature = new GeoJSON().readFeature(payload.feature, {
     dataProjection: PROJECTION_LUX,

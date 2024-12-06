@@ -1,17 +1,20 @@
 import { useTranslation } from 'i18next-vue'
-import { FeatureJSON } from '@/services/info/feature-info.model'
+import {
+  AttributeEntry,
+  Attributes,
+  FeatureJSON,
+} from '@/services/info/feature-info.model'
 import { sanitizeUrl } from '@braintree/sanitize-url'
 
-export function prefixKeys(
-  attributes: { [key: string]: any },
-  prefix: string
-): {
-  key: string
-  value: any
-}[] {
+export function sortedAttributeEntries(
+  attributes: Attributes,
+  ordered: boolean
+): AttributeEntry[] {
+  const prefix = 'f_'
   return Object.entries(attributes)
     .filter(([key]) => key !== 'showProfile')
     .map(([key, value]) => ({ key: prefix + key, value }))
+    .sort((a, b) => (ordered ? 0 : a.key.localeCompare(b.key)))
 }
 
 export function hasAttributes(feature: FeatureJSON): boolean {
@@ -21,7 +24,7 @@ export function hasAttributes(feature: FeatureJSON): boolean {
   )
 }
 
-export function isEmpty(value: string | undefined | null): boolean {
+export function isEmptyString(value: string | undefined | null): boolean {
   return value === undefined || value === null || value.length === 0
 }
 
@@ -138,14 +141,13 @@ export function getTrustedUrlByLang(
 ): string {
   const { i18next } = useTranslation()
   switch (i18next.language) {
-    case 'fr':
-      return sanitizeUrl(urlFr)
     case 'de':
       return sanitizeUrl(urlDe ?? urlFr)
     case 'en':
       return sanitizeUrl(urlEn ?? urlFr)
     case 'lb':
       return sanitizeUrl(urlLb ?? urlFr)
+    case 'fr':
     default:
       return sanitizeUrl(urlFr)
   }

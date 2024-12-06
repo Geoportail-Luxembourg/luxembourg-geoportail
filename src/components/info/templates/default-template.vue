@@ -1,18 +1,19 @@
 <script setup lang="ts">
 import { defineProps } from 'vue'
 import {
+  AttributeEntry,
   FeatureInfoJSON,
   FeatureJSON,
 } from '@/services/info/feature-info.model'
 import { useTranslation } from 'i18next-vue'
 import {
   hasAttributes,
-  isEmpty,
+  isEmptyString,
   isLink,
   showAttributesByLang,
   hasValidFID,
-  prefixKeys,
   getTrustedUrl,
+  sortedAttributeEntries,
 } from './template-utilities'
 import i18next from 'i18next'
 import ProfileFeatureInfo from '@/components/info/profile-feature-info.vue'
@@ -28,6 +29,35 @@ defineEmits<{
 }>()
 const { t } = useTranslation()
 const currentUrl = window.location.href
+
+function isNoSolarNorWaterLink(label: string, attributeEntry: AttributeEntry) {
+  return (
+    !(
+      label.startsWith('myenergy_solarkataster_luxemburg') ||
+      label.startsWith('eau_new_Wasserstand')
+    ) && isLink(attributeEntry.value)
+  )
+}
+
+function isSolarLink(label: string, attributeEntry: AttributeEntry) {
+  return (
+    label.startsWith('myenergy_solarkataster_luxemburg') &&
+    isLink(attributeEntry.value) &&
+    attributeEntry.key === 'f_href'
+  )
+}
+
+function isWaterLink(label: string, attributeEntry: AttributeEntry) {
+  return (
+    label.startsWith('eau_new_Wasserstand') &&
+    isLink(attributeEntry.value) &&
+    attributeEntry.key === 'f_Graph'
+  )
+}
+
+function isAudioLink(attributeEntry: AttributeEntry) {
+  return isLink(attributeEntry.value) && attributeEntry.key === 'f_AudioURL'
+}
 </script>
 <template>
   <div class="flex flex-col">
@@ -45,48 +75,39 @@ const currentUrl = window.location.href
         </h4>
         <div data-cy="defaultTemplateAttributes" v-if="hasAttributes(feature)">
           <div
-            v-for="entry in prefixKeys(feature.attributes, 'f_').sort(
-              (a, b) => {
-                return layers.ordered ? 0 : a.key.localeCompare(b.key)
-              }
+            v-for="attributeEntry in sortedAttributeEntries(
+              feature.attributes,
+              layers.ordered
             )"
-            :key="entry.key"
+            :key="attributeEntry.key"
           >
             <span
               v-if="
-                !isEmpty(entry['value']) &&
-                showAttributesByLang(entry, layers.layer, i18next.language)
+                !isEmptyString(attributeEntry.value) &&
+                showAttributesByLang(
+                  attributeEntry,
+                  layers.layer,
+                  i18next.language
+                )
               "
             >
-              <label v-if="!isLink(entry['value'])"
-                >{{ t(entry['key']) }} :
+              <label v-if="!isLink(attributeEntry.value)"
+                >{{ t(attributeEntry.key) }} :
               </label>
               <span
-                v-if="!isLink(entry['value'])"
-                v-dompurify-html="entry['value']"
+                v-if="!isLink(attributeEntry.value)"
+                v-dompurify-html="attributeEntry.value"
               ></span>
               <a
-                v-if="
-                  !(
-                    layers.layerLabel.startsWith(
-                      'myenergy_solarkataster_luxemburg'
-                    ) || layers.layerLabel.startsWith('eau_new_Wasserstand')
-                  ) && isLink(entry['value'])
-                "
-                :href="entry['value']"
+                v-if="isNoSolarNorWaterLink(layers.layerLabel, attributeEntry)"
+                :href="attributeEntry.value"
                 target="_blank"
-                >{{ t(entry['key']) }}</a
+                >{{ t(attributeEntry.key) }}</a
               >
               <a
                 data-cy="defaultTemplateSolarLink"
-                v-if="
-                  layers.layerLabel.startsWith(
-                    'myenergy_solarkataster_luxemburg'
-                  ) &&
-                  isLink(entry['value']) &&
-                  entry['key'] == 'f_href'
-                "
-                :href="entry['value']"
+                v-if="isSolarLink(layers.layerLabel, attributeEntry)"
+                :href="attributeEntry.value"
                 target="_blank"
               >
                 <button class="lux-solarkataster-button">
@@ -95,22 +116,16 @@ const currentUrl = window.location.href
                   }}</span>
                 </button></a
               >
-              <span
-                v-if="isLink(entry['value']) && entry['key'] == 'f_AudioURL'"
-              >
+              <span v-if="isAudioLink(attributeEntry)">
                 <audio controls autoplay style="width: 260px; height: 50px">
-                  <source :src="entry['value']" type="audio/wav" />
+                  <source :src="attributeEntry.value" type="audio/wav" />
                 </audio>
               </span>
               <iframe
                 width="260px"
                 height="560px"
-                v-if="
-                  layers.layerLabel.startsWith('eau_new_Wasserstand') &&
-                  isLink(entry['value']) &&
-                  entry['key'] == 'f_Graph'
-                "
-                :src="getTrustedUrl(entry['value'])"
+                v-if="isWaterLink(layers.layerLabel, attributeEntry)"
+                :src="getTrustedUrl(attributeEntry.value)"
                 title="water level graph"
               ></iframe>
             </span>
@@ -120,16 +135,18 @@ const currentUrl = window.location.href
           <profile-feature-info :feature="feature" />
         </div>
         <div v-if="layers.has_profile">
-          <a
+          <button
             class="lux-btn"
             @click="$emit('export', { feature, format: 'kml' })"
-            >{{ t('Exporter KMl') }}</a
           >
-          &nbsp;<a
+            {{ t('Exporter KMl') }}
+          </button>
+          &nbsp;<button
             class="lux-btn"
             @click="$emit('export', { feature, format: 'gpx' })"
-            >{{ t('Exporter GPX') }}</a
           >
+            {{ t('Exporter GPX') }}
+          </button>
         </div>
         <div v-if="!hasAttributes(feature)">
           <span>{{

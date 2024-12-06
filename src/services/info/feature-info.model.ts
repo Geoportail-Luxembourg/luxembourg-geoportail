@@ -20,8 +20,6 @@ export interface Attributes {
   showProfile: { active: boolean }
   profile: any
   label: string
-  [key: string]: any
-  value: string
 }
 
 export interface FeatureInfoJSON {
@@ -34,4 +32,9 @@ export interface FeatureInfoJSON {
   total_features_count: number
   features_count: number
   layerLabel: string
+}
+
+export interface AttributeEntry {
+  key: string
+  value: any
 }
