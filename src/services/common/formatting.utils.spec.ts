@@ -180,7 +180,7 @@ describe('Formatting utils', () => {
         'EPSG:3857',
         'EPSG:3263*'
       )
-      expect(formattedCoords).toEqual('700672 E | 5506204 N  (UTM31N)')
+      expect(formattedCoords).toEqual('700672 | 5506204  (UTM31N)')
     })
     it('format UTM 32 coordinate', () => {
       const formattedCoords = formatCoords(
@@ -188,7 +188,7 @@ describe('Formatting utils', () => {
         'EPSG:3857',
         'EPSG:3263*'
       )
-      expect(formattedCoords).toEqual('289999 E | 5506558 N  (UTM32N)')
+      expect(formattedCoords).toEqual('289999 | 5506558  (UTM32N)')
     })
   })
 })
