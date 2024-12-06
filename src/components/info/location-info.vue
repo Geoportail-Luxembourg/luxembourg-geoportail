@@ -121,7 +121,7 @@ function addRoutePoint() {
     return
   }
   const point = new Feature(new Point(locationInfo.value))
-  if (address.value?.distance <= 100) {
+  if (address.value && address.value.distance <= 100) {
     point.set('label', formatAddress(address.value))
   } else {
     point.set('label', formattedCoordinates.value['Luref'])
