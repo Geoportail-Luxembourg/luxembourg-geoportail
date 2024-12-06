@@ -20,6 +20,7 @@ import { useDrawStore } from '@/stores/draw.store'
 import { FeatureLike } from 'ol/Feature'
 import { DrawnFeature } from '@/services/draw/drawn-feature'
 import { Pixel } from 'ol/pixel'
+import { throttle } from '@/services/utils'
 
 const INFO_SERVICE_URL = import.meta.env.VITE_GET_INFO_SERVICE_URL
 
@@ -36,126 +37,27 @@ export default function useFeatureInfo() {
   )
   const responses = ref<FeatureInfoJSON[]>([])
   const lastHighlightedFeatures = ref<FeatureJSON[]>([])
-  const isLongPress = ref(false)
   const startPixel = ref<number[] | null>([])
   const stopPixel = ref<number[] | null>([])
-  const pointerDownTime = ref(0)
-  const pointerUpTime = ref(0)
   const timeoutId = ref<number | null>(null)
 
   function init() {
     featureInfoLayerService.init(map)
     listen(map, 'pointerdown', event => {
       ;(() => {
-        isLongPress.value = false
-        startPixel.value = (event as MapBrowserEvent<any>).pixel
-        pointerDownTime.value = new Date().getTime()
-        if (timeoutId.value !== null) {
-          clearTimeout(timeoutId.value)
-        }
+        startPixel.value = (event as MapBrowserEvent<MouseEvent>).pixel
       })()
     })
 
-    listen(map, 'pointerup', event => {
-      ;(async () => {
-        const evt = event as MapBrowserEvent<any>
-        if (timeoutId.value !== null) {
-          clearTimeout(timeoutId.value)
-          timeoutId.value = null
-        }
+    listen(
+      map,
+      'pointerup',
+      throttle(event => onPointerUp(event as MapBrowserEvent<MouseEvent>), 499)
+    )
 
-        const tempTime = new Date().getTime()
-        if (tempTime - pointerUpTime.value <= 499) {
-          return
-        }
-        pointerUpTime.value = tempTime
-        stopPixel.value = evt.pixel
-
-        if (!isLongPress.value && !(evt.originalEvent instanceof MouseEvent)) {
-          if (pointerUpTime.value - pointerDownTime.value > 499) {
-            isLongPress.value = true
-          }
-        }
-
-        if (isLongPress.value || evt.originalEvent.which === 3) {
-          isLongPress.value = false
-          return
-        }
-
-        if (
-          // TODO: integrate in v3 and migrate once available
-          // routingOpen ||
-          // lidarOpen ||
-          // appActivetool.value.isActive() || => corresponds to: measureActive, streetviewActive
-          drawStateActive.value ||
-          editStateActive.value ||
-          isLoading.value
-        ) {
-          return
-        }
-
-        timeoutId.value = window.setTimeout(() => {
-          let found = false
-          if (
-            (layersOpen.value || myMapsOpen.value) &&
-            drawnFeatures.value.length > 0
-          ) {
-            found = checkForDrawnFeature(evt.pixel)
-          }
-
-          if (!found && startPixel.value && stopPixel.value) {
-            featureInfoLayerService.clearFeatures()
-            const deltaX = Math.abs(startPixel.value[0] - stopPixel.value[0])
-            const deltaY = Math.abs(startPixel.value[1] - stopPixel.value[1])
-            if (deltaX + deltaY < 6) {
-              singleclickEvent(evt)
-              startPixel.value = null
-              stopPixel.value = null
-            }
-          }
-        }, 500)
-      })()
-    })
-
-    listen(map, 'pointermove', event => {
-      const evt = event as MapBrowserEvent<any>
-      if (evt.dragging || isLoading.value) {
-        return
-      }
-      if (
-        drawStateActive.value /*TODO: || measureActive || streetviewActive*/
-      ) {
-        map.getViewport().style.cursor = ''
-      } else {
-        const pixel = map.getEventPixel(evt.originalEvent)
-        let hit: boolean | undefined = false
-        try {
-          hit = map.forEachLayerAtPixel(
-            pixel,
-            layer => {
-              if (layer) {
-                const metadata = layer.get('metadata')
-                if (
-                  metadata &&
-                  metadata['is_queryable'] &&
-                  layer.getVisible() &&
-                  layer.getOpacity() > 0
-                ) {
-                  return true
-                }
-              }
-              return false
-            },
-            {
-              layerFilter: layer => !!layer.getSource(),
-            }
-          )
-        } catch (error) {
-          hit = false
-        }
-        map.getViewport().style.cursor = hit ? 'pointer' : ''
-      }
-    })
+    listen(map, 'pointermove', event =>
+      onPointerMove(event as MapBrowserEvent<MouseEvent>)
+    )
 
     watchEffect(() => {
       if (fid.value) {
@@ -166,11 +68,86 @@ export default function useFeatureInfo() {
     })
   }
 
+  function onPointerUp(evt: MapBrowserEvent<MouseEvent>) {
+    ;(async () => {
+      stopPixel.value = evt.pixel
+      if (
+        // TODO: integrate in v3 and migrate once available
+        // routingOpen ||
+        // lidarOpen ||
+        // appActivetool.value.isActive() || => corresponds to: measureActive, streetviewActive
+        drawStateActive.value ||
+        editStateActive.value ||
+        isLoading.value
+      ) {
+        return
+      }
+
+      timeoutId.value = window.setTimeout(() => {
+        let found = false
+        if (
+          (layersOpen.value || myMapsOpen.value) &&
+          drawnFeatures.value.length > 0
+        ) {
+          found = checkForDrawnFeature(evt.pixel)
+        }
+
+        if (!found && startPixel.value && stopPixel.value) {
+          featureInfoLayerService.clearFeatures()
+          const deltaX = Math.abs(startPixel.value[0] - stopPixel.value[0])
+          const deltaY = Math.abs(startPixel.value[1] - stopPixel.value[1])
+          if (deltaX + deltaY < 6) {
+            singleclickEvent(evt)
+            startPixel.value = null
+            stopPixel.value = null
+          }
+        }
+      }, 500)
+    })()
+  }
+
+  function onPointerMove(evt: MapBrowserEvent<MouseEvent>) {
+    if (evt.dragging || isLoading.value) {
+      return
+    }
+    if (drawStateActive.value /*TODO: || measureActive || streetviewActive*/) {
+      map.getViewport().style.cursor = ''
+    } else {
+      const pixel = map.getEventPixel(evt.originalEvent)
+      let hit: boolean | undefined = false
+      try {
+        hit = map.forEachLayerAtPixel(
+          pixel,
+          layer => {
+            if (layer) {
+              const metadata = layer.get('metadata')
+              if (
+                metadata &&
+                metadata['is_queryable'] &&
+                layer.getVisible() &&
+                layer.getOpacity() > 0
+              ) {
+                return true
+              }
+            }
+            return false
+          },
+          {
+            layerFilter: layer => !!layer.getSource(),
+          }
+        )
+      } catch (error) {
+        hit = false
+      }
+      map.getViewport().style.cursor = hit ? 'pointer' : ''
+    }
+  }
+
   async function getFeatureInfoById(fid: string): Promise<void> {
     const fids = fid.split(',')
     for (const curFid of fids) {
-      const splittedFid = curFid.split('_')
-      const layersList = [splittedFid[0]]
+      const fId = curFid.split('_')[0]
+      const layersList = [fId]
       const layerLabel: { [key: string]: string } = {}
 
       try {
@@ -180,30 +157,27 @@ export default function useFeatureInfo() {
 
           const url = new URL(INFO_SERVICE_URL)
           url.searchParams.append('fid', curFid)
-          try {
-            const resp = await fetch(url.toString())
 
-            let openInfoPanel = false
-            if (screenSizeIsAtLeast('sm')) {
-              openInfoPanel = true
-              setDisplayStarOnMobile(false)
-            } else {
-              setDisplayStarOnMobile(true)
-            }
+          const resp = await fetch(url.toString())
 
-            const node = findById(splittedFid[0])
-            if (node) {
-              layerLabel[splittedFid[0]] = node.layers as string
-            }
+          let openInfoPanel = false
+          if (screenSizeIsAtLeast('sm')) {
+            openInfoPanel = true
+            setDisplayStarOnMobile(false)
+          } else {
+            setDisplayStarOnMobile(true)
+          }
 
-            if (resp.ok) {
-              const data = await resp.json()
-              if (data.length > 0) {
-                showInfo(true, data, layerLabel, openInfoPanel, true)
-              }
+          const node = findById(fId)
+          if (node) {
+            layerLabel[fId] = node.layers as string
+          }
+
+          if (resp.ok) {
+            const data = await resp.json()
+            if (data.length > 0) {
+              showInfo(true, data, layerLabel, openInfoPanel, true)
             }
-          } catch (error) {
-            done()
           }
         }
       } catch (error) {
@@ -316,7 +290,7 @@ export default function useFeatureInfo() {
         item['layerLabel'] = layerLabel[item.layer]
         let found = false
         for (let iLayer = 0; iLayer < responses.value.length; iLayer++) {
-          if (responses.value[iLayer].layer == item.layer) {
+          if (responses.value[iLayer].layer === item.layer) {
             found = true
             let removed = false
             for (let iItem = 0; iItem < item.features.length; iItem++) {
@@ -406,7 +380,7 @@ export default function useFeatureInfo() {
         hitTolerance: 5,
       }
     )
-    return selected.length > 0 ? true : false
+    return selected.length > 0
   }
 
   return { init }
