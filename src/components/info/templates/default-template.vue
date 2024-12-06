@@ -33,7 +33,7 @@ const currentUrl = window.location.href
   <div class="flex flex-col">
     <div>
       <h1 class="lux-poi-title" data-cy="defaultTemplateTitle">
-        {{ t(`${layers.layerLabel}`) }}
+        {{ t(layers.layerLabel) }}
       </h1>
       <div
         v-for="feature in layers.features"
@@ -41,7 +41,7 @@ const currentUrl = window.location.href
         class="lux-poi-feature"
       >
         <h4 v-if="feature.attributes.label">
-          {{ t(`${feature.attributes.label}`) }}
+          {{ t(feature.attributes.label) }}
         </h4>
         <div data-cy="defaultTemplateAttributes" v-if="hasAttributes(feature)">
           <div
@@ -59,7 +59,7 @@ const currentUrl = window.location.href
               "
             >
               <label v-if="!isLink(entry['value'])"
-                >{{ t(`${entry['key']}`) }} :
+                >{{ t(entry['key']) }} :
               </label>
               <span
                 v-if="!isLink(entry['value'])"
@@ -73,9 +73,9 @@ const currentUrl = window.location.href
                     ) || layers.layerLabel.startsWith('eau_new_Wasserstand')
                   ) && isLink(entry['value'])
                 "
-                :href="`${entry['value']}`"
+                :href="entry['value']"
                 target="_blank"
-                >{{ t(`${entry['key']}`) }}</a
+                >{{ t(entry['key']) }}</a
               >
               <a
                 data-cy="defaultTemplateSolarLink"
@@ -86,7 +86,7 @@ const currentUrl = window.location.href
                   isLink(entry['value']) &&
                   entry['key'] == 'f_href'
                 "
-                :href="`${entry['value']}`"
+                :href="entry['value']"
                 target="_blank"
               >
                 <button class="lux-solarkataster-button">
@@ -99,7 +99,7 @@ const currentUrl = window.location.href
                 v-if="isLink(entry['value']) && entry['key'] == 'f_AudioURL'"
               >
                 <audio controls autoplay style="width: 260px; height: 50px">
-                  <source :src="`${entry['value']}`" type="audio/wav" />
+                  <source :src="entry['value']" type="audio/wav" />
                 </audio>
               </span>
               <iframe
@@ -110,7 +110,7 @@ const currentUrl = window.location.href
                   isLink(entry['value']) &&
                   entry['key'] == 'f_Graph'
                 "
-                :src="`${getTrustedUrl(entry['value'])}`"
+                :src="getTrustedUrl(entry['value'])"
                 title="water level graph"
               ></iframe>
             </span>
@@ -140,7 +140,7 @@ const currentUrl = window.location.href
           <span
             ><a
               data-cy="defaultTemplateLink"
-              :href="`${currentUrl}&fid=${feature.fid}`"
+              :href="currentUrl + '&fid=' + feature.fid"
               target="_blank"
               >{{ t('Lien direct vers cet objet') }}</a
             ></span
