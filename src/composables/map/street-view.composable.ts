@@ -1,4 +1,4 @@
-import { watch, nextTick } from 'vue'
+import { watch, nextTick, Ref } from 'vue'
 import { storeToRefs } from 'pinia'
 import useMap from '@/composables/map/map.composable'
 import { useAppStore } from '@/stores/app.store'
@@ -21,12 +21,12 @@ import { Point } from 'ol/geom'
 import VectorLayer from 'ol/layer/Vector'
 import VectorSource from 'ol/source/Vector'
 
-export const DEFAULT_INFO_ZINDEX = 1500
+export const DEFAULT_INFO_ZINDEX = 1502
 export const SV_FEATURE_LAYER_TYPE = 'svFeatureLayer'
 
 const SV_RADIUS = 90
 
-export default function useStreeView() {
+export default function useStreeView(streetViewDiv: Ref<HTMLElement | null>) {
   const { infoOpen } = storeToRefs(useAppStore())
   const {
     locationInfo,
@@ -113,12 +113,13 @@ export default function useStreeView() {
       }
     } else {
       svFeature.value = undefined
+      // force deactivate pointer style if it is still active from handleHover
       map.getViewport().style.cursor = ''
     }
   })
 
-  watch(isStreetviewActive, async act => {
-    if (act) {
+  watch([isStreetviewActive, streetViewDiv], async ([act, streetViewDiv]) => {
+    if (act && streetViewDiv) {
       await loadGoogleapis()
       if (window.hasOwnProperty('google')) {
         // @ts-ignore
@@ -129,17 +130,14 @@ export default function useStreeView() {
         streetViewService = new googleMapService!.StreetViewService()
       }
       if (panorama === null) {
-        panorama = new googleMapService!.StreetViewPanorama(
-          document.getElementById('streetview-div')!,
-          {
-            pov: {
-              heading: 0,
-              pitch: 0,
-            },
-            visible: false,
-            zoom: 1,
-          }
-        )
+        panorama = new googleMapService!.StreetViewPanorama(streetViewDiv, {
+          pov: {
+            heading: 0,
+            pitch: 0,
+          },
+          visible: false,
+          zoom: 1,
+        })
       }
       if (panoramaLinksListener === null) {
         panoramaLinksListener = googleMapService!.event.addListener(

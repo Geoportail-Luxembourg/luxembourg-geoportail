@@ -16,7 +16,7 @@ import StyleStroke from 'ol/style/Stroke'
 import { useAppStore } from '@/stores/app.store'
 import { useInfoStore } from '@/stores/info.store'
 
-export const DEFAULT_INFO_ZINDEX = 1500
+export const DEFAULT_INFO_ZINDEX = 1501
 export const INFO_FEATURE_LAYER_TYPE = 'infoFeatureLayer'
 
 export default function useLocationInfo() {
@@ -30,7 +30,6 @@ export default function useLocationInfo() {
     source: new VectorSource({
       features: [] as Feature[],
     }),
-    // altitudeMode: 'clampToGround',
     zIndex: DEFAULT_INFO_ZINDEX,
   })
   infoFeatureLayer.set('cyLayerType', INFO_FEATURE_LAYER_TYPE)

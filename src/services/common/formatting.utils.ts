@@ -3,6 +3,7 @@ import { AddressResult } from '@/stores/info.store.model'
 import { transform, toLonLat } from 'ol/proj'
 import { Coordinate } from 'ol/coordinate'
 import { Projection } from 'ol/proj'
+import { PROJECTION_WGS84 } from '@/composables/map/map.composable'
 
 export type FormatMeasureType = 'elevation' | 'length' | 'area'
 
@@ -135,7 +136,7 @@ export function formatCoords(
     toCrs = format.replace('3*', utmZone.slice(3, 5))
   }
   const projectedCoords = transform(coords, fromCrs, toCrs)
-  const isDegrees = toCrs === 'EPSG:4326'
+  const isDegrees = toCrs === PROJECTION_WGS84
   const hemispheres = projectedCoords.map((coord: number, axis: number) => {
     const axisNegative = (isDegrees ? normalizeDegrees(coord) : coord) < 0
     return axisNegative ? 'WS'[axis] : 'EN'[axis]
@@ -166,11 +167,13 @@ export function formatDegrees(degrees: number, format: string) {
   }
   const intDegrees = Math.floor(absDegrees)
   const minutes = (absDegrees % 1) * 60
+  // convert to degree, minute, decimals format
   if (format === 'DMm') {
     const roundedMinutes = Math.round(minutes * 1e6) / 1e6
     return `${intDegrees}\u00b0 ${roundedMinutes}\u2032`
   }
   if (format === 'DMS') {
+    // convert to degree, minute, second format
     const intMinutes = Math.floor(minutes)
     const seconds = Math.round((minutes % 1) * 600) / 10
     return `${intDegrees}\u00b0 ${intMinutes}\u2032 ${seconds}\u2033`

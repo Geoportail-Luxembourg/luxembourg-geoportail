@@ -1,4 +1,5 @@
 <script setup lang="ts">
+import { ref, Ref } from 'vue'
 import { useTranslation } from 'i18next-vue'
 import { storeToRefs } from 'pinia'
 import { useInfoStore } from '@/stores/info.store'
@@ -8,8 +9,10 @@ const { t } = useTranslation()
 
 const { isStreetviewActive, noDataAtLocation } = storeToRefs(useInfoStore())
 
+const streetviewDiv: Ref<HTMLElement | null> = ref(null)
+
 // launch streetView listeners
-useStreetView()
+useStreetView(streetviewDiv)
 </script>
 
 <template>
@@ -23,7 +26,7 @@ useStreetView()
     </span>
   </div>
   <div
-    id="streetview-div"
+    ref="streetviewDiv"
     class="h-[500px]"
     v-show="isStreetviewActive && !noDataAtLocation"
   >

@@ -3,6 +3,7 @@ import { transform } from 'ol/proj'
 import { Coordinate } from 'ol/coordinate'
 import { Projection } from 'ol/proj'
 import { containsCoordinate } from 'ol/extent'
+import { PROJECTION_LUX } from '@/composables/map/map.composable'
 
 import { getElevation } from '@/components/draw/feature-measurements-helper'
 
@@ -18,7 +19,7 @@ export const LIDAR_EXTENT = [46602, 53725, 106944, 141219]
 export const LIDAR_EXTENT_SRS = 'EPSG:2169'
 
 export async function queryInfos(location: Coordinate, fromCrs: Projection) {
-  const clickCoordinateLuref = transform(location, fromCrs, 'EPSG:2169')
+  const clickCoordinateLuref = transform(location, fromCrs, PROJECTION_LUX)
   const [shortUrl, elevation, address] = (
     await Promise.allSettled([
       createShortUrl(location),
@@ -31,8 +32,20 @@ export async function queryInfos(location: Coordinate, fromCrs: Projection) {
     elevation,
     address,
     clickCoordinateLuref,
-    isInBoxOfLidar: containsCoordinate(LIDAR_EXTENT, clickCoordinateLuref),
+    isInBoxOfLidar: isInBoxOfLidar(clickCoordinateLuref),
   }
+}
+
+function isInBoxOfLidar(clickCoordinateLuref: Coordinate) {
+  let testCoordinate = clickCoordinateLuref
+  if (PROJECTION_LUX !== LIDAR_EXTENT_SRS) {
+    testCoordinate = transform(
+      clickCoordinateLuref,
+      PROJECTION_LUX,
+      LIDAR_EXTENT_SRS
+    )
+  }
+  return containsCoordinate(LIDAR_EXTENT, testCoordinate)
 }
 
 export async function createShortUrl(optCoordinate: Coordinate | undefined) {
