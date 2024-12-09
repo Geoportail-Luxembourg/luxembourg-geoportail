@@ -68,7 +68,7 @@ function isAudioLink(attributeEntry: AttributeEntry) {
       <div
         v-for="feature in layers.features"
         :key="feature.id"
-        class="lux-poi-feature"
+        class="lux-feature-info"
       >
         <h4 v-if="feature.attributes.label">
           {{ t(feature.attributes.label) }}
@@ -81,7 +81,7 @@ function isAudioLink(attributeEntry: AttributeEntry) {
             )"
             :key="attributeEntry.key"
           >
-            <span
+            <div
               v-if="
                 !isEmptyString(attributeEntry.value) &&
                 showAttributesByLang(
@@ -128,7 +128,7 @@ function isAudioLink(attributeEntry: AttributeEntry) {
                 :src="getTrustedUrl(attributeEntry.value)"
                 title="water level graph"
               ></iframe>
-            </span>
+            </div>
           </div>
         </div>
         <div class="query-profile" v-if="layers.has_profile">
@@ -136,13 +136,13 @@ function isAudioLink(attributeEntry: AttributeEntry) {
         </div>
         <div v-if="layers.has_profile">
           <button
-            class="lux-btn"
+            class="lux-feature-info-export"
             @click="$emit('export', { feature, format: 'kml' })"
           >
             {{ t('Exporter KMl') }}
           </button>
-          &nbsp;<button
-            class="lux-btn"
+          <button
+            class="lux-feature-info-export"
             @click="$emit('export', { feature, format: 'gpx' })"
           >
             {{ t('Exporter GPX') }}

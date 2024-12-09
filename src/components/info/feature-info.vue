@@ -75,7 +75,8 @@ function onExport(payload: { feature: FeatureJSON; format: ExportFormat }) {
     <a ng-if="ctrl.isDownloadable" class="btn btn-default"  href="{{ctrl.getDownloadMeasurementUrl()}}?document_id={{ctrl.previewDocumentId}}" target="_blank" translate>Télécharger</a>
   </div>
   </ngeo-modal> -->
-  <div v-if="content && content.length" class="absolute">
+  <!-- absolute is needed here to make y overflow scroll on long content -->
+  <div v-if="content && content.length" class="absolute w-11/12">
     <component
       v-for="(layers, index) in content"
       :key="index"

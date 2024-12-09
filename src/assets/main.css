@@ -489,17 +489,20 @@
   .lux-poi-title {
     @apply text-title-xl mt-[22px] mb-[11px];
   }
-  .lux-poi-feature {
+  .lux-feature-info {
     @apply bg-white bg-opacity-50 m-[5px] p-[10px];
   }
-  .lux-poi-feature h4 {
+  .lux-feature-info h4 {
     @apply my-[11px] text-[20px];
   }
-  .lux-poi-feature label {
+  .lux-feature-info label {
     @apply font-bold mb-[5px];
   }
-  .lux-poi-feature a {
+  .lux-feature-info a {
     @apply text-black underline;
+  }
+  .lux-feature-info-export {
+    @apply lux-btn m-2;
   }
 
   .lux-solarkataster-button {
