@@ -94,7 +94,6 @@ const lidarUrl = computed(() =>
     : ''
 )
 const forageUrl = computed(() =>
-  //  "http://172.20.0.3:3000/x/print_sync?pdf=A6")
   clickCoordinateLuref.value
     ? `${import.meta.env.VITE_FORAGE_URL}?x=${
         clickCoordinateLuref.value[0]

@@ -38,9 +38,10 @@ export async function queryInfos(location: Coordinate, fromCrs: Projection) {
 export async function createShortUrl(optCoordinate: Coordinate | undefined) {
   const shortUrl = (await urlStorage.getShortUrl(optCoordinate)).short_url
   // workaround for incorrect route settings in migration
+  // TODO: remove when migration route settings are fixed
   return shortUrl.replace(
     'http://g-o.lu/migration/',
-    import.meta.env.VITE_HOST + 's/'
+    import.meta.env.VITE_V3_API_HOST + 's/'
   )
 }
 

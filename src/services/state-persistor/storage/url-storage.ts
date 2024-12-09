@@ -50,11 +50,12 @@ export class UrlStorage implements Storage {
     const strippedUrl = this.getStrippedUrl(optCoordinate)
       // convert github pages and vite ports localhost 4173 or 5173
       // to hosts accepted by the shortURL entrypoint
+      // TODO: remove when there is a v4 API available
       .replace(
         /https:\/\/geoportail-luxembourg.github.io\/luxembourg-geoportail\/.+\//,
-        import.meta.env.VITE_HOST
+        import.meta.env.VITE_V3_API_HOST
       )
-      .replace(/http:\/\/localhost:[45]173\//, import.meta.env.VITE_HOST)
+      .replace(/http:\/\/localhost:[45]173\//, import.meta.env.VITE_V3_API_HOST)
 
     const data = new URLSearchParams()
 

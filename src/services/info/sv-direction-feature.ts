@@ -5,6 +5,8 @@ import { Style, Icon } from 'ol/style'
 import arrowUrl from '@/assets/images/streetview/arrow.png'
 
 export class SvDirectionFeature extends Feature {
+  // By putting the properties below as public into the constructor, they are both declared
+  // and initialized in the constructor
   // heading: number
   // description: string
   // pano: string
@@ -13,7 +15,7 @@ export class SvDirectionFeature extends Feature {
     geometry: Geometry,
     public heading: number,
     public description: string,
-    public pano: string
+    public pano: string | null | undefined
   ) {
     super(geometry)
     this.setStyle(this.createStyleFunction())

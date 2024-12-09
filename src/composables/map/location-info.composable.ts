@@ -81,7 +81,7 @@ export default function useLocationInfo() {
     }
   }
 
-  listen(map, 'pointerup', (event: any) => {
+  listen(map, 'pointerup', event => {
     if (
       startPixel &&
       (event as MapBrowserEvent<PointerEvent>).originalEvent.button === 0
@@ -95,7 +95,7 @@ export default function useLocationInfo() {
     startPixel = null
   })
 
-  listen(map, 'pointermove', (event: any) => {
+  listen(map, 'pointermove', event => {
     if (startPixel !== null) {
       const pixel = (event as MapBrowserEvent<PointerEvent>).pixel
       const deltaX = Math.abs(startPixel[0] - pixel[0])

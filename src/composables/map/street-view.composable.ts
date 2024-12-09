@@ -7,11 +7,14 @@ import { MapBrowserEvent } from 'ol'
 import BaseEvent from 'ol/events/Event'
 import { Coordinate } from 'ol/coordinate'
 import { Select } from 'ol/interaction'
+import { FeatureLike } from 'ol/Feature'
 import { fromLonLat, toLonLat } from 'ol/proj'
 import { containsCoordinate } from 'ol/extent'
 import { loadGoogleapis } from '@/services/info/street-view'
 import { SvCompassFeature } from '@/services/info/sv-compass-feature'
 import { SvDirectionFeature } from '@/services/info/sv-direction-feature'
+
+import {} from 'google.maps'
 
 import { Feature } from 'ol'
 import { Point } from 'ol/geom'
@@ -36,11 +39,11 @@ export default function useStreeView() {
 
   const map = useMap().getOlMap()
 
-  let googleService: any = null
-  let streetViewService: any = null
-  let panorama: any = null
-  let panoramaLinksListener: any = null
-  let panoramaPovListener: any = null
+  let googleMapService: typeof google.maps | null = null
+  let streetViewService: google.maps.StreetViewService | null = null
+  let panorama: google.maps.StreetViewPanorama | null = null
+  let panoramaLinksListener: google.maps.MapsEventListener | null = null
+  let panoramaPovListener: google.maps.MapsEventListener | null = null
   const selectFeature = new Select({
     filter: (feature /*, layer*/) => feature instanceof SvDirectionFeature,
   })
@@ -63,7 +66,7 @@ export default function useStreeView() {
   function setLocation(loc: Coordinate | undefined) {
     if (loc && panorama !== null && !panoPositionChanging.value) {
       const lonlat = toLonLat(loc, map.getView().getProjection())
-      streetViewService.getPanorama(
+      streetViewService!.getPanorama(
         {
           location: {
             lat: lonlat[1],
@@ -76,17 +79,20 @@ export default function useStreeView() {
     }
   }
 
-  function updatePanorama(data: any, status: any) {
-    if (status === googleService?.maps.StreetViewStatus.OK) {
+  function updatePanorama(
+    data: google.maps.StreetViewPanoramaData | null,
+    status: google.maps.StreetViewStatus
+  ) {
+    if (status === google.maps.StreetViewStatus.OK) {
       noDataAtLocation.value = false
       nextTick(() => {
-        panorama.setPosition(data.location.latLng)
-        panorama.setVisible(true)
+        panorama!.setPosition(data?.location?.latLng || null)
+        panorama!.setVisible(true)
       })
     } else {
       noDataAtLocation.value = true
       svFeature.value = undefined
-      panorama.setVisible(false)
+      panorama!.setVisible(false)
     }
   }
 
@@ -116,20 +122,19 @@ export default function useStreeView() {
       await loadGoogleapis()
       if (window.hasOwnProperty('google')) {
         // @ts-ignore
-        googleService = window.google
+        googleMapService = window.google.maps
       }
       // todo PIWIK
       if (streetViewService === null) {
-        streetViewService = new googleService!.maps.StreetViewService()
+        streetViewService = new googleMapService!.StreetViewService()
       }
       if (panorama === null) {
-        panorama = new googleService!.maps.StreetViewPanorama(
-          document.getElementById('streetview-div'),
+        panorama = new googleMapService!.StreetViewPanorama(
+          document.getElementById('streetview-div')!,
           {
             pov: {
               heading: 0,
               pitch: 0,
-              zoom: 1,
             },
             visible: false,
             zoom: 1,
@@ -137,14 +142,14 @@ export default function useStreeView() {
         )
       }
       if (panoramaLinksListener === null) {
-        panoramaLinksListener = googleService?.maps.event.addListener(
+        panoramaLinksListener = googleMapService!.event.addListener(
           panorama,
           'links_changed',
           () => handlePanoramaPositionChange(true)
         )
       }
       if (panoramaPovListener === null) {
-        panoramaPovListener = googleService?.maps.event.addListener(
+        panoramaPovListener = googleMapService!.event.addListener(
           panorama,
           'pov_changed',
           () => handlePanoramaPositionChange(false)
@@ -157,11 +162,11 @@ export default function useStreeView() {
       }
       svFeature.value = undefined
       if (panoramaPovListener) {
-        googleService?.maps.event.removeListener(panoramaPovListener)
+        googleMapService!.event.removeListener(panoramaPovListener)
         panoramaPovListener = null
       }
       if (panoramaLinksListener) {
-        googleService?.maps.event.removeListener(panoramaLinksListener)
+        googleMapService!.event.removeListener(panoramaLinksListener)
         panoramaLinksListener = null
       }
     }
@@ -189,8 +194,10 @@ export default function useStreeView() {
       const nextDirection = evt.target
         .getFeatures()
         .getArray()[0] as SvDirectionFeature
-      evt.target.getFeatures().clear()
-      panorama.setPano(nextDirection.pano)
+      if (nextDirection.pano) {
+        evt.target.getFeatures().clear()
+        panorama!.setPano(nextDirection.pano)
+      }
     }
   }
 
@@ -198,10 +205,10 @@ export default function useStreeView() {
     if (isStreetviewActive.value) {
       const hit = map.forEachFeatureAtPixel(
         event.pixel,
-        function (feature /*, layer*/) {
+        function (feature: FeatureLike) {
           if (feature instanceof SvDirectionFeature) {
             return true
-            // TODO: maybe show description ??
+            // TODO: maybe show description (name of next SV node) on hover ??
           }
           return false
         }
@@ -212,22 +219,22 @@ export default function useStreeView() {
 
   function setSvFeatures(loc: Coordinate) {
     svPoint.setCoordinates(loc)
-    const pov = panorama.getPov()
+    const pov = panorama!.getPov()
     svCompassFeature.heading = pov.heading
-    svCompassFeature.zoom = Math.floor(pov.zoom)
+    svCompassFeature.zoom = Math.floor(panorama!.getZoom())
     svCompassFeature.pitch = pov.pitch
     const dir = new SvDirectionFeature(svPoint, 3, '5', '5')
     dir.heading
-    const navigationLinks = panorama.getLinks() || []
+    const navigationLinks = panorama!.getLinks() || []
     svFeature.value = {
       compass: svCompassFeature,
       directions: navigationLinks.map(
-        (link: any) =>
+        link =>
           new SvDirectionFeature(
             svPoint,
-            link.heading,
-            link.description,
-            link.pano
+            link?.heading || 0,
+            link?.description || '',
+            link?.pano
           )
       ),
     }
@@ -235,20 +242,22 @@ export default function useStreeView() {
 
   function handlePanoramaPositionChange(updateLocation: boolean) {
     panoPositionChanging.value = true
-    const position = panorama.getPosition()
-    const panoLonLat = [position.lng(), position.lat()]
-    const loc = fromLonLat(panoLonLat)
-    setSvFeatures(loc)
+    const position = panorama!.getPosition()
+    if (position) {
+      const panoLonLat = [position.lng(), position.lat()]
+      const loc = fromLonLat(panoLonLat)
+      setSvFeatures(loc)
 
-    if (updateLocation) {
-      locationInfo.value = loc
-    }
+      if (updateLocation) {
+        locationInfo.value = loc
+      }
 
-    if (
-      locationInfo.value &&
-      !containsCoordinate(map.getView().calculateExtent(map.getSize()), loc)
-    ) {
-      map.getView().setCenter(loc)
+      if (
+        locationInfo.value &&
+        !containsCoordinate(map.getView().calculateExtent(map.getSize()), loc)
+      ) {
+        map.getView().setCenter(loc)
+      }
     }
     nextTick(() => (panoPositionChanging.value = false))
   }
