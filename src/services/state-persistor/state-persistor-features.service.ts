@@ -5,7 +5,6 @@ import { storageHelper } from './storage/storage.helper'
 import { storageFeaturesMapper } from './state-persistor-features.mapper'
 import { useDrawStore } from '@/stores/draw.store'
 import { DrawnFeature } from '@/services/draw/drawn-feature'
-import useDrawSelect from '@/composables/draw/draw-select.composable'
 
 class StatePersistorFeaturesService implements StatePersistorService {
   bootstrap() {
@@ -36,8 +35,6 @@ class StatePersistorFeaturesService implements StatePersistorService {
 
   restore() {
     const { drawnFeatures } = storeToRefs(useDrawStore())
-    // initialise map listeners for feature selection
-    useDrawSelect()
 
     const features = storageHelper.getValue(
       SP_KEY_FEATURES,
