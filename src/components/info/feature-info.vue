@@ -16,7 +16,6 @@ import { Feature } from 'ol'
 import { Geometry } from 'ol/geom'
 import GeoJSON from 'ol/format/GeoJSON'
 import useMap, { PROJECTION_LUX } from '@/composables/map/map.composable'
-import { useFeatureInfoStore } from '@/stores/feature-info.store'
 
 defineProps({
   content: {
@@ -25,10 +24,8 @@ defineProps({
   },
 })
 const map = useMap().getOlMap()
-const { clearContent } = useFeatureInfoStore()
 
 onUnmounted(() => {
-  clearContent()
   featureInfoLayerService.clearFeatures()
 })
 

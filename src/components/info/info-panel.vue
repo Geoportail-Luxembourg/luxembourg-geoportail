@@ -5,12 +5,18 @@ import { useAppStore } from '@/stores/app.store'
 import { storeToRefs } from 'pinia'
 import { useFeatureInfoStore } from '@/stores/feature-info.store'
 import FeatureInfo from '@/components/info/feature-info.vue'
+import { onUnmounted } from 'vue'
 
 const { t } = useTranslation()
 const appStore = useAppStore()
+const { clearContent } = useFeatureInfoStore()
 const { featureInfoPanelContent, isLoading } = storeToRefs(
   useFeatureInfoStore()
 )
+
+onUnmounted(() => {
+  clearContent()
+})
 </script>
 
 <template>
