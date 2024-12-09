@@ -60,6 +60,7 @@ import { statePersistorStyleService } from '@/services/state-persistor/state-per
 import { statePersistorMyMapService } from '@/services/state-persistor/state-persistor-mymap.service'
 import { proxyUrlHelper } from '@/services/proxyurl/proxyurl.helper'
 import { styleUrlHelper } from '@/services/styleurl/styleurl.helper'
+import { storageHelper } from '@/services/state-persistor/storage/storage.helper'
 import { themeSelectorService } from '@/components/theme-selector/theme-selector.service'
 import MapLibreLayer from '@/lib/ol-mapbox-layer'
 import StylePanel from '@/components/style-selector/style-panel.vue'
@@ -180,6 +181,7 @@ export {
   statePersistorStyleService,
   statePersistorMyMapService,
   themeSelectorService,
+  storageHelper,
   MapLibreLayer,
   StylePanel,
   clearLayersCache,
