@@ -15,6 +15,7 @@ import FullscreenControl from '../map-controls/fullscreen-control.vue'
 import ZoomControl from '../map-controls/zoom-control.vue'
 import ZoomToExtentControl from '../map-controls/zoom-to-extent-control.vue'
 import useDraw from '@/composables/draw/draw.composable'
+import useDrawSelect from '@/composables/draw/draw-select.composable'
 
 const appStore = useAppStore()
 const { embedded } = storeToRefs(appStore)
@@ -36,6 +37,8 @@ const props = withDefaults(
 if (props.v4_standalone) {
   const draw = useDraw()
   draw.addDrawLayer(olMap)
+  // initialise map listeners for feature selection
+  useDrawSelect()
 }
 
 const DEFAULT_EXTENT = [
