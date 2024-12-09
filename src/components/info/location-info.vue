@@ -21,6 +21,7 @@ import {
   formatAddress,
   formatCoords,
 } from '@/services/common/formatting.utils'
+import { downloadUrl } from '@/services/utils'
 
 import StreetView from '@/components/info/street-view.vue'
 
@@ -134,27 +135,23 @@ function toggleStreetview() {
 
 async function downloadRapportForageVirtuel() {
   downloadingRepport.value = true
-  map.getViewport().style.cursor = 'wait'
   try {
-    const response = await fetch(forageUrl.value)
-    if (!response.ok) {
-      throw new Error()
-    }
-    const blob = await response.blob()
-    const downloadUrl = URL.createObjectURL(blob)
-    const anchor = document.createElement('a')
-    anchor.href = downloadUrl
-    anchor.download = ''
-    anchor.click()
-    URL.revokeObjectURL(downloadUrl)
+    await downloadUrl(forageUrl.value, '')
   } catch {
     // TODO harmonize error
     alert('Error downloading forage')
   } finally {
-    map.getViewport().style.cursor = ''
     downloadingRepport.value = false
   }
 }
+
+watch(downloadingRepport, downloadingRepport => {
+  if (downloadingRepport) {
+    map.getViewport().style.cursor = 'wait'
+  } else {
+    map.getViewport().style.cursor = ''
+  }
+})
 </script>
 
 <template>
