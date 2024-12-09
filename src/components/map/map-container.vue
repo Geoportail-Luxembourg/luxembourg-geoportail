@@ -21,11 +21,8 @@ const { embedded } = storeToRefs(appStore)
 const map = useMap()
 const mapContainer = ref(null)
 const olMap = map.createMap()
-// add draw layer after map init to allow restoring draw features
-const draw = useDraw()
-draw.addDrawLayer(olMap)
 
-withDefaults(
+const props = withDefaults(
   defineProps<{
     v4_standalone?: boolean
   }>(),
@@ -33,6 +30,13 @@ withDefaults(
     v4_standalone: false,
   }
 )
+
+// add draw layer after map init to allow restoring draw features (not in v3 for now)
+// TODO: remove v4_standalone condition once v4 draw is used in v3
+if (props.v4_standalone) {
+  const draw = useDraw()
+  draw.addDrawLayer(olMap)
+}
 
 const DEFAULT_EXTENT = [
   425152.9429259216, 6324465.99999133, 914349.9239510496, 6507914.867875754,
