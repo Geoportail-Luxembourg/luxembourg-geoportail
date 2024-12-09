@@ -31,7 +31,7 @@ describe('Footer bar', () => {
       cy.get('[data-cy="infoOpenClose"]').find('button').click()
       cy.get('[data-cy="infoPanel"]').should('exist')
       cy.get('button[data-cy="drawButton"]').click()
-      cy.get('[data-cy="infoPanel"]').should('not.exist')
+      cy.get('[data-cy="infoPanel"]').should('be.hidden')
     })
   })
 
@@ -72,7 +72,7 @@ describe('Footer bar', () => {
       it('Other panels are closed', () => {
         cy.get('[data-cy="styleSelector"]').should('not.exist')
         cy.get('[data-cy="layerPanel"]').should('not.exist')
-        cy.get('[data-cy="infoPanel"]').should('not.exist')
+        cy.get('[data-cy="infoPanel"]').should('be.hidden')
       })
 
       describe('When clicking on layers panel button', () => {
@@ -94,7 +94,7 @@ describe('Footer bar', () => {
       })
 
       it('Info panel is shown', () => {
-        cy.get('[data-cy="infoPanel"]').should('exist')
+        cy.get('[data-cy="infoPanel"]').should('be.visible')
       })
 
       it('Other panels are closed', () => {
@@ -108,7 +108,7 @@ describe('Footer bar', () => {
         })
 
         it('closes the info panel', () => {
-          cy.get('[data-cy="infoPanel"]').should('not.exist')
+          cy.get('[data-cy="infoPanel"]').should('be.hidden')
         })
       })
     })

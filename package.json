@@ -64,6 +64,7 @@
     "@types/d3-selection": "^3.0.10",
     "@types/d3-shape": "^3.1.6",
     "@types/d3-transition": "^3.0.8",
+    "@types/google.maps": "^3.58.1",
     "@types/jsdom": "^20.0.1",
     "@types/luxon": "^3.3.1",
     "@types/node": "^18.11.9",

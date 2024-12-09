@@ -93,7 +93,7 @@ watch(infoOpen, infoOpen => {
   </div>
 
   <!-- Info panel -->
-  <div v-if="infoOpen" class="w-full md:w-80 bg-secondary z-10">
+  <div v-show="infoOpen" class="w-full md:w-80 bg-secondary z-10">
     <info-panel />
   </div>
 </template>
