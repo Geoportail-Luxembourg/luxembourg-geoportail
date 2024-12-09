@@ -95,7 +95,6 @@ export default function useFeatureInfo() {
         }
 
         if (!found && startPixel.value && stopPixel.value) {
-          featureInfoLayerService.clearFeatures()
           const deltaX = Math.abs(startPixel.value[0] - stopPixel.value[0])
           const deltaY = Math.abs(startPixel.value[1] - stopPixel.value[1])
           if (deltaX + deltaY < 6) {
