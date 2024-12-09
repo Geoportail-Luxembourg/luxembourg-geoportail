@@ -2,9 +2,21 @@
 import { useTranslation } from 'i18next-vue'
 import SidePanelLayout from '@/components/common/side-panel-layout.vue'
 import { useAppStore } from '@/stores/app.store'
+import { storeToRefs } from 'pinia'
+import { useFeatureInfoStore } from '@/stores/feature-info.store'
+import FeatureInfo from '@/components/info/feature-info.vue'
+import { onUnmounted } from 'vue'
 
 const { t } = useTranslation()
 const appStore = useAppStore()
+const { clearContent } = useFeatureInfoStore()
+const { featureInfoPanelContent, isLoading } = storeToRefs(
+  useFeatureInfoStore()
+)
+
+onUnmounted(() => {
+  clearContent()
+})
 </script>
 
 <template>
@@ -19,7 +31,7 @@ const appStore = useAppStore()
     </template>
 
     <template v-slot:content>
-      <div class="text-white">
+      <div v-if="!featureInfoPanelContent" class="text-white">
         <ul class="list-disc pl-10">
           <li>
             {{ t(`A right click (tap and hold on mobile)...`, { ns: 'app' }) }}
@@ -29,6 +41,10 @@ const appStore = useAppStore()
           </li>
         </ul>
       </div>
+      <feature-info
+        v-if="featureInfoPanelContent && !isLoading"
+        :content="featureInfoPanelContent"
+      />
     </template>
   </side-panel-layout>
 </template>

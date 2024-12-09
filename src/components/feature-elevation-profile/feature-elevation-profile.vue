@@ -30,6 +30,8 @@ import {
 } from '@/services/export-feature/export-feature.service'
 import { PROJECTION_LUX } from '@/composables/map/map.composable'
 
+const CSV_DEFAULT_FILENAME = 'mnt'
+
 defineEmits<{
   (e: 'close'): void
 }>()
@@ -100,7 +102,7 @@ function exportCSV() {
       props.feature?.map,
       'csv',
       <FeatExport>(<Feature<Geometry>>props.feature),
-      props.feature.label
+      props.feature.label || CSV_DEFAULT_FILENAME
     )
 }
 

@@ -1,5 +1,6 @@
 describe('Legends', () => {
   beforeEach(() => {
+    cy.intercept('GET', '/legends/get_html?*').as('getLegends')
     cy.visit('/')
   })
 
@@ -53,6 +54,7 @@ describe('Legends', () => {
     })
 
     it('displays the legends for both layers', () => {
+      cy.wait('@getLegends')
       cy.get('[data-cy="legendLayer"]').should('have.length', 2)
     })
   })
@@ -73,12 +75,9 @@ describe('Legends', () => {
       cy.get('[data-cy="legendsOpenClose"] > button').click()
     })
 
-    // add a longer timeout here because web request for the layers proved to be unstable in CI
     it('displays the legends for both layers having legend', () => {
-      cy.get('[data-cy="legendLayer"]', { timeout: 15000 }).should(
-        'have.length',
-        2
-      )
+      cy.wait('@getLegends')
+      cy.get('[data-cy="legendLayer"]').should('have.length', 2)
     })
   })
 
@@ -91,6 +90,7 @@ describe('Legends', () => {
     })
 
     it('displays a txt saying there are no legend to show', () => {
+      cy.wait('@getLegends')
       cy.get('[data-cy="legendLayer"]').should('have.length', 1)
 
       cy.get('[data-cy="selectedBg"]').find('button').click()
@@ -104,6 +104,7 @@ describe('Legends', () => {
         "Aucune légende n'est disponible pour les couches sélectionnées."
       )
 
+      cy.wait('@getLegends')
       cy.get('[data-cy="legendLayer"]').should('have.length', 0)
     })
   })
