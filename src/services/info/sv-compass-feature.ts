@@ -9,7 +9,7 @@ export class SvCompassFeature extends Feature {
   pitch: number
 
   getStyleFunction() {
-    return function (feature: FeatureLike /*, resolution: number*/): Style[] {
+    return function (feature: FeatureLike): Style[] {
       let curZoom = (feature as SvCompassFeature).zoom
       if (curZoom < 1) {
         curZoom = 1

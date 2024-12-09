@@ -22,7 +22,7 @@ export class SvDirectionFeature extends Feature {
   }
 
   private createStyleFunction() {
-    return function (feature: FeatureLike /*, resolution: number*/) {
+    return function (feature: FeatureLike) {
       return [
         new Style({
           image: new Icon({

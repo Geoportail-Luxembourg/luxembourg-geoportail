@@ -94,16 +94,31 @@ export function formatArea(value: number, digits = 2): string {
     return ''
   }
 }
+
+/**
+ * Format an address from reverse address lookup service
+ * @param address AddressResult structure returned by the reverse search API
+ * @returns The formatted address as "<number> <streetname>, <postal code> <city name>"
+ */
 export function formatAddress(address: AddressResult | undefined) {
   if (address === undefined) {
     return i18next.t('N/A', { ns: 'client' })
   }
   return `${address.number}, ${address.street}, ${address.postal_code} ${address.locality}`
 }
-// export coordinates in different CRS as an 'xxx E | yyy N' pair
-// known targets:
-// EPSG:2169, EPSG:4326, EPSG:3263* (UTM zones 31N and 32N)
-// EPSG:4326:DMS (degree, minute, second), EPSG:4326:DMm (degree, minute.minute_decimals)
+
+/**
+ * Format coordinates in different CRS as an 'xxx E | yyy N' pair
+ * known targets:
+ * EPSG:2169, EPSG:4326, EPSG:3263* (UTM zones 31N and 32N)
+ * EPSG:4326:DMS (degree, minute, second), EPSG:4326:DMm (degree, minute.minute_decimals)
+ * @param coords The coordinate pair to be formatted
+ * @param fromCrs the CRS of the source coordinate pair
+ * @param format output format / CSR among:
+ *                EPSG:2169, EPSG:4326, EPSG:3263*
+ *                EPSG:4326:DMS, EPSG:4326:DMm
+ * @returns The formatted Coordinate as a string
+ */
 export function formatCoords(
   coords: Coordinate,
   fromCrs: Projection | string,
