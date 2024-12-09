@@ -41,7 +41,7 @@ const clickCoordinateLuref: Ref<Coordinate | undefined> = ref()
 const formattedCoordinates: Ref<{ [k: string]: string }> = ref({})
 const downloadingRepport: Ref<boolean> = ref(false)
 const isInBoxOfLidar: Ref<boolean> = ref(false)
-const userRole: Ref<string> = ref('Tous Publics')
+const userRole: Ref<string> = ref('ACT') //Tous Publics')
 const userType: Ref<string> = ref('base')
 
 // initialise map listeners for location info
@@ -156,8 +156,7 @@ watch(downloadingRepport, downloadingRepport => {
 
 <template>
   <div class="flex flex-row">
-    <div class="grow-[2] flex flex-col content-end">
-      <div class="grow"></div>
+    <div class="grow-[2] flex flex-col justify-end content-end">
       <h3 id="short_url_title" class="text-3xl text-white">
         {{ t('Short Url', { ns: 'client' }) }}
       </h3>
@@ -198,15 +197,14 @@ watch(downloadingRepport, downloadingRepport => {
     </table>
   </div>
   <div>
-    <div v-if="isRapportForageVirtuelAvailable">
-      <button
-        :disabled="downloadingRepport"
-        class="lux-btn mt-1"
-        @click="downloadRapportForageVirtuel()"
-      >
-        {{ t('Rapport forage virtuel') }}
-      </button>
-    </div>
+    <button
+      v-if="isRapportForageVirtuelAvailable"
+      :disabled="downloadingRepport"
+      class="lux-btn mt-1"
+      @click="downloadRapportForageVirtuel()"
+    >
+      {{ t('Rapport forage virtuel') }}
+    </button>
     <div class="flex flex-wrap mt-1 gap-x-1">
       <a
         v-if="isInBoxOfLidar"
