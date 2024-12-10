@@ -51,11 +51,10 @@ describe('Draw "Line"', () => {
 
     describe('When editing the line', () => {
       beforeEach(() => {
-        cy.intercept('POST', '/profile.json').as('getProfile')
+        cy.intercept('POST', '/profile.json', { fixture: 'profile.json' })
       })
       it('refreshes the elevation profile for Line', () => {
         cy.dragVertexOnMap(320, 223, 305, 305)
-        cy.wait('@getProfile')
         cy.get('[data-cy="featItemProfileCumul"]').should($el => {
           const text = $el.text()
           const validValues = [

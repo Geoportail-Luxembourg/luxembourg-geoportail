@@ -1,6 +1,15 @@
 describe('Legends', () => {
   beforeEach(() => {
-    cy.intercept('GET', '/legends/get_html?*').as('getLegends')
+    cy.intercept(
+      'GET',
+      '/legends/get_html?lang=fr&name=pcn_parcelles%3Ashow&id=359',
+      { fixture: 'legends_parcelles.html' }
+    )
+    cy.intercept(
+      'GET',
+      '/legends/get_html?lang=fr&name=energie%3Apotentiel_solaire&id=1813',
+      { fixture: 'legends_potentiel_solaire.html' }
+    )
     cy.visit('/')
   })
 
@@ -54,7 +63,6 @@ describe('Legends', () => {
     })
 
     it('displays the legends for both layers', () => {
-      cy.wait('@getLegends')
       cy.get('[data-cy="legendLayer"]').should('have.length', 2)
     })
   })
@@ -76,7 +84,6 @@ describe('Legends', () => {
     })
 
     it('displays the legends for both layers having legend', () => {
-      cy.wait('@getLegends')
       cy.get('[data-cy="legendLayer"]').should('have.length', 2)
     })
   })
@@ -90,7 +97,6 @@ describe('Legends', () => {
     })
 
     it('displays a txt saying there are no legend to show', () => {
-      cy.wait('@getLegends')
       cy.get('[data-cy="legendLayer"]').should('have.length', 1)
 
       cy.get('[data-cy="selectedBg"]').find('button').click()
@@ -104,7 +110,6 @@ describe('Legends', () => {
         "Aucune légende n'est disponible pour les couches sélectionnées."
       )
 
-      cy.wait('@getLegends')
       cy.get('[data-cy="legendLayer"]').should('have.length', 0)
     })
   })
