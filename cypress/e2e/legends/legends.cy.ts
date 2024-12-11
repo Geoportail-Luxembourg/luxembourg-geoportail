@@ -61,7 +61,7 @@ describe('Legends', () => {
   describe('When user adds layers with legends', () => {
     beforeEach(() => {
       cy.get('[data-cy="catalogButton"]').click()
-      cy.get('[data-cy^="layerLabel-1813"]').click()
+      cy.get('[data-cy="layerLabel-1813"]').click()
       cy.get('[data-cy="catalog"]')
         .find('[data-cy="layerLabel-359"]')
         .click({ force: true })
@@ -78,7 +78,7 @@ describe('Legends', () => {
   describe('When user adds layers with legends and one without a legend', () => {
     beforeEach(() => {
       cy.get('[data-cy="catalogButton"]').click()
-      cy.get('[data-cy^="layerLabel-1813"]').click()
+      cy.get('[data-cy="layerLabel-1813"]').click()
       cy.get('[data-cy="catalog"]')
         .find('[data-cy="layerLabel-359"]')
         .click({ force: true })
