@@ -17,7 +17,7 @@ describe('Style selector', () => {
   describe('Style panel', () => {
     describe('When closing the style panel', () => {
       beforeEach(() => {
-        cy.get('[data-cy="panelClose"]').click()
+        cy.get('[data-cy="stylePanel"]').find('[data-cy="panelClose"]').click()
       })
 
       it('closes the style panel', () => {

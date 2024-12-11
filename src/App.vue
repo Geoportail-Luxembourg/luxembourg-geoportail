@@ -24,6 +24,7 @@ import { statePersistorMyMapService } from '@/services/state-persistor/state-per
 import { useAppStore } from '@/stores/app.store'
 import useMap from '@/composables/map/map.composable'
 import useMvtStyles from '@/composables/mvt-styles/mvt-styles.composable'
+import { statePersistorFeatureInfoService } from '@/services/state-persistor/state-persistor-featureinfo.service'
 
 const appStore = useAppStore()
 const mvtStyleService = useMvtStyles()
@@ -37,6 +38,7 @@ statePersistorAppService.bootstrap()
 statePersistorStyleService.bootstrap()
 statePersistorBgLayerService.bootstrap()
 mvtStyleService.initBackgroundsConfigs()
+statePersistorFeatureInfoService.bootstrap()
 
 const {
   embedded,
@@ -87,7 +89,7 @@ onUnmounted(() => window.removeEventListener('resize', map.resize))
         </div>
       </main>
 
-      <footer-bar class="fixed bottom-5 sm:static z-20" />
+      <footer-bar class="fixed bottom-5 sm:static" />
       <alert-notifications />
     </template>
 

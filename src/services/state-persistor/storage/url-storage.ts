@@ -75,6 +75,12 @@ export class UrlStorage implements Storage {
   encodeQueryParam(key: string, value: string) {
     return `${encodeURIComponent(key)}=${encodeURIComponent(value)}`
   }
+
+  removeQueryParam(param: string): void {
+    const url = new URL(window.location.href)
+    url.searchParams.delete(param)
+    window.history.replaceState({}, document.title, url.toString())
+  }
 }
 
 export const urlStorage = new UrlStorage()

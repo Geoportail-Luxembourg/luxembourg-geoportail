@@ -4,6 +4,7 @@ import { storeToRefs } from 'pinia'
 import { useTranslation } from 'i18next-vue'
 
 import { useAppStore } from '@/stores/app.store'
+import { useFeatureInfoStore } from '@/stores/feature-info.store'
 import ButtonIcon from './button-icon.vue'
 import ButtonLink from './button-link.vue'
 import ToolbarDraw from './toolbar-draw.vue'
@@ -44,6 +45,15 @@ function onClickLayersIcon() {
 
 watch(drawToolbarOpen, isOpen => isOpen && (measureToolbarOpen.value = false))
 watch(measureToolbarOpen, isOpen => isOpen && (drawToolbarOpen.value = false))
+
+const featureInfoStore = useFeatureInfoStore()
+const { displayStarOnMobile } = storeToRefs(featureInfoStore)
+const { setDisplayStarOnMobile } = featureInfoStore
+
+function onClickInfoIcon() {
+  toggleInfoOpen()
+  setDisplayStarOnMobile(false)
+}
 </script>
 
 <template>
@@ -79,10 +89,12 @@ watch(measureToolbarOpen, isOpen => isOpen && (drawToolbarOpen.value = false))
       </li>
       <li data-cy="infoOpenClose">
         <button-icon
-          :label="t('Infos', { ns: 'client' })"
+          :label="`${t('Infos', { ns: 'client' })}${
+            displayStarOnMobile ? '(*)' : ''
+          }`"
           icon="infos"
           :active="infoOpen"
-          @click="() => toggleInfoOpen()"
+          @click="onClickInfoIcon"
         >
         </button-icon>
       </li>

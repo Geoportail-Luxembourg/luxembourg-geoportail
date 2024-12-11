@@ -1,5 +1,15 @@
 describe('Legends', () => {
   beforeEach(() => {
+    cy.intercept(
+      'GET',
+      '/legends/get_html?lang=fr&name=pcn_parcelles%3Ashow&id=359',
+      { fixture: 'legends_parcelles.html' }
+    )
+    cy.intercept(
+      'GET',
+      '/legends/get_html?lang=fr&name=energie%3Apotentiel_solaire&id=1813',
+      { fixture: 'legends_potentiel_solaire.html' }
+    )
     cy.visit('/')
   })
 
@@ -73,12 +83,8 @@ describe('Legends', () => {
       cy.get('[data-cy="legendsOpenClose"] > button').click()
     })
 
-    // add a longer timeout here because web request for the layers proved to be unstable in CI
     it('displays the legends for both layers having legend', () => {
-      cy.get('[data-cy="legendLayer"]', { timeout: 15000 }).should(
-        'have.length',
-        2
-      )
+      cy.get('[data-cy="legendLayer"]').should('have.length', 2)
     })
   })
 
