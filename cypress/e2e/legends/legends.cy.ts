@@ -91,8 +91,7 @@ describe('Legends', () => {
   describe('When a layer with a legend is removed', () => {
     beforeEach(() => {
       cy.get('[data-cy="catalogButton"]').click()
-      cy.get('[data-cy^="layerLabel-262"]').click()
-
+      cy.get('[data-cy="layerLabel-262"]').click()
       cy.get('[data-cy="legendsOpenClose"] > button').click()
     })
 

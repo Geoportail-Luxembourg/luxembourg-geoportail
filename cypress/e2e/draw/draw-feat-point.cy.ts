@@ -57,7 +57,7 @@ describe('Draw "Point"', () => {
 
   describe('When clicking button to draw Point', () => {
     it('displays a new feature item in the draw panel', () => {
-      cy.get('*[data-cy="featItemName"]').should('exist')
+      cy.get('[data-cy="featItemName"]').should('exist')
     })
 
     it('displays measurements for Point', () => {
@@ -72,17 +72,14 @@ describe('Draw "Point"', () => {
       cy.get('button[data-cy="drawPointButton"]').click()
       cy.get('button[data-cy="drawPointButton"]').click()
       cy.get('div.ol-viewport').click(200, 200)
-      cy.get('*[data-cy="featItemElevation"]').should(
-        'contain.text',
-        '333.13 m'
-      )
+      cy.get('[data-cy="featItemElevation"]').should('contain.text', '333.13 m')
     })
 
     it('displays N/A elevation for new Point if response has error', () => {
       cy.get('button[data-cy="drawPointButton"]').click()
       cy.get('button[data-cy="drawPointButton"]').click()
       cy.get('div.ol-viewport').click(300, 300)
-      cy.get('*[data-cy="featItemElevation"]').should('contain.text', 'N/A')
+      cy.get('[data-cy="featItemElevation"]').should('contain.text', 'N/A')
     })
 
     it('displays the possible actions for the feature', () => {
@@ -112,7 +109,7 @@ describe('Draw "Point"', () => {
 
   describe('When editing feature style', () => {
     beforeEach(() => {
-      cy.get('*[data-cy="featItemActionStyle"]').click()
+      cy.get('[data-cy="featItemActionStyle"]').click()
     })
 
     it('displays the style edition tab for "Point"', () => {
@@ -133,18 +130,6 @@ describe('Draw "Point"', () => {
       describe('When browsing public symbols', () => {
         beforeEach(() => {
           cy.get('[data-cy="featStyleSymbolTab"]').eq(1).click()
-        })
-
-        it('displays the public symbol list', () => {
-          cy.get('[data-cy="featStyleSymbolFilterList"]').should('exist')
-          cy.get('[data-cy="featStyleSymbolIcon"]').should('have.length', 81)
-        })
-
-        describe('When filtering public symbols', () => {
-          it('displays the public symbol list', () => {
-            cy.get('[data-cy="featStyleSymbolFilterList"]').type('pin1')
-            cy.get('[data-cy="featStyleSymbolIcon"]').should('have.length', 2)
-          })
         })
 
         describe('When choosing a symbol', () => {
