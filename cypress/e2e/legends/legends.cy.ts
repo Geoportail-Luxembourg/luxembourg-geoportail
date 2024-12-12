@@ -4,12 +4,12 @@ describe('Legends', () => {
       'GET',
       '/legends/get_html?lang=fr&name=pcn_parcelles%3Ashow&id=359',
       { fixture: 'legends_parcelles.html' }
-    )
+    ).as('mockedParcelles')
     cy.intercept(
       'GET',
       '/legends/get_html?lang=fr&name=energie%3Apotentiel_solaire&id=1813',
       { fixture: 'legends_potentiel_solaire.html' }
-    )
+    ).as('mockedSolaire')
     cy.clearLocalStorage()
     cy.visit('/')
   })
@@ -85,6 +85,14 @@ describe('Legends', () => {
     })
 
     it('displays the legends for both layers having legend', () => {
+      cy.wait('@mockedParcelles').then(interception => {
+        cy.log(interception.response.body)
+      })
+      cy.wait('@mockedSolaire').then(interception => {
+        cy.log(interception.response.body)
+      })
+
+      cy.log(Cypress.env('API_URL'))
       cy.get('[data-cy="legendLayer"]').should('have.length', 2)
     })
   })
