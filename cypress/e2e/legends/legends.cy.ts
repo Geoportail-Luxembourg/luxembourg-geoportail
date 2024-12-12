@@ -10,6 +10,7 @@ describe('Legends', () => {
       '/legends/get_html?lang=fr&name=energie%3Apotentiel_solaire&id=1813',
       { fixture: 'legends_potentiel_solaire.html' }
     )
+    cy.clearLocalStorage()
     cy.visit('/')
   })
 
