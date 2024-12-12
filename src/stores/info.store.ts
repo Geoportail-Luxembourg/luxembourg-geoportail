@@ -9,6 +9,7 @@ export const useInfoStore = defineStore('info', () => {
   const hidePointer: Ref<boolean> = ref(false)
   const isStreetviewActive: Ref<boolean> = ref(false)
   const noDataAtLocation = ref(true)
+  const streetViewLoading: Ref<boolean> = ref(false)
   const panoPositionChanging: Ref<boolean> = ref(false)
   const svFeature: Ref<SvFeature | undefined> = ref(undefined)
   const routingFeatureTemp: Ref<Feature | undefined> = ref(undefined)
@@ -18,6 +19,7 @@ export const useInfoStore = defineStore('info', () => {
     hidePointer,
     isStreetviewActive,
     noDataAtLocation,
+    streetViewLoading,
     panoPositionChanging,
     svFeature,
     routingFeatureTemp,

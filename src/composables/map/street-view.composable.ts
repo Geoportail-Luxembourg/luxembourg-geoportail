@@ -33,6 +33,7 @@ export default function useStreeView(streetViewDiv: Ref<HTMLElement | null>) {
     hidePointer,
     isStreetviewActive,
     noDataAtLocation,
+    streetViewLoading,
     panoPositionChanging,
     svFeature,
   } = storeToRefs(useInfoStore())
@@ -91,6 +92,7 @@ export default function useStreeView(streetViewDiv: Ref<HTMLElement | null>) {
       })
     } else {
       noDataAtLocation.value = true
+      streetViewLoading.value = false
       svFeature.value = undefined
       panorama!.setVisible(false)
     }
@@ -109,6 +111,7 @@ export default function useStreeView(streetViewDiv: Ref<HTMLElement | null>) {
   watch(locationInfo, loc => {
     if (loc) {
       if (isStreetviewActive.value && !panoPositionChanging.value) {
+        streetViewLoading.value = true
         setLocation(loc)
       }
     } else {
@@ -120,6 +123,7 @@ export default function useStreeView(streetViewDiv: Ref<HTMLElement | null>) {
 
   watch([isStreetviewActive, streetViewDiv], async ([act, streetViewDiv]) => {
     if (act && streetViewDiv) {
+      streetViewLoading.value = true
       await loadGoogleapis()
       if (window.hasOwnProperty('google')) {
         // @ts-ignore
@@ -180,6 +184,9 @@ export default function useStreeView(streetViewDiv: Ref<HTMLElement | null>) {
       hidePointer.value = true
       map.addInteraction(selectFeature)
       map.on('pointermove', handleHover)
+      svFeatureLayer.once('postrender', () => {
+        streetViewLoading.value = false
+      })
     } else {
       map.un('pointermove', handleHover)
       map.removeInteraction(selectFeature)
@@ -240,6 +247,7 @@ export default function useStreeView(streetViewDiv: Ref<HTMLElement | null>) {
 
   function handlePanoramaPositionChange(updateLocation: boolean) {
     panoPositionChanging.value = true
+    streetViewLoading.value = true
     const position = panorama!.getPosition()
     if (position) {
       const panoLonLat = [position.lng(), position.lat()]
@@ -257,6 +265,8 @@ export default function useStreeView(streetViewDiv: Ref<HTMLElement | null>) {
         map.getView().setCenter(loc)
       }
     }
-    nextTick(() => (panoPositionChanging.value = false))
+    nextTick(() => {
+      panoPositionChanging.value = false
+    })
   }
 }
