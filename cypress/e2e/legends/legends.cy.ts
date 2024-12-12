@@ -15,6 +15,7 @@ describe('Legends', () => {
       '/legends/get_html?lang=fr&name=act%3Aroadmap_vt&id=556',
       { fixture: 'legends_bg_roadmap.html' }
     ).as('bg-roadmap-fixture')
+    cy.clearLocalStorage()
     cy.visit('/')
   })
 
