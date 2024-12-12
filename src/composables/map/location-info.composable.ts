@@ -15,6 +15,7 @@ import StyleFill from 'ol/style/Fill'
 import StyleStroke from 'ol/style/Stroke'
 import { useAppStore } from '@/stores/app.store'
 import { useInfoStore } from '@/stores/info.store'
+import { useFeatureInfoStore } from '@/stores/feature-info.store'
 
 export const DEFAULT_INFO_ZINDEX = 1501
 export const INFO_FEATURE_LAYER_TYPE = 'infoFeatureLayer'
@@ -25,6 +26,7 @@ export default function useLocationInfo() {
   let startPixel: Coordinate | null = null
   const { infoOpen } = storeToRefs(useAppStore())
   const { locationInfo, hidePointer } = storeToRefs(useInfoStore())
+  const { clearContent } = useFeatureInfoStore()
 
   const infoFeatureLayer = new VectorLayer({
     source: new VectorSource({
@@ -72,10 +74,12 @@ export default function useLocationInfo() {
     if (event.originalEvent.button === 2) {
       // if right mouse click
       locationInfo.value = getClickCoordinate(event)
+      clearContent()
     } else if (event.originalEvent.pointerType === 'touch') {
       window.clearTimeout(holdTimeoutId)
       holdTimeoutId = window.setTimeout(() => {
         locationInfo.value = getClickCoordinate(event)
+        clearContent()
       })
     }
   }

@@ -8,16 +8,23 @@ import { useFeatureInfoStore } from '@/stores/feature-info.store'
 import useMap from '@/composables/map/map.composable'
 import LocationInfo from './location-info.vue'
 import FeatureInfo from '@/components/info/feature-info.vue'
-import { onUnmounted } from 'vue'
+import { watch, onUnmounted } from 'vue'
 
 const { t } = useTranslation()
 const appStore = useAppStore()
 const { locationInfo } = storeToRefs(useInfoStore())
 const map = useMap().olMap
+const { infoOpen } = storeToRefs(appStore)
 const { clearContent } = useFeatureInfoStore()
 const { featureInfoPanelContent, isLoading } = storeToRefs(
   useFeatureInfoStore()
 )
+
+watch(infoOpen, isOpen => {
+  if (!isOpen) {
+    clearContent()
+  }
+})
 
 onUnmounted(() => {
   clearContent()
@@ -42,7 +49,7 @@ onUnmounted(() => {
         </div>
       </template>
 
-      <template v-if="!locationInfo">
+      <template v-if="!locationInfo && !featureInfoPanelContent">
         <div class="text-white absolute">
           <ul class="list-disc pl-10">
             <li>
