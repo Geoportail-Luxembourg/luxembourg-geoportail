@@ -146,12 +146,28 @@ export function sanitizeFilename(filename: string) {
   return filename.replace(/\s+/g, '_').replace(/[^a-z0-9\-_]/gi, '') || '_'
 }
 
+export async function downloadUrl(
+  url: string | URL | Request,
+  filename: string
+) {
+  const response = await fetch(url)
+  if (!response.ok) {
+    throw new Error()
+  }
+  const blob = await response.blob()
+  downloadBlob(filename, blob)
+}
+
 export function downloadFile(
   filename: string,
   content: BlobPart,
   contentType = 'text/plain'
 ) {
   const blob = new Blob([content], { type: contentType })
+  downloadBlob(filename, blob)
+}
+
+export function downloadBlob(filename: string, blob: Blob) {
   const url = URL.createObjectURL(blob)
   const a = document.createElement('a')
   a.href = url
