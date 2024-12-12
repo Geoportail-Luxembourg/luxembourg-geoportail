@@ -127,9 +127,9 @@ describe('Location Info', () => {
           })
         cy.get('div.ol-viewport').rightclick(350, 50, { force: true })
         cy.get('[data-cy="streetviewNoData"]').should('not.be.visible')
-        // TODO: think about more reliable sync with google loanding times
-        // eslint-disable-next-line
-        cy.wait(2000)
+        // The waiting animation has been added to allow synchronisation
+        // in the test once the streetview is fully loaded.
+        cy.get('[data-cy="streetviewLoading"]').should('not.be.visible')
         cy.window()
           .its('olMap')
           .then(function (olMap) {

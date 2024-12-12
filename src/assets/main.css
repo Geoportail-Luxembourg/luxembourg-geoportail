@@ -241,6 +241,22 @@
     @apply bg-transparent border-none gap-[1px] shadow-none m-0 py-0 float-right relative left-auto;
   }
 
+  .lux-loader {
+    @apply border-[20px] border-solid border-white rounded-full;
+    @apply border-t-[20px] border-t-[color:var(--color-primary)];
+    @apply m-auto w-[200px] h-[200px];
+    animation: lux-loader 4s linear infinite;
+  }
+
+  @keyframes lux-loader {
+    0% {
+      transform: rotate(0deg);
+    }
+    100% {
+      transform: rotate(360deg);
+    }
+  }
+
   .lux-slider-line {
     @apply absolute h-full w-[4px] left-[50%] bg-primary ml-[-2px] cursor-ew-resize block top-0;
   }
