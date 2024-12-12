@@ -8,10 +8,12 @@ function testFeatItemMeasurements() {
   cy.get('*[data-cy="featItemProfile"]').should('not.exist')
 }
 
-function testFeatStyleEditionTabContent() {
+function testFeatStyleEditionTabContent(withAngle: boolean) {
   cy.get('*[data-cy="featStyleColor"]').should('exist')
   cy.get('*[data-cy="featStyleSize"]').should('exist')
-  cy.get('*[data-cy="featStyleAngle"]').should('not.exist')
+  cy.get('*[data-cy="featStyleAngle"]').should(
+    withAngle ? 'exist' : 'not.exist'
+  )
   cy.get('*[data-cy="featStyleSymbol"]').should('exist')
   cy.get('*[data-cy="featStyleLineStyle"]').should('not.exist')
   cy.get('*[data-cy="featStyleLineWidth"]').should('not.exist')
@@ -55,7 +57,7 @@ describe('Draw "Point"', () => {
 
   describe('When clicking button to draw Point', () => {
     it('displays a new feature item in the draw panel', () => {
-      cy.get('*[data-cy="featItemName"]').should('exist')
+      cy.get('[data-cy="featItemName"]').should('exist')
     })
 
     it('displays measurements for Point', () => {
@@ -70,17 +72,14 @@ describe('Draw "Point"', () => {
       cy.get('button[data-cy="drawPointButton"]').click()
       cy.get('button[data-cy="drawPointButton"]').click()
       cy.get('div.ol-viewport').click(200, 200)
-      cy.get('*[data-cy="featItemElevation"]').should(
-        'contain.text',
-        '333.13 m'
-      )
+      cy.get('[data-cy="featItemElevation"]').should('contain.text', '333.13 m')
     })
 
     it('displays N/A elevation for new Point if response has error', () => {
       cy.get('button[data-cy="drawPointButton"]').click()
       cy.get('button[data-cy="drawPointButton"]').click()
       cy.get('div.ol-viewport').click(300, 300)
-      cy.get('*[data-cy="featItemElevation"]').should('contain.text', 'N/A')
+      cy.get('[data-cy="featItemElevation"]').should('contain.text', 'N/A')
     })
 
     it('displays the possible actions for the feature', () => {
@@ -110,11 +109,12 @@ describe('Draw "Point"', () => {
 
   describe('When editing feature style', () => {
     beforeEach(() => {
-      cy.get('*[data-cy="featItemActionStyle"]').click()
+      cy.get('[data-cy="featItemActionStyle"]').click()
     })
 
     it('displays the style edition tab for "Point"', () => {
-      testFeatStyleEditionTabContent()
+      const withAngle = false
+      testFeatStyleEditionTabContent(withAngle)
     })
 
     describe('When editing symbol', () => {
@@ -132,15 +132,14 @@ describe('Draw "Point"', () => {
           cy.get('[data-cy="featStyleSymbolTab"]').eq(1).click()
         })
 
-        it('displays the public symbol list', () => {
-          cy.get('[data-cy="featStyleSymbolFilterList"]').should('exist')
-          cy.get('[data-cy="featStyleSymbolIcon"]').should('have.length', 81)
-        })
+        describe('When choosing a symbol', () => {
+          it('should close the list', () => {
+            cy.get('[data-cy="featStyleSymbolFilterList"]').should('exist')
+            cy.get('[data-cy="featStyleSymbolIcon"]').eq(1).click()
+            cy.get('[data-cy="featStyleSymbolFilterList"]').should('not.exist')
 
-        describe('When filtering public symbols', () => {
-          it('displays the public symbol list', () => {
-            cy.get('[data-cy="featStyleSymbolFilterList"]').type('pin1')
-            cy.get('[data-cy="featStyleSymbolIcon"]').should('have.length', 2)
+            const withAngle = true
+            testFeatStyleEditionTabContent(withAngle)
           })
         })
       })
@@ -148,7 +147,9 @@ describe('Draw "Point"', () => {
       describe('When clicking close button', () => {
         it('returns to style edition tab', () => {
           cy.get('[data-cy="featClosePopup"]').click()
-          testFeatStyleEditionTabContent()
+
+          const withAngle = false
+          testFeatStyleEditionTabContent(withAngle)
         })
       })
     })

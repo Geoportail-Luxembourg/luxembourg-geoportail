@@ -10,6 +10,7 @@ describe('Legends', () => {
       '/legends/get_html?lang=fr&name=energie%3Apotentiel_solaire&id=1813',
       { fixture: 'legends_potentiel_solaire.html' }
     )
+    cy.clearLocalStorage()
     cy.visit('/')
   })
 
@@ -55,7 +56,7 @@ describe('Legends', () => {
   describe('When user adds layers with legends', () => {
     beforeEach(() => {
       cy.get('[data-cy="catalogButton"]').click()
-      cy.get('[data-cy^="layerLabel-1813"]').click()
+      cy.get('[data-cy="layerLabel-1813"]').click()
       cy.get('[data-cy="catalog"]')
         .find('[data-cy="layerLabel-359"]')
         .click({ force: true })
@@ -70,7 +71,7 @@ describe('Legends', () => {
   describe('When user adds layers with legends and one without a legend', () => {
     beforeEach(() => {
       cy.get('[data-cy="catalogButton"]').click()
-      cy.get('[data-cy^="layerLabel-1813"]').click()
+      cy.get('[data-cy="layerLabel-1813"]').click()
       cy.get('[data-cy="catalog"]')
         .find('[data-cy="layerLabel-359"]')
         .click({ force: true })
@@ -91,8 +92,7 @@ describe('Legends', () => {
   describe('When a layer with a legend is removed', () => {
     beforeEach(() => {
       cy.get('[data-cy="catalogButton"]').click()
-      cy.get('[data-cy^="layerLabel-262"]').click()
-
+      cy.get('[data-cy="layerLabel-262"]').click()
       cy.get('[data-cy="legendsOpenClose"] > button').click()
     })
 

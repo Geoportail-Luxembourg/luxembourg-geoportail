@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { computed, inject, provide, Ref, ref } from 'vue'
+import { computed, inject, Reactive } from 'vue'
 import { useTranslation } from 'i18next-vue'
 
 import { LineString } from 'ol/geom'
@@ -12,15 +12,19 @@ import FeatureEditStylePoint from './feature-edit-style-point.vue'
 import FeatureEditStyleLine from './feature-edit-style-line.vue'
 import FeatureEditStylePolygon from './feature-edit-style-polygon.vue'
 import FeatureEditStyleLabel from './feature-edit-style-label.vue'
-import FeatureEditStyleSymbole from './feature-edit-style-symbole.vue'
-
 import FeatureEditLinestyleItem from './feature-edit-linestyle-item.vue'
+import FeatureEditStyleSymbol from './feature-edit-style-symbol.vue'
+import FeatureEditSymbolIcon from './feature-edit-symbol-icon.vue'
+import { DrawnFeatureStyleShape, Symboltype } from '@/stores/draw.store.model'
 
 const { t } = useTranslation()
-const feature: DrawnFeature = inject('feature')!
-const popupOpen: Ref<boolean> = ref(false)
-provide('popupOpen', popupOpen)
-
+const feature: Reactive<DrawnFeature> = inject('feature')!
+const showAngleField = computed(() => {
+  return !(
+    feature.featureType === 'drawnPoint' &&
+    feature.featureStyle.shape === 'circle'
+  )
+})
 const styleComponents = {
   FeatureEditStyleCircle,
   FeatureEditStyleLine,
@@ -28,9 +32,7 @@ const styleComponents = {
   FeatureEditStylePolygon,
   FeatureEditStyleLabel,
 }
-
 const linestyles = ['plain', 'dashed', 'dotted']
-
 const currentStyleComponent = computed(() =>
   feature?.featureType.replace('drawn', 'FeatureEditStyle')
 )
@@ -82,24 +84,44 @@ function onClickChangeOrientation() {
 function onClickChangeLineStyle(style: string) {
   feature.featureStyle = { ...feature.featureStyle, linestyle: style }
 }
+
+function onChangeSymbolShape(shape: DrawnFeatureStyleShape) {
+  feature.featureStyle = {
+    ...feature.featureStyle,
+    shape,
+    symbolId: undefined,
+    symboltype: undefined,
+  }
+}
+
+function onChangeSymbolIcon(symbolId: string, symboltype: Symboltype) {
+  feature.featureStyle = {
+    ...feature.featureStyle,
+    symbolId,
+    symboltype,
+    size: 100,
+    shape: undefined,
+  }
+}
 </script>
 
 <template>
-  <template v-if="!popupOpen">
-    {{ t('Style your drawing') }}
-  </template>
-
   <component
     :is="styleComponents[currentStyleComponent as keyof typeof styleComponents]"
-    :feature="feature"
+    :feature="<DrawnFeature>feature"
   >
+    <template v-slot:title>
+      {{ t('Style your drawing') }}
+    </template>
+
     <template v-slot:color>
       <div class="flex gap-1 items-center">
-        <label class="font-bold block" for="inline-full-name">
+        <label class="font-bold block" for="color">
           {{ t('Color') }}
         </label>
         <div class="md:w-2/3">
           <input
+            name="color"
             class="cursor-pointer"
             type="color"
             :value="feature.featureStyle.color"
@@ -112,10 +134,11 @@ function onClickChangeLineStyle(style: string) {
 
     <template v-slot:size="slotProps">
       <div class="flex gap-1 items-center mt-1">
-        <label class="font-bold block" for="inline-full-name">
+        <label class="font-bold block" for="size">
           {{ t('Size') }}
         </label>
         <RangeInput
+          name="size"
           class="md:w-2/3"
           :max="slotProps.maxsize"
           :value="feature.featureStyle.size"
@@ -126,19 +149,12 @@ function onClickChangeLineStyle(style: string) {
     </template>
 
     <template v-slot:angle>
-      <div
-        v-if="
-          !(
-            feature.featureType === 'drawnPoint' &&
-            feature.featureStyle.shape === 'circle'
-          )
-        "
-        class="flex gap-1 items-center mt-1 mb-2"
-      >
-        <label class="font-bold block" for="inline-full-name">
+      <div v-if="showAngleField" class="flex gap-1 items-center mt-1 mb-2">
+        <label class="font-bold block" for="angle">
           {{ t('Angle') }}
         </label>
         <RangeInput
+          name="angle"
           class="md:w-2/3"
           :min="-180"
           :max="180"
@@ -153,18 +169,13 @@ function onClickChangeLineStyle(style: string) {
       </div>
     </template>
 
-    <!-- Symbole for Point -->
-    <template v-slot:symbole>
-      <FeatureEditStyleSymbole :feature="feature" data-cy="featStyleSymbol" />
-    </template>
-
     <!-- Style for line -->
     <template v-slot:style>
       <div
         class="flex gap-1 items-center mt-1 mb-2"
         data-cy="featStyleLineStyle"
       >
-        <label class="font-bold block" for="inline-full-name">
+        <label class="font-bold block">
           {{ t('Style') }}
         </label>
         <div class="flex gap-1">
@@ -172,19 +183,52 @@ function onClickChangeLineStyle(style: string) {
             v-for="(linestyle, i) in linestyles"
             :key="i"
             :linestyle="linestyle"
-            :feature="feature"
             @changeLinestyle="onClickChangeLineStyle"
           />
         </div>
       </div>
     </template>
 
+    <template #styleSymbol="{ openEditIcon }">
+      <FeatureEditStyleSymbol
+        data-cy="featStyleSymbol"
+        @clickSymbolIcon="openEditIcon"
+      />
+    </template>
+
+    <template #symbolIcon="{ closeEditIcon }">
+      <FeatureEditSymbolIcon
+        @changeSymbolIcon="(symbolId: string, symboltype: Symboltype) => { onChangeSymbolIcon(symbolId, symboltype); closeEditIcon()}"
+        @changeSymbolShape="(shape: DrawnFeatureStyleShape) => { onChangeSymbolShape(shape); closeEditIcon()}"
+        @close="closeEditIcon"
+      >
+        <template v-slot:symbolcolor>
+          <div class="flex gap-1 items-center">
+            <label class="font-bold block" for="color">
+              {{ t('Color') }}
+            </label>
+            <div class="md:w-2/3">
+              <input
+                name="color"
+                class="cursor-pointer"
+                type="color"
+                :value="feature.featureStyle.color"
+                @input="onColorSelect"
+                data-cy="featStyleColor"
+              />
+            </div>
+          </div>
+        </template>
+      </FeatureEditSymbolIcon>
+    </template>
+
     <template v-slot:lineWidth>
       <div class="flex gap-1 items-center mt-1">
-        <label class="font-bold block" for="inline-full-name">
+        <label class="font-bold block" for="stroke">
           {{ t('Stroke width') }}
         </label>
         <RangeInput
+          name="stroke"
           data-cy="featStyleLineWidth"
           :value="feature.featureStyle.stroke"
           @change="onWidthChange"
@@ -194,10 +238,11 @@ function onClickChangeLineStyle(style: string) {
 
     <template v-slot:transparency>
       <div class="flex gap-1 items-center mt-1">
-        <label class="font-bold block" for="inline-full-name">
+        <label class="font-bold block" for="transparency">
           {{ t('Transparence') }}
         </label>
         <RangeInput
+          name="transparency"
           class="md:w-2/3"
           data-cy="featStyleTransparency"
           :max="100"
@@ -226,11 +271,9 @@ function onClickChangeLineStyle(style: string) {
         </button>
       </div>
     </template>
+
+    <template v-slot:footer>
+      <slot name="footer"></slot>
+    </template>
   </component>
-
-  <template v-if="!popupOpen">
-    <slot name="footer"></slot>
-  </template>
 </template>
-
-<style></style>

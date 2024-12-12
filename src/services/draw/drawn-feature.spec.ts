@@ -42,7 +42,7 @@ vi.mock('@/composables/map/map.composable', () => ({
 }))
 
 vi.mock('@/services/api/api-profile.service', () => ({
-  getProfileJson: vi.fn(() => profileDataFixtures),
+  fetchProfileJson: vi.fn(() => profileDataFixtures),
 }))
 
 describe('DrawnFeature', () => {
@@ -75,7 +75,7 @@ describe('DrawnFeature', () => {
 
   describe('#getProfile', () => {
     beforeEach(() => {
-      vi.spyOn(ApiProfileService, 'getProfileJson').mockReturnValue(
+      vi.spyOn(ApiProfileService, 'fetchProfileJson').mockReturnValue(
         Promise.resolve(profileDataFixtures)
       )
     })
@@ -120,7 +120,7 @@ describe('DrawnFeature', () => {
           },
         ]
 
-        expect(ApiProfileService.getProfileJson).toHaveBeenCalledOnce()
+        expect(ApiProfileService.fetchProfileJson).toHaveBeenCalledOnce()
         expect(profile).toStrictEqual(profileDataFixturesExpected)
       })
     })
@@ -131,7 +131,7 @@ describe('DrawnFeature', () => {
         feat.setGeometry(new Point([0, 0]))
         const profile = await feat.getProfile()
 
-        expect(ApiProfileService.getProfileJson).not.toHaveBeenCalledOnce()
+        expect(ApiProfileService.fetchProfileJson).not.toHaveBeenCalledOnce()
         expect(profile).toStrictEqual(undefined)
       })
     })
