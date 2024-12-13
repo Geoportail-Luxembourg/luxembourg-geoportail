@@ -14,7 +14,7 @@ import StyleCircle from 'ol/style/Circle'
 import StyleFill from 'ol/style/Fill'
 import StyleStroke from 'ol/style/Stroke'
 import { useAppStore } from '@/stores/app.store'
-import { useInfoStore } from '@/stores/info.store'
+import { useLocationInfoStore } from '@/stores/location-info.store'
 import { useFeatureInfoStore } from '@/stores/feature-info.store'
 
 export const DEFAULT_INFO_ZINDEX = 1501
@@ -25,7 +25,7 @@ export default function useLocationInfo() {
   let holdTimeoutId: number | undefined = undefined
   let startPixel: Coordinate | null = null
   const { infoOpen } = storeToRefs(useAppStore())
-  const { locationInfo, hidePointer } = storeToRefs(useInfoStore())
+  const { locationInfo, hidePointer } = storeToRefs(useLocationInfoStore())
   const { clearContent } = useFeatureInfoStore()
 
   const infoFeatureLayer = new VectorLayer({

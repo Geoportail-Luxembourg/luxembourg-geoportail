@@ -1,5 +1,5 @@
 import i18next from 'i18next'
-import { AddressResult } from '@/stores/info.store.model'
+import { AddressResult } from '@/stores/location-info.store.model'
 import { transform, toLonLat } from 'ol/proj'
 import { Coordinate } from 'ol/coordinate'
 import { Projection } from 'ol/proj'

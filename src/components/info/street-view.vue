@@ -2,14 +2,14 @@
 import { watch, ref, Ref } from 'vue'
 import { useTranslation } from 'i18next-vue'
 import { storeToRefs } from 'pinia'
-import { useInfoStore } from '@/stores/info.store'
+import { useLocationInfoStore } from '@/stores/location-info.store'
 import useMap from '@/composables/map/map.composable'
-import useStreetView from '@/composables/map/street-view.composable'
+import useStreetView from '@/composables/info/street-view.composable'
 
 const { t } = useTranslation()
 
 const { isStreetviewActive, streetViewLoading, noDataAtLocation } = storeToRefs(
-  useInfoStore()
+  useLocationInfoStore()
 )
 
 const streetviewDiv: Ref<HTMLElement | null> = ref(null)
@@ -48,7 +48,7 @@ watch(streetViewLoading, streetViewLoading => {
       class="h-[500px] col-start-1 row-start-1"
       v-show="isStreetviewActive && !noDataAtLocation"
     >
-      Streetview Container
+      <!-- Streetview Container -->
     </div>
   </div>
 </template>

@@ -2,14 +2,14 @@
 import { computed, Ref, ref, watch } from 'vue'
 import { useTranslation } from 'i18next-vue'
 import { storeToRefs } from 'pinia'
-import { useInfoStore } from '@/stores/info.store'
+import { useLocationInfoStore } from '@/stores/location-info.store'
 import { useUserManagerStore } from '@/stores/user-manager.store'
-import { AddressResult } from '@/stores/info.store.model'
+import { AddressResult } from '@/stores/location-info.store.model'
 import { Coordinate } from 'ol/coordinate'
 import { Feature } from 'ol'
 import { Point } from 'ol/geom'
 import useMap from '@/composables/map/map.composable'
-import useLocationInfo from '@/composables/map/location-info.composable'
+import useLocationInfo from '@/composables/info/location-info.composable'
 import {
   getQRUrl,
   queryInfos,
@@ -27,7 +27,7 @@ import StreetView from '@/components/info/street-view.vue'
 
 const { t } = useTranslation()
 const { locationInfo, isStreetviewActive, routingFeatureTemp } = storeToRefs(
-  useInfoStore()
+  useLocationInfoStore()
 )
 const { currentUser } = storeToRefs(useUserManagerStore())
 

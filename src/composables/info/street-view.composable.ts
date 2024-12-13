@@ -2,7 +2,7 @@ import { watch, nextTick, Ref } from 'vue'
 import { storeToRefs } from 'pinia'
 import useMap from '@/composables/map/map.composable'
 import { useAppStore } from '@/stores/app.store'
-import { useInfoStore } from '@/stores/info.store'
+import { useLocationInfoStore } from '@/stores/location-info.store'
 import { MapBrowserEvent } from 'ol'
 import BaseEvent from 'ol/events/Event'
 import { Coordinate } from 'ol/coordinate'
@@ -36,7 +36,7 @@ export default function useStreeView(streetViewDiv: Ref<HTMLElement | null>) {
     streetViewLoading,
     panoPositionChanging,
     svFeature,
-  } = storeToRefs(useInfoStore())
+  } = storeToRefs(useLocationInfoStore())
 
   const map = useMap().getOlMap()
 

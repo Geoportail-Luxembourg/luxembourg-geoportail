@@ -1,10 +1,10 @@
 import { defineStore, acceptHMRUpdate } from 'pinia'
 import { ref, Ref } from 'vue'
-import { SvFeature } from '@/stores/info.store.model'
+import { SvFeature } from '@/stores/location-info.store.model'
 import { Coordinate } from 'ol/coordinate'
 import { Feature } from 'ol'
 
-export const useInfoStore = defineStore('info', () => {
+export const useLocationInfoStore = defineStore('info', () => {
   const locationInfo: Ref<Coordinate | undefined> = ref(undefined)
   const hidePointer: Ref<boolean> = ref(false)
   const isStreetviewActive: Ref<boolean> = ref(false)
@@ -27,5 +27,5 @@ export const useInfoStore = defineStore('info', () => {
 })
 
 if (import.meta.hot) {
-  import.meta.hot.accept(acceptHMRUpdate(useInfoStore, import.meta.hot))
+  import.meta.hot.accept(acceptHMRUpdate(useLocationInfoStore, import.meta.hot))
 }

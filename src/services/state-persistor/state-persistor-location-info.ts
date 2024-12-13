@@ -8,7 +8,7 @@ import {
 } from './state-persistor.model'
 import { storageHelper } from './storage/storage.helper'
 import useMap from '@/composables/map/map.composable'
-import { useInfoStore } from '@/stores/info.store'
+import { useLocationInfoStore } from '@/stores/location-info.store'
 
 class StatePersistorLocationInfo implements StatePersistorService {
   bootstrap() {
@@ -22,7 +22,7 @@ class StatePersistorLocationInfo implements StatePersistorService {
   }
 
   persist() {
-    const { locationInfo } = storeToRefs(useInfoStore())
+    const { locationInfo } = storeToRefs(useLocationInfoStore())
 
     watch(
       locationInfo,
@@ -40,7 +40,7 @@ class StatePersistorLocationInfo implements StatePersistorService {
   }
 
   restore() {
-    const { locationInfo } = storeToRefs(useInfoStore())
+    const { locationInfo } = storeToRefs(useLocationInfoStore())
     const map = useMap().getOlMap()
 
     const location = storageHelper.getValue(SP_KEY_CROSSHAIR)

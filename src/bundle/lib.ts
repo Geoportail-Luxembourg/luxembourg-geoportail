@@ -49,7 +49,7 @@ import { useProfileMeasuresv3Store } from './stores/profile-measures_v3.store'
 import { useProfileRoutingv3Store } from './stores/profile-routing_v3.store'
 import { useProfileInfosv3Store } from './stores/profile-infos_v3.store'
 import { useDrawStore } from '@/stores/draw.store'
-import { useInfoStore } from '@/stores/info.store'
+import { useLocationInfoStore } from '@/stores/location-info.store'
 import { useStyleStore } from '@/stores/style.store'
 import { useThemeStore } from '@/stores/config.store'
 import { useUserManagerStore } from '@/stores/user-manager.store'
@@ -173,7 +173,7 @@ export {
   useProfileRoutingv3Store,
   useProfileInfosv3Store,
   useDrawStore,
-  useInfoStore,
+  useLocationInfoStore,
   useStyleStore,
   useThemeStore,
   useUserManagerStore,
