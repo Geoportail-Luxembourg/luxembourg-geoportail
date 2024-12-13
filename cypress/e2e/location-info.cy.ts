@@ -6,37 +6,47 @@ describe('Location Info', () => {
     }).as('shortUrl')
 
     cy.intercept(
-      'GET',
-      'https://migration.geoportail.lu/geocode/reverse?easting=67886.66280635976&northing=85024.54757489248',
       {
-        statusCode: 200,
-        body: {
-          count: 1,
-          results: [
-            {
-              id_caclr_locality: '37',
-              id_caclr_street: '1147',
-              id_caclr_bat: '213956',
-              street: 'Bergstr',
-              number: '18',
-              locality: 'Roodt/Eisch/Test',
-              commune: 'Habscht',
-              postal_code: '8398',
-              country: 'Luxembourg',
-              country_code: 'lu',
-              distance: 1967.871691858786,
-              contributor: 'ACT',
-              geom: {
-                type: 'Point',
-                coordinates: [67900.5221, 84743.219699999],
+        method: 'GET',
+        pathname: '/geocode/reverse',
+      },
+      req => {
+        const dist = Math.sqrt(
+          (parseFloat(req.query.easting.toString()) - 67887) ** 2 +
+            (parseFloat(req.query.northing.toString()) - 85410) ** 2
+        )
+        const categorizedDist =
+          dist > 5 ? (dist > 100 ? 1972.1284 : 394.2305) : 20.98493
+        req.reply({
+          statusCode: 200,
+          body: {
+            count: 1,
+            results: [
+              {
+                id_caclr_locality: '37',
+                id_caclr_street: '1147',
+                id_caclr_bat: '213956',
+                street: 'Bergstr',
+                number: '18',
+                locality: 'Roodt/Eisch/Test',
+                commune: 'Habscht',
+                postal_code: '8398',
+                country: 'Luxembourg',
+                country_code: 'lu',
+                distance: categorizedDist,
+                contributor: 'ACT',
+                geom: {
+                  type: 'Point',
+                  coordinates: [req.query.easting, req.query.northing],
+                },
+                geomlonlat: {
+                  type: 'Point',
+                  coordinates: [6.00041535, 49.697110053],
+                },
               },
-              geomlonlat: {
-                type: 'Point',
-                coordinates: [6.00041535, 49.697110053],
-              },
-            },
-          ],
-        },
+            ],
+          },
+        })
       }
     )
   })
@@ -65,8 +75,6 @@ describe('Location Info', () => {
         cy.get('div.ol-viewport').rightclick(350, 300, { force: true })
         cy.get('[data-cy="locationInfo"]').should('be.visible')
         cy.get('[data-cy="locationInfo"]').find('input').should('exist')
-        //cy.log(JSON.stringify(cy.get('[data-cy="locationInfo"]')
-        //  .find('input').invoke('val')))
         cy.get('[data-cy="locationInfo"]')
           .find('input')
           .invoke('val')
@@ -127,12 +135,10 @@ describe('Location Info', () => {
           })
         cy.get('div.ol-viewport').rightclick(350, 50, { force: true })
         cy.get('[data-cy="streetviewNoData"]').should('not.be.visible')
-        // The waiting animation has been added to allow synchronisation
-        // in the test once the streetview is fully loaded.
         cy.get('[data-cy="streetviewLoading"]').should('not.be.visible')
         cy.window()
           .its('olMap')
-          .then(function (olMap) {
+          .should(function (olMap) {
             const featureLayers = olMap
               .getLayers()
               .getArray()
@@ -140,17 +146,17 @@ describe('Location Info', () => {
             const features = featureLayers
               .map((l: any) => l.getSource().getFeatures())
               .flat()
-            cy.wrap(features.length).should('equal', 3)
+            expect(features.length).to.equal(3)
           })
         cy.get('[data-cy="locationInfo"] > div > table > tbody > tr')
           .last()
           .find('td')
-          .should('contain.text', '669.87 m')
+          .should('contain.text', '20.98 m')
         cy.get('div.ol-viewport').click(382, 82, { force: true })
         cy.get('[data-cy="locationInfo"] > div > table > tbody > tr')
           .last()
           .find('td')
-          .should('contain.text', '662.47 m')
+          .should(el => expect(el).to.contain.text('394.23 m'))
       })
     })
   })

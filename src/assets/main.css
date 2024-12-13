@@ -244,7 +244,7 @@
   .lux-loader {
     @apply border-[20px] border-solid border-white rounded-full;
     @apply border-t-[20px] border-t-[color:var(--color-primary)];
-    @apply m-auto w-[200px] h-[200px];
+    @apply z-10 m-auto w-[200px] h-[200px];
     animation: lux-loader 4s linear infinite;
   }
 

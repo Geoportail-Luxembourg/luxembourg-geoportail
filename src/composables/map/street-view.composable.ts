@@ -247,7 +247,6 @@ export default function useStreeView(streetViewDiv: Ref<HTMLElement | null>) {
 
   function handlePanoramaPositionChange(updateLocation: boolean) {
     panoPositionChanging.value = true
-    streetViewLoading.value = true
     const position = panorama!.getPosition()
     if (position) {
       const panoLonLat = [position.lng(), position.lat()]
