@@ -84,9 +84,9 @@ describe('Legends', () => {
     })
 
     it('displays the legends for both layers having legend', () => {
-      cy.get('[data-cy="legendLayer"]').should(layer =>
-        expect(layer).to.have.length(2)
-      )
+      cy.get('[data-cy="legendLayer"]')
+        .its('length')
+        .should(len => expect(len).to.equal(2))
     })
   })
 
