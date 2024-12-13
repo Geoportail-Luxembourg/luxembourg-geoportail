@@ -27,8 +27,10 @@ class StatePersistorLocationInfo implements StatePersistorService {
     watch(
       locationInfo,
       value => {
-        storageHelper.setValue(SP_KEY_CROSSHAIR, value !== undefined)
-        if (value !== undefined) {
+        if (value === undefined) {
+          storageHelper.removeItem(SP_KEY_CROSSHAIR)
+        } else {
+          storageHelper.setValue(SP_KEY_CROSSHAIR, true)
           storageHelper.setValue(SP_KEY_X, value[0])
           storageHelper.setValue(SP_KEY_Y, value[1])
         }
