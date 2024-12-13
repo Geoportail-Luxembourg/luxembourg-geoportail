@@ -57,9 +57,9 @@ describe('Legends', () => {
     beforeEach(() => {
       cy.get('[data-cy="catalogButton"]').click()
       cy.get('[data-cy="layerLabel-1813"]').click()
-      cy.get('[data-cy="catalog"]')
-        .find('[data-cy="layerLabel-359"]')
-        .click({ force: true })
+      cy.get('[data-cy="parentLayerLabel-242"]').click()
+      cy.get('[data-cy="parentLayerLabel-248"]').click()
+      cy.get('[data-cy="layerLabel-359"]').click()
       cy.get('[data-cy="legendsOpenClose"] > button').click()
     })
 
@@ -72,11 +72,10 @@ describe('Legends', () => {
     beforeEach(() => {
       cy.get('[data-cy="catalogButton"]').click()
       cy.get('[data-cy="layerLabel-1813"]').click()
-      cy.get('[data-cy="catalog"]')
-        .find('[data-cy="layerLabel-359"]')
-        .click({ force: true })
+      cy.get('[data-cy="parentLayerLabel-242"]').click()
+      cy.get('[data-cy="parentLayerLabel-248"]').click()
+      cy.get('[data-cy="layerLabel-359"]').click()
 
-      cy.get('[data-cy="parentLayerLabel-242"]').find('button').first().click()
       cy.get('[data-cy="parentLayerLabel-309"]').click()
       cy.get('[data-cy="layerLabel-269"]').click()
       cy.get('[data-cy="layerLabel-349"]').click()
