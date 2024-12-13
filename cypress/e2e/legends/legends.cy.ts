@@ -10,6 +10,16 @@ describe('Legends', () => {
       '/legends/get_html?lang=fr&name=energie%3Apotentiel_solaire&id=1813',
       { fixture: 'legends_potentiel_solaire.html' }
     )
+    cy.intercept(
+      'GET',
+      '/legends/get_html?lang=de&name=lisl%3Alc2018&id=1951',
+      { fixture: 'legends_landcover.html' }
+    )
+    cy.intercept(
+      'GET',
+      '/legends/get_html?lang=de&name=act%3Aroadmap_vt&id=556',
+      { fixture: 'legends_bg_roadmap.html' }
+    )
     cy.visit('/')
   })
 
