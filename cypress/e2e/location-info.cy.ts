@@ -58,7 +58,7 @@ describe('Location Info', () => {
       })
       it('should display coordinate and address information in the panel', () => {
         cy.get('[data-cy="locationInfo"]').should('be.hidden')
-        cy.url().should('contain', 'crosshair=false')
+        cy.url().should('not.contain', 'crosshair=')
         cy.window()
           .its('olMap')
           .then(function (olMap) {
