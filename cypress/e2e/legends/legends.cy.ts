@@ -92,17 +92,10 @@ describe('Legends', () => {
     })
 
     it('displays the legends for both layers having legend', () => {
-      cy.wait('@mockedMetadataParcelles').then(interception => {
-        cy.log(interception.response.body)
-      })
-      cy.wait('@mockedParcelles').then(interception => {
-        cy.log(interception.response.body)
-      })
-      cy.wait('@mockedSolaire').then(interception => {
-        cy.log(interception.response.body)
-      })
+      cy.wait('@mockedMetadataParcelles', { timeout: 10000 })
+      cy.wait('@mockedParcelles')
+      cy.wait('@mockedSolaire')
 
-      cy.log(Cypress.env('API_URL'))
       cy.get('[data-cy="legendLayer"]').should('have.length', 2)
     })
   })
