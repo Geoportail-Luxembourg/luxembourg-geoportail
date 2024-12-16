@@ -20,6 +20,7 @@ export interface Attributes {
   showProfile: { active: boolean }
   profile: any
   label: string
+  [key: string]: unknown
 }
 
 export interface FeatureInfoJSON {
