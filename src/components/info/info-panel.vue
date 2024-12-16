@@ -8,7 +8,7 @@ import { useFeatureInfoStore } from '@/stores/feature-info.store'
 import useMap from '@/composables/map/map.composable'
 import LocationInfo from './location-info.vue'
 import FeatureInfo from '@/components/info/feature-info.vue'
-import { watch, onUnmounted } from 'vue'
+import { watch } from 'vue'
 
 const { t } = useTranslation()
 const appStore = useAppStore()
@@ -24,10 +24,6 @@ watch(infoOpen, isOpen => {
   if (!isOpen) {
     clearContent()
   }
-})
-
-onUnmounted(() => {
-  clearContent()
 })
 </script>
 
