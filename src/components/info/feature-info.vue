@@ -30,15 +30,13 @@ onUnmounted(() => {
   featureInfoLayerService.clearFeatures()
 })
 
+const templates = {
+  'default.html': DefaultTemplate,
+  'lignes_bus.html': LignesBusTemplate,
+}
+
 const getTemplateComponent = (template: string) => {
-  switch (template) {
-    case 'default.html':
-      return DefaultTemplate
-    case 'lignes_bus.html':
-      return LignesBusTemplate
-    default:
-      return DefaultTemplate
-  }
+  return templates[template as keyof typeof templates] || DefaultTemplate
 }
 
 function onExport(payload: { feature: FeatureJSON; format: ExportFormat }) {
