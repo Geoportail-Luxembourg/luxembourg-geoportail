@@ -6,6 +6,10 @@ defineProps({
     type: Object as () => FeatureInfoJSON,
     required: true,
   },
+  currentUrl: {
+    type: String,
+    required: false,
+  },
 })
 </script>
 <template>

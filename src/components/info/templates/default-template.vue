@@ -23,12 +23,15 @@ defineProps({
     type: Object as () => FeatureInfoJSON,
     required: true,
   },
+  currentUrl: {
+    type: String,
+    required: false,
+  },
 })
 defineEmits<{
   (e: 'export', payload: { feature: FeatureJSON; format: 'kml' | 'gpx' }): void
 }>()
 const { t } = useTranslation()
-const currentUrl = window.location.href
 
 function isNoSolarNorWaterLink(label: string, attributeEntry: AttributeEntry) {
   return (

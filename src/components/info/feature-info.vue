@@ -23,6 +23,7 @@ defineProps({
     required: true,
   },
 })
+const currentUrl = window.location.href
 const map = useMap().getOlMap()
 
 onUnmounted(() => {
@@ -82,6 +83,7 @@ function onExport(payload: { feature: FeatureJSON; format: ExportFormat }) {
       :key="index"
       :is="getTemplateComponent(layers.template)"
       :layers="layers"
+      :currentUrl="currentUrl"
       @export="onExport"
     />
   </div>
