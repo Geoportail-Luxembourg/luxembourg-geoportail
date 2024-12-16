@@ -4,22 +4,17 @@ describe('Legends', () => {
       'GET',
       '/legends/get_html?lang=fr&name=pcn_parcelles%3Ashow&id=359',
       { fixture: 'legends_parcelles.html' }
-    )
+    ).as('parcel-fixture')
     cy.intercept(
       'GET',
       '/legends/get_html?lang=fr&name=energie%3Apotentiel_solaire&id=1813',
       { fixture: 'legends_potentiel_solaire.html' }
-    )
+    ).as('solaire-fixture')
     cy.intercept(
       'GET',
-      '/legends/get_html?lang=de&name=lisl%3Alc2018&id=1951',
-      { fixture: 'legends_landcover.html' }
-    )
-    cy.intercept(
-      'GET',
-      '/legends/get_html?lang=de&name=act%3Aroadmap_vt&id=556',
+      '/legends/get_html?lang=fr&name=act%3Aroadmap_vt&id=556',
       { fixture: 'legends_bg_roadmap.html' }
-    )
+    ).as('bg-roadmap-fixture')
     cy.visit('/')
   })
 
@@ -34,6 +29,7 @@ describe('Legends', () => {
         'contain.text',
         "Aucune légende n'est disponible pour les couches sélectionnées."
       )
+      cy.wait('@bg-roadmap-fixture')
       cy.get('[data-cy="legendBgLayer"]').should('exist')
     })
 
@@ -73,6 +69,8 @@ describe('Legends', () => {
     })
 
     it('displays the legends for both layers', () => {
+      cy.wait('@solaire-fixture')
+      cy.wait('@parcel-fixture')
       cy.get('[data-cy="legendLayer"]').should('have.length', 2)
     })
   })
@@ -94,9 +92,9 @@ describe('Legends', () => {
     })
 
     it('displays the legends for both layers having legend', () => {
-      cy.get('[data-cy="legendLayer"]')
-        .its('length')
-        .should(len => expect(len).to.equal(2))
+      cy.wait('@parcel-fixture')
+      cy.wait('@solaire-fixture')
+      cy.get('[data-cy="legendLayer"]').its('length').should('be.equal', 2)
     })
   })
 
