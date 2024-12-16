@@ -21,6 +21,15 @@ import AeroTemplate from './templates/aero-template.vue'
 import AffairesTemplate from './templates/affaires-template.vue'
 import AstaTemplate from './templates/asta-template.vue'
 import AutomaticSolsTemplate from './templates/automatic-sols-template.vue'
+import PoiEatTemplate from './templates/poi-eat-template.vue'
+import PoiTemplate from './templates/poi-template.vue'
+import RemembrementsTemplate from './templates/remembrements-template.vue'
+import SentierNatureTemplate from './templates/sentier-nature-template.vue'
+import UrplandTemplate from './templates/urplang-template.vue'
+import VitiFlikTemplate from './templates/viti-flik.vue'
+import VitiKleinlageTemplate from './templates/viti-kleinlage.vue'
+import VitiNameTemplate from './templates/viti-name.vue'
+import VitiParcelsTemplate from './templates/viti-parcels.vue'
 
 defineProps({
   content: {
@@ -43,6 +52,15 @@ const templates = {
   'asta_esp.html': AstaTemplate,
   'automatic_sols.html': AutomaticSolsTemplate,
   'lignes_bus.html': LignesBusTemplate,
+  'poi-eat.html': PoiEatTemplate,
+  'poi.html': PoiTemplate,
+  'remembrements.html': RemembrementsTemplate,
+  'sentier_nature.html': SentierNatureTemplate,
+  'urplang.html': UrplandTemplate,
+  'viti_flik.html': VitiFlikTemplate,
+  'viti_kleinlage.html': VitiKleinlageTemplate,
+  'viti_name.html': VitiNameTemplate,
+  'viti_parcels.html': VitiParcelsTemplate,
 }
 
 const getTemplateComponent = (template: string) => {

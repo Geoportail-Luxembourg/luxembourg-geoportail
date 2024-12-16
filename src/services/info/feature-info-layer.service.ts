@@ -48,9 +48,8 @@ class FeatureInfoLayerService {
     this.featureLayer.set('cyLayerType', FEATURE_LAYER_TYPE)
     this.featureLayer.setStyle(
       /**
-       * @param {ol.Feature|ol.render.Feature} feature Feature.
-       * @param {number} resolution Resolution.
-       * @return {Array.<ol.style.Style>} Array of styles.
+       * @param feature Feature.
+       * @return Array of styles.
        */
       function (feature: FeatureLike) {
         const lineColor = feature.get('color') || '#ffcc33'
@@ -87,7 +86,7 @@ class FeatureInfoLayerService {
   highlightFeatures(
     features: FeatureJSON[],
     fit: boolean,
-    maxZoom: number | undefined
+    maxZoom?: number
   ): void {
     if (features !== undefined && features !== null) {
       if (this.map.getLayers().getArray().indexOf(this.featureLayer) === -1) {
