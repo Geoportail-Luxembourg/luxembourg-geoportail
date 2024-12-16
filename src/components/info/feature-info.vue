@@ -1,7 +1,5 @@
 <script setup lang="ts">
 import { defineProps, onUnmounted } from 'vue'
-import DefaultTemplate from '@/components/info/templates/default-template.vue'
-import LignesBusTemplate from './templates/lignes-bus-template.vue'
 import {
   FeatureInfoJSON,
   FeatureJSON,
@@ -16,6 +14,13 @@ import { Feature } from 'ol'
 import { Geometry } from 'ol/geom'
 import GeoJSON from 'ol/format/GeoJSON'
 import useMap, { PROJECTION_LUX } from '@/composables/map/map.composable'
+import DefaultTemplate from './templates/default-template.vue'
+import LignesBusTemplate from './templates/lignes-bus-template.vue'
+import AdresseTemplate from './templates/adresse-template.vue'
+import AeroTemplate from './templates/aero-template.vue'
+import AffairesTemplate from './templates/affaires-template.vue'
+import AstaTemplate from './templates/asta-template.vue'
+import AutomaticSolsTemplate from './templates/automatic-sols-template.vue'
 
 defineProps({
   content: {
@@ -32,6 +37,11 @@ onUnmounted(() => {
 
 const templates = {
   'default.html': DefaultTemplate,
+  'adresse.html': AdresseTemplate,
+  'aero.html': AeroTemplate,
+  'affaires.html': AffairesTemplate,
+  'asta_esp.html': AstaTemplate,
+  'automatic_sols.html': AutomaticSolsTemplate,
   'lignes_bus.html': LignesBusTemplate,
 }
 
