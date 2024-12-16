@@ -1,5 +1,4 @@
 <script setup lang="ts">
-import { defineProps } from 'vue'
 import {
   AttributeEntry,
   FeatureInfoJSON,
@@ -134,22 +133,11 @@ function isAudioLink(attributeEntry: AttributeEntry) {
             </div>
           </div>
         </div>
-        <div class="query-profile" v-if="layers.has_profile">
-          <profile-feature-info :feature="feature" />
-        </div>
         <div v-if="layers.has_profile">
-          <button
-            class="lux-feature-info-export"
-            @click="$emit('export', { feature, format: 'kml' })"
-          >
-            {{ t('Exporter KMl') }}
-          </button>
-          <button
-            class="lux-feature-info-export"
-            @click="$emit('export', { feature, format: 'gpx' })"
-          >
-            {{ t('Exporter GPX') }}
-          </button>
+          <ProfileFeatureInfo
+            :feature="feature"
+            @export="payload => $emit('export', payload)"
+          />
         </div>
         <div v-if="!hasAttributes(feature)">
           <span>{{

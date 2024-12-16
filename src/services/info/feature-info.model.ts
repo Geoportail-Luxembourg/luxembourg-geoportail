@@ -8,7 +8,7 @@ export interface FeatureJSON {
   properties?: Record<string, unknown>
 }
 
-interface GeometryJSON {
+export interface GeometryJSON {
   type: string
   coordinates: number[][][]
 }
@@ -21,6 +21,8 @@ export interface Attributes {
   profile: any
   label: string
   [key: string]: unknown
+  path?: string
+  thumb?: string
 }
 
 export interface FeatureInfoJSON {
