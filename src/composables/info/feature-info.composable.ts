@@ -22,6 +22,7 @@ import { DrawnFeature } from '@/services/draw/drawn-feature'
 import { Pixel } from 'ol/pixel'
 import { throttle } from '@/services/utils'
 import { useMapStore } from '@/stores/map.store'
+import { useLocationInfoStore } from '@/stores/location-info.store'
 import { getFeatureInfoJson } from '@/services/api/api-feature-info.service'
 
 export default function useFeatureInfo() {
@@ -34,6 +35,9 @@ export default function useFeatureInfo() {
   const { findById } = useThemes()
   const { drawStateActive, editStateActive, drawnFeatures } = storeToRefs(
     useDrawStore()
+  )
+  const { locationInfo, isStreetviewActive } = storeToRefs(
+    useLocationInfoStore()
   )
   const { maxZoom } = storeToRefs(useMapStore())
 
@@ -78,6 +82,8 @@ export default function useFeatureInfo() {
         // routingOpen ||
         // lidarOpen ||
         // appActivetool.value.isActive() || => corresponds to: measureActive, streetviewActive
+        evt.originalEvent.button === 2 || // right click
+        (isStreetviewActive.value && locationInfo.value) ||
         drawStateActive.value ||
         editStateActive.value ||
         isLoading.value

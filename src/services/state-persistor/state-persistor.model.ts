@@ -24,6 +24,7 @@ export const SP_KEY_ROTATION = 'rotation'
 export const SP_KEY_SRS = 'SRS' // TODO:
 export const SP_KEY_X = 'X'
 export const SP_KEY_Y = 'Y'
+export const SP_KEY_CROSSHAIR = 'crosshair'
 export const SP_KEY_SERIAL = 'serial'
 export const SP_KEY_SERIAL_LAYERS = 'serialLayer'
 export const SP_KEYS_STYLE = [

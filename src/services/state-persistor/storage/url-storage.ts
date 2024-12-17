@@ -1,3 +1,11 @@
+import {
+  SP_KEY_LOCALFORAGE,
+  SP_KEY_APPLOGIN,
+  SP_KEY_IPV6,
+  SP_KEY_EMBEDDED_SERVER,
+  SP_KEY_EMBEDDED_SERVER_PROTOCOL,
+} from '@/services/state-persistor/state-persistor.model'
+
 export class UrlStorage implements Storage {
   private snappedUrl: URL
 
@@ -16,6 +24,52 @@ export class UrlStorage implements Storage {
 
   key(index: number): string | null {
     throw new Error('Method key() not implemented. ' + index)
+  }
+
+  getStrippedUrl(optCoordinate: number[] | undefined) {
+    // stripped by embedded app parameters
+    const url = new URL(window.location.toString())
+    const params = new URLSearchParams(url.search)
+
+    if (optCoordinate !== undefined) {
+      params.set('X', Math.round(optCoordinate[0]).toString())
+      params.set('Y', Math.round(optCoordinate[1]).toString())
+    }
+    params.delete(SP_KEY_LOCALFORAGE)
+    params.delete(SP_KEY_APPLOGIN)
+    params.delete(SP_KEY_IPV6)
+    params.delete(SP_KEY_EMBEDDED_SERVER)
+    params.delete(SP_KEY_EMBEDDED_SERVER_PROTOCOL)
+
+    url.search = params.toString()
+
+    return url.toString()
+  }
+
+  async getShortUrl(optCoordinate: number[] | undefined) {
+    const strippedUrl = this.getStrippedUrl(optCoordinate)
+      // convert github pages and vite ports localhost 4173 or 5173
+      // to hosts accepted by the shortURL entrypoint
+      // TODO: remove when there is a v4 API available
+      .replace(
+        /https:\/\/geoportail-luxembourg.github.io\/luxembourg-geoportail\/.+\//,
+        import.meta.env.VITE_V3_API_HOST
+      )
+      .replace(/http:\/\/localhost:[45]173\//, import.meta.env.VITE_V3_API_HOST)
+
+    const data = new URLSearchParams()
+
+    data.set('url', strippedUrl)
+
+    const response = await fetch(import.meta.env.VITE_SHORT_URL, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/x-www-form-urlencoded',
+      },
+      body: data.toString(),
+    })
+
+    return await response.json()
   }
 
   getSnappedUrl() {
