@@ -5,7 +5,6 @@ describe('Legends', () => {
       '/getMetadata?lang=fr&uid=de5373d6-340f-4203-a065-da7550a03cc4_2050',
       { fixture: 'legends_parcelles.html' }
     ).as('mockedMetadataParcelles')
-
     cy.intercept(
       'GET',
       '/legends/get_html?lang=fr&name=pcn_parcelles%3Ashow&id=359',
@@ -98,6 +97,7 @@ describe('Legends', () => {
     })
 
     it('displays the legends for both layers having legend', () => {
+      cy.wait('@mockedMetadataParcelles', { timeout: 10000 })
       cy.wait('@parcel-fixture')
       cy.wait('@solaire-fixture')
       cy.get('[data-cy="legendLayer"]').its('length').should('be.equal', 2)

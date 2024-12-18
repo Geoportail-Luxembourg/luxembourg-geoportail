@@ -85,16 +85,25 @@ function onClickChangeLineStyle(style: string) {
   feature.featureStyle = { ...feature.featureStyle, linestyle: style }
 }
 
-function onChangeSymbolShape(shape: DrawnFeatureStyleShape) {
+function onChangeSymbolShape(
+  shape: DrawnFeatureStyleShape,
+  callBack?: Function
+) {
   feature.featureStyle = {
     ...feature.featureStyle,
     shape,
     symbolId: undefined,
     symboltype: undefined,
   }
+
+  callBack && callBack()
 }
 
-function onChangeSymbolIcon(symbolId: string, symboltype: Symboltype) {
+function onChangeSymbolIcon(
+  symbolId: string,
+  symboltype: Symboltype,
+  callBack?: Function
+) {
   feature.featureStyle = {
     ...feature.featureStyle,
     symbolId,
@@ -102,6 +111,8 @@ function onChangeSymbolIcon(symbolId: string, symboltype: Symboltype) {
     size: 100,
     shape: undefined,
   }
+
+  callBack && callBack()
 }
 </script>
 
@@ -198,8 +209,11 @@ function onChangeSymbolIcon(symbolId: string, symboltype: Symboltype) {
 
     <template #symbolIcon="{ closeEditIcon }">
       <FeatureEditSymbolIcon
-        @changeSymbolIcon="(symbolId: string, symboltype: Symboltype) => { onChangeSymbolIcon(symbolId, symboltype); closeEditIcon()}"
-        @changeSymbolShape="(shape: DrawnFeatureStyleShape) => { onChangeSymbolShape(shape); closeEditIcon()}"
+        @changeSymbolIcon="
+          (symbolId, symboltype) =>
+            onChangeSymbolIcon(symbolId, symboltype, closeEditIcon)
+        "
+        @changeSymbolShape="shape => onChangeSymbolShape(shape, closeEditIcon)"
         @close="closeEditIcon"
       >
         <template v-slot:symbolcolor>

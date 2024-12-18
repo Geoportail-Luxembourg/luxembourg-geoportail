@@ -22,6 +22,7 @@ const shapeComponents = {
   cross: Cross,
   triangle: Triangle,
 }
+type ShapeKey = keyof typeof shapeComponents
 </script>
 
 <template>
@@ -53,7 +54,7 @@ const shapeComponents = {
       {{ t('Symbole') }}
       <component
         v-if="feature.featureStyle.shape"
-        :is="shapeComponents[feature.featureStyle.shape]"
+        :is="shapeComponents[feature.featureStyle.shape as ShapeKey]"
         :fillColor="feature.featureStyle.color"
       />
     </button>

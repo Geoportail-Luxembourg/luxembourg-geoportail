@@ -20,7 +20,7 @@ import { AlertNotificationType } from '@/stores/alert-notifications.store.model'
 
 import FeatureEditSymbolList from './feature-edit-symbol-list.vue'
 
-defineEmits<{
+const emit = defineEmits<{
   (e: 'close'): void
   (e: 'changeSymbolIcon', symbolId: string, symboltype: Symboltype): void
   (e: 'changeSymbolShape', shape: DrawnFeatureStyleShape): void
@@ -90,6 +90,10 @@ async function onSelectMySymbol() {
     }
   }
 }
+
+function onClickShape(shape: DrawnFeatureStyleShape) {
+  emit('changeSymbolShape', shape)
+}
 </script>
 
 <template>
@@ -119,7 +123,7 @@ async function onSelectMySymbol() {
         v-for="shape in Object.keys(shapeComponents)"
         :key="shape"
         class="lux-btn p-2 rounded-sm border-gray-600"
-        @click="() => $emit('changeSymbolShape', shape as keyof typeof shapeComponents)"
+        @click="onClickShape(shape as DrawnFeatureStyleShape)"
         :data-cy="`featStyleSymbol_${shape}`"
       >
         <component
@@ -147,7 +151,6 @@ async function onSelectMySymbol() {
         ref="fileInput"
         type="file"
         id="file"
-        multiple
         hidden
         @change="onSelectMySymbol"
       />

@@ -26,7 +26,7 @@ export type DrawnFeatureStyleShape =
   | 'square'
   | 'cross'
   | 'triangle'
-  // | 'star' // TODO: see if star option is used (look like it is not...)
+  | 'star' // TODO: see if star option is used (look like it is not...)
   | undefined
 
 export type Symboltype = 'us' | 'public'

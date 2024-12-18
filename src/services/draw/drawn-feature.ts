@@ -375,8 +375,7 @@ export class DrawnFeature extends Feature {
             rotation: feature.featureStyle.angle,
           })
           image = new StyleRegularShape(imageOptions as RegularShapeOptions)
-        } /*else if (shape === 'star') {
-          // TODO: star still used????
+        } else if (shape === 'star') {
           Object.assign(imageOptions, {
             points: 5,
             angle: Math.PI / 4,
@@ -384,7 +383,7 @@ export class DrawnFeature extends Feature {
             radius2: featureSize,
           })
           image = new StyleRegularShape(imageOptions as RegularShapeOptions)
-        }*/ else if (shape === 'cross') {
+        } else if (shape === 'cross') {
           Object.assign(imageOptions, {
             points: 4,
             angle: 0,
