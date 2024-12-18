@@ -187,15 +187,3 @@ export function downloadBlob(filename: string, blob: Blob) {
 export function capitalize(str: string) {
   return str.charAt(0).toUpperCase() + str.slice(1)
 }
-
-export function colorStringToRgba(colorString: string, opacity = 1) {
-  const isValidHex = /^#[0-9A-Fa-f]{6}$/.test(colorString)
-  if (!isValidHex) {
-    throw new Error(`Invalid hex color string: ${colorString}`)
-  }
-
-  const r = parseInt(colorString.slice(1, 3), 16)
-  const g = parseInt(colorString.slice(3, 5), 16)
-  const b = parseInt(colorString.slice(5, 7), 16)
-  return [r, g, b, opacity]
-}

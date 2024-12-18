@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { defineProps, onUnmounted } from 'vue'
+import { onUnmounted } from 'vue'
 import DefaultTemplate from '@/components/info/templates/default-template.vue'
 import LignesBusTemplate from './templates/lignes-bus-template.vue'
 import {

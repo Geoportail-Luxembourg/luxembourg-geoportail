@@ -60,7 +60,7 @@ jobs:
           tag_name: ${{ github.ref_type == 'tag' && github.ref || env.AUTO_TAG }}
       - uses: actions/setup-node@v3
         with:
-          node-version: 16
+          node-version: 22
           cache: 'npm'
       - name: Build and pack prod library
         shell: bash

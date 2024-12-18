@@ -38,19 +38,7 @@ describe('Authentification', () => {
 
     describe('When user is authenticating with success', () => {
       beforeEach(() => {
-        cy.intercept('POST', '/login', {
-          statusCode: 200,
-          body: {
-            login: 'MyLogin',
-            mail: 'my_login@email.com',
-          },
-        })
-        cy.get('header [data-cy="authFormIcon"]').click()
-        cy.get('[data-cy="authForm"] input[name="userName"]').type('MyLogin')
-        cy.get('[data-cy="authForm"] input[name="userPassword"]').type(
-          'Rand87321mdp'
-        )
-        cy.get('[data-cy="authForm"] input[type="submit"]').click()
+        cy.login()
       })
 
       it('authenticates the user, hides the form and display the success notification msg', () => {
@@ -73,23 +61,11 @@ describe('Authentification', () => {
 
     describe('When user is logging out', () => {
       beforeEach(() => {
-        cy.intercept('POST', '/login', {
-          statusCode: 200,
-          body: {
-            login: 'MyLogin',
-            mail: 'my_login@email.com',
-          },
-        })
         cy.intercept('GET', '/logout', {
           statusCode: 200,
           body: {},
         })
-        cy.get('[data-cy="authFormIcon"]').click()
-        cy.get('[data-cy="authForm"] input[name="userName"]').type('MyLogin')
-        cy.get('[data-cy="authForm"] input[name="userPassword"]').type(
-          'Rand87321mdp'
-        )
-        cy.get('[data-cy="authForm"] input[type="submit"]').click()
+        cy.login()
       })
 
       it('logs out the user and display back the login form', () => {

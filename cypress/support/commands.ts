@@ -71,6 +71,21 @@ Cypress.Commands.add('dragVertexOnMap', (originX, originY, x, y) => {
   cy.get('div.ol-viewport').realMouseUp()
 })
 
+Cypress.Commands.add('login', () => {
+  cy.intercept('POST', '/login', {
+    statusCode: 200,
+    body: {
+      login: 'MyLogin',
+      mail: 'my_login@email.com',
+    },
+  })
+
+  cy.get('header [data-cy="authFormIcon"]').click()
+  cy.get('[data-cy="authForm"] input[name="userName"]').type('MyLogin')
+  cy.get('[data-cy="authForm"] input[name="userPassword"]').type('Rand87321mdp')
+  cy.get('[data-cy="authForm"] input[type="submit"]').click()
+})
+
 declare global {
   namespace Cypress {
     interface Chainable {
@@ -82,7 +97,7 @@ declare global {
         x: number,
         y: number
       ): Chainable<void>
-      // login(email: string, password: string): Chainable<void>
+      login(): Chainable<void>
       // drag(subject: string, options?: Partial<TypeOptions>): Chainable<Element>
       // dismiss(subject: string, options?: Partial<TypeOptions>): Chainable<Element>
       // visit(originalFn: CommandOriginalFn, url: string, options: Partial<VisitOptions>): Chainable<Element>

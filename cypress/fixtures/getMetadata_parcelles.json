@@ -1,0 +1,321 @@
+{
+  "@from": "1",
+  "@to": "1",
+  "@selected": "0",
+  "@maxPageSize": "100",
+  "summary": {
+    "@count": "1",
+    "@type": "local",
+    "types": [
+      {
+        "@count": "1",
+        "@name": "dataset",
+        "@label": "Jeu de donn\u00e9es"
+      }
+    ],
+    "topicCats": [
+      {
+        "@count": "1",
+        "@name": "geoscientificInformation",
+        "@label": "Informations g\u00e9oscientifiques"
+      },
+      {
+        "@count": "1",
+        "@name": "planningCadastre",
+        "@label": "Planification/Cadastre"
+      }
+    ],
+    "inspireThemes": [],
+    "inspireThemesWithAc": [],
+    "keywords": [
+      {
+        "@count": "1",
+        "@name": "Grand Public",
+        "@label": "Grand Public"
+      },
+      {
+        "@count": "1",
+        "@name": "Grand-Duch\u00e9 du Luxembourg",
+        "@label": "Grand-Duch\u00e9 du Luxembourg"
+      },
+      {
+        "@count": "1",
+        "@name": "geoportail.lu",
+        "@label": "geoportail.lu"
+      },
+      {
+        "@count": "1",
+        "@name": "Informations g\u00e9oscientifiques",
+        "@label": "Informations g\u00e9oscientifiques"
+      },
+      {
+        "@count": "1",
+        "@name": "Planification/Cadastre",
+        "@label": "Planification/Cadastre"
+      },
+      {
+        "@count": "1",
+        "@name": "Urban Farming",
+        "@label": "Urban Farming"
+      },
+      {
+        "@count": "1",
+        "@name": "commune",
+        "@label": "commune"
+      },
+      {
+        "@count": "1",
+        "@name": "commune>Commande",
+        "@label": "commune>Commande"
+      },
+      {
+        "@count": "1",
+        "@name": "couche",
+        "@label": "couche"
+      },
+      {
+        "@count": "1",
+        "@name": "Grand Public>Donn\u00e9es de base>Parcelles cadastrales",
+        "@label": "Grand Public>Donn\u00e9es de base>Parcelles cadastrales"
+      },
+      {
+        "@count": "1",
+        "@name": "Urban Farming>Parcelles cadastrales",
+        "@label": "Urban Farming>Parcelles cadastrales"
+      },
+      {
+        "@count": "1",
+        "@name": "parcelle",
+        "@label": "parcelle"
+      }
+    ],
+    "orgNames": [
+      {
+        "@count": "1",
+        "@name": "Administration du Cadastre et de la Topographie",
+        "@label": "Administration du Cadastre et de la Topographie"
+      }
+    ],
+    "createDateYears": [],
+    "formats": [],
+    "spatialRepresentationTypes": [
+      {
+        "@count": "1",
+        "@name": "vector",
+        "@label": "Vecteur"
+      }
+    ],
+    "maintenanceAndUpdateFrequencies": [
+      {
+        "@count": "1",
+        "@name": "asNeeded",
+        "@label": "Lorsque n\u00e9cessaire"
+      }
+    ],
+    "status": [
+      {
+        "@count": "1",
+        "@name": "onGoing",
+        "@label": "Mise \u00e0 jour continue"
+      }
+    ],
+    "serviceTypes": [],
+    "denominators": [
+      {
+        "@count": "1",
+        "@name": "0",
+        "@label": "0"
+      }
+    ],
+    "resolutions": []
+  },
+  "metadata": {
+    "title": "Couche des parcelles cadastrales",
+    "abstract": "Cette couche contient les parcelles cadastrales issues de la base de donn\u00e9es cadastrale. Elle ne peut pas \u00eatre superpos\u00e9e avec certaines donn\u00e9es d'une autre pr\u00e9cision g\u00e9om\u00e9trique.",
+    "responsibleParty": [
+      "Point de contact|metadata|Administration du Cadastre et de la Topographie||support@geoportail.lu|Service du g\u00e9oportail et de l'ILDG (ACT)||1, Rue Charles Darwin, Luxembourg, L-1433, Luxembourg|24754401||1|",
+      "Point de contact|resource|Administration du Cadastre et de la Topographie||support@geoportail.lu|Service du g\u00e9oportail et de l'ILDG (ACT)||1, Rue Charles Darwin, Luxembourg, L-1433, Luxembourg|24754401||1|"
+    ],
+    "type": "dataset",
+    "legalConstraints": "Attribution 4.0 International (CC BY 4.0)",
+    "isHarvested": "n",
+    "displayOrder": "0",
+    "docLocale": "fre",
+    "popularity": "3644",
+    "keyword": [
+      "Grand Public",
+      "Grand Public>Donn\u00e9es de base>Parcelles cadastrales",
+      "Grand-Duch\u00e9 du Luxembourg",
+      "Informations g\u00e9oscientifiques",
+      "Planification/Cadastre",
+      "Urban Farming",
+      "Urban Farming>Parcelles cadastrales",
+      "commune",
+      "commune>Commande",
+      "couche",
+      "geoportail.lu",
+      "parcelle"
+    ],
+    "publishedForGroup": ["0", "1", "120"],
+    "identifier": "de5373d6-340f-4203-a065-da7550a03cc4_2050",
+    "image": "thumbnail|https://geocatalogue.geoportail.lu/geonetwork/srv/api/records/de5373d6-340f-4203-a065-da7550a03cc4_2050/attachments/262.png|",
+    "mdLanguage": ["eng", "fre", "ger", "ltz"],
+    "crsDetails": {
+      "code": "http://www.opengis.net/def/crs/EPSG/0/2169",
+      "codeSpace": "EPSG",
+      "name": "",
+      "url": ""
+    },
+    "maintenanceAndUpdateFrequency_text": "Lorsque n\u00e9cessaire",
+    "spatialRepresentationType_text": "Vecteur",
+    "denominator": "0",
+    "root": "gmd:MD_Metadata",
+    "isTemplate": "n",
+    "valid": "-1",
+    "feedbackCount": "0",
+    "rating": "0",
+    "source": "7d3f1bdb-fef1-4699-8c1c-0468d217e7fe",
+    "status": "onGoing",
+    "updateFrequency": "asNeeded",
+    "geoBox": "5.55|49.42|6.74|50.25",
+    "owner": "116",
+    "recordOwner": "Danielle Horper",
+    "defaultAbstract": "Cette couche contient les parcelles cadastrales issues de la base de donn\u00e9es cadastrale. Elle ne peut pas \u00eatre superpos\u00e9e avec certaines donn\u00e9es d'une autre pr\u00e9cision g\u00e9om\u00e9trique.",
+    "link": [
+      "359|ortho_2021|https://wms.geoportail.lu/public_map_layers/service|OGC:WMS-1.3.0-http-get-map|application/vnd.ogc.wms_xml|1",
+      "Parcelles cadastrales|parcels|https://map.geoportail.lu/theme/main?version=3&zoom=8&X=667917&Y=6394482&lang=fr&layers=359&opacities=1||text/plain|3",
+      "Plan cadastral|cadastre|https://map.geoportail.lu/theme/main?version=3&zoom=8&X=667917&Y=6394482&lang=fr&layers=262&opacities=1||text/plain|4",
+      "parcels|parcels|http://wmts1.geoportail.lu/opendata/service?request=getCapabilities&service=WMS&version=1.3.0|OGC:WMS-1.3.0-http-get-map|application/vnd.ogc.wms_xml|1",
+      "||https://data.public.lu/fr/datasets/plan-cadastral-numerise-pcn/|WWW:LINK-1.0-http--link|text/html|1"
+    ],
+    "defaultTitle": "Couche des parcelles cadastrales",
+    "datasetLang": ["eng", "fre", "ger", "ltz"],
+    "userinfo": "daniellehorper|Horper|Danielle|Administrator",
+    "topicCat": ["geoscientificInformation", "planningCadastre"],
+    "status_text": "Mise \u00e0 jour continue",
+    "standardName": "ISO 19115:2003/19139",
+    "crs": "http://www.opengis.net/def/crs/EPSG/0/2169::EPSG",
+    "logo": "/images/logos/7d3f1bdb-fef1-4699-8c1c-0468d217e7fe.png",
+    "draft": "n",
+    "keywordGroup": [
+      {
+        "Entit\u00e9s au Grand-Duch\u00e9 de Luxembourg": [
+          {
+            "value": "Grand-Duch\u00e9 du Luxembourg",
+            "link": ""
+          }
+        ],
+        "geoportail.lu themes": [
+          {
+            "value": "commune",
+            "link": ""
+          },
+          {
+            "value": "Urban Farming",
+            "link": ""
+          },
+          {
+            "value": "Grand Public",
+            "link": ""
+          }
+        ],
+        "geoportail.lu structure": [
+          {
+            "value": "commune>Commande",
+            "link": ""
+          },
+          {
+            "value": "Urban Farming>Parcelles cadastrales",
+            "link": ""
+          },
+          {
+            "value": "Grand Public>Donn\u00e9es de base>Parcelles cadastrales",
+            "link": ""
+          }
+        ],
+        "otherKeywords": [
+          {
+            "value": "parcelle",
+            "link": ""
+          },
+          {
+            "value": "couche",
+            "link": ""
+          },
+          {
+            "value": "geoportail.lu",
+            "link": ""
+          }
+        ]
+      },
+      {
+        "otherKeywords": [
+          {
+            "value": "parcelle",
+            "link": ""
+          },
+          {
+            "value": "couche",
+            "link": ""
+          },
+          {
+            "value": "geoportail.lu",
+            "link": ""
+          }
+        ],
+        "Entit\u00e9s au Grand-Duch\u00e9 de Luxembourg": [
+          {
+            "value": "Grand-Duch\u00e9 du Luxembourg",
+            "link": ""
+          }
+        ],
+        "geoportail.lu themes": [
+          {
+            "value": "commune",
+            "link": ""
+          },
+          {
+            "value": "Urban Farming",
+            "link": ""
+          },
+          {
+            "value": "Grand Public",
+            "link": ""
+          }
+        ],
+        "geoportail.lu structure": [
+          {
+            "value": "commune>Commande",
+            "link": ""
+          },
+          {
+            "value": "Urban Farming>Parcelles cadastrales",
+            "link": ""
+          },
+          {
+            "value": "Grand Public>Donn\u00e9es de base>Parcelles cadastrales",
+            "link": ""
+          }
+        ]
+      }
+    ],
+    "groupOwner": "120",
+    "_locale": "fre",
+    "geonet:info": {
+      "@xmlns:geonet": "http://www.fao.org/geonetwork",
+      "id": "61133",
+      "uuid": "de5373d6-340f-4203-a065-da7550a03cc4_2050",
+      "schema": "iso19139",
+      "createDate": "2021-02-04T21:44:17",
+      "changeDate": "2021-02-04T21:44:17",
+      "source": "7d3f1bdb-fef1-4699-8c1c-0468d217e7fe",
+      "isPublishedToAll": "true",
+      "view": "true",
+      "notify": "false",
+      "download": "true",
+      "dynamic": "true",
+      "featured": "false",
+      "selected": "false"
+    }
+  }
+}
