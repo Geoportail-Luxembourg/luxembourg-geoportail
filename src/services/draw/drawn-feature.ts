@@ -1,5 +1,12 @@
 import { Feature } from 'ol'
-import { Point, LineString, MultiPoint, Polygon } from 'ol/geom'
+import {
+  Point,
+  LineString,
+  MultiPoint,
+  Polygon,
+  GeometryCollection,
+  MultiLineString,
+} from 'ol/geom'
 import StyleStyle, { StyleFunction } from 'ol/style/Style'
 import StyleRegularShape, {
   Options as RegularShapeOptions,
@@ -17,7 +24,7 @@ import useMap, {
   PROJECTION_LUX,
   PROJECTION_WEBMERCATOR,
 } from '@/composables/map/map.composable'
-import { getProfileJson } from '@/services/api/api-profile.service'
+import { getProfileJson, ProfileJson } from '@/services/api/api-profile.service'
 import { colorStringToRgba } from '@/services/utils'
 import { ProfileData } from '@/components/common/graph/elevation-profile'
 
@@ -39,6 +46,7 @@ export class DrawnFeature extends Feature {
   _featureStyle: DrawnFeatureStyle
   map = useMap().getOlMap()
   profileData: ProfileData | undefined = undefined // Is used by linestring geom
+  profileJsonPromise: Promise<ProfileJson> | undefined
 
   constructor(drawnFeature?: DrawnFeature) {
     if (drawnFeature) {
@@ -79,6 +87,26 @@ export class DrawnFeature extends Feature {
   }
 
   /**
+   * Get the valid geometry to be sent to get profile api.
+   * Some geom may be collections (eg. layer "sentiers de randonnées"),
+   * for all others, simply return `this.getGeometry()`
+   */
+  getGeomProfile() {
+    const geom = this.getGeometry()
+
+    if (geom?.getType() === 'GeometryCollection') {
+      const geomArray = (<GeometryCollection>geom)
+        .getGeometriesArray()
+        .filter(g => g.getType() === 'LineString')
+        .map(g => (<LineString>g).getCoordinates())
+
+      return new MultiLineString(geomArray)
+    }
+
+    return geom
+  }
+
+  /**
    * Get the profile data (eg. to construct graph or download as a csv),
    * first calls the api profile.json and caculates the cumulative loss/gain elevations
    * for each point. Caches the result in profileData property so the api
@@ -90,22 +118,24 @@ export class DrawnFeature extends Feature {
 
     if (
       geom?.getType() !== 'LineString' &&
-      geom?.getType() !== 'MultiLineString'
+      geom?.getType() !== 'MultiLineString' &&
+      geom?.getType() !== 'GeometryCollection'
     ) {
       return
     }
 
-    if (this.profileData === undefined) {
+    if (this.profileJsonPromise === undefined) {
       const encodeOptions = {
         dataProjection: PROJECTION_LUX,
         featureProjection: PROJECTION_WEBMERCATOR,
       }
       const geomJson = new olFormatGeoJSON().writeGeometry(
-        this.getGeometry()!,
+        this.getGeomProfile()!,
         encodeOptions
       )
 
-      const profileData = await getProfileJson(geomJson, this.id)
+      this.profileJsonPromise = getProfileJson(geomJson, this.id)
+      const profileData = await this.profileJsonPromise
 
       let elevationGain = 0
       let elevationLoss = 0

@@ -1,7 +1,5 @@
 <script setup lang="ts">
-import { defineProps, onUnmounted } from 'vue'
-import DefaultTemplate from '@/components/info/templates/default-template.vue'
-import LignesBusTemplate from './templates/lignes-bus-template.vue'
+import { onUnmounted } from 'vue'
 import {
   FeatureInfoJSON,
   FeatureJSON,
@@ -16,6 +14,26 @@ import { Feature } from 'ol'
 import { Geometry } from 'ol/geom'
 import GeoJSON from 'ol/format/GeoJSON'
 import useMap, { PROJECTION_LUX } from '@/composables/map/map.composable'
+import AdresseTemplate from './templates/adresse-template.vue'
+import AeroTemplate from './templates/aero-template.vue'
+import AffairesTemplate from './templates/affaires-template.vue'
+import AstaTemplate from './templates/asta-template.vue'
+import AutomaticSolsTemplate from './templates/automatic-sols-template.vue'
+import BatimentsTemplate from './templates/batiments-template.vue'
+import BusWoTitleTemplate from './templates/bus-wo-title-template.vue'
+import BusTemplate from './templates/bus-template.vue'
+import DefaultTemplate from './templates/default-template.vue'
+import DefaultTableTemplate from './templates/default-table-template.vue'
+import LignesBusTemplate from './templates/lignes-bus-template.vue'
+import PoiEatTemplate from './templates/poi-eat-template.vue'
+import PoiTemplate from './templates/poi-template.vue'
+import RemembrementsTemplate from './templates/remembrements-template.vue'
+import SentierNatureTemplate from './templates/sentier-nature-template.vue'
+import UrplandTemplate from './templates/urplang-template.vue'
+import VitiFlikTemplate from './templates/viti-flik.vue'
+import VitiKleinlageTemplate from './templates/viti-kleinlage.vue'
+import VitiNameTemplate from './templates/viti-name.vue'
+import VitiParcelsTemplate from './templates/viti-parcels.vue'
 
 defineProps({
   content: {
@@ -23,21 +41,38 @@ defineProps({
     required: true,
   },
 })
+const currentUrl = window.location.href
 const map = useMap().getOlMap()
 
 onUnmounted(() => {
   featureInfoLayerService.clearFeatures()
 })
 
+const templates = {
+  'adresse.html': AdresseTemplate,
+  'aero.html': AeroTemplate,
+  'affaires.html': AffairesTemplate,
+  'asta_esp.html': AstaTemplate,
+  'automatic_sols.html': AutomaticSolsTemplate,
+  'batiments.html': BatimentsTemplate,
+  'bus_wo_title.html': BusWoTitleTemplate,
+  'bus.html': BusTemplate,
+  'default.html': DefaultTemplate,
+  'default_table.html': DefaultTableTemplate,
+  'lignes_bus.html': LignesBusTemplate,
+  'poi-eat.html': PoiEatTemplate,
+  'poi.html': PoiTemplate,
+  'remembrements.html': RemembrementsTemplate,
+  'sentier_nature.html': SentierNatureTemplate,
+  'urplang.html': UrplandTemplate,
+  'viti_flik.html': VitiFlikTemplate,
+  'viti_kleinlage.html': VitiKleinlageTemplate,
+  'viti_name.html': VitiNameTemplate,
+  'viti_parcels.html': VitiParcelsTemplate,
+}
+
 const getTemplateComponent = (template: string) => {
-  switch (template) {
-    case 'default.html':
-      return DefaultTemplate
-    case 'lignes_bus.html':
-      return LignesBusTemplate
-    default:
-      return DefaultTemplate
-  }
+  return templates[template as keyof typeof templates] || DefaultTemplate
 }
 
 function onExport(payload: { feature: FeatureJSON; format: ExportFormat }) {
@@ -82,6 +117,7 @@ function onExport(payload: { feature: FeatureJSON; format: ExportFormat }) {
       :key="index"
       :is="getTemplateComponent(layers.template)"
       :layers="layers"
+      :currentUrl="currentUrl"
       @export="onExport"
     />
   </div>
