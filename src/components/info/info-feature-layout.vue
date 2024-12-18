@@ -4,6 +4,7 @@ import {
   FeatureJSON,
 } from '@/services/info/feature-info.model'
 import { useTranslation } from 'i18next-vue'
+import { hasValidFID } from './templates/template-utilities'
 
 withDefaults(
   defineProps<{
@@ -41,7 +42,7 @@ const { t } = useTranslation()
     </slot>
 
     <!-- Direct link to the feature -->
-    <div>
+    <div v-if="hasValidFID(feature)">
       <a
         class="print:hidden"
         :href="getDirectLink(feature, currentUrl)"
