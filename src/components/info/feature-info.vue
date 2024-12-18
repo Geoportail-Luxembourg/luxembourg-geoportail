@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { defineProps, onUnmounted } from 'vue'
+import { onUnmounted } from 'vue'
 import {
   FeatureInfoJSON,
   FeatureJSON,
@@ -14,13 +14,17 @@ import { Feature } from 'ol'
 import { Geometry } from 'ol/geom'
 import GeoJSON from 'ol/format/GeoJSON'
 import useMap, { PROJECTION_LUX } from '@/composables/map/map.composable'
-import DefaultTemplate from './templates/default-template.vue'
-import LignesBusTemplate from './templates/lignes-bus-template.vue'
 import AdresseTemplate from './templates/adresse-template.vue'
 import AeroTemplate from './templates/aero-template.vue'
 import AffairesTemplate from './templates/affaires-template.vue'
 import AstaTemplate from './templates/asta-template.vue'
 import AutomaticSolsTemplate from './templates/automatic-sols-template.vue'
+import BatimentsTemplate from './templates/batiments-template.vue'
+import BusWoTitleTemplate from './templates/bus-wo-title-template.vue'
+import BusTemplate from './templates/bus-template.vue'
+import DefaultTemplate from './templates/default-template.vue'
+import DefaultTableTemplate from './templates/default-table-template.vue'
+import LignesBusTemplate from './templates/lignes-bus-template.vue'
 import PoiEatTemplate from './templates/poi-eat-template.vue'
 import PoiTemplate from './templates/poi-template.vue'
 import RemembrementsTemplate from './templates/remembrements-template.vue'
@@ -45,12 +49,16 @@ onUnmounted(() => {
 })
 
 const templates = {
-  'default.html': DefaultTemplate,
   'adresse.html': AdresseTemplate,
   'aero.html': AeroTemplate,
   'affaires.html': AffairesTemplate,
   'asta_esp.html': AstaTemplate,
   'automatic_sols.html': AutomaticSolsTemplate,
+  'batiments.html': BatimentsTemplate,
+  'bus_wo_title.html': BusWoTitleTemplate,
+  'bus.html': BusTemplate,
+  'default.html': DefaultTemplate,
+  'default_table.html': DefaultTableTemplate,
   'lignes_bus.html': LignesBusTemplate,
   'poi-eat.html': PoiEatTemplate,
   'poi.html': PoiTemplate,

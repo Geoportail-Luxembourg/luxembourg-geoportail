@@ -23,6 +23,7 @@ export interface Attributes {
   [key: string]: unknown
   path?: string
   thumb?: string
+  category_id?: number
 }
 
 export interface FeatureInfoJSON {
