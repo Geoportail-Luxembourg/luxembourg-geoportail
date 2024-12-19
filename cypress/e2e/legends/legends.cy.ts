@@ -2,6 +2,11 @@ describe('Legends', () => {
   beforeEach(() => {
     cy.intercept(
       'GET',
+      '/getMetadata?lang=fr&uid=de5373d6-340f-4203-a065-da7550a03cc4_2050',
+      { fixture: 'legends_parcelles.html' }
+    ).as('mockedMetadataParcelles')
+    cy.intercept(
+      'GET',
       '/legends/get_html?lang=fr&name=pcn_parcelles%3Ashow&id=359',
       { fixture: 'legends_parcelles.html' }
     ).as('parcel-fixture')
@@ -15,6 +20,7 @@ describe('Legends', () => {
       '/legends/get_html?lang=fr&name=act%3Aroadmap_vt&id=556',
       { fixture: 'legends_bg_roadmap.html' }
     ).as('bg-roadmap-fixture')
+    cy.clearLocalStorage()
     cy.visit('/')
   })
 
@@ -61,10 +67,10 @@ describe('Legends', () => {
   describe('When user adds layers with legends', () => {
     beforeEach(() => {
       cy.get('[data-cy="catalogButton"]').click()
-      cy.get('[data-cy^="layerLabel-1813"]').click()
-      cy.get('[data-cy="catalog"]')
-        .find('[data-cy="layerLabel-359"]')
-        .click({ force: true })
+      cy.get('[data-cy="layerLabel-1813"]').click()
+      cy.get('[data-cy="parentLayerLabel-242"]').click()
+      cy.get('[data-cy="parentLayerLabel-248"]').click()
+      cy.get('[data-cy="layerLabel-359"]').click()
       cy.get('[data-cy="legendsOpenClose"] > button').click()
     })
 
@@ -78,12 +84,11 @@ describe('Legends', () => {
   describe('When user adds layers with legends and one without a legend', () => {
     beforeEach(() => {
       cy.get('[data-cy="catalogButton"]').click()
-      cy.get('[data-cy^="layerLabel-1813"]').click()
-      cy.get('[data-cy="catalog"]')
-        .find('[data-cy="layerLabel-359"]')
-        .click({ force: true })
+      cy.get('[data-cy="layerLabel-1813"]').click()
+      cy.get('[data-cy="parentLayerLabel-242"]').click()
+      cy.get('[data-cy="parentLayerLabel-248"]').click()
+      cy.get('[data-cy="layerLabel-359"]').click()
 
-      cy.get('[data-cy="parentLayerLabel-242"]').find('button').first().click()
       cy.get('[data-cy="parentLayerLabel-309"]').click()
       cy.get('[data-cy="layerLabel-269"]').click()
       cy.get('[data-cy="layerLabel-349"]').click()
@@ -92,6 +97,7 @@ describe('Legends', () => {
     })
 
     it('displays the legends for both layers having legend', () => {
+      cy.wait('@mockedMetadataParcelles', { timeout: 10000 })
       cy.wait('@parcel-fixture')
       cy.wait('@solaire-fixture')
       cy.get('[data-cy="legendLayer"]').its('length').should('be.equal', 2)
@@ -101,8 +107,7 @@ describe('Legends', () => {
   describe('When a layer with a legend is removed', () => {
     beforeEach(() => {
       cy.get('[data-cy="catalogButton"]').click()
-      cy.get('[data-cy^="layerLabel-262"]').click()
-
+      cy.get('[data-cy="layerLabel-262"]').click()
       cy.get('[data-cy="legendsOpenClose"] > button').click()
     })
 

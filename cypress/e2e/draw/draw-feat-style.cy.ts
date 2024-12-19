@@ -1,3 +1,7 @@
+import { Geometry } from 'ol/geom'
+import { Layer } from 'ol/layer'
+import VectorSource from 'ol/source/Vector'
+
 beforeEach(() => {
   cy.visit('/')
 })
@@ -10,15 +14,15 @@ describe('Test style edition of Point feature', () => {
     cy.get('button[data-cy="featItemToggleEdit"]').click()
   })
   beforeEach('Edit feature style', () => {
-    cy.get('*[data-cy="featItemActionStyle"]').click()
-    cy.get('*[data-cy="featStyleColor"]')
+    cy.get('[data-cy="featItemActionStyle"]').click()
+    cy.get('[data-cy="featStyleColor"]')
       .invoke('val', '#00ff00')
       .trigger('input')
-    cy.get('*[data-cy="featStyleSymbol"]').click()
-    cy.get('*[data-cy="featStyleSymbol_2"]').click()
-    cy.get('*[data-cy="featStyleSize"]').type('{selectAll}50')
-    cy.get('*[data-cy="featStyleAngle"]').type('{selectAll}30')
-    cy.get('*[data-cy="featStyleAngle"]').trigger('input')
+    cy.get('[data-cy="featStyleSymbol"]').click()
+    cy.get('[data-cy="featStyleSymbol_cross"]').click()
+    cy.get('[data-cy="featStyleSize"]').type('{selectAll}50')
+    cy.get('[data-cy="featStyleAngle"]').type('{selectAll}30')
+    cy.get('[data-cy="featStyleAngle"]').trigger('input')
   })
   it('Check that new feature style is not yet encoded in URL', () => {
     cy.url().as('url')
@@ -66,13 +70,14 @@ describe('Test style edition of Point feature', () => {
         const featureLayers = olMap
           .getLayers()
           .getArray()
-          .filter((l: any) => l.get('cyLayerType') === 'featureLayer')
+          .filter((l: Layer) => l.get('cyLayerType') === 'featureLayer')
         const features = featureLayers
-          .map((l: any) => l.getSource().getFeatures())
+          .map((l: Layer) =>
+            (l.getSource() as VectorSource<Geometry>)?.getFeatures()
+          )
           .flat()
         cy.wrap(features.length).should('equal', 1)
 
-        // const ff = features.find((f: any) => f.get('name') === 'Point 1')
         const ff = features[0]
         cy.wrap(ff.featureType).should('equal', 'drawnPoint')
         // check color green
@@ -97,9 +102,11 @@ describe('Test style edition of Point feature', () => {
         const featureLayers = olMap
           .getLayers()
           .getArray()
-          .filter((l: any) => l.get('cyLayerType') === 'featureLayer')
+          .filter((l: Layer) => l.get('cyLayerType') === 'featureLayer')
         const features = featureLayers
-          .map((l: any) => l.getSource().getFeatures())
+          .map((l: Layer) =>
+            (l.getSource() as VectorSource<Geometry>)?.getFeatures()
+          )
           .flat()
         cy.wrap(features.length).should('equal', 1)
         const ff = features[0]
@@ -133,9 +140,11 @@ describe('Test style edition of Label feature', () => {
         const featureLayers = olMap
           .getLayers()
           .getArray()
-          .filter((l: any) => l.get('cyLayerType') === 'featureLayer')
+          .filter((l: Layer) => l.get('cyLayerType') === 'featureLayer')
         const features = featureLayers
-          .map((l: any) => l.getSource().getFeatures())
+          .map((l: Layer) =>
+            (l.getSource() as VectorSource<Geometry>)?.getFeatures()
+          )
           .flat()
         cy.wrap(features.length).should('equal', 1)
 
@@ -184,9 +193,11 @@ describe('Test style edition of Line feature', () => {
         const featureLayers = olMap
           .getLayers()
           .getArray()
-          .filter((l: any) => l.get('cyLayerType') === 'featureLayer')
+          .filter((l: Layer) => l.get('cyLayerType') === 'featureLayer')
         const features = featureLayers
-          .map((l: any) => l.getSource().getFeatures())
+          .map((l: Layer) =>
+            (l.getSource() as VectorSource<Geometry>)?.getFeatures()
+          )
           .flat()
         cy.wrap(features.length).should('equal', 1)
         const ff = features[0]
@@ -230,9 +241,11 @@ describe('Test style edition of Polygon feature', () => {
         const featureLayers = olMap
           .getLayers()
           .getArray()
-          .filter((l: any) => l.get('cyLayerType') === 'featureLayer')
+          .filter((l: Layer) => l.get('cyLayerType') === 'featureLayer')
         const features = featureLayers
-          .map((l: any) => l.getSource().getFeatures())
+          .map((l: Layer) =>
+            (l.getSource() as VectorSource<Geometry>)?.getFeatures()
+          )
           .flat()
         cy.wrap(features.length).should('equal', 1)
         const ff = features[0]
@@ -275,9 +288,11 @@ describe('Test style edition of Circle feature', () => {
         const featureLayers = olMap
           .getLayers()
           .getArray()
-          .filter((l: any) => l.get('cyLayerType') === 'featureLayer')
+          .filter((l: Layer) => l.get('cyLayerType') === 'featureLayer')
         const features = featureLayers
-          .map((l: any) => l.getSource().getFeatures())
+          .map((l: Layer) =>
+            (l.getSource() as VectorSource<Geometry>)?.getFeatures()
+          )
           .flat()
         cy.wrap(features.length).should('equal', 1)
         const ff = features[0]

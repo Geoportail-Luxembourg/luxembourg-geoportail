@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { inject, provide, Ref, ref } from 'vue'
+import { inject, provide, Ref, ref, Reactive } from 'vue'
 import { useTranslation } from 'i18next-vue'
 
 import { DrawnFeature } from '@/services/draw/drawn-feature'
@@ -25,7 +25,7 @@ const emit = defineEmits([
   'submitEditFeature',
 ])
 const { t } = useTranslation()
-const feature: DrawnFeature = inject('feature')!
+const feature: Reactive<DrawnFeature> = inject('feature')!
 let prevLabel = feature.label
 let prevDescription = feature.description
 // keep deep copy of previous style to be able to revert style on cancel
@@ -154,7 +154,7 @@ function onClickEditStyle() {
           </button>
 
           <!-- Menu dropdown with all other possible actions on feature -->
-          <FeatureMenuPopup :feature="feature" />
+          <FeatureMenuPopup />
         </div>
       </div>
     </div>
@@ -165,7 +165,6 @@ function onClickEditStyle() {
   <component
     v-else
     :is="editComponents[currentEditCompKey as keyof typeof editComponents]"
-    :feature="feature"
   >
     <!-- Dynamic component content here -->
 

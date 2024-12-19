@@ -1,23 +1,36 @@
 <script setup lang="ts">
-import { inject, Ref } from 'vue'
-import FeatureEditSymbol from './feature-edit-symbol.vue'
+import { ref } from 'vue'
+import { DrawnFeature } from '@/services/draw/drawn-feature'
 
-const popupOpen: Ref<boolean> = inject('popupOpen')!
+defineProps<{
+  feature: DrawnFeature
+}>()
+
+const isOpenEditIcon = ref(false)
+
+function closeEditIcon() {
+  isOpenEditIcon.value = false
+}
 </script>
 
 <template>
-  <div v-if="popupOpen">
-    <FeatureEditSymbol>
-      <!-- Propagate color template one level lower -->
-      <template v-slot:symbolcolor>
-        <slot name="color"></slot>
-      </template>
-    </FeatureEditSymbol>
-  </div>
-  <template v-else>
+  <!-- Default symbol styling @see FeatureEditStyleSymbol -->
+  <template v-if="!isOpenEditIcon">
+    <slot name="title"></slot>
     <slot name="color"></slot>
-    <slot name="symbole"></slot>
+    <slot
+      name="styleSymbol"
+      :openEditIcon="() => (isOpenEditIcon = true)"
+    ></slot>
     <slot name="size" :maxsize="900"></slot>
     <slot name="angle"></slot>
+    <slot name="footer"></slot>
+  </template>
+
+  <!-- Symbol Icon styling @see FeatureEditSymbolIcon -->
+  <template v-else>
+    <slot name="symbolIcon" :closeEditIcon="closeEditIcon">
+      <slot name="symbolcolor"></slot>
+    </slot>
   </template>
 </template>

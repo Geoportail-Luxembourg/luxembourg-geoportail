@@ -7,12 +7,14 @@ const props = withDefaults(
     max?: number
     step?: number
     value?: number
+    name?: string
   }>(),
   {
     min: 0,
     max: 10,
     step: 1,
     value: 0,
+    name: 'range',
   }
 )
 defineEmits(['change'])
@@ -26,6 +28,7 @@ const inputValue = ref(props.value)
       class="m-2.5 w-16 h-[5px] rounded-lg appearance-none cursor-pointer"
       :min="min"
       :max="max"
+      :name="`range-${name}`"
       :step="step"
       v-model.number="inputValue"
       @input="$emit('change', inputValue)"
@@ -35,6 +38,7 @@ const inputValue = ref(props.value)
       class="w-12"
       :min="min"
       :max="max"
+      :name="name"
       :step="step"
       v-model="inputValue"
       @change="$emit('change', inputValue)"

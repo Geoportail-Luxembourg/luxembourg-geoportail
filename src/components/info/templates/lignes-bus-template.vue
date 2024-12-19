@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { FeatureInfoJSON } from '@/services/info/feature-info.model'
-import { defineProps } from 'vue'
+
 defineProps({
   layers: {
     type: Object as () => FeatureInfoJSON,

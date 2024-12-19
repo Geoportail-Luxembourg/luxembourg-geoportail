@@ -2,7 +2,10 @@
 import { Ref, computed, ref } from 'vue'
 import { useTranslation } from 'i18next-vue'
 
-import { SYMBOL_ICONS_URL, type Symbol } from '@/services/draw/draw.helper'
+import {
+  SYMBOL_ICONS_URL,
+  type Symbol,
+} from '@/services/api/api-symbols.service'
 
 const props = defineProps<{
   symbols: Symbol[]
@@ -37,7 +40,7 @@ function onClickSymbol(id: number) {
     {{ t('Symbole') }}
 
     <!-- List of retrieved symbols -->
-    <ul v-if="filteredPublicSymbols.length > 0">
+    <ul>
       <li
         v-for="symbol in filteredPublicSymbols"
         :key="symbol.id"

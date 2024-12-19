@@ -17,12 +17,12 @@ import useMap, {
   PROJECTION_LUX,
   PROJECTION_WEBMERCATOR,
 } from '@/composables/map/map.composable'
-import { getProfileJson } from '@/services/api/api-profile.service'
-import { colorStringToRgba } from '@/services/utils'
+import { fetchProfileJson } from '@/services/api/api-profile.service'
+import { colorStringToRgba } from '@/services/colors.utils'
 import { ProfileData } from '@/components/common/graph/elevation-profile'
 
 const MYMAPS_URL = import.meta.env.VITE_MYMAPS_URL
-const MYMAPS_SYMBOL_URL = import.meta.env.VITE_SYMBOLS_URL
+const MYMAPS_SYMBOL_URL = import.meta.env.VITE_SYMBOL_URL
 const ARROW_URL = MYMAPS_URL + '/getarrow'
 
 export class DrawnFeature extends Feature {
@@ -105,7 +105,7 @@ export class DrawnFeature extends Feature {
         encodeOptions
       )
 
-      const profileData = await getProfileJson(geomJson, this.id)
+      const profileData = await fetchProfileJson(geomJson, this.id)
 
       let elevationGain = 0
       let elevationLoss = 0
@@ -157,6 +157,8 @@ export class DrawnFeature extends Feature {
       shape: this.featureStyle.shape,
       size: this.featureStyle.size,
       isCircle: this.featureType === 'drawnCircle',
+      symbolId: this.featureStyle.symbolId,
+      symboltype: this.featureStyle.symboltype,
     }
   }
 
@@ -191,7 +193,6 @@ export class DrawnFeature extends Feature {
     })
 
     const fillStyle = new StyleFill()
-    const symbolUrl = MYMAPS_SYMBOL_URL
     const arrowUrl = ARROW_URL
     // TODO 3D
     // const arrowModelUrl = ARROW_MODEL_URL
@@ -339,23 +340,25 @@ export class DrawnFeature extends Feature {
           width: featureSize / 7,
         }),
         radius: featureSize,
-        // points: [0, 0],
       }
       let image = null
       if (feature.featureStyle.symbolId) {
-        Object.assign(imageOptions, {
-          src:
-            symbolUrl + feature.featureStyle.symbolId + '?scale=' + featureSize,
-          scale: 1,
-          rotation: feature.featureStyle.angle,
-        })
-        image = new StyleIcon(imageOptions as CircleOptions)
-      } else {
-        let shape = feature.featureStyle.shape
-        if (!shape) {
-          feature.featureStyle.shape = 'circle'
-          shape = 'circle'
+        const options = {
+          ...imageOptions,
+          ...{
+            src:
+              MYMAPS_SYMBOL_URL +
+              '/' +
+              feature.featureStyle.symbolId +
+              '?scale=' +
+              featureSize,
+            scale: 1,
+            rotation: feature.featureStyle.angle,
+          },
         }
+        image = new StyleIcon(options)
+      } else {
+        const shape = feature.featureStyle.shape
         if (shape === 'circle') {
           image = new StyleCircle(imageOptions as CircleOptions)
         } else if (shape === 'square') {
