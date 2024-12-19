@@ -45,8 +45,24 @@ function onClickLayersIcon() {
   themeGridOpen.value = false
 }
 
-watch(drawToolbarOpen, isOpen => isOpen && (measureToolbarOpen.value = false))
-watch(measureToolbarOpen, isOpen => isOpen && (drawToolbarOpen.value = false))
+watch(drawToolbarOpen, isOpen => {
+  if (isOpen) {
+    measureToolbarOpen.value = false
+    printToolbarOpen.value = false
+  }
+})
+watch(measureToolbarOpen, isOpen => {
+  if (isOpen) {
+    drawToolbarOpen.value = false
+    printToolbarOpen.value = false
+  }
+})
+watch(printToolbarOpen, isOpen => {
+  if (isOpen) {
+    drawToolbarOpen.value = false
+    measureToolbarOpen.value = false
+  }
+})
 
 const featureInfoStore = useFeatureInfoStore()
 const { displayStarOnMobile } = storeToRefs(featureInfoStore)
