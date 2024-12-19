@@ -30,13 +30,16 @@ const { t } = useTranslation()
     {{ t(layers.layerLabel) }}
   </h1>
 
+  <!-- Slot content for feature to be replaced by template -->
+  <slot name="layer-content"></slot>
+
   <!-- Loop through all layer features -->
   <div
     v-for="feature in layers.features"
     :key="feature.id"
     class="lux-feature-info"
   >
-    <!-- Slot content to be replaced by template -->
+    <!-- Slot content for feature to be replaced by template -->
     <slot name="feature-content" :feature="feature">
       {{ feature.id }}
     </slot>

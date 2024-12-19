@@ -13,6 +13,8 @@ export interface GeometryJSON {
   coordinates: number[][][]
 }
 
+export type FeatureMeasurement = Record<string, string>
+
 export interface Attributes {
   name: string
   canton: string
@@ -24,6 +26,10 @@ export interface Attributes {
   path?: string
   thumb?: string
   category_id?: number
+  PF: {
+    [key: string]: unknown
+  }
+  measurements: FeatureMeasurement[]
 }
 
 export interface FeatureInfoJSON {
