@@ -6,18 +6,25 @@ import { Mask } from '@/lib/ol-mask-layer'
 import { PRINT_FORMAT, printService } from '@/services/print.service'
 import { useAlertNotificationsStore } from '@/stores/alert-notifications.store'
 import { AlertNotificationType } from '@/stores/alert-notifications.store.model'
+import { useAppStore } from '@/stores/app.store'
 import { useTranslation } from 'i18next-vue'
+import { FrameState } from 'ol/PluggableMap'
 import { v4 as uuidv4 } from 'uuid'
 import { computed, onMounted, onUnmounted, ref, watch } from 'vue'
 
-const { url, startPolling } = useJobStatus()
+const { url, startPolling, error } = useJobStatus()
 const { addNotification } = useAlertNotificationsStore()
 
 const { t } = useTranslation()
+const { lang } = useAppStore()
 const uuid = uuidv4()
+let framestate: FrameState | null = null
 
 const map = useMap().getOlMap()
 const mask = new Mask({ id: 'mask', opacity: 0 })
+
+const title = ref<string>('')
+const legend = ref<boolean>(false)
 
 const layout = ref<string>('')
 const layouts = computed(() =>
@@ -45,6 +52,7 @@ const scales = computed(() =>
 )
 const changeScale = (value: string) => {
   scalePlaceholder.value = value
+  scale.value = value
   mask.setScale(parseInt(value, 10))
   map.render()
 }
@@ -52,7 +60,20 @@ const scalePlaceholder = ref<string>('')
 
 const print = async (format: PRINT_FORMAT) => {
   try {
-    const pollingURL = await printService.print(format)
+    const pollingURL = await printService.print(
+      {
+        format,
+        layout: layout.value,
+        scale: parseInt(scale.value, 10),
+        resolution: map.getView().getResolution()!,
+        title: title.value,
+        legend: legend.value,
+        lang,
+        t,
+        framestate,
+      },
+      map
+    )
     startPolling(pollingURL)
   } catch {
     addNotification(
@@ -62,11 +83,22 @@ const print = async (format: PRINT_FORMAT) => {
   }
 }
 
+watch(error, error => {
+  if (error) {
+    addNotification(
+      t('An error occurred while printing'),
+      AlertNotificationType.ERROR
+    )
+  }
+})
 watch(url, downloadURL => downloadURL && window.open(downloadURL, '_blank'))
 
 onMounted(() => {
   map.addLayer(mask)
   mask.setOpacity(0.5)
+  map.on('rendercomplete', e => {
+    framestate = e.frameState || null
+  })
 
   // Initial values
   changeLayout(layouts.value[0].value)
@@ -94,7 +126,7 @@ onUnmounted(() => {
         <input
           class="cursor-pointer w-full p-2 lux-input"
           type="text"
-          value=""
+          v-model="title"
           :placeholder="t('Title', { ns: 'client' })"
           data-cy="printTitle"
         />
@@ -105,7 +137,7 @@ onUnmounted(() => {
           :id="uuid"
           class="cursor-pointer"
           type="checkbox"
-          value=""
+          v-model="legend"
           data-cy="printWithLegend"
         />
         <label class="font-bold block lux-text-default" :for="uuid">
