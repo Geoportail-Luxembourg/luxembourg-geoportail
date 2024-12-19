@@ -73,16 +73,18 @@ function close() {
           </div>
           <!-- footer (optional)-->
           <div v-if="footer" class="p-[15px] border-t-[1px]">
-            <div class="flex flex-row justify-end">
-              <button
-                type="button"
-                class="lux-btn"
-                data-dismiss="modal"
-                @click="close()"
-              >
-                {{ t('Close', { ns: 'client' }) }}
-              </button>
-            </div>
+            <slot name="footer">
+              <div class="flex flex-row justify-end">
+                <button
+                  type="button"
+                  class="lux-btn"
+                  data-dismiss="modal"
+                  @click="close()"
+                >
+                  {{ t('Close', { ns: 'client' }) }}
+                </button>
+              </div>
+            </slot>
           </div>
         </div>
       </div>

@@ -5,6 +5,8 @@ import {
   FeatureJSON,
 } from '@/services/info/feature-info.model'
 import { sanitizeUrl } from '@braintree/sanitize-url'
+import { useThemeStore } from '@/stores/config.store'
+import { storeToRefs } from 'pinia'
 
 export function sortedAttributeEntries(
   attributes: Attributes,
@@ -151,4 +153,43 @@ export function getTrustedUrlByLang(
     default:
       return sanitizeUrl(urlFr)
   }
+}
+
+/**
+ * Join all attributes 'attr' from feature list
+ * @param features The feature
+ * @param attr Attribute to join
+ * @param sep The join separator (default is ',')
+ * @returns The string with joined attributes
+ */
+export function joinAttributes(
+  features: FeatureJSON[],
+  attr: string,
+  sep = ','
+) {
+  return features.map(feature => feature.attributes[attr]).join(sep)
+}
+
+/**
+ * Translate and join the elements of the array
+ * @param textArray
+ * @param prefix
+ */
+export function translateAndjoin(textArray: string[], prefix: string) {
+  if (typeof textArray === undefined) {
+    return ''
+  }
+
+  const { t } = useTranslation()
+
+  return textArray.map(elem => t(prefix + '_' + elem)).join(', ')
+}
+
+/**
+ * Return true if the theme is available in app themes
+ * @param themeName The theme to find in theme list, eg. 'go'
+ */
+export function isThemeAvailable(themeName: string) {
+  const { themes } = storeToRefs(useThemeStore())
+  return themes.value?.some(t => t.name === themeName)
 }

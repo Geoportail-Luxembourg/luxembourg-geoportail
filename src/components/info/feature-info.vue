@@ -21,8 +21,12 @@ import AeroTemplate from './templates/aero-template.vue'
 import AffairesTemplate from './templates/affaires-template.vue'
 import AstaTemplate from './templates/asta-template.vue'
 import AutomaticSolsTemplate from './templates/automatic-sols-template.vue'
-import PoiEatTemplate from './templates/poi-eat-template.vue'
-import PoiTemplate from './templates/poi-template.vue'
+import PcnPagTemplate from './templates/pcn-pag-template.vue'
+// import PdsTemplate from './templates/pds-template.vue'
+import PdsreportTemplate from './templates/pdsreport-template.vue'
+import PegelTemplate from './templates/pegel-template.vue'
+// import PoiEatTemplate from './templates/poi-eat-template.vue'
+// import PoiTemplate from './templates/poi-template.vue'
 import RemembrementsTemplate from './templates/remembrements-template.vue'
 import SentierNatureTemplate from './templates/sentier-nature-template.vue'
 import UrplandTemplate from './templates/urplang-template.vue'
@@ -30,6 +34,7 @@ import VitiFlikTemplate from './templates/viti-flik.vue'
 import VitiKleinlageTemplate from './templates/viti-kleinlage.vue'
 import VitiNameTemplate from './templates/viti-name.vue'
 import VitiParcelsTemplate from './templates/viti-parcels.vue'
+import ParcelsTemplate from './templates/parcels-template.vue'
 
 defineProps({
   content: {
@@ -52,8 +57,13 @@ const templates = {
   'asta_esp.html': AstaTemplate,
   'automatic_sols.html': AutomaticSolsTemplate,
   'lignes_bus.html': LignesBusTemplate,
-  'poi-eat.html': PoiEatTemplate,
-  'poi.html': PoiTemplate,
+  'parcels.html': ParcelsTemplate,
+  'pcn_pag.html': PcnPagTemplate,
+  // 'pds.html': PdsTemplate,
+  'pdsreport.html': PdsreportTemplate,
+  'pegel.html': PegelTemplate,
+  // 'poi-eat.html': PoiEatTemplate,
+  // 'poi.html': PoiTemplate,
   'remembrements.html': RemembrementsTemplate,
   'sentier_nature.html': SentierNatureTemplate,
   'urplang.html': UrplandTemplate,
