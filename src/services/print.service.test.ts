@@ -74,4 +74,34 @@ describe('PrintService', () => {
       downloadURL: `${BASE_URL}/printproxy/download`,
     })
   })
+
+  it('should return correct legends', async () => {
+    const mockLayer = {
+      get: vi.fn().mockImplementation((key: string) => {
+        if (key === 'metadata') {
+          return {
+            legend_name: 'Test Legend',
+            max_dpi: '300',
+          }
+        }
+        if (key === 'queryable_id') {
+          return 'test-id'
+        }
+        if (key === 'label') {
+          return 'Test Label'
+        }
+      }),
+    }
+
+    const legends = await printService.getLegends([mockLayer as any], 'en')
+    expect(legends).toEqual([
+      { name: 'Test Legend' },
+      {
+        name: 'Test Label',
+        restUrl:
+          'https://migration.geoportail.lu/legends/get_html?lang=en&id=test-id&dpi=127&legend_title=Test Label',
+        legendTitle: 'Test Label',
+      },
+    ])
+  })
 })
