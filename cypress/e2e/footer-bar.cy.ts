@@ -117,9 +117,9 @@ describe('Footer bar', () => {
   describe('Print button', () => {
     describe('When opening print panel', () => {
       it('opens the print panel', () => {
-        cy.get('[data-cy="printPanel"]').should('not.exist')
+        cy.get('[data-cy="toolbarPrint"]').should('not.exist')
         cy.get('button[data-cy="printButton"]').click()
-        cy.get('[data-cy="printPanel"]').should('exist')
+        cy.get('[data-cy="toolbarPrint"]').should('exist')
       })
 
       it('Other panels are closed', () => {

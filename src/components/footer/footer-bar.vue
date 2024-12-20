@@ -168,6 +168,7 @@ function onClickInfoIcon() {
         :active="printToolbarOpen"
         @click="() => togglePrintToolbarOpen()"
         icon="print"
+        data-cy="printButton"
       >
       </button-icon>
 
