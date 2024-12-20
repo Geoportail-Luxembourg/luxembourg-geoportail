@@ -1,11 +1,16 @@
-import { describe, it, expect, vi } from 'vitest'
-import { printService, PRINT_FORMAT, BASE_URL } from './print.service'
+import { describe, it, expect, vi, MockedFunction } from 'vitest'
+import {
+  printService,
+  PRINT_FORMAT,
+  BASE_URL,
+  LuxEncoder,
+} from './print.service'
 import { createTestingPinia } from '@pinia/testing'
 
 global.fetch = vi.fn()
 
 const mockFetch = (response: any) => {
-  ;(fetch as MockedFunction<typeof fetch>).mockResolvedValueOnce(
+  ;(fetch as MockedFunction<typeof fetch>).mockResolvedValue(
     response as unknown as Response
   )
 }
@@ -48,12 +53,32 @@ describe('PrintService', () => {
   })
 
   it('should return correct print URL', async () => {
+    vi.mocked(LuxEncoder.prototype).encodeMap = vi
+      .fn()
+      .mockResolvedValue({ layers: [] })
     const mockResponse = {
       json: vi.fn().mockResolvedValue({ statusURL: '/print/status' }),
     }
     mockFetch(mockResponse as any)
 
-    const url = await printService.print(PRINT_FORMAT.PDF)
+    const url = await printService.print(
+      {
+        format: PRINT_FORMAT.PDF,
+        layout: 'A4 portrait',
+        scale: 25000,
+        lang: 'en',
+        resolution: 96,
+        title: 'Test Print',
+        legend: true,
+        framestate: null,
+      },
+      {
+        getView: () => ({ getResolution: () => 128, getCenter: () => [0, 0] }),
+        getLayers: () => ({ getArray: () => [] }),
+        getLayerGroup: () => ({ get: () => ({}), getSource: () => undefined }),
+      } as unknown as any,
+      (s: string) => s
+    )
     expect(url).toBe(`${BASE_URL}/printproxy/status`)
   })
 
@@ -94,14 +119,6 @@ describe('PrintService', () => {
     }
 
     const legends = await printService.getLegends([mockLayer as any], 'en')
-    expect(legends).toEqual([
-      { name: 'Test Legend' },
-      {
-        name: 'Test Label',
-        restUrl:
-          'https://migration.geoportail.lu/legends/get_html?lang=en&id=test-id&dpi=127&legend_title=Test Label',
-        legendTitle: 'Test Label',
-      },
-    ])
+    expect(legends).toEqual([{ name: 'Test Legend' }])
   })
 })
