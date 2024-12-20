@@ -1,5 +1,5 @@
-import { MapLibreLayer } from '@/bundle/lib'
 import { Metadata } from '@/composables/themes/themes.model'
+import MapLibreLayer from '@/lib/ol-mapbox-layer'
 import { DOTS_PER_INCH, INCHES_PER_METER } from '@/lib/ol-mask-layer'
 import { useThemeStore } from '@/stores/config.store'
 import type { MFPLayer } from '@geoblocks/mapfishprint'
@@ -9,6 +9,9 @@ import LayerGroup from 'ol/layer/Group'
 import type { State } from 'ol/layer/Layer.js'
 import BaseLayer from 'ol/layer/Layer.js'
 import { FrameState } from 'ol/PluggableMap'
+
+export const BASE_URL = import.meta.env.VITE_V3_API_HOST
+const LEGEND_URL = import.meta.env.VITE_PROFILE_URL
 
 export interface PrintLegend {
   name: string | null
@@ -25,7 +28,6 @@ export interface PrintOptions {
   title: string
   lang: string
   legend: boolean
-  t: Function
   framestate: FrameState | null
 }
 
@@ -70,9 +72,6 @@ export const enum PRINT_FORMAT {
   PNG = 'PNG',
 }
 
-export const BASE_URL = 'http://localhost:8080'
-const LEGEND_URL = 'https://migration.geoportail.lu/legends/get_html'
-
 const getWidth = (scale: number, width: number, resolution: number): number =>
   Math.round(((width / DOTS_PER_INCH / INCHES_PER_METER) * scale) / resolution)
 
@@ -90,8 +89,8 @@ export class PrintService {
     return LAYOUTS
   }
 
-  async print(options: PrintOptions, map: Map): Promise<string> {
-    const spec = await this.getSpec(options, map)
+  async print(options: PrintOptions, map: Map, t: Function): Promise<string> {
+    const spec = await this.getSpec(options, map, t)
     const response = await fetch(`${BASE_URL}/printproxy/report.pdf`, {
       method: 'POST',
       body: JSON.stringify(spec),
@@ -109,11 +108,10 @@ export class PrintService {
     return response
   }
 
-  async getSpec(options: PrintOptions, map: Map): Promise<object> {
+  async getSpec(options: PrintOptions, map: Map, t: Function): Promise<object> {
     const encoder = new LuxEncoder(BASE_URL)
     const customizer = new BaseCustomizer()
     const shortUrl = await this.getShortLink()
-    const t = options.t
 
     const mapSpec = await encoder.encodeMap({
       map,
@@ -301,7 +299,7 @@ export interface JobStatus {
   downloadURL?: string
 }
 
-class LuxEncoder extends MFPEncoder {
+export class LuxEncoder extends MFPEncoder {
   async encodeLayerState(
     layerState: State,
     printResolution: number,
