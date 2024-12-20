@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { shallowRef, ShallowRef } from 'vue'
+import { shallowRef, ShallowRef, toRef } from 'vue'
 
 import DropdownContent from '@/components/common/dropdown-content.vue'
 import { DropdownOptionModel } from './dropdown-list.model'
@@ -9,13 +9,16 @@ const props = withDefaults(
     placeholder: string
     options: DropdownOptionModel[]
     modelValue?: string
+    direction?: 'up' | 'down'
   }>(),
   {
     options: () => [{ label: 'Default label', value: 'Default value' }],
+    direction: 'down',
   }
 )
 const emit = defineEmits(['change'])
 const selectedValue: ShallowRef<string | undefined> = shallowRef()
+const direction = toRef(props.direction)
 
 function onClickItem(event: MouseEvent) {
   selectedValue.value = (event.target as HTMLElement).dataset.value
@@ -24,8 +27,12 @@ function onClickItem(event: MouseEvent) {
 </script>
 
 <template>
-  <dropdown-content :placeholder="props.placeholder ?? props.options[0]?.label">
-    <ul class="lux-dropdown-list">
+  <dropdown-content
+    :placeholder="props.placeholder ?? props.options[0]?.label"
+    :direction="direction"
+    v-bind="$attrs"
+  >
+    <ul class="lux-dropdown-list" :class="direction">
       <li
         v-for="option in props.options"
         :key="option.value"
