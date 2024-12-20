@@ -12,6 +12,8 @@ import { FrameState } from 'ol/PluggableMap'
 import { v4 as uuidv4 } from 'uuid'
 import { computed, onMounted, onUnmounted, ref, watch } from 'vue'
 
+const MASK_ZINDEX = 2000
+
 const { url, startPolling, error } = useJobStatus()
 const { addNotification } = useAlertNotificationsStore()
 
@@ -22,6 +24,7 @@ let framestate: FrameState | null = null
 
 const map = useMap().getOlMap()
 const mask = new Mask({ id: 'mask', opacity: 0 })
+mask.setZIndex(MASK_ZINDEX)
 
 const title = ref<string>('')
 const legend = ref<boolean>(false)
@@ -69,10 +72,10 @@ const print = async (format: PRINT_FORMAT) => {
         title: title.value,
         legend: legend.value,
         lang,
-        t,
         framestate,
       },
-      map
+      map,
+      t
     )
     startPolling(pollingURL)
   } catch {
