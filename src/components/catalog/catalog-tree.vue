@@ -61,7 +61,7 @@ function toggleParent(node: LayerTreeNodeModel, is3d: boolean) {
 }
 
 function toggleLayer(node: LayerTreeNodeModel, is3d: boolean) {
-  layers.toggleLayer(+node.id, !node.checked, is3d)
+  layers.toggleLayer(+node.id, !node.checked, is3d, true)
 }
 </script>
 
