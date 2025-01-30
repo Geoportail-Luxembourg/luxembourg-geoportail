@@ -35,20 +35,10 @@ export const useThemeStore = defineStore(
 
     function setThemes(themes: ConfigModel) {
       config.value = themes
-
-      // Force reset current theme, eg. if theme was restricted,
-      // may not exists anymore when user disconnect
-      if (theme.value === undefined) {
-        resetCurrentTheme()
-      }
     }
 
     function setTheme(name: string) {
       themeName.value = name
-    }
-
-    function resetCurrentTheme() {
-      themeName.value = DEFAULT_CURRENT_THEME
     }
 
     return {
