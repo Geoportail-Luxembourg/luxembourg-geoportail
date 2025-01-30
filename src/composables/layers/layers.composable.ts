@@ -149,15 +149,21 @@ export default function useLayers() {
     }
   }
 
-  function toggleLayer(id: LayerId, show = true, is3d: boolean) {
+  function toggleLayer(
+    id: LayerId,
+    show = true,
+    is3d: boolean,
+    fromCurrentTheme: boolean
+  ) {
     const themeStore = useThemeStore()
     const mapStore = useMapStore()
-
     // the cast from ThemeNodeModel | undefined to Layer might not be correct.
     // in the themes fixture only WMS layers correspond to the Layer definition,
     // whereas WMTS layers have "layer" property
     const store = is3d ? themeStore.layerTrees_3d : themeStore.theme
-    const layer = <Layer>themes.findById(id, store)
+    const layer = <Layer>(
+      themes.findById(id, fromCurrentTheme ? store : undefined)
+    )
 
     if (layer) {
       const linkedLayers = layer.metadata?.linked_layers || []
