@@ -38,7 +38,7 @@ export default function useMap() {
       view: new OlView({
         center: [682439, 6379152],
         constrainResolution: true, // Prevent intermediates zooms
-        enableRotation: true,
+        enableRotation: true, // Add an dragRotateInteraction to be able to change the key condition
         extent: transformExtent(MAX_EXTENT, 'EPSG:4326', 'EPSG:3857'),
         multiWorld: false,
         zoom: DEFAULT_VIEW_ZOOM,
