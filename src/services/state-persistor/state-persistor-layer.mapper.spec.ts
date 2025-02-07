@@ -82,7 +82,7 @@ describe('StorageLayerMapper', () => {
 
   describe('#layerIdsToLayers', () => {
     it('returns the layers corresponding to the given ids', () => {
-      expect(storageLayerMapper.layerIdsToLayers('10-360')).toStrictEqual([
+      expect(storageLayerMapper.layerIdsToLayers('360-10')).toStrictEqual([
         {
           id: 10,
           name: 'layer1_name',
@@ -107,7 +107,7 @@ describe('StorageLayerMapper', () => {
     })
 
     it('returns undefined in place of layer not found to keep the order', () => {
-      expect(storageLayerMapper.layerIdsToLayers('10-89754-360')).toStrictEqual(
+      expect(storageLayerMapper.layerIdsToLayers('360-89754-10')).toStrictEqual(
         [
           {
             id: 10,
@@ -135,7 +135,7 @@ describe('StorageLayerMapper', () => {
     })
 
     it('cannot read layer with string ids', () => {
-      expect(storageLayerMapper.layerIdsToLayers('10-AnyId')).toStrictEqual([
+      expect(storageLayerMapper.layerIdsToLayers('AnyId-10')).toStrictEqual([
         {
           id: 10,
           name: 'layer1_name',
@@ -175,11 +175,11 @@ describe('StorageLayerMapper', () => {
     it('returns the opacities as floats', () => {
       expect(
         storageLayerMapper.layersOpacitiesToNumbers('0-1-0.25-0.6-1')
-      ).toStrictEqual([0, 1, 0.25, 0.6, 1])
+      ).toStrictEqual([1, 0.6, 0.25, 1, 0])
     })
     it('returns undefined for an invalid opactiy value', () => {
       expect(
-        storageLayerMapper.layersOpacitiesToNumbers('0-opa-1')
+        storageLayerMapper.layersOpacitiesToNumbers('1-opa-0')
       ).toStrictEqual([0, undefined, 1])
     })
   })
@@ -187,7 +187,7 @@ describe('StorageLayerMapper', () => {
   describe('#layersToLayerIds', () => {
     it('converts the given layers into ids', () => {
       expect(storageLayerMapper.layersToLayerIds([layer360, layerAnyId])).toBe(
-        '360-AnyId'
+        'AnyId-360'
       )
     })
   })
@@ -200,7 +200,7 @@ describe('StorageLayerMapper', () => {
           layer360,
           layerAnyId,
         ])
-      ).toBe('0.75-1-0.5')
+      ).toBe('0.5-1-0.75')
     })
   })
 

@@ -20,13 +20,15 @@ class StorageLayerMapper {
     const layers = useLayers()
     const layerIds = layerIdsText ? layerIdsText.split(STORAGE_SEPARATOR) : []
 
-    return layerIds.map(layerId => {
-      const layer = remoteLayersService.isRemoteLayer(layerId)
-        ? remoteLayerIdtoLayer(layerId)
-        : (themes.findById(parseInt(layerId, 10)) as unknown as Layer)
+    return layerIds
+      .map(layerId => {
+        const layer = remoteLayersService.isRemoteLayer(layerId)
+          ? remoteLayerIdtoLayer(layerId)
+          : (themes.findById(parseInt(layerId, 10)) as unknown as Layer)
 
-      return layer ? layers.initLayer(layer) : void 0
-    })
+        return layer ? layers.initLayer(layer) : void 0
+      })
+      .reverse()
   }
 
   layerNamesToLayersV2(layersNamesText: string | null) {
@@ -36,17 +38,19 @@ class StorageLayerMapper {
       ? layersNamesText.split(STORAGE_SEPARATOR_V2)
       : []
 
-    return layersNames.map(layerName => {
-      const layer = themes.findByName(layerName)
-      return layer ? layers.initLayer(layer as unknown as Layer) : void 0
-    })
+    return layersNames
+      .map(layerName => {
+        const layer = themes.findByName(layerName)
+        return layer ? layers.initLayer(layer as unknown as Layer) : void 0
+      })
+      .reverse()
   }
 
   layersOpacitiesToNumbers(
     opacitiesText: string | null,
     separator = STORAGE_SEPARATOR
   ) {
-    return stringToNumbers(opacitiesText, separator)
+    return stringToNumbers(opacitiesText, separator).reverse()
   }
 
   /**
@@ -66,12 +70,20 @@ class StorageLayerMapper {
   }
 
   layersToLayerIds(layers: Layer[] | null): string {
-    return layers?.map(layer => layer.id).join(STORAGE_SEPARATOR) || ''
+    return (
+      layers
+        ?.map(layer => layer.id)
+        .reverse()
+        .join(STORAGE_SEPARATOR) || ''
+    )
   }
 
   layersToLayerOpacities(layers: Layer[] | null): string {
     return (
-      layers?.map(layer => layer.opacity ?? 1).join(STORAGE_SEPARATOR) || ''
+      layers
+        ?.map(layer => layer.opacity ?? 1)
+        .reverse()
+        .join(STORAGE_SEPARATOR) || ''
     )
   }
 
@@ -79,6 +91,7 @@ class StorageLayerMapper {
     return (
       layers
         ?.map(layer => useLayers().getLayerCurrentTime(layer) ?? '')
+        .reverse()
         .join(STORAGE_TIME_SEPARATOR) || ''
     )
   }
