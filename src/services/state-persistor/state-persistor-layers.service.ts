@@ -139,7 +139,9 @@ class StatePersistorLayersService implements StatePersistorService {
       storageLayerMapper.layersVisibilitiesToBooleansV2
     )
 
-    return opacities.map((opacity, index) => (visibility[index] ? opacity : 0))
+    return opacities
+      .map((opacity, index) => (visibility[index] ? opacity : 0))
+      .reverse()
   }
 }
 
