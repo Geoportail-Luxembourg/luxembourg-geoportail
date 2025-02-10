@@ -63,7 +63,10 @@ import { statePersistorMyMapService } from '@/services/state-persistor/state-per
 import { proxyUrlHelper } from '@/services/proxyurl/proxyurl.helper'
 import { styleUrlHelper } from '@/services/styleurl/styleurl.helper'
 import { storageHelper } from '@/services/state-persistor/storage/storage.helper'
-import { urlStorage } from '@/services/state-persistor/storage/url-storage'
+import {
+  UrlStorage,
+  urlStorage,
+} from '@/services/state-persistor/storage/url-storage'
 import { themeSelectorService } from '@/components/theme-selector/theme-selector.service'
 import MapLibreLayer from '@/lib/ol-mapbox-layer'
 import StylePanel from '@/components/style-selector/style-panel.vue'
@@ -191,4 +194,5 @@ export {
   StylePanel,
   clearLayersCache,
   urlStorage,
+  UrlStorage,
 }
