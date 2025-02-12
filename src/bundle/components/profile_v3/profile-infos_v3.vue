@@ -14,7 +14,8 @@ const { feature_v3, activePositioning_v3 } = storeToRefs(profilev3Store)
 const activateProfile = computed(
   () =>
     feature_v3.value &&
-    feature_v3.value.getGeometry()?.getType() === 'LineString'
+    (feature_v3.value.getGeometry()?.getType() === 'LineString' ||
+      feature_v3.value.getGeometry()?.getType() === 'MultiLineString')
 )
 
 /**
