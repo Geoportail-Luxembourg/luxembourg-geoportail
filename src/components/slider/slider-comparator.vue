@@ -23,6 +23,7 @@ const { sliderActive, sliderRatio, sliderTopLayer } = storeToRefs(sliderStore)
 const splitterElementOffset = computed(
   () => splitterElement.value?.sliderElement?.offsetWidth || 0
 )
+const mapSize = ref([0, 0])
 
 const getMapOffsetLeft = function () {
   // Try to get the offsetLeft of the map viewport's parent element
@@ -38,13 +39,14 @@ const getMapOffsetLeft = function () {
 
 const sliderOffset = computed(() => {
   return olMap.value && splitterElement.value
-    ? sliderRatio.value * olMap.value.getSize()![0] -
+    ? sliderRatio.value * mapSize.value![0] -
         splitterElement.value?.sliderElement?.offsetWidth! / 2
     : 0
 })
 
 let olLayerPrerenderEvent: EventsKey
 let olLayerPostrenderEvent: EventsKey
+let olViewChangeSizeEvent: EventsKey
 let mapWrapperElement: HTMLElement
 
 statePersistorSliderComparatorService.bootstrap()
@@ -71,19 +73,19 @@ watch(sliderOffset, () => {
 
 function activate() {
   const olLayer = openLayers.getLayerFromCache(sliderTopLayer.value)
-
+  mapSize.value = olMap.value?.getSize()!
   if (!olLayer) return
 
   olLayerPrerenderEvent = olLayer.on(
     <EventTypes>EventType.PRERENDER,
     function (event) {
       const ctx = <CanvasRenderingContext2D>(<RenderEvent>event).context
-      const mapSize = olMap.value?.getSize()!
+
       const width = sliderOffset.value + splitterElementOffset.value / 2
       const tl = getRenderPixel(<RenderEvent>event, [0, 0])
       const tr = getRenderPixel(<RenderEvent>event, [width, 0])
-      const bl = getRenderPixel(<RenderEvent>event, [0, mapSize[1]])
-      const br = getRenderPixel(<RenderEvent>event, [width, mapSize[1]])
+      const bl = getRenderPixel(<RenderEvent>event, [0, mapSize.value[1]])
+      const br = getRenderPixel(<RenderEvent>event, [width, mapSize.value[1]])
 
       ctx.save()
       ctx.beginPath()
@@ -104,10 +106,18 @@ function activate() {
       ctx.restore()
     }
   )
+
+  olViewChangeSizeEvent = olMap?.value!.on('change:size', () => {
+    mapSize.value = olMap.value?.getSize()!
+  })
 }
 
 function deactivate() {
-  unByKey([olLayerPrerenderEvent, olLayerPostrenderEvent])
+  unByKey([
+    olLayerPrerenderEvent,
+    olLayerPostrenderEvent,
+    olViewChangeSizeEvent,
+  ])
 }
 
 function onMoveSplitBar(offsetLeft: number) {
