@@ -1,22 +1,29 @@
 <script setup lang="ts">
 import { computed } from 'vue'
 import { storeToRefs } from 'pinia'
-
 import FeatureElevationProfile from '@/components/feature-elevation-profile/feature-elevation-profile.vue'
 import { useProfileInfosv3Store } from '@/bundle/stores/profile-infos_v3.store'
 
-defineProps<{
-  featureId: number
-}>()
+const props = defineProps({
+  featureid: {
+    type: String,
+    default: '',
+  },
+})
 
 const profilev3Store = useProfileInfosv3Store()
-const { feature_v3, activePositioning_v3 } = storeToRefs(profilev3Store)
-const activateProfile = computed(
-  () =>
-    feature_v3.value &&
-    (feature_v3.value.getGeometry()?.getType() === 'LineString' ||
-      feature_v3.value.getGeometry()?.getType() === 'MultiLineString')
-)
+const { activePositioning_v3 } = storeToRefs(profilev3Store)
+const { getFeature } = profilev3Store
+
+const activateProfile = computed(() => {
+  return (
+    props.featureid &&
+    getFeature(props.featureid) &&
+    (getFeature(props.featureid).getGeometry()?.getType() === 'LineString' ||
+      getFeature(props.featureid).getGeometry()?.getType() ===
+        'MultiLineString')
+  )
+})
 
 /**
  * This component is a wrapper to use original <feature-elevation-profile> in v3
@@ -28,7 +35,7 @@ const activateProfile = computed(
 <template>
   <feature-elevation-profile
     v-if="activateProfile"
-    :feature="feature_v3"
+    :feature="getFeature(props.featureid)"
     :enableExportCSV="true"
     :activatePositioning="activePositioning_v3"
   />

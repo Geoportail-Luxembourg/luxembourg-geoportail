@@ -1,4 +1,4 @@
-import { Ref, ref } from 'vue'
+import { ref } from 'vue'
 import { acceptHMRUpdate, defineStore } from 'pinia'
 import { Map } from 'ol'
 
@@ -18,7 +18,8 @@ export const useProfileInfosv3Store = defineStore(
      * Emulate a DrawnFeature with feature coming from v3
      * @deprecated this property is meant to be removed when Drawing and Measures in v4 are fully operational
      */
-    const feature_v3: Ref<DrawnFeature | undefined> = ref(undefined)
+    //const feature_v3: Ref<DrawnFeature | undefined> = ref(undefined)
+    const features_v3 = ref<{ [id: string]: DrawnFeature }>({})
 
     /**
      * Activate or deactivate positioning for infos, deactivation is need for eg.
@@ -30,19 +31,43 @@ export const useProfileInfosv3Store = defineStore(
     function setProfileData(
       map: Map,
       feature: DrawnFeature,
-      profileData: ProfileData
+      profileData: ProfileData,
+      id: string
     ) {
-      feature_v3.value = undefined
       feature['map'] = map // Needed by CSV Exporter
       feature['label'] = feature['label'] ?? 'mnt' // Needed by CSV Exporter (= fileName)
       feature['getProfile'] = () => Promise.resolve(profileData)
-      feature_v3.value = feature
+      features_v3.value[id] = feature
+    }
+
+    /**
+     * Add a feature.
+     */
+    const addFeature = (feature: DrawnFeature, id: string | undefined) => {
+      features_v3.value[id] = feature
+    }
+
+    /**
+     * get a specific feature.
+     */
+    const getFeature = (id: string | undefined): DrawnFeature => {
+      return features_v3.value[id]
+    }
+
+    /**
+     * Remove a feature.
+     */
+    const removeFeature = (id: string | undefined) => {
+      delete features_v3.value[id]
     }
 
     return {
-      feature_v3,
+      features_v3,
       activePositioning_v3,
       setProfileData,
+      addFeature,
+      removeFeature,
+      getFeature,
     }
   },
   {}

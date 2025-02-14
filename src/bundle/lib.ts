@@ -108,6 +108,36 @@ export default function useLuxLib(options: LuxLibOptions) {
   app.use(VueDOMPurifyHTML)
   app.use(formatMeasureDirective)
 
+  const createElementInstanceProp = (component, app = null) => {
+    return defineCustomElement(
+      {
+        props: component.props || {},
+        setup: props => {
+          const inst = getCurrentInstance()!
+          if (app) {
+            if (inst) {
+              Object.assign(inst.appContext, app._context)
+              Object.assign(inst.provides, app._context.provides)
+            }
+          }
+          if (inst) {
+            const vueEmit = inst.emit // Sauvegarder la fonction emit originale de Vue
+            inst.emit = (event, ...args) => {
+              vueEmit(event, ...args) // Émettre l'événement dans Vue
+              const ceEvent = new CustomEvent(event, { detail: args }) // Créer un CustomEvent
+              inst.vnode.el?.dispatchEvent(ceEvent) // Dispatch l'événement sur le web component
+            }
+          }
+          return () => h(component, props) // Passer les props au composant
+        },
+        render() {
+          return null // Le rendu est géré dans setup
+        },
+      },
+      { shadowRoot: false }
+    )
+  }
+
   const createElementInstance = (component = {}, app = null) => {
     return defineCustomElement(
       {
@@ -126,6 +156,7 @@ export default function useLuxLib(options: LuxLibOptions) {
   return {
     app,
     createElementInstance,
+    createElementInstanceProp,
   }
 }
 
