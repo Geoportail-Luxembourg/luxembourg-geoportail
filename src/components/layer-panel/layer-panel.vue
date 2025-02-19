@@ -69,10 +69,12 @@ function onDisplayCatalog() {
     <template v-slot:content>
       <layer-manager
         data-cy="myLayers"
-        v-if="showMyLayersTab"
+        v-show="showMyLayersTab"
         @display-catalog="onDisplayCatalog"
       ></layer-manager>
-      <catalog-tab v-if="!showMyLayersTab"></catalog-tab>
+      <div v-show="!showMyLayersTab">
+        <catalog-tab></catalog-tab>
+      </div>
     </template>
   </side-panel-layout>
 </template>
