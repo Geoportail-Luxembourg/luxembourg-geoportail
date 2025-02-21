@@ -21,8 +21,13 @@ const emit = defineEmits<{
 const isDragging = ref(false)
 const elRefTrack = ref<HTMLElement>()
 const elRefThumb = ref<HTMLElement>()
-const elRefTrackWidth = computed(() => elRefTrack.value?.offsetWidth || 0)
-const elRefThumbWidth = computed(() => elRefThumb.value?.offsetWidth || 40)
+/*
+  TODO: Since we now use v-show instead of v-if in layer-panel.vue, the element is present in the DOM but remains hidden.  
+  As a result, offsetWidth always returns its default value instead of the actual one.  
+  We need to find a way to retrieve the correct offsetWidth value.
+*/
+const elRefTrackWidth = computed(() => elRefTrack.value?.offsetWidth || 274)
+const elRefThumbWidth = computed(() => elRefThumb.value?.offsetWidth || 9)
 const currentValue = ref(props.selectedValue) // Is detached from selectedValue, keep its own state
 const currentLeftOffset = computed(() => {
   const offset = (elRefTrackWidth.value * currentValue.value) / 100
