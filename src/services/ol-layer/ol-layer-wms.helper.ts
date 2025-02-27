@@ -18,11 +18,14 @@ class OlLayerWmsHelper {
         FORMAT: imageType,
         LAYERS: layers,
       },
-      ...((url !== undefined && url !== null) || proxyUrlHelper.remoteProxyUrl
+    })
+    /*
+    These requests should be done with no-cors mode, if we want to keep the cookies for the authentication
+    Investigate why this code was here and if it is still needed
+    ...((url !== undefined && url !== null) || proxyUrlHelper.remoteProxyUrl
         ? { crossOrigin: 'anonymous' }
         : {}),
-    })
-
+    */
     const olLayer = new ImageLayer({
       properties: {
         'olcs.extent': getOlcsExtent(),
