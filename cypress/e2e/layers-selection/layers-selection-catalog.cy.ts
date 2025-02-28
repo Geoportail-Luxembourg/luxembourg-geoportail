@@ -91,4 +91,34 @@ describe('Catalogue', () => {
       cy.get('[data-cy="myLayers"] > ul > li').should('have.length', 2)
     })
   })
+
+  describe('When user navigates in the catalog, switch to the layer manager and go back to the catalog', () => {
+    it('keeps the catalog accordions previously opened, opened', () => {
+      cy.get('[data-cy="catalogButton"]').click()
+      cy.get('[data-cy="myLayers"]').should('not.be.visible')
+      cy.get('[data-cy="catalog"]').find('button').first().click() // Close the first default opened accordion
+      cy.get('[data-cy^="parentLayerLabel-"]').eq(6).as('parentAccordion')
+      cy.get('@parentAccordion').find('button').first().as('btnAccordion')
+      cy.get('@parentAccordion')
+        .next('[data-cy^="subLayerLabel-"]')
+        .should('have.class', 'lux-collapse')
+      cy.get('@btnAccordion').should('have.attr', 'aria-expanded', 'false')
+      cy.get('@btnAccordion').click()
+      cy.get('@btnAccordion').should('have.attr', 'aria-expanded', 'true')
+      cy.get('@parentAccordion')
+        .next('[data-cy^="subLayerLabel-"]')
+        .should('have.class', 'expanded')
+      // Open My Layers panel
+      cy.get('[data-cy="myLayersButton"]').click()
+      cy.get('[data-cy="myLayers"]').should('be.visible')
+      // Back to Catalog
+      cy.get('[data-cy="catalogButton"]').click()
+      cy.get('[data-cy="myLayers"]').should('not.be.visible')
+      // Check if accordion is still opened
+      cy.get('@btnAccordion').should('have.attr', 'aria-expanded', 'true')
+      cy.get('@parentAccordion')
+        .next('[data-cy^="subLayerLabel-"]')
+        .should('have.class', 'expanded')
+    })
+  })
 })
