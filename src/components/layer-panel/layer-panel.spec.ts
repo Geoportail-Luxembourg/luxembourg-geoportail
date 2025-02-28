@@ -5,7 +5,6 @@ import CatalogTab from '@/components/catalog/catalog-tab.vue'
 import LayerManager from '@/components/layer-manager/layer-manager.vue'
 
 import LayerPanel from './layer-panel.vue'
-import { useAppStore } from '@/stores/app.store'
 
 describe('LayerPanel', () => {
   const mountComponent = () => mount(LayerPanel)
@@ -20,15 +19,12 @@ describe('LayerPanel', () => {
   })
 
   it('renders properly', async () => {
-    const appStore = useAppStore()
-
     expect(wrapper.findComponent(CatalogTab).exists()).toBe(true)
-    expect(wrapper.findComponent(LayerManager).exists()).toBe(false)
-
-    appStore.setMyLayersTabOpen(true)
-    await wrapper.vm.$nextTick() // "Wait for the DOM to update before continuing the test"
-
-    expect(wrapper.findComponent(CatalogTab).exists()).toBe(true)
-    expect(wrapper.findComponent(LayerManager).exists()).toBe(false)
+    expect(wrapper.findComponent(LayerManager).exists()).toBe(true)
+    expect(wrapper.findComponent(CatalogTab).isVisible()).toBe(true)
+    // NB. LayerManager is present but not visible,
+    // CatalogTab is present even if LayerManager is visible,
+    // to keep accordions state (opened or closed) according to the user's navigation in the catalog
+    expect(wrapper.findComponent(LayerManager).isVisible()).toBe(false)
   })
 })
