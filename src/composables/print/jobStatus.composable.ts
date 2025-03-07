@@ -3,6 +3,13 @@ import { onUnmounted, ref, Ref } from 'vue'
 
 const POLLING_INTERVAL = 1000
 
+function jobInError(status: string | number) {
+  return (
+    (typeof status === 'number' && status >= 400 && status <= 500) ||
+    status === 'error'
+  )
+}
+
 export function useJobStatus() {
   const jobStatus: Ref<string | null> = ref(null)
   const url: Ref<string | null> = ref(null)
@@ -15,7 +22,7 @@ export function useJobStatus() {
         jobId
       )
       jobStatus.value = status
-      if (status === 'error') {
+      if (jobInError(status)) {
         error.value = true
         clearPolling()
       }
