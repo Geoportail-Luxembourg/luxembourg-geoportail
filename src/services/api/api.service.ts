@@ -35,7 +35,8 @@ export async function fetchApi(
       headers['Content-Type'] = 'application/json'
       options.body = JSON.stringify(payload)
     } else {
-      headers['Content-Type'] = 'application/x-www-form-urlencoded'
+      headers['Content-Type'] =
+        'application/x-www-form-urlencoded;charset=UTF-8'
       options.body = new URLSearchParams(payload as Record<string, string>)
     }
   }

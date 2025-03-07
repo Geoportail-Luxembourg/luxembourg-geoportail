@@ -9,9 +9,14 @@ import LayerGroup from 'ol/layer/Group'
 import type { State } from 'ol/layer/Layer.js'
 import BaseLayer from 'ol/layer/Layer.js'
 import { FrameState } from 'ol/PluggableMap'
+import { urlPathStorage } from './state-persistor/storage/url-storage-as-path'
+import { fetchApi } from './api/api.service'
 
-export const BASE_URL = import.meta.env.VITE_V3_API_HOST
+export const BASE_URL = import.meta.env.VITE_PRINT_HOST
 const LEGEND_URL = import.meta.env.VITE_PROFILE_URL
+const SHORT_URL = import.meta.env.VITE_SHORT_URL
+const PROXYURL_PRINT = import.meta.env.VITE_PROXYURL_PRINT
+const QR_URL = import.meta.env.VITE_QR_URL
 
 export interface PrintLegend {
   name: string | null
@@ -91,7 +96,7 @@ export class PrintService {
 
   async print(options: PrintOptions, map: Map, t: Function): Promise<string> {
     const spec = await this.getSpec(options, map, t)
-    const response = await fetch(`${BASE_URL}/printproxy/report.pdf`, {
+    const response = await fetch(`${PROXYURL_PRINT}/report.pdf`, {
       method: 'POST',
       body: JSON.stringify(spec),
     })
@@ -129,7 +134,7 @@ export class PrintService {
     recursiveGetLayerAttributions(
       map.getLayerGroup(),
       dataOwners,
-      options.framestate
+      <FrameState>options.framestate
     )
 
     const spec = {
@@ -146,7 +151,7 @@ export class PrintService {
         scale: options.scale,
         name: options.title,
         url: shortUrl,
-        qrimage: `https://map.geoportail.lu/qr?url=${shortUrl}`,
+        qrimage: `${QR_URL}?url=${shortUrl}`,
         lang: options.lang,
         legend: options.legend ? legend : null,
         scalebar: {
@@ -181,37 +186,10 @@ export class PrintService {
   }
 
   async getShortLink(): Promise<string> {
-    let url = window.location.href.toString()
-    //Replace the specific app parameter
-    const isApp =
-      location.search.includes('localforage=android') ||
-      location.search.includes('localforage=ios') ||
-      location.search.includes('applogin=yes')
+    const url = BASE_URL + urlPathStorage.getRelativeUrl()
+    const payload = { url }
+    const response = await fetchApi(SHORT_URL, payload, 'POST')
 
-    if (isApp) {
-      const paramsToRemove = [
-        'localforage=android',
-        'localforage=ios',
-        'applogin=yes',
-        'ipv6=true',
-        'embeddedserver=127.0.0.1%3A8765',
-        'embeddedserverprotocol=https',
-        'embeddedserverprotocol=http',
-      ]
-
-      paramsToRemove.forEach(param => {
-        url = url.replace(param, '')
-      })
-    }
-
-    const headers = {
-      'Content-Type': 'application/x-www-form-urlencoded;charset=UTF-8',
-    }
-    const response = await fetch(`${BASE_URL}/short/create`, {
-      method: 'POST',
-      headers,
-      body: `url=${encodeURIComponent(url)}`,
-    })
     return ((await response.json()) as { short_url: string }).short_url
   }
 
@@ -270,7 +248,7 @@ export class PrintService {
 function recursiveGetLayerAttributions(
   layer: BaseLayer | LayerGroup,
   dataOwners: string[],
-  framestate: any
+  framestate: FrameState
 ) {
   if (layer instanceof LayerGroup) {
     ;(layer as LayerGroup)
@@ -320,9 +298,9 @@ export class LuxEncoder extends MFPEncoder {
     if (i === -1 || j === -1) {
       return
     }
-    const baseURL = url.substr(0, i)
-    const imageExtension = url.substr(j + 1)
-    const styleName = baseURL.substr(
+    const baseURL = url.substring(0, i)
+    const imageExtension = url.substring(j + 1)
+    const styleName = baseURL.substring(
       baseURL.lastIndexOf('/styles/') + '/styles/'.length
     )
     let object: any

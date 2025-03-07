@@ -26,7 +26,7 @@ export class UrlStorage implements Storage {
     throw new Error('Method key() not implemented. ' + index)
   }
 
-  getStrippedUrl(optCoordinate: number[] | undefined) {
+  getStrippedUrl(optCoordinate?: number[] | undefined) {
     // stripped by embedded app parameters
     const url = new URL(window.location.toString())
     const params = new URLSearchParams(url.search)
@@ -43,11 +43,21 @@ export class UrlStorage implements Storage {
 
     url.search = params.toString()
 
-    return url.toString()
+    return url
+  }
+
+  /**
+   * Return the relative url (stripped: without isApp, forage, embedded server params)
+   * @returns The relative url as a string
+   */
+  getRelativeUrl() {
+    const url = this.getStrippedUrl(undefined)
+    return url.pathname + url.search
   }
 
   async getShortUrl(optCoordinate: number[] | undefined) {
     const strippedUrl = this.getStrippedUrl(optCoordinate)
+      .toString()
       // convert github pages and vite ports localhost 4173 or 5173
       // to hosts accepted by the shortURL entrypoint
       // TODO: remove when there is a v4 API available
