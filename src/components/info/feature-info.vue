@@ -26,6 +26,9 @@ defineProps({
     required: true,
   },
 })
+defineEmits<{
+  (e: 'export', payload: { feature: FeatureJSON; format: 'kml' | 'gpx' }): void
+}>()
 const map = useMap().getOlMap()
 
 // For print, save ref to element to access content in print composable
