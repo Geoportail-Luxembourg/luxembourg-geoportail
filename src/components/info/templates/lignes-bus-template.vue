@@ -7,6 +7,9 @@ defineProps({
     required: true,
   },
 })
+defineEmits<{
+  (e: 'export', payload: unknown): void // TS compatibilty with parent feature-info @export
+}>()
 </script>
 <template>
   <h1>{{ layers.layerLabel }}</h1>
