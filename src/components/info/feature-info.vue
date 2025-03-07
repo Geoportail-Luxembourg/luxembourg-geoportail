@@ -23,6 +23,9 @@ defineProps({
     required: true,
   },
 })
+defineEmits<{
+  (e: 'export', payload: { feature: FeatureJSON; format: 'kml' | 'gpx' }): void
+}>()
 const map = useMap().getOlMap()
 
 onUnmounted(() => {
@@ -31,10 +34,9 @@ onUnmounted(() => {
 
 const getTemplateComponent = (template: string) => {
   switch (template) {
-    case 'default.html':
-      return DefaultTemplate
     case 'lignes_bus.html':
       return LignesBusTemplate
+    case 'default.html':
     default:
       return DefaultTemplate
   }
