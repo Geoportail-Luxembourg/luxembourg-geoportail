@@ -16,7 +16,10 @@
     },
     "strict": true,
     "strictPropertyInitialization": false,
+    //  Option 'preserveValueImports' is deprecated and will stop functioning in TypeScript 5.5. Specify compilerOption '"ignoreDeprecations": "5.0"' to silence this error.
     "preserveValueImports": false,
-    "importsNotUsedAsValues": "remove"
+    // Option 'importsNotUsedAsValues' is deprecated and will stop functioning in TypeScript 5.5. Specify compilerOption '"ignoreDeprecations": "5.0"' to silence this error.
+    "importsNotUsedAsValues": "remove",
+    "ignoreDeprecations": "5.0"
   }
 }
