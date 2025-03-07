@@ -103,7 +103,9 @@ function changeTime(dateStart?: string, dateEnd?: string) {
       :isLayerComparatorOpen="isLayerComparatorOpen"
       :displayLayerComparatorOpen="displayLayerComparatorOpen"
       @clickToggleLayerComparator="$emit('clickToggleLayerComparator', $event)"
-      @changeOpacity="(layer: Layer, value: number) => $emit('changeOpacity', layer, value)"
+      @changeOpacity="
+        (layer: Layer, value: number) => $emit('changeOpacity', layer, value)
+      "
     ></layer-item-sub>
 
     <!-- Layer time: slider OR datepicker widgets -->
