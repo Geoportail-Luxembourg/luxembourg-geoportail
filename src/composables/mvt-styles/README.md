@@ -17,7 +17,7 @@ This processing is done on the backend side, see legacy v3 code for more info:
 
 ⚠️ The https://vectortiles.geoportail.lu is mandatory to make the print and the 3D map work because both functionalities need raster images.
 
-⚠️ For dev purposes, we will be using https://migration.geoportail.lu and https://vectortiles-staging.geoportail.lu plateform instead.
+⚠️ For dev purposes, we will be using https://map4gim.geoportail.lu and https://vectortiles-staging.geoportail.lu plateform instead.
 
 ## 💡 How it works
 
@@ -46,9 +46,9 @@ It is also possible to override theses values by settings new urls using `useMvt
 // Override urls on legacy v3 side:
 const mvtStyles = useMvtStyles()
 mvtStyles.setRegisterUrl_v3({
-  get: 'https://migration.geoportail.lu/getvtstyle',
-  upload: 'https://migration.geoportail.lu/uploadvtstyle',
-  delete: 'https://migration.geoportail.lu/deletevtstyle',
+  get: 'https://map4gim.geoportail.lu/getvtstyle',
+  upload: 'https://map4gim.geoportail.lu/uploadvtstyle',
+  delete: 'https://map4gim.geoportail.lu/deletevtstyle',
   vectortiles: 'https://vectortiles-staging.geoportail.lu',
 })
 ```
@@ -90,9 +90,9 @@ NB. Using relative urls is possible because proxy urls are defined in `vite.conf
 VITE_VECTORTILES_URL="https://vectortiles-staging.geoportail.lu"
 
 # Paths for MVT styles
-VITE_MVTSTYLES_PATH_GET="https://migration.geoportail.lu/getvtstyle"
-VITE_MVTSTYLES_PATH_UPLOAD="https://migration.geoportail.lu/uploadvtstyle"
-VITE_MVTSTYLES_PATH_DELETE="https://migration.geoportail.lu/deletevtstyle"
+VITE_MVTSTYLES_PATH_GET="https://map4gim.geoportail.lu/getvtstyle"
+VITE_MVTSTYLES_PATH_UPLOAD="https://map4gim.geoportail.lu/uploadvtstyle"
+VITE_MVTSTYLES_PATH_DELETE="https://map4gim.geoportail.lu/deletevtstyle"
 ```
 
 ### Save styles on production server
