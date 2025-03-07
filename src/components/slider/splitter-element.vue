@@ -95,7 +95,11 @@ onUnmounted(() => {
       <span></span>
       <span></span>
     </span>
-    <span class="lux-slider-layer-label" v-if="sliderTopLayer">
+    <span
+      data-cy="sliderLayerLabel"
+      class="lux-slider-layer-label"
+      v-if="sliderTopLayer"
+    >
       <i class="fa fa-arrow-left mr-2"></i>
       <span>{{ t(sliderTopLayer.name) }}</span>
     </span>
