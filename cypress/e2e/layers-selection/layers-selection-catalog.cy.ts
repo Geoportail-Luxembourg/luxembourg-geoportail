@@ -45,10 +45,10 @@ describe('Catalogue', () => {
         cy.get('[data-cy="myLayers"]').find('button').eq(4)
       myLayersBtn().click()
       myLayersBtn().should(() => {
-        expect(localStorage.getItem('opacities')).to.eq('1-1-0')
+        expect(localStorage.getItem('opacities')).to.eq('0-1-1')
       }) // toggle button visible
 
-      cy.url().should('contains', 'opacities=1-1-0')
+      cy.url().should('contains', 'opacities=0-1-1')
       cy.get('[data-cy="myLayers"]')
         .find('button')
         .eq(4)
