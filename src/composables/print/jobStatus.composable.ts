@@ -54,5 +54,5 @@ export function useJobStatus() {
 
   onUnmounted(() => clearPolling())
 
-  return { jobStatus, url, startPolling, error, loading }
+  return { jobStatus, url, startPolling, clearPolling, error, loading }
 }
