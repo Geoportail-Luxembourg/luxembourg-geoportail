@@ -2,6 +2,7 @@ import { acceptHMRUpdate, defineStore } from 'pinia'
 import { computed, ref, shallowRef, ShallowRef } from 'vue'
 
 import { ConfigModel } from '@/composables/themes/themes.model'
+import { themeSelectorService } from '@/components/theme-selector/theme-selector.service'
 
 const DEFAULT_CURRENT_THEME = 'main'
 const ROOT_NAME_3D = 'root_3d'
@@ -39,6 +40,7 @@ export const useThemeStore = defineStore(
 
     function setTheme(name: string) {
       themeName.value = name
+      themeSelectorService.setCurrentThemeColors(name)
     }
 
     return {

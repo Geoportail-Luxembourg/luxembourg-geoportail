@@ -14,7 +14,7 @@ const { setThemeGridOpen } = appStore
 const { themeGridOpen } = storeToRefs(appStore)
 const themeStore = useThemeStore()
 const themesService = useThemes()
-const { theme, themes: themesFromStore } = storeToRefs(themeStore)
+const { theme, themes: themesFromStore, themeName } = storeToRefs(themeStore)
 const themes = computed(
   () =>
     themesFromStore.value?.filter(
@@ -38,6 +38,7 @@ function setTheme(themeName: string) {
     @click="toggleThemesGrid"
     :themes="themes"
     :currentTheme="theme"
+    :themeName="themeName"
     :isOpen="themeGridOpen"
   ></theme-selector-button>
   <div

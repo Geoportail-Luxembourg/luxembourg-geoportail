@@ -7,6 +7,7 @@ import { ThemeNodeModel } from '@/composables/themes/themes.model'
 const { t } = useTranslation()
 const props = defineProps<{
   themes: ThemeNodeModel[]
+  themeName: string
   currentTheme?: ThemeNodeModel
   isOpen?: boolean
 }>()
@@ -20,9 +21,7 @@ const themesComputed = computed(() => {
     class="w-full flex flex-row justify-between bg-tertiary text-white px-2 py-1.5 uppercase cursor-pointer hover:bg-white hover:text-primary"
     :aria-expanded="props.isOpen"
   >
-    <span class="py-0.5"
-      >{{ t('Theme') }}: {{ t(`${props.currentTheme?.name}`) }}</span
-    >
+    <span class="py-0.5">{{ t('Theme') }}: {{ t(`${props.themeName}`) }}</span>
     <span
       class="px-1 py-0.5 shrink-0 flex flex-row text-[12px] bg-secondary text-white"
     >
