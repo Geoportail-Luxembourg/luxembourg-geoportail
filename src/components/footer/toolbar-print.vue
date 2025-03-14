@@ -14,7 +14,7 @@ import { computed, onMounted, onUnmounted, Ref, ref, watch } from 'vue'
 
 const MASK_ZINDEX = 2000
 
-const { url, startPolling, error, loading } = useJobStatus()
+const { url, startPolling, clearPolling, error, loading } = useJobStatus()
 const { addNotification } = useAlertNotificationsStore()
 
 const { t } = useTranslation()
@@ -82,6 +82,7 @@ const print = async (format: PRINT_FORMAT) => {
     startPolling(reportResponse.statusURL)
   } catch {
     printingRef.value = null
+    clearPolling()
     addNotification(
       t('An error occurred while printing'),
       AlertNotificationType.ERROR
@@ -93,6 +94,7 @@ async function abortPrint() {
   if (printingRef.value) {
     await printService.cancel(printingRef.value)
     printingRef.value = null
+    clearPolling()
   }
 }
 
