@@ -94,14 +94,31 @@ export class PrintService {
     return LAYOUTS
   }
 
-  async print(options: PrintOptions, map: Map, t: Function): Promise<string> {
+  async print(
+    options: PrintOptions,
+    map: Map,
+    t: Function
+  ): Promise<ReportResponse> {
     const spec = await this.getSpec(options, map, t)
     const response = await fetch(`${PROXYURL_PRINT}/report.pdf`, {
       method: 'POST',
       body: JSON.stringify(spec),
     })
-    const url = ((await response.json()) as { statusURL: string }).statusURL
-    return BASE_URL + url.replace(/print/, 'printproxy')
+    const res = <ReportResponse>await response.json()
+    const statusURL = BASE_URL + res.statusURL.replace(/print/, 'printproxy')
+    const downloadURL =
+      BASE_URL + res.downloadURL.replace(/print/, 'printproxy')
+    return {
+      downloadURL,
+      ref: res.ref,
+      statusURL,
+    }
+  }
+
+  cancel(ref: string) {
+    return fetch(`${PROXYURL_PRINT}/cancel${ref}`, {
+      method: 'DELETE',
+    })
   }
 
   async getJobStatus(statusUrl: string): Promise<JobStatus> {
@@ -275,6 +292,12 @@ export interface JobStatus {
   status: string
   done: boolean
   downloadURL?: string
+}
+
+export interface ReportResponse {
+  statusURL: string
+  ref: string
+  downloadURL: string
 }
 
 export class LuxEncoder extends MFPEncoder {

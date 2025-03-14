@@ -10,16 +10,17 @@ import { useAppStore } from '@/stores/app.store'
 import { useTranslation } from 'i18next-vue'
 import { FrameState } from 'ol/PluggableMap'
 import { v4 as uuidv4 } from 'uuid'
-import { computed, onMounted, onUnmounted, ref, watch } from 'vue'
+import { computed, onMounted, onUnmounted, Ref, ref, watch } from 'vue'
 
 const MASK_ZINDEX = 2000
 
-const { url, startPolling, error } = useJobStatus()
+const { url, startPolling, error, loading } = useJobStatus()
 const { addNotification } = useAlertNotificationsStore()
 
 const { t } = useTranslation()
 const { lang } = useAppStore()
 const uuid = uuidv4()
+const printingRef: Ref<string | null> = ref(null)
 let framestate: FrameState | null = null
 
 const map = useMap().getOlMap()
@@ -63,7 +64,7 @@ const scalePlaceholder = ref<string>('')
 
 const print = async (format: PRINT_FORMAT) => {
   try {
-    const pollingURL = await printService.print(
+    const reportResponse = await printService.print(
       {
         format,
         layout: layout.value,
@@ -77,12 +78,21 @@ const print = async (format: PRINT_FORMAT) => {
       map,
       t
     )
-    startPolling(pollingURL)
+    printingRef.value = reportResponse.ref
+    startPolling(reportResponse.statusURL)
   } catch {
+    printingRef.value = null
     addNotification(
       t('An error occurred while printing'),
       AlertNotificationType.ERROR
     )
+  }
+}
+
+async function abortPrint() {
+  if (printingRef.value) {
+    await printService.cancel(printingRef.value)
+    printingRef.value = null
   }
 }
 
@@ -171,7 +181,19 @@ onUnmounted(() => {
         </div>
       </div>
 
-      <div class="flex gap-1 justify-end">
+      <div class="flex gap-1 justify-end items-center">
+        <div v-if="loading" class="mr-4 flex gap-2 items-center">
+          <span
+            class="text-black fa-solid fa-arrows-rotate animate-spin"
+            aria-hidden="true"
+          ></span>
+          <button
+            class="btn btn-link opacity-75 text-white hover:underline hover:opacity-100"
+            @click="abortPrint()"
+          >
+            {{ t('Abort') }}
+          </button>
+        </div>
         <button
           data-cy="printPng"
           class="bg-white text-primary hover:bg-primary hover:text-white border border-slate-300 py-1.5 px-2.5"
