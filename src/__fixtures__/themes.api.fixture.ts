@@ -15,8 +15,8 @@ export const themesApiFixture = (): ConfigModel => ({
             "attributes": null
         },
         "source for image/jpeg": {
-            "url": "https://map4gim.geoportail.lu/mapserv_proxy?ogcserver=source+for+image%2Fjpeg&cache_version=ddc9f661fc1b496c919d096d89f6f3fb",
-            "urlWfs": "https://map4gim.geoportail.lu/mapserv_proxy?ogcserver=source+for+image%2Fjpeg&cache_version=ddc9f661fc1b496c919d096d89f6f3fb",
+            "url": "https://migration.geoportail.lu/mapserv_proxy?ogcserver=source+for+image%2Fjpeg&cache_version=ddc9f661fc1b496c919d096d89f6f3fb",
+            "urlWfs": "https://migration.geoportail.lu/mapserv_proxy?ogcserver=source+for+image%2Fjpeg&cache_version=ddc9f661fc1b496c919d096d89f6f3fb",
             "type": "mapserver",
             "credential": true,
             "imageType": "image/jpeg",
@@ -26,8 +26,8 @@ export const themesApiFixture = (): ConfigModel => ({
             "attributes": null
         },
         "Internal WMS Geoserver": {
-            "url": "https://map4gim.geoportail.lu/ogcproxywms",
-            "urlWfs": "https://map4gim.geoportail.lu/ogcproxywms",
+            "url": "https://migration.geoportail.lu/ogcproxywms",
+            "urlWfs": "https://migration.geoportail.lu/ogcproxywms",
             "type": "geoserver",
             "credential": false,
             "imageType": "image/png",
@@ -37,8 +37,8 @@ export const themesApiFixture = (): ConfigModel => ({
             "attributes": null
         },
         "Internal WMS": {
-            "url": "https://map4gim.geoportail.lu/ogcproxywms",
-            "urlWfs": "https://map4gim.geoportail.lu/ogcproxywms",
+            "url": "https://migration.geoportail.lu/ogcproxywms",
+            "urlWfs": "https://migration.geoportail.lu/ogcproxywms",
             "type": "mapserver",
             "credential": false,
             "imageType": "image/png",
@@ -48,8 +48,8 @@ export const themesApiFixture = (): ConfigModel => ({
             "attributes": null
         },
         "source for image/png": {
-            "url": "https://map4gim.geoportail.lu/mapserv_proxy?ogcserver=source+for+image%2Fpng&cache_version=ddc9f661fc1b496c919d096d89f6f3fb",
-            "urlWfs": "https://map4gim.geoportail.lu/mapserv_proxy?ogcserver=source+for+image%2Fpng&cache_version=ddc9f661fc1b496c919d096d89f6f3fb",
+            "url": "https://migration.geoportail.lu/mapserv_proxy?ogcserver=source+for+image%2Fpng&cache_version=ddc9f661fc1b496c919d096d89f6f3fb",
+            "urlWfs": "https://migration.geoportail.lu/mapserv_proxy?ogcserver=source+for+image%2Fpng&cache_version=ddc9f661fc1b496c919d096d89f6f3fb",
             "type": "mapserver",
             "credential": true,
             "imageType": "image/png",
@@ -26380,7 +26380,7 @@ export const themesApiFixture = (): ConfigModel => ({
         {
             "id": 1530,
             "name": "atlas_demographique",
-            "icon": "https://map4gim.geoportail.lu/static/ddc9f661fc1b496c919d096d89f6f3fb/images/blank.png",
+            "icon": "https://migration.geoportail.lu/static/ddc9f661fc1b496c919d096d89f6f3fb/images/blank.png",
             "children": [
                 {
                     "id": 2515,
@@ -29690,7 +29690,7 @@ export const themesApiFixture = (): ConfigModel => ({
         {
             "id": 1732,
             "name": "logement",
-            "icon": "https://map4gim.geoportail.lu/static/ddc9f661fc1b496c919d096d89f6f3fb/images/blank.png",
+            "icon": "https://migration.geoportail.lu/static/ddc9f661fc1b496c919d096d89f6f3fb/images/blank.png",
             "children": [
                 {
                     "id": 1733,
@@ -29920,7 +29920,7 @@ export const themesApiFixture = (): ConfigModel => ({
         {
             "id": 1833,
             "name": "energie",
-            "icon": "https://map4gim.geoportail.lu/static/ddc9f661fc1b496c919d096d89f6f3fb/images/blank.png",
+            "icon": "https://migration.geoportail.lu/static/ddc9f661fc1b496c919d096d89f6f3fb/images/blank.png",
             "children": [
                 {
                     "id": 1842,
@@ -30393,7 +30393,7 @@ export const themesApiFixture = (): ConfigModel => ({
         {
             "id": 1834,
             "name": "np_our",
-            "icon": "https://map4gim.geoportail.lu/static/ddc9f661fc1b496c919d096d89f6f3fb/images/blank.png",
+            "icon": "https://migration.geoportail.lu/static/ddc9f661fc1b496c919d096d89f6f3fb/images/blank.png",
             "children": [
                 {
                     "id": 1860,
@@ -33504,7 +33504,7 @@ export const themesApiFixture = (): ConfigModel => ({
         {
             "id": 2177,
             "name": "geosciences",
-            "icon": "https://map4gim.geoportail.lu/static/ddc9f661fc1b496c919d096d89f6f3fb/images/blank.png",
+            "icon": "https://migration.geoportail.lu/static/ddc9f661fc1b496c919d096d89f6f3fb/images/blank.png",
             "children": [
                 {
                     "id": 2178,
@@ -34375,7 +34375,7 @@ export const themesApiFixture = (): ConfigModel => ({
         {
             "id": 2332,
             "name": "3D Layers",
-            "icon": "https://map4gim.geoportail.lu/static/ddc9f661fc1b496c919d096d89f6f3fb/images/blank.png",
+            "icon": "https://migration.geoportail.lu/static/ddc9f661fc1b496c919d096d89f6f3fb/images/blank.png",
             "children": [
                 {
                     "id": 1958,
@@ -34500,7 +34500,7 @@ export const themesApiFixture = (): ConfigModel => ({
         {
             "id": 2576,
             "name": "anf_expo",
-            "icon": "https://map4gim.geoportail.lu/static/ddc9f661fc1b496c919d096d89f6f3fb/images/blank.png",
+            "icon": "https://migration.geoportail.lu/static/ddc9f661fc1b496c919d096d89f6f3fb/images/blank.png",
             "children": [
                 {
                     "id": 2577,
@@ -34914,7 +34914,7 @@ export const themesApiFixture = (): ConfigModel => ({
         {
             "id": 2742,
             "name": "school",
-            "icon": "https://map4gim.geoportail.lu/static/ddc9f661fc1b496c919d096d89f6f3fb/images/blank.png",
+            "icon": "https://migration.geoportail.lu/static/ddc9f661fc1b496c919d096d89f6f3fb/images/blank.png",
             "children": [
                 {
                     "id": 2753,

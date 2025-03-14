@@ -2,7 +2,11 @@ import { Metadata } from '@/composables/themes/themes.model'
 import MapLibreLayer from '@/lib/ol-mapbox-layer'
 import { DOTS_PER_INCH, INCHES_PER_METER } from '@/lib/ol-mask-layer'
 import { useThemeStore } from '@/stores/config.store'
-import type { MFPLayer } from '@geoblocks/mapfishprint'
+import type {
+  MFPLayer,
+  MFPOSMLayer,
+  MFPWmsLayer,
+} from '@geoblocks/mapfishprint'
 import { BaseCustomizer, MFPEncoder } from '@geoblocks/mapfishprint'
 import { Map } from 'ol'
 import LayerGroup from 'ol/layer/Group'
@@ -76,6 +80,7 @@ export const enum PRINT_FORMAT {
   PDF = 'PDF',
   PNG = 'PNG',
 }
+const DPI = 127
 
 const getWidth = (scale: number, width: number, resolution: number): number =>
   Math.round(((width / DOTS_PER_INCH / INCHES_PER_METER) * scale) / resolution)
@@ -116,7 +121,7 @@ export class PrintService {
   }
 
   cancel(ref: string) {
-    return fetch(`${PROXYURL_PRINT}/cancel${ref}`, {
+    return fetch(`${PROXYURL_PRINT}/cancel/${ref}`, {
       method: 'DELETE',
     })
   }
@@ -139,7 +144,7 @@ export class PrintService {
       map,
       scale: options.scale,
       printResolution: map.getView().getResolution()!,
-      dpi: 127,
+      dpi: DPI,
       customizer,
     })
     mapSpec.layers = mapSpec.layers.filter(layer => layer !== null)
@@ -213,7 +218,7 @@ export class PrintService {
   async getLegends(layers: BaseLayer[], lang: string): Promise<Object[]> {
     const legends: PrintLegend[] = []
 
-    let dpi = 127
+    let dpi = DPI
     const url = LEGEND_URL
     layers.reverse().forEach(layer => {
       const curMetadata = layer.get('metadata')
@@ -305,13 +310,41 @@ export class LuxEncoder extends MFPEncoder {
     layerState: State,
     printResolution: number,
     customizer: BaseCustomizer
-  ): Promise<MFPLayer[] | MFPLayer | null> {
+  ) {
+    let encoded: MFPLayer[] | MFPLayer | null
     const layer = layerState.layer
     if (layer instanceof MapLibreLayer) {
       // @ts-ignore
-      return this.encodeXYZLayer_(layer.getXYZ())
+      encoded = this.encodeXYZLayer_(layer.getXYZ())
+    } else {
+      encoded = await super.encodeLayerState(
+        layerState,
+        printResolution,
+        customizer
+      )
     }
-    return super.encodeLayerState(layerState, printResolution, customizer)
+
+    if (Array.isArray(encoded)) {
+      encoded = <MFPLayer[]>encoded.map(this.legacyMFPAppendCustomParams)
+    } else if (encoded) {
+      encoded = this.legacyMFPAppendCustomParams(encoded)
+    }
+
+    return encoded
+  }
+
+  legacyMFPAppendCustomParams(encoded: MFPLayer | MFPLayer[] | null) {
+    return encoded
+      ? {
+          ...encoded,
+          ...{
+            customParams: {
+              TRANSPARENT: true,
+              MAP_RESOLUTION: DPI,
+            },
+          },
+        }
+      : null
   }
 
   encodeXYZLayer_(url: string) {
@@ -326,33 +359,31 @@ export class LuxEncoder extends MFPEncoder {
     const styleName = baseURL.substring(
       baseURL.lastIndexOf('/styles/') + '/styles/'.length
     )
-    let object: any
     if (
       styleName === 'topomap' ||
       styleName === 'roadmap' ||
       styleName === 'topomap_gray'
     ) {
-      object = {
+      return {
         baseURL: 'https://wms.geoportail.lu/vectortiles_wms_4_print/service',
         imageFormat: 'image/' + imageExtension,
         layers: [styleName],
         customParams: {
           TRANSPARENT: true,
-          MAP_RESOLUTION: 127,
+          MAP_RESOLUTION: DPI,
         },
         type: 'wms',
         opacity: 1,
         version: '1.1.1',
         useNativeAngle: true,
-      }
+      } as unknown as MFPWmsLayer
     } else {
-      object = {
+      return {
         baseURL,
         type: 'OSM',
         imageExtension,
-      }
+      } as unknown as MFPOSMLayer
     }
-    return object
   }
 }
 
