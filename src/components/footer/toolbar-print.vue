@@ -148,12 +148,15 @@ onUnmounted(() => {
       <div class="flex gap-1 items-center">
         <input
           :id="uuid"
-          class="cursor-pointer"
+          class="hover:cursor-pointer"
           type="checkbox"
           v-model="legend"
           data-cy="printWithLegend"
         />
-        <label class="font-bold block lux-text-default" :for="uuid">
+        <label
+          class="font-bold block lux-text-default hover:cursor-pointer"
+          :for="uuid"
+        >
           {{ t('Avec légende') }}
         </label>
       </div>
@@ -195,15 +198,17 @@ onUnmounted(() => {
         </div>
         <button
           data-cy="printPng"
-          class="bg-white text-primary hover:bg-primary hover:text-white border border-slate-300 py-1.5 px-2.5"
+          class="bg-white disabled:opacity-75 disabled:cursor-not-allowed text-primary hover:bg-primary hover:text-white border border-slate-300 py-1.5 px-2.5"
           @click="print(PRINT_FORMAT.PNG)"
+          :disabled="loading"
         >
           {{ t('PNG') }}
         </button>
         <button
           data-cy="printPdf"
-          class="bg-white text-primary hover:bg-primary hover:text-white border border-slate-300 py-1.5 px-2.5"
+          class="bg-white disabled:opacity-75 disabled:cursor-not-allowed text-primary hover:bg-primary hover:text-white border border-slate-300 py-1.5 px-2.5"
           @click="print(PRINT_FORMAT.PDF)"
+          :disabled="loading"
         >
           {{ t('PDF') }}
         </button>
