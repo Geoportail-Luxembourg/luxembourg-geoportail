@@ -93,7 +93,7 @@ function toggleLayerComparator() {
       <li
         v-for="(layer, index) in layers3d"
         :key="layer.id"
-        :id="(layer.id as string)"
+        :id="layer.id as string"
         data-cy="myLayer"
       >
         <layer-item
@@ -120,7 +120,7 @@ function toggleLayerComparator() {
       <li
         v-for="(layer, index) in layers"
         :key="layer.id"
-        :id="(layer.id as string)"
+        :id="layer.id as string"
         data-cy="myLayer"
       >
         <layer-item

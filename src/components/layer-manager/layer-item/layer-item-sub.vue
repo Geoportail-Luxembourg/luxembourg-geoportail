@@ -58,6 +58,7 @@ function dispatchChangeOpacity() {
     class="lux-layer-manager-item-content"
     :class="isOpen ? 'h-6' : 'h-0'"
     :id="`layer-manager-item-content-${layer.id}`"
+    data-cy="myLayerSubContent"
   >
     <button
       class="w-5 fa-solid"
@@ -90,6 +91,7 @@ function dispatchChangeOpacity() {
     />
     <button
       v-if="displayLayerComparatorOpen"
+      data-cy="myLayerComparatorBtn"
       role="switch"
       class="fa ml-auto text-sm cursor-pointer"
       :class="isLayerComparatorOpen ? 'fa-adjust' : 'fa-circle'"
