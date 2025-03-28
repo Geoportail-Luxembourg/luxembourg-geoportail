@@ -49,7 +49,7 @@ const layoutPlaceholder = ref<string>('')
 const scale = ref<string>('')
 const scales = computed(() =>
   printService.getScales().map(scale => ({
-    label: t(`1:${scale}`),
+    label: `1 : ${scale.toLocaleString()}`,
     value: scale.toString(),
     ariaLabel: t('Change scale: {{lang}}', { ns: 'app', lang: 'fr' }),
   }))
