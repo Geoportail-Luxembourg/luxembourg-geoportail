@@ -17,7 +17,7 @@ import { urlPathStorage } from './state-persistor/storage/url-storage-as-path'
 import { fetchApi } from './api/api.service'
 
 export const BASE_URL = import.meta.env.VITE_PRINT_HOST
-const LEGEND_URL = import.meta.env.VITE_PROFILE_URL
+const LEGEND_URL = import.meta.env.VITE_GET_LEGENDS_URL
 const SHORT_URL = import.meta.env.VITE_SHORT_URL
 const PROXYURL_PRINT = import.meta.env.VITE_PROXYURL_PRINT
 const QR_URL = import.meta.env.VITE_QR_URL
