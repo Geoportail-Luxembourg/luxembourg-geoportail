@@ -29,6 +29,7 @@ mask.setZIndex(MASK_ZINDEX)
 
 const title = ref<string>('')
 const legend = ref<boolean>(false)
+const printPngAllowed = computed(() => !legend.value)
 
 const layout = ref<string>('')
 const layouts = computed(() =>
@@ -200,7 +201,7 @@ onUnmounted(() => {
           data-cy="printPng"
           class="bg-white disabled:opacity-75 disabled:cursor-not-allowed text-primary hover:bg-primary hover:text-white border border-slate-300 py-1.5 px-2.5"
           @click="print(PRINT_FORMAT.PNG)"
-          :disabled="loading"
+          :disabled="loading || !printPngAllowed"
         >
           {{ t('PNG') }}
         </button>
