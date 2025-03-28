@@ -105,7 +105,10 @@ export class PrintService {
     t: Function
   ): Promise<ReportResponse> {
     const spec = await this.getSpec(options, map, t)
-    const response = await fetch(`${PROXYURL_PRINT}/report.pdf`, {
+    const url = `${PROXYURL_PRINT}/report.${
+      options.format.toLocaleLowerCase() || 'pdf'
+    }`
+    const response = await fetch(url, {
       method: 'POST',
       body: JSON.stringify(spec),
     })
@@ -221,6 +224,7 @@ export class PrintService {
     let dpi = DPI
     const url = LEGEND_URL
     layers.reverse().forEach(layer => {
+      // TODO: use existing getMetadata from Metadata service instead
       const curMetadata = layer.get('metadata')
       const metaMaxDpi = curMetadata?.max_dpi
       if (metaMaxDpi !== undefined) {
