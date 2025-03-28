@@ -55,12 +55,10 @@ const scales = computed(() =>
   }))
 )
 const changeScale = (value: string) => {
-  scalePlaceholder.value = value
   scale.value = value
   mask.setScale(parseInt(value, 10))
   map.render()
 }
-const scalePlaceholder = ref<string>('')
 
 const print = async (format: PRINT_FORMAT) => {
   try {
@@ -175,7 +173,6 @@ onUnmounted(() => {
           <dropdown-list
             class="w-full"
             :options="scales"
-            :placeholder="scalePlaceholder"
             v-model="scale"
             @change="changeScale"
             :direction="'up'"

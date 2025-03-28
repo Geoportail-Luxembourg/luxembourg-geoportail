@@ -68,7 +68,10 @@ onUnmounted(
         @click="onClickOpenBtn"
       >
         <span>{{ props.placeholder }}</span
-        ><span class="lux-caret" :class="{ up: direction === 'up' }"></span>
+        ><span
+          class="lux-caret ml-1"
+          :class="{ up: direction === 'up' }"
+        ></span>
       </button>
     </div>
     <div class="lux-dropdown-wrapper">

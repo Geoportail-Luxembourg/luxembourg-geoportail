@@ -6,7 +6,7 @@ import { DropdownOptionModel } from './dropdown-list.model'
 
 const props = withDefaults(
   defineProps<{
-    placeholder: string
+    placeholder?: string
     options: DropdownOptionModel[]
     modelValue?: string
     direction?: 'up' | 'down'
@@ -24,11 +24,18 @@ function onClickItem(event: MouseEvent) {
   selectedValue.value = (event.target as HTMLElement).dataset.value
   emit('change', selectedValue.value)
 }
+
+function getPlaceholder() {
+  return (
+    props.placeholder ??
+    props.options.find(o => o.value === props.modelValue)?.label
+  )
+}
 </script>
 
 <template>
   <dropdown-content
-    :placeholder="props.placeholder ?? props.options[0]?.label"
+    :placeholder="getPlaceholder()"
     :direction="direction"
     v-bind="$attrs"
   >
