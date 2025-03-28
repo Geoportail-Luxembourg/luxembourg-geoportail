@@ -12,16 +12,16 @@ describe('Version 2 in url - Layers, opacities, visibilities, ...', () => {
 
   describe('When given layers (names instead of ids) in url', () => {
     it('sets the layers in the catalog', () => {
-      cy.get('[data-cy="myLayer"]').eq(0).should('have.id', '268')
+      cy.get('[data-cy="myLayer"]').eq(0).should('have.id', '269')
       cy.get('[data-cy="myLayer"]').eq(1).should('have.id', '346')
-      cy.get('[data-cy="myLayer"]').eq(2).should('have.id', '269')
+      cy.get('[data-cy="myLayer"]').eq(2).should('have.id', '268')
     })
 
     it('sets the correct opacity/visibility in the catalog', () => {
       cy.get('[data-cy="myLayer"]')
         .eq(0)
         .find('input[type="range"]')
-        .should('have.value', '25')
+        .should('have.value', '0')
       cy.get('[data-cy="myLayer"]')
         .eq(1)
         .find('input[type="range"]')
@@ -29,7 +29,7 @@ describe('Version 2 in url - Layers, opacities, visibilities, ...', () => {
       cy.get('[data-cy="myLayer"]')
         .eq(2)
         .find('input[type="range"]')
-        .should('have.value', '0')
+        .should('have.value', '100')
     })
   })
 })
