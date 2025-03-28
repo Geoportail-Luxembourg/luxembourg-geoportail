@@ -57,7 +57,13 @@ describe('PrintService', () => {
       .fn()
       .mockResolvedValue({ layers: [] })
     const mockResponse = {
-      json: vi.fn().mockResolvedValue({ statusURL: '/print/status' }),
+      ok: true,
+      json: vi.fn().mockResolvedValue({
+        downloadURL:
+          '/print/report/8a58a137-bb0a-4865-8187-066dd7c1c860@addda5ca-09e5-436a-b710-ddbdacc01eb8@5e7f570d-a4e7-4d0a-b76e-0854b0b12c2b',
+        statusURL:
+          '/print/status/8a58a137-bb0a-4865-8187-066dd7c1c860@addda5ca-09e5-436a-b710-ddbdacc01eb8@5e7f570d-a4e7-4d0a-b76e-0854b0b12c2b.json',
+      }),
     }
     mockFetch(mockResponse as any)
 
@@ -79,7 +85,9 @@ describe('PrintService', () => {
       } as unknown as any,
       (s: string) => s
     )
-    expect(url).toBe(`${BASE_URL}/printproxy/status`)
+    expect(url.statusURL).toBe(
+      `${BASE_URL}/printproxy/status/8a58a137-bb0a-4865-8187-066dd7c1c860@addda5ca-09e5-436a-b710-ddbdacc01eb8@5e7f570d-a4e7-4d0a-b76e-0854b0b12c2b.json`
+    )
   })
 
   it('should return correct job status', async () => {
