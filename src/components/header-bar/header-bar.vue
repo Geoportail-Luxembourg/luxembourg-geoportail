@@ -6,7 +6,6 @@ import { useTranslation } from 'i18next-vue'
 import { useAppStore } from '@/stores/app.store'
 import { useThemeStore } from '@/stores/config.store'
 import { useUserManagerStore } from '@/stores/user-manager.store'
-import { themeSelectorService } from '@/components/theme-selector/theme-selector.service'
 import AuthForm from '@/components/auth/auth-form.vue'
 import DropdownContent from '@/components/common/dropdown-content.vue'
 import LanguageSelector from '@/components/header-bar/language-selector.vue'
@@ -14,21 +13,10 @@ import LanguageSelector from '@/components/header-bar/language-selector.vue'
 const { t } = useTranslation()
 const appStore = useAppStore()
 const { toggleThemeGrid } = appStore
-const themeStore = useThemeStore()
-const { theme } = storeToRefs(themeStore)
+const { themeName } = storeToRefs(useThemeStore())
 const { authenticated } = storeToRefs(useUserManagerStore())
 const isAuthFormOpened = ref(false)
 const isLangOpened = ref(false)
-
-watch(
-  theme,
-  theme => {
-    if (theme) {
-      themeSelectorService.setCurrentThemeColors(theme.name)
-    }
-  },
-  { immediate: true }
-)
 
 // Close auth form dropdown when authentification done
 watch(
@@ -65,13 +53,11 @@ function onToggleDropdownAuth(isOpen: boolean) {
         <li>
           <button
             class="flex items-center before:font-icons before:text-3xl before:w-16 text-primary uppercase h-full mr-3"
-            :class="`before:content-${theme?.name}`"
+            :class="`before:content-${themeName}`"
             data-cy="selectedThemeIcon"
             @click="toggleThemeGrid"
           >
-            <span class="hidden lg:inline-block">{{
-              t(`${theme?.name}`)
-            }}</span>
+            <span class="hidden lg:inline-block">{{ t(`${themeName}`) }}</span>
           </button>
         </li>
 
