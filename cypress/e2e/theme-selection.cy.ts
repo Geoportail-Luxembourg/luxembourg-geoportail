@@ -43,4 +43,20 @@ describe('Theme selector', () => {
         })
     })
   })
+
+  describe('When using a link to an existing "non-main" theme', () => {
+    it('the colors of the "geomètres officiels" theme should be loaded as 187,187,187', () => {
+      cy.visit('/theme/go')
+      cy.get('[data-cy="layerPanel"]')
+        .parent()
+        .should('have.css', 'background-color', 'rgb(187, 187, 187)')
+    })
+
+    it('the colors of a non-existing theme is the same as main theme', () => {
+      cy.visit('/theme/cadastre1337')
+      cy.get('[data-cy="layerPanel"]')
+        .parent()
+        .should('have.css', 'background-color', 'rgb(151, 187, 211)')
+    })
+  })
 })
