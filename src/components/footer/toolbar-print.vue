@@ -167,7 +167,6 @@ onUnmounted(() => {
           <dropdown-list
             class="w-full"
             :options="layouts"
-            :placeholder="layoutPlaceholder"
             v-model="layout"
             @change="changeLayout"
             :direction="'up'"
