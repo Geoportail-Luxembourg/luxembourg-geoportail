@@ -174,7 +174,7 @@
   }
 
   .lux-dropdown-list {
-    @apply absolute left-0 z-10 bg-white py-[5px] mt-[2px] w-auto;
+    @apply absolute left-0 z-10 bg-white py-[5px] mt-[2px] w-auto min-w-full;
     border: 1px solid rgba(0, 0, 0, 0.15);
     box-shadow: 0 6px 12px rgb(0 0 0 / 18%);
   }
