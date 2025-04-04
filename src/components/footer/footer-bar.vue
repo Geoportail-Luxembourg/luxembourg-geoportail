@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import { useAppStore } from '@/stores/app.store'
+import { useDrawStore } from '@/stores/draw.store'
 import { useFeatureInfoStore } from '@/stores/feature-info.store'
 import { useTranslation } from 'i18next-vue'
 import { storeToRefs } from 'pinia'
@@ -12,6 +13,7 @@ import ToolbarPrint from './toolbar-print.vue'
 
 const { t, i18next } = useTranslation()
 const appStore = useAppStore()
+const drawStore = useDrawStore()
 const {
   setLayersOpen,
   togglePrintToolbarOpen,
@@ -31,6 +33,7 @@ const {
   themeGridOpen,
   printToolbarOpen,
 } = storeToRefs(appStore)
+const { setEditActiveState } = drawStore
 
 function onClickLayersIcon() {
   const open = !layersOpen.value
@@ -49,6 +52,9 @@ watch(drawToolbarOpen, isOpen => {
   if (isOpen) {
     measureToolbarOpen.value = false
     printToolbarOpen.value = false
+  } else {
+    // Deactivate edition mode when draw toolbar is closed
+    setEditActiveState(undefined)
   }
 })
 watch(measureToolbarOpen, isOpen => {
