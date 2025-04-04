@@ -15,6 +15,9 @@ import BaseLayer from 'ol/layer/Layer.js'
 import { FrameState } from 'ol/PluggableMap'
 import { urlPathStorage } from './state-persistor/storage/url-storage-as-path'
 import { fetchApi } from './api/api.service'
+import { OLLAYER_PROP_ID } from './ol-layer/ol-layer.model'
+import { LAYER_POSITION_ID } from '@/composables/map/profile-position.composable'
+import VectorLayer from 'ol/layer/Vector'
 
 export const BASE_URL = import.meta.env.VITE_PRINT_HOST
 const LEGEND_URL = import.meta.env.VITE_GET_LEGENDS_URL
@@ -192,6 +195,19 @@ export class PrintService {
     return spec
   }
 
+  /**
+   * Get layers for print, filter layers that should not be printed (eg. profile position)
+   * @param map The ol map object
+   * @returns The filtered layers
+   */
+  getLayersForPrint(map: Map) {
+    const layers = map
+      .getLayers()
+      .getArray()
+      .filter(l => l.get(OLLAYER_PROP_ID) !== LAYER_POSITION_ID)
+    return <BaseLayer[]>layers
+  }
+
   getSize(layout: string): number[] {
     return MAP_SIZES_[LAYOUTS.indexOf(layout)]
   }
@@ -329,24 +345,31 @@ export class LuxEncoder extends MFPEncoder {
     }
 
     if (Array.isArray(encoded)) {
-      encoded = <MFPLayer[]>encoded.map(this.legacyMFPAppendCustomParams)
+      encoded = <MFPLayer[]>(
+        encoded.map(e => this.legacyMFPAppendCustomParams(layer, e))
+      )
     } else if (encoded) {
-      encoded = this.legacyMFPAppendCustomParams(encoded)
+      encoded = this.legacyMFPAppendCustomParams(layer, encoded)
     }
 
     return encoded
   }
 
-  legacyMFPAppendCustomParams(encoded: MFPLayer | MFPLayer[] | null) {
+  legacyMFPAppendCustomParams(
+    layer: BaseLayer,
+    encoded: MFPLayer | MFPLayer[] | null
+  ) {
     return encoded
       ? {
           ...encoded,
-          ...{
-            customParams: {
-              TRANSPARENT: true,
-              MAP_RESOLUTION: DPI,
-            },
-          },
+          ...(!(layer instanceof VectorLayer)
+            ? {
+                customParams: {
+                  TRANSPARENT: true,
+                  MAP_RESOLUTION: DPI,
+                },
+              }
+            : {}),
         }
       : null
   }
