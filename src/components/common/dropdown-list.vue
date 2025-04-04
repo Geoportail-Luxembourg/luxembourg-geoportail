@@ -44,6 +44,7 @@ function getPlaceholder() {
         v-for="option in props.options"
         :key="option.value"
         :class="modelValue === option.value ? 'selected' : ''"
+        :data-cy="`dropdownItem-${option.value}`"
       >
         <button
           class="lux-dropdown-list-item"

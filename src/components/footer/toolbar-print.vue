@@ -165,6 +165,7 @@ onUnmounted(() => {
       <div class="flex gap-1 items-center secondary-button">
         <div class="md:w-1/2">
           <dropdown-list
+            data-cy="printLayouts"
             class="w-full"
             :options="layouts"
             v-model="layout"
@@ -174,6 +175,7 @@ onUnmounted(() => {
         </div>
         <div class="md:w-1/2">
           <dropdown-list
+            data-cy="printScales"
             class="w-full"
             :options="scales"
             v-model="scale"
@@ -184,7 +186,11 @@ onUnmounted(() => {
       </div>
 
       <div class="flex gap-1 justify-end items-center">
-        <div v-if="loading" class="mr-4 flex gap-2 items-center">
+        <div
+          v-if="loading"
+          data-cy="printLoading"
+          class="mr-4 flex gap-2 items-center"
+        >
           <span
             class="text-black fa-solid fa-arrows-rotate animate-spin"
             aria-hidden="true"
