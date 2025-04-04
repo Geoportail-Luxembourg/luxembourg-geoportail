@@ -23,12 +23,12 @@ describe('LayerPanel', () => {
     const appStore = useAppStore()
 
     expect(wrapper.findComponent(CatalogTab).exists()).toBe(true)
-    expect(wrapper.findComponent(LayerManager).exists()).toBe(false)
+    expect(wrapper.findComponent(LayerManager).exists()).toBe(true)
 
     appStore.setMyLayersTabOpen(true)
     await wrapper.vm.$nextTick() // "Wait for the DOM to update before continuing the test"
 
     expect(wrapper.findComponent(CatalogTab).exists()).toBe(true)
-    expect(wrapper.findComponent(LayerManager).exists()).toBe(false)
+    expect(wrapper.findComponent(LayerManager).exists()).toBe(true)
   })
 })
