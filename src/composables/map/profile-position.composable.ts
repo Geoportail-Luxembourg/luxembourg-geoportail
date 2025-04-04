@@ -25,6 +25,8 @@ import { useDrawStore } from '@/stores/draw.store'
 import { PositionVectorLayer } from '@/services/ol-layer/ol-layer-feature-position.helper'
 import { throttle } from '@/services/utils'
 
+export const LAYER_POSITION_ID = 'lux-feat-position'
+
 let overlay: PositionVectorLayer | undefined // Shared overlay between all profile position markers
 
 /**
@@ -101,7 +103,7 @@ export default function useProfilePosition(
     }
 
     const layerSpec: LayerFeature = {
-      id: 'feat-position',
+      id: LAYER_POSITION_ID,
       type: 'position',
     }
 

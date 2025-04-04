@@ -36,7 +36,7 @@ const layouts = computed(() =>
   printService.getLayouts().map(layout => ({
     label: t(layout),
     value: layout,
-    ariaLabel: t('Change layout: {{lang}}', { ns: 'app', lang: 'fr' }),
+    ariaLabel: t('Change layout:', { ns: 'app' }),
   }))
 )
 const changeLayout = (value: string) => {
@@ -52,7 +52,7 @@ const scales = computed(() =>
   printService.getScales().map(scale => ({
     label: `1 : ${scale.toLocaleString()}`,
     value: scale.toString(),
-    ariaLabel: t('Change scale: {{lang}}', { ns: 'app', lang: 'fr' }),
+    ariaLabel: t('Change scale:', { ns: 'app' }),
   }))
 )
 const changeScale = (value: string) => {
