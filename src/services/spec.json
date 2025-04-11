@@ -35,7 +35,7 @@
       "geodetic": true
     },
     "dataOwner": "&copy; <a href='https://www.maptiler.com/copyright/'>MapTiler</a> &copy; <a href=\"https://openstreetmap.org/copyright\">OpenStreetMap</a> contributors for data outside of Luxembourg",
-    "dateText": "Date d'impression: ",
+    "dateText": "Date d'impression:",
     "queryResults": null
   },
   "format": "pdf",

@@ -22,10 +22,10 @@ class StatePersistorLocationInfo implements StatePersistorService {
   }
 
   persist() {
-    const { locationInfo } = storeToRefs(useLocationInfoStore())
+    const { locationInfoCoords } = storeToRefs(useLocationInfoStore())
 
     watch(
-      locationInfo,
+      locationInfoCoords,
       value => {
         if (value === undefined) {
           storageHelper.removeItem(SP_KEY_CROSSHAIR)
@@ -40,7 +40,7 @@ class StatePersistorLocationInfo implements StatePersistorService {
   }
 
   restore() {
-    const { locationInfo } = storeToRefs(useLocationInfoStore())
+    const { locationInfoCoords } = storeToRefs(useLocationInfoStore())
     const map = useMap().getOlMap()
 
     const location = storageHelper.getValue(SP_KEY_CROSSHAIR)
@@ -48,7 +48,7 @@ class StatePersistorLocationInfo implements StatePersistorService {
     // always displays the info of the map center
     // This is not a very logical behaviour ??
     if (location && location !== 'false') {
-      locationInfo.value = map.getView().getCenter()
+      locationInfoCoords.value = map.getView().getCenter()
     }
   }
 }
