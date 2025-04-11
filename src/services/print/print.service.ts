@@ -1,23 +1,16 @@
 import { Metadata } from '@/composables/themes/themes.model'
-import MapLibreLayer from '@/lib/ol-mapbox-layer'
 import { DOTS_PER_INCH, INCHES_PER_METER } from '@/lib/ol-mask-layer'
 import { useThemeStore } from '@/stores/config.store'
-import type {
-  MFPLayer,
-  MFPOSMLayer,
-  MFPWmsLayer,
-} from '@geoblocks/mapfishprint'
-import { BaseCustomizer, MFPEncoder } from '@geoblocks/mapfishprint'
+import { BaseCustomizer } from '@geoblocks/mapfishprint'
 import { Map } from 'ol'
 import LayerGroup from 'ol/layer/Group'
-import type { State } from 'ol/layer/Layer.js'
 import BaseLayer from 'ol/layer/Layer.js'
 import { FrameState } from 'ol/PluggableMap'
-import { urlPathStorage } from './state-persistor/storage/url-storage-as-path'
-import { fetchApi } from './api/api.service'
-import { OLLAYER_PROP_ID } from './ol-layer/ol-layer.model'
+import { urlPathStorage } from '../state-persistor/storage/url-storage-as-path'
+import { fetchApi } from '../api/api.service'
+import { OLLAYER_PROP_ID } from '../ol-layer/ol-layer.model'
 import { LAYER_POSITION_ID } from '@/composables/map/profile-position.composable'
-import VectorLayer from 'ol/layer/Vector'
+import { LuxEncoder } from './mapfishprint/LuxEncoder'
 
 export const BASE_URL = import.meta.env.VITE_PRINT_HOST
 const LEGEND_URL = import.meta.env.VITE_GET_LEGENDS_URL
@@ -323,95 +316,6 @@ export interface ReportResponse {
   statusURL: string
   ref: string
   downloadURL: string
-}
-
-export class LuxEncoder extends MFPEncoder {
-  async encodeLayerState(
-    layerState: State,
-    printResolution: number,
-    customizer: BaseCustomizer
-  ) {
-    let encoded: MFPLayer[] | MFPLayer | null
-    const layer = layerState.layer
-    if (layer instanceof MapLibreLayer) {
-      // @ts-ignore
-      encoded = this.encodeXYZLayer_(layer.getXYZ())
-    } else {
-      encoded = await super.encodeLayerState(
-        layerState,
-        printResolution,
-        customizer
-      )
-    }
-
-    if (Array.isArray(encoded)) {
-      encoded = <MFPLayer[]>(
-        encoded.map(e => this.legacyMFPAppendCustomParams(layer, e))
-      )
-    } else if (encoded) {
-      encoded = this.legacyMFPAppendCustomParams(layer, encoded)
-    }
-
-    return encoded
-  }
-
-  legacyMFPAppendCustomParams(
-    layer: BaseLayer,
-    encoded: MFPLayer | MFPLayer[] | null
-  ) {
-    return encoded
-      ? {
-          ...encoded,
-          ...(!(layer instanceof VectorLayer)
-            ? {
-                customParams: {
-                  TRANSPARENT: true,
-                  MAP_RESOLUTION: DPI,
-                },
-              }
-            : {}),
-        }
-      : null
-  }
-
-  encodeXYZLayer_(url: string) {
-    // https://vectortiles.geoportail.lu/styles/roadmap/{z}/{x}/{y}.png
-    const i = url.indexOf('/{z}/{x}/{y}')
-    const j = url.lastIndexOf('.')
-    if (i === -1 || j === -1) {
-      return
-    }
-    const baseURL = url.substring(0, i)
-    const imageExtension = url.substring(j + 1)
-    const styleName = baseURL.substring(
-      baseURL.lastIndexOf('/styles/') + '/styles/'.length
-    )
-    if (
-      styleName === 'topomap' ||
-      styleName === 'roadmap' ||
-      styleName === 'topomap_gray'
-    ) {
-      return {
-        baseURL: 'https://wms.geoportail.lu/vectortiles_wms_4_print/service',
-        imageFormat: 'image/' + imageExtension,
-        layers: [styleName],
-        customParams: {
-          TRANSPARENT: true,
-          MAP_RESOLUTION: DPI,
-        },
-        type: 'wms',
-        opacity: 1,
-        version: '1.1.1',
-        useNativeAngle: true,
-      } as unknown as MFPWmsLayer
-    } else {
-      return {
-        baseURL,
-        type: 'OSM',
-        imageExtension,
-      } as unknown as MFPOSMLayer
-    }
-  }
 }
 
 export const printService = new PrintService()

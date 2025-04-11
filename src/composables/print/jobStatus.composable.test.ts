@@ -1,4 +1,4 @@
-import { JobStatus, printService } from '@/services/print.service'
+import { JobStatus, printService } from '@/services/print/print.service'
 import {
   afterEach,
   beforeEach,

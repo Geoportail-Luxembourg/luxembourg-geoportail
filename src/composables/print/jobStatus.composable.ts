@@ -1,4 +1,4 @@
-import { printService } from '@/services/print.service'
+import { printService } from '@/services/print/print.service'
 import { onUnmounted, ref, Ref } from 'vue'
 
 const POLLING_INTERVAL = 1000
