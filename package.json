@@ -33,7 +33,7 @@
   "dependencies": {
     "@braintree/sanitize-url": "^7.1.0",
     "@camptocamp/ogc-client": "^0.3.4",
-    "@geoblocks/mapfishprint": "0.2.18",
+    "@geoblocks/mapfishprint": "0.2.20",
     "d3-array": "^3.2.4",
     "d3-axis": "^3.0.0",
     "d3-scale": "^4.0.2",
