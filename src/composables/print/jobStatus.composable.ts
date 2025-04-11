@@ -50,6 +50,7 @@ export function useJobStatus() {
     }
     jobStatus.value = null
     loading.value = false
+    error.value = false
   }
 
   onUnmounted(() => clearPolling())

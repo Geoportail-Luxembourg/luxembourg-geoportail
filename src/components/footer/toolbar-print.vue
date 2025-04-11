@@ -1,26 +1,26 @@
 <script setup lang="ts">
 import DropdownList from '@/components/common/dropdown-list.vue'
 import useMap from '@/composables/map/map.composable'
-import { useJobStatus } from '@/composables/print/jobStatus.composable'
+import { usePrint } from '@/composables/print/print.composable'
 import { Mask } from '@/lib/ol-mask-layer'
-import { PRINT_FORMAT, printService } from '@/services/print/print.service'
+import { PRINT_FORMAT, PrintOptions } from '@/services/print/print.model'
+import { printService } from '@/services/print/print.service'
 import { useAlertNotificationsStore } from '@/stores/alert-notifications.store'
 import { AlertNotificationType } from '@/stores/alert-notifications.store.model'
 import { useAppStore } from '@/stores/app.store'
 import { useTranslation } from 'i18next-vue'
 import { FrameState } from 'ol/PluggableMap'
 import { v4 as uuidv4 } from 'uuid'
-import { computed, onMounted, onUnmounted, Ref, ref, watch } from 'vue'
+import { computed, onMounted, onUnmounted, ref, watch } from 'vue'
 
 const MASK_ZINDEX = 2000
 
-const { url, startPolling, clearPolling, error, loading } = useJobStatus()
 const { addNotification } = useAlertNotificationsStore()
 
 const { t } = useTranslation()
 const { lang } = useAppStore()
+const { print, abortPrint, url, error, loading } = usePrint()
 const uuid = uuidv4()
-const printingRef: Ref<string | null> = ref(null)
 let framestate: FrameState | null = null
 
 const map = useMap().getOlMap()
@@ -61,40 +61,17 @@ const changeScale = (value: string) => {
   map.render()
 }
 
-const print = async (format: PRINT_FORMAT) => {
-  try {
-    const reportResponse = await printService.print(
-      {
-        format,
-        layout: layout.value,
-        scale: parseInt(scale.value, 10),
-        resolution: map.getView().getResolution()!,
-        title: title.value,
-        legend: legend.value,
-        lang,
-        framestate,
-      },
-      map,
-      t
-    )
-    printingRef.value = reportResponse.ref
-    startPolling(reportResponse.statusURL)
-  } catch {
-    printingRef.value = null
-    clearPolling()
-    addNotification(
-      t('An error occurred while printing'),
-      AlertNotificationType.ERROR
-    )
-  }
-}
-
-async function abortPrint() {
-  if (printingRef.value) {
-    await printService.cancel(printingRef.value)
-    printingRef.value = null
-    clearPolling()
-  }
+function clickPrint(format: PRINT_FORMAT) {
+  print({
+    format,
+    layout: layout.value,
+    scale: parseInt(scale.value, 10),
+    resolution: map.getView().getResolution()!,
+    title: title.value,
+    legend: legend.value,
+    lang,
+    framestate,
+  } as PrintOptions)
 }
 
 watch(error, error => {
@@ -205,7 +182,7 @@ onUnmounted(() => {
         <button
           data-cy="printPng"
           class="bg-white disabled:opacity-75 disabled:cursor-not-allowed text-primary hover:bg-primary hover:text-white border border-slate-300 py-1.5 px-2.5"
-          @click="print(PRINT_FORMAT.PNG)"
+          @click="clickPrint(PRINT_FORMAT.PNG)"
           :disabled="loading || !printPngAllowed"
         >
           {{ t('PNG') }}
@@ -213,7 +190,7 @@ onUnmounted(() => {
         <button
           data-cy="printPdf"
           class="bg-white disabled:opacity-75 disabled:cursor-not-allowed text-primary hover:bg-primary hover:text-white border border-slate-300 py-1.5 px-2.5"
-          @click="print(PRINT_FORMAT.PDF)"
+          @click="clickPrint(PRINT_FORMAT.PDF)"
           :disabled="loading"
         >
           {{ t('PDF') }}

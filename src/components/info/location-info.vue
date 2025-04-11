@@ -23,13 +23,20 @@ import {
 } from '@/services/common/formatting.utils'
 import { downloadUrl } from '@/services/utils'
 
+import { useAlertNotificationsStore } from '@/stores/alert-notifications.store'
+import { AlertNotificationType } from '@/stores/alert-notifications.store.model'
+
 import StreetView from '@/components/info/street-view.vue'
 
 const { t } = useTranslation()
-const { locationInfo, isStreetviewActive, routingFeatureTemp } = storeToRefs(
-  useLocationInfoStore()
-)
+const {
+  locationInfoCoords,
+  locationInfoInfos,
+  isStreetviewActive,
+  routingFeatureTemp,
+} = storeToRefs(useLocationInfoStore())
 const { currentUser } = storeToRefs(useUserManagerStore())
+const { addNotification } = useAlertNotificationsStore()
 
 const map = useMap().getOlMap()
 
@@ -41,23 +48,26 @@ const clickCoordinateLuref: Ref<Coordinate | undefined> = ref()
 const formattedCoordinates: Ref<{ [k: string]: string }> = ref({})
 const downloadingRepport: Ref<boolean> = ref(false)
 const isInBoxOfLidar: Ref<boolean> = ref(false)
-const userRole: Ref<string> = ref('ACT') //Tous Publics')
+const userRole: Ref<string> = ref('ACT') // or 'Tous Publics'
 const userType: Ref<string> = ref('base')
 
 // initialise map listeners for location info
 useLocationInfo()
-// initial load of position infos if locationInfo is not initially undefined
+// initial load of position infos if locationInfoCoords is not initially undefined
 // async function, no need to await the completion, DOM will be updated via refs
-updateInfo(locationInfo.value)
+updateInfo(locationInfoCoords.value)
 
-watch(locationInfo, updateInfo)
+watch(locationInfoCoords, updateInfo)
 
 async function updateInfo(location: Coordinate | undefined) {
   if (location) {
-    const infos = await queryInfos(location, map.getView().getProjection())
-    shortUrl.value = infos.shortUrl
-    qrUrl.value = getQRUrl(infos.shortUrl)
-    clickCoordinateLuref.value = infos.clickCoordinateLuref
+    locationInfoInfos.value = await queryInfos(
+      location,
+      map.getView().getProjection()
+    )
+    shortUrl.value = locationInfoInfos.value.shortUrl
+    qrUrl.value = getQRUrl(locationInfoInfos.value.shortUrl)
+    clickCoordinateLuref.value = locationInfoInfos.value.clickCoordinateLuref
     formattedCoordinates.value = Object.fromEntries(
       Object.entries(INFO_PROJECTIONS).map(([crs, label]) => [
         label,
@@ -65,9 +75,11 @@ async function updateInfo(location: Coordinate | undefined) {
       ])
     )
     elevation.value =
-      infos.elevation === null ? 'N/A' : formatElevation(infos.elevation)
-    address.value = infos.address
-    isInBoxOfLidar.value = infos.isInBoxOfLidar
+      locationInfoInfos.value.elevation === null
+        ? 'N/A'
+        : formatElevation(locationInfoInfos.value.elevation)
+    address.value = locationInfoInfos.value.address
+    isInBoxOfLidar.value = locationInfoInfos.value.isInBoxOfLidar
   }
 }
 
@@ -117,10 +129,10 @@ const imagesObliquesUrl = computed(() =>
 )
 
 function addRoutePoint() {
-  if (!locationInfo.value) {
+  if (!locationInfoCoords.value) {
     return
   }
-  const point = new Feature(new Point(locationInfo.value))
+  const point = new Feature(new Point(locationInfoCoords.value))
   if (address.value && address.value.distance <= 100) {
     point.set('label', formatAddress(address.value))
   } else {
@@ -138,8 +150,10 @@ async function downloadRapportForageVirtuel() {
   try {
     await downloadUrl(forageUrl.value, '')
   } catch {
-    // TODO harmonize error
-    alert('Error downloading forage')
+    addNotification(
+      t('An error occurred while downloading forage.'),
+      AlertNotificationType.ERROR
+    )
   } finally {
     downloadingRepport.value = false
   }
@@ -191,7 +205,7 @@ watch(downloadingRepport, downloadingRepport => {
         </tr>
         <tr>
           <th style="text-align: left">{{ t('Distance approximative') }}</th>
-          <td>{{ formatLength(address?.distance || null) }}</td>
+          <td>{{ formatLength(address?.distance || null, 0) }}</td>
         </tr>
       </tbody>
     </table>

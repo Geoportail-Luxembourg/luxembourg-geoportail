@@ -1,40 +1,29 @@
-import { Metadata } from '@/composables/themes/themes.model'
-import { DOTS_PER_INCH, INCHES_PER_METER } from '@/lib/ol-mask-layer'
-import { useThemeStore } from '@/stores/config.store'
 import { BaseCustomizer } from '@geoblocks/mapfishprint'
 import { Map } from 'ol'
 import LayerGroup from 'ol/layer/Group'
 import BaseLayer from 'ol/layer/Layer.js'
 import { FrameState } from 'ol/PluggableMap'
-import { urlPathStorage } from '../state-persistor/storage/url-storage-as-path'
-import { fetchApi } from '../api/api.service'
-import { OLLAYER_PROP_ID } from '../ol-layer/ol-layer.model'
+import { DOTS_PER_INCH, INCHES_PER_METER } from '@/lib/ol-mask-layer'
+import { urlPathStorage } from '@/services/state-persistor/storage/url-storage-as-path'
+import { fetchApi } from '@/services/api/api.service'
+import { OLLAYER_PROP_ID } from '@/services/ol-layer/ol-layer.model'
+import { useThemeStore } from '@/stores/config.store'
+import { Metadata } from '@/composables/themes/themes.model'
 import { LAYER_POSITION_ID } from '@/composables/map/profile-position.composable'
 import { LuxEncoder } from './mapfishprint/LuxEncoder'
+import {
+  JobStatus,
+  PRINT_FORMAT,
+  PrintLegend,
+  PrintOptions,
+  ReportResponse,
+} from './print.model'
 
 export const BASE_URL = import.meta.env.VITE_PRINT_HOST
 const LEGEND_URL = import.meta.env.VITE_GET_LEGENDS_URL
 const SHORT_URL = import.meta.env.VITE_SHORT_URL
 const PROXYURL_PRINT = import.meta.env.VITE_PROXYURL_PRINT
 const QR_URL = import.meta.env.VITE_QR_URL
-
-export interface PrintLegend {
-  name: string | null
-  restUrl?: string
-  legendTitle?: string
-  accessConstraints?: string
-  legendUrl?: string
-}
-export interface PrintOptions {
-  format: PRINT_FORMAT
-  layout: string
-  scale: number
-  resolution: number
-  title: string
-  lang: string
-  legend: boolean
-  framestate: FrameState | null
-}
 
 const DEFAULT_MAP_SCALES = [
   1500, 2500, 5000, 10000, 15000, 20000, 25000, 50000, 80000, 100000, 125000,
@@ -72,10 +61,6 @@ const LAYOUTS = [
   'A0 portrait',
 ]
 
-export const enum PRINT_FORMAT {
-  PDF = 'PDF',
-  PNG = 'PNG',
-}
 const DPI = 127
 
 const getWidth = (scale: number, width: number, resolution: number): number =>
@@ -95,14 +80,9 @@ export class PrintService {
     return LAYOUTS
   }
 
-  async print(
-    options: PrintOptions,
-    map: Map,
-    t: Function
-  ): Promise<ReportResponse> {
-    const spec = await this.getSpec(options, map, t)
+  async print(spec: object, format: PRINT_FORMAT): Promise<ReportResponse> {
     const url = `${PROXYURL_PRINT}/report.${
-      options.format.toLocaleLowerCase() || 'pdf'
+      format.toLocaleLowerCase() || 'pdf'
     }`
     const response = await fetch(url, {
       method: 'POST',
@@ -134,7 +114,7 @@ export class PrintService {
     return response
   }
 
-  async getSpec(options: PrintOptions, map: Map, t: Function): Promise<object> {
+  async getSpec(options: PrintOptions, map: Map): Promise<object> {
     const encoder = new LuxEncoder(BASE_URL)
     const customizer = new BaseCustomizer()
     const shortUrl = await this.getShortLink()
@@ -161,14 +141,9 @@ export class PrintService {
     const spec = {
       attributes: {
         map: mapSpec,
-        disclaimer: t(
-          "www.geoportail.lu est un portail d'accès aux informations géolocalisées, données et services qui sont mis à disposition par les administrations publiques luxembourgeoises. Responsabilité: Malgré la grande attention qu’elles portent à la justesse des informations diffusées sur ce site, les autorités ne peuvent endosser aucune responsabilité quant à la fidélité, à l’exactitude, à l’actualité, à la fiabilité et à l’intégralité de ces informations. Information dépourvue de foi publique. \nDroits d'auteur: Administration du Cadastre et de la Topographie. http://g-o.lu/copyright",
-          { ns: 'app' }
-        ),
-        scaleTitle: t('Echelle approximative 1:', { ns: 'app' }),
-        appTitle: t('Le géoportail national du Grand-Duché du Luxembourg', {
-          ns: 'app',
-        }),
+        disclaimer: options.disclaimer,
+        scaleTitle: options.scaleTitle,
+        appTitle: options.appTitle,
         scale: options.scale,
         name: options.title,
         url: shortUrl,
@@ -179,8 +154,8 @@ export class PrintService {
           geodetic: true,
         },
         dataOwner: [...new Set(dataOwners)].join(' '),
-        dateText: t("Date d'impression: ", { ns: 'app' }),
-        queryResults: null,
+        dateText: options.dateText,
+        queryResults: options.queryResults,
       },
       format: options.format.toLowerCase(),
       layout: options.layout,
@@ -304,18 +279,6 @@ function recursiveGetLayerAttributions(
 
     dataOwners.push(...htmls)
   }
-}
-
-export interface JobStatus {
-  status: string
-  done: boolean
-  downloadURL?: string
-}
-
-export interface ReportResponse {
-  statusURL: string
-  ref: string
-  downloadURL: string
 }
 
 export const printService = new PrintService()
