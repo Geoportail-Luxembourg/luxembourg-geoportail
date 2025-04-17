@@ -38,7 +38,7 @@ export const useThemeStore = defineStore(
     }
 
     function setTheme(name: string) {
-      themeName.value = name
+      themeName.value = decodeURIComponent(name)
     }
 
     return {
