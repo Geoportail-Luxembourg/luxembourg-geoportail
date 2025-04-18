@@ -169,6 +169,7 @@ watch(downloadingRepport, downloadingRepport => {
 </script>
 
 <template>
+  <!-- Url and QR code image -->
   <div class="flex flex-row">
     <div class="grow-[2] flex flex-col justify-end content-end">
       <h3 id="short_url_title" class="text-3xl text-white">
@@ -185,6 +186,8 @@ watch(downloadingRepport, downloadingRepport => {
     </div>
     <img class="mx-5 mt-5" v-if="qrUrl" :src="qrUrl" />
   </div>
+
+  <!-- Coordinates -->
   <div>
     <h3 class="mt-5 text-3xl text-white">
       {{ t('Location Coordinates', { ns: 'client' }) }}
@@ -210,6 +213,8 @@ watch(downloadingRepport, downloadingRepport => {
       </tbody>
     </table>
   </div>
+
+  <!-- Forage, obliques, lidar buttons -->
   <div>
     <button
       v-if="isRapportForageVirtuelAvailable"
@@ -264,6 +269,8 @@ watch(downloadingRepport, downloadingRepport => {
       </button>
     </div>
   </div>
+
+  <!-- Streetview -->
   <div>
     <StreetView v-show="isStreetviewActive" />
     <div

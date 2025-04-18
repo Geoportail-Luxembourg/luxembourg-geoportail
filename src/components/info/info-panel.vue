@@ -40,11 +40,10 @@ watch(infoOpen, isOpen => {
 
     <template v-slot:content>
       <template v-if="map">
-        <!-- Location Info is printable, use the .printable css class -->
         <div
           data-cy="locationInfo"
           v-show="locationInfoCoords"
-          class="absolute printable"
+          class="absolute"
         >
           <LocationInfo />
         </div>
