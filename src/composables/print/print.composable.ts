@@ -1,29 +1,37 @@
 import { useTranslation } from 'i18next-vue'
 import { Ref, ref } from 'vue'
+import { storeToRefs } from 'pinia'
+import useMap from '@/composables/map/map.composable'
 import { printService } from '@/services/print/print.service'
 import { PrintOptions } from '@/services/print/print.model'
-import useMap from '@/composables/map/map.composable'
-import { useJobStatus } from './jobStatus.composable'
-import { getQRUrl, INFO_PROJECTIONS } from '@/services/info/location-info'
-import {
-  formatAddress,
-  formatCoords,
-  formatElevation,
-  formatLength,
-} from '@/services/common/formatting.utils'
+import { usePrintStore } from '@/stores/print.store'
 import { useLocationInfoStore } from '@/stores/location-info.store'
-import { storeToRefs } from 'pinia'
+import { useJobStatus } from './jobStatus.composable'
 
+/**
+ * This composable is in charge of the print functionality in Lux.
+ * It uses the jobstatus composable to handle polling and print service to call the print api.
+ * It also allows the user to stop the printing  job at anytime.
+ *
+ * The print composable is also able to print:
+ * - feature info available in the panel,
+ * - as well as location info
+ * by getting the generated html content of the components.
+ *
+ * To exclude any DOM element from the print result, just use `no-print` css class.
+ */
 export function usePrint() {
   const { t } = useTranslation()
-  const { startPolling, clearPolling, url, error, loading } = useJobStatus()
-  const { locationInfoCoords, locationInfoInfos } = storeToRefs(
-    useLocationInfoStore()
+  const { featureInfoPrintableRef, locationInfoPrintableRef } = storeToRefs(
+    usePrintStore()
   )
+  const { locationInfoCoords } = storeToRefs(useLocationInfoStore())
+  const { startPolling, clearPolling, url, error, loading } = useJobStatus()
   const map = useMap().getOlMap()
   const printingRef: Ref<string | null> = ref(null)
 
   async function print(options: PrintOptions) {
+    const queryResults = await buildQueryResults()
     const printOptions = {
       ...{
         disclaimer: t(
@@ -34,7 +42,7 @@ export function usePrint() {
           ns: 'app',
         }),
         dateText: t("Date d'impression:"),
-        queryResults: buildQueryResults(),
+        queryResults,
       },
       ...options,
     }
@@ -58,8 +66,8 @@ export function usePrint() {
    * @returns The html for locationInfoForPrint and/or featuresInfoForPrint if any
    */
   function buildQueryResults() {
-    const locationInfoForPrint = buildQueryResultsLocationInfo()
-    const featuresInfoForPrint = buildQueryResultsFeaturesInfo()
+    const locationInfoForPrint = getLocationInfoHtml()
+    const featuresInfoForPrint = getFeaturesInfoHtml()
 
     return locationInfoForPrint + '' + featuresInfoForPrint
   }
@@ -75,59 +83,35 @@ export function usePrint() {
     }
   }
 
-  function buildQueryResultsLocationInfo() {
-    if (!locationInfoCoords.value) {
-      return
-    }
-
-    const formattedCoordinates = Object.fromEntries(
-      Object.entries(INFO_PROJECTIONS).map(([crs, label]) => [
-        label,
-        formatCoords(
-          locationInfoCoords.value!,
-          map.getView().getProjection(),
-          crs
-        ),
-      ])
-    )
-    const infos = locationInfoInfos.value!
-    const qrUrl = getQRUrl(locationInfoInfos.value!.shortUrl)
-    const imgQrl = qrUrl ? `<img src="${qrUrl}" />` : ''
-
-    return `
-    ${imgQrl}
-    <h3>${t('Location Coordinates')}</h3>
-<table>
-<tbody>
-    ${Object.entries(formattedCoordinates)
-      .map(
-        ([label, coords]) => `
-    <tr>
-        <th>${t(label)}</th>
-        <td>${coords}</td>
-    </tr>
-    `
-      )
-      .join('')}
-    <tr>
-        <th>${t('Elevation')}</th>
-        <td>${
-          infos.elevation === null ? 'N/A' : formatElevation(infos.elevation)
-        }</td>
-    </tr>
-    <tr>
-        <th style="text-align: left">${t('Adresse la plus proche')}</th>
-        <td>${formatAddress(infos.address)}</td>
-    </tr>
-    <tr>
-        <th style="text-align: left">${t('Distance approximative')}</th>
-        <td>${formatLength(infos.address?.distance || null, 0)}</td>
-    </tr>
-</tbody>
-</table>`
+  function getLocationInfoHtml() {
+    if (!locationInfoCoords.value || !locationInfoPrintableRef.value) return ''
+    return cleanHtml(locationInfoPrintableRef.value)
   }
 
-  function buildQueryResultsFeaturesInfo() {}
+  function getFeaturesInfoHtml() {
+    if (locationInfoCoords.value || !featureInfoPrintableRef.value) return ''
+    return cleanHtml(featureInfoPrintableRef.value)
+  }
+
+  /**
+   * Remove all nodes in given node having css class: `.no-print`
+   * @param node HTMLElement
+   * @returns The node without no print elements
+   */
+  function cleanHtml(node: HTMLElement) {
+    const clone = <HTMLElement>node.cloneNode(true)
+    const cleanNodes = clone.querySelectorAll('[data-cy], [v-]')
+
+    cleanNodes.forEach(node => {
+      node.removeAttribute('data-cy')
+      node.removeAttribute('v-')
+    })
+
+    const noPrintElements = clone.querySelectorAll('.no-print')
+    noPrintElements.forEach(el => el.remove())
+
+    return clone.innerHTML
+  }
 
   return { print, abortPrint, url, error, loading }
 }
