@@ -18,6 +18,7 @@ import GeoJSON from 'ol/format/GeoJSON'
 import useMap, { PROJECTION_LUX } from '@/composables/map/map.composable'
 import { usePrintStore } from '@/stores/print.store'
 import { storeToRefs } from 'pinia'
+import MymapsTemplate from './templates/mymaps-template.vue'
 
 defineProps({
   content: {
@@ -37,10 +38,11 @@ onUnmounted(() => featureInfoLayerService.clearFeatures())
 
 function getTemplateComponent(template: string) {
   switch (template) {
-    case 'default.html':
-      return DefaultTemplate
+    case 'mymaps.html':
+      return MymapsTemplate
     case 'lignes_bus.html':
       return LignesBusTemplate
+    case 'default.html':
     default:
       return DefaultTemplate
   }
