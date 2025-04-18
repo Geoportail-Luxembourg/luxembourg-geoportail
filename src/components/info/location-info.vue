@@ -10,11 +10,7 @@ import { Feature } from 'ol'
 import { Point } from 'ol/geom'
 import useMap from '@/composables/map/map.composable'
 import useLocationInfo from '@/composables/info/location-info.composable'
-import {
-  getQRUrl,
-  queryInfos,
-  INFO_PROJECTIONS,
-} from '@/services/info/location-info'
+import { queryInfos, INFO_PROJECTIONS } from '@/services/info/location-info'
 import {
   formatElevation,
   formatLength,
@@ -28,6 +24,7 @@ import { AlertNotificationType } from '@/stores/alert-notifications.store.model'
 
 import StreetView from '@/components/info/street-view.vue'
 import { usePrintStore } from '@/stores/print.store'
+import { getQRUrl } from '@/services/url.utils'
 
 const { t } = useTranslation()
 const {
