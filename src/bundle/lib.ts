@@ -6,8 +6,8 @@ import VueDOMPurifyHTML from 'vue-dompurify-html'
 
 initProjections()
 
-import '../assets/main.css' // Tell Vite to build the css
 import './lib.css' // Tell Vite to build the css
+import '../assets/main.css' // Tell Vite to build the css
 
 import AlertNotifications from '@/components/alert-notifications/alert-notifications.vue'
 import AuthForm from '@/components/auth/auth-form.vue'
