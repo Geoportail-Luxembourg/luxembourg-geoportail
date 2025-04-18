@@ -27,6 +27,7 @@ import { useAlertNotificationsStore } from '@/stores/alert-notifications.store'
 import { AlertNotificationType } from '@/stores/alert-notifications.store.model'
 
 import StreetView from '@/components/info/street-view.vue'
+import { usePrintStore } from '@/stores/print.store'
 
 const { t } = useTranslation()
 const {
@@ -87,6 +88,12 @@ watch(currentUser, user => {
   userRole.value = user?.role || 'anonymous'
   userType.value = user?.role || 'base'
 })
+
+// For print, save ref to element to access content in print composable
+const { locationInfoPrintableRef } = storeToRefs(usePrintStore())
+const setPrintableRef = (el: HTMLElement | null) => {
+  locationInfoPrintableRef.value = el
+}
 
 const isRapportForageVirtuelAvailable = computed(() => userRole.value === 'ACT')
 const isCyclomediaAvailable = computed(
@@ -169,49 +176,51 @@ watch(downloadingRepport, downloadingRepport => {
 </script>
 
 <template>
-  <!-- Url and QR code image -->
-  <div class="flex flex-row">
-    <div class="grow-[2] flex flex-col justify-end content-end">
-      <h3 id="short_url_title" class="text-3xl text-white">
-        {{ t('Short Url', { ns: 'client' }) }}
-      </h3>
-      <input
-        aria-labelledby="short_url_title"
-        onclick="this.select();"
-        class="lux-input"
-        type="text"
-        :value="shortUrl"
-        readonly="true"
-      />
+  <div :ref="setPrintableRef">
+    <!-- Url and QR code image -->
+    <div class="flex flex-row">
+      <div class="no-print grow-[2] flex flex-col justify-end content-end">
+        <h3 id="short_url_title" class="text-3xl text-white">
+          {{ t('Short Url', { ns: 'client' }) }}
+        </h3>
+        <input
+          aria-labelledby="short_url_title"
+          onclick="this.select();"
+          class="lux-input"
+          type="text"
+          :value="shortUrl"
+          readonly="true"
+        />
+      </div>
+      <img class="mx-5 mt-5" v-if="qrUrl" :src="qrUrl" />
     </div>
-    <img class="mx-5 mt-5" v-if="qrUrl" :src="qrUrl" />
-  </div>
 
-  <!-- Coordinates -->
-  <div>
-    <h3 class="mt-5 text-3xl text-white">
-      {{ t('Location Coordinates', { ns: 'client' }) }}
-    </h3>
-    <table>
-      <tbody class="lux-info-table">
-        <tr v-for="(coords, label) in formattedCoordinates" :key="label">
-          <th>{{ t(label as string) }}</th>
-          <td>{{ coords }}</td>
-        </tr>
-        <tr>
-          <th>{{ t('Elevation') }}</th>
-          <td>{{ elevation }}</td>
-        </tr>
-        <tr>
-          <th style="text-align: left">{{ t('Adresse la plus proche') }}</th>
-          <td>{{ formatAddress(address) }}</td>
-        </tr>
-        <tr>
-          <th style="text-align: left">{{ t('Distance approximative') }}</th>
-          <td>{{ formatLength(address?.distance || null, 0) }}</td>
-        </tr>
-      </tbody>
-    </table>
+    <!-- Coordinates -->
+    <div>
+      <h3 class="mt-5 text-3xl text-white">
+        {{ t('Location Coordinates', { ns: 'client' }) }}
+      </h3>
+      <table>
+        <tbody class="lux-info-table">
+          <tr v-for="(coords, label) in formattedCoordinates" :key="label">
+            <th>{{ t(label as string) }}</th>
+            <td>{{ coords }}</td>
+          </tr>
+          <tr>
+            <th>{{ t('Elevation') }}</th>
+            <td>{{ elevation }}</td>
+          </tr>
+          <tr>
+            <th style="text-align: left">{{ t('Adresse la plus proche') }}</th>
+            <td>{{ formatAddress(address) }}</td>
+          </tr>
+          <tr>
+            <th style="text-align: left">{{ t('Distance approximative') }}</th>
+            <td>{{ formatLength(address?.distance || null, 0) }}</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
   </div>
 
   <!-- Forage, obliques, lidar buttons -->
