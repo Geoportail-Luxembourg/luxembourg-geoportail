@@ -29,7 +29,7 @@ const SV_RADIUS = 90
 export default function useStreeView(streetViewDiv: Ref<HTMLElement | null>) {
   const { infoOpen } = storeToRefs(useAppStore())
   const {
-    locationInfo,
+    locationInfoCoords,
     hidePointer,
     isStreetviewActive,
     noDataAtLocation,
@@ -100,15 +100,15 @@ export default function useStreeView(streetViewDiv: Ref<HTMLElement | null>) {
 
   watch(infoOpen, open => {
     if (open) {
-      if (isStreetviewActive.value && locationInfo.value) {
-        setSvFeatures(locationInfo.value)
+      if (isStreetviewActive.value && locationInfoCoords.value) {
+        setSvFeatures(locationInfoCoords.value)
       }
     } else {
       svFeature.value = undefined
     }
   })
 
-  watch(locationInfo, loc => {
+  watch(locationInfoCoords, loc => {
     if (loc) {
       if (isStreetviewActive.value && !panoPositionChanging.value) {
         streetViewLoading.value = true
@@ -157,7 +157,7 @@ export default function useStreeView(streetViewDiv: Ref<HTMLElement | null>) {
           () => handlePanoramaPositionChange(false)
         )
       }
-      setLocation(locationInfo.value)
+      setLocation(locationInfoCoords.value)
     } else {
       if (panorama !== null) {
         panorama.setVisible(false)
@@ -254,11 +254,11 @@ export default function useStreeView(streetViewDiv: Ref<HTMLElement | null>) {
       setSvFeatures(loc)
 
       if (updateLocation) {
-        locationInfo.value = loc
+        locationInfoCoords.value = loc
       }
 
       if (
-        locationInfo.value &&
+        locationInfoCoords.value &&
         !containsCoordinate(map.getView().calculateExtent(map.getSize()), loc)
       ) {
         map.getView().setCenter(loc)

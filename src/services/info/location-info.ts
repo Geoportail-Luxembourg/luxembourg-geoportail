@@ -58,10 +58,6 @@ export async function createShortUrl(optCoordinate: Coordinate | undefined) {
   )
 }
 
-export function getQRUrl(shortUrl: string | undefined) {
-  return shortUrl && `${import.meta.env.VITE_QR_URL}?url=${shortUrl}`
-}
-
 export async function getNearestAddress(coords: Coordinate) {
   const resp = await fetch(
     `${import.meta.env.VITE_ADDRESS_URL}?easting=${coords[0]}&northing=${

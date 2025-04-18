@@ -36,7 +36,7 @@ export default function useFeatureInfo() {
   const { drawStateActive, editStateActive, drawnFeatures } = storeToRefs(
     useDrawStore()
   )
-  const { locationInfo, isStreetviewActive } = storeToRefs(
+  const { locationInfoCoords, isStreetviewActive } = storeToRefs(
     useLocationInfoStore()
   )
   const { maxZoom } = storeToRefs(useMapStore())
@@ -83,7 +83,7 @@ export default function useFeatureInfo() {
         // lidarOpen ||
         // appActivetool.value.isActive() || => corresponds to: measureActive, streetviewActive
         evt.originalEvent.button === 2 || // right click
-        (isStreetviewActive.value && locationInfo.value) ||
+        (isStreetviewActive.value && locationInfoCoords.value) ||
         drawStateActive.value ||
         editStateActive.value ||
         isLoading.value

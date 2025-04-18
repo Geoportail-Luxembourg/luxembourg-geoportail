@@ -160,7 +160,10 @@ function onOutProfile() {
     </div>
 
     <!-- Loading message -->
-    <div v-if="isLoading || isDrawing" class="w-full absolute mt-2 text-center">
+    <div
+      v-if="isLoading || isDrawing"
+      class="no-print w-full absolute mt-2 text-center"
+    >
       <span class="text-gray-700 rounded p-2 bg-[rgba(120,120,120,0.5)]">{{
         isLoading
           ? t('Please wait, the profile is loading.')
