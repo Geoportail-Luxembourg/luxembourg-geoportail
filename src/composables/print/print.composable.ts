@@ -4,7 +4,7 @@ import { printService } from '@/services/print/print.service'
 import { PrintOptions } from '@/services/print/print.model'
 import useMap from '@/composables/map/map.composable'
 import { useJobStatus } from './jobStatus.composable'
-import { INFO_PROJECTIONS } from '@/services/info/location-info'
+import { getQRUrl, INFO_PROJECTIONS } from '@/services/info/location-info'
 import {
   formatAddress,
   formatCoords,
@@ -51,7 +51,31 @@ export function usePrint() {
     }
   }
 
+  /**
+   * Build the `queryResults` param content to display location or feature infos.
+   * In the pdf export only, will be ignored if png export.
+   * @see `buildQueryResultsLocationInfo()` and `buildQueryResultsFeaturesInfo()`
+   * @returns The html for locationInfoForPrint and/or featuresInfoForPrint if any
+   */
   function buildQueryResults() {
+    const locationInfoForPrint = buildQueryResultsLocationInfo()
+    const featuresInfoForPrint = buildQueryResultsFeaturesInfo()
+
+    return locationInfoForPrint + '' + featuresInfoForPrint
+  }
+
+  /**
+   * Cancel print job and clear polling
+   */
+  async function abortPrint() {
+    if (printingRef.value) {
+      await printService.cancel(printingRef.value)
+      printingRef.value = null
+      clearPolling()
+    }
+  }
+
+  function buildQueryResultsLocationInfo() {
     if (!locationInfoCoords.value) {
       return
     }
@@ -67,8 +91,12 @@ export function usePrint() {
       ])
     )
     const infos = locationInfoInfos.value!
+    const qrUrl = getQRUrl(locationInfoInfos.value!.shortUrl)
+    const imgQrl = qrUrl ? `<img src="${qrUrl}" />` : ''
 
-    return `<h3>${t('Location Coordinates')}</h3>
+    return `
+    ${imgQrl}
+    <h3>${t('Location Coordinates')}</h3>
 <table>
 <tbody>
     ${Object.entries(formattedCoordinates)
@@ -99,13 +127,7 @@ export function usePrint() {
 </table>`
   }
 
-  async function abortPrint() {
-    if (printingRef.value) {
-      await printService.cancel(printingRef.value)
-      printingRef.value = null
-      clearPolling()
-    }
-  }
+  function buildQueryResultsFeaturesInfo() {}
 
   return { print, abortPrint, url, error, loading }
 }

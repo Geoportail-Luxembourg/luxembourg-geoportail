@@ -534,7 +534,7 @@
     @apply text-title-xl mt-[22px] mb-[11px];
   }
   .lux-feature-info {
-    @apply bg-white bg-opacity-50 m-[5px] p-[10px];
+    @apply break-all bg-white bg-opacity-50 m-[5px] p-[10px];
   }
   .lux-feature-info h4 {
     @apply my-[11px] text-[20px];
