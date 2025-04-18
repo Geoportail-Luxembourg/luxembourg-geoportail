@@ -33,6 +33,7 @@ import ToolbarDraw from '@/components/footer/toolbar-draw.vue'
 import LayerPanel from '@/components/layer-panel/layer-panel.vue'
 import LegendsPanel from '@/components/legends/legends-panel.vue'
 import LocationInfoPanel from '@/components/info/location-info.vue'
+import InfoPanel from '@/components/info/info-panel.vue'
 import SliderComparator from '@/components/slider/slider-comparator.vue'
 import useBackgroundLayer from '@/composables/background-layer/background-layer.composable'
 import useLayers from '@/composables/layers/layers.composable'
@@ -190,6 +191,7 @@ export {
   LayerPanel,
   LegendsPanel,
   LocationInfoPanel,
+  InfoPanel,
   SliderComparator,
   proxyUrlHelper,
   styleUrlHelper,
