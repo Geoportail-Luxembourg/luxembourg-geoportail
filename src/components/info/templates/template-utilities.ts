@@ -10,9 +10,9 @@ import { storeToRefs } from 'pinia'
 
 export function sortedAttributeEntries(
   attributes: Attributes,
-  ordered: boolean
+  ordered: boolean,
+  prefix: string = 'f_'
 ): AttributeEntry[] {
-  const prefix = 'f_'
   return Object.entries(attributes)
     .filter(([key]) => key !== 'showProfile')
     .map(([key, value]) => ({ key: prefix + key, value }))

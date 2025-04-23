@@ -39,6 +39,7 @@ import VitiKleinlageTemplate from './templates/viti-kleinlage.vue'
 import VitiNameTemplate from './templates/viti-name.vue'
 import VitiParcelsTemplate from './templates/viti-parcels.vue'
 import ParcelsTemplate from './templates/parcels-template.vue'
+import DefaultAttachmentNoPrefixTemplate from './templates/default-attachment-no-prefix.vue'
 
 defineProps({
   content: {
@@ -79,6 +80,7 @@ const templates = {
   'viti_kleinlage.html': VitiKleinlageTemplate,
   'viti_name.html': VitiNameTemplate,
   'viti_parcels.html': VitiParcelsTemplate,
+  'default_attachment_no_prefix.html': DefaultAttachmentNoPrefixTemplate,
 }
 
 const getTemplateComponent = (template: string) => {
