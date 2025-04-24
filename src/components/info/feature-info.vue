@@ -25,6 +25,7 @@ import BusTemplate from './templates/bus-template.vue'
 import DefaultTemplate from './templates/default-template.vue'
 import DefaultTableTemplate from './templates/default-table-template.vue'
 import DefaultTableNoPrefixTemplate from './templates/default-table-no-prefix-template.vue'
+import FlikTemplate from './templates/flik-template.vue'
 import LignesBusTemplate from './templates/lignes-bus-template.vue'
 import PcnPagTemplate from './templates/pcn-pag-template.vue'
 // import PdsTemplate from './templates/pds-template.vue'
@@ -70,6 +71,7 @@ const templates = {
   'default_attachment_no_prefix.html': DefaultAttachmentNoPrefixTemplate,
   'default_table.html': DefaultTableTemplate,
   'default_table_no_prefix.html': DefaultTableNoPrefixTemplate,
+  'flik.html': FlikTemplate,
   'lignes_bus.html': LignesBusTemplate,
   'parcels.html': ParcelsTemplate,
   'pcn_pag.html': PcnPagTemplate,
