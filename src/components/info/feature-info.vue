@@ -65,6 +65,8 @@ const templates = {
   'bus_wo_title.html': BusWoTitleTemplate,
   'bus.html': BusTemplate,
   'default.html': DefaultTemplate,
+  'default_attachment.html': DefaultAttachment,
+  'default_attachment_no_prefix.html': DefaultAttachmentNoPrefixTemplate,
   'default_table.html': DefaultTableTemplate,
   'lignes_bus.html': LignesBusTemplate,
   'parcels.html': ParcelsTemplate,
@@ -81,8 +83,6 @@ const templates = {
   'viti_kleinlage.html': VitiKleinlageTemplate,
   'viti_name.html': VitiNameTemplate,
   'viti_parcels.html': VitiParcelsTemplate,
-  'default_attachment_no_prefix.html': DefaultAttachmentNoPrefixTemplate,
-  'default_attachment.html': DefaultAttachment,
 }
 
 const getTemplateComponent = (template: string) => {
