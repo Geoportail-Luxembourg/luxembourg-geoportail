@@ -12,9 +12,6 @@ const { t } = useTranslation()
   <InfoFeatureLayout :layers="layers" :currentUrl="currentUrl">
     <template #feature-content="{ feature }">
       <h4>{{ feature.attributes.num_affaire }}</h4>
-      {{ feature.attributes.numero }}, {{ feature.attributes.rue }}<br />
-      L-{{ feature.attributes.code_postal }} {{ feature.attributes.localite
-      }}<br />
       <span> {{ t('Numero') }}</span> : {{ feature.attributes.num_affaire
       }}<br />
       <span> {{ t('Numero cadastral') }} </span> : {{ feature.attributes.label
