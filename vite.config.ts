@@ -29,7 +29,6 @@ export default defineConfig(({ command, mode }) => {
     resolve: {
       alias: {
         '@': fileURLToPath(new URL('./src', import.meta.url)),
-        ol: fileURLToPath(new URL('./node_modules/ol/src', import.meta.url)),
       },
     },
     test: {
