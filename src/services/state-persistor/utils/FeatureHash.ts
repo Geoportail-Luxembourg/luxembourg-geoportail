@@ -6,7 +6,6 @@ import luxFormatFeatureProperties from './LuxFeatureProperties'
 import olFeature from 'ol/Feature'
 import { asArray as colorAsArray } from 'ol/color'
 import { ReadOptions, transformGeometryWithOptions } from 'ol/format/Feature'
-import olGeomGeometryLayout from 'ol/geom/GeometryLayout'
 import olGeomLineString from 'ol/geom/LineString'
 import olGeomMultiLineString from 'ol/geom/MultiLineString'
 import olGeomMultiPoint from 'ol/geom/MultiPoint'
@@ -585,7 +584,7 @@ function encodeStyleText_(textStyle: Text, encodedStyles: string[]) {
 function readLineStringGeometry_(this: FeatureHash, text: string) {
   text = text.substring(2, text.length - 1)
   const flatCoordinates = (this as any)?.decodeCoordinates_(text)
-  return new olGeomLineString(flatCoordinates, olGeomGeometryLayout.XY)
+  return new olGeomLineString(flatCoordinates)
 }
 
 /**
@@ -604,11 +603,7 @@ function readMultiLineStringGeometry_(this: FeatureHash, text: string) {
     )
     ends[i] = flatCoordinates.length
   }
-  return new olGeomMultiLineString(
-    flatCoordinates,
-    olGeomGeometryLayout.XY,
-    ends
-  )
+  return new olGeomMultiLineString(flatCoordinates, 'XY', ends)
 }
 
 /**
@@ -618,7 +613,7 @@ function readMultiLineStringGeometry_(this: FeatureHash, text: string) {
 function readPointGeometry_(this: FeatureHash, text: string) {
   text = text.substring(2, text.length - 1)
   const flatCoordinates = (this as any)?.decodeCoordinates_(text)
-  return new olGeomPoint(flatCoordinates, olGeomGeometryLayout.XY)
+  return new olGeomPoint(flatCoordinates)
 }
 
 /**
@@ -628,7 +623,7 @@ function readPointGeometry_(this: FeatureHash, text: string) {
 function readMultiPointGeometry_(this: FeatureHash, text: string) {
   text = text.substring(2, text.length - 1)
   const flatCoordinates = (this as any)?.decodeCoordinates_(text)
-  return new olGeomMultiPoint(flatCoordinates, olGeomGeometryLayout.XY)
+  return new olGeomMultiPoint(flatCoordinates)
 }
 
 /**
@@ -655,7 +650,7 @@ function readPolygonGeometry_(this: FeatureHash, text: string) {
     }
     ends[i] = end
   }
-  return new olGeomPolygon(flatCoordinates, olGeomGeometryLayout.XY, ends)
+  return new olGeomPolygon(flatCoordinates, 'XY', ends)
 }
 
 /**
@@ -686,7 +681,7 @@ function readMultiPolygonGeometry_(this: FeatureHash, text: string) {
       ends[j] = end
     }
   }
-  return new olGeomMultiPolygon(flatCoordinates, olGeomGeometryLayout.XY, endss)
+  return new olGeomMultiPolygon(flatCoordinates, 'XY', endss)
 }
 
 /**
