@@ -9,7 +9,7 @@ import { useAlertNotificationsStore } from '@/stores/alert-notifications.store'
 import { AlertNotificationType } from '@/stores/alert-notifications.store.model'
 import { useAppStore } from '@/stores/app.store'
 import { useTranslation } from 'i18next-vue'
-import { FrameState } from 'ol/PluggableMap'
+import { FrameState } from 'ol/Map'
 import { v4 as uuidv4 } from 'uuid'
 import { computed, onMounted, onUnmounted, ref, watch } from 'vue'
 
