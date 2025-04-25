@@ -1,11 +1,11 @@
-import { Ref, ref } from 'vue'
+import { Ref, ref, VNodeRef } from 'vue'
 import { acceptHMRUpdate, defineStore } from 'pinia'
 
 export const usePrintStore = defineStore(
   'print',
   () => {
-    const featureInfoPrintableRef: Ref<HTMLElement | null> = ref(null)
-    const locationInfoPrintableRef: Ref<HTMLElement | null> = ref(null)
+    const featureInfoPrintableRef: Ref<VNodeRef | undefined> = ref(undefined)
+    const locationInfoPrintableRef: Ref<VNodeRef | undefined> = ref(undefined)
 
     return {
       featureInfoPrintableRef,

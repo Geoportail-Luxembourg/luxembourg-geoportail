@@ -1,11 +1,8 @@
 import { describe, it, expect, vi, MockedFunction } from 'vitest'
-import {
-  printService,
-  PRINT_FORMAT,
-  BASE_URL,
-  LuxEncoder,
-} from './print.service'
+import { printService, BASE_URL } from './print.service'
 import { createTestingPinia } from '@pinia/testing'
+import { LuxEncoder } from './mapfishprint/LuxEncoder'
+import { PRINT_FORMAT } from './print.model'
 
 global.fetch = vi.fn()
 
@@ -78,12 +75,7 @@ describe('PrintService', () => {
         legend: true,
         framestate: null,
       },
-      {
-        getView: () => ({ getResolution: () => 128, getCenter: () => [0, 0] }),
-        getLayers: () => ({ getArray: () => [] }),
-        getLayerGroup: () => ({ get: () => ({}), getSource: () => undefined }),
-      } as unknown as any,
-      (s: string) => s
+      PRINT_FORMAT.PDF
     )
     expect(url.statusURL).toBe(
       `${BASE_URL}/printproxy/status/8a58a137-bb0a-4865-8187-066dd7c1c860@addda5ca-09e5-436a-b710-ddbdacc01eb8@5e7f570d-a4e7-4d0a-b76e-0854b0b12c2b.json`

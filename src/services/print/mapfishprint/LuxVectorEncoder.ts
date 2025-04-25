@@ -71,15 +71,21 @@ export class LuxVectorEncoder extends MFPVectorEncoder {
     const points = imageStyle.getPoints()
     const angle = imageStyle.getAngle()
 
+    // FIXME: Update @geoblocks/mapfishprint when support for Regular Shape ready, and remove ts ignore
     if (points === 4 && angle !== 0) {
+      // @ts-ignore
       symbolizer.graphicName = 'square'
     } else if (points === 4 && angle === 0) {
+      // @ts-ignore
       symbolizer.graphicName = 'cross'
     } else if (points === 3) {
+      // @ts-ignore
       symbolizer.graphicName = 'triangle'
     } else if (points === 5) {
+      // @ts-ignore
       symbolizer.graphicName = 'star'
     } else if (points === 8) {
+      // @ts-ignore
       symbolizer.graphicName = 'cross'
     }
 
@@ -120,6 +126,8 @@ export class LuxVectorEncoder extends MFPVectorEncoder {
     }
 
     if (symbolizer !== undefined) {
+      // FIXME: Update @geoblocks/mapfishprint when support for Regular Shape ready, and remove ts ignore
+      // @ts-ignore
       if (symbolizer.graphicName === 'cross') {
         symbolizer.strokeWidth = 0
         symbolizer.fillOpacity = 1
@@ -168,13 +176,18 @@ export class LuxVectorEncoder extends MFPVectorEncoder {
     }
     symbolizer.rotation = toDegrees(rotation)
 
+    // FIXME: Update @geoblocks/mapfishprint when support for Regular Shape ready, and remove ts ignore
+    // @ts-ignore
     if (symbolizer.labelAlign) {
+      // @ts-ignore
       symbolizer.labelAlign = 'lm'
     }
 
     if (symbolizer.externalGraphic) {
+      // @ts-ignore
       symbolizer.graphicFormat = 'image/png'
       if (symbolizer.externalGraphic.indexOf('scale=') > 0) {
+        // @ts-ignore
         delete symbolizer.graphicWidth
       } else if (symbolizer.externalGraphic.indexOf('getarrow') > 0) {
         symbolizer.graphicWidth = 10

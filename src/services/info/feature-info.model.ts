@@ -14,12 +14,18 @@ interface GeometryJSON {
 }
 
 export interface Attributes {
-  name: string
-  canton: string
-  district: string
-  showProfile: { active: boolean }
-  profile: any
+  canton?: string
+  description?: string
+  district?: string
+  image?: string
   label: string
+  length?: number
+  name: string
+  sentier?: string
+  showProfile?: { active: boolean }
+  thumbnail?: string
+  profile?: any // FIXME: improve typing
+  map_id?: number
 }
 
 export interface FeatureInfoJSON {
@@ -36,5 +42,5 @@ export interface FeatureInfoJSON {
 
 export interface AttributeEntry {
   key: string
-  value: any
+  value: any // FIXME: string instead of any?
 }

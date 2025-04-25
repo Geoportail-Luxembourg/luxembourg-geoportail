@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { computed, Ref, ref, watch } from 'vue'
+import { computed, Ref, ref, watch, VNodeRef } from 'vue'
 import { useTranslation } from 'i18next-vue'
 import { storeToRefs } from 'pinia'
 import { useLocationInfoStore } from '@/stores/location-info.store'
@@ -88,8 +88,8 @@ watch(currentUser, user => {
 
 // For print, save ref to element to access content in print composable
 const { locationInfoPrintableRef } = storeToRefs(usePrintStore())
-const setPrintableRef = (el: HTMLElement | null) => {
-  locationInfoPrintableRef.value = el
+const setPrintableRef = (el: VNodeRef | undefined) => {
+  return (locationInfoPrintableRef.value = el)
 }
 
 const isRapportForageVirtuelAvailable = computed(() => userRole.value === 'ACT')

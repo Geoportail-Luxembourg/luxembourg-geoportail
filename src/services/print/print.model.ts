@@ -5,6 +5,8 @@ export const enum PRINT_FORMAT {
   PNG = 'PNG',
 }
 
+export type MapFishPrintStatusResponse = 'running' | 'finished' | 'error'
+
 export interface PrintLegend {
   name: string | null
   restUrl?: string
@@ -30,7 +32,7 @@ export interface PrintOptions {
 }
 
 export interface JobStatus {
-  status: string
+  status: MapFishPrintStatusResponse
   done: boolean
   downloadURL?: string
 }

@@ -1,7 +1,10 @@
 <script setup lang="ts">
-import { onUnmounted } from 'vue'
+import { onUnmounted, VNodeRef } from 'vue'
+import { storeToRefs } from 'pinia'
+import { Feature } from 'ol'
+import { Geometry } from 'ol/geom'
+import GeoJSON from 'ol/format/GeoJSON'
 import DefaultTemplate from '@/components/info/templates/default-template.vue'
-import LignesBusTemplate from './templates/lignes-bus-template.vue'
 import {
   FeatureInfoJSON,
   FeatureJSON,
@@ -12,13 +15,10 @@ import {
   ExportFormat,
   FeatExport,
 } from '@/services/export-feature/export-feature.service'
-import { Feature } from 'ol'
-import { Geometry } from 'ol/geom'
-import GeoJSON from 'ol/format/GeoJSON'
 import useMap, { PROJECTION_LUX } from '@/composables/map/map.composable'
 import { usePrintStore } from '@/stores/print.store'
-import { storeToRefs } from 'pinia'
 import MymapsTemplate from './templates/mymaps-template.vue'
+import LignesBusTemplate from './templates/lignes-bus-template.vue'
 
 defineProps({
   content: {
@@ -30,8 +30,8 @@ const map = useMap().getOlMap()
 
 // For print, save ref to element to access content in print composable
 const { featureInfoPrintableRef } = storeToRefs(usePrintStore())
-const setPrintableRef = (el: HTMLElement | null) => {
-  featureInfoPrintableRef.value = el
+const setPrintableRef = (el: VNodeRef | undefined) => {
+  return (featureInfoPrintableRef.value = el)
 }
 
 onUnmounted(() => featureInfoLayerService.clearFeatures())

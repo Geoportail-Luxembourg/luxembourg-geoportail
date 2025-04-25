@@ -31,7 +31,7 @@ export function usePrint() {
   const printingRef: Ref<string | null> = ref(null)
 
   async function print(options: PrintOptions) {
-    const queryResults = await buildQueryResults()
+    const queryResults = buildQueryResults()
     const printOptions = {
       ...{
         disclaimer: t(
@@ -69,7 +69,9 @@ export function usePrint() {
     const locationInfoForPrint = getLocationInfoHtml()
     const featuresInfoForPrint = getFeaturesInfoHtml()
 
-    return locationInfoForPrint + '' + featuresInfoForPrint
+    return (
+      `${locationInfoForPrint ?? ''}${featuresInfoForPrint ?? ''}` || undefined
+    )
   }
 
   /**
@@ -84,13 +86,13 @@ export function usePrint() {
   }
 
   function getLocationInfoHtml() {
-    if (!locationInfoCoords.value || !locationInfoPrintableRef.value) return ''
-    return cleanHtml(locationInfoPrintableRef.value)
+    if (!locationInfoCoords.value || !locationInfoPrintableRef.value) return
+    return cleanHtml(locationInfoPrintableRef.value as unknown as HTMLElement)
   }
 
   function getFeaturesInfoHtml() {
-    if (locationInfoCoords.value || !featureInfoPrintableRef.value) return ''
-    return cleanHtml(featureInfoPrintableRef.value)
+    if (locationInfoCoords.value || !featureInfoPrintableRef.value) return
+    return cleanHtml(featureInfoPrintableRef.value as unknown as HTMLElement)
   }
 
   /**

@@ -1,3 +1,4 @@
+// @ts-nocheck
 import { defineCustomElement } from '@/bundle/runtime-dom/apiCustomElement'
 import { initProjections } from '@/services/projection.utils'
 import { createPinia, storeToRefs } from 'pinia'

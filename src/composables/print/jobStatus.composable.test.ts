@@ -1,4 +1,5 @@
-import { JobStatus, printService } from '@/services/print/print.service'
+import { printService } from '@/services/print/print.service'
+import { JobStatus } from '@/services/print/print.model'
 import {
   afterEach,
   beforeEach,
