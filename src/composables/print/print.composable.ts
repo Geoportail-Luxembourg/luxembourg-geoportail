@@ -61,7 +61,7 @@ export function usePrint() {
 
   /**
    * Build the `queryResults` param content to display location or feature infos.
-   * In the pdf export only, will be ignored if png export.
+   * Pdf export only, will be ignored if png export.
    * @see `buildQueryResultsLocationInfo()` and `buildQueryResultsFeaturesInfo()`
    * @returns The html for locationInfoForPrint and/or featuresInfoForPrint if any
    */

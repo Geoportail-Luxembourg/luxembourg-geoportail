@@ -11,7 +11,7 @@ import {
 import { toDegrees } from 'ol/math'
 
 /**
- * This class temporary, we need some evols to be done in @geoblocks/mapfishprint.
+ * This class is temporary: we need some evols to be done in @geoblocks/mapfishprint.
  * Meanwhile, some function have been overriden here to make the print works as before:
  * - encodeVectorStylePoint
  * - encodeVectorStylePointStyleIcon

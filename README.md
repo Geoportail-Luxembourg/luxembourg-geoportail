@@ -313,7 +313,7 @@ ALLOW_CORS=1 # ⚠️WARNING: don't use this value in production
 
 ## 🛡️ By pass CORS in dev mode
 
-Because v4 is a standalone app with no backend, it uses sometimes local v3's backend and sometimes migration platform https://migration.geoportail.lu (EDIT: warning, migration is down for now, using: https://migration.geoportail.lu instead) to perform api calls (see dedicated `.env` files to check urls).
+Because v4 is a standalone app with no backend, it uses sometimes local v3's backend and sometimes migration platform https://migration.geoportail.lu to perform api calls (see dedicated `.env` files to check urls).
 
 To ignore CORS errors when performing these calls, it is mandatory to use a plugin in your web browser (such as Use Allow CORS plugin for Chrome: https://mybrowseraddon.com/access-control-allow-origin.html). Without the plugin functionnalities such as MyMaps, authentication, MySymbols, ... won't work.
 
