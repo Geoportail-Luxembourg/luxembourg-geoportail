@@ -30,6 +30,7 @@ import LignesBusTemplate from './templates/lignes-bus-template.vue'
 import MeteoTemplate from './templates/meteo-template.vue'
 import MeteoluxEuropeTemplate from './templates/meteolux-europe-template.vue'
 import MeteoluxGrTemplate from './templates/meteolux-gr-template.vue'
+import MoTemplate from './templates/mo-template.vue'
 import PcnPagTemplate from './templates/pcn-pag-template.vue'
 // import PdsTemplate from './templates/pds-template.vue'
 import PdsreportTemplate from './templates/pdsreport-template.vue'
@@ -79,6 +80,7 @@ const templates = {
   'meteo.html': MeteoTemplate,
   'meteolux_europe.html': MeteoluxEuropeTemplate,
   'meteolux_gr.html': MeteoluxGrTemplate,
+  'mo.html': MoTemplate,
   'parcels.html': ParcelsTemplate,
   'pcn_pag.html': PcnPagTemplate,
   // 'pds.html': PdsTemplate,
