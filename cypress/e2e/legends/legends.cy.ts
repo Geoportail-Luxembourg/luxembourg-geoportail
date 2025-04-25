@@ -100,7 +100,7 @@ describe('Legends', () => {
       cy.wait('@mockedMetadataParcelles', { timeout: 10000 })
       cy.wait('@parcel-fixture')
       cy.wait('@solaire-fixture')
-      cy.get('[data-cy="legendLayer"]').its('length').should('be.equal', 2)
+      cy.get('[data-cy="legendLayer"]').its('length').should('be.equal', 4)
     })
   })
 
