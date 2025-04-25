@@ -38,6 +38,7 @@ const orderAffaire = async function (numCommune: string, numMesurage: string) {
   const isIpv6 = location.search.includes('ipv6=true')
   const urlBase = isIpv6 ? SHOP_IPV6_URL : SHOP_URL
 
+  // TODO : Link with shop should be tested as soon as a solution is found for auth cookies
   // Construct the URL with query parameters
   const url = `${urlBase}/Portail/commande/webservices/orderAffaireV3.jsp?numCommune=${encodeURIComponent(
     numCommune
