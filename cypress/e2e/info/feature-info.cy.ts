@@ -20,7 +20,7 @@ describe('Feature Info', () => {
         cy.get('[data-cy="infoPanel"]').should('exist')
         cy.get('[data-cy="defaultTemplateTitle"]')
           .first()
-          .should('contain.text', 'Communes (Noms)')
+          .should('contain.text', 'Communes')
         cy.get('[data-cy="defaultTemplateAttributes"]')
           .first()
           .children('div')
@@ -31,7 +31,7 @@ describe('Feature Info', () => {
           .should('have.attr', 'href')
           .and(
             'include',
-            '/theme/main?lang=fr&X=672676&Y=6412435&version=3&zoom=11&layers=302-269&opacities=1-1&bgLayer=orthogr_2013_global&rotation=0&features=&time=--&fid=269_0709'
+            '/theme/main?lang=fr&X=672676&Y=6412435&version=3&zoom=11&layers=302-269&opacities=1-1&bgLayer=orthogr_2013_global&rotation=0&features=&time=--&fid=302_0709'
           )
       })
       it('should display title, attributes, link in the infoPanel when clicking on a layer feature (second layer)', () => {
@@ -49,7 +49,7 @@ describe('Feature Info', () => {
           .should('have.attr', 'href')
           .and(
             'include',
-            '/theme/main?lang=fr&X=672676&Y=6412435&version=3&zoom=11&layers=302-269&opacities=1-1&bgLayer=orthogr_2013_global&rotation=0&features=&time=--&fid=269_0402'
+            '/theme/main?lang=fr&X=672676&Y=6412435&version=3&zoom=11&layers=302-269&opacities=1-1&bgLayer=orthogr_2013_global&rotation=0&features=&time=--&fid=302_0402'
           )
       })
     })
