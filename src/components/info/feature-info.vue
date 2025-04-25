@@ -28,6 +28,8 @@ import DefaultTableNoPrefixTemplate from './templates/default-table-no-prefix-te
 import FlikTemplate from './templates/flik-template.vue'
 import LignesBusTemplate from './templates/lignes-bus-template.vue'
 import MeteoTemplate from './templates/meteo-template.vue'
+import MeteoluxEuropeTemplate from './templates/meteolux-europe-template.vue'
+import MeteoluxGrTemplate from './templates/meteolux-gr-template.vue'
 import PcnPagTemplate from './templates/pcn-pag-template.vue'
 // import PdsTemplate from './templates/pds-template.vue'
 import PdsreportTemplate from './templates/pdsreport-template.vue'
@@ -75,6 +77,8 @@ const templates = {
   'flik.html': FlikTemplate,
   'lignes_bus.html': LignesBusTemplate,
   'meteo.html': MeteoTemplate,
+  'meteolux_europe.html': MeteoluxEuropeTemplate,
+  'meteolux_gr.html': MeteoluxGrTemplate,
   'parcels.html': ParcelsTemplate,
   'pcn_pag.html': PcnPagTemplate,
   // 'pds.html': PdsTemplate,
