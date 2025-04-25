@@ -1,7 +1,10 @@
 <script setup lang="ts">
-import { onUnmounted } from 'vue'
+import { onUnmounted, VNodeRef } from 'vue'
+import { storeToRefs } from 'pinia'
+import { Feature } from 'ol'
+import { Geometry } from 'ol/geom'
+import GeoJSON from 'ol/format/GeoJSON'
 import DefaultTemplate from '@/components/info/templates/default-template.vue'
-import LignesBusTemplate from './templates/lignes-bus-template.vue'
 import {
   FeatureInfoJSON,
   FeatureJSON,
@@ -12,10 +15,10 @@ import {
   ExportFormat,
   FeatExport,
 } from '@/services/export-feature/export-feature.service'
-import { Feature } from 'ol'
-import { Geometry } from 'ol/geom'
-import GeoJSON from 'ol/format/GeoJSON'
 import useMap, { PROJECTION_LUX } from '@/composables/map/map.composable'
+import { usePrintStore } from '@/stores/print.store'
+import MymapsTemplate from './templates/mymaps-template.vue'
+import LignesBusTemplate from './templates/lignes-bus-template.vue'
 
 defineProps({
   content: {
@@ -25,16 +28,21 @@ defineProps({
 })
 const map = useMap().getOlMap()
 
-onUnmounted(() => {
-  featureInfoLayerService.clearFeatures()
-})
+// For print, save ref to element to access content in print composable
+const { featureInfoPrintableRef } = storeToRefs(usePrintStore())
+const setPrintableRef = (el: VNodeRef | undefined) => {
+  return (featureInfoPrintableRef.value = el)
+}
 
-const getTemplateComponent = (template: string) => {
+onUnmounted(() => featureInfoLayerService.clearFeatures())
+
+function getTemplateComponent(template: string) {
   switch (template) {
-    case 'default.html':
-      return DefaultTemplate
+    case 'mymaps.html':
+      return MymapsTemplate
     case 'lignes_bus.html':
       return LignesBusTemplate
+    case 'default.html':
     default:
       return DefaultTemplate
   }
@@ -75,8 +83,13 @@ function onExport(payload: { feature: FeatureJSON; format: ExportFormat }) {
     <a ng-if="ctrl.isDownloadable" class="btn btn-default"  href="{{ctrl.getDownloadMeasurementUrl()}}?document_id={{ctrl.previewDocumentId}}" target="_blank" translate>Télécharger</a>
   </div>
   </ngeo-modal> -->
+
   <!-- absolute is needed here to make y overflow scroll on long content -->
-  <div v-if="content && content.length" class="absolute w-11/12">
+  <div
+    :ref="setPrintableRef"
+    v-if="content && content.length"
+    class="absolute w-11/12"
+  >
     <component
       v-for="(layers, index) in content"
       :key="index"

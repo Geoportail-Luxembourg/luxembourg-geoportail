@@ -113,4 +113,20 @@ describe('Footer bar', () => {
       })
     })
   })
+
+  describe('Print button', () => {
+    describe('When opening print panel', () => {
+      it('opens the print panel', () => {
+        cy.get('[data-cy="toolbarPrint"]').should('not.exist')
+        cy.get('button[data-cy="printButton"]').click()
+        cy.get('[data-cy="toolbarPrint"]').should('exist')
+      })
+
+      it('Other panels are closed', () => {
+        cy.get('[data-cy="styleSelector"]').should('not.exist')
+        cy.get('[data-cy="myMapsPanel"]').should('not.exist')
+        cy.get('[data-cy="infoPanel"]').should('be.hidden')
+      })
+    })
+  })
 })

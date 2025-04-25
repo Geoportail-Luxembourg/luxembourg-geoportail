@@ -1,19 +1,22 @@
 <script setup lang="ts">
-import { watch } from 'vue'
-import { storeToRefs } from 'pinia'
-import { useTranslation } from 'i18next-vue'
-
 import { useAppStore } from '@/stores/app.store'
+import { useDrawStore } from '@/stores/draw.store'
 import { useFeatureInfoStore } from '@/stores/feature-info.store'
+import { useTranslation } from 'i18next-vue'
+import { storeToRefs } from 'pinia'
+import { watch } from 'vue'
 import ButtonIcon from './button-icon.vue'
 import ButtonLink from './button-link.vue'
 import ToolbarDraw from './toolbar-draw.vue'
 import ToolbarMeasure from './toolbar-measure.vue'
+import ToolbarPrint from './toolbar-print.vue'
 
 const { t, i18next } = useTranslation()
 const appStore = useAppStore()
+const drawStore = useDrawStore()
 const {
   setLayersOpen,
+  togglePrintToolbarOpen,
   toggleDrawToolbarOpen,
   toggleMyMapsOpen,
   toggleLegendsOpen,
@@ -28,7 +31,9 @@ const {
   myMapsOpen,
   infoOpen,
   themeGridOpen,
+  printToolbarOpen,
 } = storeToRefs(appStore)
+const { setEditActiveState } = drawStore
 
 function onClickLayersIcon() {
   const open = !layersOpen.value
@@ -43,8 +48,27 @@ function onClickLayersIcon() {
   themeGridOpen.value = false
 }
 
-watch(drawToolbarOpen, isOpen => isOpen && (measureToolbarOpen.value = false))
-watch(measureToolbarOpen, isOpen => isOpen && (drawToolbarOpen.value = false))
+watch(drawToolbarOpen, isOpen => {
+  if (isOpen) {
+    measureToolbarOpen.value = false
+    printToolbarOpen.value = false
+  } else {
+    // Deactivate edition mode when draw toolbar is closed
+    setEditActiveState(undefined)
+  }
+})
+watch(measureToolbarOpen, isOpen => {
+  if (isOpen) {
+    drawToolbarOpen.value = false
+    printToolbarOpen.value = false
+  }
+})
+watch(printToolbarOpen, isOpen => {
+  if (isOpen) {
+    drawToolbarOpen.value = false
+    measureToolbarOpen.value = false
+  }
+})
 
 const featureInfoStore = useFeatureInfoStore()
 const { displayStarOnMobile } = storeToRefs(featureInfoStore)
@@ -123,6 +147,7 @@ function onClickInfoIcon() {
     >
       <!-- Drawing tools -->
       <toolbar-draw v-if="drawToolbarOpen" />
+      <toolbar-print v-if="printToolbarOpen" />
       <button-icon
         :label="t('Dessin', { ns: 'client' })"
         icon="draw"
@@ -144,9 +169,12 @@ function onClickInfoIcon() {
 
       <!-- Print tools -->
       <button-icon
-        class="text-gray-300 hidden sm:block"
+        class="hidden sm:block"
         :label="t('Imprimer', { ns: 'client' })"
+        :active="printToolbarOpen"
+        @click="() => togglePrintToolbarOpen()"
         icon="print"
+        data-cy="printButton"
       >
       </button-icon>
 

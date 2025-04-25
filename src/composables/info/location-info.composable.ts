@@ -25,7 +25,9 @@ export default function useLocationInfo() {
   let holdTimeoutId: number | undefined = undefined
   let startPixel: Coordinate | null = null
   const { infoOpen } = storeToRefs(useAppStore())
-  const { locationInfo, hidePointer } = storeToRefs(useLocationInfoStore())
+  const { locationInfoCoords, hidePointer } = storeToRefs(
+    useLocationInfoStore()
+  )
   const { clearContent } = useFeatureInfoStore()
 
   const infoFeatureLayer = new VectorLayer({
@@ -40,12 +42,12 @@ export default function useLocationInfo() {
 
   watch(infoOpen, open => {
     if (!open) {
-      locationInfo.value = undefined
+      locationInfoCoords.value = undefined
     }
   })
 
   watch(
-    [locationInfo, hidePointer],
+    [locationInfoCoords, hidePointer],
     ([location, doHide]) => {
       infoFeatureLayer.getSource()?.clear()
       if (location && !doHide) {
@@ -73,12 +75,12 @@ export default function useLocationInfo() {
     startPixel = event.pixel
     if (event.originalEvent.button === 2) {
       // if right mouse click
-      locationInfo.value = getClickCoordinate(event)
+      locationInfoCoords.value = getClickCoordinate(event)
       clearContent()
     } else if (event.originalEvent.pointerType === 'touch') {
       window.clearTimeout(holdTimeoutId)
       holdTimeoutId = window.setTimeout(() => {
-        locationInfo.value = getClickCoordinate(event)
+        locationInfoCoords.value = getClickCoordinate(event)
         clearContent()
       })
     }
@@ -91,7 +93,7 @@ export default function useLocationInfo() {
     ) {
       // if left mouse click
       if (!hidePointer.value) {
-        locationInfo.value = undefined
+        locationInfoCoords.value = undefined
       }
     }
     window.clearTimeout(holdTimeoutId)

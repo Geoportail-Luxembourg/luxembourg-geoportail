@@ -83,6 +83,10 @@
     @apply border-black;
   }
 
+  .lux-text-default {
+    @apply text-default;
+  }
+
   .lux-outlined {
     outline: 5px auto -webkit-focus-ring-color;
     outline-offset: -2px;
@@ -139,6 +143,11 @@
     @apply bg-gray-400;
   }
 
+  .lux-btn.lux-btn-secondary {
+    color: var(--main-primary);
+    background-color: var(--color-secondary);
+  }
+
   .lux-close-cross {
     @apply after:content-['\e02c'];
   }
@@ -152,8 +161,12 @@
     @apply font-bold mb-[5px] inline-block;
   }
 
+  .lux-dropdown-btn {
+    @apply w-full;
+  }
+
   .lux-dropdown {
-    @apply inline-block;
+    @apply inline-block relative;
   }
 
   .lux-dropdown-inline .lux-dropdown-list:not(.hidden) {
@@ -161,9 +174,12 @@
   }
 
   .lux-dropdown-list {
-    @apply absolute left-0 z-10 bg-white py-[5px] mt-[2px] w-auto;
+    @apply absolute left-0 z-10 bg-white py-[5px] mt-[2px] w-auto min-w-full;
     border: 1px solid rgba(0, 0, 0, 0.15);
     box-shadow: 0 6px 12px rgb(0 0 0 / 18%);
+  }
+  .lux-dropdown-list.up {
+    bottom: 100%;
   }
 
   .lux-dropdown-list-item {
@@ -225,7 +241,7 @@
 
   .lux-navbar-dropdown .lux-dropdown-list li {
     @apply h-16 w-16 bg-[color:var(--color-primary)]
-    hover:bg-white hover:[color:var(--color-primary)] 
+    hover:bg-white hover:[color:var(--color-primary)]
     [&.selected]:bg-white [&.selected]:[color:var(--color-primary)];
   }
 
@@ -518,7 +534,7 @@
     @apply text-title-xl mt-[22px] mb-[11px];
   }
   .lux-feature-info {
-    @apply bg-white bg-opacity-50 m-[5px] p-[10px];
+    @apply break-all bg-white bg-opacity-50 m-[5px] p-[10px];
   }
   .lux-feature-info h4 {
     @apply my-[11px] text-[20px];

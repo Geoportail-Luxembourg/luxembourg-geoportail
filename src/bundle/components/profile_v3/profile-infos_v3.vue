@@ -19,8 +19,8 @@ const activateProfile = computed(() => {
   return (
     props.featureid &&
     getFeature(props.featureid) &&
-    (getFeature(props.featureid).getGeometry()?.getType() === 'LineString' ||
-      getFeature(props.featureid).getGeometry()?.getType() ===
+    (getFeature(props.featureid)?.getGeometry()?.getType() === 'LineString' ||
+      getFeature(props.featureid)?.getGeometry()?.getType() ===
         'MultiLineString')
   )
 })

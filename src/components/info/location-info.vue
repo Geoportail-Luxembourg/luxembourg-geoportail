@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { computed, Ref, ref, watch } from 'vue'
+import { computed, Ref, ref, watch, VNodeRef } from 'vue'
 import { useTranslation } from 'i18next-vue'
 import { storeToRefs } from 'pinia'
 import { useLocationInfoStore } from '@/stores/location-info.store'
@@ -10,11 +10,7 @@ import { Feature } from 'ol'
 import { Point } from 'ol/geom'
 import useMap from '@/composables/map/map.composable'
 import useLocationInfo from '@/composables/info/location-info.composable'
-import {
-  getQRUrl,
-  queryInfos,
-  INFO_PROJECTIONS,
-} from '@/services/info/location-info'
+import { queryInfos, INFO_PROJECTIONS } from '@/services/info/location-info'
 import {
   formatElevation,
   formatLength,
@@ -23,13 +19,22 @@ import {
 } from '@/services/common/formatting.utils'
 import { downloadUrl } from '@/services/utils'
 
+import { useAlertNotificationsStore } from '@/stores/alert-notifications.store'
+import { AlertNotificationType } from '@/stores/alert-notifications.store.model'
+
 import StreetView from '@/components/info/street-view.vue'
+import { usePrintStore } from '@/stores/print.store'
+import { getQRUrl } from '@/services/url.utils'
 
 const { t } = useTranslation()
-const { locationInfo, isStreetviewActive, routingFeatureTemp } = storeToRefs(
-  useLocationInfoStore()
-)
+const {
+  locationInfoCoords,
+  locationInfoInfos,
+  isStreetviewActive,
+  routingFeatureTemp,
+} = storeToRefs(useLocationInfoStore())
 const { currentUser } = storeToRefs(useUserManagerStore())
+const { addNotification } = useAlertNotificationsStore()
 
 const map = useMap().getOlMap()
 
@@ -41,23 +46,26 @@ const clickCoordinateLuref: Ref<Coordinate | undefined> = ref()
 const formattedCoordinates: Ref<{ [k: string]: string }> = ref({})
 const downloadingRepport: Ref<boolean> = ref(false)
 const isInBoxOfLidar: Ref<boolean> = ref(false)
-const userRole: Ref<string> = ref('ACT') //Tous Publics')
+const userRole: Ref<string> = ref('ACT') // or 'Tous Publics'
 const userType: Ref<string> = ref('base')
 
 // initialise map listeners for location info
 useLocationInfo()
-// initial load of position infos if locationInfo is not initially undefined
+// initial load of position infos if locationInfoCoords is not initially undefined
 // async function, no need to await the completion, DOM will be updated via refs
-updateInfo(locationInfo.value)
+updateInfo(locationInfoCoords.value)
 
-watch(locationInfo, updateInfo)
+watch(locationInfoCoords, updateInfo)
 
 async function updateInfo(location: Coordinate | undefined) {
   if (location) {
-    const infos = await queryInfos(location, map.getView().getProjection())
-    shortUrl.value = infos.shortUrl
-    qrUrl.value = getQRUrl(infos.shortUrl)
-    clickCoordinateLuref.value = infos.clickCoordinateLuref
+    locationInfoInfos.value = await queryInfos(
+      location,
+      map.getView().getProjection()
+    )
+    shortUrl.value = locationInfoInfos.value.shortUrl
+    qrUrl.value = getQRUrl(locationInfoInfos.value.shortUrl)
+    clickCoordinateLuref.value = locationInfoInfos.value.clickCoordinateLuref
     formattedCoordinates.value = Object.fromEntries(
       Object.entries(INFO_PROJECTIONS).map(([crs, label]) => [
         label,
@@ -65,9 +73,11 @@ async function updateInfo(location: Coordinate | undefined) {
       ])
     )
     elevation.value =
-      infos.elevation === null ? 'N/A' : formatElevation(infos.elevation)
-    address.value = infos.address
-    isInBoxOfLidar.value = infos.isInBoxOfLidar
+      locationInfoInfos.value.elevation === null
+        ? 'N/A'
+        : formatElevation(locationInfoInfos.value.elevation)
+    address.value = locationInfoInfos.value.address
+    isInBoxOfLidar.value = locationInfoInfos.value.isInBoxOfLidar
   }
 }
 
@@ -75,6 +85,12 @@ watch(currentUser, user => {
   userRole.value = user?.role || 'anonymous'
   userType.value = user?.role || 'base'
 })
+
+// For print, save ref to element to access content in print composable
+const { locationInfoPrintableRef } = storeToRefs(usePrintStore())
+const setPrintableRef = (el: VNodeRef | undefined) => {
+  return (locationInfoPrintableRef.value = el)
+}
 
 const isRapportForageVirtuelAvailable = computed(() => userRole.value === 'ACT')
 const isCyclomediaAvailable = computed(
@@ -117,10 +133,10 @@ const imagesObliquesUrl = computed(() =>
 )
 
 function addRoutePoint() {
-  if (!locationInfo.value) {
+  if (!locationInfoCoords.value) {
     return
   }
-  const point = new Feature(new Point(locationInfo.value))
+  const point = new Feature(new Point(locationInfoCoords.value))
   if (address.value && address.value.distance <= 100) {
     point.set('label', formatAddress(address.value))
   } else {
@@ -138,8 +154,10 @@ async function downloadRapportForageVirtuel() {
   try {
     await downloadUrl(forageUrl.value, '')
   } catch {
-    // TODO harmonize error
-    alert('Error downloading forage')
+    addNotification(
+      t('An error occurred while downloading forage.'),
+      AlertNotificationType.ERROR
+    )
   } finally {
     downloadingRepport.value = false
   }
@@ -155,47 +173,54 @@ watch(downloadingRepport, downloadingRepport => {
 </script>
 
 <template>
-  <div class="flex flex-row">
-    <div class="grow-[2] flex flex-col justify-end content-end">
-      <h3 id="short_url_title" class="text-3xl text-white">
-        {{ t('Short Url', { ns: 'client' }) }}
-      </h3>
-      <input
-        aria-labelledby="short_url_title"
-        onclick="this.select();"
-        class="lux-input"
-        type="text"
-        :value="shortUrl"
-        readonly="true"
-      />
+  <div :ref="setPrintableRef">
+    <!-- Url and QR code image -->
+    <div class="flex flex-row">
+      <div class="no-print grow-[2] flex flex-col justify-end content-end">
+        <h3 id="short_url_title" class="text-3xl text-white">
+          {{ t('Short Url', { ns: 'client' }) }}
+        </h3>
+        <input
+          aria-labelledby="short_url_title"
+          onclick="this.select();"
+          class="lux-input"
+          type="text"
+          :value="shortUrl"
+          readonly="true"
+        />
+      </div>
+      <img class="mx-5 mt-5" v-if="qrUrl" :src="qrUrl" />
     </div>
-    <img class="mx-5 mt-5" v-if="qrUrl" :src="qrUrl" />
+
+    <!-- Coordinates -->
+    <div>
+      <h3 class="mt-5 text-3xl text-white">
+        {{ t('Location Coordinates', { ns: 'client' }) }}
+      </h3>
+      <table>
+        <tbody class="lux-info-table">
+          <tr v-for="(coords, label) in formattedCoordinates" :key="label">
+            <th>{{ t(label as string) }}</th>
+            <td>{{ coords }}</td>
+          </tr>
+          <tr>
+            <th>{{ t('Elevation') }}</th>
+            <td>{{ elevation }}</td>
+          </tr>
+          <tr>
+            <th style="text-align: left">{{ t('Adresse la plus proche') }}</th>
+            <td>{{ formatAddress(address) }}</td>
+          </tr>
+          <tr>
+            <th style="text-align: left">{{ t('Distance approximative') }}</th>
+            <td>{{ formatLength(address?.distance || null, 0) }}</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
   </div>
-  <div>
-    <h3 class="mt-5 text-3xl text-white">
-      {{ t('Location Coordinates', { ns: 'client' }) }}
-    </h3>
-    <table>
-      <tbody class="lux-info-table">
-        <tr v-for="(coords, label) in formattedCoordinates" :key="label">
-          <th>{{ t(label as string) }}</th>
-          <td>{{ coords }}</td>
-        </tr>
-        <tr>
-          <th>{{ t('Elevation') }}</th>
-          <td>{{ elevation }}</td>
-        </tr>
-        <tr>
-          <th style="text-align: left">{{ t('Adresse la plus proche') }}</th>
-          <td>{{ formatAddress(address) }}</td>
-        </tr>
-        <tr>
-          <th style="text-align: left">{{ t('Distance approximative') }}</th>
-          <td>{{ formatLength(address?.distance || null) }}</td>
-        </tr>
-      </tbody>
-    </table>
-  </div>
+
+  <!-- Forage, obliques, lidar buttons -->
   <div>
     <button
       v-if="isRapportForageVirtuelAvailable"
@@ -250,6 +275,8 @@ watch(downloadingRepport, downloadingRepport => {
       </button>
     </div>
   </div>
+
+  <!-- Streetview -->
   <div>
     <StreetView v-show="isStreetviewActive" />
     <div

@@ -5,7 +5,17 @@ import { Coordinate } from 'ol/coordinate'
 import { Feature } from 'ol'
 
 export const useLocationInfoStore = defineStore('info', () => {
-  const locationInfo: Ref<Coordinate | undefined> = ref(undefined)
+  const locationInfoCoords: Ref<Coordinate | undefined> = ref(undefined)
+  const locationInfoInfos: Ref<
+    | {
+        shortUrl: any
+        elevation: any
+        address: any
+        clickCoordinateLuref: Coordinate
+        isInBoxOfLidar: boolean
+      }
+    | undefined
+  > = ref(undefined)
   const hidePointer: Ref<boolean> = ref(false)
   const isStreetviewActive: Ref<boolean> = ref(false)
   const noDataAtLocation = ref(true)
@@ -15,7 +25,8 @@ export const useLocationInfoStore = defineStore('info', () => {
   const routingFeatureTemp: Ref<Feature | undefined> = ref(undefined)
 
   return {
-    locationInfo,
+    locationInfoCoords,
+    locationInfoInfos,
     hidePointer,
     isStreetviewActive,
     noDataAtLocation,

@@ -12,7 +12,7 @@ import { watch } from 'vue'
 
 const { t } = useTranslation()
 const appStore = useAppStore()
-const { locationInfo } = storeToRefs(useLocationInfoStore())
+const { locationInfoCoords } = storeToRefs(useLocationInfoStore())
 const map = useMap().olMap
 const { infoOpen } = storeToRefs(appStore)
 const { clearContent } = useFeatureInfoStore()
@@ -40,12 +40,16 @@ watch(infoOpen, isOpen => {
 
     <template v-slot:content>
       <template v-if="map">
-        <div data-cy="locationInfo" v-show="locationInfo" class="absolute">
+        <div
+          data-cy="locationInfo"
+          v-show="locationInfoCoords"
+          class="absolute"
+        >
           <LocationInfo />
         </div>
       </template>
 
-      <template v-if="!locationInfo && !featureInfoPanelContent">
+      <template v-if="!locationInfoCoords && !featureInfoPanelContent">
         <div class="text-white absolute">
           <ul class="list-disc pl-10">
             <li>

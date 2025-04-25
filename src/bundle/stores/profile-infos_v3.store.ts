@@ -44,21 +44,25 @@ export const useProfileInfosv3Store = defineStore(
      * Add a feature.
      */
     const addFeature = (feature: DrawnFeature, id: string | undefined) => {
-      features_v3.value[id] = feature
+      if (id !== undefined) {
+        features_v3.value[id] = feature
+      }
     }
 
     /**
      * get a specific feature.
      */
-    const getFeature = (id: string | undefined): DrawnFeature => {
-      return features_v3.value[id]
+    const getFeature = (id: string | undefined): DrawnFeature | undefined => {
+      return id !== undefined ? features_v3.value[id] : undefined
     }
 
     /**
      * Remove a feature.
      */
     const removeFeature = (id: string | undefined) => {
-      delete features_v3.value[id]
+      if (id !== undefined) {
+        delete features_v3.value[id]
+      }
     }
 
     return {
