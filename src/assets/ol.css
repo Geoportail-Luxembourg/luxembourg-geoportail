@@ -1,3 +1,5 @@
+@config "../../tailwind.config.cjs";
+
 @tailwind components;
 
 @layer components {
