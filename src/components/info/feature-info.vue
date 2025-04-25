@@ -27,6 +27,7 @@ import DefaultTableTemplate from './templates/default-table-template.vue'
 import DefaultTableNoPrefixTemplate from './templates/default-table-no-prefix-template.vue'
 import FlikTemplate from './templates/flik-template.vue'
 import LignesBusTemplate from './templates/lignes-bus-template.vue'
+import MeteoTemplate from './templates/meteo-template.vue'
 import PcnPagTemplate from './templates/pcn-pag-template.vue'
 // import PdsTemplate from './templates/pds-template.vue'
 import PdsreportTemplate from './templates/pdsreport-template.vue'
@@ -73,6 +74,7 @@ const templates = {
   'default_table_no_prefix.html': DefaultTableNoPrefixTemplate,
   'flik.html': FlikTemplate,
   'lignes_bus.html': LignesBusTemplate,
+  'meteo.html': MeteoTemplate,
   'parcels.html': ParcelsTemplate,
   'pcn_pag.html': PcnPagTemplate,
   // 'pds.html': PdsTemplate,
