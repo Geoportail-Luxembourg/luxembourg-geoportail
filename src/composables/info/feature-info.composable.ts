@@ -51,19 +51,17 @@ export default function useFeatureInfo() {
     featureInfoLayerService.init(map)
     listen(map, 'pointerdown', event => {
       ;(() => {
-        startPixel.value = (event as MapBrowserEvent<MouseEvent>).pixel
+        startPixel.value = (event as MapBrowserEvent).pixel
       })()
     })
 
     listen(
       map,
       'pointerup',
-      throttle(event => onPointerUp(event as MapBrowserEvent<MouseEvent>), 499)
+      throttle(event => onPointerUp(event as MapBrowserEvent), 499)
     )
 
-    listen(map, 'pointermove', event =>
-      onPointerMove(event as MapBrowserEvent<MouseEvent>)
-    )
+    listen(map, 'pointermove', event => onPointerMove(event as MapBrowserEvent))
 
     watchEffect(() => {
       if (fid.value) {
@@ -74,7 +72,7 @@ export default function useFeatureInfo() {
     })
   }
 
-  function onPointerUp(evt: MapBrowserEvent<MouseEvent>) {
+  function onPointerUp(evt: MapBrowserEvent) {
     ;(async () => {
       stopPixel.value = evt.pixel
       if (
@@ -82,7 +80,7 @@ export default function useFeatureInfo() {
         // routingOpen ||
         // lidarOpen ||
         // appActivetool.value.isActive() || => corresponds to: measureActive, streetviewActive
-        evt.originalEvent.button === 2 || // right click
+        (<MouseEvent>evt.originalEvent).button === 2 || // right click
         (isStreetviewActive.value && locationInfoCoords.value) ||
         drawStateActive.value ||
         editStateActive.value ||
@@ -113,7 +111,7 @@ export default function useFeatureInfo() {
     })()
   }
 
-  function onPointerMove(evt: MapBrowserEvent<MouseEvent>) {
+  function onPointerMove(evt: MapBrowserEvent) {
     if (evt.dragging || isLoading.value) {
       return
     }
@@ -187,9 +185,7 @@ export default function useFeatureInfo() {
     }
   }
 
-  async function getFeatureInfoFromClick(
-    evt: MapBrowserEvent<MouseEvent>
-  ): Promise<void> {
+  async function getFeatureInfoFromClick(evt: MapBrowserEvent): Promise<void> {
     const layers = map.getLayers().getArray()
     const layersList = []
     const layerLabel: { [key: string]: string } = {}

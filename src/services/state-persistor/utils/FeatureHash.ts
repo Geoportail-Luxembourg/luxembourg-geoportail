@@ -446,7 +446,7 @@ function encodeStyles_(
     const strokeStyle = style.getStroke()
     const textStyle = style.getText()
     if (styleType == FeatureHashStyleType.POLYGON) {
-      if (fillStyle !== null) {
+      if (fillStyle !== null && strokeStyle) {
         encodeStylePolygon_(fillStyle, strokeStyle, encodedStyles)
       }
     } else if (styleType == FeatureHashStyleType.LINE_STRING) {
