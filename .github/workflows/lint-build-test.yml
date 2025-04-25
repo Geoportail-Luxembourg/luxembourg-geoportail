@@ -28,4 +28,4 @@ jobs:
       - run: npm run build-only -- --mode=e2e
       - run: npm run test:unit:ci
       - run: npm run test:e2e:ci
-      - run: npm run coverage-report
+      # - run: npm run coverage-report
