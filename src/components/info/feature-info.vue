@@ -30,6 +30,7 @@ import LignesBusTemplate from './templates/lignes-bus-template.vue'
 import MeteoTemplate from './templates/meteo-template.vue'
 import MeteoluxEuropeTemplate from './templates/meteolux-europe-template.vue'
 import MeteoluxGrTemplate from './templates/meteolux-gr-template.vue'
+import MymapsTemplate from './templates/mymaps-template.vue'
 import MoTemplate from './templates/mo-template.vue'
 import PcnPagTemplate from './templates/pcn-pag-template.vue'
 // import PdsTemplate from './templates/pds-template.vue'
@@ -80,14 +81,13 @@ const templates = {
   'meteo.html': MeteoTemplate,
   'meteolux_europe.html': MeteoluxEuropeTemplate,
   'meteolux_gr.html': MeteoluxGrTemplate,
+  'mymaps.html': MymapsTemplate,
   'mo.html': MoTemplate,
   'parcels.html': ParcelsTemplate,
   'pcn_pag.html': PcnPagTemplate,
   // 'pds.html': PdsTemplate,
   'pdsreport.html': PdsreportTemplate,
   'pegel.html': PegelTemplate,
-  // 'poi-eat.html': PoiEatTemplate,
-  // 'poi.html': PoiTemplate,
   'remembrements.html': RemembrementsTemplate,
   'sentier_nature.html': SentierNatureTemplate,
   'urplang.html': UrplandTemplate,
