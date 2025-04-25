@@ -3,11 +3,11 @@ import { storeToRefs } from 'pinia'
 
 import useMap from '@/composables/map/map.composable'
 import { listen } from 'ol/events'
-import * as olArray from 'ol/array.js'
 import { getUid } from 'ol/util'
 import { useDrawStore } from '@/stores/draw.store'
 import { useAppStore } from '@/stores/app.store'
 import { useMapStore } from '@/stores/map.store'
+import { DrawnFeature } from '@/services/draw/drawn-feature'
 
 export default function useDrawSelect() {
   const map = useMap().getOlMap()
@@ -29,13 +29,13 @@ export default function useDrawSelect() {
       editingFeatureId.value = undefined
     }
     drawnFeatures.value
-      .filter(f => getUid(f) == oldId)
+      .filter(f => getUid(f) === oldId)
       .forEach(oldFeature => {
         oldFeature.selected = false
         oldFeature.changed()
       })
     drawnFeatures.value
-      .filter(f => getUid(f) == newId)
+      .filter(f => getUid(f) === newId)
       .forEach(newFeature => {
         newFeature.selected = true
         newFeature.editable = false
@@ -56,7 +56,7 @@ export default function useDrawSelect() {
     const featureFound = map.forEachFeatureAtPixel(
       pixel,
       feature => {
-        const featureMatch = olArray.includes(drawnFeatures.value, feature)
+        const featureMatch = drawnFeatures.value.includes(<DrawnFeature>feature)
         if (
           (featureMatch &&
             (layersOpen.value || myMapsOpen.value) &&
