@@ -4,7 +4,6 @@
 import luxFormatFeatureProperties from './LuxFeatureProperties'
 
 import olFeature from 'ol/Feature'
-import { includes as arrayIncludes } from 'ol/array'
 import { asArray as colorAsArray } from 'ol/color'
 import { ReadOptions, transformGeometryWithOptions } from 'ol/format/Feature'
 import olGeomGeometryLayout from 'ol/geom/GeometryLayout'
@@ -830,9 +829,9 @@ function castValue_(key: string, value: string) {
     'showOrientation',
   ]
 
-  if (arrayIncludes(numProperties, key)) {
+  if (numProperties.includes(key)) {
     return +value
-  } else if (arrayIncludes(boolProperties, key)) {
+  } else if (boolProperties.includes(key)) {
     return value === 'true'
   } else {
     return value
