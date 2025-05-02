@@ -10,6 +10,7 @@ import { DrawnFeature } from '@/services/draw/drawn-feature'
 import { useDrawStore } from '@/stores/draw.store'
 import useMap from '../map/map.composable'
 import { EditStateActive } from '@/stores/draw.store.model'
+import { OLLAYER_PROP_ID } from '@/services/ol-layer/ol-layer.model'
 
 const DEFAULT_DRAW_EDIT_ZINDEX = 1001
 const FEATURE_EDIT_LAYER_TYPE = 'featureEditLayer'
@@ -29,6 +30,7 @@ export default function useEdit() {
     source: editSource,
     zIndex: DEFAULT_DRAW_EDIT_ZINDEX,
   })
+  editLayer.set(OLLAYER_PROP_ID, FEATURE_EDIT_LAYER_TYPE)
   editLayer.set('cyLayerType', FEATURE_EDIT_LAYER_TYPE)
   map.addLayer(editLayer)
 

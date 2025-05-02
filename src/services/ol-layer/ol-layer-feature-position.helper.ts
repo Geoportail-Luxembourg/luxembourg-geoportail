@@ -10,10 +10,10 @@ import { getStyleFeaturePosition } from './styles.helper'
 export const DEFAULT_LAYER_ZINDEX = 1002
 export const FEATURE_LAYER_TYPE = 'featurePositionLayer'
 
-export class PositionVectorLayer extends VectorLayer<VectorSource<Geometry>> {
+export class PositionVectorLayer extends VectorLayer {
   geoMarker: Feature<Point> | undefined
 
-  constructor(options: Options<VectorSource<Geometry>>) {
+  constructor(options: Options<Feature, VectorSource<Feature<Geometry>>>) {
     const source = new VectorSource({
       features: [], // geoMarker to be added here (@see createGeoMarker())
       useSpatialIndex: false,
@@ -33,7 +33,7 @@ export class PositionVectorLayer extends VectorLayer<VectorSource<Geometry>> {
   createGeoMarker() {
     this.geoMarker = new Feature({ geometry: new Point([0, 0]) })
     this.getSource()?.clear()
-    this.getSource()?.addFeature(this.geoMarker)
+    this.getSource()?.addFeature(this.geoMarker as unknown as Geometry)
   }
 
   removeGeoMarker() {
