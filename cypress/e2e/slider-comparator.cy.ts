@@ -1,3 +1,17 @@
+function openFirstItemToShowToggleSliderBtn() {
+  cy.get('[data-cy="myLayer"]').first().as('firstLayerItem')
+  cy.get('@firstLayerItem').find('button[data-cy^="myLayerItemLabel"]').click()
+  cy.get('@firstLayerItem')
+    .find('[data-cy="myLayerComparatorBtn"]')
+    .as('comparatorBtn')
+  // Then, you should click the btn in the spec to enable the slider comparator
+}
+
+function toggleSliderBtn() {
+  openFirstItemToShowToggleSliderBtn()
+  cy.get('@comparatorBtn').click()
+}
+
 describe('Permalink/State persistor - Layer comparator (lc & sliderRatio)', () => {
   beforeEach(() => {
     cy.visit(
@@ -13,43 +27,40 @@ describe('Permalink/State persistor - Layer comparator (lc & sliderRatio)', () =
   })
 
   describe('when expanding layer item in layer manager', () => {
+    beforeEach(() => {
+      openFirstItemToShowToggleSliderBtn()
+    })
+
     it('displays a button to toggle the comparator for the top layer only', () => {
-      cy.get('button[data-cy="myLayerItemLabel-346"]').click()
-      cy.get('#layer-manager-item-content-346 button:last-child').should(
-        'have.class',
-        'fa-circle'
-      )
-      cy.get('button[data-cy="myLayerItemLabel-302"]').click()
-      cy.get('#layer-manager-item-content-302 button:last-child').should(
-        'not.exist'
-      )
-      cy.get('button[data-cy="myLayerItemLabel-269"]').click()
-      cy.get('#layer-manager-item-content-269 button:last-child').should(
-        'not.exist'
-      )
+      cy.get('@comparatorBtn').should('exist')
+      cy.get('[data-cy="myLayer"]').eq(1).as('secondLayerItem').click()
+      cy.get('@secondLayerItem')
+        .find('[data-cy="myLayerComparatorBtn"]')
+        .should('not.exist')
+      cy.get('[data-cy="myLayer"]').eq(2).as('thirddLayerItem').click()
+      cy.get('@thirddLayerItem')
+        .find('[data-cy="myLayerComparatorBtn"]')
+        .should('not.exist')
     })
   })
 
   describe('when clicking the toggle layer comparator button', () => {
+    beforeEach(() => {
+      openFirstItemToShowToggleSliderBtn()
+    })
+
     it('toggles the button display', () => {
-      cy.get('button[data-cy="myLayerItemLabel-346"]').click()
-      cy.get('#layer-manager-item-content-346 button:last-child').should(
-        'have.class',
-        'fa-circle'
-      )
-      const layerItemBtn = () =>
-        cy.get('#layer-manager-item-content-346 button:last-child')
-      layerItemBtn().click()
-      layerItemBtn().should('have.class', 'fa-adjust')
+      cy.get('@comparatorBtn').should('exist').should('have.class', 'fa-circle')
+      cy.get('@comparatorBtn').click()
+      cy.get('@comparatorBtn').should('have.class', 'fa-adjust')
     })
 
     it('displays the splitter on the map with le layer label', () => {
-      cy.get('button[data-cy="myLayerItemLabel-346"]').click()
-      cy.get('#layer-manager-item-content-346 button:last-child').click()
-      cy.get('button[data-cy="sliderElement"]').should('be.visible')
+      cy.get('@comparatorBtn').click()
       cy.get('button[data-cy="sliderElement"]')
-        .find('.lux-slider-layer-label')
-        .contains('Cantons (Noms)')
+        .should('be.visible')
+        .find('[data-cy="sliderLayerLabel"]')
+        .contains('Communes (Noms)')
     })
   })
 
@@ -57,8 +68,7 @@ describe('Permalink/State persistor - Layer comparator (lc & sliderRatio)', () =
     let sliderElement: Cypress.Chainable<JQuery<HTMLElement>>
 
     beforeEach(() => {
-      cy.get('button[data-cy="myLayerItemLabel-346"]').click()
-      cy.get('#layer-manager-item-content-346 button:last-child').click()
+      toggleSliderBtn()
       sliderElement = cy.get('button[data-cy="sliderElement"]')
       sliderElement.trigger('mousedown')
     })
@@ -109,8 +119,7 @@ describe('Permalink/State persistor - Layer comparator (lc & sliderRatio)', () =
     let sliderElement: Cypress.Chainable<JQuery<HTMLElement>>
 
     beforeEach(() => {
-      cy.get('button[data-cy="myLayerItemLabel-346"]').click()
-      cy.get('#layer-manager-item-content-346 button:last-child').click()
+      toggleSliderBtn()
       sliderElement = cy.get('button[data-cy="sliderElement"]')
       sliderElement.focus()
     })

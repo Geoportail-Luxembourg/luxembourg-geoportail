@@ -141,7 +141,14 @@ function onClickShape(shape: DrawnFeatureStyleShape) {
     :symbols="symbols"
     v-if="currentTab === tabs.publics || currentTab === tabs.mySymbols"
     class="max-h-80 overflow-y-auto"
-    @change="(id: number) => $emit('changeSymbolIcon', `${id}`, currentTab === tabs.mySymbols ? 'us' : 'public')"
+    @change="
+      (id: number) =>
+        $emit(
+          'changeSymbolIcon',
+          `${id}`,
+          currentTab === tabs.mySymbols ? 'us' : 'public'
+        )
+    "
   />
 
   <div class="text-right mt-3">
