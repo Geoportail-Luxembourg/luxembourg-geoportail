@@ -183,12 +183,12 @@ export default function useStreeView(streetViewDiv: Ref<HTMLElement | null>) {
       )
       hidePointer.value = true
       map.addInteraction(selectFeature)
-      map.on('pointermove', handleHover)
+      map.on(['pointermove'], handleHover)
       svFeatureLayer.once('postrender', () => {
         streetViewLoading.value = false
       })
     } else {
-      map.un('pointermove', handleHover)
+      map.un(['pointermove'], handleHover)
       map.removeInteraction(selectFeature)
       hidePointer.value = false
     }
@@ -206,10 +206,10 @@ export default function useStreeView(streetViewDiv: Ref<HTMLElement | null>) {
     }
   }
 
-  function handleHover(event: MapBrowserEvent<PointerEvent>) {
+  function handleHover(event: Event | BaseEvent): void {
     if (isStreetviewActive.value) {
       const hit = map.forEachFeatureAtPixel(
-        event.pixel,
+        (<MapBrowserEvent<PointerEvent>>event).pixel,
         function (feature: FeatureLike) {
           if (feature instanceof SvDirectionFeature) {
             return true
