@@ -141,7 +141,7 @@ export default function useFeatureInfo() {
           if (
             layer.getVisible() &&
             layer.getOpacity() > 0 &&
-            !dataAtPixel.every(d => d === 0)
+            !dataAtPixel?.every(d => d === 0)
           ) {
             const metadata = layer.get(OLLAYER_PROP_METADATA)
             return metadata && metadata['is_queryable']
