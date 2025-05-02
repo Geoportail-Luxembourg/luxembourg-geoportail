@@ -51,7 +51,7 @@ watch(infoOpen, isOpen => {
 
       <template v-if="!locationInfoCoords && !featureInfoPanelContent">
         <div class="text-white absolute">
-          <ul class="list-disc pl-10">
+          <ul class="flex flex-col gap-3 mr-5 mt-4 italic">
             <li>
               {{
                 t(`A right click (tap and hold on mobile)...`, { ns: 'app' })
