@@ -24,6 +24,9 @@ import { throttle } from '@/services/utils'
 import { useMapStore } from '@/stores/map.store'
 import { useLocationInfoStore } from '@/stores/location-info.store'
 import { getFeatureInfoJson } from '@/services/api/api-feature-info.service'
+import { OLLAYER_PROP_METADATA } from '@/services/ol-layer/ol-layer.model'
+import ImageLayer from 'ol/layer/Image'
+import { ImageWMS } from 'ol/source'
 
 export default function useFeatureInfo() {
   const map = useMap().getOlMap()
@@ -61,7 +64,9 @@ export default function useFeatureInfo() {
       throttle(event => onPointerUp(event as MapBrowserEvent), 499)
     )
 
-    listen(map, 'pointermove', event => onPointerMove(event as MapBrowserEvent))
+    listen(map, 'pointermove', event => {
+      onPointerMove(event as MapBrowserEvent<PointerEvent>)
+    })
 
     watchEffect(() => {
       if (fid.value) {
@@ -75,6 +80,7 @@ export default function useFeatureInfo() {
   function onPointerUp(evt: MapBrowserEvent) {
     ;(async () => {
       stopPixel.value = evt.pixel
+
       if (
         // TODO: integrate in v3 and migrate once available
         // routingOpen ||
@@ -111,41 +117,41 @@ export default function useFeatureInfo() {
     })()
   }
 
-  function onPointerMove(evt: MapBrowserEvent) {
+  /**
+   * On pointer move, detect if layer has data at pixel, if yes, change map viewport cursor to pointer
+   * @param evt The mouse event
+   * @returns
+   */
+  async function onPointerMove(evt: MapBrowserEvent<PointerEvent>) {
     if (evt.dragging || isLoading.value) {
       return
     }
-    if (drawStateActive.value /*TODO: || measureActive || streetviewActive*/) {
-      map.getViewport().style.cursor = ''
-    } else {
-      const pixel = map.getEventPixel(evt.originalEvent)
-      let hit: boolean | undefined = false
-      try {
-        hit = map.forEachLayerAtPixel(
-          pixel,
-          layer => {
-            if (layer) {
-              const metadata = layer.get('metadata')
-              if (
-                metadata &&
-                metadata['is_queryable'] &&
-                layer.getVisible() &&
-                layer.getOpacity() > 0
-              ) {
-                return true
-              }
-            }
-            return false
-          },
-          {
-            layerFilter: layer => !!layer.getSource(),
+
+    const hitDetected = await Promise.all(
+      // keep Promise all because cannot loop on array when async
+      map
+        .getLayers()
+        .getArray()
+        .filter(layer => layer instanceof ImageLayer)
+        .map(async layer => {
+          const dataAtPixel = (<ImageLayer<ImageWMS>>layer).getData(
+            evt.pixel
+          ) as unknown as number[]
+
+          if (
+            layer.getVisible() &&
+            layer.getOpacity() > 0 &&
+            !dataAtPixel.every(d => d === 0)
+          ) {
+            const metadata = layer.get(OLLAYER_PROP_METADATA)
+            return metadata && metadata['is_queryable']
           }
-        )
-      } catch (error) {
-        hit = false
-      }
-      map.getViewport().style.cursor = hit ? 'pointer' : ''
-    }
+
+          return false
+        })
+    ).then(results => results.some(Boolean))
+
+    map.getViewport().style.cursor = hitDetected ? 'pointer' : ''
   }
 
   async function getFeatureInfoById(fid: string): Promise<void> {
@@ -191,7 +197,7 @@ export default function useFeatureInfo() {
     const layerLabel: { [key: string]: string } = {}
 
     for (let i = layers.length - 1; i >= 0; i--) {
-      const metadata = layers[i].get('metadata')
+      const metadata = layers[i].get(OLLAYER_PROP_METADATA)
       if (metadata !== undefined && metadata !== null) {
         if (
           metadata['is_queryable'] &&
