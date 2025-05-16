@@ -48,7 +48,7 @@ class FeatureInfoLayerService {
     this.featureLayer.set('cyLayerType', FEATURE_LAYER_TYPE)
     this.featureLayer.setStyle(function (feature: FeatureLike) {
       const lineColor = feature.get('color') || '#ffcc33'
-      const lineWidth = /** @type {number} */ feature.get('width') || 3
+      const lineWidth = feature.get('width') || 3
       const defaultStyle = [
         new Style({
           fill: new Fill({
@@ -71,7 +71,7 @@ class FeatureInfoLayerService {
 
       const geometryType = feature.getGeometry()?.getType()
       return geometryType === 'Point' || geometryType === 'MultiPoint'
-        ? [new Style({ image: image })]
+        ? [new Style({ image })]
         : defaultStyle
     })
     this.map.addLayer(this.featureLayer)
@@ -118,10 +118,10 @@ class FeatureInfoLayerService {
             geomCollection.getGeometriesArray().forEach(geometry => {
               const newFeature = curFeature.clone()
               newFeature.setGeometry(geometry)
-              this.featureLayer.getSource()?.addFeature(newFeature) // FIXME: find better typing? following ol migration
+              this.featureLayer.getSource()?.addFeature(newFeature)
             })
           } else {
-            this.featureLayer.getSource()?.addFeature(curFeature) // FIXME: find better typing? following ol migration
+            this.featureLayer.getSource()?.addFeature(curFeature)
           }
         }
         if (fit && extent) {

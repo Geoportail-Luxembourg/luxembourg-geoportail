@@ -52,16 +52,20 @@ export default function useFeatureInfo() {
 
   function init() {
     featureInfoLayerService.init(map)
+
     listen(map, 'pointerdown', event => {
       ;(() => {
-        startPixel.value = (event as MapBrowserEvent).pixel
+        startPixel.value = (event as MapBrowserEvent<PointerEvent>).pixel
       })()
     })
 
     listen(
       map,
       'pointerup',
-      throttle(event => onPointerUp(event as MapBrowserEvent), 499)
+      throttle(
+        event => onPointerUp(event as MapBrowserEvent<PointerEvent>),
+        499
+      )
     )
 
     listen(map, 'pointermove', event => {
@@ -77,7 +81,7 @@ export default function useFeatureInfo() {
     })
   }
 
-  function onPointerUp(evt: MapBrowserEvent) {
+  function onPointerUp(evt: MapBrowserEvent<PointerEvent>) {
     ;(async () => {
       stopPixel.value = evt.pixel
 
@@ -86,7 +90,7 @@ export default function useFeatureInfo() {
         // routingOpen ||
         // lidarOpen ||
         // appActivetool.value.isActive() || => corresponds to: measureActive, streetviewActive
-        (<MouseEvent>evt.originalEvent).button === 2 || // right click
+        evt.originalEvent.button === 2 || // right click
         (isStreetviewActive.value && locationInfoCoords.value) ||
         drawStateActive.value ||
         editStateActive.value ||

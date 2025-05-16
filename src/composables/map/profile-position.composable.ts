@@ -158,9 +158,7 @@ export default function useProfilePosition(
    * @param evt
    * @returns
    */
-  function onPointerMove(
-    evt: MapBrowserEvent<PointerEvent | KeyboardEvent | WheelEvent>
-  ) {
+  function onPointerMove(evt: MapBrowserEvent<PointerEvent>) {
     if (evt.dragging) {
       return
     }
@@ -173,7 +171,7 @@ export default function useProfilePosition(
     let newXGeomarker: number | undefined
     let newYGeomarker: number | undefined
 
-    const coordinate = map.getEventCoordinate(<MouseEvent>evt.originalEvent)
+    const coordinate = map.getEventCoordinate(evt.originalEvent)
     const closestPoint = virtualLineProfile.getClosestPoint(coordinate)
 
     // Compute distance to line in pixels

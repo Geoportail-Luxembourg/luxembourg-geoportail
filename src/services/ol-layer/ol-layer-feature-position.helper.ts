@@ -1,4 +1,4 @@
-import { Geometry, Point } from 'ol/geom'
+import { Point } from 'ol/geom'
 import VectorLayer from 'ol/layer/Vector'
 import { Options } from 'ol/layer/BaseVector'
 import VectorSource from 'ol/source/Vector'
@@ -13,7 +13,7 @@ export const FEATURE_LAYER_TYPE = 'featurePositionLayer'
 export class PositionVectorLayer extends VectorLayer {
   geoMarker: Feature<Point> | undefined
 
-  constructor(options: Options<Feature, VectorSource<Feature<Geometry>>>) {
+  constructor(options: Options<Feature, VectorSource>) {
     const source = new VectorSource({
       features: [], // geoMarker to be added here (@see createGeoMarker())
       useSpatialIndex: false,
@@ -33,7 +33,7 @@ export class PositionVectorLayer extends VectorLayer {
   createGeoMarker() {
     this.geoMarker = new Feature({ geometry: new Point([0, 0]) })
     this.getSource()?.clear()
-    this.getSource()?.addFeature(this.geoMarker as unknown as Geometry)
+    this.getSource()?.addFeature(this.geoMarker)
   }
 
   removeGeoMarker() {
