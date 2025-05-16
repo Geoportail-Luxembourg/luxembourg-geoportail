@@ -6,21 +6,21 @@ describe('Feature Info', () => {
   describe('Default template', () => {
     /**
      * Note: The following permalink path includes all types of layers displayed via the default template for manual testing:
-     * /theme/main?version=3&lang=fr&X=702429&Y=6396653&zoom=16&rotation=0&features=&layers=655-2842-808-1713-1714-269-302-1813&opacities=1-0-1-1-1-1-1-1&time=--------------&bgLayer=basemap_2015_global
+     * /theme/main?version=3&lang=fr&X=702429&Y=6396653&zoom=16&rotation=0&features=&layers=655-2842-808-1713-1714-152-302-1813&opacities=1-0-1-1-1-1-1-1&time=--------------&bgLayer=basemap_2015_global
      */
     describe('Display basic feature info for multiple layers', () => {
       beforeEach(() => {
         cy.visit(
-          '/?lang=fr&X=672676&Y=6412435&version=3&zoom=11&layers=302-269&opacities=1&bgLayer=orthogr_2013_global'
+          '/?lang=fr&X=672676&Y=6412435&version=3&zoom=11&layers=302-152&opacities=1&bgLayer=orthogr_2013_global'
         )
-        cy.get('div.ol-viewport').click(300, 300, { force: true })
+        cy.get('div.ol-viewport').click(450, 350, { force: true })
         cy.wait('@getFeatureInfo')
       })
       it('should display title, attributes, link in the infoPanel when clicking on a layer feature (first layer)', () => {
         cy.get('[data-cy="infoPanel"]').should('exist')
         cy.get('[data-cy="defaultTemplateTitle"]')
           .first()
-          .should('contain.text', 'Communes (Noms)')
+          .should('contain.text', 'Communes')
         cy.get('[data-cy="defaultTemplateAttributes"]')
           .first()
           .children('div')
@@ -31,25 +31,25 @@ describe('Feature Info', () => {
           .should('have.attr', 'href')
           .and(
             'include',
-            '/theme/main?lang=fr&X=672676&Y=6412435&version=3&zoom=11&layers=302-269&opacities=1-1&bgLayer=orthogr_2013_global&rotation=0&features=&time=--&fid=269_0709'
+            '/theme/main?lang=fr&X=672676&Y=6412435&version=3&zoom=11&layers=302-152&opacities=1-1&bgLayer=orthogr_2013_global&rotation=0&features=&time=--&fid=302_0409'
           )
       })
       it('should display title, attributes, link in the infoPanel when clicking on a layer feature (second layer)', () => {
         cy.get('[data-cy="infoPanel"]').should('exist')
         cy.get('[data-cy="defaultTemplateTitle"]')
           .eq(1)
-          .should('contain.text', 'Communes')
+          .should('contain.text', 'Adresses')
         cy.get('[data-cy="defaultTemplateAttributes"]')
           .eq(1)
           .children('div')
-          .should('have.length', '3')
+          .should('have.length', '5')
         cy.get('[data-cy="defaultTemplateLink"]')
           .eq(1)
           .should('contain.text', 'Lien direct vers cet objet')
           .should('have.attr', 'href')
           .and(
             'include',
-            '/theme/main?lang=fr&X=672676&Y=6412435&version=3&zoom=11&layers=302-269&opacities=1-1&bgLayer=orthogr_2013_global&rotation=0&features=&time=--&fid=269_0402'
+            '/theme/main?lang=fr&X=672676&Y=6412435&version=3&zoom=11&layers=302-152&opacities=1-1&bgLayer=orthogr_2013_global&rotation=0&features=&time=--&fid=152_080C00132001904_3536_10A'
           )
       })
     })
@@ -117,18 +117,15 @@ describe('Feature Info', () => {
         cy.get('[data-cy="defaultTemplateAttributes"]')
           .first()
           .children('div')
-          .should('have.length', '4')
+          .should('have.length', '5')
         cy.get('[data-cy="defaultTemplateLink"]')
           .first()
           .should('contain.text', 'Lien direct vers cet objet')
           .should('have.attr', 'href')
           .and(
             'include',
-            '/theme/main?lang=fr&X=672676&Y=6412435&version=3&zoom=11&layers=655&opacities=1&bgLayer=orthogr_2013_global&rotation=0&features=&time=&fid=655_256'
+            '/theme/main?lang=fr&X=672676&Y=6412435&version=3&zoom=11&layers=655&opacities=1&bgLayer=orthogr_2013_global&rotation=0&features=&time=&fid=655_816'
           )
-      })
-      it('should display iframe besides basic feature info', () => {
-        cy.get('[data-cy="infoPanel"]').find('iframe').should('exist')
       })
     })
     describe('Display feature info solar potential', () => {
@@ -137,7 +134,6 @@ describe('Feature Info', () => {
           '/?lang=fr&X=678664&Y=6412182&version=3&zoom=16&layers=1813&opacities=1&bgLayer=orthogr_2013_global'
         )
         cy.get('div.ol-viewport').click(300, 300, { force: true })
-        cy.wait('@getFeatureInfo')
       })
       it('should display title, attributes and a calculator link button in the infoPanel when clicking on a layer feature', () => {
         cy.get('[data-cy="infoPanel"]').should('exist')

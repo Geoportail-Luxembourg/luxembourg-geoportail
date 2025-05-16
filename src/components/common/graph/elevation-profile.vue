@@ -20,7 +20,9 @@ const { t } = useTranslation()
     v-if="profileData"
     :dataset="profileData"
     :highlightDistance="highlightDistance"
-    :labelXFormatter="(factor: number) => `${t('Distance')} [${ factor === 1 ? 'm' : 'km'}]`"
+    :labelXFormatter="
+      (factor: number) => `${t('Distance')} [${factor === 1 ? 'm' : 'km'}]`
+    "
     :labelYFormatter="() => `${t('Elevation')} [m]`"
     :xFormatter="(value: number) => formatLength(value, 2)"
     :yFormatter="(value: number) => formatElevation(value, 1)"
