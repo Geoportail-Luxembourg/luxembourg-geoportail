@@ -14,7 +14,6 @@ describe('Feature Info', () => {
           '/?lang=fr&X=672676&Y=6412435&version=3&zoom=11&layers=302-152&opacities=1&bgLayer=orthogr_2013_global'
         )
         cy.get('div.ol-viewport').click(450, 350, { force: true })
-        cy.wait('@getFeatureInfo')
       })
       it('should display title, attributes, link in the infoPanel when clicking on a layer feature (first layer)', () => {
         cy.get('[data-cy="infoPanel"]').should('exist')
