@@ -2,7 +2,6 @@ import { BaseCustomizer } from '@geoblocks/mapfishprint'
 import { Map } from 'ol'
 import LayerGroup from 'ol/layer/Group'
 import BaseLayer from 'ol/layer/Layer.js'
-import { FrameState } from 'ol/PluggableMap'
 import { DOTS_PER_INCH, INCHES_PER_METER } from '@/lib/ol-mask-layer'
 import { urlPathStorage } from '@/services/state-persistor/storage/url-storage-as-path'
 import { fetchApi } from '@/services/api/api.service'
@@ -18,6 +17,8 @@ import {
   PrintOptions,
   ReportResponse,
 } from './print.model'
+import { FrameState } from 'ol/Map'
+import { ViewStateLayerStateExtent } from 'ol/View'
 
 export const BASE_URL = import.meta.env.VITE_PRINT_HOST
 const LEGEND_URL = import.meta.env.VITE_GET_LEGENDS_URL
@@ -271,7 +272,9 @@ function recursiveGetLayerAttributions(
     const attribution = layer.get('metadata')?.attribution
     const htmls: string[] = []
     if (attributions) {
-      htmls.push(...attributions(framestate))
+      htmls.push(
+        ...attributions(framestate as unknown as ViewStateLayerStateExtent)
+      ) // FIXME: better typing? following migration from v6
     }
     if (attribution) {
       htmls.push(attribution)

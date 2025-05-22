@@ -5,8 +5,7 @@ import CircleStyle from 'ol/style/Circle.js'
 import Fill from 'ol/style/Fill.js'
 import Stroke from 'ol/style/Stroke.js'
 import Style from 'ol/style/Style.js'
-import { FeatureJSON } from './feature-info.model'
-import { Geometry, GeometryCollection } from 'ol/geom'
+import { GeometryCollection } from 'ol/geom'
 import { FeatureLike } from 'ol/Feature'
 import { ReadOptions } from 'ol/format/Feature'
 import GeoJSON from 'ol/format/GeoJSON'
@@ -14,12 +13,13 @@ import { extend, Extent } from 'ol/extent'
 import { FitOptions } from 'ol/View'
 import { Size } from 'ol/size'
 import { PROJECTION_LUX } from '@/composables/map/map.composable'
+import { FeatureJSON } from './feature-info.model'
 
 export const FEATURE_LAYER_TYPE = 'featureInfoLayer'
 export const HIGHLIGHT_MAX_ZOOM = 17
 class FeatureInfoLayerService {
   map: Map
-  featureLayer: VectorLayer<VectorSource<Geometry>>
+  featureLayer: VectorLayer<VectorSource>
 
   init(map: Map) {
     this.map = map
@@ -46,41 +46,34 @@ class FeatureInfoLayerService {
       stroke: circleStroke,
     })
     this.featureLayer.set('cyLayerType', FEATURE_LAYER_TYPE)
-    this.featureLayer.setStyle(
-      /**
-       * @param {ol.Feature|ol.render.Feature} feature Feature.
-       * @param {number} resolution Resolution.
-       * @return {Array.<ol.style.Style>} Array of styles.
-       */
-      function (feature: FeatureLike) {
-        const lineColor = feature.get('color') || '#ffcc33'
-        const lineWidth = /** @type {number} */ feature.get('width') || 3
-        const defaultStyle = [
-          new Style({
-            fill: new Fill({
-              color: [255, 255, 0, 0.6],
-            }),
+    this.featureLayer.setStyle(function (feature: FeatureLike) {
+      const lineColor = feature.get('color') || '#ffcc33'
+      const lineWidth = feature.get('width') || 3
+      const defaultStyle = [
+        new Style({
+          fill: new Fill({
+            color: [255, 255, 0, 0.6],
           }),
-          new Style({
-            stroke: new Stroke({
-              color: '#ffffff',
-              width: 5,
-            }),
+        }),
+        new Style({
+          stroke: new Stroke({
+            color: '#ffffff',
+            width: 5,
           }),
-          new Style({
-            stroke: new Stroke({
-              color: lineColor,
-              width: lineWidth,
-            }),
+        }),
+        new Style({
+          stroke: new Stroke({
+            color: lineColor,
+            width: lineWidth,
           }),
-        ]
+        }),
+      ]
 
-        const geometryType = feature.getGeometry()?.getType()
-        return geometryType === 'Point' || geometryType === 'MultiPoint'
-          ? [new Style({ image: image })]
-          : defaultStyle
-      }
-    )
+      const geometryType = feature.getGeometry()?.getType()
+      return geometryType === 'Point' || geometryType === 'MultiPoint'
+        ? [new Style({ image })]
+        : defaultStyle
+    })
     this.map.addLayer(this.featureLayer)
   }
 
@@ -122,13 +115,11 @@ class FeatureInfoLayerService {
           if (curFeature.getGeometry()?.getType() === 'GeometryCollection') {
             const geomCollection =
               curFeature.getGeometry() as GeometryCollection
-            geomCollection
-              .getGeometriesArray()
-              .forEach((geometry: Geometry) => {
-                const newFeature = curFeature.clone()
-                newFeature.setGeometry(geometry)
-                this.featureLayer.getSource()?.addFeature(newFeature)
-              })
+            geomCollection.getGeometriesArray().forEach(geometry => {
+              const newFeature = curFeature.clone()
+              newFeature.setGeometry(geometry)
+              this.featureLayer.getSource()?.addFeature(newFeature)
+            })
           } else {
             this.featureLayer.getSource()?.addFeature(curFeature)
           }

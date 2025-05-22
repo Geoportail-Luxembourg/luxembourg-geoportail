@@ -8,6 +8,8 @@
  *
  * !!! When v4 is fully functionnal, this file is no longer needed an should be removed.
  */
+
+@config "../../tailwind.config.cjs";
 @tailwind base;
 
 @layer base {

@@ -1,4 +1,4 @@
-import { FrameState } from 'ol/PluggableMap'
+import { FrameState } from 'ol/Map'
 
 export const enum PRINT_FORMAT {
   PDF = 'PDF',

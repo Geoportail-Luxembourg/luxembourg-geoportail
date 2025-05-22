@@ -18,6 +18,7 @@ class OlLayerWmsHelper {
         FORMAT: imageType,
         LAYERS: layers,
       },
+      crossOrigin: 'anonymous', // !!!!! MANDATORY for detecting pixel with getData()
     })
     /*
     These requests should be done with no-cors mode, if we want to keep the cookies for the authentication

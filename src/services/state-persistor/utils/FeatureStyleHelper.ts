@@ -5,7 +5,6 @@ import Feature from 'ol/Feature'
 import Map from 'ol/Map'
 import { Coordinate } from 'ol/coordinate'
 import luxFormatFeatureProperties from './LuxFeatureProperties'
-import * as olArray from 'ol/array'
 import * as olColor from 'ol/color'
 import * as olExtent from 'ol/extent'
 import olGeomLineString from 'ol/geom/LineString'
@@ -474,7 +473,7 @@ class FeatureStyleHelper {
       styleGeometryType.RECTANGLE,
     ]
     const type = this.getType(feature)
-    return olArray.includes(supported, type)
+    return type ? supported.includes(type) : false
   }
 
   public getHaloStyle_(feature: Feature) {
