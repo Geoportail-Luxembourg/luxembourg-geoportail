@@ -1,3 +1,5 @@
+@config "../../tailwind.config.cjs";
+
 @tailwind components;
 
 @layer components {
@@ -32,8 +34,23 @@
     @apply left-2 top-36 right-auto;
   }
 
+  .ol-rotate {
+    @apply left-2 top-[200px] right-auto;
+  }
+
+  .ol-hidden {
+    @apply hidden;
+  }
+
   .ol-zoom-extent {
     @apply left-2 top-[86px];
+  }
+
+  .ol-compass {
+    display: block;
+    font-weight: normal;
+    font-size: 1.2em;
+    will-change: transform;
   }
 
   .lux-control {

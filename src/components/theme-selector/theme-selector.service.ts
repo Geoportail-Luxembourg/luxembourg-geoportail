@@ -4,7 +4,7 @@ export class ThemeSelectorService {
     const colors = ['primary', 'secondary', 'tertiary', 'quaternary']
     colors.forEach(colorTone => {
       const color = getComputedStyle(root).getPropertyValue(
-        `--${themeName}-${colorTone}`
+        `--${themeName.replace(/\s/g, '_')}-${colorTone}`
       )
       root.style.setProperty(`--color-${colorTone}`, color)
     })

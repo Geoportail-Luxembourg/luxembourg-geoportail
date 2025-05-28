@@ -70,6 +70,7 @@ function toggleParent(node: LayerTreeNodeModel) {
         { 'lux-collapse': !isRoot },
         { expanded: !isRoot && node.expanded },
       ]"
+      :data-cy="`subLayerLabel-${node.id}`"
     >
       <layer-tree-node
         v-for="child in node.children"

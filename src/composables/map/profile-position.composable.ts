@@ -12,7 +12,6 @@ import { storeToRefs } from 'pinia'
 import { Map, MapBrowserEvent } from 'ol'
 import { EventsKey, listen, unlistenByKey } from 'ol/events'
 import { LineString, Point } from 'ol/geom'
-import GeometryLayout from 'ol/geom/GeometryLayout'
 import { transform } from 'ol/proj'
 import { Coordinate } from 'ol/coordinate'
 
@@ -24,6 +23,8 @@ import { LayerFeature } from '@/stores/map.store.model'
 import { useDrawStore } from '@/stores/draw.store'
 import { PositionVectorLayer } from '@/services/ol-layer/ol-layer-feature-position.helper'
 import { throttle } from '@/services/utils'
+
+export const LAYER_POSITION_ID = 'lux-feat-position'
 
 let overlay: PositionVectorLayer | undefined // Shared overlay between all profile position markers
 
@@ -49,7 +50,7 @@ export default function useProfilePosition(
   const highlightDistance: ShallowRef<number | undefined> =
     shallowRef(undefined) // The value to higlight on the graph
   const displayGeoMarker = ref(true) // deactivate geomarker when mode edition
-  const virtualLineProfile = new LineString([0, 0], GeometryLayout.XYM) // don't add to the map, it is used to compute the distance between the user cursor and the feature (represented by the virtual line)
+  const virtualLineProfile = new LineString([0, 0]) // don't add to the map, it is used to compute the distance between the user cursor and the feature (represented by the virtual line)
   const activePositioning = ref(true)
   const throttledPointerMove = throttle(evt => onPointerMove(evt), 15) // Keep fn def as const for unlisten
 
@@ -101,7 +102,7 @@ export default function useProfilePosition(
     }
 
     const layerSpec: LayerFeature = {
-      id: 'feat-position',
+      id: LAYER_POSITION_ID,
       type: 'position',
     }
 
@@ -157,7 +158,7 @@ export default function useProfilePosition(
    * @param evt
    * @returns
    */
-  function onPointerMove(evt: MapBrowserEvent<MouseEvent>) {
+  function onPointerMove(evt: MapBrowserEvent<PointerEvent>) {
     if (evt.dragging) {
       return
     }

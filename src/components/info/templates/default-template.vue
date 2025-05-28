@@ -64,9 +64,9 @@ function isAudioLink(attributeEntry: AttributeEntry) {
 <template>
   <div class="flex flex-col">
     <div>
-      <h1 class="lux-poi-title" data-cy="defaultTemplateTitle">
+      <h2 class="lux-poi-title" data-cy="defaultTemplateTitle">
         {{ t(layers.layerLabel) }}
-      </h1>
+      </h2>
       <div
         v-for="feature in layers.features"
         :key="feature.id"
@@ -139,12 +139,12 @@ function isAudioLink(attributeEntry: AttributeEntry) {
             @export="payload => $emit('export', payload)"
           />
         </div>
-        <div v-if="!hasAttributes(feature)">
+        <div v-if="!hasAttributes(feature)" class="no-print">
           <span>{{
             t('Aucune information disponible pour cette couche')
           }}</span>
         </div>
-        <div v-if="hasValidFID(feature)">
+        <div v-if="hasValidFID(feature)" class="no-print">
           <span
             ><a
               data-cy="defaultTemplateLink"

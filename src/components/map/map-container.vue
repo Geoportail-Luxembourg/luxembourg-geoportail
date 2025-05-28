@@ -8,15 +8,19 @@ import { OlSynchronizer } from '@/composables/map/ol.synchronizer'
 import { OlViewSynchronizer } from '@/composables/map/ol-view.synchronizer'
 import { statePersistorMapService } from '@/services/state-persistor/state-persistor-map.service'
 import { statePersistorFeaturesService } from '@/services/state-persistor/state-persistor-features.service'
+import { statePersistorLocationInfo } from '@/services/state-persistor/state-persistor-location-info'
 import AttributionControl from '../map-controls/attribution-control.vue'
 import LocationControl from '../map-controls/location-control.vue'
 import Map3dControl from '../map-controls/map-3d.vue'
 import FullscreenControl from '../map-controls/fullscreen-control.vue'
 import ZoomControl from '../map-controls/zoom-control.vue'
+import RotateControl from '../map-controls/rotate-control.vue'
 import ZoomToExtentControl from '../map-controls/zoom-to-extent-control.vue'
 import useDraw from '@/composables/draw/draw.composable'
 import useDrawSelect from '@/composables/draw/draw-select.composable'
 import useFeatureInfo from '@/composables/info/feature-info.composable'
+import { DragRotate } from 'ol/interaction'
+import { platformModifierKeyOnly } from 'ol/events/condition'
 
 const appStore = useAppStore()
 const { embedded } = storeToRefs(appStore)
@@ -32,6 +36,18 @@ const props = withDefaults(
     v4_standalone: false,
   }
 )
+
+// Remove the default dragRotate interaction
+olMap.getInteractions().forEach(interaction => {
+  if (interaction instanceof DragRotate) {
+    olMap.removeInteraction(interaction)
+  }
+})
+const dragRotateInteraction = new DragRotate({
+  condition: platformModifierKeyOnly,
+})
+
+olMap.addInteraction(dragRotateInteraction)
 
 // add draw layer after map init to allow restoring draw features (not in v3 for now)
 // TODO: remove v4_standalone condition or move calls outside of it, once v4 draw or feature info is used in v3
@@ -54,6 +70,7 @@ onMounted(() => {
     new OlViewSynchronizer(olMap)
     statePersistorMapService.bootstrap()
     statePersistorFeaturesService.bootstrap()
+    statePersistorLocationInfo.bootstrap()
     olMap.setTarget(mapContainer.value)
 
     // Direct access to olMap for cypress
@@ -94,6 +111,7 @@ provide('olMap', olMap)
       <attribution-control />
       <map-3d-control v-if="v4_standalone" />
       <location-control />
+      <rotate-control />
     </template>
   </div>
 </template>

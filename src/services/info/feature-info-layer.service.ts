@@ -5,8 +5,7 @@ import CircleStyle from 'ol/style/Circle.js'
 import Fill from 'ol/style/Fill.js'
 import Stroke from 'ol/style/Stroke.js'
 import Style from 'ol/style/Style.js'
-import { FeatureJSON } from './feature-info.model'
-import { Geometry, GeometryCollection } from 'ol/geom'
+import { GeometryCollection } from 'ol/geom'
 import { FeatureLike } from 'ol/Feature'
 import { ReadOptions } from 'ol/format/Feature'
 import GeoJSON from 'ol/format/GeoJSON'
@@ -14,12 +13,13 @@ import { extend, Extent } from 'ol/extent'
 import { FitOptions } from 'ol/View'
 import { Size } from 'ol/size'
 import { PROJECTION_LUX } from '@/composables/map/map.composable'
+import { FeatureJSON } from './feature-info.model'
 
 export const FEATURE_LAYER_TYPE = 'featureInfoLayer'
 export const HIGHLIGHT_MAX_ZOOM = 17
 class FeatureInfoLayerService {
   map: Map
-  featureLayer: VectorLayer<VectorSource<Geometry>>
+  featureLayer: VectorLayer<VectorSource>
 
   init(map: Map) {
     this.map = map
@@ -76,7 +76,7 @@ class FeatureInfoLayerService {
 
         const geometryType = feature.getGeometry()?.getType()
         return geometryType === 'Point' || geometryType === 'MultiPoint'
-          ? [new Style({ image: image })]
+          ? [new Style({ image })]
           : defaultStyle
       }
     )
@@ -121,13 +121,11 @@ class FeatureInfoLayerService {
           if (curFeature.getGeometry()?.getType() === 'GeometryCollection') {
             const geomCollection =
               curFeature.getGeometry() as GeometryCollection
-            geomCollection
-              .getGeometriesArray()
-              .forEach((geometry: Geometry) => {
-                const newFeature = curFeature.clone()
-                newFeature.setGeometry(geometry)
-                this.featureLayer.getSource()?.addFeature(newFeature)
-              })
+            geomCollection.getGeometriesArray().forEach(geometry => {
+              const newFeature = curFeature.clone()
+              newFeature.setGeometry(geometry)
+              this.featureLayer.getSource()?.addFeature(newFeature)
+            })
           } else {
             this.featureLayer.getSource()?.addFeature(curFeature)
           }

@@ -146,12 +146,28 @@ export function sanitizeFilename(filename: string) {
   return filename.replace(/\s+/g, '_').replace(/[^a-z0-9\-_]/gi, '') || '_'
 }
 
+export async function downloadUrl(
+  url: string | URL | Request,
+  filename: string
+) {
+  const response = await fetch(url)
+  if (!response.ok) {
+    throw new Error()
+  }
+  const blob = await response.blob()
+  downloadBlob(filename, blob)
+}
+
 export function downloadFile(
   filename: string,
   content: BlobPart,
   contentType = 'text/plain'
 ) {
   const blob = new Blob([content], { type: contentType })
+  downloadBlob(filename, blob)
+}
+
+export function downloadBlob(filename: string, blob: Blob) {
   const url = URL.createObjectURL(blob)
   const a = document.createElement('a')
   a.href = url
@@ -170,16 +186,4 @@ export function downloadFile(
  */
 export function capitalize(str: string) {
   return str.charAt(0).toUpperCase() + str.slice(1)
-}
-
-export function colorStringToRgba(colorString: string, opacity = 1) {
-  const isValidHex = /^#[0-9A-Fa-f]{6}$/.test(colorString)
-  if (!isValidHex) {
-    throw new Error(`Invalid hex color string: ${colorString}`)
-  }
-
-  const r = parseInt(colorString.slice(1, 3), 16)
-  const g = parseInt(colorString.slice(3, 5), 16)
-  const b = parseInt(colorString.slice(5, 7), 16)
-  return [r, g, b, opacity]
 }

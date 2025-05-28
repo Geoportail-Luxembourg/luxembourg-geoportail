@@ -11,6 +11,29 @@ function testFeatItemMeasurements() {
 
 describe('Draw "Line"', () => {
   beforeEach(() => {
+    cy.intercept(
+      {
+        method: 'POST',
+        pathname: '/profile.json',
+      },
+      req =>
+        new Promise(r => {
+          const resp = new Response(req.body, {
+            headers: { 'content-type': 'application/x-www-form-urlencoded' },
+          })
+          resp.formData().then(formData => {
+            const geom = formData.get('geom')
+            const coordinates = JSON.parse(geom as string).coordinates
+            if (coordinates[0][0] > 40000) {
+              r(req.body)
+            } else {
+              r({
+                fixture: 'profile.json',
+              })
+            }
+          })
+        })
+    ).as('profile-fixture')
     cy.visit('/')
     cy.get('button[data-cy="drawButton"]').click()
     cy.get('button[data-cy="drawLineButton"]').click()
@@ -26,10 +49,12 @@ describe('Draw "Line"', () => {
     })
 
     it('displays measurements for Line', () => {
+      cy.wait('@profile-fixture')
       testFeatItemMeasurements()
     })
 
     it('displays the elevation profile for Line', () => {
+      cy.wait('@profile-fixture')
       cy.get('[data-cy="featItemProfileCumul"]').should(
         'contain.text',
         'Δ+964 m Δ-1105 m Δ-141 m'
@@ -50,11 +75,9 @@ describe('Draw "Line"', () => {
     })
 
     describe('When editing the line', () => {
-      beforeEach(() => {
-        cy.intercept('POST', '/profile.json', { fixture: 'profile.json' })
-      })
       it('refreshes the elevation profile for Line', () => {
         cy.dragVertexOnMap(320, 223, 305, 305)
+        cy.wait('@profile-fixture')
         cy.get('[data-cy="featItemProfileCumul"]').should($el => {
           const text = $el.text()
           const validValues = [
@@ -72,6 +95,7 @@ describe('Draw "Line"', () => {
     })
 
     it('downloads the profile elevation', () => {
+      cy.wait('@profile-fixture')
       cy.get('[data-cy="featItemProfileCSV"]').click()
 
       const downloadPath = 'cypress/downloads/Ligne_1.csv'
@@ -86,12 +110,15 @@ describe('Draw "Line"', () => {
     })
 
     it('updates length measurement when editing geometry', () => {
+      cy.wait('@profile-fixture')
       cy.get('[data-cy="featItemLength"]').should('contain.text', '42.31 km')
       cy.dragVertexOnMap(320, 223, 305, 305)
+      cy.wait('@profile-fixture')
       cy.get('[data-cy="featItemLength"]').should('contain.text', '33.26 km')
     })
 
     it('displays the possible actions for the feature', () => {
+      cy.wait('@profile-fixture')
       testFeatItem()
     })
   })
@@ -99,12 +126,14 @@ describe('Draw "Line"', () => {
   describe('When clicking button dock', () => {
     it('displays the feature info in the map popup', () => {
       testFeatItemDocking()
+      cy.wait('@profile-fixture')
       testFeatItemMeasurements()
     })
   })
 
   describe('When clicking button dropdown menu', () => {
     it('displays the dropdown menu content for "Line"', () => {
+      cy.wait('@profile-fixture')
       cy.get('[data-cy="featMenuPopup"] > button').should('exist')
       cy.get('[data-cy="featMenuPopup"] > button').click()
 
