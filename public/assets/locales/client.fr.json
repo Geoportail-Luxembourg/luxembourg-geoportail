@@ -2569,7 +2569,7 @@
   "Exporter GPX": "Exporter un GPX",
   "Aucune information disponible pour cette couche": "Aucune information disponible pour cette couche",
   "{{(\"bat_\"+feature.attributes.type) | translate}}": "{{(\"bat_\"+feature.attributes.type) | translate}}",
-  "Ici vous pouvez commander le rapport relatif aux site potentiellement contaminés": "Ici vous pouvez commander le rapport relatif aux site potentiellement contaminés",
+  "Ici vous pouvez commander le rapport relatif aux site potentiellement contaminés": "Ici vous pouvez commander le rapport relatif aux sites potentiellement contaminés",
   "Adresse Email": "Adresse Email",
   "Commander rapport": "Commander le rapport",
   "Lien direct vers le calculateur d'efficacité économique": "Lien direct vers le calculateur d'efficacité économique",

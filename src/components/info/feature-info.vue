@@ -23,6 +23,7 @@ import AutomaticSolsTemplate from './templates/automatic-sols-template.vue'
 import BatimentsTemplate from './templates/batiments-template.vue'
 import BusWoTitleTemplate from './templates/bus-wo-title-template.vue'
 import BusTemplate from './templates/bus-template.vue'
+import CasipoTemplate from './templates/casipo-template.vue'
 import DefaultTemplate from './templates/default-template.vue'
 import DefaultTableTemplate from './templates/default-table-template.vue'
 import DefaultTableNoPrefixTemplate from './templates/default-table-no-prefix-template.vue'
@@ -74,6 +75,7 @@ const templates = {
   'batiments.html': BatimentsTemplate,
   'bus_wo_title.html': BusWoTitleTemplate,
   'bus.html': BusTemplate,
+  'casipo.html': CasipoTemplate,
   'default.html': DefaultTemplate,
   'default_attachment.html': DefaultAttachment,
   'default_attachment_no_prefix.html': DefaultAttachmentNoPrefixTemplate,
