@@ -19,6 +19,7 @@ export const DEFAULT_SHARE_OPENED = false
 export const useAppStore = defineStore(
   'app',
   () => {
+    const authFormOpened = ref(false)
     const embedded = ref(false)
     const lang = ref(DEFAULT_LANG)
     const layersOpen = ref(DEFAULT_LAYER_PANEL_OPENED)
@@ -112,6 +113,10 @@ export const useAppStore = defineStore(
       layersOpen.value = true
     }
 
+    function toggleAuthFormOpen(open?: boolean) {
+      authFormOpened.value = open ?? !authFormOpened.value
+    }
+
     function toggleDrawToolbarOpen(open?: boolean) {
       drawToolbarOpen.value = open ?? !drawToolbarOpen.value
     }
@@ -147,6 +152,7 @@ export const useAppStore = defineStore(
     }
 
     return {
+      authFormOpened,
       embedded,
       lang,
       layersOpen,
@@ -180,6 +186,7 @@ export const useAppStore = defineStore(
       setMapId,
       openStyleEditorPanel,
       closeStyleEditorPanel,
+      toggleAuthFormOpen,
       toggleDrawToolbarOpen,
       togglePrintToolbarOpen,
       toggleMyMapsOpen,
