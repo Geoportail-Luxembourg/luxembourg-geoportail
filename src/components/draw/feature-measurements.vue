@@ -60,7 +60,6 @@ const featRadius = computed(() =>
     : undefined
 )
 const inputRadius = ref<number>(featRadius.value || 0)
-
 const featElevation = ref<number | undefined>()
 
 watchEffect(async () => {
@@ -126,7 +125,7 @@ function onClickValidateRadius(radius: number) {
           data-cy="featItemInputRadius"
           class="form-control block bg-secondary text-white border !border-gray-300"
           type="number"
-          v-model="inputRadius"
+          v-model.number="inputRadius"
           @keyup.enter="onClickValidateRadius(inputRadius)"
         />
         <button

@@ -75,7 +75,6 @@ function onSubmitEditFeature() {
       class="sortable-handle drag-handle fa fa-reorder ui-sortable-handle cursor-move"
     ></span>
     <!-- Type of feat. icon -->
-    <!-- TODO: create icons for label and circle -->
     <span
       class="lux-icon"
       :class="{
