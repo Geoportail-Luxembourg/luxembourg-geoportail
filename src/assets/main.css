@@ -33,6 +33,7 @@
   /*********** Baseline, reset styles ***********/
   input[type='range'] {
     @apply cursor-pointer bg-transparent appearance-none;
+    border: none;
   }
 
   /******** Chrome, Safari, Opera and Edge Chromium styles ********/
@@ -436,6 +437,7 @@
 
   .lux-drawing-item-content input[type='number'] {
     @apply py-[2px] px-1;
+    background-color: white;
   }
 
   .lux-menu-popup-list {
