@@ -274,7 +274,7 @@ export class DrawnFeature extends Feature {
                 }),
               })
             )
-            // TODO 3D
+            // TODO: 3D
             // const modelColor = colorStringToRgba(arrowColor, 1)
             // arrowPoint.set('olcs_model', () => {
             //   const coordinates = arrowPoint.getCoordinates()
