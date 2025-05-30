@@ -2461,7 +2461,7 @@
   "Click to start drawing polygon<br>Double-click or click last point to finish": "Click to start drawing polygon<br>Double-click, ESC, or click last point to finish<br>Hit ⌫ to remove the last drawn point",
   "Click to start drawing circle": "Click to start drawing a circle",
   "Click to place the label": "Click to place the label",
-  "Point": "Nom",
+  "Point": "Point",
   "LineString": "Line",
   "Please pick a layer": "Please pick a layer",
   "Feedback sent to <a href=\"mailto:\"></a>": "Feedback sent to <a href=\"mailto:\"></a>",
