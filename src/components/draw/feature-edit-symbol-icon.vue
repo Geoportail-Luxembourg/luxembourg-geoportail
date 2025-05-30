@@ -6,7 +6,7 @@ import Circle from '@/components/common/symbol/circleSymbol.vue'
 import Square from '@/components/common/symbol/squareSymbol.vue'
 import Cross from '@/components/common/symbol/crossSymbol.vue'
 import Triangle from '@/components/common/symbol/triangleSymbol.vue'
-import { DrawnFeature } from '@/services/draw/drawn-feature'
+import { DrawnFeature } from '@/services/ol-feature/ol-feature-drawn'
 import {
   fetchPrivateSymbols,
   fetchPublicSymbols,

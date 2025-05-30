@@ -4,7 +4,7 @@ import FeatureElevationProfile from '@/components/feature-elevation-profile/feat
 import { FeatureJSON } from '@/services/info/feature-info.model'
 import GeoJSON from 'ol/format/GeoJSON'
 import useMap, { PROJECTION_LUX } from '@/composables/map/map.composable'
-import { DrawnFeature } from '@/services/draw/drawn-feature'
+import { DrawnFeature } from '@/services/ol-feature/ol-feature-drawn'
 
 const props = defineProps<{
   feature: FeatureJSON

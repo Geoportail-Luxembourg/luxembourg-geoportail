@@ -4,7 +4,7 @@ import { useTranslation } from 'i18next-vue'
 
 import { LineString } from 'ol/geom'
 
-import { DrawnFeature } from '@/services/draw/drawn-feature'
+import { DrawnFeature } from '@/services/ol-feature/ol-feature-drawn'
 import RangeInput from '@/components/common/range-input/range-input.vue'
 
 import FeatureEditStyleCircle from './feature-edit-style-circle.vue'

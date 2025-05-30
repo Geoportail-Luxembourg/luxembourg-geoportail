@@ -7,7 +7,7 @@ import { getUid } from 'ol/util'
 import { useDrawStore } from '@/stores/draw.store'
 import { useAppStore } from '@/stores/app.store'
 import { useMapStore } from '@/stores/map.store'
-import { DrawnFeature } from '@/services/draw/drawn-feature'
+import { DrawnFeature } from '@/services/ol-feature/ol-feature-drawn'
 
 export default function useDrawSelect() {
   const map = useMap().getOlMap()

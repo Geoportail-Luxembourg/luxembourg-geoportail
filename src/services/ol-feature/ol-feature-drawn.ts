@@ -194,7 +194,7 @@ export class DrawnFeature extends Feature {
 
     const fillStyle = new StyleFill()
     const arrowUrl = ARROW_URL
-    // TODO 3D
+    // TODO: 3D
     // const arrowModelUrl = ARROW_MODEL_URL
 
     const curMap = this.map
@@ -203,11 +203,12 @@ export class DrawnFeature extends Feature {
       feature: DrawnFeature,
       resolution: any
     ) {
-      //Bypass the bug : https://github.com/openlayers/ol-cesium/pull/644
+      // Bypass the bug : https://github.com/openlayers/ol-cesium/pull/644
       if (resolution === undefined) {
         resolution = feature
         feature = this
       }
+      
       // clear the styles
       styles.length = 0
 
@@ -262,7 +263,6 @@ export class DrawnFeature extends Feature {
           if (!prevArrow || distance > 600) {
             const src = arrowUrl
             const rotation = Math.PI / 2 - Math.atan2(dy, dx)
-            // arrows
             styles.push(
               new StyleStyle({
                 geometry: arrowPoint,

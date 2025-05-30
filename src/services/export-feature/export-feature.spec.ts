@@ -9,7 +9,7 @@ import {
 } from 'ol/geom'
 
 import { PROJECTION_WGS84 } from '@/composables/map/map.composable'
-import { DrawnFeature } from '@/services/draw/drawn-feature'
+import { DrawnFeature } from '@/services/ol-feature/ol-feature-drawn'
 import { convertCircleFeatureToPolygon } from '@/composables/draw/draw-utils'
 import { ExportFeature } from './export-feature'
 

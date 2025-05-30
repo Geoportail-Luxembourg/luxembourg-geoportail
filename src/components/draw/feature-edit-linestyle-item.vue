@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { inject, Reactive } from 'vue'
 import { useTranslation } from 'i18next-vue'
-import { DrawnFeature } from '@/services/draw/drawn-feature'
+import { DrawnFeature } from '@/services/ol-feature/ol-feature-drawn'
 import { capitalize } from '@/services/utils'
 
 defineProps<{

@@ -3,7 +3,7 @@ import { ref, Ref } from 'vue'
 
 import { getUid } from 'ol/util'
 import { DrawStateActive, EditStateActive } from './draw.store.model'
-import { DrawnFeature } from '@/services/draw/drawn-feature'
+import { DrawnFeature } from '@/services/ol-feature/ol-feature-drawn'
 
 export const useDrawStore = defineStore('draw', () => {
   const activeFeatureId: Ref<String | undefined> = ref(undefined)
