@@ -10,6 +10,7 @@ import {
   getCircleLength,
   getCircleRadius,
   getLength,
+  setCircleRadius,
 } from '@/services/common/measurement.utils'
 import { Circle, Geometry, Point, Polygon } from 'ol/geom'
 import { Projection } from 'ol/proj'
@@ -19,7 +20,6 @@ import {
   getElevation,
 } from './feature-measurements-helper'
 import { useDrawStore } from '@/stores/draw.store'
-import { setRadius } from '@/services/draw/draw.helper'
 
 defineProps<{
   isEditingFeature?: boolean
@@ -89,7 +89,11 @@ watchEffect(() => {
 
 function onClickValidateRadius(radius: number) {
   if (feature.value) {
-    setRadius(feature.value as DrawnFeature, radius, map, drawStore)
+    const geometry = <Circle>feature.value.getGeometry()
+    if (geometry?.getType() === 'Circle') {
+      setCircleRadius(geometry, radius, map)
+      drawStore.updateDrawnFeature(<DrawnFeature>feature.value)
+    }
   }
 }
 </script>
