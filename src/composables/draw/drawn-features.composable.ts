@@ -8,7 +8,7 @@ import { Coordinate } from 'ol/coordinate'
 import { useDrawStore } from '@/stores/draw.store'
 import { useAppStore } from '@/stores/app.store'
 import { screenSizeIsAtLeast } from '@/services/common/device.utils'
-import { DrawnFeature } from '@/services/draw/drawn-feature'
+import { DrawnFeature } from '@/services/ol-feature/ol-feature-drawn'
 import { DrawnFeatureType, DrawnFeatureStyle } from '@/stores/draw.store.model'
 
 export default function useDrawnFeatures() {

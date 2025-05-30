@@ -2,7 +2,7 @@
 import { inject, provide, Ref, ref, Reactive } from 'vue'
 import { useTranslation } from 'i18next-vue'
 
-import { DrawnFeature } from '@/services/draw/drawn-feature'
+import { DrawnFeature } from '@/services/ol-feature/ol-feature-drawn'
 import { DrawnFeatureStyle } from '@/stores/draw.store.model'
 
 import FeatureMenuPopup from './feature-menu-popup.vue'

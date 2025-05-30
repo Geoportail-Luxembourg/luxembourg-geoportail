@@ -2,7 +2,7 @@
 import { provide } from 'vue'
 import { getUid } from 'ol/util'
 
-import { DrawnFeature } from '@/services/draw/drawn-feature'
+import { DrawnFeature } from '@/services/ol-feature/ol-feature-drawn'
 import { DrawnFeatureStyle } from '@/stores/draw.store.model'
 
 import FeatureSubContent from './feature-sub-content.vue'

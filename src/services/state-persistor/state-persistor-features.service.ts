@@ -4,7 +4,7 @@ import { SP_KEY_FEATURES, StatePersistorService } from './state-persistor.model'
 import { storageHelper } from './storage/storage.helper'
 import { storageFeaturesMapper } from './state-persistor-features.mapper'
 import { useDrawStore } from '@/stores/draw.store'
-import { DrawnFeature } from '@/services/draw/drawn-feature'
+import { DrawnFeature } from '@/services/ol-feature/ol-feature-drawn'
 
 class StatePersistorFeaturesService implements StatePersistorService {
   bootstrap() {

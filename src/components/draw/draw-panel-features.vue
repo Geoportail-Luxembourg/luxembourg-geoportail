@@ -5,7 +5,7 @@ import { getUid } from 'ol/util'
 
 import useSortable from '@/composables/sortable'
 import { useDrawStore } from '@/stores/draw.store'
-import { DrawnFeature } from '@/services/draw/drawn-feature'
+import { DrawnFeature } from '@/services/ol-feature/ol-feature-drawn'
 
 import FeatureItem from './feature-item.vue'
 

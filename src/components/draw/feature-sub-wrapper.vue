@@ -3,7 +3,7 @@ import { inject, ref, watchEffect } from 'vue'
 
 import MapPopup from '@/components/map/map-popup.vue'
 import useDrawnFeatures from '@/composables/draw/drawn-features.composable'
-import { DrawnFeature } from '@/services/draw/drawn-feature'
+import { DrawnFeature } from '@/services/ol-feature/ol-feature-drawn'
 import { debounce } from '@/services/utils'
 
 defineProps<{

@@ -32,7 +32,7 @@ import Text from 'ol/style/Text'
 import Stroke from 'ol/style/Stroke'
 import Fill from 'ol/style/Fill'
 import Style from 'ol/style/Style'
-import { DrawnFeature } from '@/services/draw/drawn-feature'
+import { DrawnFeature } from '@/services/ol-feature/ol-feature-drawn'
 import { DrawnFeatureStyle } from '@/stores/draw.store.model'
 import { colorRgbArrayToHex } from '@/services/colors.utils'
 

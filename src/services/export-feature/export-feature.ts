@@ -4,7 +4,7 @@ import { Geometry, GeometryCollection, MultiLineString } from 'ol/geom'
 
 import { convertCircleFeatureToPolygon } from '@/composables/draw/draw-utils'
 import { PROJECTION_WGS84 } from '@/composables/map/map.composable'
-import { DrawnFeature } from '@/services/draw/drawn-feature'
+import { DrawnFeature } from '@/services/ol-feature/ol-feature-drawn'
 import { downloadFile, sanitizeFilename } from '@/services/utils'
 
 export abstract class ExportFeature<

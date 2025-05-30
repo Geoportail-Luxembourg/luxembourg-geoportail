@@ -3,7 +3,7 @@ import {
   convertPolygonFeatureToCircle,
 } from '@/composables/draw/draw-utils'
 import featureHash from './utils/FeatureHash'
-import { DrawnFeature } from '@/services/draw/drawn-feature'
+import { DrawnFeature } from '@/services/ol-feature/ol-feature-drawn'
 
 /**
  * Note that the mapper converts circles to polygons and back to circles.
