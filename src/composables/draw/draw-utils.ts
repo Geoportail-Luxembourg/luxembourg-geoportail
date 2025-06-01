@@ -1,11 +1,11 @@
-import { Circle } from 'ol/geom'
+import { Map } from 'ol'
+import { Circle, LineString } from 'ol/geom'
 import Polygon, { fromCircle } from 'ol/geom/Polygon'
 import { getDistance } from 'ol/sphere'
 import { toLonLat } from 'ol/proj'
 import { DrawnFeature } from '@/services/ol-feature/ol-feature-drawn'
 import { setCircleRadius } from '@/services/common/measurement.utils'
 import useMap from '../map/map.composable'
-import { Map } from 'ol'
 
 // TODO 3D
 // import { transform } from 'ol/proj'
@@ -30,11 +30,10 @@ function convertCircleFeatureToPolygon(feature: DrawnFeature): DrawnFeature {
 }
 
 /**
- *
+ * Convert a Polygon feature to a Circle feature (in legacy v3 we used Polygon for Circle)
  * @param feature Feature with a polygon geometry
  * @returns The same feature with a circle geometry
  */
-
 function convertPolygonFeatureToCircle(feature: DrawnFeature): DrawnFeature {
   const map: Map = useMap().getOlMap()
   const polygon = feature.getGeometry() as Polygon
@@ -59,4 +58,16 @@ function convertPolygonFeatureToCircle(feature: DrawnFeature): DrawnFeature {
   return feature
 }
 
-export { convertCircleFeatureToPolygon, convertPolygonFeatureToCircle }
+function changeLineOrientation(feature: DrawnFeature) {
+  const coordinates = (feature.getGeometry() as LineString)
+    .getCoordinates()
+    .reverse()
+  const reversedGeometry = new LineString(coordinates)
+  feature.setGeometry(reversedGeometry)
+}
+
+export {
+  changeLineOrientation,
+  convertCircleFeatureToPolygon,
+  convertPolygonFeatureToCircle,
+}

@@ -13,9 +13,10 @@ import {
   FeatExport,
   type ExportFormat,
 } from '@/services/export-feature/export-feature.service'
+import { changeLineOrientation } from '@/composables/draw/draw-utils'
 
 const { t } = useTranslation()
-const feature: DrawnFeature = inject('feature')!
+const feature = inject<DrawnFeature>('feature')!
 
 const emit = defineEmits(['newConcentricCircle'])
 
@@ -57,7 +58,7 @@ if (feature?.featureType === 'drawnLine') {
       },
       {
         label: 'Changer sens de la ligne',
-        action: () => alert('TODO: Draw feature click drawingMenuOptions'),
+        action: () => changeLineOrientation(feature),
       },
     ],
   ]
