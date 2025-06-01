@@ -1,8 +1,6 @@
 <script setup lang="ts">
 import { inject } from 'vue'
 import { useTranslation } from 'i18next-vue'
-import { Feature } from 'ol'
-import { Geometry } from 'ol/geom'
 
 import { type MenuPopupItem as MenuPopupItemType } from '@/components/common/menu-popup/menu-popup.d'
 import MenuPopup from '@/components/common/menu-popup/menu-popup.vue'
@@ -24,7 +22,7 @@ function download(format: ExportFormat) {
   exportFeatureService.export(
     feature.map,
     format,
-    <FeatExport>[<Feature<Geometry>>feature],
+    <FeatExport>[<unknown>feature],
     feature.label,
     true
   )
