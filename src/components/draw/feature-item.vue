@@ -27,7 +27,7 @@ const emit = defineEmits([
   'clickDelete',
   'closePopup',
   'toggleFeatureSub',
-  'toggleFeatureEdit',
+  'toggleEditFeature',
   'toggleDock',
   'submitFeature',
   'submitNewConcentricCircle',
@@ -40,7 +40,7 @@ function onToggleFeatureSub() {
 }
 
 function onToggleEditFeature() {
-  emit('toggleFeatureEdit', localFeature.id, !props.isEditing)
+  emit('toggleEditFeature', localFeature.id, !props.isEditing)
 }
 
 function onClickDelete() {

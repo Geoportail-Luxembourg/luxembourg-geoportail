@@ -23,7 +23,7 @@ function onToggleFeatureSub(featureId: string | number, isOpen: boolean) {
   editingFeatureId.value = undefined
 }
 
-function onToggleFeatureEdit(featureId: string | number, isEditing: boolean) {
+function ontoggleEditFeature(featureId: string | number, isEditing: boolean) {
   editingFeatureId.value = isEditing ? featureId : undefined
 }
 
@@ -65,7 +65,7 @@ onMounted(() => {
         :isOpen="activeFeatureId === feature.id"
         :feature="<DrawnFeature>feature"
         @toggleFeatureSub="onToggleFeatureSub"
-        @toggleFeatureEdit="onToggleFeatureEdit"
+        @toggleEditFeature="ontoggleEditFeature"
         @toggleDock="() => (featureEditionDocked = !featureEditionDocked)"
         @closePopup="() => (featureEditionDocked = false)"
         @clickDelete="featureId => drawStore.removeFeature(featureId)"

@@ -1,16 +1,16 @@
 import { watch } from 'vue'
 import { storeToRefs } from 'pinia'
-import { getUid } from 'ol'
 import { noModifierKeys, singleClick } from 'ol/events/condition'
 import Modify, { ModifyEvent } from 'ol/interaction/Modify'
 import VectorLayer from 'ol/layer/Vector'
 import VectorSource from 'ol/source/Vector'
 import { listen } from 'ol/events'
+
 import { DrawnFeature } from '@/services/ol-feature/ol-feature-drawn'
 import { useDrawStore } from '@/stores/draw.store'
-import useMap from '../map/map.composable'
 import { EditStateActive } from '@/stores/draw.store.model'
 import { OLLAYER_PROP_ID } from '@/services/ol-layer/ol-layer.model'
+import useMap from '../map/map.composable'
 
 const DEFAULT_DRAW_EDIT_ZINDEX = 1001
 const FEATURE_EDIT_LAYER_TYPE = 'featureEditLayer'
@@ -42,7 +42,7 @@ export default function useEdit() {
     }
   })
 
-  //listener on editingFeatureId to set stores editing states
+  // listener on editingFeatureId to set stores editing states
   watch(editingFeatureId, editingFeatureId => {
     if (!editingFeatureId) {
       setEditActiveState(undefined)
@@ -55,7 +55,7 @@ export default function useEdit() {
     }
     editSource.clear()
     const feature = drawnFeatures.value.find(
-      feature => getUid(feature) === editingFeatureId
+      feature => feature.id === editingFeatureId
     ) as DrawnFeature
     if (feature) {
       const editState = feature.featureType.replace(
