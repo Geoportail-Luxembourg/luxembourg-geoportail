@@ -1,11 +1,11 @@
 <script setup lang="ts">
-import { computed, inject, Reactive } from 'vue'
+import { computed, inject } from 'vue'
 import { useTranslation } from 'i18next-vue'
 
-import { LineString } from 'ol/geom'
-
-import { DrawnFeature } from '@/services/ol-feature/ol-feature-drawn'
 import RangeInput from '@/components/common/range-input/range-input.vue'
+import { changeLineOrientation } from '@/composables/draw/draw-utils'
+import { DrawnFeature } from '@/services/ol-feature/ol-feature-drawn'
+import { DrawnFeatureStyleShape, Symboltype } from '@/stores/draw.store.model'
 
 import FeatureEditStyleCircle from './feature-edit-style-circle.vue'
 import FeatureEditStylePoint from './feature-edit-style-point.vue'
@@ -15,10 +15,9 @@ import FeatureEditStyleLabel from './feature-edit-style-label.vue'
 import FeatureEditLinestyleItem from './feature-edit-linestyle-item.vue'
 import FeatureEditStyleSymbol from './feature-edit-style-symbol.vue'
 import FeatureEditSymbolIcon from './feature-edit-symbol-icon.vue'
-import { DrawnFeatureStyleShape, Symboltype } from '@/stores/draw.store.model'
 
 const { t } = useTranslation()
-const feature: Reactive<DrawnFeature> = inject('feature')!
+const feature = inject<DrawnFeature>('feature')!
 const showAngleField = computed(() => {
   return !(
     feature.featureType === 'drawnPoint' &&
@@ -74,11 +73,7 @@ function onShowDirection(event: Event) {
 }
 
 function onClickChangeOrientation() {
-  const coordinates = (feature.getGeometry() as LineString)
-    .getCoordinates()
-    .reverse()
-  const reversedGeometry = new LineString(coordinates)
-  feature.setGeometry(reversedGeometry)
+  changeLineOrientation(feature)
 }
 
 function onClickChangeLineStyle(style: string) {
