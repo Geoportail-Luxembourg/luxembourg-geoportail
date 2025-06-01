@@ -1,11 +1,18 @@
 <script setup lang="ts">
 import { onMounted, provide, ref, watchEffect } from 'vue'
 import { storeToRefs } from 'pinia'
+import { DragRotate } from 'ol/interaction'
+import { platformModifierKeyOnly } from 'ol/events/condition'
 
 import { useAppStore } from '@/stores/app.store'
 import useMap from '@/composables/map/map.composable'
 import { OlSynchronizer } from '@/composables/map/ol.synchronizer'
 import { OlViewSynchronizer } from '@/composables/map/ol-view.synchronizer'
+import useDraw from '@/composables/draw/draw.composable'
+import useDrawSelect from '@/composables/draw/draw-select.composable'
+import useFeatureInfo from '@/composables/info/feature-info.composable'
+import useDrawNotifications from '@/composables/draw/draw-notifications.composable'
+import useEdit from '@/composables/draw/edit.composable'
 import { statePersistorMapService } from '@/services/state-persistor/state-persistor-map.service'
 import { statePersistorFeaturesService } from '@/services/state-persistor/state-persistor-features.service'
 import { statePersistorLocationInfo } from '@/services/state-persistor/state-persistor-location-info'
@@ -18,11 +25,6 @@ import ZoomControl from '../map-controls/zoom-control.vue'
 import RotateControl from '../map-controls/rotate-control.vue'
 import { olLayerSearchService } from '@/services/ol-layer/ol-layer-search.service'
 import ZoomToExtentControl from '../map-controls/zoom-to-extent-control.vue'
-import useDraw from '@/composables/draw/draw.composable'
-import useDrawSelect from '@/composables/draw/draw-select.composable'
-import useFeatureInfo from '@/composables/info/feature-info.composable'
-import { DragRotate } from 'ol/interaction'
-import { platformModifierKeyOnly } from 'ol/events/condition'
 
 const appStore = useAppStore()
 const { embedded } = storeToRefs(appStore)
@@ -54,6 +56,8 @@ olMap.addInteraction(dragRotateInteraction)
 // add draw layer after map init to allow restoring draw features (not in v3 for now)
 // TODO: remove v4_standalone condition or move calls outside of it, once v4 draw or feature info is used in v3
 if (props.v4_standalone) {
+  useDrawNotifications()
+  useEdit()
   const draw = useDraw()
   draw.addDrawLayer(olMap)
   // initialise map listeners for feature selection

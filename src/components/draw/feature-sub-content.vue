@@ -113,7 +113,7 @@ function onClickValidate(payload: MouseEvent | FeatureConcentricCirclePayload) {
         <button
           data-cy="featItemToggleEdit"
           class="lux-btn-primary"
-          @click="emit('toggleEditFeature', feature)"
+          @click="emit('toggleEditFeature')"
         >
           {{ isEditingFeature ? t('Terminer édition') : t("Editer l'objet") }}
         </button>
