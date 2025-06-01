@@ -1,6 +1,5 @@
 <script setup lang="ts">
 import { provide } from 'vue'
-import { getUid } from 'ol/util'
 
 import { DrawnFeature } from '@/services/ol-feature/ol-feature-drawn'
 import { DrawnFeatureStyle } from '@/stores/draw.store.model'
@@ -31,20 +30,21 @@ const emit = defineEmits([
   'toggleFeatureEdit',
   'toggleDock',
   'submitFeature',
+  'submitNewConcentricCircle',
 ])
 
-provide('feature', props.feature)
+provide('feature', localFeature)
 
 function onToggleFeatureSub() {
-  emit('toggleFeatureSub', getUid(props.feature), !props.isOpen)
+  emit('toggleFeatureSub', localFeature.id, !props.isOpen)
 }
 
 function onToggleEditFeature() {
-  emit('toggleFeatureEdit', getUid(props.feature), !props.isEditing)
+  emit('toggleFeatureEdit', localFeature.id, !props.isEditing)
 }
 
 function onClickDelete() {
-  emit('clickDelete', getUid(props.feature))
+  emit('clickDelete', localFeature.id)
 }
 
 function onResetInfo(prevLabel: string, prevDescription: string) {
@@ -57,7 +57,14 @@ function onResetStyle(prevStyle: DrawnFeatureStyle) {
 }
 
 function onSubmitEditFeature() {
-  emit('submitFeature', props.feature)
+  emit('submitFeature', localFeature)
+}
+
+function onSubmitNewConcentricCircle(
+  radius: number,
+  baseFeature: DrawnFeature
+) {
+  emit('submitNewConcentricCircle', radius, baseFeature)
 }
 </script>
 
@@ -67,7 +74,7 @@ function onSubmitEditFeature() {
     data-cy="featItemName"
     class="lux-drawing-item-label flex items-center gap-1"
     :aria-expanded="isOpen"
-    :aria-controls="`drawing-item-content-${feature.id}`"
+    :aria-controls="`drawing-item-content-${localFeature.id}`"
     @click="onToggleFeatureSub"
   >
     <!-- Dragging button -->
@@ -79,17 +86,17 @@ function onSubmitEditFeature() {
       class="lux-icon"
       :class="{
         point:
-          feature.featureType === 'drawnPoint' ||
-          feature.featureType === 'drawnLabel',
-        line: feature.featureType === 'drawnLine',
+          localFeature.featureType === 'drawnPoint' ||
+          localFeature.featureType === 'drawnLabel',
+        line: localFeature.featureType === 'drawnLine',
         polygon:
-          feature.featureType === 'drawnPolygon' ||
-          feature.featureType === 'drawnCircle',
+          localFeature.featureType === 'drawnPolygon' ||
+          localFeature.featureType === 'drawnCircle',
       }"
     ></span>
     <!-- Feature label -->
     <span :class="{ selected: isOpen }">
-      {{ feature.label }}
+      {{ localFeature.label }}
     </span>
   </button>
 
@@ -101,7 +108,7 @@ function onSubmitEditFeature() {
   >
     <div
       class="lux-drawing-item-content"
-      :id="`drawing-item-content-${feature.id}`"
+      :id="`drawing-item-content-${localFeature.id}`"
     >
       <FeatureSubContent
         :isDocked="isDocked"
@@ -112,6 +119,7 @@ function onSubmitEditFeature() {
         @resetInfo="onResetInfo"
         @resetStyle="onResetStyle"
         @submitEditFeature="onSubmitEditFeature"
+        @submitNewConcentricCircle="onSubmitNewConcentricCircle"
       />
     </div>
   </FeatureSubWrapper>

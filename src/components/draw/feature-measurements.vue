@@ -89,6 +89,7 @@ watchEffect(() => {
 
 function onClickValidateRadius(radius: number) {
   if (feature.value) {
+    // TODO: move in composable
     const geometry = <Circle>feature.value.getGeometry()
     if (geometry?.getType() === 'Circle') {
       setCircleRadius(geometry, radius, map)
@@ -127,7 +128,7 @@ function onClickValidateRadius(radius: number) {
       <div v-else class="flex">
         <input
           data-cy="featItemInputRadius"
-          class="form-control block bg-secondary text-white border !border-gray-300"
+          class="form-control block bg-secondary border !border-gray-300"
           type="number"
           v-model.number="inputRadius"
           @keyup.enter="onClickValidateRadius(inputRadius)"

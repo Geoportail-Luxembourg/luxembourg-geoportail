@@ -19,6 +19,7 @@ import olLayerWmtsHelper from './ol-layer-wmts.helper'
 import olLayerVectorHelper from './ol-layer-vector.helper'
 import { olLayerOfflineFactoryService } from './ol-layer-offline-factory'
 import olLayerFeaturePositionHelper from './ol-layer-feature-position.helper'
+import olLayerDrawnFeatureHelper from './ol-layer-drawn-feature.helper'
 
 export class OlLayerFactoryService {
   createOlLayer(
@@ -56,6 +57,10 @@ export class OlLayerFactoryService {
     this.setOlProps(<Layer>layer, olLayer)
 
     return olLayer
+  }
+
+  createOlLayerDrawnFeatures(): OlLayer {
+    return <OlLayer>olLayerDrawnFeatureHelper.createOlLayer()
   }
 
   createOlLayerFeaturePosition(layer: LayerFeature): OlLayer {

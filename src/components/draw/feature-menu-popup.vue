@@ -17,6 +17,8 @@ import {
 const { t } = useTranslation()
 const feature: DrawnFeature = inject('feature')!
 
+const emit = defineEmits(['newConcentricCircle'])
+
 function download(format: ExportFormat) {
   exportFeatureService.export(
     feature.map,
@@ -67,7 +69,7 @@ if (feature?.featureType === 'drawnCircle') {
     ...[
       {
         label: 'Créer cercle concentrique',
-        action: () => alert('TODO: Draw feature click drawingMenuOptions'),
+        action: () => emit('newConcentricCircle'),
       },
     ],
   ]
