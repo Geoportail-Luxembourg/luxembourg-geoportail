@@ -1,13 +1,12 @@
 import { defineStore } from 'pinia'
 import { ref, Ref } from 'vue'
 
-import { getUid } from 'ol/util'
-import { DrawStateActive, EditStateActive } from './draw.store.model'
 import { DrawnFeature } from '@/services/ol-feature/ol-feature-drawn'
+import { DrawStateActive, EditStateActive } from './draw.store.model'
 
 export const useDrawStore = defineStore('draw', () => {
-  const activeFeatureId: Ref<String | undefined> = ref(undefined)
-  const editingFeatureId: Ref<String | undefined> = ref(undefined)
+  const activeFeatureId: Ref<string | number | undefined> = ref(undefined)
+  const editingFeatureId: Ref<string | number | undefined> = ref(undefined)
   const drawStateActive = ref<DrawStateActive>(undefined)
   const editStateActive = ref<EditStateActive>(undefined)
   const drawnFeatures = ref<DrawnFeature[]>([])
@@ -48,8 +47,8 @@ export const useDrawStore = defineStore('draw', () => {
 
   function addDrawnFeature(feature: DrawnFeature) {
     drawnFeatures.value = [...drawnFeatures.value, feature]
-    activeFeatureId.value = getUid(feature)
-    editingFeatureId.value = getUid(feature)
+    activeFeatureId.value = feature.id
+    editingFeatureId.value = feature.id
     editStateActive.value = feature.featureType.replace(
       'drawn',
       'edit'
@@ -64,7 +63,7 @@ export const useDrawStore = defineStore('draw', () => {
     if (index !== -1) {
       drawnFeatures.value[index] = feature
     }
-    //affect immutable value to trigger reactivity for state persistor
+    // affect immutable value to trigger reactivity for state persistor
     drawnFeatures.value = [...drawnFeatures.value]
   }
 
@@ -74,7 +73,7 @@ export const useDrawStore = defineStore('draw', () => {
 
   function removeFeature(featureId: String | undefined) {
     drawnFeatures.value = drawnFeatures.value.filter(
-      feature => getUid(feature) !== featureId
+      feature => feature.id !== featureId
     )
     if (activeFeatureId.value === featureId) {
       activeFeatureId.value = undefined
@@ -86,7 +85,7 @@ export const useDrawStore = defineStore('draw', () => {
     drawnFeatures.value = drawnFeatures.value.map(f =>
       // Must use Object.assign function instead of spread operator so that
       // object type remains DrawnFeature and additional methods are not lost
-      Object.assign(f, { display_order: featuresId.indexOf(`f-${getUid(f)}`) })
+      Object.assign(f, { display_order: featuresId.indexOf(`f-${f.id}`) })
     )
   }
 

@@ -1,9 +1,9 @@
 <script setup lang="ts">
 import { onMounted } from 'vue'
 import { storeToRefs } from 'pinia'
-import { getUid } from 'ol/util'
 
 import useSortable from '@/composables/sortable'
+import useDraw from '@/composables/draw/draw.composable'
 import { useDrawStore } from '@/stores/draw.store'
 import { DrawnFeature } from '@/services/ol-feature/ol-feature-drawn'
 
@@ -17,20 +17,31 @@ const {
   featureEditionDocked,
 } = storeToRefs(drawStore)
 
-function onToggleFeatureSub(featureId: String, isOpen: boolean) {
+function onToggleFeatureSub(featureId: string | number, isOpen: boolean) {
   // Only one feature details is displayed at once
   activeFeatureId.value = isOpen ? featureId : undefined
   editingFeatureId.value = undefined
 }
 
-function onToggleFeatureEdit(featureId: String, isEditing: boolean) {
+function onToggleFeatureEdit(featureId: string | number, isEditing: boolean) {
   editingFeatureId.value = isEditing ? featureId : undefined
-  // TODO: continue...
 }
 
 function sortFunction(elements: HTMLCollection) {
   const featureIds = [...elements].map(val => val.id)
   drawStore.reorderFeatures(featureIds)
+}
+
+function onSubmitNewConcentricCircle(payload: {
+  radius: number
+  baseFeature: DrawnFeature
+}) {
+  const newDrawnFeature = useDraw().createConcentricCircle(
+    payload.baseFeature,
+    payload.radius
+  )
+
+  drawStore.addDrawnFeature(newDrawnFeature)
 }
 
 onMounted(() => {
@@ -44,14 +55,14 @@ onMounted(() => {
   <ul class="mx-1 sortable-features" v-if="features.length">
     <li
       class="lux-drawing-item"
-      v-for="(feature, index) in features"
-      :id="`f-${getUid(feature)}`"
-      :key="index"
+      v-for="feature in features"
+      :id="`f-${feature.id}`"
+      :key="feature.id"
     >
       <FeatureItem
         :isDocked="featureEditionDocked"
-        :isEditing="editingFeatureId === getUid(feature)"
-        :isOpen="activeFeatureId === getUid(feature)"
+        :isEditing="editingFeatureId === feature.id"
+        :isOpen="activeFeatureId === feature.id"
         :feature="<DrawnFeature>feature"
         @toggleFeatureSub="onToggleFeatureSub"
         @toggleFeatureEdit="onToggleFeatureEdit"
@@ -59,6 +70,7 @@ onMounted(() => {
         @closePopup="() => (featureEditionDocked = false)"
         @clickDelete="featureId => drawStore.removeFeature(featureId)"
         @submitFeature="feature => drawStore.updateDrawnFeature(feature)"
+        @submitNewConcentricCircle="onSubmitNewConcentricCircle"
       />
     </li>
   </ul>
