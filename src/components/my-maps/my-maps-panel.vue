@@ -1,25 +1,58 @@
 <script setup lang="ts">
+import { ref } from 'vue'
 import { useTranslation } from 'i18next-vue'
+import { storeToRefs } from 'pinia'
 
 import SidePanelLayout from '@/components/common/side-panel-layout.vue'
 import DrawPanel from '@/components/draw/draw-panel.vue'
-
+import { useAlertNotificationsStore } from '@/stores/alert-notifications.store'
 import { useAppStore } from '@/stores/app.store'
+import { useUserManagerStore } from '@/stores/user-manager.store'
+import { AlertNotificationType } from '@/stores/alert-notifications.store.model'
+
+import MyMapsEditForm from './my-map-edit-form.vue'
 
 const { t } = useTranslation()
+const { addNotification } = useAlertNotificationsStore()
 const appStore = useAppStore()
+const { toggleAuthFormOpen } = appStore
+const { authenticated } = storeToRefs(useUserManagerStore())
+const myMapsEditFormModalOpened = ref(false)
 
 function clickOpenMap() {
-  alert('TODO: clickOpenMap')
+  if (!checkAuth()) {
+    return
+  }
+
+  alert('TODO call api')
+
+  addNotification(
+    t('You have no existing Maps, please create a New Map'),
+    AlertNotificationType.WARNING
+  )
 }
 
 function clickCreateNewMap() {
-  alert('TODO: clickCreateNewMap')
+  if (!checkAuth()) {
+    return
+  }
+
+  myMapsEditFormModalOpened.value = true
+}
+
+function checkAuth() {
+  if (!authenticated.value) {
+    addNotification(t("Veuillez vous identifier afin d'accéder à vos cartes"))
+    toggleAuthFormOpen(true)
+    return false
+  }
+
+  return true
 }
 </script>
 
 <template>
-  <side-panel-layout
+  <SidePanelLayout
     :data-cy-value="'myMapsPanel'"
     :close-fn="() => appStore.toggleMyMapsOpen(false)"
   >
@@ -45,5 +78,8 @@ function clickCreateNewMap() {
 
       <DrawPanel />
     </template>
-  </side-panel-layout>
+  </SidePanelLayout>
+
+  <!-- Modales -->
+  <MyMapsEditForm :modalOpened="myMapsEditFormModalOpened"></MyMapsEditForm>
 </template>

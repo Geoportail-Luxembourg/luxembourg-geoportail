@@ -1,5 +1,6 @@
 import { t } from 'i18next'
 import { storeToRefs } from 'pinia'
+import { v4 as uuidv4 } from 'uuid'
 import { Feature } from 'ol'
 import { Point, Circle, Geometry, LineString } from 'ol/geom'
 import Polygon from 'ol/geom/Polygon'
@@ -8,7 +9,7 @@ import { Coordinate } from 'ol/coordinate'
 import { useDrawStore } from '@/stores/draw.store'
 import { useAppStore } from '@/stores/app.store'
 import { screenSizeIsAtLeast } from '@/services/common/device.utils'
-import { DrawnFeature } from '@/services/draw/drawn-feature'
+import { DrawnFeature } from '@/services/ol-feature/ol-feature-drawn'
 import { DrawnFeatureType, DrawnFeatureStyle } from '@/stores/draw.store.model'
 
 export default function useDrawnFeatures() {
@@ -50,13 +51,13 @@ export default function useDrawnFeatures() {
     } as DrawnFeatureStyle
 
     const drawnFeature = Object.assign(new DrawnFeature(), feature, {
-      id: Math.floor(Math.random() * Date.now()),
+      id: uuidv4(),
       label: name,
       description: '',
       display_order: nbFeatures,
       editable: true,
       selected: false,
-      map_id: undefined, // mymap uuid
+      map_id: undefined, // Mymaps uuid
       // TODO Mymaps
       // map_id: this.appMymaps_.isEditable() ? this.appMymaps_.getMapId() : undefined,
       saving: false,

@@ -1,5 +1,6 @@
+import { v4 as uuidv4 } from 'uuid'
 import { Feature } from 'ol'
-import { Point, LineString, MultiPoint, Polygon } from 'ol/geom'
+import { Point, LineString, MultiPoint, Polygon, Geometry } from 'ol/geom'
 import StyleStyle, { StyleFunction } from 'ol/style/Style'
 import StyleRegularShape, {
   Options as RegularShapeOptions,
@@ -11,6 +12,7 @@ import StyleIcon from 'ol/style/Icon'
 import StyleText from 'ol/style/Text'
 import { Extent } from 'ol/extent'
 import olFormatGeoJSON from 'ol/format/GeoJSON'
+import { ObjectWithGeometry } from 'ol/Feature'
 
 import { DrawnFeatureType, DrawnFeatureStyle } from '@/stores/draw.store.model'
 import useMap, {
@@ -27,7 +29,7 @@ const ARROW_URL = MYMAPS_URL + '/getarrow'
 
 export class DrawnFeature extends Feature {
   // TODO: refactor create a generic type that can be used by Infos panel, Draw, and Measures
-  id: number
+  id: number | string
   label: string
   description: string
   display_order: number
@@ -40,7 +42,10 @@ export class DrawnFeature extends Feature {
   map = useMap().getOlMap()
   profileData: ProfileData | undefined = undefined // Is used by linestring geom
 
-  constructor(drawnFeature?: DrawnFeature) {
+  constructor(
+    drawnFeature?: DrawnFeature,
+    geometryOrProperties?: Geometry | ObjectWithGeometry<Geometry>
+  ) {
     if (drawnFeature) {
       super(drawnFeature.getGeometry())
       this.label = drawnFeature.label
@@ -55,8 +60,36 @@ export class DrawnFeature extends Feature {
       this.saving = drawnFeature.saving
       this.setProperties(drawnFeature.getProperties())
     } else {
-      super()
+      super(geometryOrProperties)
     }
+  }
+
+  clone() {
+    const clone = new DrawnFeature(
+      this,
+      this.hasProperties() ? this.getProperties() : undefined
+    )
+
+    // NB. Following code extracted from ol/Feature
+    clone.setGeometryName(this.getGeometryName())
+    const geometry = this.getGeometry()
+    if (geometry) {
+      clone.setGeometry(geometry.clone())
+    }
+
+    const style = this.getStyle()
+    if (style) {
+      clone.setStyle(style)
+    }
+
+    // Create new id
+    clone.id = uuidv4()
+
+    return clone
+  }
+
+  static clone(drawnFeature: DrawnFeature) {
+    return drawnFeature.clone()
   }
 
   public get featureStyle() {
@@ -194,7 +227,7 @@ export class DrawnFeature extends Feature {
 
     const fillStyle = new StyleFill()
     const arrowUrl = ARROW_URL
-    // TODO 3D
+    // TODO: 3D
     // const arrowModelUrl = ARROW_MODEL_URL
 
     const curMap = this.map
@@ -203,11 +236,12 @@ export class DrawnFeature extends Feature {
       feature: DrawnFeature,
       resolution: any
     ) {
-      //Bypass the bug : https://github.com/openlayers/ol-cesium/pull/644
+      // Bypass the bug : https://github.com/openlayers/ol-cesium/pull/644
       if (resolution === undefined) {
         resolution = feature
         feature = this
       }
+
       // clear the styles
       styles.length = 0
 
@@ -262,7 +296,6 @@ export class DrawnFeature extends Feature {
           if (!prevArrow || distance > 600) {
             const src = arrowUrl
             const rotation = Math.PI / 2 - Math.atan2(dy, dx)
-            // arrows
             styles.push(
               new StyleStyle({
                 geometry: arrowPoint,
@@ -274,7 +307,7 @@ export class DrawnFeature extends Feature {
                 }),
               })
             )
-            // TODO 3D
+            // TODO: 3D
             // const modelColor = colorStringToRgba(arrowColor, 1)
             // arrowPoint.set('olcs_model', () => {
             //   const coordinates = arrowPoint.getCoordinates()

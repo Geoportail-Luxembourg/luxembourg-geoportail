@@ -62,9 +62,9 @@ Style files will be saved on local dev server (v3 in docker environment).
 VITE_VECTORTILES_URL="https://vectortiles-staging.geoportail.lu"
 
 # Paths for MVT styles
-VITE_MVTSTYLES_PATH_GET="https://localhost:8080/getvtstyle"
-VITE_MVTSTYLES_PATH_UPLOAD="https://localhost:8080//uploadvtstyle"
-VITE_MVTSTYLES_PATH_DELETE="https://localhost:8080/deletevtstyle"
+VITE_MVTSTYLES_PATH_GET="http://localhost:8080/getvtstyle"
+VITE_MVTSTYLES_PATH_UPLOAD="http://localhost:8080//uploadvtstyle"
+VITE_MVTSTYLES_PATH_DELETE="http://localhost:8080/deletevtstyle"
 ```
 
 same as using relative urls:

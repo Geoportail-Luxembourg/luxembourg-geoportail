@@ -1,27 +1,28 @@
 <script setup lang="ts">
 import { inject } from 'vue'
 import { useTranslation } from 'i18next-vue'
-import { Feature } from 'ol'
-import { Geometry } from 'ol/geom'
 
 import { type MenuPopupItem as MenuPopupItemType } from '@/components/common/menu-popup/menu-popup.d'
 import MenuPopup from '@/components/common/menu-popup/menu-popup.vue'
 import MenuPopupItem from '@/components/common/menu-popup/menu-popup-item.vue'
-import { DrawnFeature } from '@/services/draw/drawn-feature'
+import { DrawnFeature } from '@/services/ol-feature/ol-feature-drawn'
 import {
   exportFeatureService,
   FeatExport,
   type ExportFormat,
 } from '@/services/export-feature/export-feature.service'
+import { changeLineOrientation } from '@/composables/draw/draw-utils'
 
 const { t } = useTranslation()
-const feature: DrawnFeature = inject('feature')!
+const feature = inject<DrawnFeature>('feature')!
+
+const emit = defineEmits(['newConcentricCircle'])
 
 function download(format: ExportFormat) {
   exportFeatureService.export(
     feature.map,
     format,
-    <FeatExport>[<Feature<Geometry>>feature],
+    <FeatExport>[<unknown>feature],
     feature.label,
     true
   )
@@ -55,7 +56,7 @@ if (feature?.featureType === 'drawnLine') {
       },
       {
         label: 'Changer sens de la ligne',
-        action: () => alert('TODO: Draw feature click drawingMenuOptions'),
+        action: () => changeLineOrientation(feature),
       },
     ],
   ]
@@ -67,7 +68,7 @@ if (feature?.featureType === 'drawnCircle') {
     ...[
       {
         label: 'Créer cercle concentrique',
-        action: () => alert('TODO: Draw feature click drawingMenuOptions'),
+        action: () => emit('newConcentricCircle'),
       },
     ],
   ]

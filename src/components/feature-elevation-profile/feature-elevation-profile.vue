@@ -23,7 +23,7 @@ import ElevationProfile from '@/components/common/graph/elevation-profile.vue'
 import { ProfileData } from '@/components/common/graph/elevation-profile'
 import useProfilePosition from '@/composables/map/profile-position.composable'
 import { useProfilePositionStore } from '@/stores/profile-position.store'
-import { DrawnFeature } from '@/services/draw/drawn-feature'
+import { DrawnFeature } from '@/services/ol-feature/ol-feature-drawn'
 import {
   exportFeatureService,
   FeatExport,

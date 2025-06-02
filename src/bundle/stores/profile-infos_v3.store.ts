@@ -2,7 +2,7 @@ import { ref } from 'vue'
 import { acceptHMRUpdate, defineStore } from 'pinia'
 import { Map } from 'ol'
 
-import { DrawnFeature } from '@/services/draw/drawn-feature'
+import { DrawnFeature } from '@/services/ol-feature/ol-feature-drawn'
 import { ProfileData } from '@/components/common/graph/elevation-profile'
 
 /**

@@ -7,7 +7,7 @@ import { Coordinate } from 'ol/coordinate'
 
 import { dataset as datasetFixtures } from '@/__fixtures__/d3-graph-elevation.fixtures'
 import formatMeasureDirective from '@/directives/format-measure.directive'
-import { DrawnFeature } from '@/services/draw/drawn-feature'
+import { DrawnFeature } from '@/services/ol-feature/ol-feature-drawn'
 import FeatureElevationProfile from './feature-elevation-profile.vue'
 import { exportFeatureService } from '@/services/export-feature/export-feature.service'
 import { useProfilePositionStore } from '@/stores/profile-position.store'

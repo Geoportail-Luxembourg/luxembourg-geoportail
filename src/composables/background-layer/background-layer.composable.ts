@@ -48,11 +48,7 @@ export default function useBackgroundLayer() {
         bgLayer.type === LayerTypeValue.BG_WMTS
       ) {
         bgLayer.type = 'BG WMTS' // <= ????
-      }
-      // else if (bgLayer.type === LayerTypeValue.BG_MVT) {
-      //   console.log(`passed through MVT layer ${bgLayer.name}`)
-      // }
-      else {
+      } else {
         throw new Error(
           `Only WMTS and MVT BG layers are currently implemented (not ${bgLayer.type} for ${bgLayer.name})`
         )

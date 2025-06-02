@@ -2,7 +2,7 @@
 import { inject, provide, Ref, ref, Reactive } from 'vue'
 import { useTranslation } from 'i18next-vue'
 
-import { DrawnFeature } from '@/services/draw/drawn-feature'
+import { DrawnFeature } from '@/services/ol-feature/ol-feature-drawn'
 import { DrawnFeatureStyle } from '@/stores/draw.store.model'
 
 import FeatureMenuPopup from './feature-menu-popup.vue'
@@ -11,6 +11,11 @@ import FeatureEditInfo from './feature-edit-info.vue'
 import FeatureEditStyle from './feature-edit-style.vue'
 import FeatureConcentricCircle from './feature-concentric-circle.vue'
 import FeatureMeasurements from './feature-measurements.vue'
+
+interface FeatureConcentricCirclePayload {
+  radius: number
+  baseFeature: DrawnFeature
+}
 
 defineProps<{
   isDocked: boolean
@@ -23,6 +28,7 @@ const emit = defineEmits([
   'resetInfo',
   'resetStyle',
   'submitEditFeature',
+  'submitNewConcentricCircle',
 ])
 const { t } = useTranslation()
 const feature: Reactive<DrawnFeature> = inject('feature')!
@@ -53,33 +59,32 @@ function onClickCancel() {
   currentEditCompKey.value = undefined
 }
 
-function onClickValidate() {
+function onClickValidate(payload: MouseEvent | FeatureConcentricCirclePayload) {
   const currentComponent =
     editComponents[currentEditCompKey.value as keyof typeof editComponents]
 
   prevLabel = feature.label
   prevDescription = feature.description
   prevStyle = { ...feature.featureStyle }
-  if (currentComponent === FeatureConfirmDelete) {
-    emit('clickDelete')
-  } else if (
-    currentComponent === FeatureEditInfo ||
-    currentComponent === FeatureEditStyle
-  ) {
-    // reactivate highlighting of selected feature
-    feature.selected = true
-    emit('submitEditFeature')
-  } else {
-    alert('TODO: Draw feature click onClickValidate()')
-  }
-  currentEditCompKey.value = undefined
-}
 
-function onClickEditStyle() {
-  // deactivate highlighting of selected feature
-  feature.selected = false
-  feature.changed()
-  currentEditCompKey.value = 'FeatureEditStyle'
+  switch (currentComponent) {
+    case FeatureConcentricCircle:
+      emit('submitNewConcentricCircle', payload)
+      break
+    case FeatureConfirmDelete:
+      emit('clickDelete')
+      break
+    case FeatureEditInfo:
+    case FeatureEditStyle:
+      // reactivate highlighting of selected feature
+      feature.selected = true
+      emit('submitEditFeature')
+      break
+    default:
+      alert('Not implemented')
+  }
+
+  currentEditCompKey.value = undefined
 }
 </script>
 
@@ -108,7 +113,7 @@ function onClickEditStyle() {
         <button
           data-cy="featItemToggleEdit"
           class="lux-btn-primary"
-          @click="emit('toggleEditFeature', feature)"
+          @click="emit('toggleEditFeature')"
         >
           {{ isEditingFeature ? t('Terminer édition') : t("Editer l'objet") }}
         </button>
@@ -139,7 +144,7 @@ function onClickEditStyle() {
           <button
             data-cy="featItemActionStyle"
             class="hover:text-tertiary"
-            @click="onClickEditStyle()"
+            @click="() => (currentEditCompKey = 'FeatureEditStyle')"
           >
             <i class="fa fa-paint-brush"></i>
           </button>
@@ -154,7 +159,11 @@ function onClickEditStyle() {
           </button>
 
           <!-- Menu dropdown with all other possible actions on feature -->
-          <FeatureMenuPopup />
+          <FeatureMenuPopup
+            @newConcentricCircle="
+              () => (currentEditCompKey = 'FeatureConcentricCircle')
+            "
+          />
         </div>
       </div>
     </div>
@@ -165,10 +174,12 @@ function onClickEditStyle() {
   <component
     v-else
     :is="editComponents[currentEditCompKey as keyof typeof editComponents]"
+    @cancel="onClickCancel"
+    @validate="onClickValidate"
   >
     <!-- Dynamic component content here -->
 
-    <!-- Customise footer with Cancel and Validate btns -->
+    <!-- Customise footer with Cancel and Validate btns, WARNING: some sub component may override this slots -->
     <template v-slot:footer>
       <div class="mt-3 text-right">
         <button

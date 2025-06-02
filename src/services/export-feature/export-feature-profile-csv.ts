@@ -2,7 +2,7 @@ import { Feature } from 'ol'
 import { Geometry } from 'ol/geom'
 import { toLonLat } from 'ol/proj'
 
-import { DrawnFeature } from '@/services/draw/drawn-feature'
+import { DrawnFeature } from '@/services/ol-feature/ol-feature-drawn'
 import { ExportFeature } from './export-feature'
 import { PROJECTION_LUX } from '@/composables/map/map.composable'
 import {
