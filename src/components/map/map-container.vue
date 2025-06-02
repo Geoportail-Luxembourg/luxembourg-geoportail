@@ -54,14 +54,14 @@ olMap.addInteraction(dragRotateInteraction)
 // add draw layer after map init to allow restoring draw features (not in v3 for now)
 // TODO: remove v4_standalone condition or move calls outside of it, once v4 draw or feature info is used in v3
 if (props.v4_standalone) {
+  // Initialise Draw functionality/create layer for Drawings
   useDrawNotifications()
   useEdit()
-  const draw = useDraw()
-  draw.addDrawLayer(olMap)
-  // initialise map listeners for feature selection
+  useDraw().addDrawLayer(olMap)
+  // Initialise map listeners for feature selection
   useDrawSelect()
-  const featureInfo = useFeatureInfo()
-  featureInfo.init()
+  // Initialise Feature Info
+  useFeatureInfo().init()
 }
 
 const DEFAULT_EXTENT = [

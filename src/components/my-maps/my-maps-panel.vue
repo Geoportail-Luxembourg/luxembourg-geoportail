@@ -6,9 +6,9 @@ import { storeToRefs } from 'pinia'
 import SidePanelLayout from '@/components/common/side-panel-layout.vue'
 import DrawPanel from '@/components/draw/draw-panel.vue'
 import { useAlertNotificationsStore } from '@/stores/alert-notifications.store'
+import { AlertNotificationType } from '@/stores/alert-notifications.store.model'
 import { useAppStore } from '@/stores/app.store'
 import { useUserManagerStore } from '@/stores/user-manager.store'
-import { AlertNotificationType } from '@/stores/alert-notifications.store.model'
 
 import MyMapsEditForm from './my-map-edit-form.vue'
 
