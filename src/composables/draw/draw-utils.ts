@@ -59,11 +59,10 @@ function convertPolygonFeatureToCircle(feature: DrawnFeature): DrawnFeature {
 }
 
 function changeLineOrientation(feature: DrawnFeature) {
-  const coordinates = (feature.getGeometry() as LineString)
+  const reversedCoordinates = (<LineString>feature.getGeometry())
     .getCoordinates()
     .reverse()
-  const reversedGeometry = new LineString(coordinates)
-  feature.setGeometry(reversedGeometry)
+  feature.setGeometry(new LineString(reversedCoordinates))
 }
 
 export {

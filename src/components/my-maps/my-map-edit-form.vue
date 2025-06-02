@@ -18,7 +18,7 @@ const modalOpened = ref(props.modalOpened)
 <template>
   <ModalDialog
     v-if="true"
-    :title="t('Title and description of the map', { ns: 'client' })"
+    :title="t('Title and description of the map')"
     @close="modalOpened = false"
   >
     <template v-slot:content>

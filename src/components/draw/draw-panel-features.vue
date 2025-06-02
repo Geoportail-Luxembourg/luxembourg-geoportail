@@ -27,21 +27,19 @@ function ontoggleEditFeature(featureId: string | number, isEditing: boolean) {
   editingFeatureId.value = isEditing ? featureId : undefined
 }
 
+function onSubmitNewConcentricCircle(payload: {
+  baseFeature: DrawnFeature
+  radius: number
+}) {
+  const { baseFeature, radius } = payload
+  const newDrawnFeature = useDraw().createConcentricCircle(baseFeature, radius)
+
+  drawStore.addDrawnFeature(newDrawnFeature)
+}
+
 function sortFunction(elements: HTMLCollection) {
   const featureIds = [...elements].map(val => val.id)
   drawStore.reorderFeatures(featureIds)
-}
-
-function onSubmitNewConcentricCircle(payload: {
-  radius: number
-  baseFeature: DrawnFeature
-}) {
-  const newDrawnFeature = useDraw().createConcentricCircle(
-    payload.baseFeature,
-    payload.radius
-  )
-
-  drawStore.addDrawnFeature(newDrawnFeature)
 }
 
 onMounted(() => {

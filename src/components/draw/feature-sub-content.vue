@@ -179,7 +179,7 @@ function onClickValidate(payload: MouseEvent | FeatureConcentricCirclePayload) {
   >
     <!-- Dynamic component content here -->
 
-    <!-- Customise footer with Cancel and Validate btns, WARNING: some sub component may override this slots -->
+    <!-- Customise footer with Cancel and Validate btns, WARNING: some sub component may override this slot -->
     <template v-slot:footer>
       <div class="mt-3 text-right">
         <button
