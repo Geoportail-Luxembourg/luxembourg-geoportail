@@ -35,6 +35,7 @@ import MeteoluxGrTemplate from './templates/meteolux-gr-template.vue'
 import MymapsTemplate from './templates/mymaps-template.vue'
 import MoTemplate from './templates/mo-template.vue'
 import Ng95Template from './templates/ng95-template.vue'
+import Ng95NewTemplate from './templates/ng95-new-template.vue'
 import PcnPagTemplate from './templates/pcn-pag-template.vue'
 // import PdsTemplate from './templates/pds-template.vue'
 import PdsreportTemplate from './templates/pdsreport-template.vue'
@@ -90,6 +91,7 @@ const templates = {
   'mymaps.html': MymapsTemplate,
   'mo.html': MoTemplate,
   'ng95.html': Ng95Template,
+  'ng95_new.html': Ng95NewTemplate,
   'parcels.html': ParcelsTemplate,
   'pcn_pag.html': PcnPagTemplate,
   // 'pds.html': PdsTemplate,
