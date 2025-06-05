@@ -39,6 +39,7 @@ import Ng95NewTemplate from './templates/ng95-new-template.vue'
 import NpOurPoiTemplate from './templates/npour-poi-template.vue'
 import NpOurWoAddressPoiTemplate from './templates/npour-wo-address-poi-template.vue'
 import PcnPagTemplate from './templates/pcn-pag-template.vue'
+import PagTemplate from './templates/pag-template.vue'
 // import PdsTemplate from './templates/pds-template.vue'
 import PdsreportTemplate from './templates/pdsreport-template.vue'
 import PegelTemplate from './templates/pegel-template.vue'
@@ -98,6 +99,7 @@ const templates = {
   'npour_poi_wo_address.html': NpOurWoAddressPoiTemplate,
   'parcels.html': ParcelsTemplate,
   'pcn_pag.html': PcnPagTemplate,
+  'pag.html': PagTemplate,
   // 'pds.html': PdsTemplate,
   'pdsreport.html': PdsreportTemplate,
   'pegel.html': PegelTemplate,
