@@ -41,8 +41,7 @@ import NpOurWoAddressPoiTemplate from './templates/npour-wo-address-poi-template
 import PcnPagTemplate from './templates/pcn-pag-template.vue'
 import PagTemplate from './templates/pag-template.vue'
 import PagStagingTemplate from './templates/pag-staging-template.vue'
-// import PdsTemplate from './templates/pds-template.vue'
-import PdsreportTemplate from './templates/pdsreport-template.vue'
+import PdsTemplate from './templates/pds-template.vue'
 import PegelTemplate from './templates/pegel-template.vue'
 // import PoiEatTemplate from './templates/poi-eat-template.vue'
 // import PoiTemplate from './templates/poi-template.vue'
@@ -102,8 +101,7 @@ const templates = {
   'pcn_pag.html': PcnPagTemplate,
   'pag.html': PagTemplate,
   'pag_staging.html': PagStagingTemplate,
-  // 'pds.html': PdsTemplate,
-  'pdsreport.html': PdsreportTemplate,
+  'pds.html': PdsTemplate,
   'pegel.html': PegelTemplate,
   'remembrements.html': RemembrementsTemplate,
   'sentier_nature.html': SentierNatureTemplate,
