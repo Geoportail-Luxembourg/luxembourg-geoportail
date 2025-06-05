@@ -25,6 +25,26 @@ export function hasAttributes(feature: FeatureJSON): boolean {
     Object.keys(feature.attributes).length > 0
   )
 }
+/**
+ * Check if the feature has a property with the given key and a minimum length.
+ * @param key The property key to check.
+ * @param feature The feature to check against.
+ * @param minLength The minimum length of the property value (default is 0).
+ * @returns True if the property exists and its value length is greater than minLength, false otherwise.
+ * */
+export function hasProperty(
+  key: string,
+  feature: FeatureJSON,
+  minLength: number
+): boolean {
+  if (minLength == undefined) {
+    minLength = 0
+  }
+  return (
+    key in feature.attributes &&
+    ('' + feature.attributes[key]).length > minLength
+  )
+}
 
 export function isEmptyString(value: string | undefined | null): boolean {
   return value === undefined || value === null || value.length === 0
