@@ -6,7 +6,6 @@ import {
 import InfoFeatureLayout from '../info-feature-layout.vue'
 import { useTranslation } from 'i18next-vue'
 import { hasProperty } from './template-utilities'
-import ProfileFeatureInfo from '../profile-feature-info.vue'
 
 defineProps<{
   layers: FeatureInfoJSON
@@ -77,43 +76,6 @@ h3,
         >{{ feature.attributes.descr_nl }}</span
       >
 
-      <span v-if="hasProperty('number', feature, 0)"
-        >{{ feature.attributes.number }},</span
-      >
-      <span v-if="hasProperty('street', feature, 0)">{{
-        feature.attributes.street
-      }}</span>
-      <span v-if="hasProperty('town', feature, 0)"
-        >{{ feature.attributes.zip }} {{ feature.attributes.town }}</span
-      >
-      <span v-if="hasProperty('phone', feature, 1)"
-        ><i class="fa fa-phone" aria-hidden="true"></i>
-        <span>{{ feature.attributes.phone }}</span></span
-      >
-      <span v-if="hasProperty('fax', feature, 1)"
-        ><i class="fa fa-fax" aria-hidden="true"></i>
-        <span>{{ feature.attributes.fax }}</span></span
-      >
-      <span v-if="hasProperty('email', feature, 1)"
-        ><i class="fa fa-at" aria-hidden="true"></i>
-        <span>{{ feature.attributes.email }}</span></span
-      >
-
-      <span
-        v-if="hasProperty('website', feature, 3) && (feature.attributes.website as string).startsWith('http')"
-        ><a target="_blank" :href="feature.attributes.website as string">{{
-          feature.attributes.website
-        }}</a></span
-      >
-      <span
-        v-if="hasProperty('website', feature, 3) && !(feature.attributes.website as string).startsWith('http')"
-        ><a
-          target="_blank"
-          :href="'http://'+(feature.attributes.website as string)"
-          >{{ feature.attributes.website }}</a
-        ></span
-      >
-
       <span
         v-if="i18next.language != 'fr' && hasProperty('link_de', feature, 3)"
         ><a target="_blank" :href="feature.attributes.link_de as string">{{
@@ -133,11 +95,6 @@ h3,
         <span>{{ t('Longueur du sentier :') }}</span>
         <span>{{ feature.attributes['longueur sentier'] }}</span>
       </div>
-
-      <ProfileFeatureInfo
-        :feature="feature"
-        @export="payload => $emit('export', payload)"
-      />
     </template>
   </InfoFeatureLayout>
 </template>
