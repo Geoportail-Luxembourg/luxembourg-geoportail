@@ -3,14 +3,11 @@ import { storeToRefs } from 'pinia'
 import Draw from 'ol/interaction/Draw'
 import VectorSource from 'ol/source/Vector'
 import OlMap from 'ol/Map'
-import { Circle } from 'ol/geom'
 
-import useMap from '@/composables/map/map.composable'
-import { setCircleRadius } from '@/services/common/measurement.utils'
 import { useDrawStore } from '@/stores/draw.store'
 import { DrawnFeature } from '@/services/ol-feature/ol-feature-drawn'
-import useDrawInteraction from './draw-interaction.composable'
 import { olLayerFactoryService } from '@/services/ol-layer/ol-layer-factory.service'
+import useDrawInteraction from './draw-interaction.composable'
 
 type DrawInteractions = {
   drawPoint: Draw
@@ -20,10 +17,15 @@ type DrawInteractions = {
   drawPolygon: Draw
 }
 
+/**
+ * This composable is mainly used to initialize the drawing functionality.
+ * It sets watchers draw states and interactions, thus it should only be called once in the whole app.
+ * @returns addDrawLayer()
+ */
 export default function useDraw() {
   const drawStore = useDrawStore()
-  const { drawStateActive, drawnFeatures } = storeToRefs(drawStore)
-  const map = useMap().getOlMap()
+  const { drawStateActive, drawnFeatures, currentDrawInteraction } =
+    storeToRefs(drawStore)
   const drawLayer = olLayerFactoryService.createOlLayerDrawnFeatures()
   const drawInteractions = {
     drawPoint: useDrawInteraction({ type: 'Point' }).drawInteraction,
@@ -36,10 +38,12 @@ export default function useDraw() {
   // listener to synchronize ol interaction active states with store state
   watch(drawStateActive, drawStateActive => {
     Object.keys(drawInteractions).forEach(key => {
+      const interaction = drawInteractions[key as keyof DrawInteractions]
       if (`${[key as keyof DrawInteractions]}` === `${drawStateActive}`) {
-        drawInteractions[key as keyof DrawInteractions].setActive(true)
+        interaction.setActive(true)
+        currentDrawInteraction.value = interaction
       } else {
-        drawInteractions[key as keyof DrawInteractions].setActive(false)
+        interaction.setActive(false)
       }
     })
   })
@@ -60,14 +64,6 @@ export default function useDraw() {
     map.addLayer(drawLayer)
   }
 
-  function createConcentricCircle(baseFeature: DrawnFeature, radius: number) {
-    const newFeatureCircle = DrawnFeature.clone(baseFeature)
-    const geometry = <Circle>newFeatureCircle.getGeometry()
-    setCircleRadius(geometry, radius, map)
-
-    return newFeatureCircle
-  }
-
   function addFeaturesToSource(features: DrawnFeature[]) {
     const source = <VectorSource>drawLayer.getSource()
     source?.clear()
@@ -75,7 +71,6 @@ export default function useDraw() {
   }
 
   return {
-    createConcentricCircle,
     addDrawLayer,
   }
 }

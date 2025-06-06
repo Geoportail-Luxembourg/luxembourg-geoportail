@@ -3,13 +3,14 @@ import { onMounted } from 'vue'
 import { storeToRefs } from 'pinia'
 
 import useSortable from '@/composables/sortable'
-import useDraw from '@/composables/draw/draw.composable'
+import useDrawUtils from '@/composables/draw/draw-utils.composable'
 import { useDrawStore } from '@/stores/draw.store'
 import { DrawnFeature } from '@/services/ol-feature/ol-feature-drawn'
 
 import FeatureItem from './feature-item.vue'
 
 const drawStore = useDrawStore()
+const drawUtils = useDrawUtils()
 const {
   activeFeatureId,
   editingFeatureId,
@@ -32,7 +33,7 @@ function onSubmitNewConcentricCircle(payload: {
   radius: number
 }) {
   const { baseFeature, radius } = payload
-  const newDrawnFeature = useDraw().createConcentricCircle(baseFeature, radius)
+  const newDrawnFeature = drawUtils.createConcentricCircle(baseFeature, radius)
 
   drawStore.addDrawnFeature(newDrawnFeature)
 }

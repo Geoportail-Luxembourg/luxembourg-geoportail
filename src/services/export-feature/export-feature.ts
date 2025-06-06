@@ -2,7 +2,7 @@ import { Feature, Map } from 'ol'
 import { Projection } from 'ol/proj'
 import { Geometry, GeometryCollection, MultiLineString } from 'ol/geom'
 
-import { convertCircleFeatureToPolygon } from '@/composables/draw/draw-utils'
+import { convertCircleFeatureToPolygon } from '@/composables/draw/draw-utils.composable'
 import { PROJECTION_WGS84 } from '@/composables/map/map.composable'
 import { DrawnFeature } from '@/services/ol-feature/ol-feature-drawn'
 import { downloadFile, sanitizeFilename } from '@/services/utils'

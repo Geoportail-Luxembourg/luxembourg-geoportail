@@ -1,5 +1,6 @@
 import { defineStore } from 'pinia'
 import { ref, Ref } from 'vue'
+import { Draw } from 'ol/interaction'
 
 import { DrawnFeature } from '@/services/ol-feature/ol-feature-drawn'
 import { DrawStateActive, EditStateActive } from './draw.store.model'
@@ -11,6 +12,27 @@ export const useDrawStore = defineStore('draw', () => {
   const editStateActive = ref<EditStateActive>(undefined)
   const drawnFeatures = ref<DrawnFeature[]>([])
   const featureEditionDocked = ref(false)
+  const currentDrawInteraction = ref<Draw | undefined>(undefined)
+
+  function toggleDrawPoint() {
+    toggleDrawActiveState('drawPoint')
+  }
+
+  function toggleDrawLabel() {
+    toggleDrawActiveState('drawLabel')
+  }
+
+  function toggleDrawLine() {
+    toggleDrawActiveState('drawLine')
+  }
+
+  function toggleDrawPolygon() {
+    toggleDrawActiveState('drawPolygon')
+  }
+
+  function toggleDrawCircle() {
+    toggleDrawActiveState('drawCircle')
+  }
 
   function toggleDrawActiveState(newState: DrawStateActive) {
     // allow draw of different geom type after edit, but not same type
@@ -43,6 +65,13 @@ export const useDrawStore = defineStore('draw', () => {
       editingFeatureId.value = undefined
     }
     editStateActive.value = newState
+  }
+
+  function activateEditLine(feature?: DrawnFeature) {
+    if (feature) {
+      editingFeatureId.value = feature.id
+      // Nb. the edit composable will activate the state itself in his own watcher
+    }
   }
 
   function addDrawnFeature(feature: DrawnFeature) {
@@ -96,11 +125,18 @@ export const useDrawStore = defineStore('draw', () => {
     editStateActive,
     drawnFeatures,
     featureEditionDocked,
+    currentDrawInteraction,
     removeFeature,
     reorderFeatures,
+    toggleDrawCircle,
+    toggleDrawLabel,
+    toggleDrawLine,
+    toggleDrawPolygon,
+    toggleDrawPoint,
     toggleDrawActiveState,
     setDrawActiveState,
     setEditActiveState,
+    activateEditLine,
     addDrawnFeature,
     updateDrawnFeature,
     setDrawnFeatures,

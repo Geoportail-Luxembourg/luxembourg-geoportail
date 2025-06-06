@@ -1,7 +1,7 @@
 import {
   convertCircleFeatureToPolygon,
   convertPolygonFeatureToCircle,
-} from '@/composables/draw/draw-utils'
+} from '@/composables/draw/draw-utils.composable'
 import featureHash from './utils/FeatureHash'
 import { DrawnFeature } from '@/services/ol-feature/ol-feature-drawn'
 
