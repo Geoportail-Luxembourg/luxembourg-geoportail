@@ -28,7 +28,16 @@ function closePreviewMesurage() {
   selectedMeasurement.value = undefined
 }
 </script>
-
+<style scoped>
+h2 {
+  font-size: 40px;
+  line-height: 1;
+  padding: 12px 0 12px 12px;
+  margin: 0;
+  text-transform: uppercase;
+  color: #fff;
+}
+</style>
 <template>
   <InfoFeatureMeasurementModale
     v-if="selectedMeasurement"
@@ -60,35 +69,36 @@ function closePreviewMesurage() {
           feature.attributes.PF.farmingTypes &&
           Object.keys(feature.attributes.PF.farmingTypes).length > 0
         "
+        class="flex"
       >
         <span>{{ t('Nature') }}</span> :
         {{
-          translateAndjoin(
-            feature.attributes.PF.farmingTypes as string[],
-            'pf'
-          )
-        }}<br />
+          translateAndjoin(feature.attributes.PF.farmingTypes as string[], 'pf')
+        }}
       </div>
       <div
         v-if="
           feature.attributes.PF.occupations &&
           Object.keys(feature.attributes.PF.occupations).length > 0
         "
+        class="flex"
       >
         <span>{{ t('Occupation') }}</span> :
         {{
           translateAndjoin(feature.attributes.PF.occupations as string[], 'pf')
-        }}<br />
+        }}
       </div>
-      <span>{{ t('Dernier mesurage') }}</span> :
-      {{ feature.attributes.PF.measurementNumber }}<br />
+      <div class="flex">
+        <span>{{ t('Dernier mesurage') }}</span> :
+        {{ feature.attributes.PF.measurementNumber }}
+      </div>
       <div v-if="isThemeAvailable('go')">
         <a
-          class="lux-btn"
+          class="lux-btn inline-block mb-1"
           :href="`https://shop.geoportail.lu/Portail/express_mesurage/?ids=['${feature.attributes.textstring}']&camefrom=mapv3_go&lang=${i18next.language}`"
           target="_blank"
           >{{ t('Constitution de dossier de mesurage') }}</a
-        ><br />
+        >
       </div>
       <div
         v-if="
@@ -98,11 +108,11 @@ function closePreviewMesurage() {
         "
       >
         <a
-          class="lux-btn"
+          class="lux-btn inline-block mb-1"
           :href="`https://xxpfo.intranet.etat.lu/xxpfoi/detail_parcelle.do?noParcelle=${feature.attributes.textstring}`"
           target="_blank"
           >{{ t('Ouvrir la PF') }}</a
-        ><br />
+        >
       </div>
       <span>{{ t('Lien vers les mesurages') }}</span> :
       <ul class="list-disc pl-6">
@@ -136,13 +146,12 @@ function closePreviewMesurage() {
           </li>
         </template>
       </ul>
-      <br />
       <a
         class="lux-btn inline-block mb-1"
         :href="`https://historique.geoportail.lu/?id=${feature.attributes.textstring}`"
         target="_blank"
         >{{ t('Historique de la parcelle') }}</a
-      ><br />
+      >
       <a
         class="lux-btn inline-block mb-1"
         :href="`https://commande.geoportail.lu/?ids=['${feature.attributes.textstring}']&camefrom=mapv3&lang=${i18next.language}`"

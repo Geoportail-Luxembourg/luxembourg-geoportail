@@ -98,6 +98,8 @@ const templates = {
   'npour_poi.html': NpOurPoiTemplate,
   'npour_poi_wo_address.html': NpOurWoAddressPoiTemplate,
   'parcels.html': ParcelsTemplate,
+  'parcels_prof.html': ParcelsTemplate,
+  'parcels_go.html': ParcelsTemplate,
   'pcn_pag.html': PcnPagTemplate,
   'pag.html': PagTemplate,
   'pag_staging.html': PagStagingTemplate,
