@@ -28,6 +28,7 @@ import DefaultTemplate from './templates/default-template.vue'
 import DefaultTableTemplate from './templates/default-table-template.vue'
 import DefaultTableNoPrefixTemplate from './templates/default-table-no-prefix-template.vue'
 import FlikTemplate from './templates/flik-template.vue'
+import ForageVirtuelTemplate from './templates/forage-virtuel-template.vue'
 import LignesBusTemplate from './templates/lignes-bus-template.vue'
 import MeteoTemplate from './templates/meteo-template.vue'
 import MeteoluxEuropeTemplate from './templates/meteolux-europe-template.vue'
@@ -87,6 +88,7 @@ const templates = {
   'default_table.html': DefaultTableTemplate,
   'default_table_no_prefix.html': DefaultTableNoPrefixTemplate,
   'flik.html': FlikTemplate,
+  'forage_virtuel.html': ForageVirtuelTemplate,
   'lignes_bus.html': LignesBusTemplate,
   'meteo.html': MeteoTemplate,
   'meteolux_europe.html': MeteoluxEuropeTemplate,
