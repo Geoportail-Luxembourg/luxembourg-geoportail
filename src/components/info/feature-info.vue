@@ -137,6 +137,10 @@ function onExport(payload: { feature: FeatureJSON; format: ExportFormat }) {
     true
   )
 }
+function onExportWrapper(...args: unknown[]) {
+  const [payload] = args
+  onExport(payload as { feature: FeatureJSON; format: 'kml' | 'gpx' })
+}
 </script>
 <template>
   <!-- TODO: migrate modal-->
@@ -168,7 +172,7 @@ function onExport(payload: { feature: FeatureJSON; format: ExportFormat }) {
       :is="getTemplateComponent(layers.template)"
       :layers="layers"
       :currentUrl="currentUrl"
-      @export="onExport"
+      @export="onExportWrapper"
     />
   </div>
 </template>
