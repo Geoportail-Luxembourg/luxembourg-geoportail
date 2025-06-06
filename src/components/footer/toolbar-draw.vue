@@ -9,7 +9,14 @@ import { onBeforeUnmount } from 'vue'
 
 const { t } = useTranslation()
 const drawStore = useDrawStore()
-const { toggleDrawActiveState, setDrawActiveState } = drawStore
+const {
+  toggleDrawCircle,
+  toggleDrawLabel,
+  toggleDrawLine,
+  toggleDrawPolygon,
+  toggleDrawPoint,
+  setDrawActiveState,
+} = drawStore
 const { drawStateActive, editStateActive } = storeToRefs(drawStore)
 
 onBeforeUnmount(() => {
@@ -27,7 +34,7 @@ onBeforeUnmount(() => {
           :active="
             drawStateActive === 'drawPoint' || editStateActive === 'editPoint'
           "
-          @click="() => toggleDrawActiveState('drawPoint')"
+          @click="toggleDrawPoint"
           data-cy="drawPointButton"
         >
         </button-text>
@@ -38,7 +45,7 @@ onBeforeUnmount(() => {
           :active="
             drawStateActive === 'drawLabel' || editStateActive === 'editLabel'
           "
-          @click="() => toggleDrawActiveState('drawLabel')"
+          @click="toggleDrawLabel"
           data-cy="drawLabelButton"
         >
         </button-text>
@@ -49,7 +56,7 @@ onBeforeUnmount(() => {
           :active="
             drawStateActive === 'drawLine' || editStateActive === 'editLine'
           "
-          @click="() => toggleDrawActiveState('drawLine')"
+          @click="toggleDrawLine"
           data-cy="drawLineButton"
         >
         </button-text>
@@ -61,7 +68,7 @@ onBeforeUnmount(() => {
             drawStateActive === 'drawPolygon' ||
             editStateActive === 'editPolygon'
           "
-          @click="() => toggleDrawActiveState('drawPolygon')"
+          @click="toggleDrawPolygon"
           data-cy="drawPolygonButton"
         >
         </button-text>
@@ -72,7 +79,7 @@ onBeforeUnmount(() => {
           :active="
             drawStateActive === 'drawCircle' || editStateActive === 'editCircle'
           "
-          @click="() => toggleDrawActiveState('drawCircle')"
+          @click="toggleDrawCircle"
           data-cy="drawCircleButton"
         >
         </button-text>

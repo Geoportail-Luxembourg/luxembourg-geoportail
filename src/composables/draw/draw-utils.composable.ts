@@ -1,11 +1,14 @@
-import { Map } from 'ol'
+import { Feature, Map } from 'ol'
 import { Circle, LineString } from 'ol/geom'
 import Polygon, { fromCircle } from 'ol/geom/Polygon'
 import { getDistance } from 'ol/sphere'
 import { toLonLat } from 'ol/proj'
+
 import { DrawnFeature } from '@/services/ol-feature/ol-feature-drawn'
 import { setCircleRadius } from '@/services/common/measurement.utils'
+import { useDrawStore } from '@/stores/draw.store'
 import useMap from '../map/map.composable'
+import { storeToRefs } from 'pinia'
 
 // TODO 3D
 // import { transform } from 'ol/proj'
@@ -58,7 +61,7 @@ function convertPolygonFeatureToCircle(feature: DrawnFeature): DrawnFeature {
   return feature
 }
 
-function changeLineOrientation(feature: DrawnFeature) {
+function lineChangeOrientation(feature: DrawnFeature) {
   const reversedCoordinates = (<LineString>feature.getGeometry())
     .getCoordinates()
     .reverse()
@@ -66,7 +69,39 @@ function changeLineOrientation(feature: DrawnFeature) {
 }
 
 export {
-  changeLineOrientation,
+  lineChangeOrientation,
   convertCircleFeatureToPolygon,
   convertPolygonFeatureToCircle,
+}
+
+export default function useDrawUtils() {
+  const drawStore = useDrawStore()
+  const { activateEditLine } = drawStore
+  const { currentDrawInteraction } = storeToRefs(drawStore)
+  const map = useMap().getOlMap()
+
+  function createConcentricCircle(baseFeature: DrawnFeature, radius: number) {
+    const newFeatureCircle = DrawnFeature.clone(baseFeature)
+    const geometry = <Circle>newFeatureCircle.getGeometry()
+    setCircleRadius(geometry, radius, map)
+
+    return newFeatureCircle
+  }
+
+  function continueLine(feature: DrawnFeature) {
+    activateEditLine(feature)
+
+    // TODO: not working, maybe because of the watcher?
+    // TODO: double click not working correctly
+    // TODO: dont do a addFeaturesToSource
+    if (currentDrawInteraction.value) {
+      currentDrawInteraction.value?.setActive(true)
+      currentDrawInteraction.value?.extend(<Feature<LineString>>feature)
+    }
+  }
+
+  return {
+    createConcentricCircle,
+    continueLine,
+  }
 }

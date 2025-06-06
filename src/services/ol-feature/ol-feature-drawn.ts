@@ -65,6 +65,7 @@ export class DrawnFeature extends Feature {
   }
 
   clone() {
+    // TODO: use super.clone()?
     const clone = new DrawnFeature(
       this,
       this.hasProperties() ? this.getProperties() : undefined

@@ -3,7 +3,7 @@ import { computed, inject } from 'vue'
 import { useTranslation } from 'i18next-vue'
 
 import RangeInput from '@/components/common/range-input/range-input.vue'
-import { changeLineOrientation } from '@/composables/draw/draw-utils'
+import { lineChangeOrientation } from '@/composables/draw/draw-utils.composable'
 import { DrawnFeature } from '@/services/ol-feature/ol-feature-drawn'
 import { DrawnFeatureStyleShape, Symboltype } from '@/stores/draw.store.model'
 
@@ -73,7 +73,7 @@ function onShowDirection(event: Event) {
 }
 
 function onClickChangeOrientation() {
-  changeLineOrientation(feature)
+  lineChangeOrientation(feature)
 }
 
 function onClickChangeLineStyle(style: string) {
