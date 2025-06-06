@@ -89,7 +89,7 @@ h3,
         }}</a></span
       >
       <span v-if="hasProperty('Bild', feature, 3)">
-        <img :src="feature.attributes.Bild" width="250"
+        <img :src="feature.attributes.Bild as string" width="250"
       /></span>
       <div v-if="hasProperty('longueur sentier', feature, 0)">
         <span>{{ t('Longueur du sentier :') }}</span>

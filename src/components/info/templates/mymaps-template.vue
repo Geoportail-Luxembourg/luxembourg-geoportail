@@ -3,32 +3,11 @@ import { useTranslation } from 'i18next-vue'
 import { FeatureInfoJSON } from '@/services/info/feature-info.model'
 import InfoFeatureLayout from '../info-feature-layout.vue'
 import ProfileFeatureInfo from '../profile-feature-info.vue'
-
+import { getMymapsPath, getQRUrlForMyMaps } from '@/services/url.utils'
 defineProps<{
   layers: FeatureInfoJSON
   currentUrl?: string
 }>()
-const getQrCodeForMymapsUrl = function (mapId: string) {
-  const qrServiceUrl = import.meta.env.VITE_QR_URL
-
-  if (mapId !== undefined) {
-    return qrServiceUrl + '?url=https://map.geoportail.lu?map_id=' + mapId
-  }
-  return ''
-}
-const getMymapsPath = function (resource: string) {
-  const mymapsImageUrl = import.meta.env.VITE_MYMAPS_IMAGE_URL
-  if (resource) {
-    if (resource.startsWith('data:image')) {
-      return resource
-    }
-    if (resource.startsWith('/') && mymapsImageUrl.endsWith('/')) {
-      resource = '.' + resource
-    }
-    return mymapsImageUrl + resource
-  }
-  return ''
-}
 const { t } = useTranslation()
 </script>
 
@@ -37,13 +16,18 @@ const { t } = useTranslation()
     <template #feature-content="{ feature }">
       <h4>{{ feature.attributes.sentier }}</h4>
       <a
-        v-if="feature.attributes.image"
-        :href="getMymapsPath(feature.attributes.image)"
+        v-if="
+          feature.attributes.image && feature.attributes.image.trim() !== ''
+        "
+        :href="getMymapsPath(feature.attributes.image as string)"
         target="_blank"
       >
         <img
-          v-if="feature.attributes.thumbnail"
-          :href="getMymapsPath(feature.attributes.thumbnail)" /></a
+          v-if="
+            feature.attributes.thumbnail &&
+            feature.attributes.thumbnail.trim() !== ''
+          "
+          :src="getMymapsPath(feature.attributes.thumbnail as string)" /></a
       ><br />
       <span v-if="feature.attributes.sentier"
         ><span>{{ t('sentier') }}</span> : {{ feature.attributes.sentier }}<br
@@ -65,13 +49,16 @@ const { t } = useTranslation()
         :feature="feature"
         @export="payload => $emit('export', payload)"
       />
-      <img :src="getQrCodeForMymapsUrl(feature.attributes.map_id)" /><br />
+      <img
+        :src="getQRUrlForMyMaps(feature.attributes.map_id as string)"
+      /><br />
       <a
         class="fid-link no-print"
-        href="?map_id=feature.attributes.map_id"
+        :href="`?map_id=${feature.attributes.map_id}`"
         target="_blank"
         >{{ t('Lien vers la carte') }}</a
-      ><br />
+      >
+      <br />
     </template>
   </InfoFeatureLayout>
 </template>
