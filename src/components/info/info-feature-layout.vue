@@ -26,7 +26,7 @@ const { t } = useTranslation()
 
 <template>
   <!-- Layer title -->
-  <h1 class="lux-poi-title">
+  <h1 class="lux-poi-title" data-cy="defaultTemplateTitle">
     {{ t(layers.layerLabel) }}
   </h1>
 
@@ -38,6 +38,7 @@ const { t } = useTranslation()
     v-for="feature in layers.features"
     :key="feature.id"
     class="lux-feature-info"
+    data-cy="defaultTemplateAttributes"
   >
     <!-- Slot content for feature to be replaced by template -->
     <slot name="feature-content" :feature="feature">
@@ -47,6 +48,7 @@ const { t } = useTranslation()
     <!-- Direct link to the feature -->
     <div v-if="hasValidFID(feature)">
       <a
+        data-cy="defaultTemplateLink"
         class="print:hidden"
         :href="getDirectLink(feature, currentUrl)"
         target="_blank"
