@@ -114,7 +114,7 @@ describe('Feature Info', () => {
         cy.get('[data-cy="defaultTemplateAttributes"]')
           .first()
           .children('div')
-          .should('have.length', '5')
+          .should('have.length', '4')
         cy.get('[data-cy="defaultTemplateLink"]')
           .first()
           .should('contain.text', 'Lien direct vers cet objet')
