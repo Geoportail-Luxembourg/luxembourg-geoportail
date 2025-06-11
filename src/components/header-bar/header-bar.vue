@@ -9,6 +9,7 @@ import { useUserManagerStore } from '@/stores/user-manager.store'
 import AuthForm from '@/components/auth/auth-form.vue'
 import DropdownContent from '@/components/common/dropdown-content.vue'
 import LanguageSelector from '@/components/header-bar/language-selector.vue'
+import SearchDropdown from '@/components/search/search-dropdown.vue'
 
 const { t } = useTranslation()
 const appStore = useAppStore()
@@ -46,7 +47,9 @@ function onToggleDropdownAuth(isOpen: boolean) {
     <div class="flex-2 p-[5px]">
       <img src="@/assets/images/gov-light.png" />
     </div>
-    <div class="grow text-center">search</div>
+    <div class="grow flex justify-center items-center">
+      <search-dropdown :placeholder="'Search for items...'" />
+    </div>
     <div>
       <ul class="h-full flex">
         <!-- Theme selector -->
