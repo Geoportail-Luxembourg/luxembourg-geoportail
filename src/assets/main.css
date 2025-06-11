@@ -544,7 +544,7 @@
   .lux-feature-info label {
     @apply font-bold mb-[5px];
   }
-  .lux-feature-info a {
+  .lux-feature-info a:not(.lux-btn) {
     @apply text-black underline;
   }
   .lux-feature-info-export {

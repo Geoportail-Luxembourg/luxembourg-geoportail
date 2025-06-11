@@ -1,122 +1,64 @@
 <script setup lang="ts">
-import {
-  FeatureInfoJSON,
-  FeatureJSON,
-} from '@/services/info/feature-info.model'
 import { useTranslation } from 'i18next-vue'
-import { hasAttributes, hasValidFID } from './template-utilities'
-import ProfileFeatureInfo from '@/components/info/profile-feature-info.vue'
+import { FeatureInfoJSON } from '@/services/info/feature-info.model'
+import InfoFeatureLayout from '../info-feature-layout.vue'
+import ProfileFeatureInfo from '../profile-feature-info.vue'
 import { getMymapsPath, getQRUrlForMyMaps } from '@/services/url.utils'
-
-defineProps({
-  layers: {
-    type: Object as () => FeatureInfoJSON,
-    required: true,
-  },
-})
-defineEmits<{
-  (e: 'export', payload: { feature: FeatureJSON; format: 'kml' | 'gpx' }): void
+defineProps<{
+  layers: FeatureInfoJSON
+  currentUrl?: string
 }>()
 const { t } = useTranslation()
-const currentUrl = window.location.href
 </script>
+
 <template>
-  <div class="flex flex-col">
-    <div data-cy="mymapsTemplate">
-      <h2 class="lux-poi-title" data-cy="mymapsTemplateTitle">
-        {{ t(layers.layerLabel) }}
-      </h2>
-      <div
-        v-for="feature in layers.features"
-        :key="feature.id"
-        class="lux-feature-info"
+  <InfoFeatureLayout :layers="layers" :currentUrl="currentUrl">
+    <template #feature-content="{ feature }">
+      <h4>{{ feature.attributes.sentier }}</h4>
+      <a
+        v-if="
+          feature.attributes.image && feature.attributes.image.trim() !== ''
+        "
+        :href="getMymapsPath(feature.attributes.image as string)"
+        target="_blank"
       >
-        <h4 v-if="feature.attributes.sentier">
-          {{ t(feature.attributes.sentier) }}
-        </h4>
-
-        <a
-          v-if="feature.attributes.image && feature.attributes.thumbnail"
-          :href="getMymapsPath(feature.attributes.image)"
-          target="_blank"
-        >
-          <img :src="getMymapsPath(feature.attributes.thumbnail)"
-        /></a>
-
-        <div v-if="feature.attributes.sentier">
-          <label>{{ t('sentier') }}</label>
-          <span v-dompurify-html="feature.attributes.sentier"></span>
-        </div>
-
-        <div v-if="feature.attributes.name">
-          <label>{{ t('name') }}: </label>
-          <span v-dompurify-html="feature.attributes.name"></span>
-        </div>
-
-        <div v-if="feature.attributes.description">
-          <label>{{ t('description') }}: </label>
-          <span v-dompurify-html="feature.attributes.description"></span>
-        </div>
-
-        <div v-if="feature.attributes.length">
-          <label>{{ t('length') }}: </label>
-          <span v-dompurify-html="feature.attributes.length"> Km</span>
-          <!-- TODO use formatter -->
-        </div>
-
-        <!-- Profile -->
-        <div class="query-profile" v-if="layers.has_profile">
-          <profile-feature-info :feature="feature" />
-        </div>
-        <div v-if="layers.has_profile" class="no-print">
-          <button
-            class="lux-feature-info-export"
-            @click="$emit('export', { feature, format: 'kml' })"
-          >
-            {{ t('Exporter KMl') }}
-          </button>
-          <button
-            class="lux-feature-info-export"
-            @click="$emit('export', { feature, format: 'gpx' })"
-          >
-            {{ t('Exporter GPX') }}
-          </button>
-        </div>
-
-        <div v-if="!hasAttributes(feature)" class="no-print">
-          <span>{{
-            t('Aucune information disponible pour cette couche')
-          }}</span>
-        </div>
-
-        <br />
         <img
-          :src="getQRUrlForMyMaps(feature.attributes.map_id)"
-          alt="QR code"
-        />
+          v-if="
+            feature.attributes.thumbnail &&
+            feature.attributes.thumbnail.trim() !== ''
+          "
+          :src="getMymapsPath(feature.attributes.thumbnail as string)" /></a
+      ><br />
+      <span v-if="feature.attributes.sentier"
+        ><span>{{ t('sentier') }}</span> : {{ feature.attributes.sentier }}<br
+      /></span>
+      <span v-if="feature.attributes.name"
+        ><span>{{ t('Name') }}</span> : {{ feature.attributes.name }}<br
+      /></span>
+      <span v-if="feature.attributes.description"
+        ><span>{{ t('Description') }}</span> :
+        {{ feature.attributes.description }}<br
+      /></span>
+      <span v-if="feature.attributes.length"
+        ><span>{{ t('Longeueur') }}</span> :
+        {{ feature.attributes.length }} Km<br
+      /></span>
 
-        <!-- Links section -->
-        <div v-if="feature.attributes.map_id" class="no-print">
-          <span
-            ><a
-              data-cy="mymapsTemplateLinkMap"
-              :href="currentUrl + '&map_id=' + feature.attributes.map_id"
-              target="_blank"
-              >{{ t('Lien vers la carte') }}</a
-            ></span
-          >
-        </div>
-        <div v-if="hasValidFID(feature)" class="no-print">
-          <span
-            ><a
-              data-cy="mymapsTemplateLink"
-              :href="currentUrl + '&fid=' + feature.fid"
-              target="_blank"
-              >{{ t('Lien direct vers cet objet') }}</a
-            ></span
-          >
-        </div>
-      </div>
-    </div>
-  </div>
+      <!--div class="query-profile" v-show="feature.attributes.showProfile.active"-->
+      <ProfileFeatureInfo
+        :feature="feature"
+        @export="payload => $emit('export', payload)"
+      />
+      <img
+        :src="getQRUrlForMyMaps(feature.attributes.map_id as string)"
+      /><br />
+      <a
+        class="fid-link no-print"
+        :href="`?map_id=${feature.attributes.map_id}`"
+        target="_blank"
+        >{{ t('Lien vers la carte') }}</a
+      >
+      <br />
+    </template>
+  </InfoFeatureLayout>
 </template>

@@ -5,12 +5,14 @@ import {
   FeatureJSON,
 } from '@/services/info/feature-info.model'
 import { sanitizeUrl } from '@braintree/sanitize-url'
+import { useThemeStore } from '@/stores/config.store'
+import { storeToRefs } from 'pinia'
 
 export function sortedAttributeEntries(
   attributes: Attributes,
-  ordered: boolean
+  ordered: boolean,
+  prefix: string = 'f_'
 ): AttributeEntry[] {
-  const prefix = 'f_'
   return Object.entries(attributes)
     .filter(([key]) => key !== 'showProfile')
     .map(([key, value]) => ({ key: prefix + key, value }))
@@ -21,6 +23,26 @@ export function hasAttributes(feature: FeatureJSON): boolean {
   return (
     feature.attributes !== undefined &&
     Object.keys(feature.attributes).length > 0
+  )
+}
+/**
+ * Check if the feature has a property with the given key and a minimum length.
+ * @param key The property key to check.
+ * @param feature The feature to check against.
+ * @param minLength The minimum length of the property value (default is 0).
+ * @returns True if the property exists and its value length is greater than minLength, false otherwise.
+ * */
+export function hasProperty(
+  key: string,
+  feature: FeatureJSON,
+  minLength: number
+): boolean {
+  if (minLength == undefined) {
+    minLength = 0
+  }
+  return (
+    key in feature.attributes &&
+    ('' + feature.attributes[key]).length > minLength
   )
 }
 
@@ -151,4 +173,43 @@ export function getTrustedUrlByLang(
     default:
       return sanitizeUrl(urlFr)
   }
+}
+
+/**
+ * Join all attributes 'attr' from feature list
+ * @param features The feature
+ * @param attr Attribute to join
+ * @param sep The join separator (default is ',')
+ * @returns The string with joined attributes
+ */
+export function joinAttributes(
+  features: FeatureJSON[],
+  attr: string,
+  sep = ','
+) {
+  return features.map(feature => feature.attributes[attr]).join(sep)
+}
+
+/**
+ * Translate and join the elements of the array
+ * @param textArray
+ * @param prefix
+ */
+export function translateAndjoin(textArray: string[], prefix: string) {
+  if (typeof textArray === undefined) {
+    return ''
+  }
+
+  const { t } = useTranslation()
+
+  return textArray.map(elem => t(prefix + '_' + elem)).join(', ')
+}
+
+/**
+ * Return true if the theme is available in app themes
+ * @param themeName The theme to find in theme list, eg. 'go'
+ */
+export function isThemeAvailable(themeName: string) {
+  const { themes } = storeToRefs(useThemeStore())
+  return themes.value?.some(t => t.name === themeName)
 }

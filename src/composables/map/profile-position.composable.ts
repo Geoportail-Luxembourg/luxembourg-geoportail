@@ -190,11 +190,13 @@ export default function useProfilePosition(
     } else {
       highlightDistance.value = -1
       displayGeoMarker.value = true // true => to restore default, this will display the marker if it is a hover on the chart
-      newXGeomarker = undefined
-      newYGeomarker = undefined
     }
 
-    profilePositionStore.setPosition(newXGeomarker, newYGeomarker)
+    if (newXGeomarker !== undefined && newYGeomarker !== undefined) {
+      // /!\ Don't set position if both X and Y undefined, because it may be undefined for a feature,
+      // but not for another one (that may overlaps)
+      profilePositionStore.setPosition(newXGeomarker, newYGeomarker)
+    }
   }
 
   return {

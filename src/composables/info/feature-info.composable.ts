@@ -3,7 +3,7 @@ import useMap, {
   PROJECTION_WEBMERCATOR,
 } from '@/composables/map/map.composable'
 import { listen } from 'ol/events'
-import { featureInfoLayerService } from '../../services/info/feature-info-layer.service'
+import { featureInfoLayerService } from '@/services/info/feature-info-layer.service'
 import { useFeatureInfoStore } from '@/stores/feature-info.store'
 import {
   FeatureInfoJSON,

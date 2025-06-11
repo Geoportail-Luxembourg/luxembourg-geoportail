@@ -46,41 +46,47 @@ class FeatureInfoLayerService {
       stroke: circleStroke,
     })
     this.featureLayer.set('cyLayerType', FEATURE_LAYER_TYPE)
-    this.featureLayer.setStyle(function (feature: FeatureLike) {
-      const lineColor = feature.get('color') || '#ffcc33'
-      const lineWidth = feature.get('width') || 3
-      const defaultStyle = [
-        new Style({
-          fill: new Fill({
-            color: [255, 255, 0, 0.6],
+    this.featureLayer.setStyle(
+      /**
+       * @param feature Feature.
+       * @return Array of styles.
+       */
+      function (feature: FeatureLike) {
+        const lineColor = feature.get('color') || '#ffcc33'
+        const lineWidth = /** @type {number} */ feature.get('width') || 3
+        const defaultStyle = [
+          new Style({
+            fill: new Fill({
+              color: [255, 255, 0, 0.6],
+            }),
           }),
-        }),
-        new Style({
-          stroke: new Stroke({
-            color: '#ffffff',
-            width: 5,
+          new Style({
+            stroke: new Stroke({
+              color: '#ffffff',
+              width: 5,
+            }),
           }),
-        }),
-        new Style({
-          stroke: new Stroke({
-            color: lineColor,
-            width: lineWidth,
+          new Style({
+            stroke: new Stroke({
+              color: lineColor,
+              width: lineWidth,
+            }),
           }),
-        }),
-      ]
+        ]
 
-      const geometryType = feature.getGeometry()?.getType()
-      return geometryType === 'Point' || geometryType === 'MultiPoint'
-        ? [new Style({ image })]
-        : defaultStyle
-    })
+        const geometryType = feature.getGeometry()?.getType()
+        return geometryType === 'Point' || geometryType === 'MultiPoint'
+          ? [new Style({ image })]
+          : defaultStyle
+      }
+    )
     this.map.addLayer(this.featureLayer)
   }
 
   highlightFeatures(
     features: FeatureJSON[],
     fit: boolean,
-    maxZoom: number | undefined
+    maxZoom?: number
   ): void {
     if (features !== undefined && features !== null) {
       if (this.map.getLayers().getArray().indexOf(this.featureLayer) === -1) {

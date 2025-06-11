@@ -8,10 +8,12 @@ export interface FeatureJSON {
   properties?: Record<string, unknown>
 }
 
-interface GeometryJSON {
+export interface GeometryJSON {
   type: string
   coordinates: number[][][]
 }
+
+export type FeatureMeasurement = Record<string, string>
 
 export interface Attributes {
   canton?: string
@@ -19,13 +21,24 @@ export interface Attributes {
   district?: string
   image?: string
   label: string
+  [key: string]: unknown
+  path?: string
+  thumb?: string
+  category_id?: number
+  PF: {
+    [key: string]: unknown
+  }
+  measurements: FeatureMeasurement[]
   length?: number
   name: string
   sentier?: string
   showProfile?: { active: boolean }
   thumbnail?: string
   profile?: any // FIXME: improve typing
-  map_id?: number
+  map_id?: string
+  sketches?: { id: string; name: string }[]
+  K_KATASTERGEMEINDE: string
+  K_MEASUREMENTNUMBER: string
 }
 
 export interface FeatureInfoJSON {
