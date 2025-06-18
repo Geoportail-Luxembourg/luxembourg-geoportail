@@ -228,6 +228,7 @@ watch(downloadingRepport, downloadingRepport => {
 
   <!-- Forage, obliques, lidar buttons -->
   <div>
+    <hr />
     <button
       v-if="isRapportForageVirtuelAvailable"
       :disabled="downloadingRepport"
@@ -270,6 +271,7 @@ watch(downloadingRepport, downloadingRepport => {
       </button>
     </div>
     <div class="lux-panel-content relative grow p-2.5 bg-primary overflow-auto">
+      <hr />
       <span class="text-white">
         {{
           t(
