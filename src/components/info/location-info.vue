@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import { computed, Ref, ref, watch, VNodeRef } from 'vue'
 import { useTranslation } from 'i18next-vue'
+import { transform } from 'ol/proj'
 import { storeToRefs } from 'pinia'
 import { useLocationInfoStore } from '@/stores/location-info.store'
 import { useUserManagerStore } from '@/stores/user-manager.store'
@@ -12,6 +13,10 @@ import useMap from '@/composables/map/map.composable'
 import useLocationInfo from '@/composables/info/location-info.composable'
 import { queryInfos, INFO_PROJECTIONS } from '@/services/info/location-info'
 import {
+  PROJECTION_LUX,
+  PROJECTION_WGS84,
+} from '@/composables/map/map.composable'
+import {
   formatElevation,
   formatLength,
   formatAddress,
@@ -22,17 +27,12 @@ import { downloadUrl } from '@/services/utils'
 import { useAlertNotificationsStore } from '@/stores/alert-notifications.store'
 import { AlertNotificationType } from '@/stores/alert-notifications.store.model'
 
-import StreetView from '@/components/info/street-view.vue'
 import { usePrintStore } from '@/stores/print.store'
 import { getQRUrl } from '@/services/url.utils'
 
 const { t } = useTranslation()
-const {
-  locationInfoCoords,
-  locationInfoInfos,
-  isStreetviewActive,
-  routingFeatureTemp,
-} = storeToRefs(useLocationInfoStore())
+const { locationInfoCoords, locationInfoInfos, routingFeatureTemp } =
+  storeToRefs(useLocationInfoStore())
 const { currentUser } = storeToRefs(useUserManagerStore())
 const { addNotification } = useAlertNotificationsStore()
 
@@ -131,6 +131,16 @@ const imagesObliquesUrl = computed(() =>
       }&y=${clickCoordinateLuref.value[1]}&crs=2169`
     : ''
 )
+const streetViewUrl = computed(function () {
+  const coordinate = clickCoordinateLuref.value
+    ? transform(clickCoordinateLuref.value, PROJECTION_LUX, PROJECTION_WGS84)
+    : undefined
+  return clickCoordinateLuref.value
+    ? `${import.meta.env.VITE_STREETVIEW_URL}api=1&map_action=pano&viewpoint=${
+        (coordinate ?? [0, 0])[1]
+      },${(coordinate ?? [0, 0])[0]}&heading=0&pitch=0&fov=90`
+    : ''
+})
 
 function addRoutePoint() {
   if (!locationInfoCoords.value) {
@@ -143,10 +153,6 @@ function addRoutePoint() {
     point.set('label', formattedCoordinates.value['Luref'])
   }
   routingFeatureTemp.value = point
-}
-
-function toggleStreetview() {
-  isStreetviewActive.value = !isStreetviewActive.value
 }
 
 async function downloadRapportForageVirtuel() {
@@ -222,6 +228,7 @@ watch(downloadingRepport, downloadingRepport => {
 
   <!-- Forage, obliques, lidar buttons -->
   <div>
+    <hr />
     <button
       v-if="isRapportForageVirtuelAvailable"
       :disabled="downloadingRepport"
@@ -263,37 +270,23 @@ watch(downloadingRepport, downloadingRepport => {
         </span>
       </button>
     </div>
-    <div v-if="isStreetviewActive">
-      <button
-        data-cy="streetviewOff"
-        class="lux-btn mt-3"
-        @click="toggleStreetview()"
-      >
-        <span class="create-itinerary-text">
-          {{ t('Désactiver Google Streetview') }}
-        </span>
-      </button>
-    </div>
-  </div>
-
-  <!-- Streetview -->
-  <div>
-    <StreetView v-show="isStreetviewActive" />
-    <div
-      v-if="!isStreetviewActive"
-      class="grid before:content-streetview before:col-start-1 before:row-start-1"
-    >
-      <div
-        class="col-start-1 row-start-1 text-center"
-        v-if="!isStreetviewActive"
-      >
-        <button
-          data-cy="streetviewOn"
-          class="lux-btn mt-3 no-print"
-          @click="toggleStreetview()"
+    <div class="lux-panel-content relative grow p-2.5 bg-primary overflow-auto">
+      <hr />
+      <span class="text-white">
+        {{
+          t(
+            "Suite à la modification des conditions d'utilisation de Google Street View, nous avons désactivé son intégration dans la carte et proposons désormais un lien direct vers le service de Google."
+          )
+        }}
+      </span>
+      <div class="flex justify-center flex-col items-center">
+        <a
+          class="lux-btn whitespace-nowrap"
+          :href="streetViewUrl"
+          target="_streetview_ext"
         >
-          {{ t('Activer Google Streetview') }}
-        </button>
+          {{ t('Ouvrir streetView') }}
+        </a>
       </div>
     </div>
   </div>

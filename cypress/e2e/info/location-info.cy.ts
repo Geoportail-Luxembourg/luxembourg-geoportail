@@ -109,7 +109,7 @@ describe('Location Info', () => {
         cy.url().should('contain', 'crosshair=true')
       })
 
-      it('streetview should integrate smoothly in the panel', () => {
+      /*it('streetview should integrate smoothly in the panel', () => {
         cy.get('div.ol-viewport').rightclick(350, 300, { force: true })
         cy.get('[data-cy="streetviewOff"]').should('not.exist')
         cy.get('[data-cy="streetviewOn"]').click()
@@ -157,7 +157,7 @@ describe('Location Info', () => {
           .eq(7)
           .find('td')
           .should(el => expect(el).to.contain.text('2 km'))
-      })
+      })*/
     })
   })
 })
