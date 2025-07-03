@@ -1,7 +1,11 @@
 <script setup lang="ts">
 import { useTranslation } from 'i18next-vue'
 import FilterToggle from './filter-toggle.vue'
-import { initialFilters, curFilters, esLabels } from '@/composables/search/search-filters'
+import {
+  initialFilters,
+  curFilters,
+  esLabels,
+} from '@/composables/search/search-filters'
 
 const { t } = useTranslation()
 
@@ -12,7 +16,7 @@ function saveSearch() {
   localStorage.setItem('searchFacets', JSON.stringify(curFilters.value))
 }
 function resetSearch() {
-  curFilters.value = Object.assign({}, initialFilters);
+  curFilters.value = Object.assign({}, initialFilters)
 }
 </script>
 
@@ -35,6 +39,7 @@ function resetSearch() {
     <h4>{{ t('Limiter la recherche à') }}</h4>
     <FilterToggle
       v-for="(label, key) in esLabels"
+      :key="key"
       :label="t(label)"
       :checked="curFilters[key]"
       @toggle="toggleFilter(key)"

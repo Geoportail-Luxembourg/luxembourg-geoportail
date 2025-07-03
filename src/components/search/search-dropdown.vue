@@ -5,7 +5,7 @@ import { fetchApi } from '@/services/api/api.service'
 import { storeToRefs } from 'pinia'
 import { searchLayerService } from '@/services/search/search-layer.service'
 import { useMapStore } from '@/stores/map.store'
-import { coordinateService } from '@/services/search/coordinate.service'
+import { matchCoordinate } from '@/services/search/coordinate.service'
 import { useThemeStore } from '@/stores/config.store'
 import useLayers from '@/composables/layers/layers.composable'
 import useBackgroundLayer from '@/composables/background-layer/background-layer.composable'
@@ -61,7 +61,6 @@ function addLayerFromSearch(layer_name: string) {
   const { findByName } = useThemes()
   layers.forEach(function (layer) {
     const layerToAdd = findByName(layer)
-    console.log('Adding layer from search:', layerToAdd)
     if (layerToAdd !== undefined) {
       useLayers().toggleLayer(layerToAdd.id, true, false, false)
     }
@@ -106,7 +105,6 @@ function processResultFeaturesearch(data: any, selectResult: Function) {
   })
 }
 
-
 function processResultLayersearch(data: any, selectResult: Function) {
   searchResults.value.push({
     header: t('Layers'),
@@ -122,12 +120,14 @@ function processResultLayersearch(data: any, selectResult: Function) {
     ),
   })
 }
+
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
 function onRoutingClick(result: {
   label: string
   layer_name: string
   entry: object
 }) {
-  console.debug('Routing clicked for:', result)
+  // TODO: Implement routing logic
 }
 function processResultCmssearch(data: any, selectResult: Function) {
   searchResults.value.push({
@@ -156,7 +156,12 @@ function selectResultFeatureSearch(result: {
   entry: object
 }) {
   searchQuery.value = result.label // Set the selected label as the
-  searchLayerService.highlightFeatures([result.entry], true, maxZoom.value, useMap().getOlMap().getView().getProjection().getCode())
+  searchLayerService.highlightFeatures(
+    [result.entry],
+    true,
+    maxZoom.value,
+    useMap().getOlMap().getView().getProjection().getCode()
+  )
 }
 
 function selectResultFullTextSearch(result: {
@@ -207,19 +212,15 @@ function selectResultCmsSearch(result: {
   isOpenResults.value = false // Close the dropdown
   searchQuery.value = result.label // Set the selected label as the query
 }
-function processQueryCoordinate(newQuery: string) {
-  const searchString = newQuery
-  const mapEpsgCode = searchLayerService.map.getView().getProjection().getCode()
-  const maxExtent = null // Assuming maxExtent is not used in this context
-  const coordinateString = '' // Use the search query as the coordinate string
-  coordinateService.matchCoordinate(
-    searchString,
-    mapEpsgCode,
-    maxExtent,
-    coordinateString
-  )
+
+function selectResultCoordinateSearch(result: {
+  label: string
+  entry: object
+}) {
+  searchQuery.value = result.label // Set the selected label as the
+  searchLayerService.highlightFeatures([result.entry], true, maxZoom.value)
+  isOpenResults.value = false // Close the dropdown
 }
-function selectResultCoordinateSearch() {}
 function processResultBackgroundsearch(data: any, selectResult: Function) {
   searchResults.value.push({
     header: t('Background Layers'),
@@ -232,19 +233,29 @@ function processResultBackgroundsearch(data: any, selectResult: Function) {
     })),
   })
 }
-async function getData(url: string, parameters: { [key: string]: any }): Promise<any> {
-
+async function getData(
+  url: string,
+  parameters: { [key: string]: any }
+): Promise<any> {
   const response = await fetchApi(url, parameters, 'GET')
   return await response.json()
 }
 
 async function getDataFeatureSearch(newQuery: string) {
-  if (!curFilters.value['activeLayers']) return false;
+  if (!curFilters.value['activeLayers']) return false
 
-  let params: { [key: string]: any } = {query: newQuery, limit: 8, language: i18next.language}
-  const mapStore = useMapStore()
-  
-  let selected_layers = useMap().getOlMap().getLayers().getArray().map((layer) => layer.get('queryable_id')).filter(el => el !== undefined);
+  let params: { [key: string]: any } = {
+    query: newQuery,
+    limit: 8,
+    language: i18next.language,
+  }
+
+  let selected_layers = useMap()
+    .getOlMap()
+    .getLayers()
+    .getArray()
+    .map(layer => layer.get('queryable_id'))
+    .filter(el => el !== undefined)
   params['layers'] = selected_layers.join(',')
 
   if (curFilters.value['extent']) {
@@ -256,16 +267,12 @@ async function getDataFeatureSearch(newQuery: string) {
     params['extent'] = extent.join(',')
   }
 
-  const data = await getData(
-    'https://map.geoportail.lu/featuresearch',
-    params
-  )
+  const data = await getData('https://map.geoportail.lu/featuresearch', params)
   processResultFeaturesearch(data, selectResultFeatureSearch)
 }
 
 async function getDataFulltextSearch(newQuery: string) {
-
-  let params: { [key: string]: any } = {query: newQuery, limit: 8}
+  let params: { [key: string]: any } = { query: newQuery, limit: 8 }
 
   let layers = Object.keys(esMatch)
     .filter(k => curFilters.value[k])
@@ -274,7 +281,7 @@ async function getDataFulltextSearch(newQuery: string) {
   if (layers.length > 0) {
     params['layer'] = layers.join(',')
   }
-  
+
   if (curFilters.value['extent']) {
     let extent = transformExtent(
       useMap().getOlMap().getView().calculateExtent(),
@@ -283,21 +290,17 @@ async function getDataFulltextSearch(newQuery: string) {
     )
     params['extent'] = extent.join(',')
   }
-  
 
-  const data = await getData(
-    'https://map.geoportail.lu/fulltextsearch',
-    params
-  )
+  const data = await getData('https://map.geoportail.lu/fulltextsearch', params)
   processResultFulltextsearch(data, selectResultFullTextSearch)
 }
 async function getDataLayerSearch(newQuery: string) {
-  let params: { [key: string]: any } = {query: newQuery, limit: 8}
+  let params: { [key: string]: any } = { query: newQuery, limit: 8 }
   const data = await getData('https://map.geoportail.lu/layersearch', params)
   processResultLayersearch(data, selectResulLayerSearch)
 }
 async function getDataCmsSearch(newQuery: string) {
-  let params: { [key: string]: any } = {query: newQuery, limit: 8}
+  let params: { [key: string]: any } = { query: newQuery, limit: 8 }
   const data = await getData('https://map.geoportail.lu/cmssearch', params)
   processResultCmssearch(data, selectResultCmsSearch)
 }
@@ -331,36 +334,42 @@ const dataSources = {
     getData: getDataFeatureSearch,
   },
   coordinate: {
-    processQuery: function (coordinates: string) {},
-    processResult: function (result: any) {},
-    selectResult: selectResultCoordinateSearch,
+    getData: getDataCoordinates,
   },
 }
 
-async function handleDataSources(newQuery: string) {
-  searchResults.value = [] // Clear previous results
-  isLoading.value = true // Set loading state
-  const tasks = Object.entries(dataSources).map(async ([key, source]) => {
-    if ('processQuery' in source && typeof source.processQuery === 'function') {
-      source.processQuery(newQuery)
-    }
-
-    if ('getData' in source && typeof source.getData === 'function') {
-      try {
-        source.getData(newQuery)
-      } catch (error) {
-        console.error(`Error fetching data from ${key}:`, error)
+function getDataCoordinates(newQuery: string) {
+  const searchString = newQuery
+  const mapEpsgCode = searchLayerService.map.getView().getProjection().getCode()
+  const features = matchCoordinate(searchString, mapEpsgCode)
+  searchResults.value.push({
+    header: t('Coordinates'),
+    selectResult: selectResultCoordinateSearch,
+    results: features.map(function (feature: any) {
+      const label = feature.get('label') + ' (' + feature.get('epsgLabel') + ')'
+      return {
+        label: label,
+        layer_name: 'Coordinates',
+        entry: feature,
+        showRoutingButton: false,
       }
+    }),
+  })
+}
+async function handleDataSources(newQuery: string) {
+  searchResults.value = []
+  isLoading.value = true
+  const tasks = Object.entries(dataSources).map(async ([, source]) => {
+    if ('getData' in source && typeof source.getData === 'function') {
+      source.getData(newQuery)
     }
-    isLoading.value = false // Reset loading state
+    isLoading.value = false
     isOpenResults.value = true
   })
 
-  // Attendre que toutes les tâches soient complètes
   await Promise.all(tasks)
 }
 
-// Watch searchQuery and fetch results from the API
 watch(searchQuery, async newQuery => {
   handleDataSources(newQuery)
 })
@@ -486,11 +495,12 @@ function closeFilterPanel() {
   border-radius: 2px;
   border: 0;
 }
+
 :deep(.routing-icon:after) {
   content: '\e062';
   color: #fff;
   font-family: 'geoportail-icons-wc' !important;
-  position: absolute;
+  position: static;
   font-size: 0.8em;
   transform: rotate(-45deg) translateY(-15px);
   width: 25px;
@@ -532,6 +542,7 @@ function closeFilterPanel() {
   color: #333;
 }
 .dropdown {
+  box-sizing: border-box;
   position: absolute;
   top: 100%;
   left: 0;
@@ -541,6 +552,8 @@ function closeFilterPanel() {
   border-radius: 4px;
   box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
   z-index: 1000;
+  overflow-y: auto;
+  max-height: calc(100vh - 60px);
 }
 
 .dropdown ul {
@@ -562,6 +575,7 @@ function closeFilterPanel() {
   padding: 10px;
   cursor: pointer;
   font-size: 14px;
+  word-break: break-word;
 }
 
 .dropdown-item:hover {

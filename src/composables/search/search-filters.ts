@@ -35,12 +35,12 @@ export const esLabels = {
 }
 
 export const esMatch: Record<string, string[]> = {
-    address: ['Adresse', 'nom_de_rue'],
-    parcels: ['Parcelle'],
-    localite: ['Localité'],
-    lieudit: ['lieu_dit'],
-    commune: ['Commune'],
-    flik: ['FLIK','asta esp','FLIK_Provisoire'],
-    hydro: ['hydro', 'hydro_km'],
-    biotopes: ['biotope']
-  }
+  address: ['Adresse', 'nom_de_rue'],
+  parcels: ['Parcelle'],
+  localite: ['Localité'],
+  lieudit: ['lieu_dit'],
+  commune: ['Commune'],
+  flik: ['FLIK', 'asta esp', 'FLIK_Provisoire'],
+  hydro: ['hydro', 'hydro_km'],
+  biotopes: ['biotope'],
+}

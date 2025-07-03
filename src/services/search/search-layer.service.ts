@@ -12,10 +12,7 @@ import GeoJSON from 'ol/format/GeoJSON'
 import { extend, Extent } from 'ol/extent'
 import { FitOptions } from 'ol/View'
 import { Size } from 'ol/size'
-import {
-  PROJECTION_LUX,
-  PROJECTION_WGS84,
-} from '@/composables/map/map.composable'
+import { PROJECTION_WGS84 } from '@/composables/map/map.composable'
 
 export const FEATURE_LAYER_TYPE = 'searchLayer'
 export const HIGHLIGHT_MAX_ZOOM = 17
@@ -89,7 +86,7 @@ class SearchLayerService {
     this.featureLayer.getSource()?.clear()
   }
 
-  fitFeatures(features: any, maxZoom?: number, dataProjection?:string): void {
+  fitFeatures(features: any, maxZoom?: number, dataProjection?: string): void {
     const encOpt: ReadOptions = {
       dataProjection: dataProjection || PROJECTION_WGS84,
       featureProjection: this.map.getView().getProjection(),
@@ -119,9 +116,19 @@ class SearchLayerService {
       }
     }
   }
+  isGeoJsonArray(features: any[]): boolean {
+    return features.length > 0 && typeof features[0].type === 'string'
+  }
+  isFeatureLikeArray(features: any[]): features is FeatureLike[] {
+    return features.length > 0 && typeof features[0].getGeometry === 'function'
+  }
 
-  highlightFeatures(features: any, fit: boolean, maxZoom?: number, dataProjection?:string): void {
-
+  highlightFeatures(
+    features: GeoJSON[] | FeatureLike[],
+    fit: boolean,
+    maxZoom?: number,
+    dataProjection?: string
+  ): void {
     this.clearFeatures()
     if (features !== undefined && features !== null) {
       if (this.map.getLayers().getArray().indexOf(this.featureLayer) === -1) {
@@ -133,13 +140,18 @@ class SearchLayerService {
         featureProjection: this.map.getView().getProjection(),
       }
 
-      const olFeatures = new GeoJSON().readFeatures(
-        {
-          type: 'FeatureCollection',
-          features: features,
-        },
-        encOpt
-      )
+      let olFeatures: FeatureLike[] = []
+      if (this.isGeoJsonArray(features)) {
+        olFeatures = new GeoJSON().readFeatures(
+          {
+            type: 'FeatureCollection',
+            features: features,
+          },
+          encOpt
+        )
+      } else if (this.isFeatureLikeArray(features)) {
+        olFeatures = features as FeatureLike[]
+      }
       if (olFeatures.length > 0) {
         let extent: Extent = olFeatures[0].getGeometry()?.getExtent() || [
           0, 0, 0, 0,
