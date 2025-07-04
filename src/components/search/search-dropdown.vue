@@ -15,6 +15,7 @@ import { curFilters, esMatch } from '@/composables/search/search-filters'
 import { transformExtent } from 'ol/proj.js'
 import useMap from '@/composables/map/map.composable'
 
+const { findThemeNamesByLayerId } = useThemes()
 const { t, i18next } = useTranslation()
 const { maxZoom } = storeToRefs(useMapStore())
 // Define reactive variables
@@ -105,19 +106,36 @@ function processResultFeaturesearch(data: any, selectResult: Function) {
   })
 }
 
+function onDropdownClick(e: MouseEvent) {
+  const target = e.target as HTMLElement
+  if (target.tagName === 'A' && target.hasAttribute('data-theme')) {
+    e.preventDefault()
+    switchTheme(target.getAttribute('data-theme')!)
+  }
+}
+function switchTheme(themeName: string) {
+  useThemeStore().setTheme(themeName)
+  isOpenResults.value = false
+}
+
 function processResultLayersearch(data: any, selectResult: Function) {
   searchResults.value.push({
     header: t('Layers'),
     selectResult: selectResult,
-    results: data.map(
-      (item: { language: string; name: string; layer_id: number }) => ({
-        label: t(item.name),
+    results: data.map(function (item: {
+      language: string
+      name: string
+      layer_id: number
+    }) {
+      const themeLinks = getThemeLinks(item.layer_id)
+      return {
+        label: t(item.name) + themeLinks,
         layer_id: item.layer_id,
         name: item.name,
         language: item.language,
         showRoutingButton: false,
-      })
-    ),
+      }
+    }),
   })
 }
 
@@ -371,15 +389,13 @@ function getDataCoordinates(newQuery: string) {
 async function handleDataSources(newQuery: string) {
   searchResults.value = []
   isLoading.value = true
-  const tasks = Object.entries(dataSources).map(async ([, source]) => {
+  Object.entries(dataSources).map(async ([, source]) => {
     if ('getData' in source && typeof source.getData === 'function') {
       source.getData(newQuery)
     }
     isLoading.value = false
     isOpenResults.value = true
   })
-
-  await Promise.all(tasks)
 }
 
 watch(searchQuery, async newQuery => {
@@ -405,16 +421,6 @@ function closeFilterPanel() {
 
 // Focus management for dropdown results
 const focusedIndex = ref<number | null>(null)
-
-// Watch for dropdown open to reset focus
-watch([isOpenResults, searchResults], ([open, results]) => {
-  if (open && results.length) {
-    focusedIndex.value = 0
-    nextTick(() => focusItem(0))
-  } else {
-    focusedIndex.value = null
-  }
-})
 
 // Helper to focus a result item
 function focusItem(index: number) {
@@ -476,11 +482,25 @@ function onSearchInputKeydown(e: KeyboardEvent) {
     searchResults.value.length
   ) {
     e.preventDefault()
+    focusedIndex.value = 0
     // Focus the dropdown container
     nextTick(() => {
       dropdownRef.value?.focus()
     })
   }
+}
+function getThemeLinks(layerId: number): string {
+  const themeNames = findThemeNamesByLayerId(layerId)
+  const { themeName } = storeToRefs(useThemeStore())
+  return themeNames
+    .map(curThemeName =>
+      themeName.value !== curThemeName
+        ? `<br><a href="#" data-theme="${curThemeName}">(${t(
+            'open in theme'
+          )} ${t(curThemeName)})</a>`
+        : ''
+    )
+    .join('')
 }
 </script>
 
@@ -512,6 +532,7 @@ function onSearchInputKeydown(e: KeyboardEvent) {
       v-if="isOpenResults && searchResults.length"
       class="dropdown"
       @keydown="onDropdownKeydown"
+      @click="onDropdownClick"
       tabindex="0"
       ref="dropdownRef"
     >
