@@ -1,2 +1,2 @@
 export const noMapLayerRegex =
-  /((info)|(sv))?[fF]eature(Edit|Position|Info)?Layer/
+  /((info)|(sv))?[fF]eature(Edit|Position|Info)?Layer|searchLayer/
