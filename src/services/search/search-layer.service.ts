@@ -6,13 +6,14 @@ import Fill from 'ol/style/Fill.js'
 import Stroke from 'ol/style/Stroke.js'
 import Style from 'ol/style/Style.js'
 import { GeometryCollection } from 'ol/geom'
-import { FeatureLike } from 'ol/Feature'
 import { ReadOptions } from 'ol/format/Feature'
 import GeoJSON from 'ol/format/GeoJSON'
 import { extend, Extent } from 'ol/extent'
 import { FitOptions } from 'ol/View'
 import { Size } from 'ol/size'
 import { PROJECTION_WGS84 } from '@/composables/map/map.composable'
+import Feature from 'ol/Feature'
+import FeatureLike from 'ol/Feature'
 
 export const FEATURE_LAYER_TYPE = 'searchLayer'
 export const HIGHLIGHT_MAX_ZOOM = 17
@@ -50,7 +51,9 @@ class SearchLayerService {
        * @param feature Feature.
        * @return Array of styles.
        */
-      function (feature: FeatureLike) {
+      function (
+        feature: FeatureLike | import('ol/render/Feature').default
+      ): Style[] {
         const lineColor = feature.get('color') || '#ffcc33'
         const lineWidth = /** @type {number} */ feature.get('width') || 3
         const defaultStyle = [
@@ -73,7 +76,7 @@ class SearchLayerService {
           }),
         ]
 
-        const geometryType = feature.getGeometry()?.getType()
+        const geometryType = feature.getGeometry?.()?.getType?.()
         return geometryType === 'Point' || geometryType === 'MultiPoint'
           ? [new Style({ image })]
           : defaultStyle
@@ -119,12 +122,12 @@ class SearchLayerService {
   isGeoJsonArray(features: any[]): boolean {
     return features.length > 0 && typeof features[0].type === 'string'
   }
-  isFeatureLikeArray(features: any[]): features is FeatureLike[] {
+  isFeatureArray(features: any[]): features is Feature[] {
     return features.length > 0 && typeof features[0].getGeometry === 'function'
   }
 
   highlightFeatures(
-    features: GeoJSON[] | FeatureLike[],
+    features: object[],
     fit: boolean,
     maxZoom?: number,
     dataProjection?: string
@@ -140,7 +143,7 @@ class SearchLayerService {
         featureProjection: this.map.getView().getProjection(),
       }
 
-      let olFeatures: FeatureLike[] = []
+      let olFeatures: Feature[] = []
       if (this.isGeoJsonArray(features)) {
         olFeatures = new GeoJSON().readFeatures(
           {
@@ -149,8 +152,8 @@ class SearchLayerService {
           },
           encOpt
         )
-      } else if (this.isFeatureLikeArray(features)) {
-        olFeatures = features as FeatureLike[]
+      } else if (this.isFeatureArray(features)) {
+        olFeatures = features as Feature[]
       }
       if (olFeatures.length > 0) {
         let extent: Extent = olFeatures[0].getGeometry()?.getExtent() || [

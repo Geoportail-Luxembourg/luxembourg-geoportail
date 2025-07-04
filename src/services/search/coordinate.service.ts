@@ -184,7 +184,7 @@ export function matchCoordinate(
       epsgKey === 'EPSG:2169' &&
       (searchString.match(/\./g) || []).length === 1
     ) {
-      m = undefined
+      m = null
     }
     if (m) {
       const epsgCode = re[epsgKey].epsgCode
