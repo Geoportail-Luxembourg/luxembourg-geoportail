@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { ref, watch } from 'vue'
+import { ref, watch, nextTick } from 'vue'
 import { useTranslation } from 'i18next-vue'
 import { fetchApi } from '@/services/api/api.service'
 import { storeToRefs } from 'pinia'
@@ -402,6 +402,86 @@ function openFilterPanel() {
 function closeFilterPanel() {
   isFilterPanelOpen.value = false
 }
+
+// Focus management for dropdown results
+const focusedIndex = ref<number | null>(null)
+
+// Watch for dropdown open to reset focus
+watch([isOpenResults, searchResults], ([open, results]) => {
+  if (open && results.length) {
+    focusedIndex.value = 0
+    nextTick(() => focusItem(0))
+  } else {
+    focusedIndex.value = null
+  }
+})
+
+// Helper to focus a result item
+function focusItem(index: number) {
+  const el = document.querySelectorAll('.dropdown-item')[index] as HTMLElement
+  if (el) el.focus()
+}
+
+// Handle keydown on the dropdown list
+function onDropdownKeydown(e: KeyboardEvent) {
+  e.stopPropagation()
+
+  if (!searchResults.value.length) return
+  const flatResults = searchResults.value.flatMap(g => g.results)
+  if (focusedIndex.value === null) focusedIndex.value = 0
+
+  if (e.key === 'ArrowDown') {
+    e.preventDefault()
+    if (focusedIndex.value! < flatResults.length - 1) {
+      focusedIndex.value!++
+      focusItem(focusedIndex.value!)
+    }
+  } else if (e.key === 'ArrowUp') {
+    e.preventDefault()
+    if (focusedIndex.value! > 0) {
+      focusedIndex.value!--
+      focusItem(focusedIndex.value!)
+    }
+  } else if (e.key === 'Enter' || e.key === ' ' || e.code === 'Space') {
+    e.preventDefault()
+    // Find which group/result this index belongs to
+    let idx = focusedIndex.value!
+    for (const group of searchResults.value) {
+      if (idx < group.results.length) {
+        group.selectResult(group.results[idx])
+        break
+      }
+      idx -= group.results.length
+    }
+  }
+}
+
+// Helper to check if a result is focused
+function isFocused(groupIndex: number, resultIndex: number) {
+  // Flatten all results to get the global index
+  let idx = 0
+  for (let g = 0; g < groupIndex; g++) {
+    idx += searchResults.value[g].results.length
+  }
+  idx += resultIndex
+  return focusedIndex.value === idx
+}
+
+const dropdownRef = ref<HTMLElement | null>(null)
+
+function onSearchInputKeydown(e: KeyboardEvent) {
+  if (
+    (e.key === 'ArrowDown' || e.key === 'ArrowUp') &&
+    isOpenResults.value &&
+    searchResults.value.length
+  ) {
+    e.preventDefault()
+    // Focus the dropdown container
+    nextTick(() => {
+      dropdownRef.value?.focus()
+    })
+  }
+}
 </script>
 
 <template>
@@ -413,6 +493,7 @@ function closeFilterPanel() {
         :placeholder="t('Recherche adresse, parcelles, couches ...')"
         v-model="searchQuery"
         class="w-full lux-input search-input"
+        @keydown="onSearchInputKeydown"
       />
       <button
         v-if="searchQuery.length"
@@ -427,8 +508,14 @@ function closeFilterPanel() {
     </div>
 
     <!-- Dropdown -->
-    <div v-if="isOpenResults && searchResults.length" class="dropdown">
-      <ul>
+    <div
+      v-if="isOpenResults && searchResults.length"
+      class="dropdown"
+      @keydown="onDropdownKeydown"
+      tabindex="0"
+      ref="dropdownRef"
+    >
+      <ul role="listbox">
         <li v-for="(group, groupIndex) in searchResults" :key="groupIndex">
           <!-- Data Source Title -->
           <div v-if="group.results.length > 0" class="dropdown-title">
@@ -441,6 +528,11 @@ function closeFilterPanel() {
               :key="resultIndex"
               @click="group.selectResult(result)"
               class="dropdown-item"
+              tabindex="0"
+              :class="{ focused: isFocused(groupIndex, resultIndex) }"
+              @keydown.enter="group.selectResult(result)"
+              role="option"
+              :aria-selected="isFocused(groupIndex, resultIndex)"
             >
               <span v-html="result.label"></span>
               <span
@@ -612,5 +704,9 @@ function closeFilterPanel() {
   margin-left: auto;
   display: flex;
   align-items: center;
+}
+
+.dropdown-item.focused {
+  background-color: #e0e0e0;
 }
 </style>
