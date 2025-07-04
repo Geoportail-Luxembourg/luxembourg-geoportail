@@ -267,7 +267,10 @@ async function getDataFeatureSearch(newQuery: string) {
     params['extent'] = extent.join(',')
   }
 
-  const data = await getData('https://map.geoportail.lu/featuresearch', params)
+  const data = await getData(
+    import.meta.env.VITE_V3_API_HOST + 'featuresearch',
+    params
+  )
   processResultFeaturesearch(data, selectResultFeatureSearch)
 }
 
@@ -291,17 +294,26 @@ async function getDataFulltextSearch(newQuery: string) {
     params['extent'] = extent.join(',')
   }
 
-  const data = await getData('https://map.geoportail.lu/fulltextsearch', params)
+  const data = await getData(
+    import.meta.env.VITE_V3_API_HOST + 'fulltextsearch',
+    params
+  )
   processResultFulltextsearch(data, selectResultFullTextSearch)
 }
 async function getDataLayerSearch(newQuery: string) {
   let params: { [key: string]: any } = { query: newQuery, limit: 8 }
-  const data = await getData('https://map.geoportail.lu/layersearch', params)
+  const data = await getData(
+    import.meta.env.VITE_V3_API_HOST + 'layersearch',
+    params
+  )
   processResultLayersearch(data, selectResulLayerSearch)
 }
 async function getDataCmsSearch(newQuery: string) {
   let params: { [key: string]: any } = { query: newQuery, limit: 8 }
-  const data = await getData('https://map.geoportail.lu/cmssearch', params)
+  const data = await getData(
+    import.meta.env.VITE_V3_API_HOST + 'cmssearch',
+    params
+  )
   processResultCmssearch(data, selectResultCmsSearch)
 }
 
