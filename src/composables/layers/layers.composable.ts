@@ -156,7 +156,7 @@ export default function useLayers() {
     fromCurrentTheme: boolean
   ) {
     const themeStore = useThemeStore()
-    const mapStore = useMapStore()
+
     // the cast from ThemeNodeModel | undefined to Layer might not be correct.
     // in the themes fixture only WMS layers correspond to the Layer definition,
     // whereas WMTS layers have "layer" property
@@ -166,7 +166,11 @@ export default function useLayers() {
     )
 
     if (layer) {
-      const linkedLayers = layer.metadata?.linked_layers || []
+      const mapStore = useMapStore()
+      const linkedLayers =
+        layer.metadata?.linked_layers?.filter(
+          layerId => !mapStore.hasLayer(parseInt(layerId, 10))
+        ) || []
 
       if (show === false) {
         mapStore.removeLayers(layer.id as unknown as string, ...linkedLayers)
