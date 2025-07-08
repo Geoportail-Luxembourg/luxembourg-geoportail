@@ -2,7 +2,7 @@ name: CI_package
 on:
   push:
     branches:
-      - 'main'
+      - 'main_v3'
     tags:
       - '*'
 jobs:
