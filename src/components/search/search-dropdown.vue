@@ -14,6 +14,11 @@ import FilterPanel from './filter-panel.vue'
 import { curFilters, esMatch } from '@/composables/search/search-filters'
 import { transformExtent } from 'ol/proj.js'
 import useMap from '@/composables/map/map.composable'
+import { computed } from 'vue'
+
+const filterIconColor = computed(() =>
+  isFilterPanelOpen.value ? 'var(--color-tertiary)' : '#ffffff'
+)
 
 const { findThemeNamesByLayerId } = useThemes()
 const { t, i18next } = useTranslation()
@@ -563,7 +568,7 @@ function getThemeLinks(layerId: number): string {
         ✕
       </button>
       <button class="filter-button" @click="openOrCloseFilterPanel">
-        <span class="filter-icon"></span>
+        <span class="filter-icon" :style="{ color: filterIconColor }"></span>
       </button>
     </div>
 
@@ -647,7 +652,6 @@ function getThemeLinks(layerId: number): string {
   font-family: 'FontAwesome';
   content: '\f0b0';
   font-size: 16px;
-  color: #ffffff;
   display: inline-block;
 }
 
