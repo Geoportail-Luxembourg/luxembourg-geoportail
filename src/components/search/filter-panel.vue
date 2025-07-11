@@ -88,7 +88,7 @@ defineExpose({
         :checked="curFilters.layers"
         @toggle="toggleFilter('layers')"
       />
-      <hr />
+      <hr class="section-divider" />
       <h4>{{ t('Limiter la recherche à') }}</h4>
       <FilterToggle
         v-for="(label, key) in esLabels"
@@ -97,21 +97,21 @@ defineExpose({
         :checked="curFilters[key]"
         @toggle="toggleFilter(key)"
       />
-      <hr />
+      <hr class="section-divider" />
       <h4>{{ t('Étendue') }}</h4>
       <FilterToggle
         :label="t('Uniquement dans la partie actuellement visible de la carte')"
         :checked="curFilters.extent"
         @toggle="toggleFilter('extent')"
       />
-      <hr />
+      <hr class="section-divider" />
       <h4>{{ t('Avancée') }}</h4>
       <FilterToggle
         :label="t('Chercher dans les couches actives')"
         :checked="curFilters.activeLayers"
         @toggle="toggleFilter('activeLayers')"
       />
-      <hr />
+      <hr class="section-divider" />
     </div>
     <div class="flex">
       <button class="lux-btn mr-auto" @click="resetSearch()">
@@ -156,5 +156,10 @@ defineExpose({
   font-size: 36px;
   padding: 2px;
   line-height: 1.2;
+}
+.section-divider {
+  margin: 6px 0;
+  border: none;
+  border-top: 1px solid #ccc;
 }
 </style>
