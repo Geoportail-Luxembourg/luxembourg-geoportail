@@ -48,7 +48,7 @@ function onToggleDropdownAuth(isOpen: boolean) {
       <img src="@/assets/images/gov-light.png" />
     </div>
     <div class="grow flex justify-center items-center">
-      <search-dropdown :placeholder="'Search for items...'" />
+      <search-dropdown />
     </div>
     <div>
       <ul class="h-full flex">
