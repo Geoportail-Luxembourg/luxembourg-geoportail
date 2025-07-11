@@ -574,7 +574,7 @@ function getThemeLinks(layerId: number): string {
 
     <!-- Dropdown -->
     <div
-      v-if="isOpenResults && searchResults.length"
+      v-if="isOpenResults && searchResults.some(g => g.results.length > 0)"
       class="dropdown"
       @keydown="onDropdownKeydown"
       @click="onDropdownClick"
