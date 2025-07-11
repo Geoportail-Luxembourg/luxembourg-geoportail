@@ -10,13 +10,15 @@ import {
 
 const filtersCount = Object.keys(initialFilters).length
 const { t } = useTranslation()
+const emit = defineEmits(['close'])
 
 function toggleFilter(entry: string) {
   curFilters.value[entry] = !curFilters.value[entry]
 }
 
-function saveSearch() {
+function saveAndCloseSearch() {
   localStorage.setItem('searchFacets', JSON.stringify(curFilters.value))
+  emit('close')
 }
 
 function resetSearch() {
@@ -117,13 +119,7 @@ defineExpose({
       <button class="lux-btn mr-auto" @click="resetSearch()">
         {{ t('Réinitialiser') }}
       </button>
-      <button
-        class="lux-btn ml-auto"
-        @click="
-          saveSearch()
-          $emit('close')
-        "
-      >
+      <button class="lux-btn ml-auto" @click="saveAndCloseSearch()">
         {{ t('Sauvegarder la recherche') }}
       </button>
     </div>
