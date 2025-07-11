@@ -76,7 +76,7 @@ function resetSearch() {
   width: 370px;
   background: #fff;
   border: 1px solid #ccc;
-  z-index: 2000;
+  z-index: 999;
   padding: 5px 5px;
   border-radius: 4px;
   box-shadow: 0 6px 12px rgba(0, 0, 0, 0.175);
