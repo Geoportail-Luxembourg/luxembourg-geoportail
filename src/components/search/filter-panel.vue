@@ -117,7 +117,13 @@ defineExpose({
       <button class="lux-btn mr-auto" @click="resetSearch()">
         {{ t('Réinitialiser') }}
       </button>
-      <button class="lux-btn ml-auto" @click="saveSearch()">
+      <button
+        class="lux-btn ml-auto"
+        @click="
+          saveSearch()
+          $emit('close')
+        "
+      >
         {{ t('Sauvegarder la recherche') }}
       </button>
     </div>
