@@ -1,7 +1,9 @@
 import { ref } from 'vue'
+// The order of the properties in this object is important for the UI
+// because it is used to manage the key down/up events
 export const initialFilters = {
-  layers: true,
   cms: true,
+  layers: true,
   address: false,
   parcels: false,
   localite: false,

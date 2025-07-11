@@ -1,6 +1,6 @@
 <template>
   <button
-    class="w-full text-left"
+    class="w-full text-left filter-toggle-btn"
     @click="toggle"
     role="checkbox"
     :aria-checked="checked"

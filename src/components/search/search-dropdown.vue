@@ -18,6 +18,7 @@ import useMap from '@/composables/map/map.composable'
 const { findThemeNamesByLayerId } = useThemes()
 const { t, i18next } = useTranslation()
 const { maxZoom } = storeToRefs(useMapStore())
+const filterPanelRef = ref()
 // Define reactive variables
 const searchQuery = ref('')
 const isOpenResults = ref(false)
@@ -117,7 +118,7 @@ function onDropdownClick(e: MouseEvent) {
 }
 function switchTheme(themeName: string) {
   useThemeStore().setTheme(themeName)
-  isOpenResults.value = false
+  closeDropdown()
 }
 
 function processResultLayersearch(data: any, selectResult: Function) {
@@ -210,7 +211,7 @@ function selectResultFullTextSearch(result: {
       olLayerSearchService.clearFeatures()
       olLayerSearchService.fitFeatures([result.entry], maxZoom.value)
   }
-  isOpenResults.value = false // Close the dropdown
+  closeDropdown()
 }
 function selectResultBackgroundLayerSearch(result: {
   label: string
@@ -219,7 +220,7 @@ function selectResultBackgroundLayerSearch(result: {
 }) {
   const backgroundLayer = useBackgroundLayer()
   backgroundLayer.setBgLayer(result.layer_id)
-  isOpenResults.value = false // Close the dropdown
+  closeDropdown()
 }
 function selectResulLayerSearch(result: {
   label: string
@@ -227,7 +228,7 @@ function selectResulLayerSearch(result: {
   text: string
 }) {
   useLayers().toggleLayer(result.layer_id, true, false, false)
-  isOpenResults.value = false // Close the dropdown
+  closeDropdown()
 }
 function selectResultCmsSearch(result: {
   label: string
@@ -237,7 +238,7 @@ function selectResultCmsSearch(result: {
 }) {
   // Open the URL in a new tab
   window.open('https://www.geoportail.lu' + result.url, '_blank')
-  isOpenResults.value = false // Close the dropdown
+  closeDropdown()
   searchQuery.value = result.label // Set the selected label as the query
 }
 
@@ -247,7 +248,7 @@ function selectResultCoordinateSearch(result: {
 }) {
   searchQuery.value = result.label // Set the selected label as the
   olLayerSearchService.highlightFeatures([result.entry], true, maxZoom.value)
-  isOpenResults.value = false // Close the dropdown
+  closeDropdown()
 }
 function processResultBackgroundsearch(data: any, selectResult: Function) {
   searchResults.value.push({
@@ -420,17 +421,40 @@ function clearSearch() {
   olLayerSearchService.clearFeatures()
   searchQuery.value = '' // Reset the search query
   searchResults.value = [] // Clear the search results
-  isOpenResults.value = false // Close the dropdown
+  closeDropdown()
 }
 
 const isFilterPanelOpen = ref(false)
+watch(isFilterPanelOpen, open => {
+  if (open) {
+    nextTick(() => {
+      if (filterPanelRef.value) {
+        filterPanelRef.value.focusedIndex = 0
+        filterPanelRef.value.focusItem(0)
+      }
+    })
+  }
+})
+
+function openOrCloseFilterPanel() {
+  if (isFilterPanelOpen.value) {
+    closeFilterPanel()
+    return
+  }
+  closeDropdown()
+  openFilterPanel()
+}
 
 function openFilterPanel() {
-  isOpenResults.value = false
   isFilterPanelOpen.value = true
 }
+
 function closeFilterPanel() {
   isFilterPanelOpen.value = false
+}
+
+function closeDropdown() {
+  isOpenResults.value = false
 }
 
 // Focus management for dropdown results
@@ -445,7 +469,7 @@ function focusItem(index: number) {
 // Handle keydown on the dropdown list
 function onDropdownKeydown(e: KeyboardEvent) {
   e.stopPropagation()
-
+  if (isFilterPanelOpen.value) return
   if (!searchResults.value.length) return
   const flatResults = searchResults.value.flatMap(g => g.results)
   if (focusedIndex.value === null) focusedIndex.value = 0
@@ -496,11 +520,13 @@ function onSearchInputKeydown(e: KeyboardEvent) {
     searchResults.value.length
   ) {
     e.preventDefault()
-    focusedIndex.value = 0
-    // Focus the dropdown container
-    nextTick(() => {
-      dropdownRef.value?.focus()
-    })
+    if (isOpenResults.value) {
+      focusedIndex.value = 0
+      // Focus the dropdown container
+      nextTick(() => {
+        dropdownRef.value?.focus()
+      })
+    }
   }
 }
 function getThemeLinks(layerId: number): string {
@@ -536,7 +562,7 @@ function getThemeLinks(layerId: number): string {
       >
         ✕
       </button>
-      <button class="filter-button" @click="openFilterPanel">
+      <button class="filter-button" @click="openOrCloseFilterPanel">
         <span class="filter-icon"></span>
       </button>
     </div>
@@ -592,7 +618,11 @@ function getThemeLinks(layerId: number): string {
       {{ t('Loading...') }}
     </div>
 
-    <FilterPanel v-if="isFilterPanelOpen" @close="closeFilterPanel" />
+    <FilterPanel
+      ref="filterPanelRef"
+      v-if="isFilterPanelOpen"
+      @close="closeFilterPanel"
+    />
   </div>
 </template>
 

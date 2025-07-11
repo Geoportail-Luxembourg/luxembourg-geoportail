@@ -1,4 +1,5 @@
 <script setup lang="ts">
+import { ref } from 'vue'
 import { useTranslation } from 'i18next-vue'
 import FilterToggle from './filter-toggle.vue'
 import {
@@ -7,58 +8,111 @@ import {
   esLabels,
 } from '@/composables/search/search-filters'
 
+const filtersCount = Object.keys(initialFilters).length
 const { t } = useTranslation()
 
 function toggleFilter(entry: string) {
   curFilters.value[entry] = !curFilters.value[entry]
 }
+
 function saveSearch() {
   localStorage.setItem('searchFacets', JSON.stringify(curFilters.value))
 }
+
 function resetSearch() {
   curFilters.value = Object.assign({}, initialFilters)
 }
+
+const focusedIndex = ref<number | null>(null)
+
+function focusItem(index: number) {
+  const el = document.querySelectorAll('.filter-toggle-btn')[
+    index
+  ] as HTMLElement
+  if (el) el.focus()
+}
+
+function onPanelKeydown(e: KeyboardEvent) {
+  e.stopPropagation()
+  if (focusedIndex.value === null) focusedIndex.value = -1
+  if (e.key === 'Tab' && e.shiftKey && focusedIndex.value! <= 0) {
+    focusedIndex.value = -1
+    return
+  }
+  if (
+    e.key === 'Tab' &&
+    !e.shiftKey &&
+    focusedIndex.value! >= filtersCount - 1
+  ) {
+    focusedIndex.value = -1
+    return
+  }
+  if (e.key === 'ArrowDown' || (e.key === 'Tab' && !e.shiftKey)) {
+    e.preventDefault()
+    if (focusedIndex.value! < filtersCount - 1) {
+      focusedIndex.value!++
+      focusItem(focusedIndex.value!)
+    }
+  } else if (e.key === 'ArrowUp' || (e.key === 'Tab' && e.shiftKey)) {
+    e.preventDefault()
+    if (focusedIndex.value! > 0) {
+      focusedIndex.value!--
+      focusItem(focusedIndex.value!)
+    }
+  } else if (e.key === 'Enter' || e.key === ' ' || e.code === 'Space') {
+    e.preventDefault()
+    const filterKeys = Object.keys(initialFilters)
+    toggleFilter(filterKeys[focusedIndex.value!])
+  }
+}
+// Expose to parent
+defineExpose({
+  focusedIndex,
+  focusItem,
+})
 </script>
 
 <template>
   <div class="filter-panel bg-secondary text-tertiary">
     <h3>{{ t('Paramètres de recherche') }}</h3>
     <button class="close-panel" @click="$emit('close')">&times;</button>
-    <h4>{{ t('Inclure') }}</h4>
-    <FilterToggle
-      :label="t('Pages du site')"
-      :checked="curFilters.cms"
-      @toggle="toggleFilter('cms')"
-    />
-    <FilterToggle
-      :label="t('Couches')"
-      :checked="curFilters.layers"
-      @toggle="toggleFilter('layers')"
-    />
-    <hr />
-    <h4>{{ t('Limiter la recherche à') }}</h4>
-    <FilterToggle
-      v-for="(label, key) in esLabels"
-      :key="key"
-      :label="t(label)"
-      :checked="curFilters[key]"
-      @toggle="toggleFilter(key)"
-    />
-    <hr />
-    <h4>{{ t('Étendue') }}</h4>
-    <FilterToggle
-      :label="t('Uniquement dans la partie actuellement visible de la carte')"
-      :checked="curFilters.extent"
-      @toggle="toggleFilter('extent')"
-    />
-    <hr />
-    <h4>{{ t('Avancée') }}</h4>
-    <FilterToggle
-      :label="t('Chercher dans les couches actives')"
-      :checked="curFilters.activeLayers"
-      @toggle="toggleFilter('activeLayers')"
-    />
-    <hr />
+    <div @keydown="onPanelKeydown">
+      <h4>{{ t('Inclure') }}</h4>
+      <FilterToggle
+        :label="t('Pages du site')"
+        :checked="curFilters.cms"
+        @toggle="toggleFilter('cms')"
+      />
+      <FilterToggle
+        :label="t('Couches')"
+        :checked="curFilters.layers"
+        @toggle="toggleFilter('layers')"
+      />
+      <hr />
+      <h4>{{ t('Limiter la recherche à') }}</h4>
+      <FilterToggle
+        v-for="(label, key) in esLabels"
+        :key="key"
+        :label="t(label)"
+        :checked="curFilters[key]"
+        @toggle="toggleFilter(key)"
+      />
+      <hr />
+      <h4>{{ t('Étendue') }}</h4>
+      <FilterToggle
+        :label="t('Uniquement dans la partie actuellement visible de la carte')"
+        :checked="curFilters.extent"
+        @toggle="toggleFilter('extent')"
+      />
+      <hr />
+      <h4>{{ t('Avancée') }}</h4>
+      <FilterToggle
+        :label="t('Chercher dans les couches actives')"
+        :checked="curFilters.activeLayers"
+        @toggle="toggleFilter('activeLayers')"
+      />
+      <hr />
+    </div>
     <div class="flex">
       <button class="lux-btn mr-auto" @click="resetSearch()">
         {{ t('Réinitialiser') }}
