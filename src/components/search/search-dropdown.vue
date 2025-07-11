@@ -58,7 +58,7 @@ function addLayerFromSearch(layer_name: string) {
     cur_suggestion_layer = cur_suggestion_layer + '_' + theme
   }
 
-  var layers = layerLookup[cur_suggestion_layer] || []
+  const layers = layerLookup[cur_suggestion_layer] || []
   const { findByName } = useThemes()
   layers.forEach(function (layer) {
     const layerToAdd = findByName(layer)
@@ -67,6 +67,7 @@ function addLayerFromSearch(layer_name: string) {
     }
   })
 }
+
 function processResultFulltextsearch(data: any, selectResult: Function) {
   searchResults.value.push({
     header: t('Addresses'),
