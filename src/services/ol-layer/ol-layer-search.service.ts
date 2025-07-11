@@ -17,7 +17,7 @@ import FeatureLike from 'ol/Feature'
 
 export const FEATURE_LAYER_TYPE = 'searchLayer'
 export const HIGHLIGHT_MAX_ZOOM = 17
-class SearchLayerService {
+class OlLayerSearchService {
   map: Map
   featureLayer: VectorLayer<VectorSource>
 
@@ -190,4 +190,4 @@ class SearchLayerService {
     }
   }
 }
-export const searchLayerService = new SearchLayerService()
+export const olLayerSearchService = new OlLayerSearchService()

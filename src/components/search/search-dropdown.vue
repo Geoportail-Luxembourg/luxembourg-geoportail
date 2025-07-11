@@ -3,7 +3,7 @@ import { ref, watch, nextTick } from 'vue'
 import { useTranslation } from 'i18next-vue'
 import { fetchApi } from '@/services/api/api.service'
 import { storeToRefs } from 'pinia'
-import { searchLayerService } from '@/services/search/search-layer.service'
+import { olLayerSearchService } from '@/services/ol-layer/ol-layer-search.service'
 import { useMapStore } from '@/stores/map.store'
 import { matchCoordinate } from '@/services/search/coordinate.service'
 import { useThemeStore } from '@/stores/config.store'
@@ -60,10 +60,11 @@ function addLayerFromSearch(layer_name: string) {
 
   const layers = layerLookup[cur_suggestion_layer] || []
   const { findByName } = useThemes()
+  const layersService = useLayers()
   layers.forEach(function (layer) {
     const layerToAdd = findByName(layer)
     if (layerToAdd !== undefined) {
-      useLayers().toggleLayer(layerToAdd.id, true, false, false)
+      layersService.toggleLayer(layerToAdd.id, true, false, false)
     }
   })
 }
@@ -175,7 +176,7 @@ function selectResultFeatureSearch(result: {
   entry: object
 }) {
   searchQuery.value = result.label // Set the selected label as the
-  searchLayerService.highlightFeatures(
+  olLayerSearchService.highlightFeatures(
     [result.entry],
     true,
     maxZoom.value,
@@ -192,14 +193,22 @@ function selectResultFullTextSearch(result: {
   addLayerFromSearch(result.layer_name)
   switch (result.layer_name) {
     case 'Parcelle':
-      searchLayerService.highlightFeatures([result.entry], true, maxZoom.value)
+      olLayerSearchService.highlightFeatures(
+        [result.entry],
+        true,
+        maxZoom.value
+      )
       break
     case 'Adresse':
-      searchLayerService.highlightFeatures([result.entry], true, maxZoom.value)
+      olLayerSearchService.highlightFeatures(
+        [result.entry],
+        true,
+        maxZoom.value
+      )
       break
     default:
-      searchLayerService.clearFeatures()
-      searchLayerService.fitFeatures([result.entry], maxZoom.value)
+      olLayerSearchService.clearFeatures()
+      olLayerSearchService.fitFeatures([result.entry], maxZoom.value)
   }
   isOpenResults.value = false // Close the dropdown
 }
@@ -237,7 +246,7 @@ function selectResultCoordinateSearch(result: {
   entry: object
 }) {
   searchQuery.value = result.label // Set the selected label as the
-  searchLayerService.highlightFeatures([result.entry], true, maxZoom.value)
+  olLayerSearchService.highlightFeatures([result.entry], true, maxZoom.value)
   isOpenResults.value = false // Close the dropdown
 }
 function processResultBackgroundsearch(data: any, selectResult: Function) {
@@ -338,7 +347,7 @@ async function getDataCmsSearch(newQuery: string) {
 
 function getDataBackgroundSearch(newQuery: string) {
   const { bgLayers } = useThemeStore()
-  if (newQuery.length == 0) {
+  if (newQuery.length === 0) {
     return
   }
 
@@ -371,7 +380,10 @@ const dataSources = {
 
 function getDataCoordinates(newQuery: string) {
   const searchString = newQuery
-  const mapEpsgCode = searchLayerService.map.getView().getProjection().getCode()
+  const mapEpsgCode = olLayerSearchService.map
+    .getView()
+    .getProjection()
+    .getCode()
   const features = matchCoordinate(searchString, mapEpsgCode)
   searchResults.value.push({
     header: t('Coordinates'),
@@ -404,7 +416,7 @@ watch(searchQuery, async newQuery => {
 })
 
 function clearSearch() {
-  searchLayerService.clearFeatures()
+  olLayerSearchService.clearFeatures()
   searchQuery.value = '' // Reset the search query
   searchResults.value = [] // Clear the search results
   isOpenResults.value = false // Close the dropdown
