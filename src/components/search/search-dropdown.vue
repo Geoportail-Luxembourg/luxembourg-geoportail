@@ -402,6 +402,7 @@ function getDataCoordinates(newQuery: string) {
 async function handleDataSources(newQuery: string) {
   searchResults.value = []
   isLoading.value = true
+  closeFilterPanel()
   Object.entries(dataSources).map(async ([, source]) => {
     if ('getData' in source && typeof source.getData === 'function') {
       source.getData(newQuery)
