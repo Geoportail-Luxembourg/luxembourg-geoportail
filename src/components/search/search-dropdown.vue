@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { ref, watch, nextTick } from 'vue'
+import { ref, watch, nextTick, computed } from 'vue'
 import { useTranslation } from 'i18next-vue'
 import { fetchApi } from '@/services/api/api.service'
 import { storeToRefs } from 'pinia'
@@ -14,7 +14,6 @@ import FilterPanel from './filter-panel.vue'
 import { curFilters, esMatch } from '@/composables/search/search-filters'
 import { transformExtent } from 'ol/proj.js'
 import useMap from '@/composables/map/map.composable'
-import { computed } from 'vue'
 import { useMetadataStore } from '@/stores/metadata.store'
 import { LayerId, Layer } from '@/stores/map.store.model'
 
@@ -33,6 +32,7 @@ const isOpenResults = ref(false)
 const searchResults = ref<
   {
     header: string
+    groupKey: string
     selectResult: Function
     results: {
       label: string
@@ -62,7 +62,24 @@ const layerLookup: { [key: string]: string[] } = {
   nom_de_rue: ['roads', 'roads_labels'],
 }
 let handleDataSourcesToken = 0
+const groupOrder = [
+  'Addresses',
+  'Parcelles',
+  'Features',
+  'Layers',
+  'Website Pages',
+  'Background Layers',
+  'Coordinates',
+]
+const orderedSearchResults = computed(() =>
+  searchResults.value.slice().sort((a, b) => {
+    const aIdx = groupOrder.indexOf(a.groupKey)
+    const bIdx = groupOrder.indexOf(b.groupKey)
 
+    // Groups not in the list go to the end
+    return (aIdx === -1 ? 999 : aIdx) - (bIdx === -1 ? 999 : bIdx)
+  })
+)
 function addLayerFromSearch(layer_name: string) {
   const { theme } = useThemeStore()
   let cur_suggestion_layer: string = layer_name
@@ -87,28 +104,62 @@ function addLayerFromSearch(layer_name: string) {
 }
 
 function processResultFulltextsearch(data: any, selectResult: Function) {
-  searchResults.value.push({
-    header: t('Addresses'),
-    selectResult: selectResult,
-    results: data.features.map(function (feature: any) {
-      const label =
-        feature.properties.label +
-        (feature.properties.layer_name
-          ? ` (${t(feature.properties.layer_name)})`
-          : '')
-      return {
-        label: label,
-        layer_name: feature.properties.layer_name,
-        entry: feature,
-        showRoutingButton: true,
-        showInfoButton: false,
-      }
-    }),
-  })
+  // Split features into "Parcelle" and others
+  const parcelleFeatures = data.features.filter(
+    (feature: any) => feature.properties.layer_name === 'Parcelle'
+  )
+  const otherFeatures = data.features.filter(
+    (feature: any) => feature.properties.layer_name !== 'Parcelle'
+  )
+
+  if (parcelleFeatures.length) {
+    searchResults.value.push({
+      header: t('Parcelles'),
+      groupKey: 'Parcelles',
+      selectResult: selectResult,
+      results: parcelleFeatures.map(function (feature: any) {
+        const label =
+          feature.properties.label +
+          (feature.properties.layer_name
+            ? ` (${t(feature.properties.layer_name)})`
+            : '')
+        return {
+          label: label,
+          layer_name: feature.properties.layer_name,
+          entry: feature,
+          showRoutingButton: true,
+          showInfoButton: false,
+        }
+      }),
+    })
+  }
+
+  if (otherFeatures.length) {
+    searchResults.value.push({
+      header: t('Addresses'),
+      groupKey: 'Addresses',
+      selectResult: selectResult,
+      results: otherFeatures.map(function (feature: any) {
+        const label =
+          feature.properties.label +
+          (feature.properties.layer_name
+            ? ` (${t(feature.properties.layer_name)})`
+            : '')
+        return {
+          label: label,
+          layer_name: feature.properties.layer_name,
+          entry: feature,
+          showRoutingButton: true,
+          showInfoButton: false,
+        }
+      }),
+    })
+  }
 }
 function processResultFeaturesearch(data: any, selectResult: Function) {
   searchResults.value.push({
     header: t('Features'),
+    groupKey: 'Features',
     selectResult: selectResult,
     results: data.features.map(function (feature: any) {
       const label =
@@ -142,6 +193,7 @@ function switchTheme(themeName: string) {
 function processResultLayersearch(data: any, selectResult: Function) {
   searchResults.value.push({
     header: t('Layers'),
+    groupKey: 'Layers',
     selectResult: selectResult,
     results: data.map(function (item: {
       language: string
@@ -201,6 +253,7 @@ function onRoutingClick(result: {
 function processResultCmssearch(data: any, selectResult: Function) {
   searchResults.value.push({
     header: t('Website Pages'),
+    groupKey: 'Website Pages',
     selectResult: selectResult,
     results: data.map(
       (item: {
@@ -302,6 +355,7 @@ function selectResultCoordinateSearch(result: {
 function processResultBackgroundsearch(data: any, selectResult: Function) {
   searchResults.value.push({
     header: t('Background Layers'),
+    groupKey: 'Background Layers',
     selectResult: selectResult,
     results: data.map((item: { name: string; id: number }) => ({
       label: t(item.name),
@@ -444,6 +498,7 @@ function getDataCoordinates(newQuery: string, token) {
   const features = matchCoordinate(searchString, mapEpsgCode)
   searchResults.value.push({
     header: t('Coordinates'),
+    groupKey: 'Coordinates',
     selectResult: selectResultCoordinateSearch,
     results: features.map(function (feature: any) {
       const label = feature.get('label') + ' (' + feature.get('epsgLabel') + ')'
@@ -640,7 +695,10 @@ function getThemeLinks(layerId: number): string {
       ref="dropdownRef"
     >
       <ul role="listbox">
-        <li v-for="(group, groupIndex) in searchResults" :key="groupIndex">
+        <li
+          v-for="(group, groupIndex) in orderedSearchResults"
+          :key="groupIndex"
+        >
           <!-- Data Source Title -->
           <div v-if="group.results.length > 0" class="dropdown-title">
             {{ t(group.header) }}
