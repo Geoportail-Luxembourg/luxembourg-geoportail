@@ -15,7 +15,10 @@ import { curFilters, esMatch } from '@/composables/search/search-filters'
 import { transformExtent } from 'ol/proj.js'
 import useMap from '@/composables/map/map.composable'
 import { computed } from 'vue'
+import { useMetadataStore } from '@/stores/metadata.store'
+import { LayerId, Layer } from '@/stores/map.store.model'
 
+const { setMetadataLayer } = useMetadataStore()
 const filterIconColor = computed(() =>
   isFilterPanelOpen.value ? 'var(--color-tertiary)' : '#ffffff'
 )
@@ -33,12 +36,19 @@ const searchResults = ref<
     selectResult: Function
     results: {
       label: string
-      layer_name: string
+      url?: string
+      text?: string
+      layer_id?: LayerId
+      name?: string
+      layer_name?: string
+      language?: string
       entry: object
       showRoutingButton: boolean
+      showInfoButton: boolean
     }[]
   }[]
 >([])
+
 const isLoading = ref(false) // Track loading state
 const layerLookup: { [key: string]: string[] } = {
   Adresse: ['addresses'],
@@ -90,6 +100,7 @@ function processResultFulltextsearch(data: any, selectResult: Function) {
         layer_name: feature.properties.layer_name,
         entry: feature,
         showRoutingButton: true,
+        showInfoButton: false,
       }
     }),
   })
@@ -109,6 +120,7 @@ function processResultFeaturesearch(data: any, selectResult: Function) {
         layer_name: feature.properties.layer_name,
         entry: feature,
         showRoutingButton: false,
+        showInfoButton: false,
       }
     }),
   })
@@ -142,16 +154,46 @@ function processResultLayersearch(data: any, selectResult: Function) {
         name: item.name,
         language: item.language,
         showRoutingButton: false,
+        showInfoButton: true,
       }
     }),
   })
 }
 
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
+function onInfoClick(result: {
+  label: string
+  url?: string
+  text?: string
+  layer_id?: LayerId
+  name?: string
+  layer_name?: string
+  language?: string
+  entry: object
+  showRoutingButton: boolean
+  showInfoButton: boolean
+}) {
+  const { findAnyLayerById } = useThemes()
+  if (result.layer_id) {
+    const layer = findAnyLayerById(result.layer_id)
+    if (layer) {
+      setMetadataLayer(layer as Layer)
+    }
+  }
+}
+
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
 function onRoutingClick(result: {
   label: string
-  layer_name: string
+  url?: string
+  text?: string
+  layer_id?: LayerId
+  name?: string
+  layer_name?: string
+  language?: string
   entry: object
+  showRoutingButton: boolean
+  showInfoButton: boolean
 }) {
   // TODO: Implement routing logic
 }
@@ -171,6 +213,7 @@ function processResultCmssearch(data: any, selectResult: Function) {
         text: item.text,
         language: item.language,
         showRoutingButton: false,
+        showInfoButton: false,
       })
     ),
   })
@@ -260,10 +303,11 @@ function processResultBackgroundsearch(data: any, selectResult: Function) {
     header: t('Background Layers'),
     selectResult: selectResult,
     results: data.map((item: { name: string; id: number }) => ({
-      label: t(item.name), // Use the `name` property as the label
-      layer_id: item.id, // Include the layer ID
-      name: item.name, // Include the name
+      label: t(item.name),
+      layer_id: item.id,
+      name: item.name,
       showRoutingButton: false,
+      showInfoButton: true,
     })),
   })
 }
@@ -401,6 +445,7 @@ function getDataCoordinates(newQuery: string) {
         layer_name: 'Coordinates',
         entry: feature,
         showRoutingButton: false,
+        showInfoButton: false,
       }
     }),
   })
@@ -612,6 +657,14 @@ function getThemeLinks(layerId: number): string {
                   <span class="routing-icon"></span>
                 </button>
               </span>
+              <button
+                v-if="result.showInfoButton"
+                class="search-result-info self-start before:text-[.85rem] before:transform before:translate-y-[.1rem] before:inline-block before:content-['\f129'] fa-solid fa-fw fa-fh fa-info"
+                @click="onInfoClick(result)"
+                @click.stop="onInfoClick(result)"
+                @keydown.enter.stop="onInfoClick(result)"
+                @keydown.space.stop.prevent="onInfoClick(result)"
+              ></button>
             </li>
           </ul>
         </li>
@@ -777,5 +830,11 @@ function getThemeLinks(layerId: number): string {
 
 .dropdown-item.focused {
   background-color: #e0e0e0;
+}
+
+.search-result-info {
+  margin-left: auto;
+  color: #888;
+  font-weight: bold;
 }
 </style>
