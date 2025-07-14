@@ -392,11 +392,7 @@ async function getDataFeatureSearch(newQuery: string, token: number) {
   params['layers'] = selected_layers.join(',')
 
   if (curFilters.value['extent']) {
-    let extent = transformExtent(
-      useMap().getOlMap().getView().calculateExtent(),
-      'EPSG:3857',
-      'EPSG:4326'
-    )
+    let extent = useMap().getOlMap().getView().calculateExtent()
     params['extent'] = extent.join(',')
   }
 
