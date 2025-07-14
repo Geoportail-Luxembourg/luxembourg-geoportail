@@ -510,6 +510,7 @@ function getDataCoordinates(newQuery: string, token) {
 }
 async function handleDataSources(newQuery: string, token: number) {
   searchResults.value = []
+  if (newQuery.length === 0) return clearSearch()
   isLoading.value = true
   closeFilterPanel()
   await Promise.all(
