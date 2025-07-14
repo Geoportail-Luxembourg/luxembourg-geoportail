@@ -61,6 +61,7 @@ const layerLookup: { [key: string]: string[] } = {
   asta_esp: ['asta_esp_esp'],
   nom_de_rue: ['roads', 'roads_labels'],
 }
+let handleDataSourcesToken = 0
 
 function addLayerFromSearch(layer_name: string) {
   const { theme } = useThemeStore()
@@ -238,7 +239,7 @@ function selectResultFullTextSearch(result: {
   layer_name: string
   entry: object
 }) {
-  searchQuery.value = result.label // Set the selected label as the
+  searchQuery.value = result.label
   addLayerFromSearch(result.layer_name)
   switch (result.layer_name) {
     case 'Parcelle':
@@ -319,7 +320,7 @@ async function getData(
   return await response.json()
 }
 
-async function getDataFeatureSearch(newQuery: string) {
+async function getDataFeatureSearch(newQuery: string, token: number) {
   if (!curFilters.value['activeLayers']) return false
 
   let params: { [key: string]: any } = {
@@ -349,10 +350,11 @@ async function getDataFeatureSearch(newQuery: string) {
     import.meta.env.VITE_V3_API_HOST + 'featuresearch',
     params
   )
+  if (token !== handleDataSourcesToken) return
   processResultFeaturesearch(data, selectResultFeatureSearch)
 }
 
-async function getDataFulltextSearch(newQuery: string) {
+async function getDataFulltextSearch(newQuery: string, token: number) {
   let params: { [key: string]: any } = { query: newQuery, limit: 8 }
 
   let layers = Object.keys(esMatch)
@@ -376,26 +378,29 @@ async function getDataFulltextSearch(newQuery: string) {
     import.meta.env.VITE_V3_API_HOST + 'fulltextsearch',
     params
   )
+  if (token !== handleDataSourcesToken) return
   processResultFulltextsearch(data, selectResultFullTextSearch)
 }
-async function getDataLayerSearch(newQuery: string) {
+async function getDataLayerSearch(newQuery: string, token: number) {
   let params: { [key: string]: any } = { query: newQuery, limit: 8 }
   const data = await getData(
     import.meta.env.VITE_V3_API_HOST + 'layersearch',
     params
   )
+  if (token !== handleDataSourcesToken) return
   processResultLayersearch(data, selectResulLayerSearch)
 }
-async function getDataCmsSearch(newQuery: string) {
+async function getDataCmsSearch(newQuery: string, token: number) {
   let params: { [key: string]: any } = { query: newQuery, limit: 8 }
   const data = await getData(
     import.meta.env.VITE_V3_API_HOST + 'cmssearch',
     params
   )
+  if (token !== handleDataSourcesToken) return
   processResultCmssearch(data, selectResultCmsSearch)
 }
 
-function getDataBackgroundSearch(newQuery: string) {
+function getDataBackgroundSearch(newQuery: string, token: number) {
   const { bgLayers } = useThemeStore()
   if (newQuery.length === 0) {
     return
@@ -404,6 +409,7 @@ function getDataBackgroundSearch(newQuery: string) {
   const data = bgLayers.filter(bgLayer => {
     return t(bgLayer.name).toLowerCase().includes(newQuery.toLowerCase())
   })
+  if (token !== handleDataSourcesToken) return
   processResultBackgroundsearch(data, selectResultBackgroundLayerSearch)
 }
 
@@ -428,7 +434,8 @@ const dataSources = {
   },
 }
 
-function getDataCoordinates(newQuery: string) {
+function getDataCoordinates(newQuery: string, token) {
+  if (token !== handleDataSourcesToken) return
   const searchString = newQuery
   const mapEpsgCode = olLayerSearchService.map
     .getView()
@@ -450,21 +457,27 @@ function getDataCoordinates(newQuery: string) {
     }),
   })
 }
-async function handleDataSources(newQuery: string) {
+async function handleDataSources(newQuery: string, token: number) {
   searchResults.value = []
   isLoading.value = true
   closeFilterPanel()
-  Object.entries(dataSources).map(async ([, source]) => {
-    if ('getData' in source && typeof source.getData === 'function') {
-      source.getData(newQuery)
-    }
+  await Promise.all(
+    Object.entries(dataSources).map(async ([, source]) => {
+      if ('getData' in source && typeof source.getData === 'function') {
+        source.getData(newQuery, token)
+      }
+    })
+  )
+  if (token === handleDataSourcesToken) {
     isLoading.value = false
     isOpenResults.value = true
-  })
+  }
 }
 
 watch(searchQuery, async newQuery => {
-  handleDataSources(newQuery)
+  handleDataSourcesToken++
+  const currentToken = handleDataSourcesToken
+  handleDataSources(newQuery, currentToken)
 })
 
 function clearSearch() {
