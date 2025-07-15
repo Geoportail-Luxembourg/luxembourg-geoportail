@@ -484,7 +484,7 @@ const dataSources = {
   },
 }
 
-function getDataCoordinates(newQuery: string, token) {
+function getDataCoordinates(newQuery: string, token: number) {
   if (token !== handleDataSourcesToken) return
   const searchString = newQuery
   const mapEpsgCode = olLayerSearchService.map
