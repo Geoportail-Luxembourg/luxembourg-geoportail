@@ -18,6 +18,7 @@ const { themeName } = storeToRefs(useThemeStore())
 const { authenticated } = storeToRefs(useUserManagerStore())
 const isAuthFormOpened = ref(false)
 const isLangOpened = ref(false)
+const isMobileSearchOpen = ref(false)
 
 // Close auth form dropdown when authentification done
 watch(
@@ -48,12 +49,13 @@ function onToggleDropdownAuth(isOpen: boolean) {
       <img src="@/assets/images/gov-light.png" />
     </div>
     <div class="grow flex justify-center items-center">
-      <search-dropdown />
+      <search-dropdown class="hidden md:block" />
+      <search-dropdown v-if="isMobileSearchOpen" class="block md:hidden" />
     </div>
     <div>
       <ul class="h-full flex">
         <!-- Theme selector -->
-        <li>
+        <li class="hidden md:flex">
           <button
             class="flex items-center before:font-icons before:text-3xl before:w-16 text-primary uppercase h-full mr-3"
             :class="`before:content-${themeName}`"
@@ -63,7 +65,22 @@ function onToggleDropdownAuth(isOpen: boolean) {
             <span class="hidden lg:inline-block">{{ t(`${themeName}`) }}</span>
           </button>
         </li>
-
+        <!-- Search dropdown -->
+        <li class="block md:hidden">
+          <button
+            class="lux-btn lux-dropdown-btn h-full"
+            @click="isMobileSearchOpen = !isMobileSearchOpen"
+          >
+            <span
+              class="before:font-icons before:text-3xl after:font-icons after:text-3xl"
+              :class="[
+                { 'lux-navbar-search-dropdown': !isMobileSearchOpen },
+                { 'lux-navbar-search-close': isMobileSearchOpen },
+              ]"
+            >
+            </span>
+          </button>
+        </li>
         <!-- Language selector -->
         <li class="border-l-[1px] border-stone-300 h-full">
           <language-selector

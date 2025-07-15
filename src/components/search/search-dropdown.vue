@@ -805,7 +805,24 @@ function getThemeLinks(layerId: number): string {
 }
 .search-dropdown {
   position: relative;
-  width: 370px;
+  width: 100%;
+  max-width: 370px;
+  min-width: 0;
+}
+
+@media (max-width: 600px) {
+  .search-dropdown {
+    max-width: 80vw;
+    width: 80vw;
+    left: -1vw;
+    right: 1vw;
+  }
+  .dropdown {
+    max-width: 80vw;
+    width: 80vw;
+    left: 0;
+    right: 0;
+  }
 }
 .search-input-wrapper {
   position: relative;
