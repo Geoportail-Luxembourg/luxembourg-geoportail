@@ -9,6 +9,7 @@ import { setCircleRadius } from '@/services/common/measurement.utils'
 import { useDrawStore } from '@/stores/draw.store'
 import useMap from '../map/map.composable'
 import { storeToRefs } from 'pinia'
+import { nextTick } from 'vue'
 
 // TODO 3D
 // import { transform } from 'ol/proj'
@@ -88,14 +89,15 @@ export default function useDrawUtils() {
     return newFeatureCircle
   }
 
-  function continueLine(feature: DrawnFeature) {
+  async function continueLine(feature: DrawnFeature) {
     activateDrawLineContinue()
 
-    // TODO: not working, maybe because of the watcher?
-    // TODO: double click not working correctly
-    // TODO: dont do a addFeaturesToSource
     if (currentDrawInteraction.value) {
-      console.log('append feature')
+      feature.editable = true // to display vertex // TODO: move elsewhere
+      feature.changed()
+
+      await nextTick() // mandatory! // FIXME: why?
+
       currentDrawInteraction.value?.setActive(true)
       currentDrawInteraction.value?.extend(<Feature<LineString>>feature)
     }

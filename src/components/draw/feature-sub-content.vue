@@ -22,6 +22,7 @@ defineProps<{
   isEditingFeature: boolean
 }>()
 const emit = defineEmits([
+  'continueLine',
   'toggleEditFeature',
   'toggleDock',
   'clickDelete',
@@ -160,6 +161,7 @@ function onClickValidate(payload: MouseEvent | FeatureConcentricCirclePayload) {
 
           <!-- Menu dropdown with all other possible actions on feature -->
           <FeatureMenuPopup
+            @continueLine="emit('continueLine')"
             @newConcentricCircle="
               () => (currentEditCompKey = 'FeatureConcentricCircle')
             "

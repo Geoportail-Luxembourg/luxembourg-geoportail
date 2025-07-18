@@ -35,11 +35,13 @@ export const useDrawStore = defineStore('draw', () => {
   }
 
   function toggleDrawActiveState(newState: DrawStateActive) {
+    const currentEditStateType = editStateActive.value
+      ?.replace('edit', '')
+      .replace('Continue', '')
+    const newStateType = newState?.replace('draw', '').replace('Continue', '')
+
     // allow draw of different geom type after edit, but not same type
-    if (
-      editStateActive.value?.replace('edit', '') ===
-      newState?.replace('draw', '')
-    ) {
+    if (currentEditStateType === newStateType) {
       drawStateActive.value = undefined
       editStateActive.value = undefined
       editingFeatureId.value = undefined
@@ -78,10 +80,9 @@ export const useDrawStore = defineStore('draw', () => {
   function selectDrawnFeature(feature: DrawnFeature) {
     activeFeatureId.value = feature.id
     editingFeatureId.value = feature.id
-    editStateActive.value = feature.featureType.replace(
-      'drawn',
-      'edit'
-    ) as EditStateActive
+    editStateActive.value = <EditStateActive>(
+      feature.featureType.replace('drawn', 'edit').replace('Continue', '')
+    )
     drawStateActive.value = undefined
   }
 

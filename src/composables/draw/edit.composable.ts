@@ -9,76 +9,64 @@ import { listen } from 'ol/events'
 import { DrawnFeature } from '@/services/ol-feature/ol-feature-drawn'
 import { olLayerFactoryService } from '@/services/ol-layer/ol-layer-factory.service'
 import { useDrawStore } from '@/stores/draw.store'
-import { EditStateActive } from '@/stores/draw.store.model'
 import useMap from '../map/map.composable'
 
 export default function useEdit() {
+  let modifyInteraction: Modify | undefined = undefined
+  let modifyEndHandler: ((event: ModifyEvent) => void) | undefined = undefined
+
   const { editStateActive, editingFeatureId, drawnFeatures } = storeToRefs(
     useDrawStore()
   )
-  const { updateDrawnFeature, setEditActiveState } = useDrawStore()
+  const { updateDrawnFeature } = useDrawStore()
+  const map = useMap().getOlMap()
   const editLayer = olLayerFactoryService.createOlLayerInteractionDraw()
   const editSource = <VectorSource>editLayer.getSource()
-  const map = useMap().getOlMap()
 
   map.addLayer(editLayer)
 
-  let modifyInteraction: Modify
+  watch(editStateActive, active => {
+    clearInteraction()
 
-  watch(editStateActive, editStateActive => {
-    if (editStateActive) {
+    if (active) {
       createModifyInteraction()
-    } else {
-      map.removeInteraction(modifyInteraction)
     }
   })
 
-  // listener on editingFeatureId to set stores editing states
-  watch(editingFeatureId, editingFeatureId => {
-    if (!editingFeatureId) {
-      setEditActiveState(undefined)
-      drawnFeatures.value.forEach(feature => {
-        if ((feature as DrawnFeature).editable) {
-          ;(feature as DrawnFeature).editable = false
-          feature.changed()
-        }
-      })
-    }
+  // Update layer with edited feature
+  watch(editingFeatureId, fId => {
     editSource.clear()
-    const feature = drawnFeatures.value.find(
-      feature => feature.id === editingFeatureId
-    ) as DrawnFeature
+
+    const feature = <DrawnFeature>drawnFeatures.value.find(f => f.id === fId)
+
     if (feature) {
-      const editState = feature.featureType.replace(
-        'drawn',
-        'edit'
-      ) as EditStateActive
-      setEditActiveState(editState)
-      feature.editable = true
-      feature.changed()
       editSource.addFeature(feature)
     }
   })
 
-  function createModifyInteraction() {
-    if (modifyInteraction) {
+  function clearInteraction() {
+    if (modifyInteraction && modifyEndHandler) {
+      modifyInteraction.un('modifyend', modifyEndHandler)
       map.removeInteraction(modifyInteraction)
+      modifyInteraction = undefined
+      modifyEndHandler = undefined
     }
+  }
 
+  function createModifyInteraction() {
     modifyInteraction = new Modify({
       source: editSource,
       pixelTolerance: 20,
       deleteCondition: event => noModifierKeys(event) && singleClick(event),
     })
 
-    listen(modifyInteraction, 'modifyend', event => {
-      const feature = <DrawnFeature>(
-        (event as ModifyEvent).features.getArray()[0]
-      )
+    modifyEndHandler = event => {
+      const feature = <DrawnFeature>event.features.getArray()[0]
       feature.resetProfileData()
-      updateDrawnFeature(feature as DrawnFeature)
-    })
+      updateDrawnFeature(feature)
+    }
 
+    modifyInteraction.on('modifyend', modifyEndHandler)
     map.addInteraction(modifyInteraction)
   }
 

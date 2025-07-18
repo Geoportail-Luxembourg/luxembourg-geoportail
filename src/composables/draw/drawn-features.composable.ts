@@ -1,94 +1,39 @@
 import { t } from 'i18next'
 import { storeToRefs } from 'pinia'
-import { v4 as uuidv4 } from 'uuid'
+
 import { Feature } from 'ol'
-import { Point, Circle, Geometry, LineString } from 'ol/geom'
-import Polygon from 'ol/geom/Polygon'
-import { Coordinate } from 'ol/coordinate'
+import { Geometry } from 'ol/geom'
 
 import { useDrawStore } from '@/stores/draw.store'
 import { DrawnFeature } from '@/services/ol-feature/ol-feature-drawn'
-import { DrawnFeatureType, DrawnFeatureStyle } from '@/stores/draw.store.model'
+import { DrawnFeatureType } from '@/stores/draw.store.model'
 
 export default function useDrawnFeatures() {
   const drawStore = useDrawStore()
   const { drawStateActive, drawnFeatures } = storeToRefs(drawStore)
 
-  const features = drawnFeatures.value as DrawnFeature[]
-
   function generateDrawnFeature(feature: Feature<Geometry>) {
-    const nbFeatures = features.length
+    const featureGeomName = feature
+      .getGeometry()
+      ?.getType()
+      .replace('String', '')!
     const featureType = (
       drawStateActive.value === 'drawCircle'
         ? 'drawnCircle'
         : drawStateActive.value === 'drawLabel'
         ? 'drawnLabel'
-        : `drawn${feature.getGeometry()?.getType().replace('String', '')}`
+        : `drawn${featureGeomName}`
     ) as DrawnFeatureType
 
-    const name =
+    const label =
       feature.get('name') ||
-      `${t(featureType.replace('drawn', ''))} ${drawnFeatures.value.length + 1}`
+      `${t(featureGeomName)} ${drawnFeatures.value.length + 1}`
 
-    const featureStyle = {
-      angle: 0,
-      color: '#ed1c24',
-      arrowcolor: undefined,
-      stroke: 1.25,
-      linestyle: 'plain',
-      opacity: 0.2,
-      showOrientation: false,
-      shape: 'circle',
-      symbolId: undefined,
-      symboltype: undefined,
-      size: 10,
-    } as DrawnFeatureStyle
-
-    const drawnFeature = Object.assign(new DrawnFeature(), feature, {
-      id: uuidv4(),
-      label: name,
-      description: '',
-      display_order: nbFeatures,
-      editable: true,
-      selected: false,
-      map_id: undefined, // Mymaps uuid
-      // TODO Mymaps
-      // map_id: this.appMymaps_.isEditable() ? this.appMymaps_.getMapId() : undefined,
-      saving: false,
+    return DrawnFeature.generateFromFeature(feature, {
+      label,
+      display_order: drawnFeatures.value.length,
       featureType,
-      featureStyle,
     })
-
-    return drawnFeature
-  }
-
-  /**
-   * Get cordinates of a features, used to get anchor for edition popup on the map
-   * @param feature The ol feature to get the coordinates from
-   * @returns The coordinates of the feature or undefined
-   */
-  function getFeatCoordinates(feature: Feature<Geometry>) {
-    const geometry = feature.getGeometry()
-    let coordinates: Coordinate | undefined = undefined
-
-    if (geometry) {
-      switch (geometry.getType()) {
-        case 'Point':
-          coordinates = (<Point>geometry).getFlatCoordinates()
-          break
-        case 'LineString':
-          coordinates = (<LineString>geometry).getFlatMidpoint()
-          break
-        case 'Polygon':
-          coordinates = (<Polygon>geometry).getFlatInteriorPoint()
-          break
-        case 'Circle':
-          coordinates = (<Circle>geometry).getCenter()
-          break
-      }
-    }
-
-    return coordinates
   }
 
   // TODO: some geometry validity checks have not been ported to draw-utils
@@ -154,18 +99,7 @@ export default function useDrawnFeatures() {
   //   return name
   // }
 
-  // function saveFeature(feature: Feature) {
-  //   // TODO Mymaps: saveFeatureInMymaps_
-  //   // if (this.appMymaps_.isEditable() &&
-  //   //     !!feature.get('__map_id__')) {
-  //   //   this.saveFeatureInMymaps_(feature);
-  //   // }
-  //   // DONE in state persistor
-  //   encodeFeaturesInUrl(features.getArray())
-  // }
-
   return {
     generateDrawnFeature,
-    getFeatCoordinates,
   }
 }

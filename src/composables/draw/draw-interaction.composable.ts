@@ -16,6 +16,9 @@ export default function useDrawInteraction() {
   const { activeFeatureId, drawnFeatures } = storeToRefs(drawStore)
   const map = useMap().getOlMap()
 
+  /**
+   * NB. 'drawend' event is triggered when "Continue line" ends
+   */
   function onDrawEnd(event: DrawEvent, type: 'new' | 'update' = 'new') {
     let currentDrawnFeature
 
@@ -57,6 +60,7 @@ export default function useDrawInteraction() {
       drawTooltip.add(map, <DrawEvent>event)
     )
     listen(drawInteraction, 'drawend', event =>
+      // WARNING: drawend is triggered when "Continue line"
       onDrawEnd(<DrawEvent>event, type)
     )
     listen(document, 'keyup', event =>

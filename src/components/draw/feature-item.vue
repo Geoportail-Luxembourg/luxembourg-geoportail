@@ -26,6 +26,7 @@ const localFeature = props.feature
 const emit = defineEmits([
   'clickDelete',
   'closePopup',
+  'continueLine',
   'toggleFeatureSub',
   'toggleEditFeature',
   'toggleDock',
@@ -116,6 +117,7 @@ function onSubmitNewConcentricCircle(
         @toggleEditFeature="onToggleEditFeature"
         @toggleDock="() => emit('toggleDock')"
         @clickDelete="onClickDelete"
+        @continueLine="() => emit('continueLine')"
         @resetInfo="onResetInfo"
         @resetStyle="onResetStyle"
         @submitEditFeature="onSubmitEditFeature"

@@ -71,5 +71,6 @@ export default function useDraw() {
 
   return {
     addDrawLayer,
+    drawInteractions,
   }
 }
