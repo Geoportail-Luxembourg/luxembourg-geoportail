@@ -26,13 +26,15 @@ export default function useDraw() {
   const drawStore = useDrawStore()
   const { drawStateActive, drawnFeatures, currentDrawInteraction } =
     storeToRefs(drawStore)
+  const { createDrawInteraction } = useDrawInteraction()
   const drawLayer = olLayerFactoryService.createOlLayerDrawnFeatures()
   const drawInteractions = {
-    drawPoint: useDrawInteraction({ type: 'Point' }).drawInteraction,
-    drawLabel: useDrawInteraction({ type: 'Point' }).drawInteraction,
-    drawLine: useDrawInteraction({ type: 'LineString' }).drawInteraction,
-    drawCircle: useDrawInteraction({ type: 'Circle' }).drawInteraction,
-    drawPolygon: useDrawInteraction({ type: 'Polygon' }).drawInteraction,
+    drawPoint: createDrawInteraction({ type: 'Point' }),
+    drawLabel: createDrawInteraction({ type: 'Point' }),
+    drawLine: createDrawInteraction({ type: 'LineString' }),
+    drawLineContinue: createDrawInteraction({ type: 'LineString' }, 'update'),
+    drawCircle: createDrawInteraction({ type: 'Circle' }),
+    drawPolygon: createDrawInteraction({ type: 'Polygon' }),
   } as DrawInteractions
 
   // listener to synchronize ol interaction active states with store state
@@ -48,12 +50,9 @@ export default function useDraw() {
     })
   })
 
-  watch(
-    () => drawnFeatures.value,
-    drawnFeatures => {
-      addFeaturesToSource(drawnFeatures as DrawnFeature[])
-    }
-  )
+  watch(drawnFeatures, drawnFeatures => {
+    addFeaturesToSource(drawnFeatures as DrawnFeature[])
+  })
 
   /**
    * Add draw layer after map init to allow restoring draw features (not in v3 for now)

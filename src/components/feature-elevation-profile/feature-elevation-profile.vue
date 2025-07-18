@@ -81,15 +81,43 @@ onUnmounted(() => {
   profilePositionStore.setPosition(undefined, undefined)
 })
 
-watchEffect(() => {
-  // Watch update of feature geom to trigger update the profile
-  if (props.feature && !props.feature.profileData) {
-    profileData.value = undefined // Force refresh the graph
-    props.feature?.getProfile().then(data => (profileData.value = data))
-  } else {
-    profileData.value = undefined
+// watchEffect(() => {
+//   // Watch update of feature geom to trigger update the profile
+//   if (props.feature && !props.feature.profileData) {
+//     profileData.value = undefined // Force refresh the graph
+//     props.feature?.getProfile().then(data => (profileData.value = data))
+//   } else {
+//     profileData.value = undefined
+//   }
+// })
+
+watch(
+  () => props.feature,
+  (newFeature, oldFeature) => {
+    if (newFeature !== oldFeature) {
+      if (props.feature && !props.feature.profileData) {
+        profileData.value = undefined // Force refresh the graph
+        props.feature?.getProfile().then(data => (profileData.value = data))
+      } else {
+        profileData.value = undefined
+      }
+    }
   }
-})
+)
+
+watch(
+  () => props.feature?.profileData,
+  (newProfileData, oldProfileData) => {
+    if (newProfileData !== oldProfileData) {
+      if (props.feature && !props.feature.profileData) {
+        profileData.value = undefined // Force refresh the graph
+        props.feature?.getProfile().then(data => (profileData.value = data))
+      } else {
+        profileData.value = undefined
+      }
+    }
+  }
+)
 
 watch(
   profileData,

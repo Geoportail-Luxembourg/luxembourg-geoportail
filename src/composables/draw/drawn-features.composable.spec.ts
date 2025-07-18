@@ -24,9 +24,9 @@ describe('useDrawnFeatures', () => {
   })
 
   it('should add a feature to the collection and store', () => {
-    const { addFeature } = useDrawnFeatures()
+    const { generateDrawnFeature } = useDrawnFeatures()
     const feature = new Feature(new Point([0, 0]))
-    addFeature(feature)
+    generateDrawnFeature(feature)
 
     const drawStore = useDrawStore()
     expect(drawStore.drawnFeatures.length).toBe(1)

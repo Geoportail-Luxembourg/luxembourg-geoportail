@@ -73,20 +73,23 @@ export default function useEdit() {
     if (modifyInteraction) {
       map.removeInteraction(modifyInteraction)
     }
+
     modifyInteraction = new Modify({
       source: editSource,
       pixelTolerance: 20,
-      deleteCondition: function (event) {
-        return noModifierKeys(event) && singleClick(event)
-      },
+      deleteCondition: event => noModifierKeys(event) && singleClick(event),
     })
-    map.addInteraction(modifyInteraction)
+    modifyInteraction.setActive(false)
 
     listen(modifyInteraction, 'modifyend', event => {
-      const feature = (event as ModifyEvent).features.getArray()[0]
-      ;(feature as DrawnFeature).profileData = undefined // Reset the graph
+      const feature = <DrawnFeature>(
+        (event as ModifyEvent).features.getArray()[0]
+      )
+      feature.resetProfileData()
       updateDrawnFeature(feature as DrawnFeature)
     })
+
+    map.addInteraction(modifyInteraction)
   }
 
   return {}

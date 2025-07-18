@@ -21,6 +21,7 @@ export default function useDrawNotifications() {
         notification = t('Click to draw the point')
         break
       case 'drawLine':
+      case 'drawLineContinue':
         notification = t(
           'Click to start drawing line<br>Double-click to finish'
         )

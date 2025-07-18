@@ -3,6 +3,7 @@ export type DrawStateActive =
   | 'drawPoint'
   | 'drawLabel'
   | 'drawLine'
+  | 'drawLineContinue'
   | 'drawCircle'
   | 'drawPolygon'
 
