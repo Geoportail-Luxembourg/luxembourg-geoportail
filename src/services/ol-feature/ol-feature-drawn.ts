@@ -22,6 +22,7 @@ import useMap, {
 import { fetchProfileJson } from '@/services/api/api-profile.service'
 import { colorStringToRgba } from '@/services/colors.utils'
 import { ProfileData } from '@/components/common/graph/elevation-profile'
+import { debounce, throttle } from '../utils'
 
 const MYMAPS_URL = import.meta.env.VITE_MYMAPS_URL
 const MYMAPS_SYMBOL_URL = import.meta.env.VITE_SYMBOL_URL
@@ -110,6 +111,14 @@ export class DrawnFeature extends Feature {
     const extent = <Extent>this.getGeometry()?.getExtent()
 
     this.map.getView().fit(extent, { size })
+  }
+
+  /**
+   * Reset profileData property to "undefined". To update to profile graph, add a watcher
+   * on this property and trigger DrawnFeature.getProfile() to retrieve up to date profile data from the server.
+   */
+  resetProfileData() {
+    this.profileData = undefined
   }
 
   /**

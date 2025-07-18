@@ -76,7 +76,7 @@ export {
 
 export default function useDrawUtils() {
   const drawStore = useDrawStore()
-  const { activateEditLine } = drawStore
+  const { activateDrawLineContinue } = drawStore
   const { currentDrawInteraction } = storeToRefs(drawStore)
   const map = useMap().getOlMap()
 
@@ -89,12 +89,13 @@ export default function useDrawUtils() {
   }
 
   function continueLine(feature: DrawnFeature) {
-    activateEditLine(feature)
+    activateDrawLineContinue()
 
     // TODO: not working, maybe because of the watcher?
     // TODO: double click not working correctly
     // TODO: dont do a addFeaturesToSource
     if (currentDrawInteraction.value) {
+      console.log('append feature')
       currentDrawInteraction.value?.setActive(true)
       currentDrawInteraction.value?.extend(<Feature<LineString>>feature)
     }

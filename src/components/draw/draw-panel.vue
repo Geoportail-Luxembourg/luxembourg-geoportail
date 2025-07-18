@@ -1,15 +1,21 @@
 <script setup lang="ts">
+import { watch } from 'vue'
 import { storeToRefs } from 'pinia'
 import { useTranslation } from 'i18next-vue'
 
 import MenuPopup from '@/components/common/menu-popup/menu-popup.vue'
 import MenuPopupItem from '@/components/common/menu-popup/menu-popup-item.vue'
 import { useDrawStore } from '@/stores/draw.store'
+import { useAppStore } from '@/stores/app.store'
+import { screenSizeIsAtLeast } from '@/services/common/device.utils'
 
 import DrawPanelFeatures from './draw-panel-features.vue'
 
 const { t } = useTranslation()
-
+const appStore = useAppStore()
+const { toggleMyMapsOpen } = appStore
+const { feedbackOpen, feedbackanfOpen, feedbackageOpen, feedbackcruesOpen } =
+  storeToRefs(appStore)
 const drawStore = useDrawStore()
 const { drawnFeatures: features } = storeToRefs(drawStore)
 const drawingMenuOptions = [
@@ -34,6 +40,18 @@ const drawingMenuOptions = [
     action: () => alert('TODO: Draw feature click drawingMenuOptions'),
   },
 ]
+
+watch(features, () => {
+  if (
+    screenSizeIsAtLeast('md') &&
+    feedbackOpen.value !== true &&
+    feedbackanfOpen.value !== true &&
+    feedbackageOpen.value !== true &&
+    feedbackcruesOpen.value !== true
+  ) {
+    toggleMyMapsOpen(true)
+  }
+})
 </script>
 
 <template>

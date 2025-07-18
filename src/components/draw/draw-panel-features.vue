@@ -35,7 +35,8 @@ function onSubmitNewConcentricCircle(payload: {
   const { baseFeature, radius } = payload
   const newDrawnFeature = drawUtils.createConcentricCircle(baseFeature, radius)
 
-  drawStore.addDrawnFeature(newDrawnFeature)
+  drawStore.addDrawnFeatureToCollection(newDrawnFeature)
+  drawStore.selectDrawnFeature(newDrawnFeature)
 }
 
 function sortFunction(elements: HTMLCollection) {

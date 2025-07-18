@@ -29,7 +29,7 @@ function download(format: ExportFormat) {
   )
 }
 
-function onContinueLine(feature: DrawnFeature) {
+function doContinueLine(feature: DrawnFeature) {
   feature.fit()
   continueLine(feature)
 }
@@ -55,7 +55,7 @@ if (feature?.featureType === 'drawnLine') {
     ...[
       {
         label: 'Continuer la ligne',
-        action: () => onContinueLine(feature),
+        action: () => doContinueLine(feature),
       },
       {
         label: 'Changer sens de la ligne',

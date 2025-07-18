@@ -6,7 +6,7 @@ import { DrawnFeature } from '@/services/ol-feature/ol-feature-drawn'
 import { DrawStateActive, EditStateActive } from './draw.store.model'
 
 export const useDrawStore = defineStore('draw', () => {
-  const activeFeatureId: Ref<string | number | undefined> = ref(undefined)
+  const activeFeatureId = ref<string | number | undefined>(undefined)
   const editingFeatureId: Ref<string | number | undefined> = ref(undefined)
   const drawStateActive = ref<DrawStateActive>(undefined)
   const editStateActive = ref<EditStateActive>(undefined)
@@ -67,15 +67,15 @@ export const useDrawStore = defineStore('draw', () => {
     editStateActive.value = newState
   }
 
-  function activateEditLine(feature?: DrawnFeature) {
-    if (feature) {
-      editingFeatureId.value = feature.id
-      // Nb. the edit composable will activate the state itself in his own watcher
-    }
+  function activateDrawLineContinue() {
+    setDrawActiveState('drawLineContinue')
   }
 
-  function addDrawnFeature(feature: DrawnFeature) {
+  function addDrawnFeatureToCollection(feature: DrawnFeature) {
     drawnFeatures.value = [...drawnFeatures.value, feature]
+  }
+
+  function selectDrawnFeature(feature: DrawnFeature) {
     activeFeatureId.value = feature.id
     editingFeatureId.value = feature.id
     editStateActive.value = feature.featureType.replace(
@@ -85,6 +85,11 @@ export const useDrawStore = defineStore('draw', () => {
     drawStateActive.value = undefined
   }
 
+  /**
+   * Update drawnfeature stored in collection by replacing the old feature in collection
+   * by the given drawnfeature (they will be identified by feature.id)
+   * @param feature The new drawfeature that will replace the old one within the store collection
+   */
   function updateDrawnFeature(feature: DrawnFeature) {
     const index = drawnFeatures.value.findIndex(
       drawnFeature => drawnFeature.id === feature.id
@@ -100,7 +105,7 @@ export const useDrawStore = defineStore('draw', () => {
     drawnFeatures.value = features
   }
 
-  function removeFeature(featureId: String | undefined) {
+  function removeFeature(featureId: number | string | undefined) {
     drawnFeatures.value = drawnFeatures.value.filter(
       feature => feature.id !== featureId
     )
@@ -110,7 +115,7 @@ export const useDrawStore = defineStore('draw', () => {
     }
   }
 
-  function reorderFeatures(featuresId: String[]) {
+  function reorderFeatures(featuresId: string[]) {
     drawnFeatures.value = drawnFeatures.value.map(f =>
       // Must use Object.assign function instead of spread operator so that
       // object type remains DrawnFeature and additional methods are not lost
@@ -136,8 +141,9 @@ export const useDrawStore = defineStore('draw', () => {
     toggleDrawActiveState,
     setDrawActiveState,
     setEditActiveState,
-    activateEditLine,
-    addDrawnFeature,
+    activateDrawLineContinue,
+    addDrawnFeatureToCollection,
+    selectDrawnFeature,
     updateDrawnFeature,
     setDrawnFeatures,
   }

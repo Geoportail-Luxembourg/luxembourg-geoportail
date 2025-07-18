@@ -7,22 +7,16 @@ import Polygon from 'ol/geom/Polygon'
 import { Coordinate } from 'ol/coordinate'
 
 import { useDrawStore } from '@/stores/draw.store'
-import { useAppStore } from '@/stores/app.store'
-import { screenSizeIsAtLeast } from '@/services/common/device.utils'
 import { DrawnFeature } from '@/services/ol-feature/ol-feature-drawn'
 import { DrawnFeatureType, DrawnFeatureStyle } from '@/stores/draw.store.model'
 
 export default function useDrawnFeatures() {
   const drawStore = useDrawStore()
   const { drawStateActive, drawnFeatures } = storeToRefs(drawStore)
-  const { addDrawnFeature } = drawStore
-  const { feedbackOpen, feedbackanfOpen, feedbackageOpen, feedbackcruesOpen } =
-    storeToRefs(useAppStore())
-  const { toggleMyMapsOpen } = useAppStore()
 
   const features = drawnFeatures.value as DrawnFeature[]
 
-  function addFeature(feature: Feature<Geometry>) {
+  function generateDrawnFeature(feature: Feature<Geometry>) {
     const nbFeatures = features.length
     const featureType = (
       drawStateActive.value === 'drawCircle'
@@ -65,17 +59,7 @@ export default function useDrawnFeatures() {
       featureStyle,
     })
 
-    addDrawnFeature(drawnFeature)
-
-    if (
-      screenSizeIsAtLeast('md') &&
-      feedbackOpen.value !== true &&
-      feedbackanfOpen.value !== true &&
-      feedbackageOpen.value !== true &&
-      feedbackcruesOpen.value !== true
-    ) {
-      toggleMyMapsOpen(true)
-    }
+    return drawnFeature
   }
 
   /**
@@ -181,7 +165,7 @@ export default function useDrawnFeatures() {
   // }
 
   return {
-    addFeature,
+    generateDrawnFeature,
     getFeatCoordinates,
   }
 }
