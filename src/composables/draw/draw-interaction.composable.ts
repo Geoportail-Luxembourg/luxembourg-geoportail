@@ -62,7 +62,7 @@ export default function useDrawInteraction() {
     listen(document, 'keyup', event =>
       onKeyUp(drawInteraction, <KeyboardEvent>event)
     )
-    
+
     map.addInteraction(drawInteraction)
 
     return drawInteraction

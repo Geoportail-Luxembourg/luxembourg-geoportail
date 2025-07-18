@@ -27,7 +27,7 @@ export default function useDraw() {
   const { drawStateActive, drawnFeatures, currentDrawInteraction } =
     storeToRefs(drawStore)
   const { createDrawInteraction } = useDrawInteraction()
-  const drawLayer = olLayerFactoryService.createOlLayerDrawnFeatures()
+  const drawLayer = olLayerFactoryService.createOlLayerInteractionDraw()
   const drawInteractions = {
     drawPoint: createDrawInteraction({ type: 'Point' }),
     drawLabel: createDrawInteraction({ type: 'Point' }),

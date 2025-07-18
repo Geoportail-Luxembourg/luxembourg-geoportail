@@ -2,9 +2,9 @@ import VectorLayer from 'ol/layer/Vector'
 import VectorSource from 'ol/source/Vector'
 
 export const DEFAULT_DRAW_ZINDEX = 1000
-export const FEATURE_LAYER_TYPE = 'featureLayer'
+export const FEATURE_LAYER_TYPE = 'interactionModifyLayer'
 
-class OlLayerDrawnFeatureHelper {
+class OlLayerInteractionModifyHelper {
   createOlLayer(): VectorLayer {
     const olLayer = new VectorLayer({
       source: new VectorSource({
@@ -18,6 +18,6 @@ class OlLayerDrawnFeatureHelper {
   }
 }
 
-const olLayerDrawnFeatureHelper = new OlLayerDrawnFeatureHelper()
+const olLayerInteractionModifyHelper = new OlLayerInteractionModifyHelper()
 
-export default olLayerDrawnFeatureHelper
+export default olLayerInteractionModifyHelper
