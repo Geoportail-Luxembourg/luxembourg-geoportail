@@ -4,6 +4,7 @@ import { storeToRefs } from 'pinia'
 
 import HeaderBar from '@/components/header-bar/header-bar.vue'
 import FooterBar from '@/components/footer/footer-bar.vue'
+import LidarGraphPanel from '@/components/lidar/lidar-graph-panel.vue'
 
 import AlertNotifications from '@/components/alert-notifications/alert-notifications.vue'
 import RemoteLayers from '@/components/remote-layers/remote-layers.vue'
@@ -47,6 +48,7 @@ const {
   myMapsOpen,
   infoOpen,
   styleEditorOpen,
+  lidarOpen,
 } = storeToRefs(appStore)
 
 watch(layersOpen, timeoutResizeMap)
@@ -54,6 +56,7 @@ watch(legendsOpen, timeoutResizeMap)
 watch(styleEditorOpen, timeoutResizeMap)
 watch(myMapsOpen, timeoutResizeMap)
 watch(infoOpen, timeoutResizeMap)
+watch(lidarOpen, timeoutResizeMap)
 
 function timeoutResizeMap() {
   setTimeout(() => map.resize(), 50)
@@ -88,7 +91,9 @@ onUnmounted(() => window.removeEventListener('resize', map.resize))
           <background-selector />
         </div>
       </main>
-
+      <div v-if="lidarOpen" class="w-full h-[25rem]">
+        <lidar-graph-panel></lidar-graph-panel>
+      </div>
       <footer-bar class="fixed bottom-5 sm:static" />
       <alert-notifications />
     </template>

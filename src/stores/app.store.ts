@@ -13,6 +13,7 @@ export const DEFAULT_FEEDBACK_OPENED = false
 export const DEFAULT_FEEDBACKANF_OPENED = false
 export const DEFAULT_FEEDBACKAGE_OPENED = false
 export const DEFAULT_FEEDBACKCRUES_OPENED = false
+export const DEFAULT_LIDAR_OPENED = false
 
 export const useAppStore = defineStore(
   'app',
@@ -26,6 +27,7 @@ export const useAppStore = defineStore(
     const mapId: Ref<string | undefined> = ref() // => MyMaps map id
     const myMapsOpen = ref(DEFAULT_MYMAPS_OPENED)
     const infoOpen = ref(DEFAULT_INFO_OPENED)
+    const lidarOpen = ref(DEFAULT_LIDAR_OPENED) // Lidar panel open state
     const feedbackOpen = ref(DEFAULT_FEEDBACK_OPENED)
     const feedbackanfOpen = ref(DEFAULT_FEEDBACKANF_OPENED)
     const feedbackageOpen = ref(DEFAULT_FEEDBACKAGE_OPENED)
@@ -76,12 +78,14 @@ export const useAppStore = defineStore(
         legendsOpen.value = false
         myMapsOpen.value = false
         themeGridOpen.value = false
+        lidarOpen.value = false
       } else {
         themeGridOpen.value = true
         layersOpen.value = true
         legendsOpen.value = false
         myMapsOpen.value = false
         infoOpen.value = false
+        lidarOpen.value = false
         styleEditorOpen.value = false
         myLayersTabOpen.value && (myLayersTabOpen.value = false)
       }
@@ -120,7 +124,9 @@ export const useAppStore = defineStore(
     function toggleInfoOpen(open?: boolean) {
       infoOpen.value = open ?? !infoOpen.value
     }
-
+    function toggleLidarOpen(open?: boolean) {
+      lidarOpen.value = open ?? !lidarOpen.value
+    }
     function togglePrintToolbarOpen(open?: boolean) {
       printToolbarOpen.value = open ?? !printToolbarOpen.value
     }
@@ -135,6 +141,7 @@ export const useAppStore = defineStore(
       mapId,
       myMapsOpen,
       infoOpen,
+      lidarOpen,
       feedbackOpen,
       feedbackanfOpen,
       feedbackageOpen,
@@ -160,6 +167,7 @@ export const useAppStore = defineStore(
       togglePrintToolbarOpen,
       toggleMyMapsOpen,
       toggleInfoOpen,
+      toggleLidarOpen,
       toggleThemeGrid,
       toggleLegendsOpen,
     }

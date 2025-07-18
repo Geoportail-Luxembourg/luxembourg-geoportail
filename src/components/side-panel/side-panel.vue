@@ -7,6 +7,7 @@ import LegendsPanel from '@/components/legends/legends-panel.vue'
 import StylePanel from '@/components/style-selector/style-panel.vue'
 import MyMapsPanel from '@/components/my-maps/my-maps-panel.vue'
 import InfoPanel from '@/components/info/info-panel.vue'
+import LidarConfigPanel from '@/components/lidar/lidar-config-panel.vue'
 import { screenSizeIsAtLeast } from '@/services/common/device.utils'
 import { useAppStore } from '@/stores/app.store'
 
@@ -16,6 +17,7 @@ const {
   legendsOpen,
   myMapsOpen,
   infoOpen,
+  lidarOpen,
   styleEditorOpen,
   themeGridOpen,
   drawToolbarOpen,
@@ -23,7 +25,7 @@ const {
 
 watch(layersOpen, layersOpen => {
   if (layersOpen) {
-    legendsOpen.value = myMapsOpen.value = styleEditorOpen.value = false
+    lidarOpen.value = legendsOpen.value = myMapsOpen.value = styleEditorOpen.value = false
   }
 })
 
@@ -45,6 +47,7 @@ watch(legendsOpen, legendsOpen => {
       layersOpen.value =
       themeGridOpen.value =
       infoOpen.value =
+      lidarOpen.value =
         false
   }
 })
@@ -56,6 +59,7 @@ watch(drawToolbarOpen, drawToolbarOpen => {
     legendsOpen.value = false
     themeGridOpen.value = false
     infoOpen.value = false
+    lidarOpen.value = false
   }
 })
 
@@ -66,6 +70,7 @@ watch(infoOpen, infoOpen => {
       layersOpen.value =
       themeGridOpen.value =
       legendsOpen.value =
+      lidarOpen.value =
         false
   }
 })
@@ -95,5 +100,9 @@ watch(infoOpen, infoOpen => {
   <!-- Info panel -->
   <div v-show="infoOpen" class="w-full md:w-80 bg-secondary z-10">
     <info-panel />
+  </div>
+  <!-- lidar panel -->
+  <div v-show="lidarOpen" class="w-full md:w-80 bg-secondary z-10">
+    <lidar-config-panel></lidar-config-panel>
   </div>
 </template>
