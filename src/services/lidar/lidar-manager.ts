@@ -1,6 +1,6 @@
-import gmfLidarprofileMeasure from '../../components/lidar/measure'
-import gmfLidarprofilePlot from '../../components/lidar/plot'
-import gmfLidarprofileUtils from '../../components/lidar/utils'
+//import gmfLidarprofileMeasure from '../../components/lidar/measure'
+//import gmfLidarprofilePlot from '../../components/lidar/plot'
+//import gmfLidarprofileUtils from '../../components/lidar/utils'
 import olLayerVector from 'ol/layer/Vector'
 import olOverlay from 'ol/Overlay'
 import olSourceVector from 'ol/source/Vector'
@@ -12,11 +12,12 @@ import i18next from 'i18next'
 import { debounce } from '@/services/utils'
 import useMap from '@/composables/map/map.composable'
 import { LineString } from 'ol/geom'
-
+import { LidarHelpers } from '@/services/lidar/lidar.helpers'
 const d3 = { select }
 
 export class LidarManager {
   map = useMap().getOlMap()
+  utils = new LidarHelpers()
   promise: Promise<any> | null = null
   plot: any = null
   measure: any = null
@@ -49,14 +50,13 @@ export class LidarManager {
   isPlotSetup_ = false
   line_: any
   width: number = 0
-  utils = new gmfLidarprofileUtils()
-
+  
   constructor() {}
 
   init(config: any) {
     this.config = config
-    this.plot = new gmfLidarprofilePlot(this)
-    this.measure = new gmfLidarprofileMeasure(this)
+    //this.plot = new gmfLidarprofilePlot(this)
+    //this.measure = new gmfLidarprofileMeasure(this)
   }
 
   clearBuffer() {
@@ -77,8 +77,8 @@ export class LidarManager {
     d3.select('.gmf-lidarprofile-container .lidar-error').style('visibility', 'hidden')
     this.profilePoints = this.getEmptyProfilePoints_()
     this.line_ = undefined
-    this.plot = new gmfLidarprofilePlot(this)
-    this.measure = new gmfLidarprofileMeasure(this)
+    //this.plot = new gmfLidarprofilePlot(this)
+    //this.measure = new gmfLidarprofileMeasure(this)
   }
 
   setLine(line: LineString) {
@@ -179,7 +179,7 @@ export class LidarManager {
       responseType: 'arraybuffer' as const,
     }
     if (exportLAS) {
-      const url = `${this.config.pytreeLidarprofileJsonUrl}profile/get?width=${width}&coordinates=${coordinates}&pointCloud=${pointCloudName}&attributes=&getLAS=${getLAS}`
+      const url = `${ import.meta.env.VITE_LIDAR_PROFILE_URL }profile/get?width=${width}&coordinates=${coordinates}&pointCloud=${pointCloudName}&attributes=&getLAS=${getLAS}`
       fetch(url, options).then(res => res.blob())
         .then(blobobject => {
           const blob = window.URL.createObjectURL(blobobject)
@@ -195,9 +195,9 @@ export class LidarManager {
           document.body.style.cursor = ''
         })
     } else {
-      let url = `${this.config.pytreeLidarprofileJsonUrl}profile/get?minLOD=${minLOD}&maxLOD=${maxLOD}&width=${width}&coordinates=${coordinates}&pointCloud=${pointCloudName}&attributes=&getLAS=${getLAS}`
+      let url = `${import.meta.env.VITE_LIDAR_PROFILE_URL }profile/get?minLOD=${minLOD}&maxLOD=${maxLOD}&width=${width}&coordinates=${coordinates}&pointCloud=${pointCloudName}&attributes=&getLAS=${getLAS}`
       if (minLOD === undefined || maxLOD === undefined) {
-        url = `${this.config.pytreeLidarprofileJsonUrl}profile/get?width=${width}&coordinates=${coordinates}&pointCloud=${pointCloudName}&attributes=&getLAS=${getLAS}`
+        url = `${import.meta.env.VITE_LIDAR_PROFILE_URL }profile/get?width=${width}&coordinates=${coordinates}&pointCloud=${pointCloudName}&attributes=&getLAS=${getLAS}`
       }
       fetch(url, options)
         .then((resp) => resp.arrayBuffer())

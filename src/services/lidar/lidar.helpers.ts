@@ -1,6 +1,3 @@
-/**
- * @module gmf.lidarprofile.Utils
- */
 import olFeature from 'ol/Feature'
 import olGeomLineString from 'ol/geom/LineString'
 import olGeomPoint from 'ol/geom/Point'
@@ -13,7 +10,7 @@ import { saveAs } from 'file-saver'
 import { select } from 'd3-selection'
 const d3 = { select }
 
-export class LidarUtils {
+export class LidarHelpers {
   /**
    * Clip a linstring with start and end measure given by D3 Chart domain
    * returns Object with clipped lined coordinates and left domain value
@@ -347,4 +344,4 @@ export class LidarUtils {
   }
 }
 
-export default LidarUtils
+export default LidarHelpers

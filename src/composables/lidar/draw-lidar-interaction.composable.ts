@@ -109,7 +109,7 @@ export default function useDrawLidarInteraction() {
     }
   }
 function drawRectangle(line: LineString) {
-    getCoordinates()
+    const coords = line.getCoordinates()
     for (let i = 0; i < coords.length - 1; i++) {
       const p1 = transform(coords[i], map.getView().getProjection(), 'EPSG:2169')
       const p2 = transform(coords[i + 1], map.getView().getProjection(), 'EPSG:2169')
