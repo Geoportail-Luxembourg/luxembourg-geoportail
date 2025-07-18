@@ -22,7 +22,7 @@ import useMap, {
 import { fetchProfileJson } from '@/services/api/api-profile.service'
 import { colorStringToRgba } from '@/services/colors.utils'
 import { ProfileData } from '@/components/common/graph/elevation-profile'
-import { debounce, throttle } from '../utils'
+import { getDefaultDrawnFeatureStyle } from './styles.helper'
 
 const MYMAPS_URL = import.meta.env.VITE_MYMAPS_URL
 const MYMAPS_SYMBOL_URL = import.meta.env.VITE_SYMBOL_URL
@@ -39,8 +39,14 @@ export class DrawnFeature extends Feature {
   map_id: string | undefined // mymap uuid
   saving: boolean
   featureType: DrawnFeatureType
+
+  /**
+   * Use setter eg. DrawnFeatureType.featureStyle = {...} to trigger feature change()
+   * @see DrawnFeatureType.featureStyle
+   */
   _featureStyle: DrawnFeatureStyle
-  map = useMap().getOlMap()
+
+  map = useMap().getOlMap() // TODO: don't use useMap here
   profileData: ProfileData | undefined = undefined // Is used by linestring geom
 
   constructor(
@@ -92,6 +98,30 @@ export class DrawnFeature extends Feature {
 
   static clone(drawnFeature: DrawnFeature) {
     return drawnFeature.clone()
+  }
+
+  static generateFromFeature(feature: Feature<Geometry>, options = {}) {
+    const drawnFeature = <DrawnFeature>Object.assign(
+      new DrawnFeature(),
+      feature,
+      {
+        id: uuidv4(),
+        label: undefined,
+        description: '',
+        display_order: undefined,
+        editable: true,
+        selected: false,
+        map_id: undefined,
+        saving: false,
+        featureType: undefined,
+      },
+      options
+    )
+
+    drawnFeature.featureStyle = getDefaultDrawnFeatureStyle()
+    drawnFeature.setStyle(feature.getStyle())
+
+    return drawnFeature
   }
 
   public get featureStyle() {
@@ -252,27 +282,30 @@ export class DrawnFeature extends Feature {
         feature = this
       }
 
-      // clear the styles
+      console.log('STYLING FN - feature.editable =', feature.editable)
+      console.log('STYLING FN - feature.selected =', feature.selected)
+      console.log(
+        'STYLING FN - feature.featureStyle =',
+        JSON.stringify(feature.featureStyle)
+      )
+
+      // First, clear the styles
       styles.length = 0
 
       if (feature.editable && feature.selected) {
         styles.push(vertexStyle)
       }
-      let order = feature.display_order
-      if (order === undefined) {
-        order = 0
-      }
+
+      const order = feature.display_order ?? 0
       const color = feature.featureStyle.color || '#FF0000'
       const rgbColor = colorStringToRgba(color, 1)
-
-      let opacity = feature.featureStyle.opacity
-      if (opacity === undefined) {
-        opacity = 1
-      }
-      const rgbaColor = rgbColor.slice()
-      rgbaColor[3] = opacity
+      const rgbaColor = colorStringToRgba(
+        color,
+        feature.featureStyle.opacity ?? 1
+      )
 
       fillStyle.setColor(rgbaColor)
+
       if (
         feature.getGeometry()?.getType() === 'LineString' &&
         feature.featureStyle.showOrientation
@@ -459,9 +492,9 @@ export class DrawnFeature extends Feature {
         if (image) {
           styles.push(
             new StyleStyle({
-              image: image,
+              image,
               fill: fillStyle,
-              stroke: stroke,
+              stroke,
               zIndex: order,
             })
           )

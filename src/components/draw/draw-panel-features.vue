@@ -18,6 +18,11 @@ const {
   featureEditionDocked,
 } = storeToRefs(drawStore)
 
+function onContinueLine(feature: DrawnFeature) {
+  feature.fit()
+  drawUtils.continueLine(feature)
+}
+
 function onToggleFeatureSub(featureId: string | number, isOpen: boolean) {
   // Only one feature details is displayed at once
   activeFeatureId.value = isOpen ? featureId : undefined
@@ -69,6 +74,7 @@ onMounted(() => {
         @toggleDock="() => (featureEditionDocked = !featureEditionDocked)"
         @closePopup="() => (featureEditionDocked = false)"
         @clickDelete="featureId => drawStore.removeFeature(featureId)"
+        @continueLine="() => onContinueLine(<DrawnFeature>feature)"
         @submitFeature="feature => drawStore.updateDrawnFeature(feature)"
         @submitNewConcentricCircle="onSubmitNewConcentricCircle"
       />

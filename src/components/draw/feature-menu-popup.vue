@@ -12,12 +12,10 @@ import {
   type ExportFormat,
 } from '@/services/export-feature/export-feature.service'
 import { lineChangeOrientation } from '@/composables/draw/draw-utils.composable'
-import useDrawUtils from '@/composables/draw/draw-utils.composable'
 
 const { t } = useTranslation()
-const { continueLine } = useDrawUtils()
 const feature = inject<DrawnFeature>('feature')!
-const emit = defineEmits(['newConcentricCircle'])
+const emit = defineEmits(['newConcentricCircle', 'continueLine'])
 
 function download(format: ExportFormat) {
   exportFeatureService.export(
@@ -27,11 +25,6 @@ function download(format: ExportFormat) {
     feature.label,
     true
   )
-}
-
-function doContinueLine(feature: DrawnFeature) {
-  feature.fit()
-  continueLine(feature)
 }
 
 let drawingMenuOptions = <MenuPopupItemType[]>[
@@ -55,7 +48,7 @@ if (feature?.featureType === 'drawnLine') {
     ...[
       {
         label: 'Continuer la ligne',
-        action: () => doContinueLine(feature),
+        action: () => emit('continueLine'),
       },
       {
         label: 'Changer sens de la ligne',

@@ -23,24 +23,32 @@ export default function useDrawSelect() {
 
   listen(map, 'click', event => handleClick(event))
 
-  watch(activeFeatureId, (newId, oldId) => {
-    if (editingFeatureId.value !== newId) {
-      editingFeatureId.value = undefined
+  watch(
+    [activeFeatureId, editingFeatureId],
+    ([newActiveId, newEditId], [oldActiveId, oldEditId]) => {
+      if (oldEditId !== newEditId && newEditId !== newActiveId) {
+        editingFeatureId.value = undefined
+      }
+
+      drawnFeatures.value
+        .filter(f => f.id === oldActiveId)
+        .forEach(oldFeature => {
+          oldFeature.selected = false
+          oldFeature.editable = false
+          oldFeature.changed()
+        })
+
+      drawnFeatures.value
+        .filter(f => f.id === newActiveId)
+        .forEach(newFeature => {
+          newFeature.selected = true
+          newFeature.editable = !!newEditId
+          newFeature.changed()
+
+          console.log('newFeature.editable = ', newFeature.editable)
+        })
     }
-    drawnFeatures.value
-      .filter(f => f.id === oldId)
-      .forEach(oldFeature => {
-        oldFeature.selected = false
-        oldFeature.changed()
-      })
-    drawnFeatures.value
-      .filter(f => f.id === newId)
-      .forEach(newFeature => {
-        newFeature.selected = true
-        newFeature.editable = false
-        newFeature.changed()
-      })
-  })
+  )
 
   const handleClick = function (event: any) {
     const pixel = event.pixel
@@ -51,7 +59,7 @@ export default function useDrawSelect() {
     ) {
       return true
     }
-    activeFeatureId.value = undefined
+
     const featureFound = map.forEachFeatureAtPixel(
       pixel,
       feature => {
