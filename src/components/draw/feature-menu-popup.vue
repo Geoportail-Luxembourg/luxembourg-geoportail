@@ -45,28 +45,24 @@ let drawingMenuOptions = <MenuPopupItemType[]>[
 if (feature?.featureType === 'drawnLine') {
   drawingMenuOptions = [
     ...drawingMenuOptions,
-    ...[
-      {
-        label: 'Continuer la ligne',
-        action: () => emit('continueLine'),
-      },
-      {
-        label: 'Changer sens de la ligne',
-        action: () => lineChangeOrientation(feature),
-      },
-    ],
+    {
+      label: 'Continuer la ligne',
+      action: () => emit('continueLine'),
+    },
+    {
+      label: 'Changer sens de la ligne',
+      action: () => lineChangeOrientation(feature),
+    },
   ]
 }
 
 if (feature?.featureType === 'drawnCircle') {
   drawingMenuOptions = [
     ...drawingMenuOptions,
-    ...[
-      {
-        label: 'Créer cercle concentrique',
-        action: () => emit('newConcentricCircle'),
-      },
-    ],
+    {
+      label: 'Créer cercle concentrique',
+      action: () => emit('newConcentricCircle'),
+    },
   ]
 }
 </script>
