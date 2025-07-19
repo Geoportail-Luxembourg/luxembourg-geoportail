@@ -116,6 +116,12 @@ export const useDrawStore = defineStore('draw', () => {
     }
   }
 
+  function removeAllFeatures() {
+    activeFeatureId.value = undefined
+    editingFeatureId.value = undefined
+    drawnFeatures.value = []
+  }
+
   function reorderFeatures(featuresId: string[]) {
     drawnFeatures.value = drawnFeatures.value.map(f =>
       // Must use Object.assign function instead of spread operator so that
@@ -133,6 +139,7 @@ export const useDrawStore = defineStore('draw', () => {
     featureEditionDocked,
     currentDrawInteraction,
     removeFeature,
+    removeAllFeatures,
     reorderFeatures,
     toggleDrawCircle,
     toggleDrawLabel,
