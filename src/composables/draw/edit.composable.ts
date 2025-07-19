@@ -4,7 +4,6 @@ import { storeToRefs } from 'pinia'
 import { noModifierKeys, singleClick } from 'ol/events/condition'
 import Modify, { ModifyEvent } from 'ol/interaction/Modify'
 import VectorSource from 'ol/source/Vector'
-import { listen } from 'ol/events'
 
 import { DrawnFeature } from '@/services/ol-feature/ol-feature-drawn'
 import { olLayerFactoryService } from '@/services/ol-layer/ol-layer-factory.service'
