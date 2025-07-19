@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { watch } from 'vue'
+import { ref, watch } from 'vue'
 import { storeToRefs } from 'pinia'
 import { useTranslation } from 'i18next-vue'
 
@@ -10,6 +10,7 @@ import { useAppStore } from '@/stores/app.store'
 import { screenSizeIsAtLeast } from '@/services/common/device.utils'
 
 import DrawPanelFeatures from './draw-panel-features.vue'
+import ModalConfirmDeleteAll from './modal-confirm-delete-all.vue'
 
 const { t } = useTranslation()
 const appStore = useAppStore()
@@ -25,7 +26,7 @@ const drawingMenuOptions = [
   },
   {
     label: 'Effacer tous les dessins',
-    action: () => alert('TODO: Draw feature click drawingMenuOptions'),
+    action: () => (showConfirmDeleteModal.value = true),
   },
   {
     label: 'Créer une nouvelle carte à partir de ces dessins',
@@ -40,6 +41,11 @@ const drawingMenuOptions = [
     action: () => alert('TODO: Draw feature click drawingMenuOptions'),
   },
 ]
+const showConfirmDeleteModal = ref(false)
+
+function onConfirmDeleteAll() {
+  drawStore.removeAllFeatures()
+}
 
 watch(features, () => {
   if (
@@ -86,6 +92,18 @@ watch(features, () => {
       <!-- Drawings/Features list -->
       <DrawPanelFeatures />
     </div>
+
+    <!-- Modales -->
+    <ModalConfirmDeleteAll
+      v-if="showConfirmDeleteModal"
+      @cancel="() => (showConfirmDeleteModal = false)"
+      @confirm="
+        () => {
+          showConfirmDeleteModal = false
+          onConfirmDeleteAll()
+        }
+      "
+    />
   </template>
 </template>
 
