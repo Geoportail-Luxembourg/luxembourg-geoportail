@@ -11,6 +11,7 @@ import { screenSizeIsAtLeast } from '@/services/common/device.utils'
 
 import DrawPanelFeatures from './draw-panel-features.vue'
 import ModalConfirmDeleteAll from './modal-confirm-delete-all.vue'
+import ModalMergeLines from './modal-merge-lines.vue'
 
 const { t } = useTranslation()
 const appStore = useAppStore()
@@ -26,7 +27,7 @@ const drawingMenuOptions = [
   },
   {
     label: 'Effacer tous les dessins',
-    action: () => (showConfirmDeleteModal.value = true),
+    action: () => (showModalConfirmDelete.value = true),
   },
   {
     label: 'Créer une nouvelle carte à partir de ces dessins',
@@ -34,18 +35,21 @@ const drawingMenuOptions = [
   },
   {
     label: 'Fusionner des lignes',
-    action: () => alert('TODO: Draw feature click drawingMenuOptions'),
+    action: () => (showModalMergeLines.value = true),
   },
   {
     label: 'Couper une ligne',
     action: () => alert('TODO: Draw feature click drawingMenuOptions'),
   },
 ]
-const showConfirmDeleteModal = ref(false)
+const showModalConfirmDelete = ref(false)
+const showModalMergeLines = ref(false)
 
 function onConfirmDeleteAll() {
   drawStore.removeAllFeatures()
 }
+
+function onMergeLines() {}
 
 watch(features, () => {
   if (
@@ -95,14 +99,18 @@ watch(features, () => {
 
     <!-- Modales -->
     <ModalConfirmDeleteAll
-      v-if="showConfirmDeleteModal"
-      @cancel="() => (showConfirmDeleteModal = false)"
+      v-if="showModalConfirmDelete"
+      @cancel="() => (showModalConfirmDelete = false)"
       @confirm="
         () => {
-          showConfirmDeleteModal = false
+          showModalConfirmDelete = false
           onConfirmDeleteAll()
         }
       "
+    />
+    <ModalMergeLines
+      v-if="showModalMergeLines"
+      @cancel="() => (showModalMergeLines = false)"
     />
   </template>
 </template>
