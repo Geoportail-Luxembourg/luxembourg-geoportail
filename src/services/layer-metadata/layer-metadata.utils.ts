@@ -52,7 +52,19 @@ export function getResponsibleParty(
   const pocs = Array.isArray(responsibleParty)
     ? responsibleParty
     : [responsibleParty]
-  const poc = pocs.filter(poc => poc.split('|')[1] === 'metadata')
+  const poc = pocs.filter(poc => {
+    const type = poc.split('|')[1]
+    return type === 'metadata' || type === 'resource'
+  })
+  if (poc.length === 0) {
+    return {
+      organisaton: '',
+      name: '',
+      unknown: '',
+      address: '',
+      email: '',
+    }
+  }
   return {
     organisaton: poc[0].split('|')[2],
     name: poc[0].split('|')[5],
