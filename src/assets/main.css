@@ -229,6 +229,15 @@
       [&.expanded]:after:content-['\e02c'];
   }
 
+  .lux-navbar-search-dropdown {
+    @apply after:content-['\E00D'];
+    color: var(--color-navbar-default);
+  }
+  .lux-navbar-search-close {
+    @apply after:content-['\e02c'];
+    color: var(--color-navbar-default);
+  }
+
   .lux-navbar-dropdown-auth .lux-dropdown-btn {
     @apply after:content-['\E02E'];
   }

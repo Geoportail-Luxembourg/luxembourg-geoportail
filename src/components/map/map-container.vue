@@ -15,6 +15,7 @@ import Map3dControl from '../map-controls/map-3d.vue'
 import FullscreenControl from '../map-controls/fullscreen-control.vue'
 import ZoomControl from '../map-controls/zoom-control.vue'
 import RotateControl from '../map-controls/rotate-control.vue'
+import { olLayerSearchService } from '@/services/ol-layer/ol-layer-search.service'
 import ZoomToExtentControl from '../map-controls/zoom-to-extent-control.vue'
 import useDraw from '@/composables/draw/draw.composable'
 import useDrawSelect from '@/composables/draw/draw-select.composable'
@@ -58,6 +59,7 @@ if (props.v4_standalone) {
   useDrawSelect()
   const featureInfo = useFeatureInfo()
   featureInfo.init()
+  olLayerSearchService.init(olMap)
 }
 
 const DEFAULT_EXTENT = [

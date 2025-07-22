@@ -39,7 +39,33 @@ export default function useThemes() {
       }
     }
   }
+  function findThemeNamesByLayerId(layerId: LayerId): string[] {
+    const { themes } = useThemeStore()
+    const result: string[] = []
 
+    function traverse(node: ThemeNodeModel, themeName: string) {
+      // Check if this node matches the layer id
+      if (node.id === +layerId) {
+        result.push(themeName)
+      }
+      // Traverse children
+      if (node.children) {
+        node.children.forEach(child => traverse(child, themeName))
+      }
+    }
+
+    if (themes && Array.isArray(themes)) {
+      themes.forEach(theme => {
+        // theme is always the first parent node, so theme.name is the theme name
+        if (theme?.metadata?.display_in_switcher) {
+          traverse(theme, theme.name)
+        }
+      })
+    }
+
+    // Remove duplicates, just in case
+    return [...new Set(result)]
+  }
   function find3dLayerById(id: LayerId) {
     const { layerTrees_3d } = useThemeStore()
     return findByIdOrName(id, undefined, layerTrees_3d)
@@ -99,5 +125,6 @@ export default function useThemes() {
     findBgLayerByName,
     findAnyLayerById,
     setTheme,
+    findThemeNamesByLayerId,
   }
 }
