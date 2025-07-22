@@ -74,7 +74,7 @@ onUnmounted(() => window.removeEventListener('resize', map.resize))
     <template v-if="!embedded">
       <header-bar />
 
-      <main class="flex grow">
+      <main class="flex grow min-h-0">
         <!-- Side panel containing, Layers catalog, MyMaps, Legends, ... -->
         <side-panel />
 
@@ -91,10 +91,12 @@ onUnmounted(() => window.removeEventListener('resize', map.resize))
           <background-selector />
         </div>
       </main>
-      <div v-if="lidarOpen" class="w-full h-[25rem]">
-        <lidar-graph-panel></lidar-graph-panel>
-      </div>
-      <footer-bar class="fixed bottom-5 sm:static" />
+      <transition name="fade">
+        <div v-if="lidarOpen" class="w-full flex-shrink-0" style="height: 25rem;">
+          <lidar-graph-panel class="w-full h-full" />
+        </div>
+      </transition>
+      <footer-bar class="w-full flex-shrink-0" style="height: 3.5rem;" />
       <alert-notifications />
     </template>
 

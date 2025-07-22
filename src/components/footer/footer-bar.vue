@@ -20,7 +20,7 @@ const {
   toggleDrawToolbarOpen,
   toggleMyMapsOpen,
   toggleLegendsOpen,
-  toggleInfoOpen
+  toggleInfoOpen,
 } = appStore
 const {
   layersOpen,
@@ -77,19 +77,20 @@ watch(printToolbarOpen, isOpen => {
 watch(lidarOpen, isOpen => {
   if (isOpen) {
     layersOpen.value =
-    legendsOpen.value =
-    drawToolbarOpen.value =
-    measureToolbarOpen.value =
-    styleEditorOpen.value =
-    myMapsOpen.value =
-    infoOpen.value =
-    themeGridOpen.value =
-    printToolbarOpen.value =
-    drawToolbarOpen.value =
-    measureToolbarOpen.value =
-    styleEditorOpen.value =
-    myMapsOpen.value =
-    infoOpen.value = false
+      legendsOpen.value =
+      drawToolbarOpen.value =
+      measureToolbarOpen.value =
+      styleEditorOpen.value =
+      myMapsOpen.value =
+      infoOpen.value =
+      themeGridOpen.value =
+      printToolbarOpen.value =
+      drawToolbarOpen.value =
+      measureToolbarOpen.value =
+      styleEditorOpen.value =
+      myMapsOpen.value =
+      infoOpen.value =
+        false
   }
 })
 const featureInfoStore = useFeatureInfoStore()

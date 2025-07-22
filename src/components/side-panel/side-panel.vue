@@ -25,7 +25,11 @@ const {
 
 watch(layersOpen, layersOpen => {
   if (layersOpen) {
-    lidarOpen.value = legendsOpen.value = myMapsOpen.value = styleEditorOpen.value = false
+    lidarOpen.value =
+      legendsOpen.value =
+      myMapsOpen.value =
+      styleEditorOpen.value =
+        false
   }
 })
 

@@ -16,7 +16,16 @@ export class LidarHelpers {
    * Clip a linstring with start and end measure given by D3 Chart domain
    * returns Object with clipped lined coordinates and left domain value
    */
-  clipLineByMeasure(linestring: olGeomLineString, dLeft:number , dRight:number):{clippedLine: Coordinate[]; bufferGeom: olFeature; distanceOffset: number, bufferStyle: olStyleStyle[]} {
+  clipLineByMeasure(
+    linestring: olGeomLineString,
+    dLeft: number,
+    dRight: number
+  ): {
+    clippedLine: Coordinate[]
+    bufferGeom: olFeature
+    distanceOffset: number
+    bufferStyle: olStyleStyle[]
+  } {
     const clippedLine = new olGeomLineString([])
     let mileage_start = 0
     let mileage_end = 0
@@ -47,7 +56,11 @@ export class LidarHelpers {
         clippedLine.appendCoordinate(segEnd)
       } else if (dRight > mileage_start && dRight < mileage_end) {
         clippedLine.appendCoordinate(linestring.getCoordinateAt(fractionEnd))
-      } else if (dRight > mileage_start && dRight > mileage_end && counter === segNumber) {
+      } else if (
+        dRight > mileage_start &&
+        dRight > mileage_end &&
+        counter === segNumber
+      ) {
         clippedLine.appendCoordinate(linestring.getCoordinateAt(fractionEnd))
       }
 
@@ -57,15 +70,15 @@ export class LidarHelpers {
     // Return clippedLine in original projection to request new lidar data
     const clippedLineLidarProjection = clippedLine.clone()
     const feat = new olFeature({
-      geometry: clippedLine.transform('EPSG:2169', 'EPSG:3857')
+      geometry: clippedLine.transform('EPSG:2169', 'EPSG:3857'),
     })
 
     const lineStyle = new olStyleStyle({
       stroke: new olStyleStroke({
         color: 'rgba(255,0,0,1)',
         width: 2,
-        lineCap: 'square'
-      })
+        lineCap: 'square',
+      }),
     })
 
     let firstSegmentAngle = 0
@@ -101,13 +114,13 @@ export class LidarHelpers {
           stroke: new olStyleStroke({
             color: 'rgba(255,0,0,1)',
             width: 1,
-            lineCap: 'square'
+            lineCap: 'square',
           }),
           points: 3,
           radius: 5,
           rotation: firstSegmentAngle,
-          angle: Math.PI / 3
-        })
+          angle: Math.PI / 3,
+        }),
       }),
       new olStyleStyle({
         geometry: new olGeomPoint(lineEnd),
@@ -116,13 +129,13 @@ export class LidarHelpers {
           stroke: new olStyleStroke({
             color: 'rgba(255,0,0,1)',
             width: 1,
-            lineCap: 'square'
+            lineCap: 'square',
           }),
           points: 3,
           radius: 5,
           rotation: lastSegementAngle,
-          angle: 4 * Math.PI / 3
-        })
+          angle: (4 * Math.PI) / 3,
+        }),
       })
     )
 
@@ -130,7 +143,7 @@ export class LidarHelpers {
       clippedLine: clippedLineLidarProjection.getCoordinates(),
       distanceOffset: dLeft,
       bufferGeom: feat,
-      bufferStyle: styles
+      bufferStyle: styles,
     }
   }
 
@@ -139,7 +152,7 @@ export class LidarHelpers {
    * Configuration is set up in Pytree configuration
    * return Object with optimized Level Of Details and width for this profile span
    */
-  getNiceLOD(span: number, max_levels:any):{maxLOD: number; width: number} {
+  getNiceLOD(span: number, max_levels: any): { maxLOD: number; width: number } {
     let maxLOD = 0
     let width = 0
     for (const key in max_levels) {
@@ -155,7 +168,7 @@ export class LidarHelpers {
   /**
    * Create a image file by combining SVG and canvas elements and let the user downloads it.
    */
-  downloadProfileAsImageFile(profileClientConfig:any) {
+  downloadProfileAsImageFile(profileClientConfig: any) {
     const profileSVG = d3.select('.gmf-lidarprofile-container svg.lidar-svg')
     const w = parseInt(profileSVG.attr('width'), 10)
     const h = parseInt(profileSVG.attr('height'), 10)
@@ -172,9 +185,17 @@ export class LidarHelpers {
       ctx.fillRect(0, 0, w, h)
 
       // Draw the profile canvas (the points) into the new canvas.
-      const profileCanvasNode = d3.select('.gmf-lidarprofile-container .lidar-canvas').node()
+      const profileCanvasNode = d3
+        .select('.gmf-lidarprofile-container .lidar-canvas')
+        .node()
       if (profileCanvasNode instanceof HTMLCanvasElement) {
-        ctx.drawImage(profileCanvasNode, margin.left, margin.top, w - (margin.left + margin.right), h - (margin.top + margin.bottom))
+        ctx.drawImage(
+          profileCanvasNode,
+          margin.left,
+          margin.top,
+          w - (margin.left + margin.right),
+          h - (margin.top + margin.bottom)
+        )
       }
 
       // Add transforms the profile into an image.
@@ -197,7 +218,7 @@ export class LidarHelpers {
           body.removeChild(exportImgElem)
         }
         // Let the user download the image.
-        canvas.toBlob((blob) => {
+        canvas.toBlob(blob => {
           saveAs(blob, 'LIDAR_profile.png')
         })
       }
@@ -209,7 +230,7 @@ export class LidarHelpers {
    * Transforms a lidarprofile into multiple single points sorted by distance.
    * returns An array of Lidar Points.
    */
-  getFlatPointsByDistance(profilePoints:any):any[] {
+  getFlatPointsByDistance(profilePoints: any): any[] {
     const points = []
     for (let i = 0; i < profilePoints.distance.length; i++) {
       const p = {
@@ -218,7 +239,7 @@ export class LidarHelpers {
         color_packed: profilePoints.color_packed[i],
         intensity: profilePoints.intensity[i],
         classification: profilePoints.classification[i],
-        coords: profilePoints.coords[i]
+        coords: profilePoints.coords[i],
       }
       points.push(p)
     }
@@ -233,7 +254,7 @@ export class LidarHelpers {
    * @export
    */
   getCSVData(points: Array<{ [key: string]: any }>): any[] {
-    return points.map((point) => {
+    return points.map(point => {
       const row: Record<string, any> = {}
       for (const key in point) {
         const value = point[key]
@@ -281,7 +302,9 @@ export class LidarHelpers {
     for (let i = 0; i < coords.length; i++) {
       const px = coords[i][0]
       const py = coords[i][1]
-      pytreeLineString += `{${Math.round(100 * px) / 100}, ${Math.round(100 * py) / 100}},`
+      pytreeLineString += `{${Math.round(100 * px) / 100}, ${
+        Math.round(100 * py) / 100
+      }},`
     }
     return pytreeLineString.substr(0, pytreeLineString.length - 1)
   }
@@ -297,13 +320,28 @@ export class LidarHelpers {
    * @param {lidarprofileServer.ConfigClassifications} classification_colors classification colors
    * @return {gmfx.LidarPoint} closestPoint the closest point to the clicked coordinates
    */
-  getClosestPoint(points: LidarProfilePoints, xs: number, ys: number, tolerance: number, sx: Function, sy: Function, classification_colors: any): any {
+  getClosestPoint(
+    points: LidarProfilePoints,
+    xs: number,
+    ys: number,
+    tolerance: number,
+    sx: Function,
+    sy: Function,
+    classification_colors: any
+  ): any {
     const d = points
     const tol = tolerance
     const distances = []
     const hP = []
 
-    if (d.distance && d.altitude && d.classification && d.color_packed && d.intensity && d.coords) {
+    if (
+      d.distance &&
+      d.altitude &&
+      d.classification &&
+      d.color_packed &&
+      d.intensity &&
+      d.coords
+    ) {
       for (let i = 0; i < d.distance.length; i++) {
         if (
           sx(d.distance[i]) < xs + tol &&
@@ -312,7 +350,8 @@ export class LidarHelpers {
           sy(d.altitude[i]) > ys - tol
         ) {
           const pDistance = Math.sqrt(
-            Math.pow(sx(d.distance[i]) - xs, 2) + Math.pow(sy(d.altitude[i]) - ys, 2)
+            Math.pow(sx(d.distance[i]) - xs, 2) +
+              Math.pow(sy(d.altitude[i]) - ys, 2)
           )
           const cClassif = classification_colors[d.classification[i]]
           if (cClassif && cClassif.visible == 1) {
@@ -322,7 +361,7 @@ export class LidarHelpers {
               classification: d.classification[i],
               color_packed: d.color_packed[i],
               intensity: d.intensity[i],
-              coords: d.coords[i]
+              coords: d.coords[i],
             })
             distances.push(pDistance)
           }
