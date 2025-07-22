@@ -33,6 +33,10 @@ export default function useDrawLidarInteraction() {
       drawLidarActive.value = true
     } else {
       drawLidarActive.value = false
+      const source = vectorLayer.getSource()
+      if (source) {
+        source.clear()
+      }
     }
   })
 

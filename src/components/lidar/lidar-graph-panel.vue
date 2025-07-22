@@ -1,4 +1,7 @@
-<script setup lang="ts"></script>
+<script setup lang="ts">
+import { useAppStore } from '@/stores/app.store'
+const { toggleLidarOpen } = useAppStore()
+</script>
 <style lang="css" scoped>
 .lidarprofile-container {
   position: relative;
@@ -50,7 +53,7 @@
 </style>
 <template>
   <div class="lidarprofile-container">
-    <div class="close">&times;</div>
+    <div class="close" @click="toggleLidarOpen(false)">&times;</div>
     <div class="lidar-flex">
       <div class="lidar-legend">
         <div class="width-info"></div>
