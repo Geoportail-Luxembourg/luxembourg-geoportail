@@ -4,21 +4,14 @@ import { storeToRefs } from 'pinia'
 import { ref, onMounted } from 'vue'
 import { useTranslation} from 'i18next-vue'
 import Style from 'ol/style/Style'
-import Stroke from 'ol/style/Stroke'
-import DrawInteraction from 'ol/interaction/Draw'
-import VectorSource from 'ol/source/Vector'
 import VectorLayer from 'ol/layer/Vector'
 import LineString from 'ol/geom/LineString'
-import Feature from 'ol/Feature'
 
 import { useAppStore } from '@/stores/app.store'
 
-import useMap from '@/composables/map/map.composable'
 import useDrawLidarInteraction from '@/composables/lidar/draw-lidar-interaction.composable'
 import { useLidarStore } from '@/stores/lidar.store'
 
-//import saveCsv from 'save-csv/save-csv.min'
-import Fill from 'ol/style/Fill.js'
 
 const appStore = useAppStore()
 const { t, i18next } = useTranslation()
@@ -32,71 +25,18 @@ const url = ref<string | undefined>(undefined)
 const config = ref<any>(lidarStore.getLidarConfig())
 
 
-const active = ref(false)
-
 const measureActive = ref(false)
 
 const classifications = ref<any[]>(config.value.serverConfig.classification_colors || [])
 
-let vectorLayer: VectorLayer
 let coordinates: LineString | null = null
-//let manager: LidarManager
-let lineStyle: Style
 
-
+let lidarDrawInteraction: any
 
 onMounted(() => {
-  const lidarDrawInteraction = useDrawLidarInteraction()
-
-  
-  /*manager = new LidarManager()
-  manager.width = profileWidth.value*/
-  /*lineStyle = new Style({
-    fill: new Fill({ color: 'rgba(255,204,51,0.5)' }),
-    stroke: new Stroke({
-      color: 'rgba(255,204,51,0.5)',
-      lineCap: 'square'
-    })
-  })
-  vectorLayer = new VectorLayer({
-    source: new VectorSource(),
-    zIndex: 1000
-  })
-  drawInteraction = new DrawInteraction({
-    source: vectorLayer.getSource()!,
-    type: 'LineString'
-  })
-  drawInteraction.setActive(true)
-  drawInteraction.on('drawstart', () => {
-    if (coordinates) clearProfile()
-  })
-  
-  const map = useMap().getOlMap()
-  map.addInteraction(drawInteraction)
-
-*/
- /* drawInteraction.on('drawend', (event) => {
-    drawActive.value = false
-    coordinates = event.feature.getGeometry()
-    drawRectangles(event.feature.clone().getGeometry())
-    event.feature.setStyle(createStyleFunction())
-    generatePlot(event.feature)
-  })*/
+  lidarDrawInteraction = useDrawLidarInteraction()
 })
 
-/*
-function generatePlot(lineFeature: Feature) {
-  coordinates = lineFeature
-  manager.clearBuffer()
-  manager.init(config.value, map.value)
-  manager.setLine(lineFeature.clone().getGeometry().transform('EPSG:3857', 'EPSG:2169'))
-  manager.getProfileByLOD([], 0, true, config.value.serverConfig.minLOD, false, profileWidth.value)
-  // todo PIWIK
-  if (window._paq) {
-    window._paq.push(['setDocumentTitle', 'LidarGeneratePlot'])
-    window._paq.push(['trackPageView'])
-  }
-}*/
 
 function exportCsv() {
  //const points = manager.utils.getFlatPointsByDistance(manager.profilePoints) || {}
@@ -128,8 +68,7 @@ function exportLas() {
 }
 
 function resetPlot() {
-  //manager.clearBuffer()
-  //manager.getProfileByLOD([], 0, true, 0, false, profileWidth.value)
+  lidarDrawInteraction.resetPlot()
 }
 
 function toggleMeasure() {

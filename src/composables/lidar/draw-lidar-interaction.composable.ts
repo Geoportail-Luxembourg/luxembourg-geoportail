@@ -24,6 +24,7 @@ export default function useDrawLidarInteraction() {
   const config = lidarStore.getLidarConfig()
   const { drawLidarActive, currentProfileFeature, profileWidth } = storeToRefs(lidarStore)
   const { lidarOpen} = storeToRefs(appStore)
+  
   const map = useMap().getOlMap()
   const lidarManager = new LidarManager()
 
@@ -135,9 +136,11 @@ function drawRectangle(line: LineString) {
     const y6 = y2 + dx
     return new olGeomPolygon([[[x3, y3], [x5, y5], [x4, y4], [x6, y6], [x3, y3]]])
   }
-
+  function resetPlot() {
+    lidarManager.clearBuffer()
+    lidarManager.getProfileByLOD([], 0, true, config.serverConfig.minLOD, false, profileWidth.value)
+  }
   function generatePlot() {
-    //coordinates = lineFeature
     lidarManager.clearBuffer()
     lidarManager.init(config)
     lidarManager.setLine(currentProfileFeature.value!.clone()!.getGeometry()!.transform('EPSG:3857', 'EPSG:2169') as LineString)
@@ -146,6 +149,7 @@ function drawRectangle(line: LineString) {
   }
   return {
     drawInteraction,
-    drawLidarActive
+    drawLidarActive,
+    resetPlot
   }
 }

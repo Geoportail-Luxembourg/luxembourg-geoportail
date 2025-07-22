@@ -8,6 +8,7 @@ import olStyleStyle from 'ol/style/Style'
 import type { Coordinate } from 'ol/coordinate'
 import { saveAs } from 'file-saver'
 import { select } from 'd3-selection'
+import type { LidarProfilePoints } from './lidar.types'
 const d3 = { select }
 
 export class LidarHelpers {
@@ -296,7 +297,7 @@ export class LidarHelpers {
    * @param {lidarprofileServer.ConfigClassifications} classification_colors classification colors
    * @return {gmfx.LidarPoint} closestPoint the closest point to the clicked coordinates
    */
-  getClosestPoint(points: {distance?: number[];altitude?: number[];color_packed?: number[][];intensity?: number[];  classification?: number[];  coords?: number[][];  }, xs: number, ys: number, tolerance: number, sx: Function, sy: Function, classification_colors: any): any {
+  getClosestPoint(points: LidarProfilePoints, xs: number, ys: number, tolerance: number, sx: Function, sy: Function, classification_colors: any): any {
     const d = points
     const tol = tolerance
     const distances = []

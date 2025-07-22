@@ -8,13 +8,14 @@ import Fill from 'ol/style/Fill';
 import Style from 'ol/style/Style';
 import { axisBottom, axisLeft } from 'd3-axis';
 import { scaleLinear, ScaleLinear } from 'd3-scale';
-import { event as d3Event, pointer as mouse, select, Selection } from 'd3-selection';
-import { zoom, ZoomBehavior } from 'd3-zoom';
+import { pointer as mouse, select, Selection } from 'd3-selection';
+import {zoom as d3Zoom} from 'd3-zoom';
 import i18next from 'i18next';
 
-import type { LidarprofileManager } from '../../services/lidar/lidar-manager';
-import type { LidarprofilePoints } from './types';
+import type { LidarManager } from '../../services/lidar/lidar-manager';
+import type { LidarProfilePoints } from '../../services/lidar/lidar.types'
 import type { ConfigClassification, ConfigClassifications } from './lidarConfig';
+
 
 const d3 = {
   axisBottom,
@@ -22,11 +23,10 @@ const d3 = {
   mouse,
   scaleLinear,
   select,
-  zoom,
 };
 
 export class LidarPlot {
-  private manager_: LidarprofileManager;
+  private manager_: LidarManager;
   public scaleX!: ScaleLinear<number, number>;
   public scaleY!: ScaleLinear<number, number>;
   public updateScaleX: (x: number) => number = x => x;
@@ -36,26 +36,26 @@ export class LidarPlot {
   private height_!: number;
   public previousDomainX: number[] = [];
   private moved_ = false;
-  private zoom_!: ZoomBehavior<Element, unknown>;
-  private svg_!: Selection<SVGSVGElement, unknown, null, undefined>;
+  private zoom_!: any;
+  private svg_!: any;
 
-  constructor(manager: LidarprofileManager) {
+  constructor(manager: LidarManager) {
     this.manager_ = manager;
   }
 
-  drawPoints(points: LidarprofilePoints) {
-    const nPoints = points.distance.length;
-    const ctx = (d3.select('.gmf-lidarprofile-container .lidar-canvas')
+  drawPoints(points: LidarProfilePoints) {
+    const nPoints = points.distance!.length;
+    const ctx = (d3.select('.lidarprofile-container .lidar-canvas')
       .node() as HTMLCanvasElement)!
       .getContext('2d')!;
     const profileServerConfig = this.manager_.config.serverConfig;
 
     for (let i = 0; i < nPoints; ++i) {
-      const distance = points.distance[i];
-      const altitude = points.altitude[i];
-      const rgb = points.color_packed[i];
-      const intensity = points.intensity[i];
-      const classification = points.classification[i];
+      const distance = points.distance![i];
+      const altitude = points.altitude![i];
+      const rgb = points.color_packed![i];
+      const intensity = points.intensity![i];
+      const classification = points.classification![i];
       if (
         profileServerConfig.classification_colors[classification] &&
         profileServerConfig.classification_colors[classification].visible
@@ -82,13 +82,13 @@ export class LidarPlot {
   }
 
   setupPlot(rangeX: [number, number], rangeY: [number, number]) {
-    const canvas = d3.select('.gmf-lidarprofile-container .lidar-canvas');
+    const canvas = d3.select('.lidarprofile-container .lidar-canvas');
     const canvasEl = canvas.node() as HTMLCanvasElement;
     const ctx = canvasEl.getContext('2d')!;
     ctx.clearRect(0, 0, canvasEl.width, canvasEl.height);
 
     const margin = this.manager_.config.clientConfig.margin;
-    const containerEl = d3.select('.gmf-lidarprofile-container').node() as HTMLElement;
+    const containerEl = d3.select('.lidarprofile-container').node() as HTMLElement;
     const containerWidth = containerEl.getBoundingClientRect().width;
     const containerHeight = containerEl.getBoundingClientRect().height;
 
@@ -130,8 +130,7 @@ export class LidarPlot {
         .range([this.height_, 0]);
     }
 
-    this.zoom_ = d3
-      .zoom<Element, unknown>()
+    this.zoom_ = d3Zoom<Element, unknown>()
       .scaleExtent([-10, 100])
       .translateExtent([
         [0, 0],
@@ -148,12 +147,7 @@ export class LidarPlot {
     this.updateScaleX = this.scaleX;
     this.updateScaleY = this.scaleY;
 
-    this.svg_ = d3.select('.gmf-lidarprofile-container svg.lidar-svg') as Selection<
-      SVGSVGElement,
-      unknown,
-      null,
-      undefined
-    >;
+    this.svg_ = d3.select('.lidarprofile-container svg.lidar-svg');
 
     this.svg_.call(this.zoom_).on('dblclick.zoom', null);
     this.svg_.selectAll('*').remove();
@@ -196,9 +190,9 @@ export class LidarPlot {
       return;
     }
     this.moved_ = false;
-    const ctx = d3
-      .select('.gmf-lidarprofile-container .lidar-canvas')
-      .node()!
+    const ctx = (d3
+      .select('.lidarprofile-container .lidar-canvas')
+      .node() as HTMLCanvasElement)!
       .getContext('2d')!;
     ctx.clearRect(0, 0, this.width_, this.height_);
     this.manager_.updateData();
@@ -218,7 +212,7 @@ export class LidarPlot {
 
     // @ts-ignore
     const tr = d3Event.transform;
-    const svg = d3.select('.gmf-lidarprofile-container svg.lidar-svg');
+    const svg = d3.select('.lidarprofile-container svg.lidar-svg');
     const xAxis = d3.axisBottom(this.scaleX);
     const yAxis = d3.axisLeft(this.scaleY).tickSize(-this.width_);
 
@@ -228,9 +222,9 @@ export class LidarPlot {
     svg.select('.x.axis').call(xAxis.scale(new_scaleX));
     svg.select('.y.axis').call(yAxis.scale(new_scaleY));
 
-    const ctx = d3
-      .select('.gmf-lidarprofile-container .lidar-canvas')
-      .node()!
+    const ctx = (d3
+      .select('.lidarprofile-container .lidar-canvas')
+      .node() as HTMLCanvasElement)!
       .getContext('2d')!;
     ctx.clearRect(0, 0, this.width_, this.height_);
 
@@ -245,14 +239,14 @@ export class LidarPlot {
   }
 
   pointHighlight() {
-    const svg = d3.select('.gmf-lidarprofile-container svg.lidar-svg');
-    const lidarInfo = d3.select('.gmf-lidarprofile-container .lidar-info');
+    const svg = d3.select('.lidarprofile-container svg.lidar-svg');
+    const lidarInfo = d3.select('.lidarprofile-container .lidar-info');
     const pointSize = this.manager_.config.serverConfig.point_size;
     const margin = this.manager_.config.clientConfig.margin;
     const tolerance = this.manager_.config.clientConfig.tolerance || 0;
 
     const canvasCoordinates = mouse(
-      d3.select('.gmf-lidarprofile-container .lidar-canvas').node() as Element
+      d3.select('.lidarprofile-container .lidar-canvas').node() as Element
     );
     const classification_colors = this.manager_.config.serverConfig.classification_colors;
 
@@ -286,7 +280,7 @@ export class LidarPlot {
       const html = this.getInfoHTML(p, pointClassification, 1);
 
       lidarInfo.html(html);
-      this.manager_.cartoHighlight.setElement(null);
+      this.manager_.cartoHighlight.setElement(undefined);
       const el = document.createElement('div');
       el.className += 'tooltip gmf-tooltip-measure';
       el.innerHTML = html;
@@ -294,7 +288,10 @@ export class LidarPlot {
       this.manager_.cartoHighlight.setElement(el);
       const lidarPointGeom = new Point([p.coords[0], p.coords[1]]).transform('EPSG:2169', 'EPSG:3857');
       this.manager_.cartoHighlight.setPosition(lidarPointGeom.getCoordinates());
-      this.manager_.lidarPointHighlight.getSource().clear();
+      const lidarPointHighlightSource = this.manager_.lidarPointHighlight.getSource();
+      if (lidarPointHighlightSource) {
+        lidarPointHighlightSource.clear();
+      }
       const lidarPointFeature = new Feature(lidarPointGeom);
       if (typeof pointClassification.color !== 'undefined') {
         lidarPointFeature.setStyle(
@@ -308,10 +305,14 @@ export class LidarPlot {
           })
         );
       }
-
-      this.manager_.lidarPointHighlight.getSource().addFeature(lidarPointFeature);
+      if (lidarPointHighlightSource) {
+        lidarPointHighlightSource.addFeature(lidarPointFeature);
+      }
     } else {
-      this.manager_.lidarPointHighlight.getSource().clear();
+      const lidarPointHighlightSource = this.manager_.lidarPointHighlight.getSource();
+      if (lidarPointHighlightSource) {
+        lidarPointHighlightSource.clear();
+      }
       svg.select('#highlightCircle').remove();
       lidarInfo.html('');
       this.manager_.cartoHighlight.setPosition(undefined);
@@ -355,7 +356,7 @@ export class LidarPlot {
 
   changeStyle(material: string) {
     this.material = material;
-    const canvasEl = d3.select('.gmf-lidarprofile-container .lidar-canvas').node() as HTMLCanvasElement;
+    const canvasEl = d3.select('.lidarprofile-container .lidar-canvas').node() as HTMLCanvasElement;
     const ctx = canvasEl.getContext('2d')!;
     ctx.clearRect(0, 0, canvasEl.width, canvasEl.height);
     this.drawPoints(this.manager_.profilePoints);

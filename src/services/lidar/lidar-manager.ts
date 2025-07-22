@@ -1,5 +1,5 @@
 //import gmfLidarprofileMeasure from '../../components/lidar/measure'
-//import gmfLidarprofilePlot from '../../components/lidar/plot'
+import LidarPlot from '../../components/lidar/plot'
 //import gmfLidarprofileUtils from '../../components/lidar/utils'
 import olLayerVector from 'ol/layer/Vector'
 import olOverlay from 'ol/Overlay'
@@ -55,7 +55,7 @@ export class LidarManager {
 
   init(config: any) {
     this.config = config
-    //this.plot = new gmfLidarprofilePlot(this)
+    this.plot = new LidarPlot(this)
     //this.measure = new gmfLidarprofileMeasure(this)
   }
 
@@ -69,12 +69,12 @@ export class LidarManager {
   }
 
   clearRect() {
-    const canvas = d3.select('.gmf-lidarprofile-container .lidar-canvas')
+    const canvas = d3.select('.lidarprofile-container .lidar-canvas')
     const canvasEl = canvas.node() as HTMLCanvasElement
     const ctx = canvasEl.getContext('2d')
     ctx!.clearRect(0, 0, canvasEl.getBoundingClientRect().width, canvasEl.getBoundingClientRect().height)
     canvas.selectAll('*').remove()
-    d3.select('.gmf-lidarprofile-container .lidar-error').style('visibility', 'hidden')
+    d3.select('.lidarprofile-container .lidar-error').style('visibility', 'hidden')
     this.profilePoints = this.getEmptyProfilePoints_()
     this.line_ = undefined
     //this.plot = new gmfLidarprofilePlot(this)
@@ -110,12 +110,12 @@ export class LidarManager {
       this.isPlotSetup_ = false
     }
 
-    d3.select('.gmf-lidarprofile-container .lidar-error').style('visibility', 'hidden')
+    d3.select('.lidarprofile-container .lidar-error').style('visibility', 'hidden')
     let pytreeLinestring = this.utils.getPytreeLinestring(this.line_)
 
     let maxLODWith
     let lastLOD = false
-    d3.select('.gmf-lidarprofile-container .lod-info').html('')
+    d3.select('.lidarprofile-container .lod-info').html('')
     const max_levels = this.config.serverConfig.max_levels
     let profileWidth = 0
 
@@ -139,7 +139,7 @@ export class LidarManager {
     }
     profileWidth = userWidth
     const profileWidthTxt = i18next.t('Profile width: ')
-    d3.select('.gmf-lidarprofile-container .width-info').html(`${profileWidthTxt} ${profileWidth}m`)
+    d3.select('.lidarprofile-container .width-info').html(`${profileWidthTxt} ${profileWidth}m`)
     if (!exportLAS) {
       for (let i = 0; i < maxLODWith.maxLOD; i++) {
         if (i == 0) {
@@ -162,7 +162,7 @@ export class LidarManager {
     if (!this.config.serverConfig) throw new Error('Missing config.serverConfig')
     this.map.getViewport().style.cursor = 'wait'
     document.body.style.cursor = 'wait'
-    const lodInfo = d3.select('.gmf-lidarprofile-container .lod-info')
+    const lodInfo = d3.select('.lidarprofile-container .lod-info')
     if (this.config.serverConfig.debug) {
       let html = lodInfo.html()
       const loadingLodTxt = i18next.t('Loading LOD: ')
@@ -223,7 +223,7 @@ export class LidarManager {
   }
 
   processBuffer_(profile: ArrayBuffer, iter: number, distanceOffset: number, lastLOD: boolean, resetPlot: boolean) {
-    const lidarError = d3.select('.gmf-lidarprofile-container .lidar-error');
+    const lidarError = d3.select('.lidarprofile-container .lidar-error');
 
     const typedArrayInt32 = new Int32Array(profile, 0, 4);
     const headerSize = typedArrayInt32[0];
@@ -240,7 +240,7 @@ export class LidarManager {
 
     } catch (e) {
       if (!this.isPlotSetup_) {
-        const canvas = d3.select('.gmf-lidarprofile-container .lidar-canvas');
+        const canvas = d3.select('.lidarprofile-container .lidar-canvas');
         const canvasEl = canvas.node();
         if (canvasEl && canvasEl instanceof HTMLCanvasElement) {
             const ctx = canvasEl.getContext('2d');

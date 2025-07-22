@@ -9,7 +9,7 @@
             <div class="lidar-info"></div>
         </div>
         <div class="lidarprofile">
-            <div class="lidar-error">RRRRRRRRRRRRRRRRRRR</div>
+            <div class="lidar-error"></div>
             <canvas class="lidar-canvas"></canvas>
             <svg class="lidar-svg" style="fill: #ffff00;position:absolute;z-index:1;"></svg>
         </div>
