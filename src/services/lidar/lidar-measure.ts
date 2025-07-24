@@ -5,7 +5,7 @@ import type { LidarManager } from '../../services/lidar/lidar-manager'
  * Measure tool for the d3 chart.
  * Provides interactive measurement between two points on the LIDAR profile.
  */
-export class Measure {
+export class LidarMeasure {
   private manager: LidarManager
   private pStart: any & { set?: boolean }
   private pEnd: any & { set?: boolean }
@@ -41,22 +41,22 @@ export class Measure {
     this.manager.plot.deactivateZoom()
     const svg = select('.lidarprofile-container svg.lidar-svg')
     svg.style('cursor', 'pointer')
-    svg.on('click', this.measureHeight.bind(this))
+    svg.on('click', event => this.measureHeight(event))
   }
 
   /**
    * Measure and display height after two clicks on the profile.
    */
-  private measureHeight(): void {
+  private measureHeight(event: MouseEvent): void {
     const svg = select('.lidarprofile-container svg.lidar-svg')
     const svgNode = svg.node()
     const canvasNode = select('.lidarprofile-container .lidar-canvas').node()
 
     if (!svgNode || !canvasNode) return
 
-    const svgCoordinates = d3Mouse(svgNode)
-    const canvasCoordinates = d3Mouse(canvasNode)
-    const margin = this.manager.config.clientConfig.margin
+    const svgCoordinates = d3Mouse(event, svgNode)
+    const canvasCoordinates = d3Mouse(event, canvasNode)
+    const margin = this.manager.config.value.clientConfig.margin
     const xs = svgCoordinates[0]
     const ys = svgCoordinates[1]
     const tolerance = 2
@@ -71,7 +71,7 @@ export class Measure {
       tolerance,
       sx,
       sy,
-      this.manager.config.serverConfig.classification_colors
+      this.manager.config.value.serverConfig.classification_colors
     )
 
     if (!this.pStart.set) {
@@ -152,4 +152,4 @@ export class Measure {
   }
 }
 
-export default Measure
+export default LidarMeasure

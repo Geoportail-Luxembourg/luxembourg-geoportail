@@ -1,6 +1,43 @@
 <script setup lang="ts">
 import { useAppStore } from '@/stores/app.store'
+import { useTranslation } from 'i18next-vue'
+import { storeToRefs } from 'pinia'
 const { toggleLidarOpen } = useAppStore()
+import useDrawLidarInteraction from '@/composables/lidar/draw-lidar-interaction.composable'
+import { useLidarStore } from '@/stores/lidar.store'
+const lidarStore = useLidarStore()
+const { measureActive } = storeToRefs(lidarStore)
+const { t } = useTranslation()
+const lidarDrawInteraction = useDrawLidarInteraction()
+function exportCsv() {
+  lidarDrawInteraction.exportCsv()
+  // todo PIWIK
+}
+function exportPng() {
+  lidarDrawInteraction.exportPng()
+  // todo PIWIK
+}
+function exportLas() {
+  lidarDrawInteraction.exportLas()
+  // todo PIWIK
+}
+function toggleMeasure() {
+  measureActive.value = !measureActive.value
+  if (measureActive.value) {
+    setMeasureActive()
+  } else {
+    clearMeasure()
+  }
+}
+
+function setMeasureActive() {
+  lidarDrawInteraction.setMeasureActive()
+}
+
+function clearMeasure() {
+  measureActive.value = false
+  lidarDrawInteraction.clearMeasure()
+}
 </script>
 <style lang="css" scoped>
 .lidarprofile-container {
@@ -9,6 +46,7 @@ const { toggleLidarOpen } = useAppStore()
   height: 100%;
   display: flex;
   flex-direction: column;
+  border-top: solid 1px black;
 }
 .lidar-flex {
   display: flex;
@@ -20,7 +58,7 @@ const { toggleLidarOpen } = useAppStore()
   min-width: 15rem;
   max-width: 15rem;
   height: 100%;
-  background: #f8fafc;
+  /* background: #f8fafc; */
   display: flex;
   flex-direction: column;
   justify-content: flex-start;
@@ -55,10 +93,45 @@ const { toggleLidarOpen } = useAppStore()
   <div class="lidarprofile-container">
     <div class="close" @click="toggleLidarOpen(false)">&times;</div>
     <div class="lidar-flex">
-      <div class="lidar-legend">
+      <div class="lidar-legend p-2.5 bg-primary text-white">
+        <div class="export-tools">
+          <div
+            v-if="lidarDrawInteraction && lidarDrawInteraction.hasLineFeature()"
+          >
+            <button class="lux-btn mt-3" @click="exportCsv">
+              {{ t('Export CSV') }}
+            </button>
+            <button class="lux-btn mt-3" @click="exportPng">
+              {{ t('Export PNG') }}
+            </button>
+            <button class="lux-btn mt-3" @click="exportLas">
+              {{ t('Export LAS') }}
+            </button>
+            <hr />
+            <div>
+              <p>
+                <button
+                  class="lux-btn mt-3"
+                  :class="{ active: measureActive }"
+                  @click="toggleMeasure"
+                >
+                  {{ t('Take measure') }}
+                </button>
+                <button class="lux-btn mt-3" @click="clearMeasure">
+                  <span class="fa fa-eraser"></span>
+                </button>
+              </p>
+              <p class="lux-alert-info" v-if="measureActive">
+                {{ t('Measure distances on the profile below.') }}
+                <em>{{ t('(Deactivates zoom and pan on the profile!)') }}</em>
+              </p>
+            </div>
+            <hr />
+          </div>
+        </div>
         <div class="width-info"></div>
         <div class="lod-info"></div>
-        <div class="lidar-info"></div>
+        <div class="lidar-info poi-feature"></div>
       </div>
       <div class="lidarprofile">
         <div class="lidar-error"></div>

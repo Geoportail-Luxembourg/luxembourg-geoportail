@@ -8,7 +8,7 @@ import { scaleLinear, ScaleLinear } from 'd3-scale'
 import { pointer, select } from 'd3-selection'
 import { zoom } from 'd3-zoom'
 import i18next from 'i18next'
-import type { LidarManager } from '../../services/lidar/lidar-manager'
+import { LidarManager } from '../../services/lidar/lidar-manager'
 import type { LidarProfilePoints } from '../../services/lidar/lidar.types'
 import type {
   ConfigClassification,
@@ -205,7 +205,7 @@ export class LidarPlot {
   }
 
   zoomed(d3Event: any) {
-    //this.manager_.measure.clearMeasure()
+    this.manager_.clearMeasure()
 
     const tr = d3Event.transform
     const svg = d3.select('.lidarprofile-container svg.lidar-svg')
@@ -270,8 +270,8 @@ export class LidarPlot {
         .attr('id', 'highlightCircle')
         .attr('cx', cx)
         .attr('cy', cy)
-        .attr('r', pointSize + 1)
-        .style('fill', 'orange')
+        .attr('r', pointSize + 3)
+        .style('fill', 'red')
 
       const pClassification = p.classification ?? -1
       const pointClassification = classification_colors[pClassification] || {}

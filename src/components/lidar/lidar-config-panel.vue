@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import SidePanelLayout from '@/components/common/side-panel-layout.vue'
 import { storeToRefs } from 'pinia'
-import { ref, onMounted } from 'vue'
+import { onMounted } from 'vue'
 import { useTranslation } from 'i18next-vue'
 import { useAppStore } from '@/stores/app.store'
 
@@ -13,7 +13,8 @@ type LangKey = 'fr' | 'en' | 'de' | 'lb'
 const appStore = useAppStore()
 const { t, i18next } = useTranslation()
 const lidarStore = useLidarStore()
-const { drawLidarActive, profileWidth, lidarConfig } = storeToRefs(lidarStore)
+const { drawLidarActive, profileWidth, lidarConfig, measureActive } =
+  storeToRefs(lidarStore)
 
 // Helper to safely access classification name
 function getClassificationName(
@@ -26,14 +27,13 @@ function getClassificationName(
   return name['en']
 }
 
-const measureActive = ref(false)
-
 const classifications = lidarConfig.value.serverConfig.classification_colors
 
-let lidarDrawInteraction: any
+let lidarDrawInteraction: any = useDrawLidarInteraction()
 
 onMounted(() => {
-  lidarDrawInteraction = useDrawLidarInteraction()
+  //alert("ddd")
+  lidarDrawInteraction.init()
 })
 
 function exportCsv() {
@@ -66,21 +66,17 @@ function toggleMeasure() {
 }
 
 function setMeasureActive() {
-  /* if (!manager.measure) throw new Error('Missing profile.measure')
-  manager.measure.clearMeasure()
-  manager.measure.setMeasureActive()*/
+  lidarDrawInteraction.setMeasureActive()
 }
 
 function clearMeasure() {
-  /* if (!manager.measure) throw new Error('Missing profile.measure')
   measureActive.value = false
-  manager.measure.clearMeasure()*/
+  lidarDrawInteraction.clearMeasure()
 }
 
 function toggleClassificationCheck(classification: any) {
   classification.visible = (classification.visible + 1) % 2
-  lidarDrawInteraction.lidarManager.resetPlot()
-  lidarDrawInteraction.lidarManager.updateData()
+  lidarDrawInteraction.updateData()
 }
 </script>
 
@@ -90,6 +86,13 @@ function toggleClassificationCheck(classification: any) {
 }
 .checkbox {
   margin-bottom: 0.5em;
+}
+input[type='number'] {
+  background: #fff;
+  border: 1px solid #ccc;
+  color: #222;
+  border-radius: 4px;
+  padding: 2px 6px;
 }
 </style>
 
@@ -104,7 +107,7 @@ function toggleClassificationCheck(classification: any) {
       </h1>
     </template>
     <template v-slot:content>
-      <div>
+      <div class="text-white">
         <p>
           <button
             class="lux-btn mt-3"
@@ -121,7 +124,7 @@ function toggleClassificationCheck(classification: any) {
             min="0"
             max="1000"
             v-model.number="profileWidth"
-            style="width: 5em"
+            style="width: 5em; margin-right: 1em"
           />
           <button class="lux-btn mt-3" @click="resetPlot">
             <span class="fa fa-refresh"></span>
@@ -137,7 +140,11 @@ function toggleClassificationCheck(classification: any) {
           </em>
         </p>
         <div
-          v-if="lidarDrawInteraction && lidarDrawInteraction.hasLineFeature()"
+          v-if="
+            false &&
+            lidarDrawInteraction &&
+            lidarDrawInteraction.hasLineFeature()
+          "
         >
           <div>
             <button class="lux-btn mt-3" @click="exportCsv">

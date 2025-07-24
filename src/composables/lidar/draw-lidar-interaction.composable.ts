@@ -10,35 +10,23 @@ import { watch } from 'vue'
 import { storeToRefs } from 'pinia'
 import { useAppStore } from '@/stores/app.store'
 import { useLidarStore } from '@/stores/lidar.store'
-import { Feature } from 'ol'
+import { Feature, Map } from 'ol'
 import LineString from 'ol/geom/LineString'
 import { transform } from 'ol/proj'
 import { Coordinate } from 'ol/coordinate'
 import olGeomPolygon from 'ol/geom/Polygon'
 import { LidarManager } from '@/services/lidar/lidar-manager'
+import drawTooltip from '@/composables/draw/draw-tooltip'
 
+let lidarManager: LidarManager
 export default function useDrawLidarInteraction() {
   const appStore = useAppStore()
   const lidarStore = useLidarStore()
   const { drawLidarActive, currentProfileFeature, profileWidth, lidarConfig } =
     storeToRefs(lidarStore)
   const { lidarOpen } = storeToRefs(appStore)
-
-  const map = useMap().getOlMap()
-  const lidarManager = new LidarManager()
-  lidarManager.init(lidarConfig)
-  watch(lidarOpen, lidarOpen => {
-    if (lidarOpen) {
-      drawLidarActive.value = true
-    } else {
-      drawLidarActive.value = false
-      const source = vectorLayer.getSource()
-      if (source) {
-        source.clear()
-      }
-    }
-  })
-
+  let map: Map
+  const drawInteraction = new Draw({ type: 'LineString' })
   const lineStyle = new Style({
     fill: new Fill({ color: 'rgba(255,204,51,0.5)' }),
     stroke: new Stroke({
@@ -51,54 +39,71 @@ export default function useDrawLidarInteraction() {
     source: new VectorSource(),
     zIndex: 1001,
   })
-  watch(
-    () => currentProfileFeature.value,
-    feature => {
-      const source = vectorLayer.getSource()
-      if (source) {
-        source.clear()
-        if (feature) {
-          //source.addFeature(feature as Feature);
-          drawRectangle(feature.getGeometry() as LineString)
+
+  function init() {
+    map = useMap().getOlMap()
+    lidarManager = new LidarManager()
+    lidarManager.init(lidarConfig)
+    watch(lidarOpen, lidarOpen => {
+      if (lidarOpen) {
+        drawLidarActive.value = true
+      } else {
+        drawLidarActive.value = false
+        const source = vectorLayer.getSource()
+        if (source) {
+          source.clear()
         }
       }
-    }
-  )
-  watch(
-    () => profileWidth.value,
-    () => {
-      const source = vectorLayer.getSource()
-      if (source) {
-        source.clear()
-        if (currentProfileFeature.value) {
-          if (currentProfileFeature.value) {
-            //source.addFeature(currentProfileFeature.value as Feature);
-            drawRectangle(
-              currentProfileFeature.value.getGeometry() as LineString
-            )
+    })
+    watch(
+      () => currentProfileFeature.value,
+      feature => {
+        const source = vectorLayer.getSource()
+        if (source) {
+          source.clear()
+          if (feature) {
+            //source.addFeature(feature as Feature);
+            drawRectangle(feature.getGeometry() as LineString)
           }
         }
       }
-    }
-  )
+    )
+    watch(
+      () => profileWidth.value,
+      () => {
+        const source = vectorLayer.getSource()
+        if (source) {
+          source.clear()
+          if (currentProfileFeature.value) {
+            if (currentProfileFeature.value) {
+              //source.addFeature(currentProfileFeature.value as Feature);
+              drawRectangle(
+                currentProfileFeature.value.getGeometry() as LineString
+              )
+            }
+          }
+        }
+      }
+    )
 
-  const drawInteraction = new Draw({ type: 'LineString' })
-  drawInteraction.setActive(false)
-  watch(drawLidarActive, drawLidarActive => {
-    drawInteraction.setActive(drawLidarActive)
-  })
+    drawInteraction.setActive(false)
+    watch(drawLidarActive, drawLidarActive => {
+      drawInteraction.setActive(drawLidarActive)
+    })
 
-  map.addInteraction(drawInteraction)
-  map.addLayer(vectorLayer)
-  vectorLayer.setStyle(lineStyle)
-
-  listen(drawInteraction, 'drawend', event => {
-    onDrawEnd(event as DrawEvent)
-  })
-  listen(document, 'keyup', event => {
-    onKeyUp(event as KeyboardEvent)
-  })
-
+    map.addInteraction(drawInteraction)
+    map.addLayer(vectorLayer)
+    vectorLayer.setStyle(lineStyle)
+    listen(drawInteraction, 'drawstart', event =>
+      drawTooltip.add(map, event as DrawEvent)
+    )
+    listen(drawInteraction, 'drawend', event => {
+      onDrawEnd(event as DrawEvent)
+    })
+    listen(document, 'keyup', event => {
+      onKeyUp(event as KeyboardEvent)
+    })
+  }
   function onDrawEnd(event: DrawEvent) {
     drawInteraction.finishDrawing()
     drawLidarActive.value = false
@@ -213,7 +218,17 @@ export default function useDrawLidarInteraction() {
       feature.getGeometry()!.getType() === 'LineString'
     )
   }
-
+  function updateData() {
+    lidarManager.resetPlot()
+    lidarManager.updateData()
+  }
+  function setMeasureActive() {
+    lidarManager.clearMeasure()
+    lidarManager.setMeasureActive()
+  }
+  function clearMeasure() {
+    lidarManager.clearMeasure()
+  }
   return {
     drawInteraction,
     drawLidarActive,
@@ -223,5 +238,9 @@ export default function useDrawLidarInteraction() {
     exportCsv,
     exportPng,
     exportLas,
+    init,
+    updateData,
+    setMeasureActive,
+    clearMeasure,
   }
 }

@@ -15,6 +15,7 @@ import { LidarProfilePoints } from './lidar.types'
 import { useLidarStore } from '@/stores/lidar.store'
 import { storeToRefs } from 'pinia'
 import { downloadFile } from '@/services/utils'
+import { LidarMeasure } from '@/services/lidar/lidar-measure'
 
 const d3 = { select }
 
@@ -54,7 +55,7 @@ export class LidarManager {
     this.plot = new LidarPlot(this)
     this.lidarBuffer.setMap(this.map)
     this.lidarPointHighlight.setMap(this.map)
-    //this.measure = new gmfLidarprofileMeasure(this)
+    this.measure = new LidarMeasure(this)
   }
 
   clearBuffer() {
@@ -466,5 +467,16 @@ export class LidarManager {
     }
 
     this.plot.previousDomainX = domainX
+  }
+  clearMeasure() {
+    if (this.measure) {
+      this.measure.clearMeasure()
+    }
+  }
+  setMeasureActive() {
+    if (this.measure) {
+      this.clearMeasure()
+      this.measure.setMeasureActive()
+    }
   }
 }
