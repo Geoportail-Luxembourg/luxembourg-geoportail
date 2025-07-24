@@ -169,7 +169,7 @@ export class LidarHelpers {
    * Create a image file by combining SVG and canvas elements and let the user downloads it.
    */
   downloadProfileAsImageFile(profileClientConfig: any) {
-    const profileSVG = d3.select('.gmf-lidarprofile-container svg.lidar-svg')
+    const profileSVG = d3.select('.lidarprofile-container svg.lidar-svg')
     const w = parseInt(profileSVG.attr('width'), 10)
     const h = parseInt(profileSVG.attr('height'), 10)
     const margin = profileClientConfig.margin
@@ -186,7 +186,7 @@ export class LidarHelpers {
 
       // Draw the profile canvas (the points) into the new canvas.
       const profileCanvasNode = d3
-        .select('.gmf-lidarprofile-container .lidar-canvas')
+        .select('.lidarprofile-container .lidar-canvas')
         .node()
       if (profileCanvasNode instanceof HTMLCanvasElement) {
         ctx.drawImage(

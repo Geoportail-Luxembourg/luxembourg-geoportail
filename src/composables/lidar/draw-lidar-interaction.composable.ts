@@ -20,14 +20,13 @@ import { LidarManager } from '@/services/lidar/lidar-manager'
 export default function useDrawLidarInteraction() {
   const appStore = useAppStore()
   const lidarStore = useLidarStore()
-  const config = lidarStore.getLidarConfig()
-  const { drawLidarActive, currentProfileFeature, profileWidth } =
+  const { drawLidarActive, currentProfileFeature, profileWidth, lidarConfig } =
     storeToRefs(lidarStore)
   const { lidarOpen } = storeToRefs(appStore)
 
   const map = useMap().getOlMap()
   const lidarManager = new LidarManager()
-
+  lidarManager.init(lidarConfig)
   watch(lidarOpen, lidarOpen => {
     if (lidarOpen) {
       drawLidarActive.value = true
@@ -170,7 +169,7 @@ export default function useDrawLidarInteraction() {
     lidarManager.getProfileByLOD(
       [],
       0,
-      config.serverConfig.minLOD,
+      lidarConfig.value.serverConfig.minLOD,
       false,
       profileWidth.value
     )
@@ -178,7 +177,6 @@ export default function useDrawLidarInteraction() {
   function generatePlot() {
     lidarManager.resetPlot()
     lidarManager.clearBuffer()
-    lidarManager.init(config)
     lidarManager.setLine(
       currentProfileFeature
         .value!.clone()!
@@ -188,15 +186,42 @@ export default function useDrawLidarInteraction() {
     lidarManager.getProfileByLOD(
       [],
       0,
-      config.serverConfig.minLOD,
+      lidarConfig.value.serverConfig.minLOD,
       false,
       profileWidth.value
     )
     // todo PIWIK
   }
+
+  function exportCsv() {
+    lidarManager.exportCsv()
+  }
+  function exportPng() {
+    lidarManager.exportPng()
+  }
+  function exportLas() {
+    lidarManager.exportLas()
+  }
+
+  function hasLineFeature() {
+    const feature = currentProfileFeature.value
+    return (
+      !!feature &&
+      typeof feature.getGeometry === 'function' &&
+      feature.getGeometry() &&
+      feature.getGeometry()!.getType &&
+      feature.getGeometry()!.getType() === 'LineString'
+    )
+  }
+
   return {
     drawInteraction,
     drawLidarActive,
     resetPlot,
+    lidarManager,
+    hasLineFeature,
+    exportCsv,
+    exportPng,
+    exportLas,
   }
 }

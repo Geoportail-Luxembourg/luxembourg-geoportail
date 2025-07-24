@@ -6,7 +6,7 @@ export const useLidarStore = defineStore('lidar', () => {
   const drawLidarActive = ref<boolean>(false)
   const profileWidth = ref<number>(5)
   const currentProfileFeature = ref<Feature | null>(null)
-  const getLidarConfig = () => ({
+  const lidarConfig = ref({
     pytreeLidarprofileJsonUrl: null,
     loaded: false,
     clientConfig: {
@@ -239,6 +239,6 @@ export const useLidarStore = defineStore('lidar', () => {
     drawLidarActive,
     profileWidth,
     currentProfileFeature,
-    getLidarConfig,
+    lidarConfig,
   }
 })

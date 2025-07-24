@@ -1,6 +1,4 @@
-//import gmfLidarprofileMeasure from '../../components/lidar/measure'
 import LidarPlot from '../../components/lidar/plot'
-//import gmfLidarprofileUtils from '../../components/lidar/utils'
 import olLayerVector from 'ol/layer/Vector'
 import olOverlay from 'ol/Overlay'
 import olSourceVector from 'ol/source/Vector'
@@ -14,6 +12,10 @@ import useMap from '@/composables/map/map.composable'
 import { LineString } from 'ol/geom'
 import { LidarHelpers } from '@/services/lidar/lidar.helpers'
 import { LidarProfilePoints } from './lidar.types'
+import { useLidarStore } from '@/stores/lidar.store'
+import { storeToRefs } from 'pinia'
+import { downloadFile } from '@/services/utils'
+
 const d3 = { select }
 
 export class LidarManager {
@@ -40,16 +42,18 @@ export class LidarManager {
   lidarBuffer = new olLayerVector({
     source: new olSourceVector({}),
   })
+
   profilePoints: LidarProfilePoints = this.getEmptyProfilePoints_()
   isPlotSetup_ = false
   line_: any
-  width: number = 0
 
   constructor() {}
 
   init(config: any) {
     this.config = config
     this.plot = new LidarPlot(this)
+    this.lidarBuffer.setMap(this.map)
+    this.lidarPointHighlight.setMap(this.map)
     //this.measure = new gmfLidarprofileMeasure(this)
   }
 
@@ -78,6 +82,30 @@ export class LidarManager {
   }
   resetPlot() {
     this.isPlotSetup_ = false
+    this.plot.clear()
+  }
+  arrayToCsvString(data: any[]): string {
+    if (!data.length) return ''
+    const headers = Object.keys(data[0])
+    const rows = data.map(row =>
+      headers.map(h => JSON.stringify(row[h] ?? '')).join(',')
+    )
+    return [headers.join(','), ...rows].join('\r\n')
+  }
+  exportCsv() {
+    const points = this.utils.getFlatPointsByDistance(this.profilePoints) || {}
+    const csvData = this.utils.getCSVData(points)
+    const csvString = this.arrayToCsvString(csvData)
+    const blob = new Blob([csvString], { type: 'text/csv' })
+    downloadFile('export-lidar.csv', blob, 'text/csv')
+  }
+  exportPng() {
+    this.utils.downloadProfileAsImageFile(this.config.value.clientConfig)
+  }
+  exportLas() {
+    const lidarStore = useLidarStore()
+    const { profileWidth } = storeToRefs(lidarStore)
+    this.getProfileByLOD([], 0, 0, true, profileWidth.value)
   }
   getProfileByLOD(
     clippedLine: any[],
@@ -96,8 +124,8 @@ export class LidarManager {
 
     let maxLODWith
     d3.select('.lidarprofile-container .lod-info').html('')
-    const max_levels = this.config.serverConfig.max_levels
-    let profileWidth = 0
+    const max_levels = this.config.value.serverConfig.max_levels
+    let domainProfileWidth = 0
 
     if (distanceOffset == 0) {
       maxLODWith = this.utils.getNiceLOD(this.line_.getLength(), max_levels)
@@ -111,36 +139,36 @@ export class LidarManager {
       maxLODWith = this.utils.getNiceLOD(domain[1] - domain[0], max_levels)
     }
 
-    this.config.clientConfig.pointSum = 0
-    if (this.config.clientConfig.autoWidth) {
-      profileWidth = maxLODWith.width
+    this.config.value.clientConfig.pointSum = 0
+    if (this.config.value.clientConfig.autoWidth) {
+      domainProfileWidth = maxLODWith.width
     } else {
-      profileWidth = this.config.serverConfig.width
+      domainProfileWidth = this.config.value.serverConfig.width
     }
-    profileWidth = userWidth
+    domainProfileWidth = userWidth
     const profileWidthTxt = i18next.t('Profile width: ')
     d3.select('.lidarprofile-container .width-info').html(
-      `${profileWidthTxt} ${profileWidth}m`
+      `${profileWidthTxt} ${domainProfileWidth}m`
     )
     if (!exportLAS) {
       for (let i = 0; i < maxLODWith.maxLOD; i++) {
         if (i == 0) {
           this.queryPytree_(
             minLOD,
-            this.config.serverConfig.initialLOD,
+            this.config.value.serverConfig.initialLOD,
             pytreeLinestring,
             distanceOffset,
-            profileWidth,
+            domainProfileWidth,
             false
           )
-          i += this.config.serverConfig.initialLOD - 1
+          i += this.config.value.serverConfig.initialLOD - 1
         } else {
           this.queryPytree_(
             minLOD + i,
             minLOD + i + 1,
             pytreeLinestring,
             distanceOffset,
-            profileWidth,
+            domainProfileWidth,
             false
           )
         }
@@ -151,7 +179,7 @@ export class LidarManager {
         undefined,
         pytreeLinestring,
         distanceOffset,
-        profileWidth,
+        domainProfileWidth,
         true
       )
     }
@@ -166,19 +194,19 @@ export class LidarManager {
     exportLAS: boolean
   ) {
     if (!this.config) throw new Error('Missing config')
-    if (!this.config.serverConfig)
+    if (!this.config.value.serverConfig)
       throw new Error('Missing config.serverConfig')
     this.map.getViewport().style.cursor = 'wait'
     document.body.style.cursor = 'wait'
     const lodInfo = d3.select('.lidarprofile-container .lod-info')
-    if (this.config.serverConfig.debug) {
+    if (this.config.value.serverConfig.debug) {
       let html = lodInfo.html()
       const loadingLodTxt = i18next.t('Loading LOD: ')
       html += `${loadingLodTxt} ${minLOD}-${maxLOD}...<br>`
       lodInfo.html(html)
     }
 
-    const pointCloudName = this.config.serverConfig.default_point_cloud
+    const pointCloudName = this.config.value.serverConfig.default_point_cloud
     const getLAS = exportLAS ? 1 : 0
 
     const options = {
@@ -219,9 +247,9 @@ export class LidarManager {
         .then(resp => resp.arrayBuffer())
         .then(data => {
           if (!this.config) throw new Error('Missing config')
-          if (!this.config.serverConfig)
+          if (!this.config.value.serverConfig)
             throw new Error('Missing config.serverConfig')
-          if (this.config.serverConfig.debug) {
+          if (this.config.value.serverConfig.debug) {
             let html = lodInfo.html()
             const lodTxt = i18next.t('LOD: ')
             const loadedTxt = i18next.t('loaded')
@@ -283,10 +311,10 @@ export class LidarManager {
 
     // If number of points return is higher than Pytree configuration max value,
     // stop sending requests.
-    this.config.clientConfig.pointSum += jHeader['points']
+    this.config.value.clientConfig.pointSum += jHeader['points']
     if (
-      this.config.clientConfig.pointSum >
-      this.config.serverConfig.max_point_number
+      this.config.value.clientConfig.pointSum >
+      this.config.value.serverConfig.max_point_number
     ) {
       // eslint-disable-next-line no-console
       console.warn(
@@ -297,8 +325,12 @@ export class LidarManager {
     const attr = jHeader['pointAttributes']
     const attributes = []
     for (let j = 0; j < attr.length; j++) {
-      if (this.config.serverConfig.point_attributes[attr[j]] != undefined) {
-        attributes.push(this.config.serverConfig.point_attributes[attr[j]])
+      if (
+        this.config.value.serverConfig.point_attributes[attr[j]] != undefined
+      ) {
+        attributes.push(
+          this.config.value.serverConfig.point_attributes[attr[j]]
+        )
       }
     }
     const scale = jHeader['scale']
@@ -357,14 +389,15 @@ export class LidarManager {
     const rangeX = [0, this.line_.getLength()]
 
     const rangeY = [
-      this.utils.arrayMin(points.altitude),
-      this.utils.arrayMax(points.altitude),
+      this.utils.arrayMin(points.altitude!),
+      this.utils.arrayMax(points.altitude!),
     ]
 
     if (!this.isPlotSetup_) {
       this.plot.setupPlot(rangeX, rangeY)
       this.isPlotSetup_ = true
     }
+
     this.plot.drawPoints(points)
   }
 
@@ -407,7 +440,7 @@ export class LidarManager {
     const span = domainX[1] - domainX[0]
     const maxLODWidth = this.utils.getNiceLOD(
       span,
-      this.config.serverConfig.max_levels
+      this.config.value.serverConfig.max_levels
     )
     const xTolerance = 0.2
 
@@ -417,15 +450,17 @@ export class LidarManager {
     ) {
       this.plot.drawPoints(this.profilePoints)
     } else {
-      if (maxLODWidth.maxLOD <= this.config.serverConfig.initialLOD) {
+      if (maxLODWidth.maxLOD <= this.config.value.serverConfig.initialLOD) {
         this.plot.drawPoints(this.profilePoints)
       } else {
+        const lidarStore = useLidarStore()
+        const { profileWidth } = storeToRefs(lidarStore)
         this.getProfileByLOD(
           clip.clippedLine,
           clip.distanceOffset,
           0,
           false,
-          this.width
+          profileWidth.value
         )
       }
     }

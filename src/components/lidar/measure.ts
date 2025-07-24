@@ -24,7 +24,7 @@ export class Measure {
     this.pStart = {}
     this.pEnd = {}
 
-    const svg = select('.gmf-lidarprofile-container svg.lidar-svg')
+    const svg = select('.lidarprofile-container svg.lidar-svg')
     svg.selectAll('#text_m').remove()
     svg.selectAll('#start_m').remove()
     svg.selectAll('#end_m').remove()
@@ -39,7 +39,7 @@ export class Measure {
    */
   setMeasureActive(): void {
     this.manager.plot.deactivateZoom()
-    const svg = select('.gmf-lidarprofile-container svg.lidar-svg')
+    const svg = select('.lidarprofile-container svg.lidar-svg')
     svg.style('cursor', 'pointer')
     svg.on('click', this.measureHeight.bind(this))
   }
@@ -48,11 +48,9 @@ export class Measure {
    * Measure and display height after two clicks on the profile.
    */
   private measureHeight(): void {
-    const svg = select('.gmf-lidarprofile-container svg.lidar-svg')
+    const svg = select('.lidarprofile-container svg.lidar-svg')
     const svgNode = svg.node()
-    const canvasNode = select(
-      '.gmf-lidarprofile-container .lidar-canvas'
-    ).node()
+    const canvasNode = select('.lidarprofile-container .lidar-canvas').node()
 
     if (!svgNode || !canvasNode) return
 

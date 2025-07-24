@@ -3,28 +3,32 @@ import SidePanelLayout from '@/components/common/side-panel-layout.vue'
 import { storeToRefs } from 'pinia'
 import { ref, onMounted } from 'vue'
 import { useTranslation } from 'i18next-vue'
-import LineString from 'ol/geom/LineString'
 import { useAppStore } from '@/stores/app.store'
 
 import useDrawLidarInteraction from '@/composables/lidar/draw-lidar-interaction.composable'
 import { useLidarStore } from '@/stores/lidar.store'
 
+type LangKey = 'fr' | 'en' | 'de' | 'lb'
+
 const appStore = useAppStore()
 const { t, i18next } = useTranslation()
 const lidarStore = useLidarStore()
-const { drawLidarActive, profileWidth } = storeToRefs(lidarStore)
+const { drawLidarActive, profileWidth, lidarConfig } = storeToRefs(lidarStore)
 
-// Props (replace with defineProps if you want to receive from parent)
-
-const config = ref<any>(lidarStore.getLidarConfig())
+// Helper to safely access classification name
+function getClassificationName(
+  name: Record<LangKey, string>,
+  lang: string
+): string {
+  if (['fr', 'en', 'de', 'lb'].includes(lang)) {
+    return name[lang as LangKey]
+  }
+  return name['en']
+}
 
 const measureActive = ref(false)
 
-const classifications = ref<any[]>(
-  config.value.serverConfig.classification_colors || []
-)
-
-let coordinates: LineString | null = null
+const classifications = lidarConfig.value.serverConfig.classification_colors
 
 let lidarDrawInteraction: any
 
@@ -33,32 +37,19 @@ onMounted(() => {
 })
 
 function exportCsv() {
-  //const points = manager.utils.getFlatPointsByDistance(manager.profilePoints) || {}
-  // const csvData = manager.utils.getCSVData(points)
+  lidarDrawInteraction.exportCsv()
   // todo PIWIK
-  //saveCsv(csvData, { filename: 'export-lidar.csv' })
-  /*if (window._paq) {
-    window._paq.push(['setDocumentTitle', 'LidarExportCsv'])
-    window._paq.push(['trackPageView'])
-  }*/
 }
 
 function exportPng() {
-  //manager.utils.downloadProfileAsImageFile(getConfig().clientConfig)
+  lidarDrawInteraction.exportPng()
   // todo PIWIK
-  /*if (window._paq) {
-    window._paq.push(['setDocumentTitle', 'LidarExportPNG'])
-    window._paq.push(['trackPageView'])
-  }*/
 }
 
 function exportLas() {
+  lidarDrawInteraction.exportLas()
   //manager.getProfileByLOD([], 0, true, 0, true, profileWidth.value)
   // todo PIWIK
-  /*if (window._paq) {
-    window._paq.push(['setDocumentTitle', 'LidarExportLAS'])
-    window._paq.push(['trackPageView'])
-  }*/
 }
 
 function resetPlot() {
@@ -88,7 +79,8 @@ function clearMeasure() {
 
 function toggleClassificationCheck(classification: any) {
   classification.visible = (classification.visible + 1) % 2
-  // manager.getProfileByLOD([], 0, true, config.value.serverConfig.minLOD, false, profileWidth.value)
+  lidarDrawInteraction.lidarManager.resetPlot()
+  lidarDrawInteraction.lidarManager.updateData()
 }
 </script>
 
@@ -144,7 +136,9 @@ function toggleClassificationCheck(classification: any) {
             }}
           </em>
         </p>
-        <div v-if="coordinates">
+        <div
+          v-if="lidarDrawInteraction && lidarDrawInteraction.hasLineFeature()"
+        >
           <div>
             <button class="lux-btn mt-3" @click="exportCsv">
               {{ t('Export CSV') }}
@@ -180,8 +174,8 @@ function toggleClassificationCheck(classification: any) {
         <div>
           <div>{{ t('Classes') }}</div>
           <div
-            v-for="classification in classifications"
-            :key="classification.id"
+            v-for="(classification, id) in classifications"
+            :key="id"
             class="checkbox"
           >
             <label>
@@ -190,7 +184,9 @@ function toggleClassificationCheck(classification: any) {
                 :checked="classification.visible === 1"
                 @change="toggleClassificationCheck(classification)"
               />
-              <span>{{ classification.name[i18next.language] }}</span>
+              <span>{{
+                getClassificationName(classification.name, i18next.language)
+              }}</span>
             </label>
           </div>
         </div>
