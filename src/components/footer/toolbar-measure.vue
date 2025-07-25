@@ -1,11 +1,12 @@
 <script setup lang="ts">
 import { ref } from 'vue'
 import { useTranslation } from 'i18next-vue'
-
+import { useAppStore } from '@/stores/app.store'
 import FeatureElevationProfile from '@/components/feature-elevation-profile/feature-elevation-profile.vue'
 import ButtonText from './button-text.vue'
-
+const { toggleLidarOpen } = useAppStore()
 const { t } = useTranslation()
+
 const showProfil = ref(false)
 
 const tools = [
@@ -20,7 +21,7 @@ const tools = [
   {
     label: t('Profil Lidar'),
     active: false,
-    onClick: () => alert('TODO Profil Lidar'),
+    onClick: () => toggleLidarOpen(true),
   },
   { label: t('Reset'), active: false, onClick: () => alert('TODO Reset') },
 ]
