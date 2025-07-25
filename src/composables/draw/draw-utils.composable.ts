@@ -69,10 +69,104 @@ function lineChangeOrientation(feature: DrawnFeature) {
   feature.setGeometry(new LineString(reversedCoordinates))
 }
 
+function mergeGeometryLines(features: DrawnFeature[]) {
+  const featureLines = features.filter(f =>
+    ['LineString', 'MultiLineString'].includes(f.getGeometry()?.getType()!)
+  )
+  const firstFeature = featureLines.shift()
+
+  if (!firstFeature) {
+    return
+  }
+
+  const newGeom = <LineString>firstFeature.getGeometry()
+
+  while (featureLines.length > 0) {
+    const firstCoordFirstGeom = newGeom.getFirstCoordinate()
+    const lastCoordFirstGeom = newGeom.getLastCoordinate()
+    let prevLength = undefined
+    let idxCanditate = -1
+    let exchange = false
+    let reverseLine = false
+
+    for (let i = 0; i < featureLines.length; i++) {
+      const curFeature = featureLines[i]
+      const curGeom = <LineString>curFeature.getGeometry()
+      const firstCoordCurGeom = curGeom.getFirstCoordinate()
+      const lastCoordCurGeom = curGeom.getLastCoordinate()
+      const line1 = new LineString([firstCoordFirstGeom, firstCoordCurGeom])
+      const line4 = new LineString([lastCoordFirstGeom, lastCoordCurGeom])
+
+      const line2 = new LineString([lastCoordFirstGeom, firstCoordCurGeom])
+      const line3 = new LineString([firstCoordFirstGeom, lastCoordCurGeom])
+
+      const lengthLine1 = line1.getLength()
+      const lengthLine2 = line2.getLength()
+      const lengthLine3 = line3.getLength()
+      const lengthLine4 = line4.getLength()
+
+      if (
+        lengthLine1 < lengthLine2 &&
+        lengthLine1 < lengthLine3 &&
+        lengthLine1 < lengthLine4
+      ) {
+        if (prevLength === undefined || lengthLine1 < prevLength) {
+          prevLength = lengthLine1
+          idxCanditate = i
+          exchange = true
+          reverseLine = true
+        }
+      } else if (
+        lengthLine4 < lengthLine1 &&
+        lengthLine4 < lengthLine2 &&
+        lengthLine4 < lengthLine3
+      ) {
+        if (prevLength === undefined || lengthLine4 < prevLength) {
+          prevLength = lengthLine4
+          idxCanditate = i
+          exchange = false
+          reverseLine = true
+        }
+      } else if (
+        lengthLine2 < lengthLine1 &&
+        lengthLine2 < lengthLine3 &&
+        lengthLine2 < lengthLine4
+      ) {
+        if (prevLength === undefined || lengthLine2 < prevLength) {
+          prevLength = lengthLine2
+          idxCanditate = i
+          exchange = false
+          reverseLine = false
+        }
+      } else if (prevLength === undefined || lengthLine3 < prevLength) {
+        prevLength = lengthLine3
+        idxCanditate = i
+        exchange = true
+        reverseLine = false
+      }
+    }
+    const candidateFeature = featureLines.shift()!
+    let candidateGeom = <LineString>candidateFeature.getGeometry()
+
+    if (reverseLine) {
+      candidateGeom = new LineString(candidateGeom.getCoordinates().reverse())
+    }
+
+    newGeom.setCoordinates(
+      exchange
+        ? candidateGeom.getCoordinates().concat(newGeom.getCoordinates())
+        : newGeom.getCoordinates().concat(candidateGeom.getCoordinates())
+    )
+
+    return firstFeature
+  }
+}
+
 export {
   lineChangeOrientation,
   convertCircleFeatureToPolygon,
   convertPolygonFeatureToCircle,
+  mergeGeometryLines,
 }
 
 export default function useDrawUtils() {

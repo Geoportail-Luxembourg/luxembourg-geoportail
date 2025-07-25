@@ -49,8 +49,6 @@ function onConfirmDeleteAll() {
   drawStore.removeAllFeatures()
 }
 
-function onMergeLines() {}
-
 watch(features, () => {
   if (
     screenSizeIsAtLeast('md') &&
@@ -111,6 +109,7 @@ watch(features, () => {
     <ModalMergeLines
       v-if="showModalMergeLines"
       @cancel="() => (showModalMergeLines = false)"
+      @confirm="() => (showModalMergeLines = false)"
     />
   </template>
 </template>

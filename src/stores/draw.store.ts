@@ -4,6 +4,7 @@ import { Draw } from 'ol/interaction'
 
 import { DrawnFeature } from '@/services/ol-feature/ol-feature-drawn'
 import { DrawStateActive, EditStateActive } from './draw.store.model'
+import { Type } from 'ol/geom/Geometry'
 
 export const useDrawStore = defineStore('draw', () => {
   const activeFeatureId = ref<string | number | undefined>(undefined)
@@ -130,6 +131,23 @@ export const useDrawStore = defineStore('draw', () => {
     )
   }
 
+  /**
+   * Returns all the drawn features in the store collection corresponding to the given types
+   * @param types An array of type geometry
+   * @returns The list of drawn features corresponding to the given geometry types
+   */
+  function getDrawnFeaturesOfTypes(types: Type[]) {
+    return <DrawnFeature[]>(
+      drawnFeatures.value.filter(
+        f => f.getGeometry() && types.includes(<Type>f.getGeometry()?.getType())
+      )
+    )
+  }
+
+  function getDrawnFeaturesWithIds(ids: (string | number)[]) {
+    return <DrawnFeature[]>drawnFeatures.value.filter(f => ids.includes(f.id))
+  }
+
   return {
     activeFeatureId,
     editingFeatureId,
@@ -154,5 +172,7 @@ export const useDrawStore = defineStore('draw', () => {
     selectDrawnFeature,
     updateDrawnFeature,
     setDrawnFeatures,
+    getDrawnFeaturesOfTypes,
+    getDrawnFeaturesWithIds,
   }
 })
