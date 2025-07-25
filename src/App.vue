@@ -100,7 +100,9 @@ onUnmounted(() => window.removeEventListener('resize', map.resize))
           <lidar-graph-panel class="w-full h-full" />
         </div>
       </transition>
-      <footer-bar class="w-full flex-shrink-0" style="height: 3.5rem" />
+      <footer-bar
+        class="sm:w-full flex-shrink-0 md:h-14 fixed bottom-5 sm:static"
+      />
       <alert-notifications />
     </template>
 
