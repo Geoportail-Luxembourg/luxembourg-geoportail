@@ -69,11 +69,18 @@ function lineChangeOrientation(feature: DrawnFeature) {
   feature.setGeometry(new LineString(reversedCoordinates))
 }
 
+/**
+ * Merge multiple drawn line features
+ * @param features The drawn feature to be merged (on of type 'Line'), other types will be ignored
+ * @returns The first feature to which the other geom have been merged
+ */
 function mergeGeometryLines(features: DrawnFeature[]) {
+  const drawStore = useDrawStore()
   const featureLines = features.filter(f =>
     ['LineString', 'MultiLineString'].includes(f.getGeometry()?.getType()!)
   )
   const firstFeature = featureLines.shift()
+  const featureIdsToRemove = featureLines.map(f => f.id)
 
   if (!firstFeature) {
     return
@@ -157,6 +164,9 @@ function mergeGeometryLines(features: DrawnFeature[]) {
         ? candidateGeom.getCoordinates().concat(newGeom.getCoordinates())
         : newGeom.getCoordinates().concat(candidateGeom.getCoordinates())
     )
+
+    firstFeature.resetProfileData()
+    drawStore.removeFeature(featureIdsToRemove)
 
     return firstFeature
   }
