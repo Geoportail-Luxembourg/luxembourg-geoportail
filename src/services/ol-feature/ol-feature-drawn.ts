@@ -28,9 +28,11 @@ const MYMAPS_URL = import.meta.env.VITE_MYMAPS_URL
 const MYMAPS_SYMBOL_URL = import.meta.env.VITE_SYMBOL_URL
 const ARROW_URL = MYMAPS_URL + '/getarrow'
 
+export type DrawnFeatureId = number | string
+
 export class DrawnFeature extends Feature {
   // TODO: refactor create a generic type that can be used by Infos panel, Draw, and Measures
-  id: number | string
+  id: DrawnFeatureId
   label: string
   description: string
   display_order: number
@@ -144,7 +146,7 @@ export class DrawnFeature extends Feature {
   }
 
   /**
-   * Reset profileData property to "undefined". To update to profile graph, add a watcher
+   * Reset profileData property to "undefined". To update to profile graph, add a watcher in your component 
    * on this property and trigger DrawnFeature.getProfile() to retrieve up to date profile data from the server.
    */
   resetProfileData() {

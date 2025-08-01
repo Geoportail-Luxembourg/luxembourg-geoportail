@@ -2,13 +2,13 @@ import { defineStore } from 'pinia'
 import { ref, Ref } from 'vue'
 import { Draw } from 'ol/interaction'
 
-import { DrawnFeature } from '@/services/ol-feature/ol-feature-drawn'
+import { DrawnFeature, DrawnFeatureId } from '@/services/ol-feature/ol-feature-drawn'
 import { DrawStateActive, EditStateActive } from './draw.store.model'
 import { Type } from 'ol/geom/Geometry'
 
 export const useDrawStore = defineStore('draw', () => {
-  const activeFeatureId = ref<string | number | undefined>(undefined)
-  const editingFeatureId: Ref<string | number | undefined> = ref(undefined)
+  const activeFeatureId = ref<DrawnFeatureId | undefined>(undefined)
+  const editingFeatureId = ref<DrawnFeatureId | undefined>(undefined)
   const drawStateActive = ref<DrawStateActive>(undefined)
   const editStateActive = ref<EditStateActive>(undefined)
   const drawnFeatures = ref<DrawnFeature[]>([])
@@ -107,11 +107,18 @@ export const useDrawStore = defineStore('draw', () => {
     drawnFeatures.value = features
   }
 
-  function removeFeature(featureId: number | string | undefined) {
+  /**
+   * Remove feature or features according to given id or ids
+   * @param featureId 
+   */
+  function removeFeature(featureId: DrawnFeatureId | DrawnFeatureId[] | undefined ) {
+    const featureIds = Array.isArray(featureId) ? featureId : [featureId]
+
     drawnFeatures.value = drawnFeatures.value.filter(
-      feature => feature.id !== featureId
+      feature => !featureIds.includes(feature.id)
     )
-    if (activeFeatureId.value === featureId) {
+
+    if (featureIds.includes(activeFeatureId.value)) {
       activeFeatureId.value = undefined
       editingFeatureId.value = undefined
     }
