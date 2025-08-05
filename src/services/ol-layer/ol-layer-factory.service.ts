@@ -20,7 +20,6 @@ import olLayerVectorHelper from './ol-layer-vector.helper'
 import { olLayerOfflineFactoryService } from './ol-layer-offline-factory'
 import olLayerFeaturePositionHelper from './ol-layer-feature-position.helper'
 import olLayerInteractionDrawHelper from './ol-layer-interaction-draw.helper'
-import olLayerInteractionModifyHelper from './ol-layer-interaction-modify.helper'
 
 export class OlLayerFactoryService {
   createOlLayer(
@@ -64,11 +63,7 @@ export class OlLayerFactoryService {
     return <OlLayer>olLayerInteractionDrawHelper.createOlLayer()
   }
 
-  createOlLayerInteractionModify(): OlLayer {
-    return <OlLayer>olLayerInteractionModifyHelper.createOlLayer()
-  }
-
-  createOlLayerModifyInteraction(): OlLayer {
+  createOlLayerInteractionClip(): OlLayer {
     return <OlLayer>olLayerInteractionDrawHelper.createOlLayer()
   }
 

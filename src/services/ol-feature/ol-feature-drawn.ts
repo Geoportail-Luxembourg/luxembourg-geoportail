@@ -146,7 +146,7 @@ export class DrawnFeature extends Feature {
   }
 
   /**
-   * Reset profileData property to "undefined". To update to profile graph, add a watcher in your component 
+   * Reset profileData property to "undefined". To update to profile graph, add a watcher in your component
    * on this property and trigger DrawnFeature.getProfile() to retrieve up to date profile data from the server.
    */
   resetProfileData() {
@@ -269,10 +269,8 @@ export class DrawnFeature extends Feature {
 
     const fillStyle = new StyleFill()
     const arrowUrl = ARROW_URL
-    // TODO: 3D
-    // const arrowModelUrl = ARROW_MODEL_URL
-
     const curMap = this.map
+
     return function (
       this: DrawnFeature,
       feature: DrawnFeature,
@@ -283,13 +281,6 @@ export class DrawnFeature extends Feature {
         resolution = feature
         feature = this
       }
-
-      console.log('STYLING FN - feature.editable =', feature.editable)
-      console.log('STYLING FN - feature.selected =', feature.selected)
-      console.log(
-        'STYLING FN - feature.featureStyle =',
-        JSON.stringify(feature.featureStyle)
-      )
 
       // First, clear the styles
       styles.length = 0

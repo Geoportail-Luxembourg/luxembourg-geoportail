@@ -44,8 +44,6 @@ export default function useDrawSelect() {
           newFeature.selected = true
           newFeature.editable = !!newEditId
           newFeature.changed()
-
-          console.log('newFeature.editable = ', newFeature.editable)
         })
     }
   )

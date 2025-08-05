@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { ref, watch } from 'vue'
+import { computed, ref, watch } from 'vue'
 import { storeToRefs } from 'pinia'
 import { useTranslation } from 'i18next-vue'
 
@@ -12,15 +12,17 @@ import { screenSizeIsAtLeast } from '@/services/common/device.utils'
 import DrawPanelFeatures from './draw-panel-features.vue'
 import ModalConfirmDeleteAll from './modal-confirm-delete-all.vue'
 import ModalMergeLines from './modal-merge-lines.vue'
+import useClipLine from '@/composables/draw/draw-clip-line.composable'
 
 const { t } = useTranslation()
 const appStore = useAppStore()
+const clipLine = useClipLine()
 const { toggleMyMapsOpen } = appStore
 const { feedbackOpen, feedbackanfOpen, feedbackageOpen, feedbackcruesOpen } =
   storeToRefs(appStore)
 const drawStore = useDrawStore()
-const { drawnFeatures: features } = storeToRefs(drawStore)
-const drawingMenuOptions = [
+const { drawnFeatures: features, clipLineActive } = storeToRefs(drawStore)
+const drawingMenuOptions = computed(() => [
   {
     label: 'Copier dans ma carte',
     action: () => alert('TODO: Draw feature click drawingMenuOptions'),
@@ -38,10 +40,15 @@ const drawingMenuOptions = [
     action: () => (showModalMergeLines.value = true),
   },
   {
-    label: 'Couper une ligne',
-    action: () => alert('TODO: Draw feature click drawingMenuOptions'),
+    label: clipLineActive.value
+      ? 'Désactiver mode couper une ligne'
+      : 'Couper une ligne',
+    action: () => {
+      clipLine.toggle()
+      drawStore.deactivateDraw()
+    },
   },
-]
+])
 const showModalConfirmDelete = ref(false)
 const showModalMergeLines = ref(false)
 
@@ -83,7 +90,7 @@ watch(features, () => {
             <MenuPopupItem
               data-cy="drawPanelMenuPopupItem"
               :item="item"
-              @click="() => item.action && item.action()"
+              @click="item.action"
             >
               {{ t(item.label) }}
             </MenuPopupItem>
