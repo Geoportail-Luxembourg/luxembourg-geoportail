@@ -1,8 +1,11 @@
 import { defineStore } from 'pinia'
-import { ref, Ref } from 'vue'
+import { ref, Ref, shallowRef } from 'vue'
 import { Draw } from 'ol/interaction'
 
-import { DrawnFeature, DrawnFeatureId } from '@/services/ol-feature/ol-feature-drawn'
+import {
+  DrawnFeature,
+  DrawnFeatureId,
+} from '@/services/ol-feature/ol-feature-drawn'
 import { DrawStateActive, EditStateActive } from './draw.store.model'
 import { Type } from 'ol/geom/Geometry'
 
@@ -14,6 +17,8 @@ export const useDrawStore = defineStore('draw', () => {
   const drawnFeatures = ref<DrawnFeature[]>([])
   const featureEditionDocked = ref(false)
   const currentDrawInteraction = ref<Draw | undefined>(undefined)
+  const clipLineActive = ref(false)
+  const queueAddedDrawnFeatures = shallowRef<DrawnFeature[]>([])
 
   function toggleDrawPoint() {
     toggleDrawActiveState('drawPoint')
@@ -38,8 +43,8 @@ export const useDrawStore = defineStore('draw', () => {
   function toggleDrawActiveState(newState: DrawStateActive) {
     const currentEditStateType = editStateActive.value
       ?.replace('edit', '')
-      .replace('Continue', '')
-    const newStateType = newState?.replace('draw', '').replace('Continue', '')
+      .replace('Continue', '') // FIXME: Continue => hack for now...
+    const newStateType = newState?.replace('draw', '').replace('Continue', '') // FIXME: Continue => hack for now...
 
     // allow draw of different geom type after edit, but not same type
     if (currentEditStateType === newStateType) {
@@ -70,11 +75,18 @@ export const useDrawStore = defineStore('draw', () => {
     editStateActive.value = newState
   }
 
+  function deactivateDraw() {
+    drawStateActive.value = undefined
+    editingFeatureId.value = undefined
+    editStateActive.value = undefined
+  }
+
   function activateDrawLineContinue() {
     setDrawActiveState('drawLineContinue')
   }
 
   function addDrawnFeatureToCollection(feature: DrawnFeature) {
+    queueAddedDrawnFeatures.value = [feature]
     drawnFeatures.value = [...drawnFeatures.value, feature]
   }
 
@@ -109,9 +121,11 @@ export const useDrawStore = defineStore('draw', () => {
 
   /**
    * Remove feature or features according to given id or ids
-   * @param featureId 
+   * @param featureId
    */
-  function removeFeature(featureId: DrawnFeatureId | DrawnFeatureId[] | undefined ) {
+  function removeFeature(
+    featureId: DrawnFeatureId | DrawnFeatureId[] | undefined
+  ) {
     const featureIds = Array.isArray(featureId) ? featureId : [featureId]
 
     drawnFeatures.value = drawnFeatures.value.filter(
@@ -163,6 +177,9 @@ export const useDrawStore = defineStore('draw', () => {
     drawnFeatures,
     featureEditionDocked,
     currentDrawInteraction,
+    clipLineActive,
+    queueAddedDrawnFeatures,
+    deactivateDraw,
     removeFeature,
     removeAllFeatures,
     reorderFeatures,
