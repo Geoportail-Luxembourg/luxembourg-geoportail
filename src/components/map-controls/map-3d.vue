@@ -14,16 +14,16 @@ const LUX_VCS_URL = import.meta.env.VITE_LUX_VCS_URL
 const LUX_VCS_COORDINATES = [6.13, 49.61]
 const LUX_VCS_MODULES = ['catalogConfig', 'LuxConfig']
 const zoomToCesiumAltitude = {
-  9: 500000,
-  10: 250000,
-  11: 150000,
-  12: 50000,
-  13: 40000,
-  14: 20000,
-  15: 10000,
-  16: 5000,
-  17: 2500,
-  18: 1200,
+  9: 350000,
+  10: 180000,
+  11: 100000,
+  12: 40000,
+  13: 25000,
+  14: 9000,
+  15: 6000,
+  16: 3500,
+  17: 1900,
+  18: 900,
   19: 600,
 }
 
