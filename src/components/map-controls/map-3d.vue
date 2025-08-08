@@ -92,9 +92,7 @@ function getAltFromZoom(zoom: number) {
   <div
     data-cy="3dViewerLink"
     ref="controlElement"
-    :class="`${props.className} ${CLASS_UNSELECTABLE} ${CLASS_CONTROL} ${
-      mapStore.is3dActive ? 'active' : ''
-    }`"
+    :class="`${props.className} ${CLASS_UNSELECTABLE} ${CLASS_CONTROL}`"
   >
     <a
       type="button"
