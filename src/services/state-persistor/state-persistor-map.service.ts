@@ -3,6 +3,7 @@ import { getTransform, ProjectionLike, transform } from 'ol/proj'
 import { Coordinate } from 'ol/coordinate'
 import ObjectEventType from 'ol/ObjectEventType'
 
+import { useMapStore } from '@/stores/map.store'
 import useMap, {
   PROJECTION_WEBMERCATOR,
   PROJECTION_LUX,
@@ -22,6 +23,7 @@ import {
   V2_ZOOM_TO_V3_ZOOM_,
 } from './state-persistor-map.mapper'
 import { debounce, stringToNumber } from '@/services/utils'
+import { storeToRefs } from 'pinia'
 
 class StatePersistorMapService implements StatePersistorService {
   bootstrap(): void {
@@ -30,18 +32,25 @@ class StatePersistorMapService implements StatePersistorService {
   }
 
   persistZoom() {
+    const mapStore = useMapStore()
+    const { zoom } = storeToRefs(mapStore)
     const view = useMap().getOlMap().getView()
-    const fnStorageSetValueZoom = () => {
-      const zoom = view.getZoom()
-      storageHelper.setValue(SP_KEY_ZOOM, zoom ? Math.ceil(zoom) : null)
+
+    const fnPersistValueZoom = () => {
+      const z = view.getZoom()
+      const pz = z ? Math.ceil(z) : null
+
+      storageHelper.setValue(SP_KEY_ZOOM, pz)
+
+      zoom.value = pz
     }
 
-    fnStorageSetValueZoom()
+    fnPersistValueZoom()
 
     olEvents.listen(
       view,
       'change:resolution',
-      debounce(fnStorageSetValueZoom, 300)
+      debounce(fnPersistValueZoom, 300)
     )
   }
 
@@ -62,19 +71,28 @@ class StatePersistorMapService implements StatePersistorService {
   }
 
   persistXY() {
+    const mapStore = useMapStore()
+    const { x, y } = storeToRefs(mapStore)
     const view = useMap().getOlMap().getView()
-    const fnStorageSetValueXY = () => {
+
+    const fnPersistValueXY = () => {
       const center = view.getCenter()
-      storageHelper.setValue(SP_KEY_X, center ? Math.round(center[0]) : null)
-      storageHelper.setValue(SP_KEY_Y, center ? Math.round(center[1]) : null)
+      const px = center ? Math.round(center[0]) : null
+      const py = center ? Math.round(center[1]) : null
+
+      storageHelper.setValue(SP_KEY_X, px)
+      storageHelper.setValue(SP_KEY_Y, py)
+
+      x.value = px
+      y.value = py
     }
 
-    fnStorageSetValueXY()
+    fnPersistValueXY()
 
     olEvents.listen(
       view,
       ObjectEventType.PROPERTYCHANGE,
-      debounce(fnStorageSetValueXY, 300)
+      debounce(fnPersistValueXY, 300)
     )
   }
 
