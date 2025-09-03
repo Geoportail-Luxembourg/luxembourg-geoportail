@@ -17,7 +17,8 @@
     @apply absolute rounded p-1;
   }
 
-  .ol-control button {
+  .ol-control button,
+  .ol-control a[type='button'] {
     @apply w-10 h-10 text-xl text-center font-normal indent-0 block ol-btn m-[-1px] p-0 border-[1px] border-[color:var(--color-border-default)];
     font-family: 'geoportail-icons-wc';
   }
