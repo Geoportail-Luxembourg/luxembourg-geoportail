@@ -285,7 +285,7 @@ class FeatureHash extends TextFeature {
    * Encode a feature into a logical sequence of characters.
    */
   writeFeatureText(feature: Feature, opt_options: any) {
-    const encodedParts: String[] = []
+    const encodedParts: string[] = []
 
     // encode geometry
 
@@ -583,13 +583,12 @@ function encodeStyleText_(textStyle: Text, encodedStyles: string[]) {
  */
 function readLineStringGeometry_(this: FeatureHash, text: string) {
   text = text.substring(2, text.length - 1)
-  const flatCoordinates = (this as any)?.decodeCoordinates_(text)
-  return new olGeomLineString(flatCoordinates)
+  const flatCoordinates = this.decodeCoordinates_(text, [])
+  return new olGeomLineString(flatCoordinates, 'XY')
 }
 
 /**
  * Read a logical sequence of characters and return a corresponding
- * {@link ol.geom.MultiLineString}.
  */
 function readMultiLineStringGeometry_(this: FeatureHash, text: string) {
   text = text.substring(2, text.length - 1)
