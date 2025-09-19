@@ -1,5 +1,5 @@
 import { defineStore } from 'pinia'
-import { ref, Ref, shallowRef } from 'vue'
+import { ref, shallowRef } from 'vue'
 import { Draw } from 'ol/interaction'
 
 import {
