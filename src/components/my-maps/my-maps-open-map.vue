@@ -8,7 +8,7 @@ import { createMyMaps } from '@/services/api/api-mymaps.service'
 
 const emit = defineEmits<{
   (e: 'cancel'): void
-  (e: 'confirm', uuid: string): void
+  (e: 'select', uuid: string): void
 }>()
 
 const { t } = useTranslation()
@@ -41,56 +41,28 @@ async function onClickSave() {
 </script>
 
 <template>
-  <ModalDialog
-    :title="t('Title and description of the map')"
-    @close="emit('cancel')"
-  >
+  <ModalDialog :title="t('Ouvrir une carte')" @close="emit('cancel')">
     <template v-slot:content>
-      <form class="flex flex-col gap-4">
-        <div class="flex flex-col">
-          <label>{{ t('Titre de la carte') }}</label>
-          <input class="lux-input" type="text" v-model="mapTitle" />
-        </div>
-
-        <div>
-          <input id="mapIsPublic" v-model="mapIsPublic" type="checkbox" />
-          <label class="ml-2 hover:cursor-pointer" for="mapIsPublic">{{
-            t('Public Map')
-          }}</label>
-        </div>
-
-        <div>
-          <DropdownList
-            class="min-w-36"
-            :placeholder="t('Please select a Category')"
-            :options="categories"
-            v-model="category"
-            @change="v => (category = v)"
-          ></DropdownList>
-        </div>
-
-        <div class="flex flex-col">
-          <label>{{ t('Description') }}</label>
-          <textarea
-            class="lux-input"
-            rows="3"
-            v-model="mapDescription"
-          ></textarea>
-        </div>
-      </form>
+      <DropdownList
+        class="min-w-36"
+        :placeholder="t('Please select a Category')"
+        :options="categories"
+        v-model="category"
+        @change="v => (category = v)"
+      ></DropdownList>
+      <DropdownList
+        class="min-w-36"
+        :placeholder="t('Please select a Category')"
+        :options="categories"
+        v-model="category"
+        @change="v => (category = v)"
+      ></DropdownList>
     </template>
 
     <template v-slot:footer>
       <div class="flex flex-row justify-end gap-2">
         <button class="lux-btn" data-dismiss="modal" @click="emit('cancel')">
           {{ t('Annuler') }}
-        </button>
-        <button
-          class="lux-btn-primary"
-          data-dismiss="modal"
-          @click="onClickSave"
-        >
-          {{ t('Save changes') }}
         </button>
       </div>
     </template>

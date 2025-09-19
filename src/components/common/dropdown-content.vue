@@ -61,13 +61,13 @@ onUnmounted(
     <div class="h-full w-full">
       <button
         type="button"
-        class="lux-btn lux-dropdown-btn"
+        class="lux-btn lux-dropdown-btn flex items-center"
         :class="[localIsOpen ? 'expanded' : '', className]"
         :aria-expanded="localIsOpen"
         aria-haspopup="true"
         @click="onClickOpenBtn"
       >
-        <span>{{ props.placeholder }}</span
+        <span class="grow text-left">{{ props.placeholder }}</span
         ><span
           class="lux-caret ml-1"
           :class="{ up: direction === 'up' }"

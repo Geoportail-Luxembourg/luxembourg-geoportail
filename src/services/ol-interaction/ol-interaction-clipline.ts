@@ -101,7 +101,6 @@ class OlInteractionClipLine extends Pointer {
   }
 
   handleFeatureChanged(feature: DrawnFeature) {
-    console.log('handleFeatureChangedhandleFeatureChanged')
     this.removeFeature_(feature)
     this.addFeature_(feature)
   }
