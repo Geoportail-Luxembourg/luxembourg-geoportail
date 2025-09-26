@@ -61,12 +61,13 @@ const linkTo3dMap = computed(() => {
   return `${LUX_VCS_URL}?state=${encodeURIComponent(state)}`
 })
 
-onMounted(() =>
+onMounted(() => {
+  window.name = 'lux2d' // set window name as tab reference for 3D viewer
   useControl(Control, {
     ...props,
     target: controlElement,
   } as unknown as Options)
-)
+})
 
 function getLonLatFromXY(
   x: number | undefined | null,
