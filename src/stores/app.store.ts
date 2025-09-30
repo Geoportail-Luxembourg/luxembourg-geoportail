@@ -1,6 +1,7 @@
-import { Ref, ref } from 'vue'
+import { Ref, ref, shallowRef } from 'vue'
 import { acceptHMRUpdate, defineStore } from 'pinia'
 import { StyleSection } from '@/composables/mvt-styles/mvt-styles.model'
+import { MyMap } from './app.store.model'
 
 export const DEFAULT_LANG = 'fr'
 export const DEFAULT_LAYER_PANEL_OPENED = true
@@ -26,7 +27,9 @@ export const useAppStore = defineStore(
     const legendsOpen = ref(DEFAULT_LEGENDS_PANEL_OPENED)
     const myLayersTabOpen = ref(DEFAULT_MY_LAYERS_TAB_OPENED)
     const themeGridOpen = ref(DEFAULT_THEME_GRID_OPENED)
-    const mapId: Ref<string | undefined> = ref() // => MyMaps map id
+    const myMapId: Ref<string | undefined> = ref() // => MyMaps map id
+    const myMap = shallowRef<MyMap | undefined>(undefined) // MyMap map object
+    const myMapLayersChanged = ref(false)
     const myMapsOpen = ref(DEFAULT_MYMAPS_OPENED)
     const infoOpen = ref(DEFAULT_INFO_OPENED)
     const shareOpen = ref(DEFAULT_SHARE_OPENED)
@@ -43,6 +46,7 @@ export const useAppStore = defineStore(
     const measureToolbarOpen = ref(false)
     const elevationProfileToolbarOpen = ref(false)
     const printToolbarOpen = ref(false)
+    const shareToolbarOpen = ref(false)
     const isOffLine = ref(false)
     const isApp = ref(false) // Is the app displayed for Android or Ios?
 
@@ -99,10 +103,6 @@ export const useAppStore = defineStore(
       remoteLayersOpen.value = open
     }
 
-    function setMapId(id: string | undefined) {
-      mapId.value = id
-    }
-
     function openStyleEditorPanel() {
       styleEditorOpen.value = true
       layersOpen.value = false
@@ -150,6 +150,16 @@ export const useAppStore = defineStore(
     function toggleFeedbackOpen(open?: boolean) {
       feedbackOpen.value = open ?? !feedbackOpen.value
     }
+    
+    function toggleShareToolbarOpen(open?: boolean) {
+      shareToolbarOpen.value = open ?? !shareToolbarOpen.value
+
+      if (shareToolbarOpen.value) {
+        drawToolbarOpen.value = false
+        measureToolbarOpen.value = false
+        printToolbarOpen.value = false
+      }
+    }
 
     return {
       authFormOpened,
@@ -159,7 +169,9 @@ export const useAppStore = defineStore(
       legendsOpen,
       myLayersTabOpen,
       themeGridOpen,
-      mapId,
+      myMapId,
+      myMap,
+      myMapLayersChanged,
       myMapsOpen,
       infoOpen,
       shareOpen,
@@ -178,17 +190,18 @@ export const useAppStore = defineStore(
       isApp,
       setIsApp,
       printToolbarOpen,
+      shareToolbarOpen,
       setLang,
       setLayersOpen,
       setMyLayersTabOpen,
       setThemeGridOpen,
       setRemoteLayersOpen,
-      setMapId,
       openStyleEditorPanel,
       closeStyleEditorPanel,
       toggleAuthFormOpen,
       toggleDrawToolbarOpen,
       togglePrintToolbarOpen,
+      toggleShareToolbarOpen,
       toggleMyMapsOpen,
       toggleInfoOpen,
       toggleShareOpen,

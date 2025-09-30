@@ -12,7 +12,7 @@ const CREDENTIALS_ORIGIN = import.meta.env.VITE_CREDENTIALS_ORIGIN
 export async function fetchApi(
   url: string,
   payload: Record<string, any> | string | URLSearchParams | FormData,
-  method: 'POST' | 'GET' | 'PUT' = 'GET',
+  method: 'POST' | 'GET' | 'PUT' | 'DELETE' = 'GET',
   contentType?: string // eg. 'application/x-www-form-urlencoded'
 ) {
   const headers: Record<string, string> = {}

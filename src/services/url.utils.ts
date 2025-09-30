@@ -4,7 +4,7 @@ export function getQRUrl(shortUrl: string | undefined) {
 
 export function getQRUrlForMyMaps(mapId: string | undefined) {
   // legacy: getQrCodeForMymapsUrl
-  return typeof mapId !== undefined
+  return mapId !== undefined
     ? `${import.meta.env.VITE_QR_URL}?url=${
         import.meta.env.VITE_QR_URL
       }?map_id=${mapId}`

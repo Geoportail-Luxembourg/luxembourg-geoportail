@@ -1,5 +1,13 @@
 <script setup lang="ts">
-import { onMounted, onUnmounted, shallowRef, ShallowRef, watch, ref } from 'vue'
+import {
+  onMounted,
+  onUnmounted,
+  shallowRef,
+  ShallowRef,
+  watch,
+  ref,
+  useTemplateRef,
+} from 'vue'
 
 const props = withDefaults(
   defineProps<{
@@ -42,8 +50,10 @@ const root = ref<HTMLElement | null>(null)
 const className = ref<string>('')
 
 onMounted(() => {
-  props.enableClickOutside &&
+  if (props.enableClickOutside) {
     document.addEventListener('click', onClickOutsideOpenBtn)
+  }
+
   className.value = root.value
     ? 'lux-btn-' +
       getComputedStyle(root.value).getPropertyValue('--button-theme')
@@ -58,23 +68,28 @@ onUnmounted(
 
 <template>
   <div class="lux-dropdown" v-bind="$attrs" ref="root">
+    <!-- Placeholder or selected value  -->
     <div class="h-full w-full">
       <button
         type="button"
-        class="lux-btn lux-dropdown-btn flex items-center"
+        class="lux-btn lux-dropdown-btn flex items-center text-ellipsis max-w-full"
         :class="[localIsOpen ? 'expanded' : '', className]"
         :aria-expanded="localIsOpen"
         aria-haspopup="true"
         @click="onClickOpenBtn"
       >
-        <span class="grow text-left">{{ props.placeholder }}</span
+        <span
+          class="grow text-left text-ellipsis max-w-full overflow-hidden text-nowrap"
+          :title="props.placeholder"
+          >{{ props.placeholder }}</span
         ><span
           class="lux-caret ml-1"
           :class="{ up: direction === 'up' }"
         ></span>
       </button>
     </div>
-    <div class="lux-dropdown-wrapper">
+    <!-- Dropdown list  -->
+    <div class="lux-dropdown-wrapper" ref="dropdownWrapperDOM">
       <div
         class="lux-dropdown-content"
         :class="localIsOpen ? '' : 'hidden'"

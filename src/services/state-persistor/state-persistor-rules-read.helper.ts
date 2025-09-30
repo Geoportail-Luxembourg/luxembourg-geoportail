@@ -65,7 +65,7 @@ const ruleMustSetDefaultBgLayer = (paramKeys: ParamKeys) => {
   )
 
   // TODO:
-  // if (mapId === undefined &&
+  // if (myMapId === undefined &&
   //   !((this.initialState_.hasOwnProperty('bgLayer') &&
   //   this.initialState_['bgLayer'].length > 0 &&
   //   this.initialState_['bgLayer'] != 'blank') ||

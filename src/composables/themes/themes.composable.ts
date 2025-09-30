@@ -6,6 +6,12 @@ import { storeToRefs } from 'pinia'
 import { DEFAULT_VIEW_ZOOM_MAX } from '@/composables/map/map.model'
 
 export default function useThemes() {
+  /**
+   * Find a layer by its id in all the themes
+   * @param id
+   * @param node
+   * @returns
+   */
   function findById(
     id: LayerId,
     node?: ThemeNodeModel
@@ -13,6 +19,12 @@ export default function useThemes() {
     return findByIdOrName(id, undefined, node)
   }
 
+  /**
+   * Find a layer by its name in all the themes
+   * @param name
+   * @param node
+   * @returns
+   */
   function findByName(
     name: string,
     node?: ThemeNodeModel
@@ -20,6 +32,13 @@ export default function useThemes() {
     return findByIdOrName(undefined, name, node)
   }
 
+  /**
+   * Find a layer by its name or its id in all the themes
+   * @param id
+   * @param name
+   * @param node
+   * @returns
+   */
   function findByIdOrName(
     id?: LayerId,
     name?: string,

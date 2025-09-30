@@ -13,6 +13,8 @@ export interface MyMapJson {
   last_feature_update: string
   category: string
   owner: string
+  dirty?: boolean
+  deletedWhileOffline?: boolean
 }
 
 export interface MyMap {
@@ -57,6 +59,11 @@ export async function fetchMyMaps() {
   return json
 }
 
+/**
+ * Get info for My Map with the given uuid
+ * @param uuid
+ * @returns
+ */
 export async function fetchMyMap(uuid: string) {
   const response = await fetchApi(MYMAPS_URL + '/map/' + uuid, {})
 
@@ -65,6 +72,28 @@ export async function fetchMyMap(uuid: string) {
   }
 
   const json = <MyMap>await response.json()
+
+  return json
+}
+
+export interface Cateorgy {
+  id: number
+  allow_labeling: boolean | null
+  name: string
+}
+
+/**
+ * Retrieve all My Maps categories
+ * @returns
+ */
+export async function fetchCategories() {
+  const response = await fetchApi(MYMAPS_URL + '/categories', {})
+
+  if (!response.ok) {
+    throw new Error('Error while trying to get categories')
+  }
+
+  const json = <Array<Cateorgy>>await response.json()
 
   return json
 }
@@ -82,7 +111,7 @@ export interface MyMapCreatedJson {
  * @param publique
  * @returns
  */
-export async function createMyMaps(
+export async function createMyMap(
   title: string,
   description: string,
   categoryId: number,
@@ -103,4 +132,154 @@ export async function createMyMaps(
   const json = <MyMapCreatedJson>await response.json()
 
   return json
+}
+
+/**
+ * Call api to edit a map for a user (title, description, public and cat)
+ * @param uuid
+ * @param title
+ * @param description
+ * @param categoryId
+ * @param publique
+ * @returns
+ */
+export async function editMyMap(
+  uuid: string,
+  title: string,
+  description: string,
+  categoryId: number,
+  publique: boolean
+) {
+  const payload = {
+    title,
+    description,
+    category_id: categoryId,
+    public: publique,
+    dirty: true,
+  }
+  const response = await fetchApi(
+    MYMAPS_URL + '/update/' + uuid,
+    payload,
+    'PUT'
+  )
+
+  if (!response.ok) {
+    throw new Error('Error while trying to update My Map')
+  }
+
+  const json = <MyMapCreatedJson>await response.json()
+
+  return json
+}
+
+/**
+ * Call api to update layers and feature of a Mymap
+ * @param uuid
+ * @param bgLayer
+ * @param bgOpacity
+ * @param layers
+ * @param layersOpacity
+ * @param layersVisibility
+ * @param layersIndices
+ * @param theme
+ * @returns
+ */
+export async function updateMyMap(
+  uuid: string,
+  bgLayer: string,
+  bgOpacity: number,
+  layers: string,
+  layersOpacity: string,
+  layersVisibility: string,
+  layersIndices: string,
+  theme: string
+) {
+  const payload = {
+    bgLayer,
+    bgOpacity,
+    layers,
+    layers_opacity: layersOpacity,
+    layers_visibility: layersVisibility,
+    layers_indices: layersIndices,
+    theme,
+  }
+  const response = await fetchApi(
+    MYMAPS_URL + '/update/' + uuid,
+    payload,
+    'PUT'
+  )
+
+  if (!response.ok) {
+    throw new Error('Error while trying to update My Map')
+  }
+
+  const json = <MyMapCreatedJson>await response.json()
+
+  return json
+}
+
+/**
+ * Call api to copy a map for a user
+ * @param uuid
+ * @param title
+ * @param description
+ * @param categoryId
+ * @param publique
+ * @returns
+ */
+export async function copyMyMap(
+  uuid: string,
+  title: string,
+  description: string,
+  categoryId: number,
+  publique: boolean
+) {
+  const payload = {
+    title,
+    description,
+    category_id: categoryId,
+    public: publique,
+  }
+  const response = await fetchApi(MYMAPS_URL + '/copy/' + uuid, payload, 'POST')
+
+  if (!response.ok) {
+    throw new Error('Error while trying to copy My Map')
+  }
+
+  const json = <MyMapCreatedJson>await response.json()
+
+  return json
+}
+
+/**
+ * Call api to delete My Map with uuid
+ * @param uuid My Map uuid
+ * @returns true if map was successfully deleted
+ */
+export async function deleteMyMap(uuid: string) {
+  const response = await fetchApi(MYMAPS_URL + '/delete/' + uuid, {}, 'DELETE')
+
+  if (!response.ok) {
+    throw new Error('Error while trying to delete My Map')
+  }
+
+  const json = <{ success: boolean }>await response.json()
+
+  return json.success
+}
+
+export async function clearMyMap(uuid: string) {
+  const response = await fetchApi(
+    MYMAPS_URL + '/delete_all_features/' + uuid,
+    {},
+    'DELETE'
+  )
+
+  if (!response.ok) {
+    throw new Error('Error while trying to clear My Map')
+  }
+
+  const json = <{ success: boolean }>await response.json()
+
+  return json.success
 }

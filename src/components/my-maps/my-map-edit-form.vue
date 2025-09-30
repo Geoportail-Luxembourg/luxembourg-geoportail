@@ -1,48 +1,99 @@
 <script setup lang="ts">
-import { computed, ref } from 'vue'
+import { computed, onBeforeMount, ref, shallowRef } from 'vue'
 import { useTranslation } from 'i18next-vue'
 
 import ModalDialog from '@/components/common/modal-dialog.vue'
 import DropdownList from '@/components/common/dropdown-list.vue'
-import { createMyMaps } from '@/services/api/api-mymaps.service'
+import {
+  Cateorgy,
+  copyMyMap,
+  createMyMap,
+  editMyMap,
+  fetchCategories,
+  MyMap,
+  MyMapCreatedJson,
+} from '@/services/api/api-mymaps.service'
+import { useAlertNotificationsStore } from '@/stores/alert-notifications.store'
+
+import { EditFormModeType } from './my-maps.model'
+import { AlertNotificationType } from '@/stores/alert-notifications.store.model'
 
 const emit = defineEmits<{
   (e: 'cancel'): void
   (e: 'confirm', uuid: string): void
 }>()
 
+const props = defineProps<{
+  map: MyMap | undefined
+  mode: EditFormModeType
+}>()
+
 const { t } = useTranslation()
-const mapIsPublic = ref(false)
-const mapTitle = ref(t('Map without Title'))
-const mapDescription = ref('')
-const category = ref<string | undefined>(undefined)
-const categories = computed(() => [
-  {
-    label: t('Aucune catégorie'),
-    value: '999',
-  },
-])
+const { addNotification } = useAlertNotificationsStore()
+const copyMode = props.map && props.mode === EditFormModeType.COPY
+const mapIsPublic = ref(props.map ? props.map.public : false)
+const mapTitle = ref(props.map ? props.map.title : t('Map without Title'))
+const mapDescription = ref(props.map ? props.map.description : '')
+const category = ref<string | undefined>(
+  props.map ? props.map.category_id + '' : undefined
+)
+const categories = shallowRef<Cateorgy[]>([])
+const categoriesOptions = computed(() =>
+  categories.value.map(c => ({ label: c.name, value: '' + c.id }))
+)
 
 async function onClickSave() {
   const catId = category.value ? parseInt(category.value, 10) : 999
-  const createdResponse = await createMyMaps(
-    mapTitle.value,
-    mapDescription.value,
-    catId,
-    mapIsPublic.value
-  )
+  let createdResponse: MyMapCreatedJson | undefined = undefined
 
-  if (createdResponse.success) {
-    emit('confirm', createdResponse.uuid)
-  } else {
-    emit('cancel')
+  try {
+    if (props.map && props.mode === EditFormModeType.COPY) {
+      createdResponse = await copyMyMap(
+        props.map.uuid,
+        mapTitle.value,
+        mapDescription.value,
+        catId,
+        mapIsPublic.value
+      )
+    } else if (props.map && props.mode === EditFormModeType.EDIT) {
+      createdResponse = await editMyMap(
+        props.map.uuid,
+        mapTitle.value,
+        mapDescription.value,
+        catId,
+        mapIsPublic.value
+      )
+    } else {
+      createdResponse = await createMyMap(
+        mapTitle.value,
+        mapDescription.value,
+        catId,
+        mapIsPublic.value
+      )
+    }
+
+    if (createdResponse?.success) {
+      emit('confirm', createdResponse.uuid)
+    } else {
+      emit('cancel')
+    }
+  } catch (e) {
+    addNotification(<string>e, AlertNotificationType.ERROR)
   }
 }
+
+onBeforeMount(async () => {
+  categories.value = await fetchCategories()
+})
 </script>
 
 <template>
   <ModalDialog
-    :title="t('Title and description of the map')"
+    :title="
+      copyMode
+        ? t('Modify title and description of the map')
+        : t('Title and description of the map')
+    "
     @close="emit('cancel')"
   >
     <template v-slot:content>
@@ -63,7 +114,7 @@ async function onClickSave() {
           <DropdownList
             class="min-w-36"
             :placeholder="t('Please select a Category')"
-            :options="categories"
+            :options="categoriesOptions"
             v-model="category"
             @change="v => (category = v)"
           ></DropdownList>
@@ -90,7 +141,7 @@ async function onClickSave() {
           data-dismiss="modal"
           @click="onClickSave"
         >
-          {{ t('Save changes') }}
+          {{ map && !copyMode ? t('Save changes') : t('Save new map') }}
         </button>
       </div>
     </template>

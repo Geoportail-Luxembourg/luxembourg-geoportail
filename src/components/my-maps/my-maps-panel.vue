@@ -5,51 +5,42 @@ import { storeToRefs } from 'pinia'
 
 import SidePanelLayout from '@/components/common/side-panel-layout.vue'
 import DrawPanel from '@/components/draw/draw-panel.vue'
+import useMyMaps from '@/composables/my-maps/my-maps.composable'
 import { useAlertNotificationsStore } from '@/stores/alert-notifications.store'
 import { AlertNotificationType } from '@/stores/alert-notifications.store.model'
 import { useAppStore } from '@/stores/app.store'
 import { useUserManagerStore } from '@/stores/user-manager.store'
 import {
+  clearMyMap,
+  deleteMyMap,
   fetchMyMap,
   fetchMyMaps,
   MyMap,
+  MyMapJson,
 } from '@/services/api/api-mymaps.service'
 
 import MyMapEditForm from './my-map-edit-form.vue'
 import MyMapInfo from './my-map-info.vue'
+import MyMapsOpenMap from './my-maps-open-map.vue'
+import MyMapConfirm from './my-map-confirm.vue'
+import { EditFormModeType } from './my-maps.model'
 
 const { t } = useTranslation()
 const { addNotification } = useAlertNotificationsStore()
 const appStore = useAppStore()
-const { toggleAuthFormOpen } = appStore
+const { loadMyMap, openMyMap, closeMyMap, applyToMyMap, resetFromMyMap } =
+  useMyMaps()
+const { toggleAuthFormOpen, toggleShareToolbarOpen } = appStore
+const { myMap } = storeToRefs(appStore)
 const { authenticated } = storeToRefs(useUserManagerStore())
-const myMapsEditFormModalOpened = ref(false)
-const currentMyMapUuid = ref<string | undefined>(undefined)
-const currentMyMap = shallowRef<MyMap | undefined>(undefined)
 
-async function clickOpenMap() {
-  if (!checkAuth()) {
-    return
-  }
+const editFormModalState = ref<EditFormModeType | undefined>(undefined) // undefined => closed
+const editFormModalMyMap = shallowRef<MyMap | undefined>(undefined) // Current MyMap opened in Edit form
+const openMapModalState = ref(false) // false => closed
+const confirmDeleteModalState = ref<'clear' | 'delete' | undefined>(undefined) // undefined => closed
+const confirmDeleteModalMyMap = ref<MyMap | undefined>(undefined)
 
-  const mymaps = await fetchMyMaps()
-
-  if (!mymaps.length) {
-    addNotification(
-      t('You have no existing Maps, please create a New Map'),
-      AlertNotificationType.WARNING
-    )
-    return
-  }
-}
-
-function clickCreateNewMap() {
-  if (!checkAuth()) {
-    return
-  }
-
-  myMapsEditFormModalOpened.value = true
-}
+const myMaps = shallowRef<MyMapJson[]>([]) // All user's MyMaps
 
 function checkAuth() {
   if (!authenticated.value) {
@@ -61,20 +52,123 @@ function checkAuth() {
   return true
 }
 
-function onMapCreated(uuid: string) {
-  addNotification(t('Nouvelle carte créée'))
-  myMapsEditFormModalOpened.value = false
-  currentMyMapUuid.value = uuid
-}
+async function refreshModale() {
+  myMaps.value = await fetchMyMaps()
 
-watch(currentMyMapUuid, async uuid => {
-  if (!uuid) {
-    currentMyMap.value = undefined
+  if (!myMaps.value.length) {
+    addNotification(
+      t('You have no existing Maps, please create a New Map'),
+      AlertNotificationType.WARNING
+    )
     return
   }
 
-  currentMyMap.value = await fetchMyMap(uuid)
-})
+  openMapModalState.value = true
+}
+
+async function openMap() {
+  if (!checkAuth()) {
+    return
+  }
+
+  await refreshModale()
+}
+
+function openEditFormModal(map: MyMap | undefined, mode: EditFormModeType) {
+  if (!checkAuth()) {
+    return
+  }
+
+  editFormModalMyMap.value = map
+  editFormModalState.value = mode
+}
+
+async function onMapUpdated(uuid: string) {
+  loadMyMap(uuid) // refreshes MyMap
+
+  if (editFormModalState.value !== EditFormModeType.EDIT) {
+    addNotification(t('Nouvelle carte créée'))
+  }
+
+  editFormModalState.value = undefined
+}
+
+async function onMapSelected(uuid: string) {
+  openMyMap(uuid)
+  openMapModalState.value = false
+}
+
+async function onMapDeleteOpenConfirm(map: MyMap) {
+  openMapModalState.value = false
+  openConfirmModal(map, 'delete')
+}
+
+async function onMapConfirmedDeletion(uuid: string) {
+  myMaps.value = []
+  await doDeleteMap(uuid)
+  await refreshModale()
+}
+
+function onClearOpenConfirm(map: MyMap) {
+  openConfirmModal(map, 'clear')
+}
+
+function openConfirmModal(
+  map: MyMap | undefined,
+  mode: 'clear' | 'delete' | undefined
+) {
+  confirmDeleteModalState.value = mode
+  confirmDeleteModalMyMap.value = map
+}
+
+function onConfirmed(uuid: string, mode: 'clear' | 'delete') {
+  if (mode === 'delete') {
+    doDeleteMap(uuid)
+  } else if (mode === 'clear') {
+    doClearMap(uuid)
+  }
+}
+
+/**
+ * Call api to delete map with uuid, used in "Open map modale" and Drodown menu
+ * If succeed, if the deleted map was the current opened map, reset current opened map.
+ * @param uuid
+ */
+async function doDeleteMap(uuid: string) {
+  const deleted = await deleteMyMap(uuid)
+
+  if (deleted) {
+    confirmDeleteModalState.value = undefined
+
+    if (uuid === myMap.value?.uuid) {
+      closeMyMap()
+    }
+
+    addNotification(t('MyMap successfully deleted.'))
+  } else {
+    addNotification(t('Unable to delete MyMap.'), AlertNotificationType.ERROR)
+  }
+}
+
+async function doClearMap(uuid: string) {
+  const cleared = await clearMyMap(uuid)
+
+  if (cleared) {
+    confirmDeleteModalState.value = undefined
+  } else {
+    addNotification(t('Unable to clear MyMap.'), AlertNotificationType.ERROR)
+  }
+}
+
+watch(
+  editFormModalState,
+  state => state === undefined && (editFormModalMyMap.value = undefined)
+)
+
+watch(
+  confirmDeleteModalState,
+  state => state === undefined && (confirmDeleteModalMyMap.value = undefined)
+)
 </script>
 
 <template>
@@ -91,9 +185,18 @@ watch(currentMyMapUuid, async uuid => {
     <template v-slot:content>
       <!-- a MyMap is selected -->
       <MyMapInfo
-        v-if="currentMyMapUuid && currentMyMap"
-        :myMap="currentMyMap"
-        @close="currentMyMapUuid = undefined"
+        v-if="myMap"
+        :myMap="myMap"
+        @close="closeMyMap"
+        @delete="onMapDeleteOpenConfirm"
+        @clear="onClearOpenConfirm"
+        @copy="map => openEditFormModal(map, EditFormModeType.COPY)"
+        @edit="map => openEditFormModal(map, EditFormModeType.EDIT)"
+        @new="() => openEditFormModal(undefined, EditFormModeType.CREATE)"
+        @open="openMap"
+        @share="() => toggleShareToolbarOpen(true)"
+        @resetLayers="resetFromMyMap"
+        @saveLayers="applyToMyMap"
       />
       <!-- No MyMap selected, display button to create or select one in popups -->
       <template v-else>
@@ -102,10 +205,13 @@ watch(currentMyMapUuid, async uuid => {
         </div>
 
         <div class="flex justify-center flex-col items-center">
-          <button class="lux-btn mt-3" @click="clickOpenMap">
+          <button class="lux-btn mt-3" @click="openMap">
             {{ t('Ouvrir une carte', { ns: 'client' }) }}
           </button>
-          <button class="lux-btn mt-3" @click="clickCreateNewMap">
+          <button
+            class="lux-btn mt-3"
+            @click="openEditFormModal(undefined, EditFormModeType.CREATE)"
+          >
             {{ t('Créer une nouvelle carte', { ns: 'client' }) }}
           </button>
         </div>
@@ -116,9 +222,27 @@ watch(currentMyMapUuid, async uuid => {
   </SidePanelLayout>
 
   <!-- Modales -->
+  <MyMapConfirm
+    v-if="confirmDeleteModalMyMap && confirmDeleteModalState"
+    :mode="confirmDeleteModalState"
+    :map="confirmDeleteModalMyMap"
+    @cancel="confirmDeleteModalState = undefined"
+    @confirm="onConfirmed"
+  ></MyMapConfirm>
+
   <MyMapEditForm
-    v-if="myMapsEditFormModalOpened"
-    @cancel="() => (myMapsEditFormModalOpened = false)"
-    @confirm="onMapCreated"
+    v-if="editFormModalState"
+    :mode="editFormModalState"
+    :map="editFormModalMyMap"
+    @cancel="editFormModalState = undefined"
+    @confirm="onMapUpdated"
   ></MyMapEditForm>
+
+  <MyMapsOpenMap
+    :maps="myMaps"
+    v-if="openMapModalState"
+    @cancel="openMapModalState = false"
+    @select="onMapSelected"
+    @delete="onMapConfirmedDeletion"
+  ></MyMapsOpenMap>
 </template>

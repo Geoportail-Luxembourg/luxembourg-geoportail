@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import { onMounted, onUnmounted, watch } from 'vue'
 import { storeToRefs } from 'pinia'
+import { useTranslation } from 'i18next-vue'
 
 import HeaderBar from '@/components/header-bar/header-bar.vue'
 import HeaderBarOffline from '@/components/header-bar/header-bar-offline.vue'
@@ -22,14 +23,14 @@ import { statePersistorThemeService } from '@/services/state-persistor/state-per
 import { statePersistorAppService } from '@/services/state-persistor/state-persistor-app.service'
 import { statePersistorStyleService } from '@/services/state-persistor/state-persistor-bgstyle.service'
 import { statePersistorMyMapService } from '@/services/state-persistor/state-persistor-mymap.service'
+import { statePersistorFeatureInfoService } from '@/services/state-persistor/state-persistor-featureinfo.service'
 
-import { useAppStore } from '@/stores/app.store'
 import useMap from '@/composables/map/map.composable'
 import useMvtStyles from '@/composables/mvt-styles/mvt-styles.composable'
-import { statePersistorFeatureInfoService } from '@/services/state-persistor/state-persistor-featureinfo.service'
+import useMyMaps from '@/composables/my-maps/my-maps.composable'
 import useNetwork from '@/composables/network/network.composable'
-import { useTranslation } from 'i18next-vue'
 import { createLogger } from '@/lib/logging/namespacedLogger'
+import { useAppStore } from '@/stores/app.store'
 
 const { t } = useTranslation()
 const appStore = useAppStore()
@@ -55,6 +56,7 @@ statePersistorStyleService.bootstrap()
 statePersistorBgLayerService.bootstrap()
 mvtStyleService.initBackgroundsConfigs()
 statePersistorFeatureInfoService.bootstrap()
+useMyMaps().init()
 
 const {
   embedded,
