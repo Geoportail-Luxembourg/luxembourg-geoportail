@@ -10,6 +10,7 @@ import ButtonLink from './button-link.vue'
 import ToolbarDraw from './toolbar-draw.vue'
 import ToolbarMeasure from './toolbar-measure.vue'
 import ToolbarPrint from './toolbar-print.vue'
+import ToolbarShare from './toolbar-share.vue'
 
 const { t, i18next } = useTranslation()
 const appStore = useAppStore()
@@ -17,6 +18,7 @@ const drawStore = useDrawStore()
 const {
   setLayersOpen,
   togglePrintToolbarOpen,
+  toggleShareToolbarOpen,
   toggleDrawToolbarOpen,
   toggleMyMapsOpen,
   toggleLegendsOpen,
@@ -28,10 +30,12 @@ const {
   drawToolbarOpen,
   measureToolbarOpen,
   styleEditorOpen,
+  myMapLayersChanged,
   myMapsOpen,
   infoOpen,
   themeGridOpen,
   printToolbarOpen,
+  shareToolbarOpen,
 } = storeToRefs(appStore)
 const { setEditActiveState } = drawStore
 
@@ -104,7 +108,9 @@ function onClickInfoIcon() {
       -->
       <li data-cy="mymapsOpenClose">
         <button-icon
-          :label="t('my_maps', { ns: 'client' })"
+          :label="
+            t('my_maps', { ns: 'client' }) + (myMapLayersChanged ? '(*)' : '')
+          "
           icon="mymaps"
           :active="myMapsOpen"
           @click="() => toggleMyMapsOpen()"
@@ -148,6 +154,7 @@ function onClickInfoIcon() {
       <!-- Drawing tools -->
       <toolbar-draw v-if="drawToolbarOpen" />
       <toolbar-print v-if="printToolbarOpen" />
+      <toolbar-share v-if="shareToolbarOpen" />
       <button-icon
         :label="t('Dessin', { ns: 'client' })"
         icon="draw"
@@ -180,8 +187,9 @@ function onClickInfoIcon() {
 
       <!-- Social sharing tools -->
       <button-icon
-        class="text-gray-300"
         :label="t('Partager', { ns: 'client' })"
+        :active="shareToolbarOpen"
+        @click="() => toggleShareToolbarOpen()"
         icon="share"
       >
       </button-icon>

@@ -13,16 +13,16 @@ import {
   BgLayerDefaultsType,
 } from '@/composables/background-layer/background-layer.model'
 import useThemes from '@/composables/themes/themes.composable'
-import { LayerTypeValue } from '../themes/themes.model'
+import { LayerTypeValue } from '@/composables/themes/themes.model'
 
 export default function useBackgroundLayer() {
   const appStore = useAppStore()
-  const { mapId } = storeToRefs(appStore)
+  const { myMapId } = storeToRefs(appStore)
   const theme = useThemes()
   const mapStore = useMapStore()
   const layers = useLayers()
   const defaultSelectedBgId = computed(() => {
-    if (!mapId.value) {
+    if (!myMapId.value) {
       const themeName = useThemeStore().theme?.name
 
       if (themeName) {
@@ -36,9 +36,18 @@ export default function useBackgroundLayer() {
     return getDefaultSelectedId()
   })
 
-  function setBgLayer(layerId: number) {
-    const newBgLayer = theme.findBgLayerById(layerId) as Layer
-    setMapBackground(newBgLayer || null)
+  /**
+   * Set bgLayer accordint to given bg id or bg name, if bgLayer definition not found, will set null as a background.
+   * @param layerId Will try to fing the bg layer by its id and set bg to the map
+   * @param layerName Will try to fing the bg layer by its name and set bg to the map
+   */
+  function setBgLayer(layerId?: number, layerName?: string) {
+    const newBgLayer = layerName
+      ? <Layer>theme.findBgLayerByName(layerName) ?? null
+      : layerId
+      ? <Layer>theme.findBgLayerById(layerId) ?? null
+      : null
+    setMapBackground(newBgLayer)
   }
 
   function setMapBackground(bgLayer: Layer | null) {

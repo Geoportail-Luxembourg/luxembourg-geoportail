@@ -1,70 +1,47 @@
 <script setup lang="ts">
-import { computed, ref } from 'vue'
-import { useTranslation } from 'i18next-vue'
+import { ref } from 'vue'
 
-import ModalDialog from '@/components/common/modal-dialog.vue'
-import DropdownList from '@/components/common/dropdown-list.vue'
-import { createMyMaps } from '@/services/api/api-mymaps.service'
+import { MyMap, MyMapJson } from '@/services/api/api-mymaps.service'
+
+import MyMapsOpenMapList from './my-maps-open-map-list.vue'
+import MyMapConfirm from './my-map-confirm.vue'
 
 const emit = defineEmits<{
   (e: 'cancel'): void
   (e: 'select', uuid: string): void
+  (e: 'delete', muuid: string): void
 }>()
 
-const { t } = useTranslation()
-const mapIsPublic = ref(false)
-const mapTitle = ref(t('Map without Title'))
-const mapDescription = ref('')
-const category = ref<string | undefined>(undefined)
-const categories = computed(() => [
-  {
-    label: t('Aucune catégorie'),
-    value: '999',
-  },
-])
+defineProps<{
+  maps: MyMapJson[]
+}>()
 
-async function onClickSave() {
-  const catId = category.value ? parseInt(category.value, 10) : 999
-  const createdResponse = await createMyMaps(
-    mapTitle.value,
-    mapDescription.value,
-    catId,
-    mapIsPublic.value
-  )
+const confirmDeleteMap = ref<MyMap | undefined>(undefined)
 
-  if (createdResponse.success) {
-    emit('confirm', createdResponse.uuid)
-  } else {
-    emit('cancel')
-  }
+function onDeleteOpenConfirm(map: MyMap) {
+  confirmDeleteMap.value = map
+}
+
+function onDelete(uuid: string) {
+  confirmDeleteMap.value = undefined
+  emit('delete', uuid)
 }
 </script>
 
 <template>
-  <ModalDialog :title="t('Ouvrir une carte')" @close="emit('cancel')">
-    <template v-slot:content>
-      <DropdownList
-        class="min-w-36"
-        :placeholder="t('Please select a Category')"
-        :options="categories"
-        v-model="category"
-        @change="v => (category = v)"
-      ></DropdownList>
-      <DropdownList
-        class="min-w-36"
-        :placeholder="t('Please select a Category')"
-        :options="categories"
-        v-model="category"
-        @change="v => (category = v)"
-      ></DropdownList>
-    </template>
+  <MyMapsOpenMapList
+    v-if="!confirmDeleteMap"
+    :maps="maps"
+    @cancel="emit('cancel')"
+    @select="emit('select', $event)"
+    @delete="onDeleteOpenConfirm"
+  ></MyMapsOpenMapList>
 
-    <template v-slot:footer>
-      <div class="flex flex-row justify-end gap-2">
-        <button class="lux-btn" data-dismiss="modal" @click="emit('cancel')">
-          {{ t('Annuler') }}
-        </button>
-      </div>
-    </template>
-  </ModalDialog>
+  <MyMapConfirm
+    v-else="confirmDeleteMap"
+    :map="confirmDeleteMap"
+    :mode="'delete'"
+    @cancel="confirmDeleteMap = undefined"
+    @confirm="onDelete"
+  ></MyMapConfirm>
 </template>

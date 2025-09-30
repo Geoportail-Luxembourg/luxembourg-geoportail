@@ -15,8 +15,14 @@ export type FormatMeasureType = 'elevation' | 'length' | 'area'
  */
 
 export function formatDate(dateString: string, language: string = 'fr-FR') {
-  const date = new Date(dateString)
-  return new Intl.DateTimeFormat(language).format(date)
+  if (!dateString) {
+    return ''
+  }
+
+  return new Intl.DateTimeFormat(language, {
+    dateStyle: 'short',
+    timeStyle: 'short',
+  }).format(new Date(dateString))
 }
 
 /**

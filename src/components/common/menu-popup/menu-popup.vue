@@ -66,9 +66,13 @@ watch(isOpen, isOpen => {
         ref="ddElement"
         role="menu"
       >
-        <li v-for="item in props.items" :key="item.label">
-          <slot :name="`item`" :item="item">
-            {{ item.label }}
+        <li
+          v-for="item in props.items"
+          :key="item.label"
+          :class="item.separator ? 'border-b-[1px] pb-2 mb-2' : ''"
+        >
+          <slot v-if="item.label" :name="`item`" :item="item">
+            {{ item.label }} {{ item.separator }}
           </slot>
         </li>
       </ul>
