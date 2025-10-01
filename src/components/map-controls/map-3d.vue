@@ -41,7 +41,7 @@ const props = withDefaults(
     tipLabel: '3D',
   }
 )
-const { x, y, zoom, layers } = storeToRefs(mapStore)
+const { x, y, zoom, layers, rotation } = storeToRefs(mapStore)
 const controlElement = ref(null)
 const linkTo3dMap = computed(() => {
   // Example pattern for VCS state
@@ -49,12 +49,13 @@ const linkTo3dMap = computed(() => {
 
   const [lon, lat] = getLonLatFromXY(x.value, y.value)
   const altitude = getAltFromZoom(zoom.value ?? 12)
+  const heading = getHeadingFromRotation(rotation.value ?? 0)
   const selectedLayers = layers.value.map(l => JSON.stringify([l.name, 1, 0]))
   const state = `[[[${[lon, lat, altitude].join(',')}],[${[
     lon,
     lat,
     altitude,
-  ].join(',')}],300,0,-90,0],"cesium",["${LUX_VCS_MODULES.join(
+  ].join(',')}],300,${heading},-90,0],"cesium",["${LUX_VCS_MODULES.join(
     '","'
   )}"],[${selectedLayers.join(',')}],[],0]`
 
@@ -85,6 +86,11 @@ function getAltFromZoom(zoom: number) {
   ) as keyof typeof zoomToCesiumAltitude
 
   return zoomToCesiumAltitude[clampedZoom]
+}
+
+function getHeadingFromRotation(rotation: number) {
+  const degrees = -((rotation * (180 / Math.PI) + 360) % 360)
+  return Math.round(degrees)
 }
 </script>
 

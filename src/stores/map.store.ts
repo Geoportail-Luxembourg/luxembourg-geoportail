@@ -18,6 +18,7 @@ export const useMapStore = defineStore('map', () => {
   const x = ref<number | undefined | null>(undefined)
   const y = ref<number | undefined | null>(undefined)
   const zoom = ref<number | undefined | null>(undefined)
+  const rotation = ref<number | undefined | null>(undefined)
 
   function setBgLayer(layer: Layer | null) {
     bgLayer.value = layer
@@ -118,6 +119,7 @@ export const useMapStore = defineStore('map', () => {
     x,
     y,
     zoom,
+    rotation,
     addLayers,
     add3dLayers,
     removeLayers,
