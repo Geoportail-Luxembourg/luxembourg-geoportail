@@ -55,10 +55,15 @@ class StatePersistorMapService implements StatePersistorService {
   }
 
   persistRotation() {
+    const mapStore = useMapStore()
+    const { rotation } = storeToRefs(mapStore)
+
     const view = useMap().getOlMap().getView()
     const fnStorageSetValueRotation = () => {
-      const rotation = view.getRotation()
-      storageHelper.setValue(SP_KEY_ROTATION, rotation || 0)
+      const viewRotation = view.getRotation() || 0
+      storageHelper.setValue(SP_KEY_ROTATION, viewRotation)
+
+      rotation.value = viewRotation
     }
 
     fnStorageSetValueRotation()
