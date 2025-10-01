@@ -41,7 +41,7 @@ const props = withDefaults(
     tipLabel: '3D',
   }
 )
-const { x, y, zoom, layers, rotation } = storeToRefs(mapStore)
+const { x, y, zoom, layers, bgLayer, rotation } = storeToRefs(mapStore)
 const controlElement = ref(null)
 const linkTo3dMap = computed(() => {
   // Example pattern for VCS state
@@ -51,6 +51,10 @@ const linkTo3dMap = computed(() => {
   const altitude = getAltFromZoom(zoom.value ?? 12)
   const heading = getHeadingFromRotation(rotation.value ?? 0)
   const selectedLayers = layers.value.map(l => JSON.stringify([l.name, 1, 0]))
+  const selectedBgLayer = bgLayer.value
+    ? JSON.stringify([bgLayer.value.name, 1, 0])
+    : null
+  if (selectedBgLayer) selectedLayers.unshift(selectedBgLayer)
   const state = `[[[${[lon, lat, altitude].join(',')}],[${[
     lon,
     lat,
