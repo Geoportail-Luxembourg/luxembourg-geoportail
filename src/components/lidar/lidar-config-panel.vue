@@ -132,7 +132,7 @@ input[type='number'] {
           <em>
             {{
               t(
-                'Draw a line on the map to dislay the corresponding LIDAR profile. Double clic to confirm.'
+                'Draw a line on the map to display the corresponding LIDAR profile. Double clic to confirm.'
               )
             }}
           </em>

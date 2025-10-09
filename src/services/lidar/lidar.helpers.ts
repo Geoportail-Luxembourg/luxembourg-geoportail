@@ -205,7 +205,7 @@ export class LidarHelpers {
       const svgStr = serializer.serializeToString(svgNode as Node)
 
       // Draw the image of the profile into the context of the new canvas.
-      const img_id = 'lidare_profile_for_export_uid'
+      const img_id = 'lidar_profile_for_export_uid'
       exportImage.id = img_id
       exportImage.src = `data:image/svg+xml;base64, ${btoa(svgStr)}`
       exportImage.style.setProperty('display', 'none')
@@ -271,7 +271,7 @@ export class LidarHelpers {
   }
 
   /**
-   * Find the maximum value in am array of numbers
+   * Find the maximum value in an array of numbers
    * returns the maximum of input array
    */
   arrayMax(array: number[]): number {
@@ -279,7 +279,7 @@ export class LidarHelpers {
   }
 
   /**
-   * Find the minimum value in am array of numbers
+   * Find the minimum value in an array of numbers
    * returns the minimum of input array
    */
   arrayMin(array: number[]): number {

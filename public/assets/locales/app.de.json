@@ -27,7 +27,7 @@
   "Delete offline data": "Offline-Daten löschen",
   "Distance: ": "Distanz",
   "Draw a lidar profile": "LIDAR Profil zeichnen",
-  "Draw a line on the map to dislay the corresponding LIDAR profile. Double clic to confirm.": "Zeichnen Sie eine Linie auf der Karte, um das entsprechende LIDAR Profil anzuzeigen. Mit einem Doppelklick bestätigen",
+  "Draw a line on the map to display the corresponding LIDAR profile. Double clic to confirm.": "Zeichnen Sie eine Linie auf der Karte, um das entsprechende LIDAR Profil anzuzeigen. Mit einem Doppelklick bestätigen",
   "Embed map": "Karte integrieren",
   "Export CSV": "CSV exportieren",
   "Export PNG": "PNG exportieren",
