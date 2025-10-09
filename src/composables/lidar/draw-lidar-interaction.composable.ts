@@ -62,7 +62,6 @@ export default function useDrawLidarInteraction() {
         if (source) {
           source.clear()
           if (feature) {
-            //source.addFeature(feature as Feature);
             drawRectangle(feature.getGeometry() as LineString)
           }
         }
@@ -76,7 +75,6 @@ export default function useDrawLidarInteraction() {
           source.clear()
           if (currentProfileFeature.value) {
             if (currentProfileFeature.value) {
-              //source.addFeature(currentProfileFeature.value as Feature);
               drawRectangle(
                 currentProfileFeature.value.getGeometry() as LineString
               )

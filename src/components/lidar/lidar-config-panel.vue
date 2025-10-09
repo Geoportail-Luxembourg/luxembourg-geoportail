@@ -32,7 +32,6 @@ const classifications = lidarConfig.value.serverConfig.classification_colors
 let lidarDrawInteraction: any = useDrawLidarInteraction()
 
 onMounted(() => {
-  //alert("ddd")
   lidarDrawInteraction.init()
 })
 
@@ -48,7 +47,6 @@ function exportPng() {
 
 function exportLas() {
   lidarDrawInteraction.exportLas()
-  //manager.getProfileByLOD([], 0, true, 0, true, profileWidth.value)
   // todo PIWIK
 }
 

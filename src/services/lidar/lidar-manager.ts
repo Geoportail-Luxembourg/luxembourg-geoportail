@@ -136,7 +136,7 @@ export class LidarManager {
       for (let i = 0; i < clippedLine.length; i++) {
         pytreeLinestring += `{${clippedLine[i][0]},${clippedLine[i][1]}},`
       }
-      pytreeLinestring = pytreeLinestring.substr(0, pytreeLinestring.length - 1)
+      pytreeLinestring = pytreeLinestring.slice(0, -1)
       maxLODWith = this.utils.getNiceLOD(domain[1] - domain[0], max_levels)
     }
 
@@ -358,7 +358,7 @@ export class LidarManager {
         } else if (attributes[k]['value'] == 'CLASSIFICATION') {
           const classif = view.getUint8(aoffset)
           points.classification!.push(classif)
-          this.profilePoints.classification!.push!(classif)
+          this.profilePoints.classification!.push(classif)
         } else if (attributes[k]['value'] == 'INTENSITY') {
           const intensity = view.getUint8(aoffset)
           points.intensity!.push(intensity)

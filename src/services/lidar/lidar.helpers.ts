@@ -275,7 +275,7 @@ export class LidarHelpers {
    * returns the maximum of input array
    */
   arrayMax(array: number[]): number {
-    return array.reduce((a, b) => Math.max(a, b))
+    return Math.max(...array)
   }
 
   /**
@@ -306,7 +306,7 @@ export class LidarHelpers {
         Math.round(100 * py) / 100
       }},`
     }
-    return pytreeLineString.substr(0, pytreeLineString.length - 1)
+    return pytreeLineString.slice(0, -1)
   }
 
   /**
