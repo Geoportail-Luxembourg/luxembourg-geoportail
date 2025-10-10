@@ -30,6 +30,7 @@ const {
   styleEditorOpen,
   myMapsOpen,
   infoOpen,
+  lidarOpen,
   themeGridOpen,
   printToolbarOpen,
 } = storeToRefs(appStore)
@@ -43,6 +44,7 @@ function onClickLayersIcon() {
     styleEditorOpen.value = false
     myMapsOpen.value = false
     infoOpen.value = false
+    lidarOpen.value = false
   }
 
   themeGridOpen.value = false
@@ -52,6 +54,7 @@ watch(drawToolbarOpen, isOpen => {
   if (isOpen) {
     measureToolbarOpen.value = false
     printToolbarOpen.value = false
+    lidarOpen.value = false
   } else {
     // Deactivate edition mode when draw toolbar is closed
     setEditActiveState(undefined)
@@ -61,15 +64,35 @@ watch(measureToolbarOpen, isOpen => {
   if (isOpen) {
     drawToolbarOpen.value = false
     printToolbarOpen.value = false
+    lidarOpen.value = false
   }
 })
 watch(printToolbarOpen, isOpen => {
   if (isOpen) {
     drawToolbarOpen.value = false
     measureToolbarOpen.value = false
+    lidarOpen.value = false
   }
 })
-
+watch(lidarOpen, isOpen => {
+  if (isOpen) {
+    layersOpen.value =
+      legendsOpen.value =
+      drawToolbarOpen.value =
+      measureToolbarOpen.value =
+      styleEditorOpen.value =
+      myMapsOpen.value =
+      infoOpen.value =
+      themeGridOpen.value =
+      printToolbarOpen.value =
+      drawToolbarOpen.value =
+      measureToolbarOpen.value =
+      styleEditorOpen.value =
+      myMapsOpen.value =
+      infoOpen.value =
+        false
+  }
+})
 const featureInfoStore = useFeatureInfoStore()
 const { displayStarOnMobile } = storeToRefs(featureInfoStore)
 const { setDisplayStarOnMobile } = featureInfoStore

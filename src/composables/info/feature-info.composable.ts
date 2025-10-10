@@ -8,7 +8,7 @@ import { useFeatureInfoStore } from '@/stores/feature-info.store'
 import {
   FeatureInfoJSON,
   FeatureJSON,
-} from '../../services/info/feature-info.model'
+} from '@/services/info/feature-info.model'
 import { MapBrowserEvent } from 'ol'
 import { ref, watchEffect } from 'vue'
 import { storeToRefs } from 'pinia'
