@@ -176,7 +176,7 @@ input[type='number'] {
             </p>
           </div>
         </div>
-        <hr />
+        <hr style="margin-top: 10px" />
         <div>
           <div>{{ t('Classes') }}</div>
           <div

@@ -95,29 +95,59 @@ function clearMeasure() {
     <div class="lidar-flex">
       <div class="lidar-legend p-2.5 bg-primary text-white">
         <div class="export-tools">
-          <div
-            v-if="lidarDrawInteraction && lidarDrawInteraction.hasLineFeature()"
-          >
-            <button class="lux-btn mt-3" @click="exportCsv">
+          <div>
+            <button
+              class="lux-btn mt-3"
+              :disabled="
+                !(lidarDrawInteraction && lidarDrawInteraction.hasLineFeature())
+              "
+              @click="exportCsv"
+            >
               {{ t('Export CSV') }}
             </button>
-            <button class="lux-btn mt-3" @click="exportPng">
+            <button
+              class="lux-btn mt-3"
+              :disabled="
+                !(lidarDrawInteraction && lidarDrawInteraction.hasLineFeature())
+              "
+              @click="exportPng"
+            >
               {{ t('Export PNG') }}
             </button>
-            <button class="lux-btn mt-3" @click="exportLas">
+            <button
+              class="lux-btn mt-3"
+              :disabled="
+                !(lidarDrawInteraction && lidarDrawInteraction.hasLineFeature())
+              "
+              @click="exportLas"
+            >
               {{ t('Export LAS') }}
             </button>
-            <hr />
             <div>
               <p>
                 <button
                   class="lux-btn mt-3"
                   :class="{ active: measureActive }"
+                  :disabled="
+                    !(
+                      lidarDrawInteraction &&
+                      lidarDrawInteraction.hasLineFeature()
+                    )
+                  "
                   @click="toggleMeasure"
                 >
                   {{ t('Take measure') }}
                 </button>
-                <button class="lux-btn mt-3" @click="clearMeasure">
+                <button
+                  class="lux-btn mt-3"
+                  @click="clearMeasure"
+                  :disabled="
+                    !(
+                      lidarDrawInteraction &&
+                      lidarDrawInteraction.hasLineFeature()
+                    )
+                  "
+                >
                   <span class="fa fa-eraser"></span>
                 </button>
               </p>
@@ -126,9 +156,9 @@ function clearMeasure() {
                 <em>{{ t('(Deactivates zoom and pan on the profile!)') }}</em>
               </p>
             </div>
-            <hr />
           </div>
         </div>
+        <hr style="margin-top: 10px" />
         <div class="width-info"></div>
         <div class="lod-info"></div>
         <div class="lidar-info poi-feature"></div>
