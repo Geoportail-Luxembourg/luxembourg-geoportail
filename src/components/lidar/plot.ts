@@ -8,8 +8,8 @@ import { scaleLinear, ScaleLinear } from 'd3-scale'
 import { pointer, select } from 'd3-selection'
 import { zoom } from 'd3-zoom'
 import i18next from 'i18next'
-import { LidarManager } from '../../services/lidar/lidar-manager'
-import type { LidarProfilePoints } from '../../services/lidar/lidar.types'
+import { LidarManager } from '@/services/lidar/lidar-manager'
+import type { LidarProfilePoints } from '@/services/lidar/lidar.types'
 import type {
   ConfigClassification,
   ConfigClassifications,
@@ -45,7 +45,7 @@ export class LidarPlot {
     const ctx = (d3
       .select('.lidarprofile-container .lidar-canvas')
       .node() as HTMLCanvasElement)!.getContext('2d')!
-    const profileServerConfig = this.manager_.config.value.serverConfig
+    const profileServerConfig = this.manager_.config.serverConfig
 
     for (let i = 0; i < nPoints; ++i) {
       const distance = points.distance![i]
@@ -89,7 +89,7 @@ export class LidarPlot {
       canvasEl.getBoundingClientRect().height
     )
 
-    const margin = this.manager_.config.value.clientConfig.margin
+    const margin = this.manager_.config.clientConfig.margin
     const containerEl = d3
       .select('.lidarprofile-container')
       .node() as HTMLElement
@@ -99,7 +99,7 @@ export class LidarPlot {
     this.width_ = Math.max(containerWidth - (margin.left + margin.right), 0)
     this.height_ = Math.max(containerHeight - (margin.top + margin.bottom), 0)
 
-    this.material = this.manager_.config.value.serverConfig.default_attribute
+    this.material = this.manager_.config.serverConfig.default_attribute
 
     canvas
       .attr('height', this.height_)
@@ -238,16 +238,16 @@ export class LidarPlot {
   pointHighlight(event: MouseEvent) {
     const svg = d3.select('.lidarprofile-container svg.lidar-svg')
     const lidarInfo = d3.select('.lidarprofile-container .lidar-info')
-    const pointSize = this.manager_.config.value.serverConfig.point_size
-    const margin = this.manager_.config.value.clientConfig.margin
-    const tolerance = this.manager_.config.value.clientConfig.tolerance || 0
+    const pointSize = this.manager_.config.serverConfig.point_size
+    const margin = this.manager_.config.clientConfig.margin
+    const tolerance = this.manager_.config.clientConfig.tolerance || 0
     const canvas = d3
       .select('.lidarprofile-container .lidar-canvas')
       .node() as Element
     const canvasCoordinates = pointer(event, canvas)
 
     const classification_colors =
-      this.manager_.config.value.serverConfig.classification_colors
+      this.manager_.config.serverConfig.classification_colors
 
     const p = this.manager_.utils.getClosestPoint(
       this.manager_.profilePoints,
@@ -380,8 +380,7 @@ export class LidarPlot {
   }
 
   setClassActive(classification: ConfigClassifications, material: string) {
-    this.manager_.config.value.serverConfig.classification_colors =
-      classification
+    this.manager_.config.serverConfig.classification_colors = classification
     this.changeStyle(material)
   }
 }

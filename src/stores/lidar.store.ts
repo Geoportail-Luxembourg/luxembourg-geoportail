@@ -7,9 +7,7 @@ export const useLidarStore = defineStore('lidar', () => {
   const measureActive = ref<boolean>(false)
   const profileWidth = ref<number>(5)
   const currentProfileFeature = ref<Feature | null>(null)
-  const lidarConfig = ref({
-    pytreeLidarprofileJsonUrl: null,
-    loaded: false,
+  const lidarConfig = {
     clientConfig: {
       autoWidth: true,
       margin: { left: 40, top: 10, right: 0, bottom: 40 },
@@ -235,7 +233,7 @@ export const useLidarStore = defineStore('lidar', () => {
       point_size: 1,
       width: 10,
     },
-  })
+  }
   return {
     drawLidarActive,
     profileWidth,

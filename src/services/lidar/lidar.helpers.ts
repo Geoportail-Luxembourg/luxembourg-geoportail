@@ -258,9 +258,9 @@ export class LidarHelpers {
       const row: Record<string, any> = {}
       for (const key in point) {
         const value = point[key]
-        if (key == 'altitude') {
+        if (key === 'altitude') {
           row[key] = value ? value.toFixed(4) : null
-        } else if (key == 'color_packed' || key == 'coords') {
+        } else if (key === 'color_packed' || key == 'coords') {
           row[key] = value ? value.join(' ') : null
         } else {
           row[key] = value

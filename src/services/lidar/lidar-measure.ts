@@ -1,5 +1,5 @@
 import { select, pointer as d3Mouse } from 'd3-selection'
-import type { LidarManager } from '../../services/lidar/lidar-manager'
+import type { LidarManager } from '@/services/lidar/lidar-manager'
 
 /**
  * Measure tool for the d3 chart.
@@ -56,7 +56,7 @@ export class LidarMeasure {
 
     const svgCoordinates = d3Mouse(event, svgNode)
     const canvasCoordinates = d3Mouse(event, canvasNode)
-    const margin = this.manager.config.value.clientConfig.margin
+    const margin = this.manager.config.clientConfig.margin
     const xs = svgCoordinates[0]
     const ys = svgCoordinates[1]
     const tolerance = 2
@@ -71,7 +71,7 @@ export class LidarMeasure {
       tolerance,
       sx,
       sy,
-      this.manager.config.value.serverConfig.classification_colors
+      this.manager.config.serverConfig.classification_colors
     )
 
     if (!this.pStart.set) {

@@ -22,7 +22,7 @@ let lidarManager: LidarManager
 export default function useDrawLidarInteraction() {
   const appStore = useAppStore()
   const lidarStore = useLidarStore()
-  const { drawLidarActive, currentProfileFeature, profileWidth, lidarConfig } =
+  const { drawLidarActive, currentProfileFeature, profileWidth } =
     storeToRefs(lidarStore)
   const { lidarOpen } = storeToRefs(appStore)
   let map: Map
@@ -43,7 +43,7 @@ export default function useDrawLidarInteraction() {
   function init() {
     map = useMap().getOlMap()
     lidarManager = new LidarManager()
-    lidarManager.init(lidarConfig)
+    lidarManager.init(lidarStore.lidarConfig)
     watch(lidarOpen, lidarOpen => {
       if (lidarOpen) {
         drawLidarActive.value = true
@@ -172,7 +172,7 @@ export default function useDrawLidarInteraction() {
     lidarManager.getProfileByLOD(
       [],
       0,
-      lidarConfig.value.serverConfig.minLOD,
+      lidarStore.lidarConfig.serverConfig.minLOD,
       false,
       profileWidth.value
     )
@@ -189,7 +189,7 @@ export default function useDrawLidarInteraction() {
     lidarManager.getProfileByLOD(
       [],
       0,
-      lidarConfig.value.serverConfig.minLOD,
+      lidarStore.lidarConfig.serverConfig.minLOD,
       false,
       profileWidth.value
     )

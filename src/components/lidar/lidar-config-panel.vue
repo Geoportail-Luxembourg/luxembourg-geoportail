@@ -13,8 +13,7 @@ type LangKey = 'fr' | 'en' | 'de' | 'lb'
 const appStore = useAppStore()
 const { t, i18next } = useTranslation()
 const lidarStore = useLidarStore()
-const { drawLidarActive, profileWidth, lidarConfig, measureActive } =
-  storeToRefs(lidarStore)
+const { drawLidarActive, profileWidth, measureActive } = storeToRefs(lidarStore)
 
 // Helper to safely access classification name
 function getClassificationName(
@@ -27,7 +26,8 @@ function getClassificationName(
   return name['en']
 }
 
-const classifications = lidarConfig.value.serverConfig.classification_colors
+const classifications =
+  lidarStore.lidarConfig.serverConfig.classification_colors
 
 let lidarDrawInteraction: any = useDrawLidarInteraction()
 
@@ -137,6 +137,7 @@ input[type='number'] {
             }}
           </em>
         </p>
+        <!-- TODO : To remove when we are sure we don't want it here-->
         <div
           v-if="
             false &&
