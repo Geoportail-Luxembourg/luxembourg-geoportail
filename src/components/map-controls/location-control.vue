@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { ref, onMounted, onUnmounted, watch } from 'vue'
+import { ref, onMounted, onUnmounted } from 'vue'
 import { useTranslation } from 'i18next-vue'
 import { CLASS_CONTROL, CLASS_UNSELECTABLE } from 'ol/css'
 import Control from 'ol/control/Control'
@@ -10,6 +10,7 @@ import Feature from 'ol/Feature'
 import VectorLayer from 'ol/layer/Vector'
 import VectorSource from 'ol/source/Vector'
 import { Circle as CircleStyle, Fill, Stroke, Style } from 'ol/style'
+import type Map from 'ol/Map'
 
 import useControl from '@/composables/control/control.composable'
 import useMap from '@/composables/map/map.composable'
@@ -38,7 +39,7 @@ let geolocation: Geolocation | null = null
 let positionFeature: Feature<Point> | null = null
 let accuracyFeature: Feature | null = null
 let featureOverlay: VectorLayer<VectorSource> | null = null
-let map: ReturnType<typeof useMap.prototype.getOlMap> | null = null
+let map: Map | null = null
 
 function handleCenterToLocation() {
   // Check for HTTPS protocol (disabled for localhost testing)
@@ -177,19 +178,6 @@ function clearFeatureOverlay() {
   featureOverlay?.getSource()?.clear()
 }
 
-// Watch for tracking changes to update CSS classes
-watch(isTracking, tracking => {
-  if (controlElement.value) {
-    if (tracking) {
-      controlElement.value.classList.remove('tracker-off')
-      controlElement.value.classList.add('tracker-on')
-    } else {
-      controlElement.value.classList.remove('tracker-on')
-      controlElement.value.classList.add('tracker-off')
-    }
-  }
-})
-
 onMounted(() => {
   map = useMap().getOlMap()
   useControl(Control, {
@@ -213,11 +201,10 @@ onUnmounted(() => {
   <div
     ref="controlElement"
     :class="[
-      'tracker-off',
+      { 'tracker-on': isTracking, 'tracker-off': !isTracking },
       props.className,
       CLASS_UNSELECTABLE,
       CLASS_CONTROL,
-      { active: isTracking },
     ]"
   >
     <button :title="t(props.tipLabel)" @click="handleCenterToLocation">
