@@ -3,8 +3,7 @@
 import ScaleSelector from './scale-selector.vue'
 import ScaleLine from './scale-line.vue'
 import ProjectionSelector from './projection-selector.vue'
-// import CoordinatesDisplay from './coordinates-display.vue'
-// import ElevationDisplay from './elevation-display.vue'
+import ElevationDisplay from './elevation-display.vue'
 </script>
 
 <template>
@@ -22,8 +21,7 @@ import ProjectionSelector from './projection-selector.vue'
     </div>
     <div class="infobar-separator"></div>
     <div class="infobar-item">
-      <!-- <ElevationDisplay /> -->
-      <span>Elevation</span>
+      <ElevationDisplay />
     </div>
   </div>
 </template>
