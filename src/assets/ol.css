@@ -80,4 +80,9 @@
     @apply lux-control;
     bottom: 105px;
   }
+
+  .infobar-button {
+    @apply lux-control;
+    bottom: 5px;
+  }
 }

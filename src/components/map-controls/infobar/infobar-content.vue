@@ -1,0 +1,66 @@
+<script setup lang="ts">
+import { useTranslation } from 'i18next-vue'
+import ScaleSelector from './scale-selector.vue'
+import ScaleLine from './scale-line.vue'
+import ProjectionSelector from './projection-selector.vue'
+import ElevationDisplay from './elevation-display.vue'
+
+const { t } = useTranslation()
+</script>
+
+<template>
+  <div
+    class="infobar"
+    role="toolbar"
+    :aria-label="t('Map information toolbar')"
+  >
+    <div class="infobar-item">
+      <ScaleSelector />
+    </div>
+    <div class="infobar-separator" aria-hidden="true"></div>
+    <div class="infobar-item">
+      <ScaleLine />
+    </div>
+    <div class="!hidden lg:!block infobar-separator" aria-hidden="true"></div>
+    <div class="!hidden lg:!flex infobar-item-projection">
+      <ProjectionSelector />
+    </div>
+    <div class="!hidden lg:!block infobar-separator" aria-hidden="true"></div>
+    <div class="!hidden lg:!flex infobar-item-elevation">
+      <ElevationDisplay />
+    </div>
+  </div>
+</template>
+
+<style scoped>
+.infobar {
+  height: 40px;
+  background-color: white;
+  border: 1px solid var(--color-border-default);
+  border-radius: 4px;
+  padding: 0 12px;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  white-space: nowrap;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  font-family: 'DINNextLTPro-Condensed', Arial, sans-serif;
+  font-size: 1rem;
+}
+
+.infobar-item,
+.infobar-item-projection,
+.infobar-item-elevation {
+  display: flex;
+  align-items: center;
+  font-size: 14px;
+  color: var(--color-primary);
+}
+
+.infobar-separator {
+  width: 1px;
+  height: 24px;
+  background-color: var(--color-border-default);
+  flex-shrink: 0;
+}
+</style>

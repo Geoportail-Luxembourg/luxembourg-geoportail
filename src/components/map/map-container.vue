@@ -11,6 +11,7 @@ import { statePersistorFeaturesService } from '@/services/state-persistor/state-
 import { statePersistorLocationInfo } from '@/services/state-persistor/state-persistor-location-info'
 import AttributionControl from '../map-controls/attribution-control.vue'
 import LocationControl from '../map-controls/location-control.vue'
+import InfobarControl from '../map-controls/infobar-control.vue'
 import Map3dControl from '../map-controls/map-3d.vue'
 import FullscreenControl from '../map-controls/fullscreen-control.vue'
 import ZoomControl from '../map-controls/zoom-control.vue'
@@ -113,6 +114,7 @@ provide('olMap', olMap)
       <attribution-control />
       <map-3d-control v-if="v4_standalone" />
       <location-control />
+      <infobar-control />
       <rotate-control />
     </template>
   </div>
