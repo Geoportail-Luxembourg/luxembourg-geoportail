@@ -2,7 +2,7 @@
 // TODO: Import child components when created
 import ScaleSelector from './scale-selector.vue'
 import ScaleLine from './scale-line.vue'
-// import ProjectionSelector from './projection-selector.vue'
+import ProjectionSelector from './projection-selector.vue'
 // import CoordinatesDisplay from './coordinates-display.vue'
 // import ElevationDisplay from './elevation-display.vue'
 </script>
@@ -18,13 +18,7 @@ import ScaleLine from './scale-line.vue'
     </div>
     <div class="infobar-separator"></div>
     <div class="infobar-item">
-      <!-- <ProjectionSelector /> -->
-      <span>Projection selector</span>
-    </div>
-    <div class="infobar-separator"></div>
-    <div class="infobar-item">
-      <!-- <CoordinatesDisplay /> -->
-      <span>Coordinates</span>
+      <ProjectionSelector />
     </div>
     <div class="infobar-separator"></div>
     <div class="infobar-item">
