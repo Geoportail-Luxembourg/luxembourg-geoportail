@@ -2,20 +2,23 @@
 import { ref, computed, onMounted, onBeforeUnmount, nextTick } from 'vue'
 import { useTranslation } from 'i18next-vue'
 import useMap from '@/composables/map/map.composable'
+import { useMapStore } from '@/stores/map.store'
+import { storeToRefs } from 'pinia'
 import { EventsKey } from 'ol/events'
 import { unByKey } from 'ol/Observable'
 
 const { t } = useTranslation()
 const { getOlMap } = useMap()
 const map = getOlMap()
+const { minZoom, maxZoom } = storeToRefs(useMapStore())
 
 const isOpen = ref(false)
 const dropdownButton = ref<HTMLElement | null>(null)
 const dropdownMenu = ref<HTMLElement | null>(null)
 let resolutionChangeKey: EventsKey | null = null
 
-// Scales mapping (zoom level to display string)
-const scales: Record<number, string> = {
+// All available scales mapping (zoom level to display string)
+const allScales: Record<number, string> = {
   8: "1&nbsp;:&nbsp;1'500'000",
   9: "1&nbsp;:&nbsp;750'000",
   10: "1&nbsp;:&nbsp;400'000",
@@ -34,16 +37,32 @@ const scales: Record<number, string> = {
 
 const currentScale = ref<string | undefined>(undefined)
 
-// Computed property for available zoom levels (sorted)
+// Filter scales based on theme's min/max zoom
+const availableScales = computed(() => {
+  const min = minZoom.value ?? 8
+  const max = maxZoom.value ?? 19
+  const filtered: Record<number, string> = {}
+
+  Object.keys(allScales).forEach(key => {
+    const zoom = Number(key)
+    if (zoom >= min && zoom <= max) {
+      filtered[zoom] = allScales[zoom]
+    }
+  })
+
+  return filtered
+})
+
+// Computed property for available zoom levels (sorted and filtered)
 const zoomLevels = computed(() => {
-  return Object.keys(scales)
+  return Object.keys(availableScales.value)
     .map(Number)
     .sort((a, b) => a - b)
 })
 
 // Get scale label for a given zoom level
 const getScaleLabel = (zoom: number): string => {
-  return scales[zoom] || ''
+  return availableScales.value[zoom] || allScales[zoom] || ''
 }
 
 // Get plain text scale (without HTML entities) for accessibility
@@ -83,7 +102,7 @@ const handleResolutionChange = () => {
   if (!view) return
 
   const zoom = Math.round(view.getZoom() || 0)
-  const scale = scales[zoom]
+  const scale = allScales[zoom] // Use allScales to display current scale even if outside range
 
   if (scale !== undefined) {
     currentScale.value = scale
@@ -191,7 +210,7 @@ onMounted(() => {
   if (view) {
     const currentZoom = view.getZoom()
     if (currentZoom !== undefined) {
-      currentScale.value = scales[Math.round(currentZoom)]
+      currentScale.value = allScales[Math.round(currentZoom)]
     }
   }
 
