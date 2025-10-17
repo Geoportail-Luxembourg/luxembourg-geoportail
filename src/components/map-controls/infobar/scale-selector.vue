@@ -16,6 +16,7 @@ const isOpen = ref(false)
 const dropdownButton = ref<HTMLElement | null>(null)
 const dropdownMenu = ref<HTMLElement | null>(null)
 let resolutionChangeKey: EventsKey | null = null
+let viewChangeKey: EventsKey | null = null
 
 // All available scales mapping (zoom level to display string)
 const allScales: Record<number, string> = {
@@ -217,10 +218,13 @@ onMounted(() => {
   registerResolutionChangeListener()
 
   // Listen for view changes
-  view.on('change', () => {
-    registerResolutionChangeListener()
-    handleResolutionChange()
-  })
+  const view2 = map.getView()
+  if (view2) {
+    viewChangeKey = view2.on('change', () => {
+      registerResolutionChangeListener()
+      handleResolutionChange()
+    })
+  }
 
   // Add click outside listener
   document.addEventListener('click', handleClickOutside)
@@ -230,6 +234,9 @@ onMounted(() => {
 onBeforeUnmount(() => {
   if (resolutionChangeKey !== null) {
     unByKey(resolutionChangeKey)
+  }
+  if (viewChangeKey !== null) {
+    unByKey(viewChangeKey)
   }
   document.removeEventListener('click', handleClickOutside)
 })
