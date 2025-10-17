@@ -21,12 +21,12 @@ const { t } = useTranslation()
     <div class="infobar-item">
       <ScaleLine />
     </div>
-    <div class="infobar-separator" aria-hidden="true"></div>
-    <div class="infobar-item">
+    <div class="!hidden lg:!block infobar-separator" aria-hidden="true"></div>
+    <div class="!hidden lg:!flex infobar-item-projection">
       <ProjectionSelector />
     </div>
-    <div class="infobar-separator" aria-hidden="true"></div>
-    <div class="infobar-item">
+    <div class="!hidden lg:!block infobar-separator" aria-hidden="true"></div>
+    <div class="!hidden lg:!flex infobar-item-elevation">
       <ElevationDisplay />
     </div>
   </div>
@@ -48,7 +48,9 @@ const { t } = useTranslation()
   font-size: 1rem;
 }
 
-.infobar-item {
+.infobar-item,
+.infobar-item-projection,
+.infobar-item-elevation {
   display: flex;
   align-items: center;
   font-size: 14px;
