@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { ref, computed, onMounted, onBeforeUnmount } from 'vue'
+import { ref, computed, onMounted, onBeforeUnmount, nextTick } from 'vue'
 import { useTranslation } from 'i18next-vue'
 import useMap from '@/composables/map/map.composable'
 import { EventsKey } from 'ol/events'
@@ -11,6 +11,7 @@ const map = getOlMap()
 
 const isOpen = ref(false)
 const dropdownButton = ref<HTMLElement | null>(null)
+const dropdownMenu = ref<HTMLElement | null>(null)
 let resolutionChangeKey: EventsKey | null = null
 
 // Scales mapping (zoom level to display string)
@@ -45,9 +46,21 @@ const getScaleLabel = (zoom: number): string => {
   return scales[zoom] || ''
 }
 
+// Get plain text scale (without HTML entities) for accessibility
+const getPlainTextScale = (scale: string): string => {
+  return scale.replace(/&nbsp;/g, ' ').replace(/'/g, "'")
+}
+
 // Current scale display label
 const currentScaleLabel = computed(() => {
   return currentScale.value !== undefined ? currentScale.value : ''
+})
+
+// Current scale for screen readers (plain text)
+const currentScalePlainText = computed(() => {
+  return currentScale.value
+    ? getPlainTextScale(currentScale.value)
+    : t('No scale')
 })
 
 // Change zoom level
@@ -57,6 +70,11 @@ const changeZoom = (zoom: number) => {
     view.setZoom(zoom)
     isOpen.value = false
   }
+
+  // Return focus to button
+  nextTick(() => {
+    dropdownButton.value?.focus()
+  })
 }
 
 // Handle resolution changes
@@ -88,12 +106,81 @@ const registerResolutionChangeListener = () => {
 // Toggle dropdown
 const toggleDropdown = () => {
   isOpen.value = !isOpen.value
+
+  if (isOpen.value) {
+    // Focus first item when opening
+    nextTick(() => {
+      const firstLink = dropdownMenu.value?.querySelector('a') as HTMLElement
+      firstLink?.focus()
+    })
+  }
+}
+
+// Handle keyboard events on button
+const handleButtonKeydown = (event: KeyboardEvent) => {
+  if (event.key === 'Enter' || event.key === ' ') {
+    event.preventDefault()
+    event.stopPropagation()
+    toggleDropdown()
+  } else if (event.key === 'Escape' && isOpen.value) {
+    event.preventDefault()
+    event.stopPropagation()
+    isOpen.value = false
+  } else if (event.key === 'ArrowDown' && !isOpen.value) {
+    event.preventDefault()
+    event.stopPropagation()
+    toggleDropdown()
+  } else if (event.key === 'ArrowUp' || event.key === 'ArrowDown') {
+    // Prevent map from zooming when dropdown is closed but button is focused
+    event.stopPropagation()
+  }
+}
+
+// Handle keyboard navigation in dropdown
+const handleDropdownKeydown = (event: KeyboardEvent) => {
+  const links = Array.from(
+    dropdownMenu.value?.querySelectorAll('a') || []
+  ) as HTMLElement[]
+  const currentIndex = links.findIndex(link => link === document.activeElement)
+
+  if (event.key === 'Escape') {
+    event.preventDefault()
+    event.stopPropagation()
+    isOpen.value = false
+    dropdownButton.value?.focus()
+  } else if (event.key === 'ArrowDown') {
+    event.preventDefault()
+    event.stopPropagation()
+    const nextIndex = (currentIndex + 1) % links.length
+    links[nextIndex]?.focus()
+  } else if (event.key === 'ArrowUp') {
+    event.preventDefault()
+    event.stopPropagation()
+    const prevIndex = currentIndex <= 0 ? links.length - 1 : currentIndex - 1
+    links[prevIndex]?.focus()
+  } else if (event.key === 'Home') {
+    event.preventDefault()
+    event.stopPropagation()
+    links[0]?.focus()
+  } else if (event.key === 'End') {
+    event.preventDefault()
+    event.stopPropagation()
+    links[links.length - 1]?.focus()
+  } else if (event.key === 'Tab') {
+    // Close on tab out
+    isOpen.value = false
+  }
 }
 
 // Close dropdown when clicking outside
 const handleClickOutside = (event: MouseEvent) => {
   const target = event.target as HTMLElement
-  if (dropdownButton.value && !dropdownButton.value.contains(target)) {
+  if (
+    dropdownButton.value &&
+    !dropdownButton.value.contains(target) &&
+    dropdownMenu.value &&
+    !dropdownMenu.value.contains(target)
+  ) {
     isOpen.value = false
   }
 }
@@ -135,23 +222,37 @@ onBeforeUnmount(() => {
       type="button"
       class="scale-button"
       @click="toggleDropdown"
+      @keydown="handleButtonKeydown"
       ref="dropdownButton"
-      :title="t('Select scale')"
+      :aria-label="t('Select scale') + ': ' + currentScalePlainText"
+      :aria-expanded="isOpen"
+      aria-haspopup="true"
+      :aria-controls="isOpen ? 'scale-menu' : undefined"
     >
-      <span v-html="currentScaleLabel"></span>&nbsp;<span class="caret"></span>
+      <span v-html="currentScaleLabel" aria-hidden="true"></span>&nbsp;<span
+        class="caret"
+        aria-hidden="true"
+      ></span>
     </button>
     <ul
+      v-show="isOpen"
+      ref="dropdownMenu"
+      id="scale-menu"
       class="scale-dropdown"
       role="menu"
-      :class="{ show: isOpen }"
-      v-show="isOpen"
+      @keydown="handleDropdownKeydown"
+      :aria-labelledby="dropdownButton ? 'scale-button' : undefined"
     >
-      <li v-for="zoomLevel in zoomLevels" :key="zoomLevel">
+      <li v-for="zoomLevel in zoomLevels" :key="zoomLevel" role="none">
         <a
           href="#"
+          role="menuitem"
           @click.prevent="changeZoom(zoomLevel)"
-          v-html="getScaleLabel(zoomLevel)"
-        ></a>
+          :aria-label="getPlainTextScale(getScaleLabel(zoomLevel))"
+          tabindex="0"
+        >
+          <span v-html="getScaleLabel(zoomLevel)"></span>
+        </a>
       </li>
     </ul>
   </div>
@@ -189,13 +290,17 @@ onBeforeUnmount(() => {
   background-color: #f0f0f0;
 }
 
+.scale-button:focus {
+  outline: 2px solid var(--color-primary);
+  outline-offset: 2px;
+}
+
 .caret {
   display: inline-block;
   width: 0;
   height: 0;
   margin-left: 2px;
   vertical-align: middle;
-  border-top: 4px dashed;
   border-top: 4px solid;
   border-right: 4px solid transparent;
   border-left: 4px solid transparent;
@@ -210,7 +315,7 @@ onBeforeUnmount(() => {
   min-width: 160px;
   padding: 5px 0;
   margin: 2px 0 0;
-  font-size: 14px;
+  font-size: 12px;
   text-align: left;
   list-style: none;
   background-color: white;
@@ -243,5 +348,11 @@ onBeforeUnmount(() => {
   color: #262626;
   text-decoration: none;
   background-color: #f5f5f5;
+  outline: none;
+}
+
+.scale-dropdown li a:focus {
+  background-color: var(--color-primary);
+  color: white;
 }
 </style>

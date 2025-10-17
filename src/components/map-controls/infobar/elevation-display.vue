@@ -52,9 +52,14 @@ onBeforeUnmount(() => {
 </script>
 
 <template>
-  <div class="elevation-display">
+  <div
+    class="elevation-display"
+    :aria-label="t('Elevation at cursor position')"
+  >
     <span class="elevation-label">{{ t('Elevation') }}:</span>
-    <span class="elevation-value">{{ elevation }}</span>
+    <span class="elevation-value" role="status" aria-live="polite">
+      {{ elevation }}
+    </span>
   </div>
 </template>
 

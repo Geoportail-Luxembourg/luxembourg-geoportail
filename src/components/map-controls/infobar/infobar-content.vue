@@ -1,25 +1,31 @@
 <script setup lang="ts">
-// TODO: Import child components when created
+import { useTranslation } from 'i18next-vue'
 import ScaleSelector from './scale-selector.vue'
 import ScaleLine from './scale-line.vue'
 import ProjectionSelector from './projection-selector.vue'
 import ElevationDisplay from './elevation-display.vue'
+
+const { t } = useTranslation()
 </script>
 
 <template>
-  <div class="infobar">
+  <div
+    class="infobar"
+    role="toolbar"
+    :aria-label="t('Map information toolbar')"
+  >
     <div class="infobar-item">
       <ScaleSelector />
     </div>
-    <div class="infobar-separator"></div>
+    <div class="infobar-separator" aria-hidden="true"></div>
     <div class="infobar-item">
       <ScaleLine />
     </div>
-    <div class="infobar-separator"></div>
+    <div class="infobar-separator" aria-hidden="true"></div>
     <div class="infobar-item">
       <ProjectionSelector />
     </div>
-    <div class="infobar-separator"></div>
+    <div class="infobar-separator" aria-hidden="true"></div>
     <div class="infobar-item">
       <ElevationDisplay />
     </div>
@@ -51,5 +57,6 @@ import ElevationDisplay from './elevation-display.vue'
   width: 1px;
   height: 24px;
   background-color: var(--color-border-default);
+  flex-shrink: 0;
 }
 </style>

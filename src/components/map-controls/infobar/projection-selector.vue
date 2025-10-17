@@ -1,15 +1,18 @@
 <script setup lang="ts">
-import { ref, computed, onMounted, onBeforeUnmount } from 'vue'
+import { ref, computed, onMounted, onBeforeUnmount, nextTick } from 'vue'
+import { useTranslation } from 'i18next-vue'
 import useMap from '@/composables/map/map.composable'
 import MousePosition from 'ol/control/MousePosition'
 import { useCoordinateString } from '@/services/search/coordinate.service'
 
+const { t } = useTranslation()
 const { getOlMap } = useMap()
 const map = getOlMap()
 const { coordinateString } = useCoordinateString()
 
 const isOpen = ref(false)
 const dropdownButton = ref<HTMLElement | null>(null)
+const dropdownMenu = ref<HTMLElement | null>(null)
 const mousePositionContainer = ref<HTMLElement | null>(null)
 let mousePositionControl: MousePosition | null = null
 
@@ -57,17 +60,88 @@ const switchProjection = (option: ProjectionOption) => {
   if (mousePositionControl) {
     mousePositionControl.setCoordinateFormat(mouseCoordinateFormat)
   }
+
+  // Return focus to button
+  nextTick(() => {
+    dropdownButton.value?.focus()
+  })
 }
 
 // Toggle dropdown
 const toggleDropdown = () => {
   isOpen.value = !isOpen.value
+
+  if (isOpen.value) {
+    // Focus first item when opening
+    nextTick(() => {
+      const firstLink = dropdownMenu.value?.querySelector('a') as HTMLElement
+      firstLink?.focus()
+    })
+  }
+}
+
+// Handle keyboard events on button
+const handleButtonKeydown = (event: KeyboardEvent) => {
+  if (event.key === 'Enter' || event.key === ' ') {
+    event.preventDefault()
+    event.stopPropagation()
+    toggleDropdown()
+  } else if (event.key === 'Escape' && isOpen.value) {
+    event.preventDefault()
+    event.stopPropagation()
+    isOpen.value = false
+  } else if (event.key === 'ArrowDown' && !isOpen.value) {
+    event.preventDefault()
+    event.stopPropagation()
+    toggleDropdown()
+  }
+}
+
+// Handle keyboard navigation in dropdown
+const handleDropdownKeydown = (event: KeyboardEvent) => {
+  const links = Array.from(
+    dropdownMenu.value?.querySelectorAll('a') || []
+  ) as HTMLElement[]
+  const currentIndex = links.findIndex(link => link === document.activeElement)
+
+  if (event.key === 'Escape') {
+    event.preventDefault()
+    event.stopPropagation()
+    isOpen.value = false
+    dropdownButton.value?.focus()
+  } else if (event.key === 'ArrowDown') {
+    event.preventDefault()
+    event.stopPropagation()
+    const nextIndex = (currentIndex + 1) % links.length
+    links[nextIndex]?.focus()
+  } else if (event.key === 'ArrowUp') {
+    event.preventDefault()
+    event.stopPropagation()
+    const prevIndex = currentIndex <= 0 ? links.length - 1 : currentIndex - 1
+    links[prevIndex]?.focus()
+  } else if (event.key === 'Home') {
+    event.preventDefault()
+    event.stopPropagation()
+    links[0]?.focus()
+  } else if (event.key === 'End') {
+    event.preventDefault()
+    event.stopPropagation()
+    links[links.length - 1]?.focus()
+  } else if (event.key === 'Tab') {
+    // Close on tab out
+    isOpen.value = false
+  }
 }
 
 // Close dropdown when clicking outside
 const handleClickOutside = (event: MouseEvent) => {
   const target = event.target as HTMLElement
-  if (dropdownButton.value && !dropdownButton.value.contains(target)) {
+  if (
+    dropdownButton.value &&
+    !dropdownButton.value.contains(target) &&
+    dropdownMenu.value &&
+    !dropdownMenu.value.contains(target)
+  ) {
     isOpen.value = false
   }
 }
@@ -109,18 +183,37 @@ onBeforeUnmount(() => {
         type="button"
         class="projection-button"
         @click="toggleDropdown"
+        @keydown="handleButtonKeydown"
         ref="dropdownButton"
-        :title="projectionLabel"
+        :aria-label="t('Select projection') + ': ' + projectionLabel"
+        :aria-expanded="isOpen"
+        aria-haspopup="true"
+        :aria-controls="isOpen ? 'projection-menu' : undefined"
       >
-        <span class="projection-label">{{ projectionLabel }}</span>
-        <span class="caret"></span>
+        <span class="projection-label" aria-hidden="true">{{
+          projectionLabel
+        }}</span>
+        <span class="caret" aria-hidden="true"></span>
       </button>
-      <ul class="projection-dropdown" role="menu" v-show="isOpen">
-        <li v-for="option in projectionOptions" :key="option.value">
+      <ul
+        v-show="isOpen"
+        ref="dropdownMenu"
+        id="projection-menu"
+        class="projection-dropdown"
+        role="menu"
+        @keydown="handleDropdownKeydown"
+        :aria-labelledby="dropdownButton ? 'projection-button' : undefined"
+      >
+        <li v-for="option in projectionOptions" :key="option.value" role="none">
           <a
             href="#"
+            role="menuitem"
             @click.prevent="switchProjection(option)"
             :class="{ active: option.value === selectedProjection.value }"
+            :aria-current="
+              option.value === selectedProjection.value ? 'true' : undefined
+            "
+            tabindex="0"
           >
             {{ option.label }}
           </a>
@@ -129,7 +222,13 @@ onBeforeUnmount(() => {
     </div>
 
     <!-- Mouse coordinates display -->
-    <div ref="mousePositionContainer" class="mouse-position"></div>
+    <div
+      ref="mousePositionContainer"
+      class="mouse-position"
+      role="status"
+      aria-live="polite"
+      :aria-label="t('Current coordinates')"
+    ></div>
   </div>
 </template>
 
@@ -168,6 +267,11 @@ onBeforeUnmount(() => {
 
 .projection-button:hover {
   background-color: #f0f0f0;
+}
+
+.projection-button:focus {
+  outline: 2px solid var(--color-primary);
+  outline-offset: 2px;
 }
 
 .projection-label {
@@ -225,6 +329,12 @@ onBeforeUnmount(() => {
 .projection-dropdown li a:hover,
 .projection-dropdown li a:focus {
   background-color: #f5f5f5;
+  outline: none;
+}
+
+.projection-dropdown li a:focus {
+  background-color: var(--color-primary);
+  color: white;
 }
 
 .projection-dropdown li a.active {
