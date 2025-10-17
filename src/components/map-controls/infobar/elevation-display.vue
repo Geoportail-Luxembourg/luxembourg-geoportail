@@ -68,7 +68,8 @@ onBeforeUnmount(() => {
   display: flex;
   align-items: center;
   gap: 4px;
-  font-size: 12px;
+  font-family: 'DINNextLTPro-Condensed', Arial, sans-serif;
+  font-size: 1rem;
   color: var(--color-primary);
   white-space: nowrap;
 }

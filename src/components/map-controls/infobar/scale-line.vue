@@ -43,6 +43,8 @@ onBeforeUnmount(() => {
 .scaleline-wrapper {
   display: inline-flex;
   align-items: center;
+  font-family: 'DINNextLTPro-Condensed', Arial, sans-serif;
+  font-size: 1rem;
 }
 
 .scaleline-container {
@@ -65,7 +67,8 @@ onBeforeUnmount(() => {
   border: 1px solid var(--color-primary);
   border-top: none;
   color: var(--color-primary);
-  font-size: 12px;
+  font-family: 'DINNextLTPro-Condensed', Arial, sans-serif;
+  font-size: 1rem;
   text-align: center;
   margin: 0;
   padding: 0 2px;

@@ -44,6 +44,8 @@ const { t } = useTranslation()
   gap: 12px;
   white-space: nowrap;
   box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  font-family: 'DINNextLTPro-Condensed', Arial, sans-serif;
+  font-size: 1rem;
 }
 
 .infobar-item {

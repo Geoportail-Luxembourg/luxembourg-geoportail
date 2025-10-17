@@ -262,6 +262,8 @@ onBeforeUnmount(() => {
 .scale-selector {
   position: relative;
   display: inline-block;
+  font-family: 'DINNextLTPro-Condensed', Arial, sans-serif;
+  font-size: 1rem;
 }
 
 .scale-selector.dropup .scale-dropdown {
@@ -274,14 +276,15 @@ onBeforeUnmount(() => {
   background-color: white;
   border: 1px solid var(--color-border-default);
   padding: 4px 8px;
-  font-size: 12px;
+  font-family: 'DINNextLTPro-Condensed', Arial, sans-serif;
+  font-size: 1rem;
   cursor: pointer;
   display: flex;
   align-items: center;
   gap: 4px;
   white-space: nowrap;
   border-radius: 2px;
-  min-width: 150px;
+  min-width: 110px;
   justify-content: space-between;
   text-align: left;
 }
@@ -301,7 +304,7 @@ onBeforeUnmount(() => {
   height: 0;
   margin-left: 2px;
   vertical-align: middle;
-  border-top: 4px solid;
+  border-bottom: 4px solid;
   border-right: 4px solid transparent;
   border-left: 4px solid transparent;
   color: var(--color-primary);
@@ -315,7 +318,8 @@ onBeforeUnmount(() => {
   min-width: 160px;
   padding: 5px 0;
   margin: 2px 0 0;
-  font-size: 12px;
+  font-family: 'DINNextLTPro-Condensed', Arial, sans-serif;
+  font-size: 1rem;
   text-align: left;
   list-style: none;
   background-color: white;

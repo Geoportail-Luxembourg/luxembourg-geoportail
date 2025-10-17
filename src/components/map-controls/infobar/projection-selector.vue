@@ -238,6 +238,8 @@ onBeforeUnmount(() => {
   align-items: center;
   gap: 8px;
   flex-shrink: 0;
+  font-family: 'DINNextLTPro-Condensed', Arial, sans-serif;
+  font-size: 1rem;
 }
 
 .projection-selector {
@@ -256,7 +258,8 @@ onBeforeUnmount(() => {
   background-color: white;
   border: 1px solid var(--color-border-default);
   padding: 4px 8px;
-  font-size: 12px;
+  font-family: 'DINNextLTPro-Condensed', Arial, sans-serif;
+  font-size: 1rem;
   cursor: pointer;
   display: flex;
   align-items: center;
@@ -287,8 +290,9 @@ onBeforeUnmount(() => {
   display: inline-block;
   width: 0;
   height: 0;
+  margin-left: 2px;
   vertical-align: middle;
-  border-top: 4px solid;
+  border-bottom: 4px solid;
   border-right: 4px solid transparent;
   border-left: 4px solid transparent;
   color: var(--color-primary);
@@ -300,7 +304,8 @@ onBeforeUnmount(() => {
   z-index: 1000;
   min-width: 160px;
   padding: 5px 0;
-  font-size: 12px;
+  font-family: 'DINNextLTPro-Condensed', Arial, sans-serif;
+  font-size: 1rem;
   text-align: left;
   list-style: none;
   background-color: white;
@@ -343,7 +348,8 @@ onBeforeUnmount(() => {
 }
 
 .mouse-position {
-  font-size: 12px;
+  font-family: 'DINNextLTPro-Condensed', Arial, sans-serif;
+  font-size: 1rem;
   color: var(--color-primary);
   white-space: nowrap;
   flex-shrink: 0;
@@ -356,7 +362,8 @@ onBeforeUnmount(() => {
   background: transparent;
   padding: 0;
   margin: 0;
-  font-size: 12px;
+  font-family: 'DINNextLTPro-Condensed', Arial, sans-serif;
+  font-size: 1rem;
   color: var(--color-primary);
 }
 </style>
