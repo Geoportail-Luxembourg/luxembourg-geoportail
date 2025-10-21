@@ -38,6 +38,7 @@ export const useAppStore = defineStore(
       ref(undefined)
     const drawToolbarOpen = ref(false)
     const measureToolbarOpen = ref(false)
+    const elevationProfileToolbarOpen = ref(false)
     const printToolbarOpen = ref(false)
     const isOffLine = ref(false)
     const isApp = ref(false) // Is the app displayed for Android or Ios?
@@ -131,6 +132,11 @@ export const useAppStore = defineStore(
       printToolbarOpen.value = open ?? !printToolbarOpen.value
     }
 
+    function toggleElevationProfileToolbarOpen(open?: boolean) {
+      elevationProfileToolbarOpen.value =
+        open ?? !elevationProfileToolbarOpen.value
+    }
+
     return {
       embedded,
       lang,
@@ -151,6 +157,7 @@ export const useAppStore = defineStore(
       remoteLayersOpen,
       drawToolbarOpen,
       measureToolbarOpen,
+      elevationProfileToolbarOpen,
       isOffLine,
       isApp,
       setIsApp,
@@ -170,6 +177,7 @@ export const useAppStore = defineStore(
       toggleLidarOpen,
       toggleThemeGrid,
       toggleLegendsOpen,
+      toggleElevationProfileToolbarOpen,
     }
   },
   {}
