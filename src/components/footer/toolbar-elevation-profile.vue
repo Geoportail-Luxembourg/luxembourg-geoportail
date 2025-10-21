@@ -37,7 +37,8 @@ onMounted(() => {
 })
 
 onUnmounted(() => {
-  drawElevationProfile.clearFeature()
+  // Clean up event listeners and resources to prevent memory leaks
+  drawElevationProfile.destroy()
 })
 
 function onRedraw() {

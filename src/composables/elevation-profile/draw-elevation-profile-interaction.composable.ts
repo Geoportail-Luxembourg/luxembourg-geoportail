@@ -1,4 +1,5 @@
-import { listen } from 'ol/events'
+import { listen, unlistenByKey } from 'ol/events'
+import { EventsKey } from 'ol/events'
 import Draw, { DrawEvent } from 'ol/interaction/Draw'
 import { watch } from 'vue'
 import { storeToRefs } from 'pinia'
@@ -29,6 +30,8 @@ export default function useDrawElevationProfileInteraction() {
 
   let map: Map
   const drawInteraction = new Draw({ type: 'LineString' })
+  let keyupListenerKey: EventsKey | undefined
+
   const lineStyle = new olStyleStyle({
     fill: new olStyleFill({
       color: 'rgba(255, 204, 51, 0.2)',
@@ -116,7 +119,8 @@ export default function useDrawElevationProfileInteraction() {
       onDrawEnd(event as DrawEvent)
     })
 
-    listen(document, 'keyup', event => {
+    // Store the listener key for cleanup
+    keyupListenerKey = listen(document, 'keyup', event => {
       onKeyUp(event as KeyboardEvent)
     })
   }
@@ -160,6 +164,30 @@ export default function useDrawElevationProfileInteraction() {
     )
   }
 
+  /**
+   * Cleanup function to remove event listeners and prevent memory leaks
+   * Should be called when the composable is no longer needed
+   */
+  function destroy() {
+    // Remove the keyup event listener
+    if (keyupListenerKey) {
+      unlistenByKey(keyupListenerKey)
+      keyupListenerKey = undefined
+    }
+
+    // Clear the vector layer source
+    const source = vectorLayer.getSource()
+    if (source) {
+      source.clear()
+    }
+
+    // Remove the layer from the map
+    if (map) {
+      map.removeLayer(vectorLayer)
+      map.removeInteraction(drawInteraction)
+    }
+  }
+
   return {
     drawInteraction,
     drawElevationProfileActive,
@@ -167,5 +195,6 @@ export default function useDrawElevationProfileInteraction() {
     init,
     clearFeature,
     hasLineFeature,
+    destroy,
   }
 }
