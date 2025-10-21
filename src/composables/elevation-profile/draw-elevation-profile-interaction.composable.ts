@@ -3,11 +3,13 @@ import Draw, { DrawEvent } from 'ol/interaction/Draw'
 import { watch } from 'vue'
 import { storeToRefs } from 'pinia'
 import { Feature, Map } from 'ol'
-import Style from 'ol/style/Style'
-import Stroke from 'ol/style/Stroke'
 import VectorSource from 'ol/source/Vector'
 import VectorLayer from 'ol/layer/Vector'
-
+import olStyleFill from 'ol/style/Fill.js'
+import olStyleStroke from 'ol/style/Stroke.js'
+import olStyleText from 'ol/style/Text.js'
+import olStyleStyle from 'ol/style/Style.js'
+import olStyleCircle from 'ol/style/Circle.js'
 import useMap from '@/composables/map/map.composable'
 import { useElevationProfileStore } from '@/stores/elevation-profile.store'
 import { useAppStore } from '@/stores/app.store'
@@ -27,14 +29,30 @@ export default function useDrawElevationProfileInteraction() {
 
   let map: Map
   const drawInteraction = new Draw({ type: 'LineString' })
-
-  // Style for the drawn line
-  const lineStyle = new Style({
-    stroke: new Stroke({
-      color: 'rgba(255, 0, 0, 0.8)',
-      width: 3,
-      lineCap: 'round',
-      lineJoin: 'round',
+  const lineStyle = new olStyleStyle({
+    fill: new olStyleFill({
+      color: 'rgba(255, 204, 51, 0.2)',
+    }),
+    stroke: new olStyleStroke({
+      color: 'rgba(255, 204, 51, 1)',
+      width: 2,
+    }),
+    image: new olStyleCircle({
+      radius: 7,
+      fill: new olStyleFill({
+        color: 'rgba(255, 204, 51, 0.3)',
+      }),
+    }),
+    text: new olStyleText({
+      font: 'bold 12px Calibri,sans-serif',
+      fill: new olStyleFill({
+        color: 'rgb(0 0 0)',
+      }),
+      stroke: new olStyleStroke({
+        color: 'rgba(255, 204, 51, 1)',
+        width: 4,
+      }),
+      overflow: true,
     }),
   })
 
