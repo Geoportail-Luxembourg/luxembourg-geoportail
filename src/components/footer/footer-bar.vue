@@ -9,6 +9,7 @@ import ButtonIcon from './button-icon.vue'
 import ButtonLink from './button-link.vue'
 import ToolbarDraw from './toolbar-draw.vue'
 import ToolbarMeasure from './toolbar-measure.vue'
+import ToolbarElevationProfile from './toolbar-elevation-profile.vue'
 import ToolbarPrint from './toolbar-print.vue'
 
 const { t, i18next } = useTranslation()
@@ -27,6 +28,7 @@ const {
   legendsOpen,
   drawToolbarOpen,
   measureToolbarOpen,
+  elevationProfileToolbarOpen,
   styleEditorOpen,
   myMapsOpen,
   infoOpen,
@@ -53,6 +55,7 @@ function onClickLayersIcon() {
 watch(drawToolbarOpen, isOpen => {
   if (isOpen) {
     measureToolbarOpen.value = false
+    elevationProfileToolbarOpen.value = false
     printToolbarOpen.value = false
     lidarOpen.value = false
   } else {
@@ -63,6 +66,15 @@ watch(drawToolbarOpen, isOpen => {
 watch(measureToolbarOpen, isOpen => {
   if (isOpen) {
     drawToolbarOpen.value = false
+    elevationProfileToolbarOpen.value = false
+    printToolbarOpen.value = false
+    lidarOpen.value = false
+  }
+})
+watch(elevationProfileToolbarOpen, isOpen => {
+  if (isOpen) {
+    drawToolbarOpen.value = false
+    measureToolbarOpen.value = false
     printToolbarOpen.value = false
     lidarOpen.value = false
   }
@@ -71,6 +83,7 @@ watch(printToolbarOpen, isOpen => {
   if (isOpen) {
     drawToolbarOpen.value = false
     measureToolbarOpen.value = false
+    elevationProfileToolbarOpen.value = false
     lidarOpen.value = false
   }
 })
@@ -80,6 +93,7 @@ watch(lidarOpen, isOpen => {
       legendsOpen.value =
       drawToolbarOpen.value =
       measureToolbarOpen.value =
+      elevationProfileToolbarOpen.value =
       styleEditorOpen.value =
       myMapsOpen.value =
       infoOpen.value =
@@ -87,6 +101,7 @@ watch(lidarOpen, isOpen => {
       printToolbarOpen.value =
       drawToolbarOpen.value =
       measureToolbarOpen.value =
+      elevationProfileToolbarOpen.value =
       styleEditorOpen.value =
       myMapsOpen.value =
       infoOpen.value =
@@ -171,6 +186,7 @@ function onClickInfoIcon() {
       <!-- Drawing tools -->
       <toolbar-draw v-if="drawToolbarOpen" />
       <toolbar-print v-if="printToolbarOpen" />
+      <toolbar-elevation-profile v-if="elevationProfileToolbarOpen" />
       <button-icon
         :label="t('Dessin', { ns: 'client' })"
         icon="draw"
