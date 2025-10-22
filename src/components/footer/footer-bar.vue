@@ -11,6 +11,7 @@ import ToolbarDraw from './toolbar-draw.vue'
 import ToolbarMeasure from './toolbar-measure.vue'
 import ToolbarElevationProfile from './toolbar-elevation-profile.vue'
 import ToolbarPrint from './toolbar-print.vue'
+import SharePanel from '@/components/share/share-panel.vue'
 
 const { t, i18next } = useTranslation()
 const appStore = useAppStore()
@@ -22,6 +23,7 @@ const {
   toggleMyMapsOpen,
   toggleLegendsOpen,
   toggleInfoOpen,
+  toggleShareOpen,
 } = appStore
 const {
   layersOpen,
@@ -32,6 +34,7 @@ const {
   styleEditorOpen,
   myMapsOpen,
   infoOpen,
+  shareOpen,
   lidarOpen,
   themeGridOpen,
   printToolbarOpen,
@@ -201,6 +204,7 @@ function onClickInfoIcon() {
       </button-icon>
 
       <!-- Print tools -->
+      <toolbar-print v-if="printToolbarOpen" />
       <button-icon
         class="hidden sm:block"
         :label="t('Imprimer', { ns: 'client' })"
@@ -212,10 +216,13 @@ function onClickInfoIcon() {
       </button-icon>
 
       <!-- Social sharing tools -->
+      <share-panel v-if="shareOpen" />
       <button-icon
-        class="text-gray-300"
         :label="t('Partager', { ns: 'client' })"
+        :active="shareOpen"
         icon="share"
+        @click="() => toggleShareOpen()"
+        data-cy="shareButton"
       >
       </button-icon>
     </div>
