@@ -125,7 +125,7 @@ onUnmounted(() => {
         />
         <button
           @click="openIframePreview"
-          class="px-4 py-2 bg-secondary text-white hover:bg-secondary-dark rounded"
+          class="bg-white disabled:opacity-75 disabled:cursor-not-allowed text-primary hover:bg-primary hover:text-white border border-slate-300 py-1.5 px-2.5"
           :aria-label="t('Preview', { ns: 'client' })"
           data-cy="previewButton"
         >
@@ -242,7 +242,7 @@ onUnmounted(() => {
             />
             <button
               @click="copyIframeCode"
-              class="px-4 py-2 bg-primary text-white hover:bg-primary-dark rounded"
+              class="bg-white disabled:opacity-75 disabled:cursor-not-allowed text-primary hover:bg-primary hover:text-white border border-slate-300 py-1.5 px-2.5"
               :aria-label="t('Copy', { ns: 'client' })"
               data-cy="copyIframeCodeButton"
             >
