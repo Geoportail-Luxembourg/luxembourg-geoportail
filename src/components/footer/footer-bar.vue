@@ -183,6 +183,7 @@ function onClickInfoIcon() {
       <!-- Drawing tools -->
       <toolbar-draw v-if="drawToolbarOpen" />
       <toolbar-print v-if="printToolbarOpen" />
+      <share-panel v-if="shareOpen" />
       <toolbar-elevation-profile v-if="elevationProfileToolbarOpen" />
       <button-icon
         :label="t('Dessin', { ns: 'client' })"
@@ -204,7 +205,6 @@ function onClickInfoIcon() {
       </button-icon>
 
       <!-- Print tools -->
-      <toolbar-print v-if="printToolbarOpen" />
       <button-icon
         class="hidden sm:block"
         :label="t('Imprimer', { ns: 'client' })"
@@ -216,7 +216,6 @@ function onClickInfoIcon() {
       </button-icon>
 
       <!-- Social sharing tools -->
-      <share-panel v-if="shareOpen" />
       <button-icon
         :label="t('Partager', { ns: 'client' })"
         :active="shareOpen"
