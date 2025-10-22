@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { ref, watch, onMounted, onUnmounted } from 'vue'
+import { ref, watch, onUnmounted } from 'vue'
 import { useTranslation } from 'i18next-vue'
 import { storeToRefs } from 'pinia'
 
@@ -15,19 +15,22 @@ const longurl = ref('')
 const showLongUrl = ref(false)
 const onlyMymaps = ref(false)
 
-let urlWatchRemoveFn: (() => void) | null = null
+let urlWatchInterval: ReturnType<typeof setInterval> | null = null
 let lastCheckedUrl = ''
+
+// Helper function to get the final URL (with MyMaps-only transformation if needed)
+function getFinalUrl(baseUrl: string): string {
+  if (onlyMymaps.value && mapId.value) {
+    const urlObj = new URL(baseUrl)
+    urlObj.search = `?map_id=${mapId.value}`
+    return urlObj.toString()
+  }
+  return baseUrl
+}
 
 async function updateUrl() {
   const strippedUrl = urlStorage.getStrippedUrl()
-  let finalUrl = strippedUrl.toString()
-
-  if (onlyMymaps.value && mapId.value) {
-    // Replace search params with only map_id
-    const urlObj = new URL(finalUrl)
-    urlObj.search = `?map_id=${mapId.value}`
-    finalUrl = urlObj.toString()
-  }
+  const finalUrl = getFinalUrl(strippedUrl.toString())
 
   longurl.value = finalUrl
   lastCheckedUrl = finalUrl // Update the last checked URL
@@ -63,27 +66,30 @@ function selectInput(event: Event) {
   input.select()
 }
 
-// Watch for URL changes when panel is open
-function setupUrlWatch() {
-  const checkInterval = setInterval(() => {
-    if (shareOpen.value) {
-      const currentUrl = urlStorage.getStrippedUrl().toString()
-      const currentFinalUrl =
-        onlyMymaps.value && mapId.value
-          ? (() => {
-              const urlObj = new URL(currentUrl)
-              urlObj.search = `?map_id=${mapId.value}`
-              return urlObj.toString()
-            })()
-          : currentUrl
+// Start watching for URL changes
+function startUrlWatch() {
+  // Clear any existing interval first
+  if (urlWatchInterval !== null) {
+    clearInterval(urlWatchInterval)
+  }
 
-      if (lastCheckedUrl !== currentFinalUrl) {
-        updateUrl()
-      }
+  // Start polling for URL changes
+  urlWatchInterval = setInterval(() => {
+    const currentUrl = urlStorage.getStrippedUrl().toString()
+    const currentFinalUrl = getFinalUrl(currentUrl)
+
+    if (lastCheckedUrl !== currentFinalUrl) {
+      updateUrl()
     }
   }, 500)
+}
 
-  return () => clearInterval(checkInterval)
+// Stop watching for URL changes
+function stopUrlWatch() {
+  if (urlWatchInterval !== null) {
+    clearInterval(urlWatchInterval)
+    urlWatchInterval = null
+  }
 }
 
 // Watch onlyMymaps changes
@@ -93,28 +99,22 @@ watch(onlyMymaps, () => {
   }
 })
 
-onMounted(() => {
-  watch(
-    shareOpen,
-    isOpen => {
-      if (isOpen) {
-        updateUrl()
-        urlWatchRemoveFn = setupUrlWatch()
-      } else {
-        if (urlWatchRemoveFn) {
-          urlWatchRemoveFn()
-          urlWatchRemoveFn = null
-        }
-      }
-    },
-    { immediate: true }
-  )
-})
+// Watch shareOpen to start/stop URL monitoring
+watch(
+  shareOpen,
+  isOpen => {
+    if (isOpen) {
+      updateUrl()
+      startUrlWatch()
+    } else {
+      stopUrlWatch()
+    }
+  },
+  { immediate: true }
+)
 
 onUnmounted(() => {
-  if (urlWatchRemoveFn) {
-    urlWatchRemoveFn()
-  }
+  stopUrlWatch()
 })
 
 const isMymapsSelected = () => !!mapId.value
