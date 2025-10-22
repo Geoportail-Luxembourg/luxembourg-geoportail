@@ -60,6 +60,7 @@ watch(drawToolbarOpen, isOpen => {
     measureToolbarOpen.value = false
     elevationProfileToolbarOpen.value = false
     printToolbarOpen.value = false
+    shareOpen.value = false
     lidarOpen.value = false
   } else {
     // Deactivate edition mode when draw toolbar is closed
@@ -71,6 +72,7 @@ watch(measureToolbarOpen, isOpen => {
     drawToolbarOpen.value = false
     elevationProfileToolbarOpen.value = false
     printToolbarOpen.value = false
+    shareOpen.value = false
     lidarOpen.value = false
   }
 })
@@ -79,6 +81,7 @@ watch(elevationProfileToolbarOpen, isOpen => {
     drawToolbarOpen.value = false
     measureToolbarOpen.value = false
     printToolbarOpen.value = false
+    shareOpen.value = false
     lidarOpen.value = false
   }
 })
@@ -87,6 +90,16 @@ watch(printToolbarOpen, isOpen => {
     drawToolbarOpen.value = false
     measureToolbarOpen.value = false
     elevationProfileToolbarOpen.value = false
+    shareOpen.value = false
+    lidarOpen.value = false
+  }
+})
+watch(shareOpen, isOpen => {
+  if (isOpen) {
+    drawToolbarOpen.value = false
+    measureToolbarOpen.value = false
+    elevationProfileToolbarOpen.value = false
+    printToolbarOpen.value = false
     lidarOpen.value = false
   }
 })
@@ -99,6 +112,7 @@ watch(lidarOpen, isOpen => {
       drawToolbarOpen.value =
       measureToolbarOpen.value =
       elevationProfileToolbarOpen.value =
+      shareOpen.value =
       styleEditorOpen.value =
       myMapsOpen.value =
       infoOpen.value =
