@@ -151,12 +151,12 @@ onUnmounted(() => {
       >
         <div class="flex justify-between items-center p-4 border-b">
           <h2 id="modal-title" class="text-xl font-semibold">
-            {{ t('Embed map', { ns: 'client' }) }}
+            {{ t('Embed map', { ns: 'app' }) }}
           </h2>
           <button
             @click="closeIframePreview"
             class="text-gray-500 hover:text-gray-700 text-2xl leading-none"
-            :aria-label="t('Close', { ns: 'client' })"
+            :aria-label="t('Close', { ns: 'app' })"
             data-cy="closePreviewButton"
           >
             &times;
@@ -176,13 +176,13 @@ onUnmounted(() => {
               :aria-label="t('Select iframe size', { ns: 'client' })"
               data-cy="iframeSizeSelect"
             >
-              <option value="small">{{ t('small', { ns: 'client' }) }}</option>
+              <option value="small">{{ t('small', { ns: 'app' }) }}</option>
               <option value="medium">
-                {{ t('medium', { ns: 'client' }) }}
+                {{ t('medium', { ns: 'app' }) }}
               </option>
-              <option value="large">{{ t('large', { ns: 'client' }) }}</option>
+              <option value="large">{{ t('large', { ns: 'app' }) }}</option>
               <option value="custom">
-                {{ t('custom', { ns: 'client' }) }}
+                {{ t('custom', { ns: 'app' }) }}
               </option>
             </select>
           </div>
