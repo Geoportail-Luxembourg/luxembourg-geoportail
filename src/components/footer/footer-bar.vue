@@ -11,6 +11,7 @@ import ToolbarDraw from './toolbar-draw.vue'
 import ToolbarMeasure from './toolbar-measure.vue'
 import ToolbarElevationProfile from './toolbar-elevation-profile.vue'
 import ToolbarPrint from './toolbar-print.vue'
+import SharePanel from '@/components/share/share-panel.vue'
 
 const { t, i18next } = useTranslation()
 const appStore = useAppStore()
@@ -22,6 +23,7 @@ const {
   toggleMyMapsOpen,
   toggleLegendsOpen,
   toggleInfoOpen,
+  toggleShareOpen,
 } = appStore
 const {
   layersOpen,
@@ -32,6 +34,7 @@ const {
   styleEditorOpen,
   myMapsOpen,
   infoOpen,
+  shareOpen,
   lidarOpen,
   themeGridOpen,
   printToolbarOpen,
@@ -57,6 +60,7 @@ watch(drawToolbarOpen, isOpen => {
     measureToolbarOpen.value = false
     elevationProfileToolbarOpen.value = false
     printToolbarOpen.value = false
+    shareOpen.value = false
     lidarOpen.value = false
   } else {
     // Deactivate edition mode when draw toolbar is closed
@@ -68,6 +72,7 @@ watch(measureToolbarOpen, isOpen => {
     drawToolbarOpen.value = false
     elevationProfileToolbarOpen.value = false
     printToolbarOpen.value = false
+    shareOpen.value = false
     lidarOpen.value = false
   }
 })
@@ -76,6 +81,7 @@ watch(elevationProfileToolbarOpen, isOpen => {
     drawToolbarOpen.value = false
     measureToolbarOpen.value = false
     printToolbarOpen.value = false
+    shareOpen.value = false
     lidarOpen.value = false
   }
 })
@@ -84,6 +90,16 @@ watch(printToolbarOpen, isOpen => {
     drawToolbarOpen.value = false
     measureToolbarOpen.value = false
     elevationProfileToolbarOpen.value = false
+    shareOpen.value = false
+    lidarOpen.value = false
+  }
+})
+watch(shareOpen, isOpen => {
+  if (isOpen) {
+    drawToolbarOpen.value = false
+    measureToolbarOpen.value = false
+    elevationProfileToolbarOpen.value = false
+    printToolbarOpen.value = false
     lidarOpen.value = false
   }
 })
@@ -96,6 +112,7 @@ watch(lidarOpen, isOpen => {
       drawToolbarOpen.value =
       measureToolbarOpen.value =
       elevationProfileToolbarOpen.value =
+      shareOpen.value =
       styleEditorOpen.value =
       myMapsOpen.value =
       infoOpen.value =
@@ -180,6 +197,7 @@ function onClickInfoIcon() {
       <!-- Drawing tools -->
       <toolbar-draw v-if="drawToolbarOpen" />
       <toolbar-print v-if="printToolbarOpen" />
+      <share-panel v-if="shareOpen" />
       <toolbar-elevation-profile v-if="elevationProfileToolbarOpen" />
       <button-icon
         :label="t('Dessin', { ns: 'client' })"
@@ -213,9 +231,11 @@ function onClickInfoIcon() {
 
       <!-- Social sharing tools -->
       <button-icon
-        class="text-gray-300"
         :label="t('Partager', { ns: 'client' })"
+        :active="shareOpen"
         icon="share"
+        @click="() => toggleShareOpen()"
+        data-cy="shareButton"
       >
       </button-icon>
     </div>

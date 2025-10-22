@@ -14,6 +14,7 @@ export const DEFAULT_FEEDBACKANF_OPENED = false
 export const DEFAULT_FEEDBACKAGE_OPENED = false
 export const DEFAULT_FEEDBACKCRUES_OPENED = false
 export const DEFAULT_LIDAR_OPENED = false
+export const DEFAULT_SHARE_OPENED = false
 
 export const useAppStore = defineStore(
   'app',
@@ -27,6 +28,7 @@ export const useAppStore = defineStore(
     const mapId: Ref<string | undefined> = ref() // => MyMaps map id
     const myMapsOpen = ref(DEFAULT_MYMAPS_OPENED)
     const infoOpen = ref(DEFAULT_INFO_OPENED)
+    const shareOpen = ref(DEFAULT_SHARE_OPENED)
     const lidarOpen = ref(DEFAULT_LIDAR_OPENED) // Lidar panel open state
     const feedbackOpen = ref(DEFAULT_FEEDBACK_OPENED)
     const feedbackanfOpen = ref(DEFAULT_FEEDBACKANF_OPENED)
@@ -125,6 +127,9 @@ export const useAppStore = defineStore(
     function toggleInfoOpen(open?: boolean) {
       infoOpen.value = open ?? !infoOpen.value
     }
+    function toggleShareOpen(open?: boolean) {
+      shareOpen.value = open ?? !shareOpen.value
+    }
     function toggleLidarOpen(open?: boolean) {
       lidarOpen.value = open ?? !lidarOpen.value
     }
@@ -147,6 +152,7 @@ export const useAppStore = defineStore(
       mapId,
       myMapsOpen,
       infoOpen,
+      shareOpen,
       lidarOpen,
       feedbackOpen,
       feedbackanfOpen,
@@ -174,6 +180,7 @@ export const useAppStore = defineStore(
       togglePrintToolbarOpen,
       toggleMyMapsOpen,
       toggleInfoOpen,
+      toggleShareOpen,
       toggleLidarOpen,
       toggleThemeGrid,
       toggleLegendsOpen,
