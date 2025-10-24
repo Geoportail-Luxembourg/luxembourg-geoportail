@@ -16,6 +16,7 @@ import SharePanel from '@/components/share/share-panel.vue'
 const { t, i18next } = useTranslation()
 const appStore = useAppStore()
 const drawStore = useDrawStore()
+const geonetworkUrl = import.meta.env.VITE_GEONETWORK_URL
 const {
   setLayersOpen,
   togglePrintToolbarOpen,
@@ -250,11 +251,10 @@ function onClickInfoIcon() {
         :link="`https://geoportail.lu/${i18next.language}/questions/whats-new/`"
       >
       </ButtonLink>
-      <!--TODO get geonetworkBaseUrl from config-->
       <ButtonLink
         class="hidden lg:flex text-gray-500"
         :label="t('Geocatalogue', { ns: 'client' })"
-        link=""
+        :link="geonetworkUrl"
       >
       </ButtonLink>
       <!--TODO handle feedback links (for different portals?)-->
