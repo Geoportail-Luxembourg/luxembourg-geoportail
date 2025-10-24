@@ -14,7 +14,6 @@ import useThemes from '@/composables/themes/themes.composable'
 import useLayers from '@/composables/layers/layers.composable'
 import useBackgroundLayer from '@/composables/background-layer/background-layer.composable'
 import { useUserManagerStore } from '@/stores/user-manager.store'
-import { useDrawStore } from '@/stores/draw.store'
 
 let watchersDefined = false
 
@@ -31,7 +30,6 @@ export default function useMyMaps() {
   const { themeName } = storeToRefs(themeStore)
   const { initLayer } = useLayers()
   const { setBgLayer } = useBackgroundLayer()
-  const drawStore = useDrawStore()
   const isMyMapEditable = computed(() =>
     myMap.value?.is_editable && authenticated.value
       ? myMap.value.uuid
@@ -54,9 +52,6 @@ export default function useMyMaps() {
   }
 
   function closeMyMap() {
-    // Also clear MyMap features on the map
-    myMapId.value && drawStore.removeMyMapsFeature(myMapId.value)
-
     myMapId.value = undefined
     myMap.value = undefined
   }

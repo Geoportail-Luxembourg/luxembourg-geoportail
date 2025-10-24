@@ -158,6 +158,7 @@ async function doClearMap(uuid: string) {
 
   if (cleared) {
     confirmDeleteModalState.value = undefined
+    drawStore.removeMyMapsFeature(uuid)
   } else {
     addNotification(t('Unable to clear MyMap.'), AlertNotificationType.ERROR)
   }
@@ -171,6 +172,13 @@ watch(
 watch(
   confirmDeleteModalState,
   state => state === undefined && (confirmDeleteModalMyMap.value = undefined)
+)
+
+// Clear MyMap features on the map when the map does not exists
+watch(
+  myMap,
+  (map, mapPrevious) =>
+    !map && mapPrevious && drawStore.removeMyMapsFeature(mapPrevious.uuid)
 )
 </script>
 
