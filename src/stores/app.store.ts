@@ -28,7 +28,7 @@ export const useAppStore = defineStore(
     const myLayersTabOpen = ref(DEFAULT_MY_LAYERS_TAB_OPENED)
     const themeGridOpen = ref(DEFAULT_THEME_GRID_OPENED)
     const myMapId: Ref<string | undefined> = ref() // => MyMaps map id
-    const myMap = shallowRef<MyMap | undefined>(undefined) // MyMap map object
+    const myMap = ref<MyMap | undefined>(undefined) // MyMap map object
     const myMapLayersChanged = ref(false)
     const myMapsOpen = ref(DEFAULT_MYMAPS_OPENED)
     const infoOpen = ref(DEFAULT_INFO_OPENED)

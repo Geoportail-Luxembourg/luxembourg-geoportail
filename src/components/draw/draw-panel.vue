@@ -21,7 +21,8 @@ const { toggleMyMapsOpen } = appStore
 const { feedbackOpen, feedbackanfOpen, feedbackageOpen, feedbackcruesOpen } =
   storeToRefs(appStore)
 const drawStore = useDrawStore()
-const { drawnFeatures: features, clipLineActive } = storeToRefs(drawStore)
+const { drawnFeaturesExceptMyMaps: features, clipLineActive } =
+  storeToRefs(drawStore)
 const drawingMenuOptions = computed(() => [
   {
     label: 'Copier dans ma carte',

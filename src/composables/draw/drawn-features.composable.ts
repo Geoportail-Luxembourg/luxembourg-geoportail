@@ -7,10 +7,12 @@ import { Geometry } from 'ol/geom'
 import { useDrawStore } from '@/stores/draw.store'
 import { DrawnFeature } from '@/services/ol-feature/ol-feature-drawn'
 import { DrawnFeatureType } from '@/stores/draw.store.model'
+import useMyMaps from '@/composables/my-maps/my-maps.composable'
 
 export default function useDrawnFeatures() {
   const drawStore = useDrawStore()
   const { drawStateActive, drawnFeatures } = storeToRefs(drawStore)
+  const { isMyMapEditable } = useMyMaps()
 
   function generateDrawnFeature(feature: Feature<Geometry>) {
     const featureGeomName = feature
@@ -33,6 +35,7 @@ export default function useDrawnFeatures() {
       label,
       display_order: drawnFeatures.value.length,
       featureType,
+      map_id: isMyMapEditable.value,
     })
   }
 

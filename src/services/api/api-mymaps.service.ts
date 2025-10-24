@@ -76,6 +76,18 @@ export async function fetchMyMap(uuid: string) {
   return json
 }
 
+export async function fetchMyMapfeatures(uuid: string) {
+  const response = await fetchApi(MYMAPS_URL + '/features/' + uuid, {})
+
+  if (!response.ok) {
+    throw new Error('Error while trying to get My Map features')
+  }
+
+  const json = <MyMap>await response.json()
+
+  return json
+}
+
 export interface Cateorgy {
   id: number
   allow_labeling: boolean | null
