@@ -1,13 +1,13 @@
 import { defineStore } from 'pinia'
-import { ref, shallowRef } from 'vue'
+import { computed, ref, shallowRef } from 'vue'
 import { Draw } from 'ol/interaction'
+import { Type } from 'ol/geom/Geometry'
 
 import {
   DrawnFeature,
   DrawnFeatureId,
 } from '@/services/ol-feature/ol-feature-drawn'
 import { DrawStateActive, EditStateActive } from './draw.store.model'
-import { Type } from 'ol/geom/Geometry'
 
 export const useDrawStore = defineStore('draw', () => {
   const activeFeatureId = ref<DrawnFeatureId | undefined>(undefined)
@@ -15,6 +15,12 @@ export const useDrawStore = defineStore('draw', () => {
   const drawStateActive = ref<DrawStateActive>(undefined)
   const editStateActive = ref<EditStateActive>(undefined)
   const drawnFeatures = ref<DrawnFeature[]>([])
+  const drawnFeaturesExceptMyMaps = computed(
+    () => drawnFeatures.value.filter(f => !f.map_id) as DrawnFeature[]
+  )
+  const drawnFeaturesMyMaps = computed(
+    () => drawnFeatures.value.filter(f => f.map_id) as DrawnFeature[]
+  )
   const featureEditionDocked = ref(false)
   const currentDrawInteraction = ref<Draw | undefined>(undefined)
   const clipLineActive = ref(false)
@@ -138,6 +144,19 @@ export const useDrawStore = defineStore('draw', () => {
     }
   }
 
+  /**
+   * Remove all features related to the given MyMap,
+   * usually called when closing the MyMap, this removes the features on the map
+   * @param myMapId
+   */
+  function removeMyMapsFeature(myMapId: string) {
+    const featureIds = drawnFeatures.value
+      .filter(f => f.map_id === myMapId)
+      .map(f => f.id)
+
+    return removeFeature(featureIds)
+  }
+
   function removeAllFeatures() {
     activeFeatureId.value = undefined
     editingFeatureId.value = undefined
@@ -175,12 +194,15 @@ export const useDrawStore = defineStore('draw', () => {
     drawStateActive,
     editStateActive,
     drawnFeatures,
+    drawnFeaturesExceptMyMaps,
+    drawnFeaturesMyMaps,
     featureEditionDocked,
     currentDrawInteraction,
     clipLineActive,
     queueAddedDrawnFeatures,
     deactivateDraw,
     removeFeature,
+    removeMyMapsFeature,
     removeAllFeatures,
     reorderFeatures,
     toggleDrawCircle,

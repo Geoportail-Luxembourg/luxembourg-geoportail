@@ -5,15 +5,16 @@ import { storeToRefs } from 'pinia'
 
 import SidePanelLayout from '@/components/common/side-panel-layout.vue'
 import DrawPanel from '@/components/draw/draw-panel.vue'
+import FeaturesList from '@/components/draw/features-list.vue'
 import useMyMaps from '@/composables/my-maps/my-maps.composable'
 import { useAlertNotificationsStore } from '@/stores/alert-notifications.store'
 import { AlertNotificationType } from '@/stores/alert-notifications.store.model'
 import { useAppStore } from '@/stores/app.store'
+import { useDrawStore } from '@/stores/draw.store'
 import { useUserManagerStore } from '@/stores/user-manager.store'
 import {
   clearMyMap,
   deleteMyMap,
-  fetchMyMap,
   fetchMyMaps,
   MyMap,
   MyMapJson,
@@ -33,6 +34,8 @@ const { loadMyMap, openMyMap, closeMyMap, applyToMyMap, resetFromMyMap } =
 const { toggleAuthFormOpen, toggleShareToolbarOpen } = appStore
 const { myMap } = storeToRefs(appStore)
 const { authenticated } = storeToRefs(useUserManagerStore())
+const drawStore = useDrawStore()
+const { drawnFeaturesMyMaps: features } = storeToRefs(drawStore)
 
 const editFormModalState = ref<EditFormModeType | undefined>(undefined) // undefined => closed
 const editFormModalMyMap = shallowRef<MyMap | undefined>(undefined) // Current MyMap opened in Edit form
@@ -184,20 +187,22 @@ watch(
 
     <template v-slot:content>
       <!-- a MyMap is selected -->
-      <MyMapInfo
-        v-if="myMap"
-        :myMap="myMap"
-        @close="closeMyMap"
-        @delete="onMapDeleteOpenConfirm"
-        @clear="onClearOpenConfirm"
-        @copy="map => openEditFormModal(map, EditFormModeType.COPY)"
-        @edit="map => openEditFormModal(map, EditFormModeType.EDIT)"
-        @new="() => openEditFormModal(undefined, EditFormModeType.CREATE)"
-        @open="openMap"
-        @share="() => toggleShareToolbarOpen(true)"
-        @resetLayers="resetFromMyMap"
-        @saveLayers="applyToMyMap"
-      />
+      <div v-if="myMap">
+        <MyMapInfo
+          :myMap="myMap"
+          @close="closeMyMap"
+          @delete="onMapDeleteOpenConfirm"
+          @clear="onClearOpenConfirm"
+          @copy="map => openEditFormModal(map, EditFormModeType.COPY)"
+          @edit="map => openEditFormModal(map, EditFormModeType.EDIT)"
+          @new="() => openEditFormModal(undefined, EditFormModeType.CREATE)"
+          @open="openMap"
+          @share="() => toggleShareToolbarOpen(true)"
+          @resetLayers="resetFromMyMap"
+          @saveLayers="applyToMyMap"
+        />
+        <FeaturesList :features="features" />
+      </div>
       <!-- No MyMap selected, display button to create or select one in popups -->
       <template v-else>
         <div class="text-white">

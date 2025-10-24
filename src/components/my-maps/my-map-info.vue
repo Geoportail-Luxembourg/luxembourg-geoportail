@@ -88,6 +88,7 @@ const menuOptions = computed(() => [
 <template>
   <div class="flex items-center">
     <h2
+      data-cy="mymap-title"
       class="text-white font-bold grow max-w-full text-ellipsis overflow-hidden text-nowrap hover:cursor-pointer"
       role="button"
       :title="myMap.title"
@@ -98,13 +99,14 @@ const menuOptions = computed(() => [
     <button
       @click="emit('close')"
       class="text-slate-400 hover:text-slate-700 text-2xl"
-      aria-label="Close"
+      :aria-label="t('Close')"
     >
       <span aria-hidden="true">×</span>
     </button>
   </div>
 
   <p
+    data-cy="mymap-description"
     class="text-white mb-2 hover:cursor-pointer"
     role="button"
     @click="emit('edit', myMap)"

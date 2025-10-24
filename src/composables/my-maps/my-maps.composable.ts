@@ -1,4 +1,4 @@
-import { watch } from 'vue'
+import { computed, watch } from 'vue'
 import { storeToRefs } from 'pinia'
 import { useTranslation } from 'i18next-vue'
 
@@ -13,6 +13,8 @@ import { fetchMyMap, updateMyMap } from '@/services/api/api-mymaps.service'
 import useThemes from '@/composables/themes/themes.composable'
 import useLayers from '@/composables/layers/layers.composable'
 import useBackgroundLayer from '@/composables/background-layer/background-layer.composable'
+import { useUserManagerStore } from '@/stores/user-manager.store'
+import { useDrawStore } from '@/stores/draw.store'
 
 let watchersDefined = false
 
@@ -22,12 +24,19 @@ export default function useMyMaps() {
   const mapStore = useMapStore()
   const themeStore = useThemeStore()
   const { addNotification } = useAlertNotificationsStore()
+  const { authenticated } = storeToRefs(useUserManagerStore())
   const { myMap, myMapId, myMapLayersChanged } = storeToRefs(appStore)
   const { layers, bgLayer } = storeToRefs(mapStore)
   const themes = useThemes()
   const { themeName } = storeToRefs(themeStore)
   const { initLayer } = useLayers()
   const { setBgLayer } = useBackgroundLayer()
+  const drawStore = useDrawStore()
+  const isMyMapEditable = computed(() =>
+    myMap.value?.is_editable && authenticated.value
+      ? myMap.value.uuid
+      : undefined
+  )
 
   async function loadMyMap(uuid: string) {
     try {
@@ -45,23 +54,37 @@ export default function useMyMaps() {
   }
 
   function closeMyMap() {
+    // Also clear MyMap features on the map
+    myMapId.value && drawStore.removeMyMapsFeature(myMapId.value)
+
     myMapId.value = undefined
     myMap.value = undefined
   }
 
   /**
    * Update MyMap with (app) map content (apply changes on layers/bgLayer)
+   * and save MyMap changes to api
    */
   async function applyToMyMap() {
     if (myMap.value) {
+      const layersToSave = layers.value.reverse()
+      myMap.value.bg_layer = bgLayer.value?.name ?? 'blank'
+      myMap.value.bg_opacity = 1
+      myMap.value.layers = layersToSave.map(l => l.name).join(',')
+      myMap.value.layers_opacity = layersToSave
+        .map(l => l.opacity ?? '1')
+        .join(',')
+      myMap.value.layers_visibility = layersToSave.map(() => 'true').join(',') // layersVisibility: Is it usefull?
+      myMap.value.layers_indices = layersToSave.map((l, i) => i).join(',')
+
       updateMyMap(
-        myMap.value?.uuid,
-        bgLayer.value?.name ?? '',
-        1,
-        layers.value.map(l => l.name).join(','),
-        layers.value.map(l => l.opacity ?? '1').join(','),
-        layers.value.map(() => '1').join(','),
-        layers.value.map((l, i) => i).join(','), // layersVisibility: Is it usefull?
+        myMap.value.uuid,
+        myMap.value.bg_layer,
+        myMap.value.bg_opacity,
+        myMap.value.layers,
+        myMap.value.layers_opacity,
+        myMap.value.layers_visibility,
+        myMap.value.layers_indices,
         themeName.value
       ).catch(() =>
         addNotification(
@@ -84,7 +107,9 @@ export default function useMyMaps() {
       ? myMap.value?.layers_opacity.split(',').map(o => parseInt(o, 10))
       : []
     const myVisibilities = myMap.value?.layers_visibility
-      ? myMap.value?.layers_visibility.split(',').map(v => parseInt(v, 10))
+      ? myMap.value?.layers_visibility
+          .split(',')
+          .map(v => (v === 'false' ? false : true))
       : []
     const myLayers: Layer[] = myMap.value?.layers
       ? myMap.value?.layers
@@ -115,17 +140,17 @@ export default function useMyMaps() {
       // Populate MyMap object whenever MyMap uuid changes
       watch(myMapId, async uuid => uuid && loadMyMap(uuid), { immediate: true })
 
-      // Check if MyMap content difers from Map store
+      // Populate map (app map) content when MyMap is loaded
+      watch(myMap, myMap => myMap && resetFromMyMap())
+
+      // Check if MyMap content differs from Map store
       watch(
-        [layers, bgLayer],
-        ([layers, bgLayer]) =>
-          myMap.value &&
-          (myMapLayersChanged.value = myMapCompareLayers(
-            myMap.value,
-            layers,
-            bgLayer
-          )),
-        { immediate: true }
+        [layers, bgLayer, myMap],
+        ([layers, bgLayer, myMap]) =>
+          (myMapLayersChanged.value = myMap
+            ? myMapCompareLayers(myMap, layers, bgLayer)
+            : false),
+        { immediate: true, deep: true }
       )
 
       watchersDefined = true
@@ -133,6 +158,7 @@ export default function useMyMaps() {
   }
 
   return {
+    isMyMapEditable,
     init,
     loadMyMap,
     closeMyMap,
@@ -147,14 +173,8 @@ function myMapCompareLayers(
   layers: Layer[],
   bgLayer: Layer | null | undefined
 ) {
-  const selectedLayers = layers
-    .map(l => l.name)
-    .reverse()
-    .join(',')
-  const selectedOpacities = layers
-    .map(l => l.opacity)
-    .reverse()
-    .join(',')
+  const selectedLayers = layers.map(l => l.name).join(',')
+  const selectedOpacities = layers.map(l => l.opacity).join(',')
 
   if (
     selectedLayers !== (myMap.layers ?? '') ||
@@ -163,7 +183,8 @@ function myMapCompareLayers(
     return true
   }
 
-  if (bgLayer?.name ?? null !== myMap.bg_layer) {
+  if ((bgLayer?.name ?? 'blank') !== (myMap.bg_layer ?? 'blank')) {
+    // NB. myMap.bg_layer ?? 'blank' => consider "null" or "undefined" as 'blank' bg
     return true
   }
 
