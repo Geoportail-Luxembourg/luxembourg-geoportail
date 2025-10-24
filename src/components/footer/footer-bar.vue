@@ -25,6 +25,7 @@ const {
   toggleLegendsOpen,
   toggleInfoOpen,
   toggleShareOpen,
+  toggleFeedbackOpen,
 } = appStore
 const {
   layersOpen,
@@ -39,6 +40,7 @@ const {
   lidarOpen,
   themeGridOpen,
   printToolbarOpen,
+  feedbackOpen,
 } = storeToRefs(appStore)
 const { setEditActiveState } = drawStore
 
@@ -257,13 +259,16 @@ function onClickInfoIcon() {
         :link="geonetworkUrl"
       >
       </ButtonLink>
-      <!--TODO handle feedback links (for different portals?)-->
-      <ButtonLink
-        class="hidden lg:flex text-gray-500"
-        :label="t('Feedback', { ns: 'client' })"
-        link=""
+      <button
+        class="hidden lg:flex h-full flex-col justify-center px-[7px] uppercase hover:text-white hover:bg-primary text-gray-500"
+        :class="{ 'bg-primary text-white': feedbackOpen }"
+        :aria-pressed="feedbackOpen ? 'true' : 'false'"
+        :aria-label="t('Feedback', { ns: 'client' })"
+        @click="() => toggleFeedbackOpen()"
+        data-cy="feedbackButton"
       >
-      </ButtonLink>
+        {{ t('Feedback', { ns: 'client' }) }}
+      </button>
       <ButtonLink
         class="hidden lg:flex text-gray-500"
         :label="t('A Propos', { ns: 'client' })"

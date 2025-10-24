@@ -8,6 +8,7 @@ import StylePanel from '@/components/style-selector/style-panel.vue'
 import MyMapsPanel from '@/components/my-maps/my-maps-panel.vue'
 import InfoPanel from '@/components/info/info-panel.vue'
 import LidarConfigPanel from '@/components/lidar/lidar-config-panel.vue'
+import FeedbackPanel from '@/components/feedback/feedback-panel.vue'
 import { screenSizeIsAtLeast } from '@/services/common/device.utils'
 import { useAppStore } from '@/stores/app.store'
 
@@ -18,6 +19,7 @@ const {
   myMapsOpen,
   infoOpen,
   lidarOpen,
+  feedbackOpen,
   styleEditorOpen,
   themeGridOpen,
   drawToolbarOpen,
@@ -29,6 +31,7 @@ watch(layersOpen, layersOpen => {
       legendsOpen.value =
       myMapsOpen.value =
       styleEditorOpen.value =
+      feedbackOpen.value =
         false
   }
 })
@@ -40,6 +43,7 @@ watch(myMapsOpen, myMapsOpen => {
       themeGridOpen.value =
       legendsOpen.value =
       infoOpen.value =
+      feedbackOpen.value =
         false
   }
 })
@@ -52,6 +56,7 @@ watch(legendsOpen, legendsOpen => {
       themeGridOpen.value =
       infoOpen.value =
       lidarOpen.value =
+      feedbackOpen.value =
         false
   }
 })
@@ -64,6 +69,7 @@ watch(drawToolbarOpen, drawToolbarOpen => {
     themeGridOpen.value = false
     infoOpen.value = false
     lidarOpen.value = false
+    feedbackOpen.value = false
   }
 })
 
@@ -75,6 +81,20 @@ watch(infoOpen, infoOpen => {
       themeGridOpen.value =
       legendsOpen.value =
       lidarOpen.value =
+      feedbackOpen.value =
+        false
+  }
+})
+
+watch(feedbackOpen, isOpen => {
+  if (isOpen) {
+    myMapsOpen.value =
+      styleEditorOpen.value =
+      layersOpen.value =
+      themeGridOpen.value =
+      legendsOpen.value =
+      lidarOpen.value =
+      infoOpen.value =
         false
   }
 })
@@ -105,6 +125,12 @@ watch(infoOpen, infoOpen => {
   <div v-show="infoOpen" class="w-full md:w-80 bg-secondary z-10">
     <info-panel />
   </div>
+
+  <!-- Feedback panel -->
+  <div v-if="feedbackOpen" class="w-full md:w-80 bg-secondary z-10">
+    <feedback-panel />
+  </div>
+
   <!-- lidar panel -->
   <div v-show="lidarOpen" class="w-full md:w-80 bg-secondary z-10">
     <lidar-config-panel></lidar-config-panel>
