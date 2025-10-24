@@ -142,6 +142,10 @@ export const useAppStore = defineStore(
         open ?? !elevationProfileToolbarOpen.value
     }
 
+    function toggleFeedbackOpen(open?: boolean) {
+      feedbackOpen.value = open ?? !feedbackOpen.value
+    }
+
     return {
       embedded,
       lang,
@@ -185,6 +189,7 @@ export const useAppStore = defineStore(
       toggleThemeGrid,
       toggleLegendsOpen,
       toggleElevationProfileToolbarOpen,
+      toggleFeedbackOpen,
     }
   },
   {}
