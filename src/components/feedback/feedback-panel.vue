@@ -10,6 +10,7 @@ import { useUserManagerStore } from '@/stores/user-manager.store'
 import { useAlertNotificationsStore } from '@/stores/alert-notifications.store'
 import { AlertNotificationType } from '@/stores/alert-notifications.store.model'
 import { urlStorage } from '@/services/state-persistor/storage/url-storage'
+import { fetchApi } from '@/services/api/api.service'
 
 const FEEDBACK_URL =
   (import.meta.env.VITE_FEEDBACK_URL as string) || '/feedback'
@@ -81,13 +82,12 @@ async function sendReport() {
   }
 
   try {
-    const response = await fetch(FEEDBACK_URL, {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json; charset=utf-8',
-      },
-      body: JSON.stringify(payload),
-    })
+    const response = await fetchApi(
+      FEEDBACK_URL,
+      payload,
+      'POST',
+      'application/json'
+    )
 
     if (response.ok) {
       const supportEmail = 'support@geoportail.lu'
