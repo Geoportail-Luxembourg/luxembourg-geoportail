@@ -243,30 +243,35 @@ const availableLayers = computed(() => {
 
           <div class="form-group text-sm">
             <p class="mb-2">
-              {{ t('The following', { ns: 'client' }) }}
               <a
                 :href="url"
                 target="_blank"
                 class="text-blue-400 hover:text-blue-300 underline"
               >
-                {{ t('map link', { ns: 'client' }) }}
+                {{
+                  t(
+                    'Click to view the map link that will be sent to our support team',
+                    {
+                      ns: 'client',
+                    }
+                  )
+                }}
               </a>
-              {{ t('will be sent to our support team.', { ns: 'client' }) }}
             </p>
             <p>
-              {{ t('You can also use the', { ns: 'client' }) }}
+              {{
+                t(
+                  'You can also use the Drawing Tools to annotate the map and send it to the support team.',
+                  { ns: 'client' }
+                )
+              }}
               <button
                 type="button"
                 @click="activateDrawingTools"
-                class="text-blue-400 hover:text-blue-300 underline bg-transparent border-0 p-0 cursor-pointer font-normal"
+                class="ml-2 text-blue-400 hover:text-blue-300 underline bg-transparent border-0 p-0 cursor-pointer font-normal"
               >
-                {{ t('Drawing Tools', { ns: 'client' }) }}
+                {{ t('Open Drawing Tools', { ns: 'client' }) }}
               </button>
-              {{
-                t('to annotate the map send to the support team.', {
-                  ns: 'client',
-                })
-              }}
             </p>
           </div>
 
