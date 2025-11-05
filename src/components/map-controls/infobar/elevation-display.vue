@@ -4,7 +4,7 @@ import { useTranslation } from 'i18next-vue'
 import useMap from '@/composables/map/map.composable'
 import { getDebouncedElevation } from '@/components/draw/feature-measurements-helper'
 import type { MapBrowserEvent } from 'ol'
-import { EventsKey } from 'ol/events'
+import { EventsKey, listen } from 'ol/events'
 import { unByKey } from 'ol/Observable'
 
 const { t } = useTranslation()
@@ -23,7 +23,7 @@ const formatElevation = (dhm: number | null): string => {
 }
 
 // Handle pointer move event
-const handlePointerMove = async (evt: MapBrowserEvent<UIEvent>) => {
+const handlePointerMove = async (evt: MapBrowserEvent<PointerEvent>) => {
   if (!evt.coordinate) {
     return
   }
@@ -31,15 +31,20 @@ const handlePointerMove = async (evt: MapBrowserEvent<UIEvent>) => {
   try {
     const dhm = await getDebouncedElevation(evt.coordinate)
     elevation.value = formatElevation(dhm)
-  } catch (error) {
+  } catch {
     elevation.value = 'N/A'
   }
+}
+
+// Wrapper for event listener (must not return promise)
+const pointerMoveListener = (evt: any) => {
+  void handlePointerMove(evt)
 }
 
 // Initialize
 onMounted(() => {
   // Listen to pointer move events
-  pointerMoveKey = map.on('pointermove', handlePointerMove)
+  pointerMoveKey = listen(map, 'pointermove', pointerMoveListener)
 })
 
 // Cleanup
