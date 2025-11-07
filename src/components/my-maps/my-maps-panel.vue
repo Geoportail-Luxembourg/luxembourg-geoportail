@@ -18,6 +18,7 @@ import {
   fetchMyMaps,
   MyMap,
   MyMapJson,
+  saveMyMapFeature,
 } from '@/services/api/api-mymaps.service'
 
 import MyMapEditForm from './my-map-edit-form.vue'
@@ -180,6 +181,23 @@ watch(
   (map, mapPrevious) =>
     !map && mapPrevious && drawStore.removeMyMapsFeature(mapPrevious.uuid)
 )
+
+watch(features, (features, featuresOld) => {
+  if (myMap.value) {
+    const mapUuid = myMap.value.uuid
+    const featureIds = new Set(featuresOld.map(f => f.id))
+    const featuresAdded = features.filter(f => !featureIds.has(f.id))
+
+    featuresAdded.forEach(f =>
+      saveMyMapFeature(mapUuid, f.toGeoJSONString()).catch(e =>
+        addNotification(
+          t('Erreur inattendue lors de la sauvegarde de votre modification.'),
+          AlertNotificationType.ERROR
+        )
+      )
+    )
+  }
+})
 </script>
 
 <template>
