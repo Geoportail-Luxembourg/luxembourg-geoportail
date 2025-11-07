@@ -1,7 +1,7 @@
 import { v4 as uuidv4 } from 'uuid'
 import { Feature } from 'ol'
 import { Point, LineString, MultiPoint, Polygon, Geometry } from 'ol/geom'
-import StyleStyle, { StyleFunction } from 'ol/style/Style'
+import StyleStyle, { StyleFunction, StyleLike } from 'ol/style/Style'
 import StyleRegularShape, {
   Options as RegularShapeOptions,
 } from 'ol/style/RegularShape'
@@ -23,6 +23,7 @@ import { fetchProfileJson } from '@/services/api/api-profile.service'
 import { colorStringToRgba } from '@/services/colors.utils'
 import { ProfileData } from '@/components/common/graph/elevation-profile'
 import { getDefaultDrawnFeatureStyle } from './styles.helper'
+import GeoJSON from 'ol/format/GeoJSON'
 
 const MYMAPS_URL = import.meta.env.VITE_MYMAPS_URL
 const MYMAPS_SYMBOL_URL = import.meta.env.VITE_SYMBOL_URL
@@ -120,9 +121,30 @@ export class DrawnFeature extends Feature {
       options
     )
 
+    const geometryType = feature.getGeometry()?.getType()!
+    const typeMapping = {
+      Point: 'drawnPoint',
+      LineString: 'drawnLine',
+      Polygon: 'drawnPolygon',
+      Circle: 'drawnCircle',
+    }
+
+    if (drawnFeature.featureType === undefined && geometryType in typeMapping) {
+      drawnFeature.featureType = typeMapping[geometryType]
+    }
+
     drawnFeature.featureStyle = getDefaultDrawnFeatureStyle()
     drawnFeature.setStyle(feature.getStyle())
 
+    return drawnFeature
+  }
+
+  static generateFromGeoJson(geoJson: unknown, options = {}) {
+    const feature = new GeoJSON().readFeature(geoJson) as Feature<Geometry>
+    const drawnFeature = DrawnFeature.generateFromFeature(feature, options)
+
+    drawnFeature.fromProperties(geoJson.properties)
+    drawnFeature.setStyle(feature.getStyle())
     return drawnFeature
   }
 
@@ -234,7 +256,46 @@ export class DrawnFeature extends Feature {
       isCircle: this.featureType === 'drawnCircle',
       symbolId: this.featureStyle.symbolId,
       symboltype: this.featureStyle.symboltype,
+      __map_id__: this.map_id,
     }
+  }
+
+  fromProperties(properties) {
+    if (!properties) return
+
+    this.description = properties.description ?? this.description
+    this.label = properties.name ?? this.label
+    this.map_id = properties.__map_id__ ?? this.map_id
+
+    if (properties.isLabel !== undefined) {
+      this.featureType = properties.isLabel ? 'drawnLabel' : this.featureType
+    } else if (properties.isCircle !== undefined) {
+      this.featureType = properties.isCircle ? 'drawnCircle' : this.featureType
+    }
+
+    this.featureStyle = {
+      angle: properties.angle ?? this.featureStyle.angle,
+      color: properties.color ?? this.featureStyle.color,
+      stroke: properties.stroke ?? this.featureStyle.stroke,
+      linestyle: properties.linestyle ?? this.featureStyle.linestyle,
+      opacity: properties.opacity ?? this.featureStyle.opacity,
+      showOrientation:
+        properties.showOrientation ?? this.featureStyle.showOrientation,
+      shape: properties.shape ?? this.featureStyle.shape,
+      size: properties.size ?? this.featureStyle.size,
+      symbolId: properties.symbolId ?? this.featureStyle.symbolId,
+      symboltype: properties.symboltype ?? this.featureStyle.symboltype,
+    }
+  }
+
+  toGeoJSONString() {
+    const encodeOptions = {
+      dataProjection: PROJECTION_LUX,
+      featureProjection: PROJECTION_WEBMERCATOR,
+    }
+    const feature = this.clone()
+    feature.setProperties(this.toProperties())
+    return new olFormatGeoJSON().writeFeature(feature, encodeOptions)
   }
 
   getStyleFunction(): StyleFunction {

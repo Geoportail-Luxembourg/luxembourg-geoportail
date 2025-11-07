@@ -9,11 +9,19 @@ import { MyMap } from '@/stores/app.store.model'
 import { useThemeStore } from '@/stores/config.store'
 import { useMapStore } from '@/stores/map.store'
 import { Layer } from '@/stores/map.store.model'
-import { fetchMyMap, updateMyMap } from '@/services/api/api-mymaps.service'
+import {
+  fetchMyMap,
+  fetchMyMapFeatures,
+  updateMyMap,
+} from '@/services/api/api-mymaps.service'
 import useThemes from '@/composables/themes/themes.composable'
 import useLayers from '@/composables/layers/layers.composable'
 import useBackgroundLayer from '@/composables/background-layer/background-layer.composable'
 import { useUserManagerStore } from '@/stores/user-manager.store'
+import { DrawnFeature } from '@/services/ol-feature/ol-feature-drawn'
+import { useDrawStore } from '@/stores/draw.store'
+import { Feature } from 'ol'
+import { Geometry } from 'ol/geom'
 
 let watchersDefined = false
 
@@ -21,6 +29,8 @@ export default function useMyMaps() {
   const { t } = useTranslation()
   const appStore = useAppStore()
   const mapStore = useMapStore()
+  const drawStore = useDrawStore()
+  const { addDrawnFeatureToCollection } = drawStore
   const themeStore = useThemeStore()
   const { addNotification } = useAlertNotificationsStore()
   const { authenticated } = storeToRefs(useUserManagerStore())
@@ -36,14 +46,37 @@ export default function useMyMaps() {
       : undefined
   )
 
+  function handleLoadMapError() {
+    addNotification(
+      t('Erreur inattendue lors du chargement de votre carte.'),
+      AlertNotificationType.ERROR
+    )
+  }
+
   async function loadMyMap(uuid: string) {
+    myMap.value = undefined
+
+    const features = await fetchMyMapFeatures(uuid)
+
+    features.features?.forEach((feature: unknown) => {
+      try {
+        const drawnFeature = DrawnFeature.generateFromGeoJson(feature, {
+          map_id: uuid,
+        })
+
+        console.log('Loaded MyMap feature', drawnFeature) // DEBUG
+
+        addDrawnFeatureToCollection(drawnFeature)
+      } catch (e) {
+        console.error('Error while loading MyMap feature', feature, e)
+      }
+    })
+
     try {
-      myMap.value = await fetchMyMap(uuid)
+      const map = await fetchMyMap(uuid)
+      myMap.value = map
     } catch (e) {
-      addNotification(
-        t('Erreur inattendue lors du chargement de votre carte.'),
-        AlertNotificationType.ERROR
-      )
+      handleLoadMapError()
     }
   }
 
