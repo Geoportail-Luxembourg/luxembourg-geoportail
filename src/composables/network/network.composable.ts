@@ -11,7 +11,8 @@ export default function useNetwork() {
   const { t } = useTranslation()
   const wasOffline = ref(false)
 
-  // Set initial state IMMEDIATELY - critical for SSR and page reload while offline
+  // Set initial state IMMEDIATELY - critical for page reload while offline
+  // Must execute before template renders to show correct offline UI on first load
   appStore.isOffLine = !navigator.onLine
 
   const handleOnline = () => {
@@ -34,12 +35,6 @@ export default function useNetwork() {
     // eslint-disable-next-line no-console
     console.log('[Network] Set appStore.isOffLine to:', appStore.isOffLine)
     wasOffline.value = true
-
-    alertStore.addNotification(
-      t('You are currently offline. Some features may be unavailable.'),
-      AlertNotificationType.ERROR,
-      5000
-    )
   }
 
   const initialize = () => {
@@ -59,11 +54,6 @@ export default function useNetwork() {
     // Initial check - show notification if starting offline
     if (!navigator.onLine) {
       wasOffline.value = true
-      alertStore.addNotification(
-        t('You are currently offline. Some features may be unavailable.'),
-        AlertNotificationType.ERROR,
-        5000
-      )
     }
 
     // Double-check after a short delay - navigator.onLine can be unreliable immediately after page load
