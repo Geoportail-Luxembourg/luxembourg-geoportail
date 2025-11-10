@@ -41,6 +41,7 @@ const {
   themeGridOpen,
   printToolbarOpen,
   feedbackOpen,
+  isOffLine,
 } = storeToRefs(appStore)
 const { setEditActiveState } = drawStore
 
@@ -163,7 +164,7 @@ function onClickInfoIcon() {
         >
         </button-icon>
       </li>
-      <li data-cy="infoOpenClose">
+      <li v-if="!isOffLine" data-cy="infoOpenClose">
         <button-icon
           :label="`${t('Infos', { ns: 'client' })}${
             displayStarOnMobile ? '(*)' : ''
@@ -174,7 +175,7 @@ function onClickInfoIcon() {
         >
         </button-icon>
       </li>
-      <li data-cy="legendsOpenClose">
+      <li v-if="!isOffLine" data-cy="legendsOpenClose">
         <button-icon
           :label="t('Legends', { ns: 'client' })"
           icon="legends"
@@ -183,7 +184,7 @@ function onClickInfoIcon() {
         >
         </button-icon>
       </li>
-      <li>
+      <li v-if="!isOffLine">
         <button-icon
           class="text-gray-300"
           :label="t('Routing', { ns: 'client' })"
@@ -193,9 +194,13 @@ function onClickInfoIcon() {
       </li>
     </ul>
 
+    <!-- Left spacer when offline to center the draw button -->
+    <div v-if="isOffLine" class="hidden sm:block sm:flex-grow"></div>
+
     <!-- center buttons -->
     <div
-      class="relative flex flex-col w-12 sm:w-64 sm:flex-row justify-start text-primary divide-y sm:divide-y-0 sm:divide-x divide-gray-400 divide-solid box-content border-y sm:border-y-0 border-x border-gray-400"
+      class="relative flex flex-col w-12 sm:flex-row justify-start text-primary divide-y sm:divide-y-0 sm:divide-x divide-gray-400 divide-solid box-content border-y sm:border-y-0 border-x border-gray-400"
+      :class="isOffLine ? 'sm:w-16' : 'sm:w-64'"
     >
       <!-- Drawing tools -->
       <toolbar-draw v-if="drawToolbarOpen" />
@@ -212,17 +217,20 @@ function onClickInfoIcon() {
       </button-icon>
 
       <!-- Measures tools -->
-      <toolbar-measure v-if="measureToolbarOpen" />
-      <button-icon
-        :label="t('Mesurer', { ns: 'client' })"
-        :active="measureToolbarOpen"
-        icon="measure"
-        @click="() => (measureToolbarOpen = !measureToolbarOpen)"
-      >
-      </button-icon>
+      <template v-if="!isOffLine">
+        <toolbar-measure v-if="measureToolbarOpen" />
+        <button-icon
+          :label="t('Mesurer', { ns: 'client' })"
+          :active="measureToolbarOpen"
+          icon="measure"
+          @click="() => (measureToolbarOpen = !measureToolbarOpen)"
+        >
+        </button-icon>
+      </template>
 
       <!-- Print tools -->
       <button-icon
+        v-if="!isOffLine"
         class="hidden sm:block"
         :label="t('Imprimer', { ns: 'client' })"
         :active="printToolbarOpen"
@@ -234,6 +242,7 @@ function onClickInfoIcon() {
 
       <!-- Social sharing tools -->
       <button-icon
+        v-if="!isOffLine"
         :label="t('Partager', { ns: 'client' })"
         :active="shareOpen"
         icon="share"
@@ -243,8 +252,10 @@ function onClickInfoIcon() {
       </button-icon>
     </div>
 
-    <!-- Right buttons (links) -->
+    <!-- Right buttons (links) - Hidden when offline, spacer maintains layout -->
+    <div v-if="isOffLine" class="hidden sm:block sm:flex-grow"></div>
     <div
+      v-else
       class="w-[466px] hidden sm:flex flex-row justify-end text-gray-500 whitespace-nowrap"
     >
       <ButtonLink

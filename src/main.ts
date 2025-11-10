@@ -44,3 +44,74 @@ app.use(formatMeasureDirective)
 app.mount('#app')
 
 useThemeStore().setThemes(themesApiFixture())
+
+// Register Service Worker for offline Vector Tiles caching
+// Only in production builds (not in dev mode to avoid conflicts with HMR)
+//  && import.meta.env.PROD
+// eslint-disable-next-line no-console
+console.log('[SW Debug] Starting registration...')
+// eslint-disable-next-line no-console
+console.log(
+  '[SW Debug] serviceWorker in navigator?',
+  'serviceWorker' in navigator
+)
+// eslint-disable-next-line no-console
+console.log('[SW Debug] BASE_URL:', import.meta.env.BASE_URL)
+// eslint-disable-next-line no-console
+console.log(
+  '[SW Debug] Full SW URL:',
+  `${import.meta.env.BASE_URL}service-worker.js`
+)
+
+if ('serviceWorker' in navigator) {
+  window.addEventListener('load', () => {
+    // eslint-disable-next-line no-console
+    console.log('[SW Debug] Window loaded, registering SW...')
+    navigator.serviceWorker
+      .register(`${import.meta.env.BASE_URL}service-worker.js`)
+      .then(registration => {
+        // eslint-disable-next-line no-console
+        console.log('[SW] ✅ Registered successfully:', registration.scope)
+        // eslint-disable-next-line no-console
+        console.log('[SW] State:', registration.active?.state)
+
+        // Check for updates periodically
+        setInterval(() => {
+          registration.update()
+        }, 60 * 60 * 1000) // Check every hour
+
+        // Handle service worker updates
+        registration.addEventListener('updatefound', () => {
+          const newWorker = registration.installing
+          if (newWorker) {
+            newWorker.addEventListener('statechange', () => {
+              if (
+                newWorker.state === 'installed' &&
+                navigator.serviceWorker.controller
+              ) {
+                // New service worker available
+                // eslint-disable-next-line no-console
+                // eslint-disable-next-line no-console
+                console.log('[SW] New version available')
+                // Optional: notify user to reload
+                // dispatchEvent(new CustomEvent('sw-update-available'))
+              }
+            })
+          }
+        })
+      })
+      .catch(error => {
+        // eslint-disable-next-line no-console
+        console.error('[SW] ❌ Registration failed:', error)
+        // eslint-disable-next-line no-console
+        console.error('[SW] Error details:', {
+          name: error.name,
+          message: error.message,
+          stack: error.stack,
+        })
+      })
+  })
+} else {
+  // eslint-disable-next-line no-console
+  console.warn('[SW] ⚠️ Service Worker not supported in this browser')
+}
