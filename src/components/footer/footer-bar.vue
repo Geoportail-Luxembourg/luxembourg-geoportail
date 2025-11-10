@@ -144,6 +144,11 @@ function onClickInfoIcon() {
       <li data-cy="layersOpenClose">
         <button-icon
           :label="t('layers', { ns: 'client' })"
+          :aria-label="
+            layersOpen
+              ? t('Close layers panel')
+              : t('Open layers panel to browse and add map layers')
+          "
           icon="layers"
           :active="layersOpen"
           @click="onClickLayersIcon"
@@ -158,6 +163,11 @@ function onClickInfoIcon() {
       <li data-cy="mymapsOpenClose">
         <button-icon
           :label="t('my_maps', { ns: 'client' })"
+          :aria-label="
+            myMapsOpen
+              ? t('Close my maps panel')
+              : t('Open my maps panel to access saved maps')
+          "
           icon="mymaps"
           :active="myMapsOpen"
           @click="() => toggleMyMapsOpen()"
@@ -169,6 +179,11 @@ function onClickInfoIcon() {
           :label="`${t('Infos', { ns: 'client' })}${
             displayStarOnMobile ? '(*)' : ''
           }`"
+          :aria-label="
+            infoOpen
+              ? t('Close feature info panel')
+              : t('Open feature info panel to view map details')
+          "
           icon="infos"
           :active="infoOpen"
           @click="onClickInfoIcon"
@@ -178,6 +193,9 @@ function onClickInfoIcon() {
       <li v-if="!isOffLine" data-cy="legendsOpenClose">
         <button-icon
           :label="t('Legends', { ns: 'client' })"
+          :aria-label="
+            legendsOpen ? t('Close legends panel') : t('Open legends panel')
+          "
           icon="legends"
           :active="legendsOpen"
           @click="() => toggleLegendsOpen()"
@@ -188,6 +206,7 @@ function onClickInfoIcon() {
         <button-icon
           class="text-gray-300"
           :label="t('Routing', { ns: 'client' })"
+          :aria-label="t('Routing tool - not yet implemented')"
           icon="routing"
         >
         </button-icon>
@@ -209,6 +228,11 @@ function onClickInfoIcon() {
       <toolbar-elevation-profile v-if="elevationProfileToolbarOpen" />
       <button-icon
         :label="t('Dessin', { ns: 'client' })"
+        :aria-label="
+          drawToolbarOpen
+            ? t('Close drawing toolbar')
+            : t('Open drawing toolbar to draw on the map')
+        "
         icon="draw"
         :active="drawToolbarOpen"
         @click="() => toggleDrawToolbarOpen()"
@@ -221,6 +245,11 @@ function onClickInfoIcon() {
         <toolbar-measure v-if="measureToolbarOpen" />
         <button-icon
           :label="t('Mesurer', { ns: 'client' })"
+          :aria-label="
+            measureToolbarOpen
+              ? t('Close measure toolbar')
+              : t('Open measure toolbar to measure distances and areas')
+          "
           :active="measureToolbarOpen"
           icon="measure"
           @click="() => (measureToolbarOpen = !measureToolbarOpen)"
@@ -233,6 +262,11 @@ function onClickInfoIcon() {
         v-if="!isOffLine"
         class="hidden sm:block"
         :label="t('Imprimer', { ns: 'client' })"
+        :aria-label="
+          printToolbarOpen
+            ? t('Close print toolbar')
+            : t('Open print toolbar to create a PDF of the map')
+        "
         :active="printToolbarOpen"
         @click="() => togglePrintToolbarOpen()"
         icon="print"
@@ -244,6 +278,11 @@ function onClickInfoIcon() {
       <button-icon
         v-if="!isOffLine"
         :label="t('Partager', { ns: 'client' })"
+        :aria-label="
+          shareOpen
+            ? t('Close share panel')
+            : t('Open share panel to create a shareable link')
+        "
         :active="shareOpen"
         icon="share"
         @click="() => toggleShareOpen()"

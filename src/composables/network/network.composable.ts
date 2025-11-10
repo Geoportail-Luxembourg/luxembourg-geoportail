@@ -10,13 +10,64 @@ export default function useNetwork() {
   const alertStore = useAlertNotificationsStore()
   const { t } = useTranslation()
   const wasOffline = ref(false)
+  let previousFocusElement: HTMLElement | null = null
 
   // Set initial state IMMEDIATELY - critical for page reload while offline
   // Must execute before template renders to show correct offline UI on first load
   appStore.isOffLine = !navigator.onLine
 
+  /**
+   * Check if an element will be hidden when going offline
+   */
+  const willBeHiddenOffline = (element: Element): boolean => {
+    // Check if element or any parent has v-if="!isOffLine" which will hide it
+    let current: Element | null = element
+    while (current) {
+      // Check for data-cy attributes of tools that are hidden offline
+      const dataCy = current.getAttribute('data-cy')
+      if (dataCy) {
+        const hiddenTools = [
+          'infoOpenClose',
+          'legendsOpenClose',
+          'printOpenClose',
+          'shareOpenClose',
+          'feedbackOpenClose',
+        ]
+        if (hiddenTools.includes(dataCy)) {
+          return true
+        }
+      }
+      current = current.parentElement
+    }
+    return false
+  }
+
+  /**
+   * Find a safe element to focus on (one that won't be hidden)
+   */
+  const findSafeFocusTarget = (): HTMLElement | null => {
+    // Try to focus on the drawing button (always visible)
+    const drawButton = document.querySelector(
+      '[data-cy="drawOpenClose"]'
+    ) as HTMLElement
+    if (drawButton) return drawButton
+
+    // Fallback to the map container
+    const mapContainer = document.querySelector('.map-wrapper') as HTMLElement
+    return mapContainer
+  }
+
   const handleOnline = () => {
     appStore.isOffLine = false
+
+    // Restore focus if we saved it
+    if (previousFocusElement && document.contains(previousFocusElement)) {
+      // Wait for DOM to update
+      setTimeout(() => {
+        previousFocusElement?.focus()
+        previousFocusElement = null
+      }, 100)
+    }
 
     if (wasOffline.value) {
       alertStore.addNotification(
@@ -35,6 +86,24 @@ export default function useNetwork() {
     // eslint-disable-next-line no-console
     console.log('[Network] Set appStore.isOffLine to:', appStore.isOffLine)
     wasOffline.value = true
+
+    // Save current focus and move it to a safe location if needed
+    const activeElement = document.activeElement as HTMLElement
+    if (activeElement && activeElement !== document.body) {
+      if (willBeHiddenOffline(activeElement)) {
+        // Save reference to restore later
+        previousFocusElement = activeElement
+
+        // Move focus to a safe element
+        const safeFocus = findSafeFocusTarget()
+        if (safeFocus) {
+          // Wait for DOM to update
+          setTimeout(() => {
+            safeFocus.focus()
+          }, 100)
+        }
+      }
+    }
   }
 
   const initialize = () => {

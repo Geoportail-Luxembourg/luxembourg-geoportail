@@ -34,7 +34,9 @@ const { t } = useTranslation()
           {{ t('You are currently disconnected') }}
         </p>
         <p class="text-xs opacity-90 hidden sm:block">
-          {{ t('Some features may be unavailable in offline mode') }}
+          {{
+            t('Features requiring network connection are temporarily hidden')
+          }}
         </p>
       </div>
 
@@ -62,7 +64,10 @@ const { t } = useTranslation()
   }
 }
 
-header {
-  animation: pulse-subtle 3s ease-in-out infinite;
+/* Only animate if user hasn't requested reduced motion */
+@media (prefers-reduced-motion: no-preference) {
+  header {
+    animation: pulse-subtle 3s ease-in-out infinite;
+  }
 }
 </style>

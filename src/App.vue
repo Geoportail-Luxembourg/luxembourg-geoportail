@@ -28,7 +28,9 @@ import useMap from '@/composables/map/map.composable'
 import useMvtStyles from '@/composables/mvt-styles/mvt-styles.composable'
 import { statePersistorFeatureInfoService } from '@/services/state-persistor/state-persistor-featureinfo.service'
 import useNetwork from '@/composables/network/network.composable'
+import { useTranslation } from 'i18next-vue'
 
+const { t } = useTranslation()
 const appStore = useAppStore()
 const mvtStyleService = useMvtStyles()
 const map = useMap()
@@ -86,6 +88,17 @@ onUnmounted(() => {
 
 <template>
   <div class="h-screen flex flex-col overflow-hidden">
+    <!-- Accessibility: Announce offline status changes to screen readers -->
+    <div role="status" aria-live="polite" aria-atomic="true" class="sr-only">
+      <span v-if="isOffLine">
+        {{
+          t(
+            'You are offline. The following features are unavailable: Info panel, Legends, Routing, Measure tools, Print, Share, and external links.'
+          )
+        }}
+      </span>
+    </div>
+
     <!-- ----------------------------- -->
     <!-- Template for full app display -->
     <!-- ----------------------------- -->
