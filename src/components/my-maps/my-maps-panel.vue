@@ -13,7 +13,6 @@ import { useAppStore } from '@/stores/app.store'
 import { useDrawStore } from '@/stores/draw.store'
 import { useUserManagerStore } from '@/stores/user-manager.store'
 import {
-  clearMyMap,
   deleteMyMap,
   fetchMyMaps,
   MyMap,
@@ -31,8 +30,7 @@ import { EditFormModeType } from './my-maps.model'
 const { t } = useTranslation()
 const { addNotification } = useAlertNotificationsStore()
 const appStore = useAppStore()
-const { loadMyMap, openMyMap, closeMyMap, applyToMyMap, resetFromMyMap } =
-  useMyMaps()
+const myMapsHelper = useMyMaps()
 const { toggleAuthFormOpen, toggleShareToolbarOpen } = appStore
 const { myMap } = storeToRefs(appStore)
 const { authenticated } = storeToRefs(useUserManagerStore())
@@ -89,7 +87,7 @@ function openEditFormModal(map: MyMap | undefined, mode: EditFormModeType) {
 }
 
 async function onMapUpdated(uuid: string) {
-  loadMyMap(uuid) // refreshes MyMap
+  myMapsHelper.loadMyMap(uuid) // refreshes MyMap
 
   if (editFormModalState.value !== EditFormModeType.EDIT) {
     addNotification(t('Nouvelle carte créée'))
@@ -99,7 +97,7 @@ async function onMapUpdated(uuid: string) {
 }
 
 async function onMapSelected(uuid: string) {
-  openMyMap(uuid)
+  myMapsHelper.openMyMap(uuid)
   openMapModalState.value = false
 }
 
@@ -146,7 +144,7 @@ async function doDeleteMap(uuid: string) {
     confirmDeleteModalState.value = undefined
 
     if (uuid === myMap.value?.uuid) {
-      closeMyMap()
+      myMapsHelper.closeMyMap()
     }
 
     addNotification(t('MyMap successfully deleted.'))
@@ -156,7 +154,7 @@ async function doDeleteMap(uuid: string) {
 }
 
 async function doClearMap(uuid: string) {
-  const cleared = await clearMyMap(uuid)
+  const cleared = await myMapsHelper.clearMyMap(uuid)
 
   if (cleared) {
     confirmDeleteModalState.value = undefined
@@ -225,7 +223,7 @@ watch(
       <div v-if="myMap">
         <MyMapInfo
           :myMap="myMap"
-          @close="closeMyMap"
+          @close="myMapsHelper.closeMyMap"
           @delete="onMapDeleteOpenConfirm"
           @clear="onClearOpenConfirm"
           @copy="map => openEditFormModal(map, EditFormModeType.COPY)"
@@ -233,8 +231,8 @@ watch(
           @new="() => openEditFormModal(undefined, EditFormModeType.CREATE)"
           @open="openMap"
           @share="() => toggleShareToolbarOpen(true)"
-          @resetLayers="resetFromMyMap"
-          @saveLayers="applyToMyMap"
+          @resetLayers="myMapsHelper.resetFromMyMap"
+          @saveLayers="myMapsHelper.applyToMyMap"
         />
         <FeaturesList :features="features" />
       </div>
