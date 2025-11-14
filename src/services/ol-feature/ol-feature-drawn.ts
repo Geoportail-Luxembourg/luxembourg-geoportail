@@ -245,6 +245,7 @@ export class DrawnFeature extends Feature {
       angle: this.featureStyle.angle,
       color: this.featureStyle.color,
       description: this.description,
+      display_order: this.display_order,
       stroke: this.featureStyle.stroke,
       isLabel: this.featureType === 'drawnLabel',
       linestyle: this.featureStyle.linestyle,
@@ -264,6 +265,7 @@ export class DrawnFeature extends Feature {
     if (!properties) return
 
     this.description = properties.description ?? this.description
+    this.display_order = properties.display_order ?? this.display_order
     this.label = properties.name ?? this.label
     this.map_id = properties.__map_id__ ?? this.map_id
 
