@@ -9,6 +9,7 @@ import {
   copyMyMap,
   createMyMap,
   editMyMap,
+  updateMyMap,
   fetchCategories,
   MyMap,
   MyMapCreatedJson,
@@ -17,6 +18,9 @@ import { useAlertNotificationsStore } from '@/stores/alert-notifications.store'
 
 import { EditFormModeType } from './my-maps.model'
 import { AlertNotificationType } from '@/stores/alert-notifications.store.model'
+import { storeToRefs } from 'pinia'
+import { useThemeStore } from '@/stores/config.store'
+import { useMapStore } from '@/stores/map.store'
 
 const emit = defineEmits<{
   (e: 'cancel'): void
@@ -30,6 +34,10 @@ const props = defineProps<{
 
 const { t } = useTranslation()
 const { addNotification } = useAlertNotificationsStore()
+const mapStore = useMapStore()
+const { bgLayer } = storeToRefs(mapStore)
+const themeStore = useThemeStore()
+const { theme } = storeToRefs(themeStore)
 const copyMode = props.map && props.mode === EditFormModeType.COPY
 const mapIsPublic = ref(props.map ? props.map.public : false)
 const mapTitle = ref(props.map ? props.map.title : t('Map without Title'))
@@ -69,6 +77,17 @@ async function onClickSave() {
         mapDescription.value,
         catId,
         mapIsPublic.value
+      )
+
+      await updateMyMap(
+        createdResponse.uuid,
+        bgLayer.value?.name || '',
+        1,
+        '',
+        '',
+        '',
+        '',
+        theme.value?.name || ''
       )
     }
 
