@@ -167,10 +167,19 @@ export default function useMyMaps() {
   function init() {
     if (!watchersDefined) {
       // Populate MyMap object whenever MyMap uuid changes
-      watch(myMapId, async uuid => uuid && loadMyMap(uuid), { immediate: true })
+      watch(
+        myMapId,
+        async (uuid, oldValue) => uuid && uuid !== oldValue && loadMyMap(uuid),
+        { immediate: true }
+      )
 
       // Populate map (app map) content when MyMap is loaded
-      watch(myMap, myMap => myMap && resetFromMyMap())
+      watch(myMap, myMap => {
+        if (myMap) {
+          myMapId.value = myMap.uuid
+          resetFromMyMap()
+        }
+      })
 
       // Check if MyMap content differs from Map store
       watch(
