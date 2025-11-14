@@ -1,4 +1,4 @@
-import { computed, watch } from 'vue'
+import { computed, nextTick, watch } from 'vue'
 import { storeToRefs } from 'pinia'
 import { useTranslation } from 'i18next-vue'
 
@@ -57,20 +57,20 @@ export default function useMyMaps() {
   async function loadMyMap(uuid: string) {
     myMap.value = undefined
 
-    const features = await fetchMyMapFeatures(uuid)
+    fetchMyMapFeatures(uuid).then(features => {
+      features.features?.forEach((feature: unknown) => {
+        try {
+          const drawnFeature = DrawnFeature.generateFromGeoJson(feature, {
+            map_id: uuid,
+          })
 
-    features.features?.forEach((feature: unknown) => {
-      try {
-        const drawnFeature = DrawnFeature.generateFromGeoJson(feature, {
-          map_id: uuid,
-        })
+          console.log('Loaded MyMap feature', drawnFeature) // DEBUG
 
-        console.log('Loaded MyMap feature', drawnFeature) // DEBUG
-
-        addDrawnFeatureToCollection(drawnFeature)
-      } catch (e) {
-        console.error('Error while loading MyMap feature', feature, e)
-      }
+          addDrawnFeatureToCollection(drawnFeature)
+        } catch (e) {
+          console.error('Error while loading MyMap feature', feature, e)
+        }
+      })
     })
 
     try {
@@ -188,12 +188,7 @@ export default function useMyMaps() {
       )
 
       // Populate map (app map) content when MyMap is loaded
-      watch(myMap, myMap => {
-        if (myMap) {
-          myMapId.value = myMap.uuid
-          resetFromMyMap()
-        }
-      })
+      watch(myMap, myMap => myMap && resetFromMyMap())
 
       // Check if MyMap content differs from Map store
       watch(

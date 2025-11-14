@@ -20,14 +20,14 @@ class StatePersistorMyMapService {
 
   persist() {
     const appStore = useAppStore()
-    const { myMapId } = storeToRefs(appStore)
+    const { myMap } = storeToRefs(appStore)
 
     watch(
-      myMapId,
+      myMap, // ! watch only myMap changes, not on mapId
       (value, oldValue) => {
-        if (oldValue !== value) {
+        if (oldValue?.uuid !== value?.uuid) {
           if (value) {
-            storageHelper.setValue(SP_KEY_MAPID, value)
+            storageHelper.setValue(SP_KEY_MAPID, value.uuid)
           } else {
             storageHelper.removeItem(SP_KEY_MAPID)
           }
