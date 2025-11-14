@@ -10,6 +10,8 @@ import { useThemeStore } from '@/stores/config.store'
 import { useMapStore } from '@/stores/map.store'
 import { Layer } from '@/stores/map.store.model'
 import {
+  clearMyMap as clearMyMapApi,
+  deleteMyMapFeature,
   fetchMyMap,
   fetchMyMapFeatures,
   updateMyMap,
@@ -29,6 +31,7 @@ export default function useMyMaps() {
   const mapStore = useMapStore()
   const drawStore = useDrawStore()
   const { addDrawnFeatureToCollection } = drawStore
+  const { drawnFeaturesMyMaps } = storeToRefs(drawStore)
   const themeStore = useThemeStore()
   const { addNotification } = useAlertNotificationsStore()
   const { authenticated } = storeToRefs(useUserManagerStore())
@@ -83,11 +86,22 @@ export default function useMyMaps() {
   }
 
   function closeMyMap() {
-    // When closing mymaps, remove all mymaps features from the map view
+    // When closing mymaps, remove all mymaps features from the map view (don't save to mymaps backend)
     myMapId.value && drawStore.removeMyMapsFeature(myMapId.value)
 
     myMapId.value = undefined
     myMap.value = undefined
+  }
+
+  async function clearMyMap(uuid: string) {
+    const cleared = await clearMyMapApi(uuid)
+
+    if (cleared) {
+      drawnFeaturesMyMaps.value.forEach(f => deleteMyMapFeature(f.id))
+      drawStore.removeMyMapsFeature(uuid)
+    }
+
+    return cleared
   }
 
   /**
@@ -199,6 +213,7 @@ export default function useMyMaps() {
     isMyMapEditable,
     init,
     loadMyMap,
+    clearMyMap,
     closeMyMap,
     openMyMap,
     applyToMyMap,

@@ -145,15 +145,6 @@ export const useDrawStore = defineStore('draw', () => {
   ) {
     const featureIds = Array.isArray(featureId) ? featureId : [featureId]
 
-    // First delete in db if needed
-    featureIds.forEach(id => {
-      const feature = drawnFeatures.value.find(f => f.id === id)
-      if (feature && feature.map_id !== undefined) {
-        deleteMyMapFeature(feature.id)
-      }
-    })
-
-    // Then, delete in store
     drawnFeatures.value = drawnFeatures.value.filter(
       feature => !featureIds.includes(feature.id)
     )
