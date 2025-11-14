@@ -8,6 +8,10 @@ import {
   DrawnFeatureId,
 } from '@/services/ol-feature/ol-feature-drawn'
 import { DrawStateActive, EditStateActive } from './draw.store.model'
+import {
+  deleteMyMapFeature,
+  saveMyMapFeature,
+} from '@/services/api/api-mymaps.service'
 
 export const useDrawStore = defineStore('draw', () => {
   const activeFeatureId = ref<DrawnFeatureId | undefined>(undefined)
@@ -119,8 +123,13 @@ export const useDrawStore = defineStore('draw', () => {
     if (index !== -1) {
       drawnFeatures.value[index] = feature
     }
+
     // affect immutable value to trigger reactivity for state persistor
     drawnFeatures.value = [...drawnFeatures.value]
+
+    if (feature.map_id !== undefined) {
+      saveMyMapFeature(feature.map_id, feature.toGeoJSONString())
+    }
   }
 
   function setDrawnFeatures(features: DrawnFeature[]) {
@@ -136,6 +145,15 @@ export const useDrawStore = defineStore('draw', () => {
   ) {
     const featureIds = Array.isArray(featureId) ? featureId : [featureId]
 
+    // First delete in db if needed
+    featureIds.forEach(id => {
+      const feature = drawnFeatures.value.find(f => f.id === id)
+      if (feature && feature.map_id !== undefined) {
+        deleteMyMapFeature(feature.id)
+      }
+    })
+
+    // Then, delete in store
     drawnFeatures.value = drawnFeatures.value.filter(
       feature => !featureIds.includes(feature.id)
     )

@@ -1,4 +1,4 @@
-import { DrawnFeature } from '../ol-feature/ol-feature-drawn'
+import { DrawnFeatureId } from '@/services/ol-feature/ol-feature-drawn'
 import { fetchApi } from './api.service'
 
 const MYMAPS_URL = import.meta.env.VITE_MYMAPS_URL
@@ -314,6 +314,22 @@ export async function saveMyMapFeature(uuid: string, feature: string) {
 
   if (!response.ok) {
     throw new Error('Error while trying to save feature to My Map')
+  }
+
+  const json = <MyMapSaveFeatureJson>await response.json()
+
+  return json
+}
+
+export async function deleteMyMapFeature(featureId: DrawnFeatureId) {
+  const response = await fetchApi(
+    MYMAPS_URL + '/delete_feature/' + featureId,
+    {},
+    'DELETE'
+  )
+
+  if (!response.ok) {
+    throw new Error('Error while trying to delete feature to My Map')
   }
 
   const json = <MyMapSaveFeatureJson>await response.json()

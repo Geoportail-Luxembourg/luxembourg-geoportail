@@ -20,8 +20,6 @@ import useBackgroundLayer from '@/composables/background-layer/background-layer.
 import { useUserManagerStore } from '@/stores/user-manager.store'
 import { DrawnFeature } from '@/services/ol-feature/ol-feature-drawn'
 import { useDrawStore } from '@/stores/draw.store'
-import { Feature } from 'ol'
-import { Geometry } from 'ol/geom'
 
 let watchersDefined = false
 
@@ -85,6 +83,9 @@ export default function useMyMaps() {
   }
 
   function closeMyMap() {
+    // When closing mymaps, remove all mymaps features from the map view
+    myMapId.value && drawStore.removeMyMapsFeature(myMapId.value)
+
     myMapId.value = undefined
     myMap.value = undefined
   }

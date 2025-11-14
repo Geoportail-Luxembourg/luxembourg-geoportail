@@ -18,6 +18,7 @@ import {
   fetchMyMaps,
   MyMap,
   MyMapJson,
+  MyMapSaveFeatureJson,
   saveMyMapFeature,
 } from '@/services/api/api-mymaps.service'
 
@@ -182,22 +183,30 @@ watch(
     !map && mapPrevious && drawStore.removeMyMapsFeature(mapPrevious.uuid)
 )
 
-watch(features, (features, featuresOld) => {
-  if (myMap.value) {
-    const mapUuid = myMap.value.uuid
-    const featureIds = new Set(featuresOld.map(f => f.id))
-    const featuresAdded = features.filter(f => !featureIds.has(f.id))
+watch(
+  features,
+  async (features, featuresOld) => {
+    if (myMap.value) {
+      const mapUuid = myMap.value.uuid
+      const featureIds = new Set(featuresOld.map(f => f.id))
+      const featuresAdded = features.filter(f => !featureIds.has(f.id))
 
-    featuresAdded.forEach(f =>
-      saveMyMapFeature(mapUuid, f.toGeoJSONString()).catch(e =>
-        addNotification(
-          t('Erreur inattendue lors de la sauvegarde de votre modification.'),
-          AlertNotificationType.ERROR
+      for (const f of featuresAdded) {
+        const resp = await saveMyMapFeature(mapUuid, f.toGeoJSONString()).catch(
+          e =>
+            addNotification(
+              t(
+                'Erreur inattendue lors de la sauvegarde de votre modification.'
+              ),
+              AlertNotificationType.ERROR
+            )
         )
-      )
-    )
-  }
-})
+        f.id = (<MyMapSaveFeatureJson>resp).id!
+      }
+    }
+  },
+  { deep: true }
+)
 </script>
 
 <template>
