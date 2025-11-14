@@ -31,7 +31,7 @@ export default function useMyMaps() {
   const mapStore = useMapStore()
   const drawStore = useDrawStore()
   const { addDrawnFeatureToCollection } = drawStore
-  const { drawnFeaturesMyMaps } = storeToRefs(drawStore)
+  const { drawnFeatures, drawnFeaturesMyMaps } = storeToRefs(drawStore)
   const themeStore = useThemeStore()
   const { addNotification } = useAlertNotificationsStore()
   const { authenticated } = storeToRefs(useUserManagerStore())
@@ -58,19 +58,12 @@ export default function useMyMaps() {
     myMap.value = undefined
 
     fetchMyMapFeatures(uuid).then(features => {
-      features.features?.forEach((feature: unknown) => {
-        try {
-          const drawnFeature = DrawnFeature.generateFromGeoJson(feature, {
-            map_id: uuid,
-          })
-
-          console.log('Loaded MyMap feature', drawnFeature) // DEBUG
-
-          addDrawnFeatureToCollection(drawnFeature)
-        } catch (e) {
-          console.error('Error while loading MyMap feature', feature, e)
-        }
-      })
+      const newFeatures = features.features?.map(f =>
+        DrawnFeature.generateFromGeoJson(f, {
+          map_id: uuid,
+        })
+      )
+      drawnFeatures.value = [...drawnFeatures.value, ...newFeatures]
     })
 
     try {
