@@ -7,6 +7,13 @@ import MenuPopup from '@/components/common/menu-popup/menu-popup.vue'
 import MenuPopupItem from '@/components/common/menu-popup/menu-popup-item.vue'
 import { MyMap } from '@/services/api/api-mymaps.service'
 import { useAppStore } from '@/stores/app.store'
+import {
+  exportFeatureService,
+  ExportFormat,
+  FeatExport,
+} from '@/services/export-feature/export-feature.service'
+import useMap from '@/composables/map/map.composable'
+import { useDrawStore } from '@/stores/draw.store'
 
 const { t } = useTranslation()
 const emit = defineEmits<{
@@ -25,7 +32,9 @@ const emit = defineEmits<{
 const props = defineProps<{
   myMap: MyMap
 }>()
+const map = useMap().getOlMap()
 const { myMapLayersChanged } = storeToRefs(useAppStore())
+const { drawnFeaturesMyMaps } = storeToRefs(useDrawStore())
 const menuOptions = computed(() => [
   {
     label: 'Créer une nouvelle carte',
@@ -54,11 +63,11 @@ const menuOptions = computed(() => [
   },
   {
     label: 'Fusionner des lignes',
-    action: () => alert('TODO: Créer une copie'),
+    action: () => alert('TODO: Fusionner des lignes'),
   },
   {
     label: 'Couper une ligne',
-    action: () => alert('TODO: Créer une copie'),
+    action: () => alert('TODO: Couper une ligne'),
     separator: true,
   },
   {
@@ -68,21 +77,35 @@ const menuOptions = computed(() => [
   },
   {
     label: 'Exporter un GPX',
-    action: () => alert('TODO: Créer une copie'),
+    action: () => download('gpx'),
   },
   {
     label: 'Exporter un KML',
-    action: () => alert('TODO: Créer une copie'),
+    action: () => download('kml'),
   },
   {
     label: 'Exporter un Shapefile',
-    action: () => alert('TODO: Créer une copie'),
+    action: () => download('shapefile'),
   },
   {
     label: 'Exporter un fichier GPX/KML/KMZ',
-    action: () => alert('TODO: Créer une copie'),
+    action: () => importFeatures(),
   },
 ])
+
+function download(format: ExportFormat) {
+  exportFeatureService.export(
+    map,
+    format,
+    <FeatExport>(<unknown>drawnFeaturesMyMaps.value),
+    props.myMap.title,
+    true
+  )
+}
+
+function importFeatures() {
+  alert('TODO: Import features')
+}
 </script>
 
 <template>
