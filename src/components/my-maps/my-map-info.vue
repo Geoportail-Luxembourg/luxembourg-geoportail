@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { useTranslation } from 'i18next-vue'
-import { computed } from 'vue'
+import { computed, ref, watch } from 'vue'
 import { storeToRefs } from 'pinia'
 
 import MenuPopup from '@/components/common/menu-popup/menu-popup.vue'
@@ -14,6 +14,8 @@ import {
 } from '@/services/export-feature/export-feature.service'
 import useMap from '@/composables/map/map.composable'
 import { useDrawStore } from '@/stores/draw.store'
+import { readFileContent } from '@/services/file.utils'
+import useDrawnFeatures from '@/composables/draw/drawn-features.composable'
 
 const { t } = useTranslation()
 const emit = defineEmits<{
@@ -33,8 +35,12 @@ const props = defineProps<{
   myMap: MyMap
 }>()
 const map = useMap().getOlMap()
+const { generateDrawnFeature } = useDrawnFeatures()
 const { myMapLayersChanged } = storeToRefs(useAppStore())
-const { drawnFeaturesMyMaps } = storeToRefs(useDrawStore())
+const drawStore = useDrawStore()
+const { drawnFeaturesMyMaps } = storeToRefs(drawStore)
+const fileInputRef = ref<HTMLInputElement | null>(null)
+const selectedFile = ref<File | null>(null)
 const menuOptions = computed(() => [
   {
     label: 'Créer une nouvelle carte',
@@ -88,10 +94,30 @@ const menuOptions = computed(() => [
     action: () => download('shapefile'),
   },
   {
-    label: 'Exporter un fichier GPX/KML/KMZ',
+    label: 'Importer un fichier GPX/KML/KMZ',
     action: () => importFeatures(),
   },
 ])
+
+watch(selectedFile, async file => {
+  if (!file) return
+
+  try {
+    const result = await readFileContent(file, map)
+    const { features } = result
+
+    features.forEach(feature => {
+      const drawFeature = generateDrawnFeature(feature)
+      drawStore.addDrawnFeatureToCollection(drawFeature)
+      drawFeature.fit()
+    })
+  } catch (error) {
+    console.error('Error importing file:', error)
+  } finally {
+    // Reset the file input so the same file can be selected again
+    selectedFile.value = null
+  }
+})
 
 function download(format: ExportFormat) {
   exportFeatureService.export(
@@ -104,7 +130,7 @@ function download(format: ExportFormat) {
 }
 
 function importFeatures() {
-  alert('TODO: Import features')
+  fileInputRef.value?.click()
 }
 </script>
 
@@ -164,6 +190,14 @@ function importFeatures() {
       <i v-else class="fa fa-lock mr-1"></i>
       {{ t('Carte créée par') }} {{ myMap.user_login }}
     </span>
+
+    <input
+      type="file"
+      class="hidden"
+      ref="fileInputRef"
+      accept=".gpx,.kml,.kmz"
+      v-on:change="(e) => selectedFile = (e.target as HTMLInputElement).files?.[0] || null"
+    />
 
     <!-- Dropdown menu -->
     <MenuPopup

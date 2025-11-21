@@ -30,7 +30,6 @@ export default function useMyMaps() {
   const appStore = useAppStore()
   const mapStore = useMapStore()
   const drawStore = useDrawStore()
-  const { addDrawnFeatureToCollection } = drawStore
   const { drawnFeatures, drawnFeaturesMyMaps } = storeToRefs(drawStore)
   const themeStore = useThemeStore()
   const { addNotification } = useAlertNotificationsStore()
