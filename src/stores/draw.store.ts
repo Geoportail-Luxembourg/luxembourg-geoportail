@@ -96,8 +96,6 @@ export const useDrawStore = defineStore('draw', () => {
   }
 
   function addDrawnFeatureToCollection(feature: DrawnFeature) {
-    console.log('Adding drawn feature to collection', feature) // DEBUG
-
     queueAddedDrawnFeatures.value = [feature]
     drawnFeatures.value = [...drawnFeatures.value, feature]
   }

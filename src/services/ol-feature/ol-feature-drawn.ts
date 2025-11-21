@@ -24,12 +24,18 @@ import { colorStringToRgba } from '@/services/colors.utils'
 import { ProfileData } from '@/components/common/graph/elevation-profile'
 import { getDefaultDrawnFeatureStyle } from './styles.helper'
 import GeoJSON from 'ol/format/GeoJSON'
+import { convertCircleFeatureToPolygon } from '@/composables/draw/draw-utils.composable'
 
 const MYMAPS_URL = import.meta.env.VITE_MYMAPS_URL
 const MYMAPS_SYMBOL_URL = import.meta.env.VITE_SYMBOL_URL
 const ARROW_URL = MYMAPS_URL + '/getarrow'
 
 export type DrawnFeatureId = number | string
+
+const encodeOptions = {
+  dataProjection: PROJECTION_LUX,
+  featureProjection: PROJECTION_WEBMERCATOR,
+}
 
 export class DrawnFeature extends Feature {
   // TODO: refactor create a generic type that can be used by Infos panel, Draw, and Measures
@@ -140,7 +146,9 @@ export class DrawnFeature extends Feature {
   }
 
   static generateFromGeoJson(geoJson: unknown, options = {}) {
-    const feature = new GeoJSON().readFeature(geoJson) as Feature<Geometry>
+    const feature = new GeoJSON(encodeOptions).readFeature(
+      geoJson
+    ) as Feature<Geometry>
     const drawnFeature = DrawnFeature.generateFromFeature(feature, options)
 
     drawnFeature.fromProperties(geoJson.properties)
@@ -193,10 +201,6 @@ export class DrawnFeature extends Feature {
     }
 
     if (this.profileData === undefined) {
-      const encodeOptions = {
-        dataProjection: PROJECTION_LUX,
-        featureProjection: PROJECTION_WEBMERCATOR,
-      }
       const geomJson = new olFormatGeoJSON().writeGeometry(
         this.getGeometry()!,
         encodeOptions
@@ -291,13 +295,16 @@ export class DrawnFeature extends Feature {
   }
 
   toGeoJSONString() {
-    const encodeOptions = {
-      dataProjection: PROJECTION_LUX,
-      featureProjection: PROJECTION_WEBMERCATOR,
-    }
     const feature = this.clone()
     feature.setProperties(this.toProperties())
-    return new olFormatGeoJSON().writeFeature(feature, encodeOptions)
+
+    // NB. If feature is circle, convert geometry to polygon for GeoJSON export
+    return new olFormatGeoJSON().writeFeature(
+      feature.getGeometry()?.getType() === 'Circle'
+        ? convertCircleFeatureToPolygon(feature)
+        : feature,
+      encodeOptions
+    )
   }
 
   getStyleFunction(): StyleFunction {

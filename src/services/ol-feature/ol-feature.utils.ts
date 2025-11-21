@@ -25,6 +25,15 @@ export function getFeatCoordinates(feature: Feature<Geometry>) {
       case 'Circle':
         coordinates = (<Circle>geometry).getCenter()
         break
+      case 'MultiPoint':
+      case 'MultiLineString':
+      case 'MultiPolygon':
+      case 'GeometryCollection':
+      default:
+        console.warn(
+          `getFeatCoordinates: Geometry type ${geometry.getType()} not supported, please convert to a supported geometry type before calling this function.`
+        )
+        break
     }
   }
 

@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { ref, shallowRef, watch, nextTick } from 'vue'
+import { ref, shallowRef, watch } from 'vue'
 import { useTranslation } from 'i18next-vue'
 import { storeToRefs } from 'pinia'
 
@@ -26,13 +26,10 @@ import MyMapInfo from './my-map-info.vue'
 import MyMapsOpenMap from './my-maps-open-map.vue'
 import MyMapConfirm from './my-map-confirm.vue'
 import { EditFormModeType } from './my-maps.model'
-import { useMapStore } from '@/stores/map.store'
 
 const { t } = useTranslation()
 const { addNotification } = useAlertNotificationsStore()
 const appStore = useAppStore()
-const mapStore = useMapStore()
-const { bgLayer } = storeToRefs(mapStore)
 const myMapsHelper = useMyMaps()
 const { toggleAuthFormOpen, toggleShareToolbarOpen } = appStore
 const { myMap } = storeToRefs(appStore)

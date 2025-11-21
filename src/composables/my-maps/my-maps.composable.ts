@@ -1,4 +1,4 @@
-import { computed, nextTick, watch } from 'vue'
+import { computed, watch } from 'vue'
 import { storeToRefs } from 'pinia'
 import { useTranslation } from 'i18next-vue'
 
@@ -30,7 +30,6 @@ export default function useMyMaps() {
   const appStore = useAppStore()
   const mapStore = useMapStore()
   const drawStore = useDrawStore()
-  const { addDrawnFeatureToCollection } = drawStore
   const { drawnFeatures, drawnFeaturesMyMaps } = storeToRefs(drawStore)
   const themeStore = useThemeStore()
   const { addNotification } = useAlertNotificationsStore()

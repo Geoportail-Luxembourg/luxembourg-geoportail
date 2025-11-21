@@ -13,7 +13,6 @@ import {
   setCircleRadius,
 } from '@/services/common/measurement.utils'
 import { Circle, Geometry, Point, Polygon } from 'ol/geom'
-import { Projection } from 'ol/proj'
 import useMap from '@/composables/map/map.composable'
 import {
   getDebouncedElevation,
@@ -28,7 +27,7 @@ defineProps<{
 const { t } = useTranslation()
 const drawStore = useDrawStore()
 const map = useMap().getOlMap()
-const mapProjection: Projection = map.getView().getProjection()
+const mapProjection = map.getView().getProjection()
 
 const feature = ref<DrawnFeature | undefined>(inject('feature'))
 const featureType = ref<string>(feature.value?.featureType || '')
