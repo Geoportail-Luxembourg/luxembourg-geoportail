@@ -1,6 +1,8 @@
 <script setup lang="ts">
 import { useTranslation } from 'i18next-vue'
 
+defineEmits(['cancel', 'validate'])
+
 const { t } = useTranslation()
 </script>
 

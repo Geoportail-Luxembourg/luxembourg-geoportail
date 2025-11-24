@@ -4,6 +4,8 @@ import { useTranslation } from 'i18next-vue'
 
 import { DrawnFeature } from '@/services/ol-feature/ol-feature-drawn'
 
+defineEmits(['cancel', 'validate'])
+
 const { t } = useTranslation()
 const feature: Reactive<DrawnFeature> = inject('feature')!
 </script>

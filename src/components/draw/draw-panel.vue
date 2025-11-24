@@ -5,6 +5,8 @@ import { useTranslation } from 'i18next-vue'
 
 import MenuPopup from '@/components/common/menu-popup/menu-popup.vue'
 import MenuPopupItem from '@/components/common/menu-popup/menu-popup-item.vue'
+import useClipLine from '@/composables/draw/draw-clip-line.composable'
+import useMyMaps from '@/composables/my-maps/my-maps.composable'
 import { useDrawStore } from '@/stores/draw.store'
 import { useAppStore } from '@/stores/app.store'
 import { screenSizeIsAtLeast } from '@/services/common/device.utils'
@@ -12,7 +14,6 @@ import { screenSizeIsAtLeast } from '@/services/common/device.utils'
 import DrawPanelFeatures from './draw-panel-features.vue'
 import ModalConfirmDeleteAll from './modal-confirm-delete-all.vue'
 import ModalMergeLines from './modal-merge-lines.vue'
-import useClipLine from '@/composables/draw/draw-clip-line.composable'
 
 const { t } = useTranslation()
 const appStore = useAppStore()
@@ -23,33 +24,47 @@ const { feedbackOpen, feedbackanfOpen, feedbackageOpen, feedbackcruesOpen } =
 const drawStore = useDrawStore()
 const { drawnFeaturesExceptMyMaps: features, clipLineActive } =
   storeToRefs(drawStore)
-const drawingMenuOptions = computed(() => [
-  {
-    label: 'Copier dans ma carte',
-    action: () => alert('TODO: Draw feature click drawingMenuOptions'),
-  },
-  {
-    label: 'Effacer tous les dessins',
-    action: () => (showModalConfirmDelete.value = true),
-  },
-  {
-    label: 'Créer une nouvelle carte à partir de ces dessins',
-    action: () => alert('TODO: Draw feature click drawingMenuOptions'),
-  },
-  {
-    label: 'Fusionner des lignes',
-    action: () => (showModalMergeLines.value = true),
-  },
-  {
-    label: clipLineActive.value
-      ? 'Désactiver mode couper une ligne'
-      : 'Couper une ligne',
-    action: () => {
-      clipLine.toggle()
-      drawStore.deactivateDraw()
+const myMaps = useMyMaps()
+const drawingMenuOptions = computed(() => {
+  const menu = [
+    {
+      label: 'Effacer tous les dessins',
+      action: () => (showModalConfirmDelete.value = true),
     },
-  },
-])
+    {
+      label: 'Créer une nouvelle carte à partir de ces dessins',
+      action: () => alert('TODO: Draw feature click drawingMenuOptions'),
+    },
+    {
+      label: 'Fusionner des lignes',
+      action: () => (showModalMergeLines.value = true),
+    },
+    {
+      label: clipLineActive.value
+        ? 'Désactiver mode couper une ligne'
+        : 'Couper une ligne',
+      action: () => {
+        clipLine.toggle()
+        drawStore.deactivateDraw()
+      },
+    },
+  ]
+
+  if (myMaps.isMyMapEditable.value) {
+    menu.unshift({
+      label: 'Copier dans ma carte',
+      action: () => {
+        if (!myMaps.checkAuth()) {
+          return
+        }
+
+        myMaps.addInMyMap()
+      },
+    })
+  }
+
+  return menu
+})
 const showModalConfirmDelete = ref(false)
 const showModalMergeLines = ref(false)
 
