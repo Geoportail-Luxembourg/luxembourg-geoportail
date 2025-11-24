@@ -16,6 +16,8 @@ import FeatureEditLinestyleItem from './feature-edit-linestyle-item.vue'
 import FeatureEditStyleSymbol from './feature-edit-style-symbol.vue'
 import FeatureEditSymbolIcon from './feature-edit-symbol-icon.vue'
 
+defineEmits(['cancel', 'validate'])
+
 const { t } = useTranslation()
 const feature = inject<DrawnFeature>('feature')!
 const showAngleField = computed(() => {

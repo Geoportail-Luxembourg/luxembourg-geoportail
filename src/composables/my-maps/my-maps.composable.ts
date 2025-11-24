@@ -30,7 +30,8 @@ export default function useMyMaps() {
   const appStore = useAppStore()
   const mapStore = useMapStore()
   const drawStore = useDrawStore()
-  const { drawnFeatures, drawnFeaturesMyMaps } = storeToRefs(drawStore)
+  const { drawnFeatures, drawnFeaturesMyMaps, drawnFeaturesExceptMyMaps } =
+    storeToRefs(drawStore)
   const themeStore = useThemeStore()
   const { addNotification } = useAlertNotificationsStore()
   const { authenticated } = storeToRefs(useUserManagerStore())
@@ -196,10 +197,30 @@ export default function useMyMaps() {
     }
   }
 
+  function addInMyMap() {
+    if (isMyMapEditable.value) {
+      drawnFeaturesExceptMyMaps.value.forEach(
+        f => (f.map_id = isMyMapEditable.value)
+      )
+    }
+  }
+
+  function checkAuth() {
+    if (!authenticated.value) {
+      addNotification(t("Veuillez vous identifier afin d'accéder à vos cartes"))
+      appStore.toggleAuthFormOpen(true)
+      return false
+    }
+
+    return true
+  }
+
   return {
     isMyMapEditable,
     init,
+    addInMyMap,
     loadMyMap,
+    checkAuth,
     clearMyMap,
     closeMyMap,
     openMyMap,

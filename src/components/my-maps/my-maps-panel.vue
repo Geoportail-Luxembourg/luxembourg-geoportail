@@ -45,16 +45,6 @@ const confirmDeleteModalMyMap = ref<MyMap | undefined>(undefined)
 
 const myMaps = shallowRef<MyMapJson[]>([]) // All user's MyMaps
 
-function checkAuth() {
-  if (!authenticated.value) {
-    addNotification(t("Veuillez vous identifier afin d'accéder à vos cartes"))
-    toggleAuthFormOpen(true)
-    return false
-  }
-
-  return true
-}
-
 async function refreshModale() {
   myMaps.value = await fetchMyMaps()
 
@@ -70,7 +60,7 @@ async function refreshModale() {
 }
 
 async function openMap() {
-  if (!checkAuth()) {
+  if (!myMapsHelper.checkAuth()) {
     return
   }
 
@@ -78,7 +68,7 @@ async function openMap() {
 }
 
 function openEditFormModal(map: MyMap | undefined, mode: EditFormModeType) {
-  if (!checkAuth()) {
+  if (!myMapsHelper.checkAuth()) {
     return
   }
 
