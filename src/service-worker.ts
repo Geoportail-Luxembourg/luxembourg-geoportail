@@ -71,11 +71,7 @@ const TRANSLATION_FILES = [
   '/assets/locales/tooltips.lb.json',
 ]
 
-const STATIC_APP_SHELL_PATHS = [
-  '/favicon.ico',
-  '/offline-ui-reference.html',
-  '/offline-test.html',
-]
+const STATIC_APP_SHELL_PATHS = ['/favicon.ico']
 const CDN_APP_SHELL_URLS = [
   'https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.2.0/css/all.min.css',
 ]
