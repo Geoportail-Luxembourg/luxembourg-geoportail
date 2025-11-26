@@ -45,28 +45,9 @@ app.mount('#app')
 
 useThemeStore().setThemes(themesApiFixture())
 
-// Register Service Worker for offline Vector Tiles caching
-// Only in production builds (not in dev mode to avoid conflicts with HMR)
-//  && import.meta.env.PROD
-// eslint-disable-next-line no-console
-console.log('[SW Debug] Starting registration...')
-// eslint-disable-next-line no-console
-console.log(
-  '[SW Debug] serviceWorker in navigator?',
-  'serviceWorker' in navigator
-)
-// eslint-disable-next-line no-console
-console.log('[SW Debug] BASE_URL:', import.meta.env.BASE_URL)
-// eslint-disable-next-line no-console
-console.log(
-  '[SW Debug] Full SW URL:',
-  `${import.meta.env.BASE_URL}service-worker.js`
-)
-
-if ('serviceWorker' in navigator) {
+// Register Service Worker for offline Vector Tiles caching (production only)
+if (import.meta.env.PROD && 'serviceWorker' in navigator) {
   window.addEventListener('load', () => {
-    // eslint-disable-next-line no-console
-    console.log('[SW Debug] Window loaded, registering SW...')
     navigator.serviceWorker
       .register(`${import.meta.env.BASE_URL}service-worker.js`)
       .then(registration => {
@@ -111,7 +92,7 @@ if ('serviceWorker' in navigator) {
         })
       })
   })
-} else {
+} else if (import.meta.env.PROD) {
   // eslint-disable-next-line no-console
   console.warn('[SW] ⚠️ Service Worker not supported in this browser')
 }

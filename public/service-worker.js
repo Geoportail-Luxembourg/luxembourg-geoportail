@@ -1,396 +1,631 @@
 /**
  * Service Worker for Luxembourg Geoportail v4
  *
- * Purpose: Cache vector tiles, styles, and related resources for offline use
+ * VERSION 7.0.3 (+ app-shell precache enhancements)
  *
- * Cache Strategy:
- * - Vector Tiles (.pbf): Cache-First (long-term storage)
- * - Styles (.json): Network-First with fallback (may update)
- * - Sprites/Glyphs: Cache-First (static resources)
- *
- * Architecture Notes:
- * - Only caches vectortiles.geoportail.lu and vectortiles-staging.geoportail.lu
- * - Does NOT cache user style uploads/downloads (disabled in offline mode)
- * - Does NOT cache print/layer metadata (disabled in offline mode)
- * - Works alongside existing localforage_v3 for raster tiles (WMTS)
+ * Responsibilities
+ * - Cache the full application shell (HTML, JS, CSS, fonts, icons, translations)
+ * - Pre-cache default MapLibre styles, TileJSON metadata, and critical glyph ranges
+ * - Cache tiles/sprites/glyphs on demand and gracefully degrade offline
+ * - Provide cache statistics & maintenance hooks used by the UI
  */
 
-const CACHE_VERSION = 'lux-geoportail-v4-vt-v1'
+const SW_VERSION = '7.0.3'
+const CACHE_VERSION = 'lux-geoportail-v4-v20'
+
 const CACHE_NAMES = {
-  APP_SHELL: `${CACHE_VERSION}-app-shell`, // Core app files (HTML, CSS, JS)
-  VT_TILES: `${CACHE_VERSION}-vt-tiles`, // Vector tile PBF files
-  VT_STYLES: `${CACHE_VERSION}-vt-styles`, // style.json files
-  VT_SPRITES: `${CACHE_VERSION}-vt-sprites`, // Sprite images and JSON
-  VT_GLYPHS: `${CACHE_VERSION}-vt-glyphs`, // Font glyphs (PBF)
+  APP_SHELL: `${CACHE_VERSION}-app-shell`,
+  VT_TILES: `${CACHE_VERSION}-vt-tiles`,
+  VT_STYLES: `${CACHE_VERSION}-vt-styles`,
+  VT_SPRITES: `${CACHE_VERSION}-vt-sprites`,
+  VT_GLYPHS: `${CACHE_VERSION}-vt-glyphs`,
 }
 
 const ALL_CACHES = Object.values(CACHE_NAMES)
 
-// App Shell: Critical resources needed for the app to load
-const APP_SHELL_URLS = [
-  '/',
-  '/index.html',
-  // Note: Vite generates hashed filenames, so we'll cache these on first load
-  // '/assets/index-[hash].js',
-  // '/assets/index-[hash].css',
+const REG_SCOPE = self.registration?.scope ?? `${self.location.origin}/`
+const APP_BASE_URL = new URL('.', REG_SCOPE).href
+const APP_BASE_PATH = new URL(APP_BASE_URL).pathname
+const ROOT_URL = `${self.location.origin}/`
+const ROOT_INDEX_URL = `${self.location.origin}/index.html`
+const ENTRY_URL = APP_BASE_URL
+const INDEX_HTML_URL = new URL('index.html', APP_BASE_URL).href
+
+const ENTRYPOINT_URLS = Array.from(
+  new Set([ENTRY_URL, INDEX_HTML_URL, ROOT_URL, ROOT_INDEX_URL])
+)
+
+const TRANSLATION_FILES = [
+  '/assets/locales/app.de.json',
+  '/assets/locales/app.en.json',
+  '/assets/locales/app.fr.json',
+  '/assets/locales/app.lb.json',
+  '/assets/locales/client.de.json',
+  '/assets/locales/client.en.json',
+  '/assets/locales/client.fr.json',
+  '/assets/locales/client.lb.json',
+  '/assets/locales/legends.de.json',
+  '/assets/locales/legends.en.json',
+  '/assets/locales/legends.fr.json',
+  '/assets/locales/legends.lb.json',
+  '/assets/locales/server.de.json',
+  '/assets/locales/server.en.json',
+  '/assets/locales/server.fr.json',
+  '/assets/locales/server.lb.json',
+  '/assets/locales/tooltips.de.json',
+  '/assets/locales/tooltips.en.json',
+  '/assets/locales/tooltips.fr.json',
+  '/assets/locales/tooltips.lb.json',
 ]
 
-// URLs to cache
+const STATIC_APP_SHELL_PATHS = [
+  '/favicon.ico',
+  '/offline-ui-reference.html',
+  '/offline-test.html',
+]
+const CDN_APP_SHELL_URLS = [
+  'https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.2.0/css/all.min.css',
+]
+
+const TRANSLATION_URLS = TRANSLATION_FILES.map(
+  path => new URL(path, self.location.origin).href
+)
+const STATIC_APP_SHELL_URLS = STATIC_APP_SHELL_PATHS.map(
+  path => new URL(path, self.location.origin).href
+)
+const PRECACHE_APP_SHELL_URLS = Array.from(
+  new Set([
+    ...ENTRYPOINT_URLS,
+    ...TRANSLATION_URLS,
+    ...STATIC_APP_SHELL_URLS,
+    ...CDN_APP_SHELL_URLS,
+  ])
+)
+
 const VT_HOSTS = [
   'vectortiles.geoportail.lu',
   'vectortiles-staging.geoportail.lu',
 ]
-
-// Default styles to precache
 const DEFAULT_STYLES = ['roadmap', 'topomap', 'topomap_gray']
+const DEFAULT_FONT_FAMILIES = [
+  'Noto Sans Regular',
+  'Noto Sans Bold',
+  'Noto Sans Italic',
+]
+const CRITICAL_GLYPH_RANGE = '0-255'
+const APP_SHELL_CDN_HOSTS = ['cdnjs.cloudflare.com', 'map.geoportail.lu']
 
-/**
- * Check if URL is an app shell resource (HTML, CSS, JS, fonts, images)
- */
-function isAppShellResource(url) {
-  try {
-    const urlObj = new URL(url)
-    const pathname = urlObj.pathname
+const swLog = (...args) => console.log('[SW]', ...args) // eslint-disable-line no-console
+const swWarn = (...args) => console.warn('[SW]', ...args) // eslint-disable-line no-console
 
-    // HTML
-    if (pathname === '/' || pathname.endsWith('.html')) {
-      return CACHE_NAMES.APP_SHELL
-    }
+swLog(`Bootstrapping service worker v${SW_VERSION} / cache ${CACHE_VERSION}`)
 
-    // CSS, JS (including hashed Vite bundles)
-    if (pathname.match(/\/assets\/.*\.(js|css)$/)) {
-      return CACHE_NAMES.APP_SHELL
-    }
-
-    // Fonts
-    if (pathname.match(/\.(woff2?|ttf|eot|otf)$/)) {
-      return CACHE_NAMES.APP_SHELL
-    }
-
-    // Images (favicon, logos, icons)
-    if (
-      pathname.match(/\/(favicon\.ico|.*\.(png|jpg|jpeg|svg|gif))$/) &&
-      !pathname.includes('/styles/') && // Exclude VT sprite images
-      !pathname.includes('vectortiles')
-    ) {
-      return CACHE_NAMES.APP_SHELL
-    }
-
-    // Translation files
-    if (pathname.match(/\/assets\/locales\/.*\.json$/)) {
-      return CACHE_NAMES.APP_SHELL
-    }
-
-    return null
-  } catch (e) {
-    return null
-  }
-}
-
-/**
- * Check if URL is a vector tiles resource we should cache
- */
-function isVectorTileResource(url) {
-  try {
-    const urlObj = new URL(url)
-
-    // Only cache from our VT hosts
-    if (!VT_HOSTS.some(host => urlObj.hostname === host)) {
-      return null
-    }
-
-    // Determine cache type
-    if (urlObj.pathname.endsWith('.pbf')) {
-      // Could be tile or glyph
-      if (urlObj.pathname.includes('/fonts/')) {
-        return CACHE_NAMES.VT_GLYPHS
-      }
-      return CACHE_NAMES.VT_TILES
-    }
-
-    // TileJSON metadata files (critical for MapLibre initialization!)
-    // These are in /data/ and define tile sources
-    if (
-      urlObj.pathname.includes('/data/') &&
-      urlObj.pathname.endsWith('.json')
-    ) {
-      return CACHE_NAMES.VT_STYLES
-    }
-
-    // Style JSON files in /styles/
-    if (
-      urlObj.pathname.includes('/styles/') &&
-      urlObj.pathname.endsWith('style.json')
-    ) {
-      return CACHE_NAMES.VT_STYLES
-    }
-
-    // Sprite files (both .json metadata and .png images)
-    if (
-      urlObj.pathname.includes('/styles/') &&
-      (urlObj.pathname.includes('/sprite') ||
-        urlObj.pathname.endsWith('.png') ||
-        urlObj.pathname.endsWith('.json'))
-    ) {
-      return CACHE_NAMES.VT_SPRITES
-    }
-
-    return null
-  } catch (e) {
-    return null
-  }
-}
-
-/**
- * Install event - precache critical resources
- */
 self.addEventListener('install', event => {
-  // eslint-disable-next-line no-console
-  console.log('[SW] Installing service worker...')
-
-  const precachePromises = []
-
-  // 1. Precache app shell (HTML)
-  const appShellPromise = caches.open(CACHE_NAMES.APP_SHELL).then(cache => {
-    // eslint-disable-next-line no-console
-    console.log('[SW] Precaching app shell:', APP_SHELL_URLS.length, 'files')
-    return cache.addAll(APP_SHELL_URLS).catch(err => {
-      // eslint-disable-next-line no-console
-      console.warn('[SW] Failed to precache app shell:', err)
-      // Continue even if app shell precache fails
-    })
-  })
-  precachePromises.push(appShellPromise)
-
-  // 2. Precache default VT styles
-  const vtStylesPromise = caches.open(CACHE_NAMES.VT_STYLES).then(cache => {
-    const styleUrls = VT_HOSTS.flatMap(host =>
-      DEFAULT_STYLES.map(style => `https://${host}/styles/${style}/style.json`)
-    )
-    // eslint-disable-next-line no-console
-    console.log('[SW] Precaching default VT styles:', styleUrls.length, 'files')
-
-    // Fetch and cache, but don't fail install if precache fails
-    return Promise.allSettled(
-      styleUrls.map(url =>
-        fetch(url)
-          .then(response => {
-            if (response.ok) {
-              return cache.put(url, response)
-            }
-          })
-          .catch(err =>
-            // eslint-disable-next-line no-console
-            console.warn('[SW] Failed to precache VT style:', url, err)
-          )
-      )
-    )
-  })
-  precachePromises.push(vtStylesPromise)
+  const installWork = (async () => {
+    await precacheEntrypoint()
+    await Promise.all([
+      precacheStaticAppShell(),
+      precacheDefaultStyles(),
+      precacheDefaultGlyphs(),
+    ])
+  })()
 
   event.waitUntil(
-    Promise.all(precachePromises).then(() => {
-      // eslint-disable-next-line no-console
-      console.log('[SW] Service worker installed successfully')
-      // Skip waiting to activate immediately
-      return self.skipWaiting()
-    })
-  )
-})
-
-/**
- * Activate event - clean up old caches
- */
-self.addEventListener('activate', event => {
-  // eslint-disable-next-line no-console
-  console.log('[SW] Activating service worker...')
-
-  const cleanupPromise = caches.keys().then(cacheNames => {
-    return Promise.all(
-      cacheNames.map(cacheName => {
-        // Delete caches that don't match current version
-        if (
-          cacheName.startsWith('lux-geoportail-v4-vt-') &&
-          !ALL_CACHES.includes(cacheName)
-        ) {
-          // eslint-disable-next-line no-console
-          console.log('[SW] Deleting old cache:', cacheName)
-          return caches.delete(cacheName)
-        }
+    installWork
+      .catch(error => {
+        swWarn('Install failed', error)
       })
-    )
-  })
-
-  event.waitUntil(
-    cleanupPromise.then(() => {
-      // eslint-disable-next-line no-console
-      console.log('[SW] Service worker activated')
-      // Take control of all pages immediately (don't wait for reload)
-      return self.clients.claim()
-    })
+      .finally(() => self.skipWaiting())
   )
 })
 
-/**
- * Fetch event - implement caching strategies
- */
-self.addEventListener('fetch', event => {
-  const url = event.request.url
-  const request = event.request
+self.addEventListener('activate', event => {
+  const cleanup = caches.keys().then(cacheNames => {
+    const deletions = cacheNames.map(cacheName => {
+      if (
+        cacheName.startsWith('lux-geoportail-v4-') &&
+        !ALL_CACHES.includes(cacheName)
+      ) {
+        swLog('Deleting legacy cache', cacheName)
+        return caches.delete(cacheName)
+      }
+      return undefined
+    })
 
-  // Skip non-GET requests
+    return Promise.all(deletions)
+  })
+
+  event.waitUntil(
+    cleanup
+      .catch(error => swWarn('Cache cleanup failed', error))
+      .then(() => self.clients.claim())
+  )
+})
+
+self.addEventListener('fetch', event => {
+  const { request } = event
+
   if (request.method !== 'GET') {
     return
   }
 
-  // Skip Vite dev server HMR requests (won't exist in production)
-  if (
-    url.includes('@vite/client') ||
-    url.includes('?t=') ||
-    url.includes('.ts?')
-  ) {
-    return // Let browser handle (will fail silently when offline)
-  }
-
-  // Handle navigation requests (page loads) specially
   if (request.mode === 'navigate') {
     event.respondWith(handleNavigate(request))
     return
   }
 
-  // Check if it's an app shell resource
-  const appShellCache = isAppShellResource(url)
-  if (appShellCache) {
-    // App shell: Cache-First with network update (works offline, updates when online)
-    event.respondWith(cacheFirstWithNetworkUpdate(request, appShellCache))
+  const cacheNameForAppShell = isAppShellResource(request.url)
+  if (cacheNameForAppShell) {
+    event.respondWith(
+      cacheFirstWithNetworkUpdate(request, cacheNameForAppShell)
+    )
     return
   }
 
-  // Check if it's a VT resource
-  const vtCacheName = isVectorTileResource(url)
-  if (vtCacheName) {
-    // Use different strategies based on resource type
-    if (vtCacheName === CACHE_NAMES.VT_STYLES) {
-      // Styles: Network-First (they may update)
-      event.respondWith(networkFirstStrategy(request, vtCacheName))
+  const cacheNameForVector = isVectorTileResource(request.url)
+  if (cacheNameForVector) {
+    if (cacheNameForVector === CACHE_NAMES.VT_STYLES) {
+      event.respondWith(networkFirstStrategy(request, cacheNameForVector))
     } else {
-      // Tiles, Sprites, Glyphs: Cache-First (static resources)
-      event.respondWith(cacheFirstStrategy(request, vtCacheName))
+      event.respondWith(cacheFirstStrategy(request, cacheNameForVector))
     }
-    return
   }
-
-  // Everything else: let browser handle normally
 })
 
-/**
- * Handle navigation requests (page loads)
- * Always returns cached index.html or fetches it
- */
+self.addEventListener('message', event => {
+  const { data, ports } = event
+  if (!data) {
+    return
+  }
+
+  if (data.type === 'CLEAR_CACHE') {
+    event.waitUntil(
+      Promise.all(ALL_CACHES.map(cacheName => caches.delete(cacheName)))
+        .then(() => ports?.[0]?.postMessage({ success: true }))
+        .catch(error => {
+          swWarn('Failed to clear caches', error)
+          ports?.[0]?.postMessage({ success: false, error: error.message })
+        })
+    )
+    return
+  }
+
+  if (data.type === 'GET_CACHE_SIZE') {
+    event.waitUntil(
+      getCacheSize().then(size => ports?.[0]?.postMessage({ size }))
+    )
+    return
+  }
+
+  if (data.type === 'SKIP_WAITING') {
+    self.skipWaiting()
+    return
+  }
+
+  if (data.type === 'GET_SW_META') {
+    ports?.[0]?.postMessage({
+      version: SW_VERSION,
+      cacheVersion: CACHE_VERSION,
+    })
+  }
+})
+
+async function precacheEntrypoint() {
+  const cache = await caches.open(CACHE_NAMES.APP_SHELL)
+
+  for (const url of ENTRYPOINT_URLS) {
+    try {
+      const request = new Request(url, { credentials: 'same-origin' })
+      const response = await fetch(request)
+      if (
+        !response.ok ||
+        !response.headers.get('content-type')?.includes('text/html')
+      ) {
+        continue
+      }
+
+      await cache.put(request, response.clone())
+
+      const html = await response.clone().text()
+      await precacheLinkedAssetsFromHtml(html, url, cache)
+
+      await Promise.all(
+        ENTRYPOINT_URLS.filter(alias => alias !== url).map(alias =>
+          cache.put(
+            new Request(alias, { credentials: 'same-origin' }),
+            response.clone()
+          )
+        )
+      )
+
+      swLog('Precaching entrypoint + linked assets succeeded via', url)
+      return
+    } catch (error) {
+      swWarn('Failed to precache entrypoint', url, error)
+    }
+  }
+
+  swWarn('Unable to precache entry HTML – all attempts failed')
+}
+
+async function precacheStaticAppShell() {
+  const cache = await caches.open(CACHE_NAMES.APP_SHELL)
+  const tasks = PRECACHE_APP_SHELL_URLS.map(url =>
+    putUrlInCache(cache, url, { parseCss: true })
+  )
+  await Promise.allSettled(tasks)
+}
+
+async function precacheLinkedAssetsFromHtml(html, baseUrl, cache) {
+  const assets = Array.from(extractLinkedAssetUrls(html, baseUrl))
+  if (!assets.length) {
+    return
+  }
+
+  swLog('Precaching linked HTML assets:', assets.length)
+  await Promise.allSettled(
+    assets.map(url => putUrlInCache(cache, url, { parseCss: true }))
+  )
+}
+
+function extractLinkedAssetUrls(html, baseUrl) {
+  const urls = new Set()
+  const patterns = [
+    /<script[^>]+src=["']([^"']+)["'][^>]*>/gi,
+    /<link[^>]+rel=["'](?:modulepreload|preload|stylesheet)["'][^>]*href=["']([^"']+)["'][^>]*>/gi,
+    /<link[^>]+rel=["'](?:icon|apple-touch-icon)["'][^>]*href=["']([^"']+)["'][^>]*>/gi,
+    /<img[^>]+src=["']([^"']+)["'][^>]*>/gi,
+  ]
+
+  patterns.forEach(regex => {
+    let match
+    while ((match = regex.exec(html)) !== null) {
+      const href = match[1]
+      if (!href || href.startsWith('data:') || href.startsWith('mailto:')) {
+        continue
+      }
+      try {
+        const absolute = new URL(href, baseUrl).href
+        urls.add(absolute)
+      } catch (error) {
+        swWarn('Failed to resolve linked asset URL:', href, error)
+      }
+    }
+  })
+
+  return urls
+}
+
+async function putUrlInCache(cache, url, options = {}) {
+  try {
+    const sameOrigin = url.startsWith(self.location.origin)
+    const isAllowedExternal = APP_SHELL_CDN_HOSTS.includes(
+      new URL(url).hostname
+    )
+    const requestInit = {
+      credentials: sameOrigin ? 'same-origin' : 'omit',
+      mode: sameOrigin ? 'same-origin' : 'cors',
+    }
+
+    let response
+    try {
+      const request = new Request(url, requestInit)
+      response = await fetch(request)
+    } catch (error) {
+      if (!sameOrigin && isAllowedExternal && requestInit.mode === 'cors') {
+        swWarn('CORS fetch failed, retrying without CORS for asset:', url)
+        const fallbackRequest = new Request(url, {
+          credentials: 'omit',
+          mode: 'no-cors',
+        })
+        response = await fetch(fallbackRequest)
+      } else {
+        throw error
+      }
+    }
+
+    const isOpaqueResponse = response.type === 'opaque'
+
+    if (!isOpaqueResponse && !response.ok) {
+      throw new Error(`HTTP ${response.status}`)
+    }
+
+    const cacheRequest = new Request(url, {
+      credentials: sameOrigin ? 'same-origin' : 'omit',
+      mode: sameOrigin ? 'same-origin' : isOpaqueResponse ? 'no-cors' : 'cors',
+    })
+
+    await cache.put(cacheRequest, response.clone())
+
+    const canParseCss =
+      !isOpaqueResponse &&
+      (sameOrigin || isAllowedExternal) &&
+      response.headers.get('content-type')?.includes('text/css')
+
+    const shouldParseCss = Boolean(options.parseCss && canParseCss)
+
+    if (shouldParseCss) {
+      const cssText = await response.clone().text()
+      await precacheCssEmbeddedAssets(cssText, url, cache)
+    }
+  } catch (error) {
+    swWarn('Failed to precache asset:', url, error)
+  }
+}
+
+async function precacheCssEmbeddedAssets(cssText, baseUrl, cache) {
+  const assetUrls = Array.from(extractCssAssetUrls(cssText, baseUrl))
+  if (!assetUrls.length) {
+    return
+  }
+
+  swLog('Precaching CSS-referenced assets:', assetUrls.length)
+  await Promise.allSettled(
+    assetUrls.map(assetUrl => putUrlInCache(cache, assetUrl))
+  )
+}
+
+function extractCssAssetUrls(cssText, baseUrl) {
+  const regex = /url\(([^)]+)\)/gi
+  const urls = new Set()
+  let match
+
+  while ((match = regex.exec(cssText)) !== null) {
+    let raw = match[1].trim().replace(/^['"]|['"]$/g, '')
+    if (!raw || raw.startsWith('data:') || raw.startsWith('mailto:')) {
+      continue
+    }
+
+    try {
+      const absolute = new URL(raw, baseUrl).href
+      const hostname = new URL(absolute).hostname
+      if (
+        absolute.startsWith(self.location.origin) ||
+        APP_SHELL_CDN_HOSTS.includes(hostname)
+      ) {
+        urls.add(absolute)
+      }
+    } catch (error) {
+      swWarn('Failed to resolve CSS asset URL:', raw, error)
+    }
+  }
+
+  return urls
+}
+
+async function precacheDefaultStyles() {
+  const cache = await caches.open(CACHE_NAMES.VT_STYLES)
+  const styleUrls = VT_HOSTS.flatMap(host =>
+    DEFAULT_STYLES.map(style => `https://${host}/styles/${style}/style.json`)
+  )
+
+  swLog(
+    'Precaching default vector styles + TileJSON metadata:',
+    styleUrls.length,
+    'files'
+  )
+
+  const tasks = styleUrls.map(url => precacheStyleAndTileJson(cache, url))
+  await Promise.allSettled(tasks)
+}
+
+async function precacheStyleAndTileJson(cache, url) {
+  try {
+    const request = new Request(url, { mode: 'cors' })
+    const response = await fetch(request)
+    if (!response.ok) {
+      throw new Error(`HTTP ${response.status}`)
+    }
+
+    await cache.put(request, response.clone())
+
+    const tileJsonUrls = await extractTileJsonUrls(response.clone(), url)
+    await Promise.allSettled(
+      tileJsonUrls.map(tileUrl => fetchAndPut(cache, tileUrl))
+    )
+
+    swLog('Precached style + metadata:', url)
+  } catch (error) {
+    swWarn('Failed to precache style:', url, error)
+  }
+}
+
+async function extractTileJsonUrls(response, baseUrl) {
+  try {
+    const data = await response.json()
+    return Object.values(data.sources || {})
+      .map(source =>
+        typeof source.url === 'string'
+          ? new URL(source.url, baseUrl).href
+          : null
+      )
+      .filter(Boolean)
+  } catch (error) {
+    swWarn('Failed to parse style JSON for TileJSON references', error)
+    return []
+  }
+}
+
+async function fetchAndPut(cache, url) {
+  try {
+    const request = new Request(url, { mode: 'cors' })
+    const response = await fetch(request)
+    if (response.ok) {
+      await cache.put(request, response.clone())
+      swLog('Precached metadata:', url)
+    } else {
+      throw new Error(`HTTP ${response.status}`)
+    }
+  } catch (error) {
+    swWarn('Failed to precache metadata:', url, error)
+  }
+}
+
+async function precacheDefaultGlyphs() {
+  const cache = await caches.open(CACHE_NAMES.VT_GLYPHS)
+  const fontUrls = VT_HOSTS.flatMap(host =>
+    DEFAULT_FONT_FAMILIES.map(
+      font =>
+        `https://${host}/fonts/${encodeURIComponent(
+          font
+        )}/${CRITICAL_GLYPH_RANGE}.pbf`
+    )
+  )
+
+  swLog('Precaching critical glyph ranges:', fontUrls.length, 'files')
+
+  const tasks = fontUrls.map(async url => {
+    try {
+      const request = new Request(url, { mode: 'cors' })
+      const response = await fetch(request)
+      if (!response.ok) {
+        throw new Error(`HTTP ${response.status}`)
+      }
+      await cache.put(request, response.clone())
+      swLog('Precached glyphs:', url)
+    } catch (error) {
+      swWarn('Failed to precache glyphs:', url, error)
+    }
+  })
+
+  await Promise.allSettled(tasks)
+}
+
+function isAppShellResource(url) {
+  try {
+    const urlObj = new URL(url)
+
+    if (APP_SHELL_CDN_HOSTS.includes(urlObj.hostname)) {
+      return CACHE_NAMES.APP_SHELL
+    }
+
+    if (urlObj.origin !== self.location.origin) {
+      return null
+    }
+
+    const pathname = urlObj.pathname
+
+    if (ENTRYPOINT_URLS.includes(urlObj.href)) {
+      return CACHE_NAMES.APP_SHELL
+    }
+
+    if (
+      pathname === APP_BASE_PATH ||
+      pathname === '/' ||
+      pathname.endsWith('.html')
+    ) {
+      return CACHE_NAMES.APP_SHELL
+    }
+
+    if (pathname.startsWith('/assets/locales/')) {
+      return CACHE_NAMES.APP_SHELL
+    }
+
+    if (pathname.match(/\/assets\/.*\.(js|css|svg|png|jpg|jpeg|gif|webp)$/)) {
+      return CACHE_NAMES.APP_SHELL
+    }
+
+    if (pathname.match(/\.(woff2?|ttf|otf|eot)$/)) {
+      return CACHE_NAMES.APP_SHELL
+    }
+
+    if (
+      pathname.match(/\/(favicon\.ico|.*\.(png|jpg|jpeg|svg|gif|webp))$/) &&
+      !pathname.includes('/styles/')
+    ) {
+      return CACHE_NAMES.APP_SHELL
+    }
+
+    return null
+  } catch (error) {
+    swWarn('Failed to classify app shell resource:', url, error)
+    return null
+  }
+}
+
+function isVectorTileResource(url) {
+  try {
+    const urlObj = new URL(url)
+    if (!VT_HOSTS.includes(urlObj.hostname)) {
+      return null
+    }
+
+    const pathname = urlObj.pathname
+
+    if (pathname.endsWith('.pbf')) {
+      if (pathname.includes('/fonts/')) {
+        return CACHE_NAMES.VT_GLYPHS
+      }
+      return CACHE_NAMES.VT_TILES
+    }
+
+    if (pathname.includes('/data/') && pathname.endsWith('.png')) {
+      return CACHE_NAMES.VT_TILES
+    }
+
+    if (pathname.includes('/data/') && pathname.endsWith('.json')) {
+      return CACHE_NAMES.VT_STYLES
+    }
+
+    if (pathname.includes('/styles/') && pathname.endsWith('style.json')) {
+      return CACHE_NAMES.VT_STYLES
+    }
+
+    if (
+      pathname.includes('/styles/') &&
+      (pathname.includes('/sprite') ||
+        pathname.endsWith('.png') ||
+        pathname.endsWith('.json'))
+    ) {
+      return CACHE_NAMES.VT_SPRITES
+    }
+
+    return null
+  } catch (error) {
+    swWarn('Failed to classify vector resource:', url, error)
+    return null
+  }
+}
+
 async function handleNavigate(request) {
   const cache = await caches.open(CACHE_NAMES.APP_SHELL)
 
   try {
-    // Try network first for navigation
-    const networkResponse = await fetch(request)
-
-    if (networkResponse.ok) {
-      // Cache the response
-      cache.put(request, networkResponse.clone())
-      // Also cache it as '/' for offline use
-      cache.put('/', networkResponse.clone())
-      return networkResponse
+    const response = await fetch(request)
+    if (response.ok) {
+      await cache.put(request, response.clone())
+      await Promise.all(
+        ENTRYPOINT_URLS.map(url =>
+          cache.put(
+            new Request(url, { credentials: 'same-origin' }),
+            response.clone()
+          )
+        )
+      )
+      return response
     }
   } catch (error) {
-    // eslint-disable-next-line no-console
-    console.log('[SW] Network failed for navigation, using cache')
+    swWarn('Navigation failed, attempting cache fallback', error)
   }
 
-  // If network fails, try cached responses in order
-  const cachedResponse =
-    (await cache.match(request)) ||
-    (await cache.match('/')) ||
-    (await cache.match('/index.html'))
-
-  if (cachedResponse) {
-    // eslint-disable-next-line no-console
-    console.log('[SW] Serving navigation from cache')
-    return cachedResponse
-  }
-
-  // Ultimate fallback: offline page
-  return new Response(
-    `<!DOCTYPE html>
-    <html lang="en">
-    <head>
-      <meta charset="UTF-8">
-      <meta name="viewport" content="width=device-width, initial-scale=1.0">
-      <title>Offline - Luxembourg Geoportail</title>
-      <style>
-        body {
-          font-family: system-ui, -apple-system, sans-serif;
-          display: flex;
-          align-items: center;
-          justify-content: center;
-          min-height: 100vh;
-          margin: 0;
-          background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-          color: white;
-          text-align: center;
-          padding: 20px;
-        }
-        .container {
-          max-width: 500px;
-        }
-        h1 {
-          font-size: 3em;
-          margin: 0 0 20px 0;
-        }
-        p {
-          font-size: 1.2em;
-          line-height: 1.6;
-        }
-        .icon {
-          font-size: 5em;
-          margin-bottom: 20px;
-        }
-        button {
-          background: white;
-          color: #667eea;
-          border: none;
-          padding: 12px 30px;
-          font-size: 1em;
-          border-radius: 25px;
-          cursor: pointer;
-          margin-top: 20px;
-          font-weight: bold;
-        }
-        button:hover {
-          transform: scale(1.05);
-          box-shadow: 0 5px 20px rgba(0,0,0,0.2);
-        }
-      </style>
-    </head>
-    <body>
-      <div class="container">
-        <div class="icon">📡</div>
-        <h1>You're Offline</h1>
-        <p>This page hasn't been cached yet. Please check your internet connection and try again.</p>
-        <button onclick="window.location.reload()">Retry</button>
-      </div>
-    </body>
-    </html>`,
-    {
-      status: 200,
-      headers: { 'Content-Type': 'text/html' },
+  for (const url of ENTRYPOINT_URLS) {
+    const cached = await cache.match(new Request(url))
+    if (cached) {
+      return cached
     }
+  }
+
+  const fallback = await cache.match(new Request(ENTRY_URL))
+  if (fallback) {
+    return fallback
+  }
+
+  return new Response(
+    '<!doctype html><html><head><title>Offline</title></head><body><h1>You are offline</h1><p>This page has not been cached yet.</p></body></html>',
+    { status: 200, headers: { 'Content-Type': 'text/html' } }
   )
 }
 
-/**
- * Cache-First Strategy: Check cache, fallback to network
- * Best for: Vector tiles, sprites, glyphs (immutable resources)
- */
 async function cacheFirstStrategy(request, cacheName) {
   const cache = await caches.open(cacheName)
   const cachedResponse = await cache.match(request)
@@ -400,85 +635,23 @@ async function cacheFirstStrategy(request, cacheName) {
   }
 
   try {
-    const networkResponse = await fetch(request)
-
-    // Only cache successful responses
-    if (networkResponse.ok) {
-      // Clone before caching (response can only be read once)
-      cache.put(request, networkResponse.clone())
+    const response = await fetch(request)
+    if (response.ok) {
+      await cache.put(request, response.clone())
     }
-
-    return networkResponse
+    return response
   } catch (error) {
-    // eslint-disable-next-line no-console
-    console.warn('[SW] Fetch failed for:', request.url, error)
-
-    // For tiles, return a transparent 1x1 image to prevent broken map
-    if (cacheName === CACHE_NAMES.VT_TILES && request.url.endsWith('.pbf')) {
-      // Return empty response for missing tiles
-      return new Response(new ArrayBuffer(0), {
-        headers: { 'Content-Type': 'application/x-protobuf' },
-      })
+    if (cacheName === CACHE_NAMES.VT_GLYPHS && isGlyphRequest(request.url)) {
+      return handleGlyphFetchFailure(request, error)
     }
 
-    throw error
-  }
-}
-
-/**
- * Cache-First with Network Update: Serve from cache immediately, update in background
- * Best for: App shell (instant offline, auto-updates)
- */
-async function cacheFirstWithNetworkUpdate(request, cacheName) {
-  const cache = await caches.open(cacheName)
-  const cachedResponse = await cache.match(request)
-
-  // Always try to fetch and update cache in background
-  const fetchPromise = fetch(request)
-    .then(response => {
-      if (response.ok) {
-        cache.put(request, response.clone())
-      }
-      return response
-    })
-    .catch(err => {
-      // Only log if not offline (avoid spam when offline)
-      if (!err.message.includes('Failed to fetch')) {
-        // eslint-disable-next-line no-console
-        console.warn('[SW] Background update failed for:', request.url, err)
-      }
-    })
-
-  // Return cached version immediately if available
-  if (cachedResponse) {
-    // Update cache in background
-    fetchPromise.catch(() => {}) // Ignore background errors
-    return cachedResponse
-  }
-
-  // If not in cache, wait for network
-  try {
-    const networkResponse = await fetchPromise
-    if (networkResponse && networkResponse.ok) {
-      return networkResponse
-    }
-    throw new Error('Network response not ok')
-  } catch (error) {
-    // eslint-disable-next-line no-console
-    console.error('[SW] Failed to fetch:', request.url, error)
-
-    // Return offline page or error for HTML
-    if (request.mode === 'navigate') {
-      return new Response(
-        `<!DOCTYPE html>
-        <html>
-        <head><title>Offline</title></head>
-        <body>
-          <h1>You are offline</h1>
-          <p>This page is not cached. Please check your connection.</p>
-        </body>
-        </html>`,
-        { headers: { 'Content-Type': 'text/html' } }
+    if (
+      cacheName === CACHE_NAMES.VT_TILES &&
+      isVectorTileRequest(request.url)
+    ) {
+      swWarn(
+        'Tile not available offline, allowing MapLibre to reuse previously rendered tiles:',
+        request.url
       )
     }
 
@@ -486,81 +659,95 @@ async function cacheFirstWithNetworkUpdate(request, cacheName) {
   }
 }
 
-/**
- * Network-First Strategy: Try network, fallback to cache
- * Best for: Style files that may change
- */
+async function cacheFirstWithNetworkUpdate(request, cacheName) {
+  const cache = await caches.open(cacheName)
+  const cachedResponse = await cache.match(request)
+
+  const fetchPromise = fetch(request)
+    .then(response => {
+      if (response && response.ok) {
+        cache.put(request, response.clone())
+      }
+      return response
+    })
+    .catch(error => {
+      if (!(error instanceof TypeError)) {
+        swWarn('Background update failed for', request.url, error)
+      }
+      return undefined
+    })
+
+  if (cachedResponse) {
+    fetchPromise.catch(() => {})
+    return cachedResponse
+  }
+
+  const networkResponse = await fetchPromise
+  if (networkResponse) {
+    return networkResponse
+  }
+
+  throw new Error('Network response not available')
+}
+
 async function networkFirstStrategy(request, cacheName) {
   const cache = await caches.open(cacheName)
 
   try {
-    const networkResponse = await fetch(request)
-
-    if (networkResponse.ok) {
-      cache.put(request, networkResponse.clone())
+    const response = await fetch(request)
+    if (response.ok) {
+      await cache.put(request, response.clone())
     }
-
-    return networkResponse
+    return response
   } catch (error) {
-    // eslint-disable-next-line no-console
-    console.warn('[SW] Network failed, trying cache for:', request.url)
-
+    swWarn('Network failed, falling back to cache for', request.url)
     const cachedResponse = await cache.match(request)
-
     if (cachedResponse) {
       return cachedResponse
     }
-
     throw error
   }
 }
 
-/**
- * Message handler for commands from the app
- */
-self.addEventListener('message', event => {
-  if (event.data && event.data.type === 'CLEAR_CACHE') {
-    event.waitUntil(
-      Promise.all(ALL_CACHES.map(cacheName => caches.delete(cacheName)))
-        .then(() => {
-          // eslint-disable-next-line no-console
-          console.log('[SW] All caches cleared')
-          event.ports[0].postMessage({ success: true })
-        })
-        .catch(error => {
-          // eslint-disable-next-line no-console
-          console.error('[SW] Failed to clear caches:', error)
-          event.ports[0].postMessage({ success: false, error: error.message })
-        })
-    )
-  } else if (event.data && event.data.type === 'GET_CACHE_SIZE') {
-    event.waitUntil(
-      getCacheSize().then(size => {
-        event.ports[0].postMessage({ size })
-      })
-    )
-  } else if (event.data && event.data.type === 'SKIP_WAITING') {
-    self.skipWaiting()
-  }
-})
+function isGlyphRequest(url) {
+  return /\/fonts\/.*\.pbf$/.test(url)
+}
 
-/**
- * Calculate total cache size (approximate)
- */
+function getGlyphRange(url) {
+  const match = url.match(/\/(\d+-\d+)\.pbf$/)
+  return match ? match[1] : null
+}
+
+function isCriticalGlyphRange(range) {
+  return range === CRITICAL_GLYPH_RANGE
+}
+
+function handleGlyphFetchFailure(request, error) {
+  const range = getGlyphRange(request.url)
+  if (!range || isCriticalGlyphRange(range)) {
+    swWarn('Critical glyph missing:', request.url, error)
+    throw error
+  }
+
+  swLog('Optional glyph not cached (offline):', request.url)
+  return new Response(null, {
+    status: 404,
+    headers: { 'Content-Type': 'application/x-protobuf' },
+  })
+}
+
+function isVectorTileRequest(url) {
+  return /\/data\/.*\.(pbf|png)$/.test(url)
+}
+
 async function getCacheSize() {
-  let totalEntries = 0
+  const size = { entries: 0, caches: ALL_CACHES.length }
 
   for (const cacheName of ALL_CACHES) {
     const cache = await caches.open(cacheName)
     const keys = await cache.keys()
-    totalEntries += keys.length
-
-    // Note: Can't get exact size without reading all responses
-    // This is an approximation based on entry count
+    size.entries += keys.length
   }
 
-  return {
-    entries: totalEntries,
-    caches: ALL_CACHES.length,
-  }
+  return size
 }
