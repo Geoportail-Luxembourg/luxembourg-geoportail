@@ -44,6 +44,8 @@ const MANIFEST_CANDIDATE_URLS = Array.from(
   ])
 )
 
+const toAppUrl = (path: string) => new URL(path, APP_BASE_URL).href
+
 const ENTRYPOINT_URLS = Array.from(
   new Set([ENTRY_URL, INDEX_HTML_URL, ROOT_URL, ROOT_INDEX_URL])
 )
@@ -76,12 +78,8 @@ const CDN_APP_SHELL_URLS = [
   'https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.2.0/css/all.min.css',
 ]
 
-const TRANSLATION_URLS = TRANSLATION_FILES.map(
-  path => new URL(path, self.location.origin).href
-)
-const STATIC_APP_SHELL_URLS = STATIC_APP_SHELL_PATHS.map(
-  path => new URL(path, self.location.origin).href
-)
+const TRANSLATION_URLS = TRANSLATION_FILES.map(toAppUrl)
+const STATIC_APP_SHELL_URLS = STATIC_APP_SHELL_PATHS.map(toAppUrl)
 const PRECACHE_APP_SHELL_URLS = Array.from(
   new Set([
     ...ENTRYPOINT_URLS,
