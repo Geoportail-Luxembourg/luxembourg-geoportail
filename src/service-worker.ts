@@ -44,7 +44,14 @@ const MANIFEST_CANDIDATE_URLS = Array.from(
   ])
 )
 
-const toAppUrl = (path: string) => new URL(path, APP_BASE_URL).href
+const toAppUrl = (path: string) => {
+  try {
+    return new URL(path).href
+  } catch {
+    const normalizedPath = path.replace(/^\/+/, '')
+    return new URL(normalizedPath, APP_BASE_URL).href
+  }
+}
 
 const ENTRYPOINT_URLS = Array.from(
   new Set([ENTRY_URL, INDEX_HTML_URL, ROOT_URL, ROOT_INDEX_URL])
