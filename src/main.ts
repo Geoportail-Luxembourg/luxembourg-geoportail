@@ -16,6 +16,9 @@ import App from './App.vue'
 import './assets/main.css'
 import './assets/ol.css'
 
+import { createLogger } from '@/lib/logging/namespacedLogger'
+const { log: swLog, error: swError, warn: swWarn } = createLogger('SW')
+
 initProjections()
 
 i18next.use(backend)
@@ -45,16 +48,31 @@ app.mount('#app')
 
 useThemeStore().setThemes(themesApiFixture())
 
+async function registerServiceWorker(swUrl: string) {
+  const moduleOptions: RegistrationOptions = {
+    type: 'module',
+  }
+
+  try {
+    swLog('Registering service worker as module:', swUrl)
+    return await navigator.serviceWorker.register(swUrl, moduleOptions)
+  } catch (error) {
+    swWarn(
+      'Module service worker registration failed, retrying as classic script',
+      error
+    )
+    return navigator.serviceWorker.register(swUrl)
+  }
+}
+
 // Register Service Worker for offline Vector Tiles caching (production only)
 if (import.meta.env.PROD && 'serviceWorker' in navigator) {
   window.addEventListener('load', () => {
-    navigator.serviceWorker
-      .register(`${import.meta.env.BASE_URL}service-worker.js`)
+    const swUrl = `${import.meta.env.BASE_URL}service-worker.js`
+    registerServiceWorker(swUrl)
       .then(registration => {
-        // eslint-disable-next-line no-console
-        console.log('[SW] ✅ Registered successfully:', registration.scope)
-        // eslint-disable-next-line no-console
-        console.log('[SW] State:', registration.active?.state)
+        swLog('[SW] ✅ Registered successfully:', registration.scope)
+        swLog('[SW] State:', registration.active?.state)
 
         // Check for updates periodically
         setInterval(() => {
@@ -70,22 +88,15 @@ if (import.meta.env.PROD && 'serviceWorker' in navigator) {
                 newWorker.state === 'installed' &&
                 navigator.serviceWorker.controller
               ) {
-                // New service worker available
-                // eslint-disable-next-line no-console
-                // eslint-disable-next-line no-console
-                console.log('[SW] New version available')
-                // Optional: notify user to reload
-                // dispatchEvent(new CustomEvent('sw-update-available'))
+                swLog('[SW] New version available')
               }
             })
           }
         })
       })
       .catch(error => {
-        // eslint-disable-next-line no-console
-        console.error('[SW] ❌ Registration failed:', error)
-        // eslint-disable-next-line no-console
-        console.error('[SW] Error details:', {
+        swError('[SW] ❌ Registration failed:', error)
+        swError('[SW] Error details:', {
           name: error.name,
           message: error.message,
           stack: error.stack,

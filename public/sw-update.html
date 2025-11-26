@@ -1,0 +1,170 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Service Worker Updater</title>
+    <style>
+      body {
+        font-family: system-ui;
+        max-width: 600px;
+        margin: 50px auto;
+        padding: 20px;
+        background: #f5f5f5;
+      }
+      .card {
+        background: white;
+        padding: 30px;
+        border-radius: 10px;
+        box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+        text-align: center;
+      }
+      h1 {
+        color: #333;
+      }
+      button {
+        background: #007bff;
+        color: white;
+        border: none;
+        padding: 15px 30px;
+        border-radius: 5px;
+        font-size: 16px;
+        cursor: pointer;
+        margin: 10px;
+      }
+      button:hover {
+        background: #0056b3;
+      }
+      .success {
+        color: #28a745;
+        font-weight: bold;
+      }
+      .error {
+        color: #dc3545;
+        font-weight: bold;
+      }
+      pre {
+        background: #f5f5f5;
+        padding: 15px;
+        border-radius: 5px;
+        text-align: left;
+        overflow-x: auto;
+        max-height: 300px;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="card">
+      <h1>🔄 Service Worker Updater</h1>
+      <p>Click the button below to update and test your Service Worker</p>
+
+      <button onclick="updateServiceWorker()">🔄 Update Service Worker</button>
+      <button onclick="clearAndReload()">🗑️ Clear All & Reload</button>
+      <button onclick="logWorkerStatus()">📋 Log SW Status</button>
+
+      <div id="status"></div>
+      <pre id="output"></pre>
+    </div>
+
+    <script>
+      const status = document.getElementById('status')
+      const output = document.getElementById('output')
+
+      function log(msg) {
+        output.textContent += msg + '\n'
+        output.scrollTop = output.scrollHeight
+      }
+
+      async function updateServiceWorker() {
+        status.innerHTML = ''
+        output.textContent = ''
+        log('Starting update process...\n')
+
+        try {
+          // Unregister existing SW
+          const registrations = await navigator.serviceWorker.getRegistrations()
+
+          for (const reg of registrations) {
+            log(`Unregistering: ${reg.scope}`)
+            await reg.unregister()
+          }
+
+          log('✅ All service workers unregistered\n')
+
+          // Clear all caches
+          const cacheNames = await caches.keys()
+          log(`Found ${cacheNames.length} caches`)
+
+          for (const name of cacheNames) {
+            log(`Deleting cache: ${name}`)
+            await caches.delete(name)
+          }
+
+          log('✅ All caches cleared\n')
+        } catch (error) {
+          status.innerHTML =
+            '<p class="error">❌ Error: ' + error.message + '</p>'
+          log('Error: ' + error.message)
+        }
+      }
+
+      async function clearAndReload() {
+        await updateServiceWorker()
+        status.innerHTML =
+          '<p class="success">✅ Update complete! Reloading in 2 seconds...</p>'
+        setTimeout(() => {
+          window.location.href = '/'
+        }, 2000)
+      }
+
+      async function logWorkerStatus() {
+        log('\n--- Service Worker Status ---')
+
+        if (!('serviceWorker' in navigator)) {
+          log('Service workers are not supported in this browser')
+          return
+        }
+
+        try {
+          const registrations = await navigator.serviceWorker.getRegistrations()
+          if (!registrations.length) {
+            log('No active service worker registrations found')
+          } else {
+            registrations.forEach(reg => {
+              log(`Scope: ${reg.scope}`)
+              log(
+                `  States -> installing: ${
+                  reg.installing?.state ?? 'n/a'
+                }, waiting: ${reg.waiting?.state ?? 'n/a'}, active: ${
+                  reg.active?.state ?? 'n/a'
+                }`
+              )
+              log(
+                `  Last update check: ${
+                  reg.updateTime
+                    ? new Date(reg.updateTime).toISOString()
+                    : 'unknown'
+                }`
+              )
+            })
+          }
+
+          log('\n--- Cache Status ---')
+          const cacheNames = await caches.keys()
+          if (!cacheNames.length) {
+            log('No caches found')
+          } else {
+            log(`${cacheNames.length} cache(s) detected`)
+            for (const name of cacheNames) {
+              const cache = await caches.open(name)
+              const keys = await cache.keys()
+              log(`  • ${name}: ${keys.length} entries`)
+            }
+          }
+        } catch (error) {
+          log('Failed to log status: ' + error.message)
+        }
+      }
+    </script>
+  </body>
+</html>

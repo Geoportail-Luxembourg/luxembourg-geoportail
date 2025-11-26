@@ -1,3 +1,9 @@
+/// <reference lib="webworker" />
+export {}
+declare const self: ServiceWorkerGlobalScope
+
+import { createLogger } from '@/lib/logging/namespacedLogger'
+
 /**
  * Service Worker for Luxembourg Geoportail v4
  *
@@ -30,6 +36,13 @@ const ROOT_URL = `${self.location.origin}/`
 const ROOT_INDEX_URL = `${self.location.origin}/index.html`
 const ENTRY_URL = APP_BASE_URL
 const INDEX_HTML_URL = new URL('index.html', APP_BASE_URL).href
+const MANIFEST_CANDIDATE_URLS = Array.from(
+  new Set([
+    new URL('manifest.json', APP_BASE_URL).href,
+    new URL('manifest.json', REG_SCOPE).href,
+    new URL('manifest.json', self.location.href).href,
+  ])
+)
 
 const ENTRYPOINT_URLS = Array.from(
   new Set([ENTRY_URL, INDEX_HTML_URL, ROOT_URL, ROOT_INDEX_URL])
@@ -95,16 +108,36 @@ const DEFAULT_FONT_FAMILIES = [
 const CRITICAL_GLYPH_RANGE = '0-255'
 const APP_SHELL_CDN_HOSTS = ['cdnjs.cloudflare.com', 'map.geoportail.lu']
 
-const swLog = (...args) => console.log('[SW]', ...args) // eslint-disable-line no-console
-const swWarn = (...args) => console.warn('[SW]', ...args) // eslint-disable-line no-console
+type CacheName = (typeof CACHE_NAMES)[keyof typeof CACHE_NAMES]
+type PutUrlOptions = {
+  parseCss?: boolean
+}
+type StyleSourceConfig = {
+  url?: string
+}
+type StyleJson = {
+  sources?: Record<string, StyleSourceConfig>
+}
+type ViteManifest = Record<string, ViteManifestEntry>
+type ViteManifestEntry = {
+  file?: string
+  css?: string[]
+  assets?: string[]
+  imports?: string[]
+  dynamicImports?: string[]
+  isEntry?: boolean
+}
+
+const { log: swLog, warn: swWarn } = createLogger('SW')
 
 swLog(`Bootstrapping service worker v${SW_VERSION} / cache ${CACHE_VERSION}`)
 
-self.addEventListener('install', event => {
+self.addEventListener('install', (event: ExtendableEvent) => {
   const installWork = (async () => {
     await precacheEntrypoint()
     await Promise.all([
       precacheStaticAppShell(),
+      precacheViteManifestAssets(),
       precacheDefaultStyles(),
       precacheDefaultGlyphs(),
     ])
@@ -119,7 +152,7 @@ self.addEventListener('install', event => {
   )
 })
 
-self.addEventListener('activate', event => {
+self.addEventListener('activate', (event: ExtendableEvent) => {
   const cleanup = caches.keys().then(cacheNames => {
     const deletions = cacheNames.map(cacheName => {
       if (
@@ -142,7 +175,7 @@ self.addEventListener('activate', event => {
   )
 })
 
-self.addEventListener('fetch', event => {
+self.addEventListener('fetch', (event: FetchEvent) => {
   const { request } = event
 
   if (request.method !== 'GET') {
@@ -172,7 +205,7 @@ self.addEventListener('fetch', event => {
   }
 })
 
-self.addEventListener('message', event => {
+self.addEventListener('message', (event: ExtendableMessageEvent) => {
   const { data, ports } = event
   if (!data) {
     return
@@ -256,7 +289,84 @@ async function precacheStaticAppShell() {
   await Promise.allSettled(tasks)
 }
 
-async function precacheLinkedAssetsFromHtml(html, baseUrl, cache) {
+async function precacheViteManifestAssets() {
+  for (const url of MANIFEST_CANDIDATE_URLS) {
+    const request = new Request(url, { credentials: 'same-origin' })
+    try {
+      const response = await fetch(request)
+      if (!response.ok) {
+        throw new Error(`HTTP ${response.status}`)
+      }
+
+      const cache = await caches.open(CACHE_NAMES.APP_SHELL)
+      await cache.put(request, response.clone())
+
+      const manifest = (await response.json()) as ViteManifest
+      const assetUrls = collectManifestAssetUrls(manifest)
+
+      if (!assetUrls.size) {
+        swWarn('No manifest assets detected to precache from', url)
+        return
+      }
+
+      swLog('Precaching manifest assets from', url, 'count:', assetUrls.size)
+      await Promise.allSettled(
+        Array.from(assetUrls).map(assetUrl => putUrlInCache(cache, assetUrl))
+      )
+      return
+    } catch (error) {
+      swWarn('Failed to precache build manifest assets via', url, error)
+    }
+  }
+}
+
+function collectManifestAssetUrls(manifest: ViteManifest) {
+  const visited = new Set<string>()
+  const urls = new Set<string>()
+
+  const addAssetPath = (path: string | undefined) => {
+    if (!path) {
+      return
+    }
+    try {
+      urls.add(new URL(path, APP_BASE_URL).href)
+    } catch (error) {
+      swWarn('Failed to resolve manifest asset URL:', path, error)
+    }
+  }
+
+  const visitEntry = (key: string | undefined) => {
+    if (!key || visited.has(key)) {
+      return
+    }
+    visited.add(key)
+    const entry = manifest[key]
+    if (!entry) {
+      return
+    }
+
+    addAssetPath(entry.file)
+    entry.css?.forEach(addAssetPath)
+    entry.assets?.forEach(addAssetPath)
+
+    entry.imports?.forEach(visitEntry)
+    entry.dynamicImports?.forEach(visitEntry)
+  }
+
+  Object.entries(manifest).forEach(([key, entry]) => {
+    if (entry?.isEntry || key.endsWith('.html')) {
+      visitEntry(key)
+    }
+  })
+
+  return urls
+}
+
+async function precacheLinkedAssetsFromHtml(
+  html: string,
+  baseUrl: string,
+  cache: Cache
+) {
   const assets = Array.from(extractLinkedAssetUrls(html, baseUrl))
   if (!assets.length) {
     return
@@ -268,8 +378,8 @@ async function precacheLinkedAssetsFromHtml(html, baseUrl, cache) {
   )
 }
 
-function extractLinkedAssetUrls(html, baseUrl) {
-  const urls = new Set()
+function extractLinkedAssetUrls(html: string, baseUrl: string) {
+  const urls = new Set<string>()
   const patterns = [
     /<script[^>]+src=["']([^"']+)["'][^>]*>/gi,
     /<link[^>]+rel=["'](?:modulepreload|preload|stylesheet)["'][^>]*href=["']([^"']+)["'][^>]*>/gi,
@@ -296,13 +406,17 @@ function extractLinkedAssetUrls(html, baseUrl) {
   return urls
 }
 
-async function putUrlInCache(cache, url, options = {}) {
+async function putUrlInCache(
+  cache: Cache,
+  url: string,
+  options: PutUrlOptions = {}
+) {
   try {
     const sameOrigin = url.startsWith(self.location.origin)
     const isAllowedExternal = APP_SHELL_CDN_HOSTS.includes(
       new URL(url).hostname
     )
-    const requestInit = {
+    const requestInit: RequestInit = {
       credentials: sameOrigin ? 'same-origin' : 'omit',
       mode: sameOrigin ? 'same-origin' : 'cors',
     }
@@ -330,10 +444,12 @@ async function putUrlInCache(cache, url, options = {}) {
       throw new Error(`HTTP ${response.status}`)
     }
 
-    const cacheRequest = new Request(url, {
+    const cacheRequestInit: RequestInit = {
       credentials: sameOrigin ? 'same-origin' : 'omit',
       mode: sameOrigin ? 'same-origin' : isOpaqueResponse ? 'no-cors' : 'cors',
-    })
+    }
+
+    const cacheRequest = new Request(url, cacheRequestInit)
 
     await cache.put(cacheRequest, response.clone())
 
@@ -353,7 +469,11 @@ async function putUrlInCache(cache, url, options = {}) {
   }
 }
 
-async function precacheCssEmbeddedAssets(cssText, baseUrl, cache) {
+async function precacheCssEmbeddedAssets(
+  cssText: string,
+  baseUrl: string,
+  cache: Cache
+) {
   const assetUrls = Array.from(extractCssAssetUrls(cssText, baseUrl))
   if (!assetUrls.length) {
     return
@@ -365,13 +485,13 @@ async function precacheCssEmbeddedAssets(cssText, baseUrl, cache) {
   )
 }
 
-function extractCssAssetUrls(cssText, baseUrl) {
+function extractCssAssetUrls(cssText: string, baseUrl: string) {
   const regex = /url\(([^)]+)\)/gi
-  const urls = new Set()
+  const urls = new Set<string>()
   let match
 
   while ((match = regex.exec(cssText)) !== null) {
-    let raw = match[1].trim().replace(/^['"]|['"]$/g, '')
+    const raw = match[1].trim().replace(/^['"]|['"]$/g, '')
     if (!raw || raw.startsWith('data:') || raw.startsWith('mailto:')) {
       continue
     }
@@ -409,7 +529,7 @@ async function precacheDefaultStyles() {
   await Promise.allSettled(tasks)
 }
 
-async function precacheStyleAndTileJson(cache, url) {
+async function precacheStyleAndTileJson(cache: Cache, url: string) {
   try {
     const request = new Request(url, { mode: 'cors' })
     const response = await fetch(request)
@@ -430,23 +550,25 @@ async function precacheStyleAndTileJson(cache, url) {
   }
 }
 
-async function extractTileJsonUrls(response, baseUrl) {
+async function extractTileJsonUrls(response: Response, baseUrl: string) {
   try {
-    const data = await response.json()
-    return Object.values(data.sources || {})
+    const data = (await response.json()) as StyleJson
+    const sources: Record<string, StyleSourceConfig> = data.sources ?? {}
+
+    return Object.values(sources)
       .map(source =>
         typeof source.url === 'string'
           ? new URL(source.url, baseUrl).href
           : null
       )
-      .filter(Boolean)
+      .filter((url): url is string => Boolean(url))
   } catch (error) {
     swWarn('Failed to parse style JSON for TileJSON references', error)
     return []
   }
 }
 
-async function fetchAndPut(cache, url) {
+async function fetchAndPut(cache: Cache, url: string) {
   try {
     const request = new Request(url, { mode: 'cors' })
     const response = await fetch(request)
@@ -491,7 +613,7 @@ async function precacheDefaultGlyphs() {
   await Promise.allSettled(tasks)
 }
 
-function isAppShellResource(url) {
+function isAppShellResource(url: string) {
   try {
     const urlObj = new URL(url)
 
@@ -543,7 +665,7 @@ function isAppShellResource(url) {
   }
 }
 
-function isVectorTileResource(url) {
+function isVectorTileResource(url: string) {
   try {
     const urlObj = new URL(url)
     if (!VT_HOSTS.includes(urlObj.hostname)) {
@@ -587,7 +709,7 @@ function isVectorTileResource(url) {
   }
 }
 
-async function handleNavigate(request) {
+async function handleNavigate(request: Request) {
   const cache = await caches.open(CACHE_NAMES.APP_SHELL)
 
   try {
@@ -626,7 +748,7 @@ async function handleNavigate(request) {
   )
 }
 
-async function cacheFirstStrategy(request, cacheName) {
+async function cacheFirstStrategy(request: Request, cacheName: CacheName) {
   const cache = await caches.open(cacheName)
   const cachedResponse = await cache.match(request)
 
@@ -659,7 +781,10 @@ async function cacheFirstStrategy(request, cacheName) {
   }
 }
 
-async function cacheFirstWithNetworkUpdate(request, cacheName) {
+async function cacheFirstWithNetworkUpdate(
+  request: Request,
+  cacheName: CacheName
+) {
   const cache = await caches.open(cacheName)
   const cachedResponse = await cache.match(request)
 
@@ -690,7 +815,7 @@ async function cacheFirstWithNetworkUpdate(request, cacheName) {
   throw new Error('Network response not available')
 }
 
-async function networkFirstStrategy(request, cacheName) {
+async function networkFirstStrategy(request: Request, cacheName: CacheName) {
   const cache = await caches.open(cacheName)
 
   try {
@@ -709,20 +834,20 @@ async function networkFirstStrategy(request, cacheName) {
   }
 }
 
-function isGlyphRequest(url) {
+function isGlyphRequest(url: string) {
   return /\/fonts\/.*\.pbf$/.test(url)
 }
 
-function getGlyphRange(url) {
+function getGlyphRange(url: string) {
   const match = url.match(/\/(\d+-\d+)\.pbf$/)
   return match ? match[1] : null
 }
 
-function isCriticalGlyphRange(range) {
+function isCriticalGlyphRange(range: string | null) {
   return range === CRITICAL_GLYPH_RANGE
 }
 
-function handleGlyphFetchFailure(request, error) {
+function handleGlyphFetchFailure(request: Request, error: unknown) {
   const range = getGlyphRange(request.url)
   if (!range || isCriticalGlyphRange(range)) {
     swWarn('Critical glyph missing:', request.url, error)
@@ -736,7 +861,7 @@ function handleGlyphFetchFailure(request, error) {
   })
 }
 
-function isVectorTileRequest(url) {
+function isVectorTileRequest(url: string) {
   return /\/data\/.*\.(pbf|png)$/.test(url)
 }
 

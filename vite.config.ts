@@ -4,6 +4,7 @@ import { loadEnv, type UserConfig } from 'vite'
 import IstanbulPlugin from 'vite-plugin-istanbul'
 import vue from '@vitejs/plugin-vue'
 import type { RootNode, TemplateChildNode } from '@vue/compiler-core'
+import { resolve } from 'path'
 
 function removeDataTestAttrs(node: RootNode | TemplateChildNode) {
   if (node.type === 1 /* NodeTypes.ELEMENT */) {
@@ -56,14 +57,22 @@ export default defineConfig(({ command, mode }) => {
 
   if (command === 'build') {
     base.build = {
-      // assetsInlineLimit: 0, // Imported or referenced assets that are smaller than this threshold will be inlined as base64 URLs to avoid extra http requests. Set to 0 to disable inlining altogether.
+      ...(base.build ?? {}),
+      manifest: true,
       rollupOptions: {
+        input: {
+          main: resolve(__dirname, 'index.html'),
+          'service-worker': resolve(__dirname, 'src/service-worker.ts'),
+        },
         output: {
+          entryFileNames: chunk =>
+            chunk.name === 'service-worker'
+              ? 'service-worker.js'
+              : 'assets/[name]-[hash].js',
           assetFileNames: chunkInfo => {
             if (/\.(gif|jpe?g|png|svg)$/.test(chunkInfo.name ?? '')) {
               return 'assets/images/[name]-[hash][extname]'
             }
-
             return 'assets/[name]-[hash][extname]'
           },
         },

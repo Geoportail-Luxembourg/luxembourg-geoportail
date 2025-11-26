@@ -4,6 +4,7 @@ import { useAppStore } from '@/stores/app.store'
 import { useAlertNotificationsStore } from '@/stores/alert-notifications.store'
 import { useTranslation } from 'i18next-vue'
 import { AlertNotificationType } from '@/stores/alert-notifications.store.model'
+import { createLogger } from '@/lib/logging/namespacedLogger'
 
 export default function useNetwork() {
   const appStore = useAppStore()
@@ -11,6 +12,7 @@ export default function useNetwork() {
   const { t } = useTranslation()
   const wasOffline = ref(false)
   let previousFocusElement: HTMLElement | null = null
+  const { log: swLog } = createLogger('SW')
 
   // Set initial state IMMEDIATELY - critical for page reload while offline
   // Must execute before template renders to show correct offline UI on first load
@@ -80,11 +82,9 @@ export default function useNetwork() {
   }
 
   const handleOffline = () => {
-    // eslint-disable-next-line no-console
-    console.log('[Network] Going OFFLINE - navigator.onLine:', navigator.onLine)
+    swLog('[Network] Going OFFLINE - navigator.onLine:', navigator.onLine)
     appStore.isOffLine = true
-    // eslint-disable-next-line no-console
-    console.log('[Network] Set appStore.isOffLine to:', appStore.isOffLine)
+    swLog('[Network] Set appStore.isOffLine to:', appStore.isOffLine)
     wasOffline.value = true
 
     // Save current focus and move it to a safe location if needed
@@ -108,14 +108,10 @@ export default function useNetwork() {
 
   const initialize = () => {
     // Set initial state immediately - critical for page load while offline
-    // eslint-disable-next-line no-console
-    console.log('[Network] Initialize - navigator.onLine:', navigator.onLine)
+    swLog('[Network] Initialize - navigator.onLine:', navigator.onLine)
     appStore.isOffLine = !navigator.onLine
     // eslint-disable-next-line no-console
-    console.log(
-      '[Network] Set initial appStore.isOffLine to:',
-      appStore.isOffLine
-    )
+    swLog('[Network] Set initial appStore.isOffLine to:', appStore.isOffLine)
 
     window.addEventListener('online', handleOnline)
     window.addEventListener('offline', handleOffline)
@@ -128,11 +124,7 @@ export default function useNetwork() {
     // Double-check after a short delay - navigator.onLine can be unreliable immediately after page load
     // Test actual connectivity by trying to fetch a resource
     setTimeout(async () => {
-      // eslint-disable-next-line no-console
-      console.log(
-        '[Network] Delayed check - navigator.onLine:',
-        navigator.onLine
-      )
+      swLog('[Network] Delayed check - navigator.onLine:', navigator.onLine)
 
       // Try to make a real network request to detect actual connectivity
       try {
@@ -147,23 +139,19 @@ export default function useNetwork() {
         clearTimeout(timeoutId)
 
         // Request succeeded - we're online
-        // eslint-disable-next-line no-console
-        console.log('[Network] Connectivity test: ONLINE')
+        swLog('[Network] Connectivity test: ONLINE')
         if (appStore.isOffLine) {
-          // eslint-disable-next-line no-console
-          console.log('[Network] Correcting state to online')
+          swLog('[Network] Correcting state to online')
           handleOnline()
         }
       } catch (error) {
         // Request failed - we're offline
-        // eslint-disable-next-line no-console
-        console.log(
+        swLog(
           '[Network] Connectivity test: OFFLINE',
           error instanceof Error ? error.message : String(error)
         )
         if (!appStore.isOffLine) {
-          // eslint-disable-next-line no-console
-          console.log('[Network] Correcting state to offline')
+          swLog('[Network] Correcting state to offline')
           handleOffline()
         }
       }

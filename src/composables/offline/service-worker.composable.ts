@@ -1,5 +1,7 @@
 import { ref, Ref } from 'vue'
 
+import { createLogger } from '@/lib/logging/namespacedLogger'
+
 /**
  * Service Worker Management Composable
  *
@@ -20,6 +22,11 @@ export interface CacheStats {
 }
 
 export default function useServiceWorker() {
+  const logger = createLogger('SW Composable')
+  const swLog = logger.log
+  const swWarn = logger.warn
+  const swError = logger.error
+
   const isSupported = ref<boolean>('serviceWorker' in navigator)
   const isRegistered = ref<boolean>(false)
   const registration: Ref<ServiceWorkerRegistration | null> = ref(null)
@@ -40,8 +47,7 @@ export default function useServiceWorker() {
       }
       return reg || null
     } catch (error) {
-      // eslint-disable-next-line no-console
-      console.error('[SW Composable] Failed to get registration:', error)
+      swError('Failed to get registration:', error)
       return null
     }
   }
@@ -90,8 +96,7 @@ export default function useServiceWorker() {
         }, 5000)
       })
     } catch (error) {
-      // eslint-disable-next-line no-console
-      console.error('[SW Composable] Failed to get cache stats:', error)
+      swError('Failed to get cache stats:', error)
       return defaultStats
     }
   }
@@ -101,16 +106,14 @@ export default function useServiceWorker() {
    */
   async function clearCache(): Promise<boolean> {
     if (!isSupported.value) {
-      // eslint-disable-next-line no-console
-      console.warn('[SW Composable] Service Worker not supported')
+      swWarn('Service Worker not supported')
       return false
     }
 
     try {
       const reg = await getRegistration()
       if (!reg || !reg.active) {
-        // eslint-disable-next-line no-console
-        console.warn('[SW Composable] No active Service Worker found')
+        swWarn('No active Service Worker found')
         return false
       }
 
@@ -120,14 +123,9 @@ export default function useServiceWorker() {
         messageChannel.port1.onmessage = event => {
           const { success } = event.data
           if (success) {
-            // eslint-disable-next-line no-console
-            console.log('[SW Composable] Cache cleared successfully')
+            swLog('Cache cleared successfully')
           } else {
-            // eslint-disable-next-line no-console
-            console.error(
-              '[SW Composable] Failed to clear cache:',
-              event.data.error
-            )
+            swError('Failed to clear cache:', event.data.error)
           }
           resolve(success)
         }
@@ -136,14 +134,12 @@ export default function useServiceWorker() {
 
         // Timeout after 10 seconds
         setTimeout(() => {
-          // eslint-disable-next-line no-console
-          console.error('[SW Composable] Clear cache timeout')
+          swError('Clear cache timeout')
           resolve(false)
         }, 10000)
       })
     } catch (error) {
-      // eslint-disable-next-line no-console
-      console.error('[SW Composable] Failed to clear cache:', error)
+      swError('Failed to clear cache:', error)
       return false
     }
   }
@@ -165,15 +161,13 @@ export default function useServiceWorker() {
 
       const success = await reg.unregister()
       if (success) {
-        // eslint-disable-next-line no-console
-        console.log('[SW Composable] Service Worker unregistered')
+        swLog('Service Worker unregistered')
         isRegistered.value = false
         registration.value = null
       }
       return success
     } catch (error) {
-      // eslint-disable-next-line no-console
-      console.error('[SW Composable] Failed to unregister:', error)
+      swError('Failed to unregister:', error)
       return false
     }
   }
@@ -190,12 +184,10 @@ export default function useServiceWorker() {
       const reg = await getRegistration()
       if (reg) {
         await reg.update()
-        // eslint-disable-next-line no-console
-        console.log('[SW Composable] Service Worker update check completed')
+        swLog('Service Worker update check completed')
       }
     } catch (error) {
-      // eslint-disable-next-line no-console
-      console.error('[SW Composable] Failed to update:', error)
+      swError('Failed to update:', error)
     }
   }
 
