@@ -136,7 +136,9 @@ swLog(`Bootstrapping service worker v${SW_VERSION} / cache ${CACHE_VERSION}`)
 self.addEventListener('install', (event: ExtendableEvent) => {
   const installWork = (async () => {
     await precacheEntrypoint()
-    await Promise.all([
+    // Run precache tasks in parallel but tolerate individual failures so
+    // one bad fetch doesn't abort the whole install step.
+    await Promise.allSettled([
       precacheStaticAppShell(),
       precacheViteManifestAssets(),
       precacheDefaultStyles(),
@@ -214,8 +216,19 @@ self.addEventListener('message', (event: ExtendableMessageEvent) => {
 
   if (data.type === 'CLEAR_CACHE') {
     event.waitUntil(
-      Promise.all(ALL_CACHES.map(cacheName => caches.delete(cacheName)))
-        .then(() => ports?.[0]?.postMessage({ success: true }))
+      Promise.allSettled(ALL_CACHES.map(cacheName => caches.delete(cacheName)))
+        .then(results => {
+          const rejected = results.some(r => r.status === 'rejected')
+          if (!rejected) {
+            ports?.[0]?.postMessage({ success: true })
+          } else {
+            swWarn('Failed to clear some caches', results)
+            ports?.[0]?.postMessage({
+              success: false,
+              error: 'Some cache deletions failed',
+            })
+          }
+        })
         .catch(error => {
           swWarn('Failed to clear caches', error)
           ports?.[0]?.postMessage({ success: false, error: error.message })
@@ -263,7 +276,7 @@ async function precacheEntrypoint() {
       const html = await response.clone().text()
       await precacheLinkedAssetsFromHtml(html, url, cache)
 
-      await Promise.all(
+      await Promise.allSettled(
         ENTRYPOINT_URLS.filter(alias => alias !== url).map(alias =>
           cache.put(
             new Request(alias, { credentials: 'same-origin' }),
@@ -717,7 +730,7 @@ async function handleNavigate(request: Request) {
     const response = await fetch(request)
     if (response.ok) {
       await cache.put(request, response.clone())
-      await Promise.all(
+      await Promise.allSettled(
         ENTRYPOINT_URLS.map(url =>
           cache.put(
             new Request(url, { credentials: 'same-origin' }),
