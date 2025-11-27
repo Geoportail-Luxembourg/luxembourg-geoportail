@@ -29,6 +29,7 @@ import useMvtStyles from '@/composables/mvt-styles/mvt-styles.composable'
 import { statePersistorFeatureInfoService } from '@/services/state-persistor/state-persistor-featureinfo.service'
 import useNetwork from '@/composables/network/network.composable'
 import { useTranslation } from 'i18next-vue'
+import { createLogger } from '@/lib/logging/namespacedLogger'
 
 const { t } = useTranslation()
 const appStore = useAppStore()
@@ -37,8 +38,8 @@ const map = useMap()
 
 // Initialize network detection FIRST to set offline state before template renders
 const network = useNetwork()
-// eslint-disable-next-line no-console
-console.log(
+const { log: swLog } = createLogger('SW')
+swLog(
   '[App.vue] After useNetwork() - appStore.isOffLine:',
   appStore.isOffLine,
   'navigator.onLine:',
