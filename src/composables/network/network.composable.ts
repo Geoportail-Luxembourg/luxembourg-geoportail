@@ -109,9 +109,18 @@ export default function useNetwork() {
   const initialize = () => {
     // Set initial state immediately - critical for page load while offline
     swLog('[Network] Initialize - navigator.onLine:', navigator.onLine)
-    appStore.isOffLine = !navigator.onLine
-    // eslint-disable-next-line no-console
-    swLog('[Network] Set initial appStore.isOffLine to:', appStore.isOffLine)
+    // The composable performs an "immediate" assignment at instantiation
+    // to ensure the UI shows the correct offline state before the
+    // component mounts. To avoid a duplicated write/race between that
+    // early assignment and this initialize() call, only update the
+    // store here if the desired state differs from the current one.
+    const desiredState = !navigator.onLine
+    if (appStore.isOffLine !== desiredState) {
+      appStore.isOffLine = desiredState
+      swLog('[Network] Set initial appStore.isOffLine to:', appStore.isOffLine)
+    } else {
+      swLog('[Network] appStore.isOffLine already set to:', appStore.isOffLine)
+    }
 
     window.addEventListener('online', handleOnline)
     window.addEventListener('offline', handleOffline)
