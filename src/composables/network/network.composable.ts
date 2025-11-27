@@ -126,17 +126,27 @@ export default function useNetwork() {
     setTimeout(async () => {
       swLog('[Network] Delayed check - navigator.onLine:', navigator.onLine)
 
-      // Try to make a real network request to detect actual connectivity
+      // Try to make a real network request to detect actual connectivity.
+      // Prefer a configured ping endpoint (VITE_PING_URL) and fall back to
+      // favicon.ico which should exist in most deployments. Treat non-OK
+      // responses as offline for the purpose of this quick probe.
       try {
+        const probeUrl =
+          import.meta.env.VITE_PING_URL ||
+          `${import.meta.env.BASE_URL}favicon.ico`
         const controller = new AbortController()
         const timeoutId = setTimeout(() => controller.abort(), 2000) // 2s timeout
 
-        await fetch('/service-worker.js', {
+        const resp = await fetch(probeUrl, {
           method: 'HEAD',
           cache: 'no-store',
           signal: controller.signal,
         })
         clearTimeout(timeoutId)
+
+        if (!resp.ok) {
+          throw new Error(`HTTP ${resp.status}`)
+        }
 
         // Request succeeded - we're online
         swLog('[Network] Connectivity test: ONLINE')
@@ -145,7 +155,7 @@ export default function useNetwork() {
           handleOnline()
         }
       } catch (error) {
-        // Request failed - we're offline
+        // Request failed - treat as offline for the probe
         swLog(
           '[Network] Connectivity test: OFFLINE',
           error instanceof Error ? error.message : String(error)
