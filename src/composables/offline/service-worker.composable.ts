@@ -211,7 +211,7 @@ export default function useServiceWorker() {
   }
 
   /**
-   * Check if the Service Worker is currently caching VT resources
+   * Check if the Service Worker is registered and active
    * This is useful to show UI indicators
    */
   async function isVTCachingActive(): Promise<boolean> {
