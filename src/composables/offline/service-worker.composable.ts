@@ -75,9 +75,24 @@ export default function useServiceWorker() {
 
       return new Promise<CacheStats>(resolve => {
         const messageChannel = new MessageChannel()
+        const timeoutId = setTimeout(() => {
+          // Ensure port is closed to avoid leaks
+          try {
+            messageChannel.port1.close()
+          } catch {
+            /* ignore */
+          }
+          resolve({ ...defaultStats, isRegistered: true })
+        }, 5000)
 
         messageChannel.port1.onmessage = event => {
           const { size } = event.data
+          clearTimeout(timeoutId)
+          try {
+            messageChannel.port1.close()
+          } catch {
+            /* ignore */
+          }
           resolve({
             entries: size?.entries || 0,
             caches: size?.caches || 0,
@@ -89,11 +104,6 @@ export default function useServiceWorker() {
         reg.active!.postMessage({ type: 'GET_CACHE_SIZE' }, [
           messageChannel.port2,
         ])
-
-        // Timeout after 5 seconds
-        setTimeout(() => {
-          resolve({ ...defaultStats, isRegistered: true })
-        }, 5000)
       })
     } catch (error) {
       swError('Failed to get cache stats:', error)
@@ -119,24 +129,33 @@ export default function useServiceWorker() {
 
       return new Promise<boolean>(resolve => {
         const messageChannel = new MessageChannel()
+        const timeoutId = setTimeout(() => {
+          swError('Clear cache timeout')
+          try {
+            messageChannel.port1.close()
+          } catch {
+            /* ignore */
+          }
+          resolve(false)
+        }, 10000)
 
         messageChannel.port1.onmessage = event => {
           const { success } = event.data
+          clearTimeout(timeoutId)
           if (success) {
             swLog('Cache cleared successfully')
           } else {
             swError('Failed to clear cache:', event.data.error)
           }
+          try {
+            messageChannel.port1.close()
+          } catch {
+            /* ignore */
+          }
           resolve(success)
         }
 
         reg.active!.postMessage({ type: 'CLEAR_CACHE' }, [messageChannel.port2])
-
-        // Timeout after 10 seconds
-        setTimeout(() => {
-          swError('Clear cache timeout')
-          resolve(false)
-        }, 10000)
       })
     } catch (error) {
       swError('Failed to clear cache:', error)
