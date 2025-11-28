@@ -65,6 +65,25 @@ async function registerServiceWorker(swUrl: string) {
   }
 }
 
+function setupPeriodicSwUpdate(
+  registration: ServiceWorkerRegistration
+): () => void {
+  const intervalId = window.setInterval(() => {
+    registration.update()
+  }, 60 * 60 * 1000) // Check every hour
+
+  const cleanup = () => {
+    window.clearInterval(intervalId)
+    window.removeEventListener('pagehide', cleanup)
+    window.removeEventListener('beforeunload', cleanup)
+  }
+
+  window.addEventListener('pagehide', cleanup)
+  window.addEventListener('beforeunload', cleanup)
+
+  return cleanup
+}
+
 // Register Service Worker for offline Vector Tiles caching (production only)
 if (import.meta.env.PROD && 'serviceWorker' in navigator) {
   window.addEventListener('load', () => {
@@ -74,10 +93,8 @@ if (import.meta.env.PROD && 'serviceWorker' in navigator) {
         swLog('[SW] ✅ Registered successfully:', registration.scope)
         swLog('[SW] State:', registration.active?.state)
 
-        // Check for updates periodically
-        setInterval(() => {
-          registration.update()
-        }, 60 * 60 * 1000) // Check every hour
+        // Check for updates periodically with cleanup to avoid leaks
+        const cleanupPeriodicUpdate = setupPeriodicSwUpdate(registration)
 
         // Handle service worker updates
         registration.addEventListener('updatefound', () => {
@@ -89,6 +106,7 @@ if (import.meta.env.PROD && 'serviceWorker' in navigator) {
                 navigator.serviceWorker.controller
               ) {
                 swLog('[SW] New version available')
+                cleanupPeriodicUpdate()
               }
             })
           }

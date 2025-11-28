@@ -286,6 +286,7 @@ self.addEventListener('message', (event: ExtendableMessageEvent) => {
       version: SW_VERSION,
       cacheVersion: CACHE_VERSION,
     })
+    return
   }
 })
 
