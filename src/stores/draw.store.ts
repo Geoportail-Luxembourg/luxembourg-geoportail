@@ -9,7 +9,6 @@ import {
 } from '@/services/ol-feature/ol-feature-drawn'
 import { DrawStateActive, EditStateActive } from './draw.store.model'
 import {
-  deleteMyMapFeature,
   saveMyMapFeature,
 } from '@/services/api/api-mymaps.service'
 
@@ -24,6 +23,11 @@ export const useDrawStore = defineStore('draw', () => {
   )
   const drawnFeaturesMyMaps = computed(
     () => drawnFeatures.value.filter(f => f.map_id) as DrawnFeature[]
+  )
+  const editingFeature = computed(() =>
+    editingFeatureId.value
+      ? drawnFeatures.value.find(f => f.id === editingFeatureId.value)
+      : undefined
   )
   const featureEditionDocked = ref(false)
   const currentDrawInteraction = ref<Draw | undefined>(undefined)
@@ -205,6 +209,7 @@ export const useDrawStore = defineStore('draw', () => {
     drawnFeatures,
     drawnFeaturesExceptMyMaps,
     drawnFeaturesMyMaps,
+    editingFeature,
     featureEditionDocked,
     currentDrawInteraction,
     clipLineActive,

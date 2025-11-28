@@ -33,7 +33,7 @@ const myMapsHelper = useMyMaps()
 const { toggleShareToolbarOpen } = appStore
 const { myMap, myMapIsLoading } = storeToRefs(appStore)
 const drawStore = useDrawStore()
-const { drawnFeaturesMyMaps: features } = storeToRefs(drawStore)
+const { drawnFeaturesMyMaps: features, editingFeature } = storeToRefs(drawStore)
 
 const editFormModalState = ref<EditFormModeType | undefined>(undefined) // undefined => closed
 const editFormModalMyMap = shallowRef<MyMap | undefined>(undefined) // Current MyMap opened in Edit form
@@ -181,7 +181,17 @@ watch(
     !map && mapPrevious && drawStore.removeMyMapsFeature(mapPrevious.uuid)
 )
 
-// TODO: watch on current editing feature to save changes, instead of deep watch on all features
+watch(editingFeature, async feature => {
+  if (feature && feature.map_id && myMap.value) {
+    await saveMyMapFeature(feature.map_id, feature.toGeoJSONString()).catch(
+      e =>
+        addNotification(
+          t('Erreur inattendue lors de la sauvegarde de votre modification.'),
+          AlertNotificationType.ERROR
+        )
+    )
+  }
+})
 
 watch(
   [features, myMapIsLoading],
