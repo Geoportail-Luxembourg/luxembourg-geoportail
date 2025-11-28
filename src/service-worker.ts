@@ -2,12 +2,44 @@
 export {}
 declare const self: ServiceWorkerGlobalScope
 
-import { createLogger } from '@/lib/logging/namespacedLogger'
+function createServiceWorkerLogger(prefix: string) {
+  const normalizedPrefix = prefix.startsWith('[') ? prefix : `[${prefix}]`
+
+  const withPrefix = (method: keyof Console) => {
+    return (...args: unknown[]) => {
+      /* eslint-disable no-console */
+      const consoleMethod = console?.[method] ?? console?.log
+      if (typeof consoleMethod !== 'function') {
+        return
+      }
+
+      const callable = consoleMethod as (...callArgs: unknown[]) => void
+
+      try {
+        callable.call(console, normalizedPrefix, ...args)
+      } catch {
+        try {
+          callable(normalizedPrefix, ...args)
+        } catch {
+          // Ignore logging failures within the service worker
+        }
+      }
+    }
+  }
+
+  return {
+    log: withPrefix('log'),
+    info: withPrefix('info'),
+    warn: withPrefix('warn'),
+    error: withPrefix('error'),
+    debug: withPrefix('debug'),
+  }
+}
 
 /**
  * Service Worker for Luxembourg Geoportail v4
  *
- * VERSION 7.0.3 (+ app-shell precache enhancements)
+ * VERSION 7.0.4 (+ app-shell precache enhancements)
  *
  * Responsibilities
  * - Cache the full application shell (HTML, JS, CSS, fonts, icons, translations)
@@ -16,8 +48,8 @@ import { createLogger } from '@/lib/logging/namespacedLogger'
  * - Provide cache statistics & maintenance hooks used by the UI
  */
 
-const SW_VERSION = '7.0.3'
-const CACHE_VERSION = 'lux-geoportail-v4-v20'
+const SW_VERSION = '7.0.4'
+const CACHE_VERSION = `lux-geoportail-v4-v${SW_VERSION}`
 
 const CACHE_NAMES = {
   APP_SHELL: `${CACHE_VERSION}-app-shell`,
@@ -129,7 +161,7 @@ type ViteManifestEntry = {
   isEntry?: boolean
 }
 
-const { log: swLog, warn: swWarn } = createLogger('SW')
+const { log: swLog, warn: swWarn } = createServiceWorkerLogger('SW')
 
 swLog(`Bootstrapping service worker v${SW_VERSION} / cache ${CACHE_VERSION}`)
 
@@ -405,12 +437,48 @@ function extractLinkedAssetUrls(html: string, baseUrl: string) {
     let match
     while ((match = regex.exec(html)) !== null) {
       const href = match[1]
-      if (!href || href.startsWith('data:') || href.startsWith('mailto:')) {
+      if (!href) {
         continue
       }
+
+      // Reject obviously unsafe or non-network schemes early
+      const lower = href.trim().toLowerCase()
+      if (
+        lower.startsWith('data:') ||
+        lower.startsWith('javascript:') ||
+        lower.startsWith('vbscript:') ||
+        lower.startsWith('file:') ||
+        lower.startsWith('blob:') ||
+        lower.startsWith('mailto:')
+      ) {
+        continue
+      }
+
       try {
         const absolute = new URL(href, baseUrl).href
-        urls.add(absolute)
+
+        // Only precache same-origin app shell assets, explicitly allowed CDNs,
+        // or assets that match common static file extensions. This avoids
+        // caching arbitrary URLs discovered in HTML (reduces XSS surface).
+        const urlObj = new URL(absolute)
+        const hostname = urlObj.hostname
+        const pathname = urlObj.pathname
+
+        const isSameOrigin = absolute.startsWith(self.location.origin)
+        const isAllowedCdn = APP_SHELL_CDN_HOSTS.includes(hostname)
+
+        const staticExtMatch = pathname.match(
+          /\.(js|css|svg|png|jpg|jpeg|gif|webp|ico|json|map)$/i
+        )
+
+        if (isSameOrigin || isAllowedCdn || staticExtMatch) {
+          urls.add(absolute)
+        } else {
+          swWarn(
+            'Skipping non-standard linked asset (not same-origin, CDN, or known asset type):',
+            absolute
+          )
+        }
       } catch (error) {
         swWarn('Failed to resolve linked asset URL:', href, error)
       }
@@ -506,18 +574,43 @@ function extractCssAssetUrls(cssText: string, baseUrl: string) {
 
   while ((match = regex.exec(cssText)) !== null) {
     const raw = match[1].trim().replace(/^['"]|['"]$/g, '')
-    if (!raw || raw.startsWith('data:') || raw.startsWith('mailto:')) {
+    if (!raw) {
+      continue
+    }
+
+    const lower = raw.trim().toLowerCase()
+    if (
+      lower.startsWith('data:') ||
+      lower.startsWith('javascript:') ||
+      lower.startsWith('vbscript:') ||
+      lower.startsWith('file:') ||
+      lower.startsWith('blob:') ||
+      lower.startsWith('mailto:')
+    ) {
       continue
     }
 
     try {
       const absolute = new URL(raw, baseUrl).href
       const hostname = new URL(absolute).hostname
+
+      // Prefer same-origin or known CDNs and ensure the path looks like a static asset
+      const staticExtMatch = absolute.match(
+        /\.(woff2?|ttf|otf|eot|png|jpg|jpeg|gif|webp|svg)$/i
+      )
+
       if (
         absolute.startsWith(self.location.origin) ||
         APP_SHELL_CDN_HOSTS.includes(hostname)
       ) {
-        urls.add(absolute)
+        if (staticExtMatch) {
+          urls.add(absolute)
+        } else {
+          swWarn(
+            'Skipping CSS url() reference that is not a known static asset type:',
+            absolute
+          )
+        }
       }
     } catch (error) {
       swWarn('Failed to resolve CSS asset URL:', raw, error)

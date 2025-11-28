@@ -12,16 +12,32 @@ export function createLogger(
 ): NamespacedLogger {
   const normalizedPrefix = prefix.startsWith('[') ? prefix : `[${prefix}]`
 
+  const invokeConsoleMethod = (method: keyof Console, args: unknown[]) => {
+    const prefixedArgs = [normalizedPrefix, ...args]
+
+    try {
+      if (typeof consoleRef[method] === 'function') {
+        ;(consoleRef[method] as (...callArgs: unknown[]) => void)(
+          ...prefixedArgs
+        )
+        return
+      }
+    } catch {
+      // Attempt fallback below
+    }
+
+    try {
+      if (typeof consoleRef.log === 'function') {
+        consoleRef.log(...prefixedArgs)
+      }
+    } catch {
+      // Ignore logging failures inside worker contexts
+    }
+  }
+
   const withPrefix = (method: keyof Console) => {
-    const consoleMethod =
-      typeof consoleRef[method] === 'function'
-        ? (consoleRef[method] as (...args: unknown[]) => void)
-        : consoleRef.log
-
-    const bound = consoleMethod.bind(consoleRef)
-
     return (...args: unknown[]) => {
-      bound(normalizedPrefix, ...args)
+      invokeConsoleMethod(method, args)
     }
   }
 

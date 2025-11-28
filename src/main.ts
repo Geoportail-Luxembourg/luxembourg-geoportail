@@ -104,6 +104,5 @@ if (import.meta.env.PROD && 'serviceWorker' in navigator) {
       })
   })
 } else if (import.meta.env.PROD) {
-  // eslint-disable-next-line no-console
-  console.warn('[SW] ⚠️ Service Worker not supported in this browser')
+  swWarn('[SW] ⚠️ Service Worker not supported in this browser')
 }
