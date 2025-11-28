@@ -16,6 +16,9 @@ import App from './App.vue'
 import './assets/main.css'
 import './assets/ol.css'
 
+import { createLogger } from '@/lib/logging/namespacedLogger'
+const { log: swLog, error: swError, warn: swWarn } = createLogger('SW')
+
 initProjections()
 
 i18next.use(backend)
@@ -44,3 +47,80 @@ app.use(formatMeasureDirective)
 app.mount('#app')
 
 useThemeStore().setThemes(themesApiFixture())
+
+async function registerServiceWorker(swUrl: string) {
+  const moduleOptions: RegistrationOptions = {
+    type: 'module',
+  }
+
+  try {
+    swLog('Registering service worker as module:', swUrl)
+    return await navigator.serviceWorker.register(swUrl, moduleOptions)
+  } catch (error) {
+    swWarn(
+      'Module service worker registration failed, retrying as classic script',
+      error
+    )
+    return navigator.serviceWorker.register(swUrl)
+  }
+}
+
+function setupPeriodicSwUpdate(
+  registration: ServiceWorkerRegistration
+): () => void {
+  const intervalId = window.setInterval(() => {
+    registration.update()
+  }, 60 * 60 * 1000) // Check every hour
+
+  const cleanup = () => {
+    window.clearInterval(intervalId)
+    window.removeEventListener('pagehide', cleanup)
+    window.removeEventListener('beforeunload', cleanup)
+  }
+
+  window.addEventListener('pagehide', cleanup)
+  window.addEventListener('beforeunload', cleanup)
+
+  return cleanup
+}
+
+// Register Service Worker for offline Vector Tiles caching (production only)
+if (import.meta.env.PROD && 'serviceWorker' in navigator) {
+  window.addEventListener('load', () => {
+    const swUrl = `${import.meta.env.BASE_URL}service-worker.js`
+    registerServiceWorker(swUrl)
+      .then(registration => {
+        swLog('[SW] ✅ Registered successfully:', registration.scope)
+        swLog('[SW] State:', registration.active?.state)
+
+        // Check for updates periodically with cleanup to avoid leaks
+        const cleanupPeriodicUpdate = setupPeriodicSwUpdate(registration)
+
+        // Handle service worker updates
+        registration.addEventListener('updatefound', () => {
+          const newWorker = registration.installing
+          if (newWorker) {
+            newWorker.addEventListener('statechange', () => {
+              if (
+                newWorker.state === 'installed' &&
+                navigator.serviceWorker.controller
+              ) {
+                swLog('[SW] New version available')
+                cleanupPeriodicUpdate()
+              }
+            })
+          }
+        })
+      })
+      .catch(error => {
+        swError('[SW] ❌ Registration failed:', error)
+        swError('[SW] Error details:', {
+          name: error.name,
+          message: error.message,
+          stack: error.stack,
+        })
+      })
+  })
+} else if (import.meta.env.PROD) {
+  swWarn('[SW] ⚠️ Service Worker not supported in this browser')
+}

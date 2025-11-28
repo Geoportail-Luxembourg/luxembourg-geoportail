@@ -41,6 +41,7 @@ const {
   themeGridOpen,
   printToolbarOpen,
   feedbackOpen,
+  isOffLine,
 } = storeToRefs(appStore)
 const { setEditActiveState } = drawStore
 
@@ -143,6 +144,11 @@ function onClickInfoIcon() {
       <li data-cy="layersOpenClose">
         <button-icon
           :label="t('layers', { ns: 'client' })"
+          :aria-label="
+            layersOpen
+              ? t('Close layers panel')
+              : t('Open layers panel to browse and add map layers')
+          "
           icon="layers"
           :active="layersOpen"
           @click="onClickLayersIcon"
@@ -157,45 +163,63 @@ function onClickInfoIcon() {
       <li data-cy="mymapsOpenClose">
         <button-icon
           :label="t('my_maps', { ns: 'client' })"
+          :aria-label="
+            myMapsOpen
+              ? t('Close my maps panel')
+              : t('Open my maps panel to access saved maps')
+          "
           icon="mymaps"
           :active="myMapsOpen"
           @click="() => toggleMyMapsOpen()"
         >
         </button-icon>
       </li>
-      <li data-cy="infoOpenClose">
+      <li v-if="!isOffLine" data-cy="infoOpenClose">
         <button-icon
           :label="`${t('Infos', { ns: 'client' })}${
             displayStarOnMobile ? '(*)' : ''
           }`"
+          :aria-label="
+            infoOpen
+              ? t('Close feature info panel')
+              : t('Open feature info panel to view map details')
+          "
           icon="infos"
           :active="infoOpen"
           @click="onClickInfoIcon"
         >
         </button-icon>
       </li>
-      <li data-cy="legendsOpenClose">
+      <li v-if="!isOffLine" data-cy="legendsOpenClose">
         <button-icon
           :label="t('Legends', { ns: 'client' })"
+          :aria-label="
+            legendsOpen ? t('Close legends panel') : t('Open legends panel')
+          "
           icon="legends"
           :active="legendsOpen"
           @click="() => toggleLegendsOpen()"
         >
         </button-icon>
       </li>
-      <li>
+      <li v-if="!isOffLine">
         <button-icon
           class="text-gray-300"
           :label="t('Routing', { ns: 'client' })"
+          :aria-label="t('Routing tool - not yet implemented')"
           icon="routing"
         >
         </button-icon>
       </li>
     </ul>
 
+    <!-- Left spacer when offline to center the draw button -->
+    <div v-if="isOffLine" class="hidden sm:block sm:flex-grow"></div>
+
     <!-- center buttons -->
     <div
-      class="relative flex flex-col w-12 sm:w-64 sm:flex-row justify-start text-primary divide-y sm:divide-y-0 sm:divide-x divide-gray-400 divide-solid box-content border-y sm:border-y-0 border-x border-gray-400"
+      class="relative flex flex-col w-12 sm:flex-row justify-start text-primary divide-y sm:divide-y-0 sm:divide-x divide-gray-400 divide-solid box-content border-y sm:border-y-0 border-x border-gray-400"
+      :class="isOffLine ? 'sm:w-16' : 'sm:w-64'"
     >
       <!-- Drawing tools -->
       <toolbar-draw v-if="drawToolbarOpen" />
@@ -204,6 +228,11 @@ function onClickInfoIcon() {
       <toolbar-elevation-profile v-if="elevationProfileToolbarOpen" />
       <button-icon
         :label="t('Dessin', { ns: 'client' })"
+        :aria-label="
+          drawToolbarOpen
+            ? t('Close drawing toolbar')
+            : t('Open drawing toolbar to draw on the map')
+        "
         icon="draw"
         :active="drawToolbarOpen"
         @click="() => toggleDrawToolbarOpen()"
@@ -212,19 +241,32 @@ function onClickInfoIcon() {
       </button-icon>
 
       <!-- Measures tools -->
-      <toolbar-measure v-if="measureToolbarOpen" />
-      <button-icon
-        :label="t('Mesurer', { ns: 'client' })"
-        :active="measureToolbarOpen"
-        icon="measure"
-        @click="() => (measureToolbarOpen = !measureToolbarOpen)"
-      >
-      </button-icon>
+      <template v-if="!isOffLine">
+        <toolbar-measure v-if="measureToolbarOpen" />
+        <button-icon
+          :label="t('Mesurer', { ns: 'client' })"
+          :aria-label="
+            measureToolbarOpen
+              ? t('Close measure toolbar')
+              : t('Open measure toolbar to measure distances and areas')
+          "
+          :active="measureToolbarOpen"
+          icon="measure"
+          @click="() => (measureToolbarOpen = !measureToolbarOpen)"
+        >
+        </button-icon>
+      </template>
 
       <!-- Print tools -->
       <button-icon
+        v-if="!isOffLine"
         class="hidden sm:block"
         :label="t('Imprimer', { ns: 'client' })"
+        :aria-label="
+          printToolbarOpen
+            ? t('Close print toolbar')
+            : t('Open print toolbar to create a PDF of the map')
+        "
         :active="printToolbarOpen"
         @click="() => togglePrintToolbarOpen()"
         icon="print"
@@ -234,7 +276,13 @@ function onClickInfoIcon() {
 
       <!-- Social sharing tools -->
       <button-icon
+        v-if="!isOffLine"
         :label="t('Partager', { ns: 'client' })"
+        :aria-label="
+          shareOpen
+            ? t('Close share panel')
+            : t('Open share panel to create a shareable link')
+        "
         :active="shareOpen"
         icon="share"
         @click="() => toggleShareOpen()"
@@ -243,8 +291,10 @@ function onClickInfoIcon() {
       </button-icon>
     </div>
 
-    <!-- Right buttons (links) -->
+    <!-- Right buttons (links) - Hidden when offline, spacer maintains layout -->
+    <div v-if="isOffLine" class="hidden sm:block sm:flex-grow"></div>
     <div
+      v-else
       class="w-[466px] hidden sm:flex flex-row justify-end text-gray-500 whitespace-nowrap"
     >
       <ButtonLink

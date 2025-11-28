@@ -3,6 +3,7 @@ import { onMounted, onUnmounted, watch } from 'vue'
 import { storeToRefs } from 'pinia'
 
 import HeaderBar from '@/components/header-bar/header-bar.vue'
+import HeaderBarOffline from '@/components/header-bar/header-bar-offline.vue'
 import FooterBar from '@/components/footer/footer-bar.vue'
 import LidarGraphPanel from '@/components/lidar/lidar-graph-panel.vue'
 
@@ -26,10 +27,24 @@ import { useAppStore } from '@/stores/app.store'
 import useMap from '@/composables/map/map.composable'
 import useMvtStyles from '@/composables/mvt-styles/mvt-styles.composable'
 import { statePersistorFeatureInfoService } from '@/services/state-persistor/state-persistor-featureinfo.service'
+import useNetwork from '@/composables/network/network.composable'
+import { useTranslation } from 'i18next-vue'
+import { createLogger } from '@/lib/logging/namespacedLogger'
 
+const { t } = useTranslation()
 const appStore = useAppStore()
 const mvtStyleService = useMvtStyles()
 const map = useMap()
+
+// Initialize network detection FIRST to set offline state before template renders
+const network = useNetwork()
+const { log: swLog } = createLogger('SW')
+swLog(
+  '[App.vue] After useNetwork() - appStore.isOffLine:',
+  appStore.isOffLine,
+  'navigator.onLine:',
+  navigator.onLine
+)
 
 // Important, keep order!
 statePersistorMyMapService.bootstrap()
@@ -49,6 +64,7 @@ const {
   infoOpen,
   styleEditorOpen,
   lidarOpen,
+  isOffLine,
 } = storeToRefs(appStore)
 
 watch(layersOpen, timeoutResizeMap)
@@ -61,18 +77,36 @@ watch(lidarOpen, timeoutResizeMap)
 function timeoutResizeMap() {
   setTimeout(() => map.resize(), 50)
 }
-
-onMounted(() => window.addEventListener('resize', map.resize))
-onUnmounted(() => window.removeEventListener('resize', map.resize))
+onMounted(() => {
+  network.initialize()
+  window.addEventListener('resize', map.resize)
+})
+onUnmounted(() => {
+  network.cleanup()
+  window.removeEventListener('resize', map.resize)
+})
 </script>
 
 <template>
   <div class="h-screen flex flex-col overflow-hidden">
+    <!-- Accessibility: Announce offline status changes to screen readers -->
+    <div role="status" aria-live="polite" aria-atomic="true" class="sr-only">
+      <span v-if="isOffLine">
+        {{
+          t(
+            'You are offline. The following features are unavailable: Info panel, Legends, Routing, Measure tools, Print, Share, and external links.'
+          )
+        }}
+      </span>
+    </div>
+
     <!-- ----------------------------- -->
     <!-- Template for full app display -->
     <!-- ----------------------------- -->
     <template v-if="!embedded">
-      <header-bar />
+      <!-- Show offline header when disconnected, normal header when online -->
+      <header-bar-offline v-if="isOffLine" />
+      <header-bar v-else />
 
       <main class="flex grow min-h-0">
         <!-- Side panel containing, Layers catalog, MyMaps, Legends, ... -->
