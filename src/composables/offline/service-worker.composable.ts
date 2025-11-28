@@ -75,24 +75,24 @@ export default function useServiceWorker() {
 
       return new Promise<CacheStats>(resolve => {
         const messageChannel = new MessageChannel()
-        const timeoutId = setTimeout(() => {
-          // Ensure port is closed to avoid leaks
+
+        const closePort = () => {
           try {
             messageChannel.port1.close()
           } catch {
             /* ignore */
           }
+        }
+
+        const timeoutId = setTimeout(() => {
+          closePort()
           resolve({ ...defaultStats, isRegistered: true })
         }, 5000)
 
         messageChannel.port1.onmessage = event => {
           const { size } = event.data
           clearTimeout(timeoutId)
-          try {
-            messageChannel.port1.close()
-          } catch {
-            /* ignore */
-          }
+          closePort()
           resolve({
             entries: size?.entries || 0,
             caches: size?.caches || 0,
