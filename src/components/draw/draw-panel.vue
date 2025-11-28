@@ -15,6 +15,11 @@ import DrawPanelFeatures from './draw-panel-features.vue'
 import ModalConfirmDeleteAll from './modal-confirm-delete-all.vue'
 import ModalMergeLines from './modal-merge-lines.vue'
 
+const emit = defineEmits<{
+  (e: 'moveInMyMap'): void
+  (e: 'createNewMyMap'): void
+}>()
+
 const { t } = useTranslation()
 const appStore = useAppStore()
 const clipLine = useClipLine()
@@ -33,7 +38,7 @@ const drawingMenuOptions = computed(() => {
     },
     {
       label: 'Créer une nouvelle carte à partir de ces dessins',
-      action: () => alert('TODO: Draw feature click drawingMenuOptions'),
+      action: () => emit('createNewMyMap'),
     },
     {
       label: 'Fusionner des lignes',
@@ -53,13 +58,7 @@ const drawingMenuOptions = computed(() => {
   if (myMaps.isMyMapEditable.value) {
     menu.unshift({
       label: 'Copier dans ma carte',
-      action: () => {
-        if (!myMaps.checkAuth()) {
-          return
-        }
-
-        myMaps.addInMyMap()
-      },
+      action: () => emit('moveInMyMap'),
     })
   }
 

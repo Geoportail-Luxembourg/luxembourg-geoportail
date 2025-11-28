@@ -1,4 +1,4 @@
-import { computed, watch } from 'vue'
+import { computed, ref, watch } from 'vue'
 import { storeToRefs } from 'pinia'
 import { useTranslation } from 'i18next-vue'
 
@@ -35,7 +35,8 @@ export default function useMyMaps() {
   const themeStore = useThemeStore()
   const { addNotification } = useAlertNotificationsStore()
   const { authenticated } = storeToRefs(useUserManagerStore())
-  const { myMap, myMapId, myMapLayersChanged } = storeToRefs(appStore)
+  const { myMap, myMapId, myMapIsLoading, myMapLayersChanged } =
+    storeToRefs(appStore)
   const { layers, bgLayer } = storeToRefs(mapStore)
   const themes = useThemes()
   const { themeName } = storeToRefs(themeStore)
@@ -56,21 +57,26 @@ export default function useMyMaps() {
 
   async function loadMyMap(uuid: string) {
     myMap.value = undefined
+    myMapIsLoading.value = true
 
-    fetchMyMapFeatures(uuid).then(features => {
+    try {
+      const [map, features] = await Promise.all([
+        fetchMyMap(uuid),
+        fetchMyMapFeatures(uuid),
+      ])
+
       const newFeatures = features.features?.map(f =>
         DrawnFeature.generateFromGeoJson(f, {
           map_id: uuid,
         })
       )
-      drawnFeatures.value = [...drawnFeatures.value, ...newFeatures]
-    })
 
-    try {
-      const map = await fetchMyMap(uuid)
       myMap.value = map
+      drawnFeatures.value = [...drawnFeatures.value, ...newFeatures]
     } catch (e) {
       handleLoadMapError()
+    } finally {
+      myMapIsLoading.value = false
     }
   }
 
