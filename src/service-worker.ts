@@ -834,6 +834,8 @@ async function handleNavigate(request: Request) {
       )
       return response
     }
+
+    swWarn('Navigation returned non-OK status:', response.status, request.url)
   } catch (error) {
     swWarn('Navigation failed, attempting cache fallback', error)
   }
