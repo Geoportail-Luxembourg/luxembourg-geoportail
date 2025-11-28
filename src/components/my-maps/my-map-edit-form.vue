@@ -1,5 +1,6 @@
 <script setup lang="ts">
-import { computed, onBeforeMount, ref, shallowRef } from 'vue'
+import { computed, nextTick, onBeforeMount, ref, shallowRef } from 'vue'
+import { storeToRefs } from 'pinia'
 import { useTranslation } from 'i18next-vue'
 
 import ModalDialog from '@/components/common/modal-dialog.vue'
@@ -15,12 +16,14 @@ import {
   MyMapCreatedJson,
 } from '@/services/api/api-mymaps.service'
 import { useAlertNotificationsStore } from '@/stores/alert-notifications.store'
-
-import { EditFormModeType } from './my-maps.model'
 import { AlertNotificationType } from '@/stores/alert-notifications.store.model'
-import { storeToRefs } from 'pinia'
 import { useThemeStore } from '@/stores/config.store'
 import { useMapStore } from '@/stores/map.store'
+import { useDrawStore } from '@/stores/draw.store'
+import useMyMaps from '@/composables/my-maps/my-maps.composable'
+
+import { EditFormModeType } from './my-maps.model'
+import { useAppStore } from '@/stores/app.store'
 
 const emit = defineEmits<{
   (e: 'cancel'): void
@@ -34,6 +37,9 @@ const props = defineProps<{
 
 const { t } = useTranslation()
 const { addNotification } = useAlertNotificationsStore()
+const myMaps = useMyMaps()
+const appStore = useAppStore()
+const { myMapId } = storeToRefs(appStore)
 const mapStore = useMapStore()
 const { bgLayer } = storeToRefs(mapStore)
 const themeStore = useThemeStore()
@@ -89,6 +95,16 @@ async function onClickSave() {
         '',
         theme.value?.name || ''
       )
+
+      if (
+        createdResponse?.success &&
+        props.mode === EditFormModeType.CREATE_FROM_FEATURES
+      ) {
+        myMapId.value = createdResponse.uuid // Force here, otherwise features are not added
+        nextTick(() => {
+          myMaps.addInMyMap() // TODO:
+        })
+      }
     }
 
     if (createdResponse?.success) {

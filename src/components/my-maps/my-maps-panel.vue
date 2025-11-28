@@ -11,7 +11,6 @@ import { useAlertNotificationsStore } from '@/stores/alert-notifications.store'
 import { AlertNotificationType } from '@/stores/alert-notifications.store.model'
 import { useAppStore } from '@/stores/app.store'
 import { useDrawStore } from '@/stores/draw.store'
-import { useUserManagerStore } from '@/stores/user-manager.store'
 import {
   deleteMyMap,
   fetchMyMaps,
@@ -31,9 +30,8 @@ const { t } = useTranslation()
 const { addNotification } = useAlertNotificationsStore()
 const appStore = useAppStore()
 const myMapsHelper = useMyMaps()
-const { toggleAuthFormOpen, toggleShareToolbarOpen } = appStore
-const { myMap } = storeToRefs(appStore)
-const { authenticated } = storeToRefs(useUserManagerStore())
+const { toggleShareToolbarOpen } = appStore
+const { myMap, myMapIsLoading } = storeToRefs(appStore)
 const drawStore = useDrawStore()
 const { drawnFeaturesMyMaps: features } = storeToRefs(drawStore)
 
@@ -154,6 +152,18 @@ async function doClearMap(uuid: string) {
   }
 }
 
+function onMoveInMyMap() {
+  if (!myMapsHelper.checkAuth()) {
+    return
+  }
+
+  myMapsHelper.addInMyMap()
+}
+
+function onCreateNewMyMap() {
+  openEditFormModal(undefined, EditFormModeType.CREATE_FROM_FEATURES)
+}
+
 watch(
   editFormModalState,
   state => state === undefined && (editFormModalMyMap.value = undefined)
@@ -171,10 +181,12 @@ watch(
     !map && mapPrevious && drawStore.removeMyMapsFeature(mapPrevious.uuid)
 )
 
+// TODO: watch on current editing feature to save changes, instead of deep watch on all features
+
 watch(
-  features,
-  async (features, featuresOld) => {
-    if (myMap.value) {
+  [features, myMapIsLoading],
+  async ([features, isLoading], [featuresOld]) => {
+    if (features.length && !isLoading && myMap.value) {
       const mapUuid = myMap.value.uuid
       const featureIds = new Set(featuresOld.map(f => f.id))
       const featuresAdded = features.filter(f => !featureIds.has(f.id))
@@ -193,7 +205,7 @@ watch(
       }
     }
   },
-  { deep: true }
+  { flush: 'sync' } // <= MANDATORY to avoid POST requests being sent after next watch (eg? when the mymap and its features are loading)
 )
 </script>
 
@@ -245,7 +257,10 @@ watch(
         </div>
       </template>
 
-      <DrawPanel />
+      <DrawPanel
+        @move-in-my-map="onMoveInMyMap"
+        @create-new-my-map="onCreateNewMyMap"
+      />
     </template>
   </SidePanelLayout>
 
