@@ -16,9 +16,8 @@ import {
   fetchMyMaps,
   MyMap,
   MyMapJson,
-  MyMapSaveFeatureJson,
-  saveMyMapFeature,
 } from '@/services/api/api-mymaps.service'
+import { DrawnFeatureId } from '@/services/ol-feature/ol-feature-drawn'
 
 import MyMapEditForm from './my-map-edit-form.vue'
 import MyMapInfo from './my-map-info.vue'
@@ -31,16 +30,15 @@ const { addNotification } = useAlertNotificationsStore()
 const appStore = useAppStore()
 const myMapsHelper = useMyMaps()
 const { toggleShareToolbarOpen } = appStore
-const { myMap, myMapIsLoading } = storeToRefs(appStore)
+const { myMap } = storeToRefs(appStore)
 const drawStore = useDrawStore()
-const { drawnFeaturesMyMaps: features, editingFeature } = storeToRefs(drawStore)
+const { drawnFeaturesMyMaps: features } = storeToRefs(drawStore)
 
 const editFormModalState = ref<EditFormModeType | undefined>(undefined) // undefined => closed
 const editFormModalMyMap = shallowRef<MyMap | undefined>(undefined) // Current MyMap opened in Edit form
 const openMapModalState = ref(false) // false => closed
 const confirmDeleteModalState = ref<'clear' | 'delete' | undefined>(undefined) // undefined => closed
 const confirmDeleteModalMyMap = ref<MyMap | undefined>(undefined)
-
 const myMaps = shallowRef<MyMapJson[]>([]) // All user's MyMaps
 
 async function refreshModale() {
@@ -179,42 +177,6 @@ watch(
   myMap,
   (map, mapPrevious) =>
     !map && mapPrevious && drawStore.removeMyMapsFeature(mapPrevious.uuid)
-)
-
-watch(editingFeature, async feature => {
-  if (feature && feature.map_id && myMap.value) {
-    await saveMyMapFeature(feature.map_id, feature.toGeoJSONString()).catch(e =>
-      addNotification(
-        t('Erreur inattendue lors de la sauvegarde de votre modification.'),
-        AlertNotificationType.ERROR
-      )
-    )
-  }
-})
-
-watch(
-  [features, myMapIsLoading],
-  async ([features, isLoading], [featuresOld]) => {
-    if (features.length && !isLoading && myMap.value) {
-      const mapUuid = myMap.value.uuid
-      const featureIds = new Set(featuresOld.map(f => f.id))
-      const featuresAdded = features.filter(f => !featureIds.has(f.id))
-
-      for (const f of featuresAdded) {
-        const resp = await saveMyMapFeature(mapUuid, f.toGeoJSONString()).catch(
-          e =>
-            addNotification(
-              t(
-                'Erreur inattendue lors de la sauvegarde de votre modification.'
-              ),
-              AlertNotificationType.ERROR
-            )
-        )
-        f.id = (<MyMapSaveFeatureJson>resp).id!
-      }
-    }
-  },
-  { flush: 'sync' } // <= MANDATORY to avoid POST requests being sent after next watch (eg? when the mymap and its features are loading)
 )
 </script>
 

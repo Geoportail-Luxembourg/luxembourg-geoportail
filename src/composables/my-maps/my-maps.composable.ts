@@ -14,6 +14,8 @@ import {
   deleteMyMapFeature,
   fetchMyMap,
   fetchMyMapFeatures,
+  MyMapSaveFeatureJson,
+  saveMyMapFeature,
   updateMyMap,
 } from '@/services/api/api-mymaps.service'
 import useThemes from '@/composables/themes/themes.composable'
@@ -64,12 +66,12 @@ export default function useMyMaps() {
         fetchMyMap(uuid),
         fetchMyMapFeatures(uuid),
       ])
-
       const newFeatures = features.features?.map(f =>
         DrawnFeature.generateFromGeoJson(f, {
           map_id: uuid,
+          id: (<MyMapSaveFeatureJson>f).id!, // !!! Force reattribution of id from backend
         })
-      )
+      ) as DrawnFeature[]
 
       myMap.value = map
       drawnFeatures.value = [...drawnFeatures.value, ...newFeatures]
@@ -205,9 +207,19 @@ export default function useMyMaps() {
 
   function addInMyMap() {
     if (isMyMapEditable.value) {
-      drawnFeaturesExceptMyMaps.value.forEach(
-        f => (f.map_id = isMyMapEditable.value)
-      )
+      drawnFeaturesExceptMyMaps.value.forEach(async f => {
+        f.map_id = isMyMapEditable.value
+        const resp = await saveMyMapFeature(
+          <string>f.map_id,
+          f.toGeoJSONString()
+        ).catch(e =>
+          addNotification(
+            t('Erreur inattendue lors de la sauvegarde de votre modification.'),
+            AlertNotificationType.ERROR
+          )
+        )
+        f.id = (<MyMapSaveFeatureJson>resp).id!
+      })
     }
   }
 
