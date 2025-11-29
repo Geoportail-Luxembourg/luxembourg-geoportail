@@ -1,5 +1,6 @@
 import { defineStore } from 'pinia'
 import { computed, ref, shallowRef } from 'vue'
+import { useTranslation } from 'i18next-vue'
 import { Draw } from 'ol/interaction'
 import { Type } from 'ol/geom/Geometry'
 
@@ -8,9 +9,17 @@ import {
   DrawnFeatureId,
 } from '@/services/ol-feature/ol-feature-drawn'
 import { DrawStateActive, EditStateActive } from './draw.store.model'
-import { saveMyMapFeature } from '@/services/api/api-mymaps.service'
+import { useAlertNotificationsStore } from './alert-notifications.store'
+import {
+  deleteMyMapFeature,
+  MyMapSaveFeatureJson,
+  saveMyMapFeature,
+} from '@/services/api/api-mymaps.service'
+import { AlertNotificationType } from './alert-notifications.store.model'
 
 export const useDrawStore = defineStore('draw', () => {
+  const { t } = useTranslation()
+  const { addNotification } = useAlertNotificationsStore()
   const activeFeatureId = ref<DrawnFeatureId | undefined>(undefined)
   const editingFeatureId = ref<DrawnFeatureId | undefined>(undefined)
   const drawStateActive = ref<DrawStateActive>(undefined)
@@ -98,9 +107,22 @@ export const useDrawStore = defineStore('draw', () => {
     setDrawActiveState('drawLineContinue')
   }
 
-  function addDrawnFeatureToCollection(feature: DrawnFeature) {
+  async function addDrawnFeatureToCollection(feature: DrawnFeature) {
     queueAddedDrawnFeatures.value = [feature]
     drawnFeatures.value = [...drawnFeatures.value, feature]
+
+    if (feature.map_id !== undefined) {
+      const resp = await saveMyMapFeature(
+        feature.map_id,
+        feature.toGeoJSONString()
+      ).catch(e =>
+        addNotification(
+          t('Erreur inattendue lors de la sauvegarde de votre modification.'),
+          AlertNotificationType.ERROR
+        )
+      )
+      feature.id = (<MyMapSaveFeatureJson>resp).id!
+    }
   }
 
   function selectDrawnFeature(feature: DrawnFeature) {
@@ -142,15 +164,35 @@ export const useDrawStore = defineStore('draw', () => {
    * @param featureId
    */
   function removeFeature(
-    featureId: DrawnFeatureId | DrawnFeatureId[] | undefined
+    featureId: DrawnFeatureId | DrawnFeatureId[] | undefined,
+    updateMyMap = true
   ) {
     const featureIds = Array.isArray(featureId) ? featureId : [featureId]
+
+    if (updateMyMap) {
+      featureIds.forEach(id => {
+        const feature = drawnFeatures.value.find(f => f.id === id)
+        if (feature && feature.map_id && updateMyMap) {
+          deleteMyMapFeature(feature.id).catch(e =>
+            addNotification(
+              t(
+                'Erreur inattendue lors de la sauvegarde de votre modification.'
+              ),
+              AlertNotificationType.ERROR
+            )
+          )
+        }
+      })
+    }
 
     drawnFeatures.value = drawnFeatures.value.filter(
       feature => !featureIds.includes(feature.id)
     )
 
-    if (featureIds.includes(activeFeatureId.value)) {
+    if (
+      featureIds.includes(activeFeatureId.value) ||
+      featureIds.includes(editingFeatureId.value)
+    ) {
       activeFeatureId.value = undefined
       editingFeatureId.value = undefined
     }
@@ -158,15 +200,18 @@ export const useDrawStore = defineStore('draw', () => {
 
   /**
    * Remove all features related to the given MyMap,
-   * usually called when closing the MyMap, this removes the features on the map
+   * usually called when closing the MyMap, this ONLY removes the features on the map, it does not save in the MyMap backend
    * @param myMapId
    */
   function removeMyMapsFeature(myMapId: string) {
+    activeFeatureId.value = undefined
+    editingFeatureId.value = undefined
+
     const featureIds = drawnFeatures.value
       .filter(f => f.map_id === myMapId)
       .map(f => f.id)
 
-    return removeFeature(featureIds)
+    return removeFeature(featureIds, false)
   }
 
   function removeAllFeatures() {

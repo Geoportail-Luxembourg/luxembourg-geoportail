@@ -55,7 +55,7 @@ export class DrawnFeature extends Feature {
    */
   _featureStyle: DrawnFeatureStyle
 
-  map = useMap().getOlMap() // TODO: don't use useMap here
+  map = useMap().getOlMap() // FIXME: don't use useMap here
   profileData: ProfileData | undefined = undefined // Is used by linestring geom
 
   constructor(

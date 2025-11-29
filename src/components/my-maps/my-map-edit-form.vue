@@ -102,7 +102,7 @@ async function onClickSave() {
       ) {
         myMapId.value = createdResponse.uuid // Force here, otherwise features are not added
         nextTick(() => {
-          myMaps.addInMyMap() // TODO:
+          myMaps.addInMyMap()
         })
       }
     }
