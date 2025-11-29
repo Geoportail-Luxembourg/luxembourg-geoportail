@@ -27,8 +27,11 @@ const { toggleMyMapsOpen } = appStore
 const { feedbackOpen, feedbackanfOpen, feedbackageOpen, feedbackcruesOpen } =
   storeToRefs(appStore)
 const drawStore = useDrawStore()
-const { drawnFeaturesExceptMyMaps: features, clipLineActive } =
-  storeToRefs(drawStore)
+const {
+  drawnFeaturesExceptMyMaps: features,
+  clipLineActive,
+  showModalMergeLines,
+} = storeToRefs(drawStore)
 const myMaps = useMyMaps()
 const drawingMenuOptions = computed(() => {
   const menu = [
@@ -42,7 +45,7 @@ const drawingMenuOptions = computed(() => {
     },
     {
       label: 'Fusionner des lignes',
-      action: () => (showModalMergeLines.value = true),
+      action: () => drawStore.toggleDrawMergeLinesModal(true),
     },
     {
       label: clipLineActive.value
@@ -65,7 +68,6 @@ const drawingMenuOptions = computed(() => {
   return menu
 })
 const showModalConfirmDelete = ref(false)
-const showModalMergeLines = ref(false)
 
 function onConfirmDeleteAll() {
   drawStore.removeAllFeatures()
@@ -117,7 +119,6 @@ watch(features, () => {
       <DrawPanelFeatures />
     </div>
 
-    <!-- Modales -->
     <ModalConfirmDeleteAll
       v-if="showModalConfirmDelete"
       @cancel="() => (showModalConfirmDelete = false)"
@@ -128,14 +129,10 @@ watch(features, () => {
         }
       "
     />
-    <ModalMergeLines
-      v-if="showModalMergeLines"
-      @cancel="() => (showModalMergeLines = false)"
-      @confirm="() => (showModalMergeLines = false)"
-    />
   </template>
-</template>
 
+  <ModalMergeLines />
+</template>
 <style scoped>
 .separator {
   margin-left: -10px;
