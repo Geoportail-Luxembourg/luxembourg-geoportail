@@ -29,7 +29,8 @@ const emit = defineEmits<{
   (e: 'clear', map: MyMap): void
   (e: 'resetLayers', map: MyMap): void
   (e: 'saveLayers', map: MyMap): void
-  // ...
+  (e: 'draw:mergelines', map: MyMap): void
+  (e: 'draw:cutlines', map: MyMap): void
 }>()
 const props = defineProps<{
   myMap: MyMap
@@ -69,11 +70,11 @@ const menuOptions = computed(() => [
   },
   {
     label: 'Fusionner des lignes',
-    action: () => alert('TODO: Fusionner des lignes'),
+    action: () => emit('draw:mergelines', props.myMap),
   },
   {
     label: 'Couper une ligne',
-    action: () => alert('TODO: Couper une ligne'),
+    action: () => emit('draw:cutlines', props.myMap),
     separator: true,
   },
   {

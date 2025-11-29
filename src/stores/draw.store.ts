@@ -8,9 +8,7 @@ import {
   DrawnFeatureId,
 } from '@/services/ol-feature/ol-feature-drawn'
 import { DrawStateActive, EditStateActive } from './draw.store.model'
-import {
-  saveMyMapFeature,
-} from '@/services/api/api-mymaps.service'
+import { saveMyMapFeature } from '@/services/api/api-mymaps.service'
 
 export const useDrawStore = defineStore('draw', () => {
   const activeFeatureId = ref<DrawnFeatureId | undefined>(undefined)
@@ -33,6 +31,7 @@ export const useDrawStore = defineStore('draw', () => {
   const currentDrawInteraction = ref<Draw | undefined>(undefined)
   const clipLineActive = ref(false)
   const queueAddedDrawnFeatures = shallowRef<DrawnFeature[]>([])
+  const showModalMergeLines = ref(false)
 
   function toggleDrawPoint() {
     toggleDrawActiveState('drawPoint')
@@ -201,6 +200,14 @@ export const useDrawStore = defineStore('draw', () => {
     return <DrawnFeature[]>drawnFeatures.value.filter(f => ids.includes(f.id))
   }
 
+  function toggleDrawMergeLinesModal(open?: boolean) {
+    showModalMergeLines.value = open ?? !showModalMergeLines.value
+  }
+
+  function toggleDrawCutLineMode(active?: boolean) {
+    clipLineActive.value = active ?? !clipLineActive.value
+  }
+
   return {
     activeFeatureId,
     editingFeatureId,
@@ -214,6 +221,7 @@ export const useDrawStore = defineStore('draw', () => {
     currentDrawInteraction,
     clipLineActive,
     queueAddedDrawnFeatures,
+    showModalMergeLines,
     deactivateDraw,
     removeFeature,
     removeMyMapsFeature,
@@ -234,5 +242,7 @@ export const useDrawStore = defineStore('draw', () => {
     setDrawnFeatures,
     getDrawnFeaturesOfTypes,
     getDrawnFeaturesWithIds,
+    toggleDrawMergeLinesModal,
+    toggleDrawCutLineMode,
   }
 })

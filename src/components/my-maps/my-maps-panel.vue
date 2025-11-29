@@ -183,12 +183,11 @@ watch(
 
 watch(editingFeature, async feature => {
   if (feature && feature.map_id && myMap.value) {
-    await saveMyMapFeature(feature.map_id, feature.toGeoJSONString()).catch(
-      e =>
-        addNotification(
-          t('Erreur inattendue lors de la sauvegarde de votre modification.'),
-          AlertNotificationType.ERROR
-        )
+    await saveMyMapFeature(feature.map_id, feature.toGeoJSONString()).catch(e =>
+      addNotification(
+        t('Erreur inattendue lors de la sauvegarde de votre modification.'),
+        AlertNotificationType.ERROR
+      )
     )
   }
 })
@@ -245,6 +244,8 @@ watch(
           @share="() => toggleShareToolbarOpen(true)"
           @resetLayers="myMapsHelper.resetFromMyMap"
           @saveLayers="myMapsHelper.applyToMyMap"
+          @draw:mergelines="() => drawStore.toggleDrawMergeLinesModal(true)"
+          @draw:cutlines="() => drawStore.toggleDrawCutLineMode(true)"
         />
         <FeaturesList :features="features" />
       </div>
