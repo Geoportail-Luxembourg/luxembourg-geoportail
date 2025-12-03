@@ -76,7 +76,7 @@ type LuxLibOptions = {
   i18nextConfig?: InitOptions
 }
 
-export default function useLuxLib(options: LuxLibOptions) {
+export default async function useLuxLib(options: LuxLibOptions) {
   const i18nextConfig = options.i18nextConfig ?? {
     lng: 'fr',
     debug: false,
@@ -92,7 +92,9 @@ export default function useLuxLib(options: LuxLibOptions) {
   }
 
   i18next.use(backend)
-  i18next.init(i18nextConfig)
+  // Wait for i18next to load translations before creating Vue app
+  // This prevents race conditions where components try to render before translations are available
+  await i18next.init(i18nextConfig)
 
   const app = createApp(App)
 
