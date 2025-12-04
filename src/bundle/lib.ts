@@ -94,18 +94,16 @@ export default async function useLuxLib(options: LuxLibOptions) {
     backend: {
       loadPath: `/static-ngeo/web-components/assets/locales/{{ns}}.{{lng}}.json`,
     },
-    nsSeparator: false, // ! force separator off because some i18n keys have ':' (otherwise, i18next doesn't find the key)
+    nsSeparator: false,
     keySeparator: false,
   }
 
   i18next.use(backend)
-  // Wait for i18next to load translations before creating Vue app
-  // This prevents race conditions where components try to render before translations are available
   await i18next.init(i18nextConfig)
-
+  const pinia = createPinia()
   const app = createApp(App)
 
-  app.use(createPinia())
+  app.use(pinia)
   app.use(I18NextVue, { i18next })
   app.use(VueDOMPurifyHTML)
   app.use(formatMeasureDirective)
