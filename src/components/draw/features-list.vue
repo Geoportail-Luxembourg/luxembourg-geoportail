@@ -5,7 +5,10 @@ import { storeToRefs } from 'pinia'
 import useSortable from '@/composables/sortable'
 import useDrawUtils from '@/composables/draw/draw-utils.composable'
 import { useDrawStore } from '@/stores/draw.store'
-import { DrawnFeature } from '@/services/ol-feature/ol-feature-drawn'
+import {
+  DrawnFeature,
+  DrawnFeatureId,
+} from '@/services/ol-feature/ol-feature-drawn'
 
 import FeatureItem from './feature-item.vue'
 
@@ -84,9 +87,9 @@ watch(sortableFeatures, elem => {
         @toggleEditFeature="ontoggleEditFeature"
         @toggleDock="() => (featureEditionDocked = !featureEditionDocked)"
         @closePopup="() => (featureEditionDocked = false)"
-        @clickDelete="featureId => drawStore.removeFeature(featureId)"
+        @clickDelete="(featureId: DrawnFeatureId) => drawStore.removeFeature(featureId)"
         @continueLine="() => onContinueLine(<DrawnFeature>feature)"
-        @submitFeature="feature => drawStore.updateDrawnFeature(feature)"
+        @submitFeature="(feature: DrawnFeature) => drawStore.updateDrawnFeature(feature)"
         @submitNewConcentricCircle="onSubmitNewConcentricCircle"
       />
     </li>

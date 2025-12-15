@@ -14,6 +14,7 @@ import {
   deleteMyMapFeature,
   fetchMyMap,
   fetchMyMapFeatures,
+  MyMapFetchFeatureJson,
   MyMapSaveFeatureJson,
   saveMyMapFeature,
   updateMyMap,
@@ -66,10 +67,12 @@ export default function useMyMaps() {
         fetchMyMap(uuid),
         fetchMyMapFeatures(uuid),
       ])
-      const newFeatures = features.features?.map(f =>
+      const newFeatures = features.features?.map((f: MyMapFetchFeatureJson) =>
         DrawnFeature.generateFromGeoJson(f, {
           map_id: uuid,
-          id: (<MyMapSaveFeatureJson>f).id!, // !!! Force reattribution of id from backend
+          id: f.id!, // !!! Force reattribution of id from backend
+          fid: f.id!, // !!! Force reattribution of fid from backend
+          display_order: f.properties?.display_order,
         })
       ) as DrawnFeature[]
 

@@ -40,6 +40,7 @@ const encodeOptions = {
 export class DrawnFeature extends Feature {
   // TODO: refactor create a generic type that can be used by Infos panel, Draw, and Measures
   id: DrawnFeatureId
+  fid: number | undefined // For mymaps, returned by the server
   label: string
   description: string
   display_order: number
@@ -250,6 +251,7 @@ export class DrawnFeature extends Feature {
       color: this.featureStyle.color,
       description: this.description,
       display_order: this.display_order,
+      fid: this.fid,
       stroke: this.featureStyle.stroke,
       isLabel: this.featureType === 'drawnLabel',
       linestyle: this.featureStyle.linestyle,

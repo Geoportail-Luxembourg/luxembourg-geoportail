@@ -116,6 +116,8 @@ export const useDrawStore = defineStore('draw', () => {
       const resp = await saveMyMapFeature(
         feature.map_id,
         feature.toGeoJSONString()
+
+        // eslint-disable-next-line @typescript-eslint/no-unused-vars
       ).catch(e =>
         addNotification(
           t('Erreur inattendue lors de la sauvegarde de votre modification.'),
@@ -123,6 +125,7 @@ export const useDrawStore = defineStore('draw', () => {
         )
       )
       feature.id = (<MyMapSaveFeatureJson>resp).id!
+      feature.fid = (<MyMapSaveFeatureJson>resp).id!
     }
   }
 
@@ -174,6 +177,7 @@ export const useDrawStore = defineStore('draw', () => {
       featureIds.forEach(id => {
         const feature = drawnFeatures.value.find(f => f.id === id)
         if (feature && feature.map_id && updateMyMap) {
+          // eslint-disable-next-line @typescript-eslint/no-unused-vars
           deleteMyMapFeature(feature.id).catch(e =>
             addNotification(
               t(

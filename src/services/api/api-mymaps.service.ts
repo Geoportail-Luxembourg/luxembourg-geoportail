@@ -369,9 +369,24 @@ export async function deleteMyMapFeature(featureId: DrawnFeatureId) {
   return json
 }
 
+export interface MyMapFetchFeatureJson {
+  geometry: { [key: string]: any }
+  id: number
+  properties: {
+    map_id: string
+    description: string
+    color: string
+    stroke: string
+    linestyle: string
+    isLabel: boolean
+    label: string
+    display_order: number
+  }
+}
+
 export interface MyMapFetchFeaturesJson {
   type: 'FeatureCollection'
-  features: []
+  features: MyMapFetchFeatureJson[]
 }
 
 export async function fetchMyMapFeatures(uuid: string) {

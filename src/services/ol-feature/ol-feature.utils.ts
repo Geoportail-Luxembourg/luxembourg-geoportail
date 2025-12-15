@@ -30,6 +30,7 @@ export function getFeatCoordinates(feature: Feature<Geometry>) {
       case 'MultiPolygon':
       case 'GeometryCollection':
       default:
+        // eslint-disable-next-line no-console
         console.warn(
           `getFeatCoordinates: Geometry type ${geometry.getType()} not supported, please convert to a supported geometry type before calling this function.`
         )
