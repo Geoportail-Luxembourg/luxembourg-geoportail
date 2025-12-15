@@ -17,7 +17,6 @@ import {
   MyMap,
   MyMapJson,
 } from '@/services/api/api-mymaps.service'
-import { DrawnFeatureId } from '@/services/ol-feature/ol-feature-drawn'
 
 import MyMapEditForm from './my-map-edit-form.vue'
 import MyMapInfo from './my-map-info.vue'
@@ -29,7 +28,7 @@ const { t } = useTranslation()
 const { addNotification } = useAlertNotificationsStore()
 const appStore = useAppStore()
 const myMapsHelper = useMyMaps()
-const { toggleShareToolbarOpen } = appStore
+const { toggleShareOpen } = appStore
 const { myMap } = storeToRefs(appStore)
 const drawStore = useDrawStore()
 const { drawnFeaturesMyMaps: features } = storeToRefs(drawStore)
@@ -203,7 +202,7 @@ watch(
           @edit="map => openEditFormModal(map, EditFormModeType.EDIT)"
           @new="() => openEditFormModal(undefined, EditFormModeType.CREATE)"
           @open="openMap"
-          @share="() => toggleShareToolbarOpen(true)"
+          @share="() => toggleShareOpen(true)"
           @resetLayers="myMapsHelper.resetFromMyMap"
           @saveLayers="myMapsHelper.applyToMyMap"
           @draw:mergelines="() => drawStore.toggleDrawMergeLinesModal(true)"

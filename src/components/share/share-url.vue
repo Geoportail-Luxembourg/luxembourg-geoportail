@@ -8,7 +8,7 @@ import { urlStorage } from '@/services/state-persistor/storage/url-storage'
 
 const { t } = useTranslation()
 const appStore = useAppStore()
-const { mapId, shareOpen } = storeToRefs(appStore)
+const { myMapId, shareOpen } = storeToRefs(appStore)
 
 const url = ref('')
 const longurl = ref('')
@@ -20,9 +20,9 @@ let lastCheckedUrl = ''
 
 // Helper function to get the final URL (with MyMaps-only transformation if needed)
 function getFinalUrl(baseUrl: string): string {
-  if (onlyMymaps.value && mapId.value) {
+  if (onlyMymaps.value && myMapId.value) {
     const urlObj = new URL(baseUrl)
-    urlObj.search = `?map_id=${mapId.value}`
+    urlObj.search = `?map_id=${myMapId.value}`
     return urlObj.toString()
   }
   return baseUrl
@@ -36,7 +36,7 @@ async function updateUrl() {
   lastCheckedUrl = finalUrl // Update the last checked URL
 
   try {
-    if (onlyMymaps.value && mapId.value) {
+    if (onlyMymaps.value && myMapId.value) {
       // For MyMaps-only mode, call the shortener directly with the filtered URL
       const data = new URLSearchParams()
       data.set('url', finalUrl)
@@ -117,7 +117,7 @@ onUnmounted(() => {
   stopUrlWatch()
 })
 
-const isMymapsSelected = () => !!mapId.value
+const isMymapsSelected = () => !!myMapId.value
 </script>
 
 <template>

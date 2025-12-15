@@ -1,4 +1,4 @@
-import { Ref, ref, shallowRef } from 'vue'
+import { Ref, ref } from 'vue'
 import { acceptHMRUpdate, defineStore } from 'pinia'
 import { StyleSection } from '@/composables/mvt-styles/mvt-styles.model'
 import { MyMap } from './app.store.model'
@@ -47,7 +47,6 @@ export const useAppStore = defineStore(
     const measureToolbarOpen = ref(false)
     const elevationProfileToolbarOpen = ref(false)
     const printToolbarOpen = ref(false)
-    const shareToolbarOpen = ref(false)
     const isOffLine = ref(false)
     const isApp = ref(false) // Is the app displayed for Android or Ios?
 
@@ -133,12 +132,21 @@ export const useAppStore = defineStore(
     function toggleInfoOpen(open?: boolean) {
       infoOpen.value = open ?? !infoOpen.value
     }
+
     function toggleShareOpen(open?: boolean) {
       shareOpen.value = open ?? !shareOpen.value
+
+      if (shareOpen.value) {
+        drawToolbarOpen.value = false
+        measureToolbarOpen.value = false
+        printToolbarOpen.value = false
+      }
     }
+
     function toggleLidarOpen(open?: boolean) {
       lidarOpen.value = open ?? !lidarOpen.value
     }
+
     function togglePrintToolbarOpen(open?: boolean) {
       printToolbarOpen.value = open ?? !printToolbarOpen.value
     }
@@ -150,16 +158,6 @@ export const useAppStore = defineStore(
 
     function toggleFeedbackOpen(open?: boolean) {
       feedbackOpen.value = open ?? !feedbackOpen.value
-    }
-
-    function toggleShareToolbarOpen(open?: boolean) {
-      shareToolbarOpen.value = open ?? !shareToolbarOpen.value
-
-      if (shareToolbarOpen.value) {
-        drawToolbarOpen.value = false
-        measureToolbarOpen.value = false
-        printToolbarOpen.value = false
-      }
     }
 
     return {
@@ -190,9 +188,8 @@ export const useAppStore = defineStore(
       elevationProfileToolbarOpen,
       isOffLine,
       isApp,
-      setIsApp,
       printToolbarOpen,
-      shareToolbarOpen,
+      setIsApp,
       setLang,
       setLayersOpen,
       setMyLayersTabOpen,
@@ -203,7 +200,6 @@ export const useAppStore = defineStore(
       toggleAuthFormOpen,
       toggleDrawToolbarOpen,
       togglePrintToolbarOpen,
-      toggleShareToolbarOpen,
       toggleMyMapsOpen,
       toggleInfoOpen,
       toggleShareOpen,
