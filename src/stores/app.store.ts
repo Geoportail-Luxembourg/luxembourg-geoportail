@@ -151,7 +151,7 @@ export const useAppStore = defineStore(
     function toggleFeedbackOpen(open?: boolean) {
       feedbackOpen.value = open ?? !feedbackOpen.value
     }
-    
+
     function toggleShareToolbarOpen(open?: boolean) {
       shareToolbarOpen.value = open ?? !shareToolbarOpen.value
 

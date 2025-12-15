@@ -164,11 +164,14 @@ function onClickInfoIcon() {
       -->
       <li data-cy="mymapsOpenClose">
         <button-icon
-          :label="t('my_maps', { ns: 'client' }) + (myMapLayersChanged ? '(*)' : '')"
+          :label="
+            t('my_maps', { ns: 'client' }) + (myMapLayersChanged ? '(*)' : '')
+          "
           :aria-label="
             myMapsOpen
               ? t('Close my maps panel')
-              : t('Open my maps panel to access saved maps')"
+              : t('Open my maps panel to access saved maps')
+          "
           icon="mymaps"
           :active="myMapsOpen"
           @click="() => toggleMyMapsOpen()"
