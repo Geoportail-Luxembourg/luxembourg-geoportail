@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { onMounted } from 'vue'
+import { onMounted, useTemplateRef, watch } from 'vue'
 import { storeToRefs } from 'pinia'
 
 import useSortable from '@/composables/sortable'
@@ -9,7 +9,7 @@ import { DrawnFeature } from '@/services/ol-feature/ol-feature-drawn'
 
 import FeatureItem from './feature-item.vue'
 
-defineProps<{
+const props = defineProps<{
   features: DrawnFeature[]
 }>()
 
@@ -17,6 +17,9 @@ const drawStore = useDrawStore()
 const drawUtils = useDrawUtils()
 const { activeFeatureId, editingFeatureId, featureEditionDocked } =
   storeToRefs(drawStore)
+const sortableFeatures = useTemplateRef('sortableFeatures')
+let sortElement: ReturnType<typeof useSortable> | undefined = undefined
+
 function onContinueLine(feature: DrawnFeature) {
   feature.fit()
   drawUtils.continueLine(feature)
@@ -48,15 +51,24 @@ function sortFunction(elements: HTMLCollection) {
   drawStore.reorderFeatures(featureIds)
 }
 
-onMounted(() => {
-  useSortable(<HTMLElement>document.querySelector('.sortable-features'), {
-    onSort: sortFunction,
-  })
+watch(sortableFeatures, elem => {
+  if (elem) {
+    sortElement = useSortable(elem, {
+      onSort: sortFunction,
+    })
+  } else {
+    sortElement?.destroy()
+    sortElement = undefined
+  }
 })
 </script>
 
 <template>
-  <ul class="mx-1 sortable-features" v-if="features.length">
+  <ul
+    class="mx-1 sortable-features"
+    ref="sortableFeatures"
+    v-if="features.length"
+  >
     <li
       class="lux-drawing-item"
       v-for="feature in features"

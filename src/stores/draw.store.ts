@@ -14,6 +14,7 @@ import {
   deleteMyMapFeature,
   MyMapSaveFeatureJson,
   saveMyMapFeature,
+  saveMyMapOrder,
 } from '@/services/api/api-mymaps.service'
 import { AlertNotificationType } from './alert-notifications.store.model'
 
@@ -226,6 +227,17 @@ export const useDrawStore = defineStore('draw', () => {
       // object type remains DrawnFeature and additional methods are not lost
       Object.assign(f, { display_order: featuresId.indexOf(`f-${f.id}`) })
     )
+
+    const myMapFeatures = drawnFeatures.value.filter(f => f.map_id)
+
+    if (myMapFeatures.length > 0) {
+      const myMapId = myMapFeatures[0].map_id!
+      const orders = myMapFeatures.map(f => ({
+        fid: <number>f.id,
+        display_order: f.display_order,
+      }))
+      saveMyMapOrder(myMapId, orders)
+    }
   }
 
   /**

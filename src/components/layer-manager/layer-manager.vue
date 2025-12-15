@@ -1,5 +1,11 @@
 <script setup lang="ts">
-import { computed, onMounted, ShallowRef, shallowRef } from 'vue'
+import {
+  computed,
+  onMounted,
+  ShallowRef,
+  shallowRef,
+  useTemplateRef,
+} from 'vue'
 import { storeToRefs } from 'pinia'
 import { useTranslation } from 'i18next-vue'
 
@@ -27,6 +33,8 @@ const { sliderActive } = storeToRefs(sliderStore)
 const { isOffLine } = storeToRefs(appStore)
 const { setRemoteLayersOpen } = appStore
 
+const sortableLayers = useTemplateRef('sortableLayers')
+const sortableLayers3d = useTemplateRef('sortableLayers3d')
 const layers = computed(() => [...mapStore.layers].reverse())
 const layers3d = computed(() => [...mapStore.layers3d].reverse())
 const isLayerOpenId: ShallowRef<LayerId | undefined> = shallowRef()
@@ -39,15 +47,8 @@ const showAddLayerButton = computed(() => !isOffLine.value)
 const emit = defineEmits(['displayCatalog'])
 
 onMounted(() => {
-  const sortableLayersDOM = <HTMLElement>(
-    document.querySelector('.sortable-layers')
-  )
-  const sortableLayers3dDOM = <HTMLElement>(
-    document.querySelector('.sortable-layers-3d')
-  )
-
-  useSortable(sortableLayersDOM, { onSort: sortMethod })
-  useSortable(sortableLayers3dDOM, { onSort: sort3dMethod })
+  useSortable(<HTMLElement>sortableLayers.value, { onSort: sortMethod })
+  useSortable(<HTMLElement>sortableLayers3d.value, { onSort: sort3dMethod })
 })
 
 function sortMethod(elements: HTMLCollection, is3d?: boolean) {
@@ -89,7 +90,11 @@ function toggleLayerComparator() {
     <div v-if="isOffLine && layers.length === 0" class="text-black">
       {{ t('No layer selected', { ns: 'client' }) }}
     </div>
-    <ul class="mb-4 sortable-layers-3d" v-if="layers3d.length > 0">
+    <ul
+      ref="sortableLayers3d"
+      class="mb-4 sortable-layers-3d"
+      v-if="layers3d.length > 0"
+    >
       <li
         v-for="(layer, index) in layers3d"
         :key="layer.id"
@@ -116,7 +121,7 @@ function toggleLayerComparator() {
       </li>
     </ul>
 
-    <ul class="sortable-layers">
+    <ul ref="sortableLayers" class="sortable-layers">
       <li
         v-for="(layer, index) in layers"
         :key="layer.id"

@@ -321,6 +321,38 @@ export async function saveMyMapFeature(uuid: string, feature: string) {
   return json
 }
 
+export interface MyMapSaveOrderJson {
+  success: boolean
+}
+
+/**
+ * Save the order of features in a My Map
+ * @param uuid My Map uuid
+ * @param order Array of objects: { fid: number, display_order: number }
+ * @returns
+ */
+export async function saveMyMapOrder(
+  uuid: string,
+  orders: { fid: number; display_order: number }[]
+) {
+  const payload = {
+    orders: JSON.stringify(orders),
+  }
+  const response = await fetchApi(
+    MYMAPS_URL + '/save_order/' + uuid,
+    payload,
+    'POST'
+  )
+
+  if (!response.ok) {
+    throw new Error('Error while trying to save features order to My Map')
+  }
+
+  const json = <MyMapSaveOrderJson>await response.json()
+
+  return json
+}
+
 export async function deleteMyMapFeature(featureId: DrawnFeatureId) {
   const response = await fetchApi(
     MYMAPS_URL + '/delete_feature/' + featureId,
