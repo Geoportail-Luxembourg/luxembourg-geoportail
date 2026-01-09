@@ -25,6 +25,7 @@ import useBackgroundLayer from '@/composables/background-layer/background-layer.
 import { useUserManagerStore } from '@/stores/user-manager.store'
 import { DrawnFeature } from '@/services/ol-feature/ol-feature-drawn'
 import { useDrawStore } from '@/stores/draw.store'
+import { convertPolygonFeatureToCircle } from '@/composables/draw/draw-utils.composable'
 
 let watchersDefined = false
 
@@ -67,14 +68,16 @@ export default function useMyMaps() {
         fetchMyMap(uuid),
         fetchMyMapFeatures(uuid),
       ])
-      const newFeatures = features.features?.map((f: MyMapFetchFeatureJson) =>
-        DrawnFeature.generateFromGeoJson(f, {
+      const newFeatures = features.features?.map((f: MyMapFetchFeatureJson) => {
+        const feature = DrawnFeature.generateFromGeoJson(f, {
           map_id: uuid,
           id: f.id!, // !!! Force reattribution of id from backend
           fid: f.id!, // !!! Force reattribution of fid from backend
           display_order: f.properties?.display_order,
         })
-      ) as DrawnFeature[]
+        // Convert polygon geometries to circles if needed (circles are saved as polygons in MyMaps)
+        return convertPolygonFeatureToCircle(feature)
+      }) as DrawnFeature[]
 
       myMap.value = map
       drawnFeatures.value = [...drawnFeatures.value, ...newFeatures]

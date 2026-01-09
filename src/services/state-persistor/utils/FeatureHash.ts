@@ -815,7 +815,6 @@ function castValue_(key: string, value: string) {
     'size',
   ]
   const boolProperties = [
-    luxFormatFeatureProperties.IS_CIRCLE,
     luxFormatFeatureProperties.IS_RECTANGLE,
     luxFormatFeatureProperties.IS_TEXT,
     luxFormatFeatureProperties.SHOW_MEASURE,

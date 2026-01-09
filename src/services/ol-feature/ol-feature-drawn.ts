@@ -1,6 +1,6 @@
 import { v4 as uuidv4 } from 'uuid'
 import { Feature } from 'ol'
-import { Point, LineString, MultiPoint, Polygon, Geometry } from 'ol/geom'
+import { Point, LineString, MultiPoint, Polygon, Geometry, Circle } from 'ol/geom'
 import StyleStyle, { StyleFunction } from 'ol/style/Style'
 import StyleRegularShape, {
   Options as RegularShapeOptions,
@@ -150,7 +150,9 @@ export class DrawnFeature extends Feature {
     ) as Feature<Geometry>
     const drawnFeature = DrawnFeature.generateFromFeature(feature, options)
 
-    drawnFeature.fromProperties(geoJson.properties)
+    // GeoJSON readFeature already sets properties on the feature, so we read from there
+    const properties = feature.getProperties()
+    drawnFeature.fromProperties(properties)
     // Ensure style function is set after loading properties
     drawnFeature.setStyle(drawnFeature.getStyleFunction())
     return drawnFeature
@@ -274,10 +276,11 @@ export class DrawnFeature extends Feature {
     this.label = properties.name ?? this.label
     this.map_id = properties.__map_id__ ?? this.map_id
 
-    if (properties.isLabel !== undefined) {
-      this.featureType = properties.isLabel ? 'drawnLabel' : this.featureType
-    } else if (properties.isCircle !== undefined) {
-      this.featureType = properties.isCircle ? 'drawnCircle' : this.featureType
+    // Determine featureType from properties - check isCircle first, then isLabel
+    if (properties.isCircle === true) {
+      this.featureType = 'drawnCircle'
+    } else if (properties.isLabel === true) {
+      this.featureType = 'drawnLabel'
     }
 
     this.featureStyle = {
@@ -339,6 +342,26 @@ export class DrawnFeature extends Feature {
       },
     })
 
+    const circleCenterStyle = new StyleStyle({
+      image: new StyleCircle({
+        radius: 8,
+        fill: new StyleFill({
+          color: [0, 0, 255, 0.8],
+        }),
+        stroke: new StyleStroke({
+          color: [255, 255, 255, 1],
+          width: 2,
+        }),
+      }),
+      geometry: function (feature) {
+        const geom = feature.getGeometry()
+        if (geom instanceof Circle) {
+          return new Point(geom.getCenter())
+        }
+        return undefined
+      },
+    })
+
     const fillStyle = new StyleFill()
     const arrowUrl = ARROW_URL
     const curMap = this.map
@@ -360,6 +383,11 @@ export class DrawnFeature extends Feature {
       // Show vertex handles when feature is being edited
       if (feature.get('__isBeingEdited__')) {
         styles.push(vertexStyle)
+        
+        // Show blue center point for circles in edit mode
+        if (feature.featureType === 'drawnCircle' && feature.getGeometry()?.getType() === 'Circle') {
+          styles.push(circleCenterStyle)
+        }
       }
 
       const order = feature.display_order ?? 0
