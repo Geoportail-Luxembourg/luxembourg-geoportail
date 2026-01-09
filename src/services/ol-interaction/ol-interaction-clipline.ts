@@ -229,7 +229,6 @@ function compareIndexes_(a: { index: number }, b: { index: number }): number {
  */
 function handleUpEvent(
   this: OlInteractionClipLine,
-  evt: MapBrowserEvent
 ): boolean {
   this.handlingDownUpSequence = false
   return false

@@ -258,7 +258,6 @@ class FeatureHash extends TextFeature {
         id: Math.floor(Math.random() * Date.now()),
         label: name,
         description,
-        editable: false,
         display_order: defaultOrder,
         selected: false,
         map_id: undefined, // ??? TODO : check use of this param
@@ -267,6 +266,10 @@ class FeatureHash extends TextFeature {
         featureStyle: drawnFeatureStyle,
       }
     )
+    
+    // Apply the style function to the feature
+    drawnFeature.setStyle(drawnFeature.getStyleFunction())
+    
     return drawnFeature
 
     // TODO check defaults:

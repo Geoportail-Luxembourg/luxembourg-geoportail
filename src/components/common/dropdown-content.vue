@@ -6,7 +6,6 @@ import {
   ShallowRef,
   watch,
   ref,
-  useTemplateRef,
 } from 'vue'
 
 const props = withDefaults(

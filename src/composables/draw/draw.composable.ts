@@ -24,7 +24,7 @@ type DrawInteractions = {
  */
 export default function useDraw() {
   const drawStore = useDrawStore()
-  const { drawStateActive, drawnFeatures, currentDrawInteraction } =
+  const { drawStateActive, drawnFeatures, currentDrawInteraction, editingFeatureId } =
     storeToRefs(drawStore)
   const { createDrawInteraction } = useDrawInteraction()
   const drawLayer = olLayerFactoryService.createOlLayerInteractionDraw()
@@ -51,7 +51,12 @@ export default function useDraw() {
   })
 
   watch(drawnFeatures, drawnFeatures => {
-    addFeaturesToSource(drawnFeatures as DrawnFeature[])
+    addFeaturesToSource(drawnFeatures as DrawnFeature[], editingFeatureId.value)
+  }, { flush: 'post' })
+  
+  // Also watch editingFeatureId to refresh the draw layer when entering/exiting edit mode
+  watch(editingFeatureId, () => {
+    addFeaturesToSource(drawnFeatures.value as DrawnFeature[], editingFeatureId.value)
   })
 
   /**
@@ -63,10 +68,32 @@ export default function useDraw() {
     map.addLayer(drawLayer)
   }
 
-  function addFeaturesToSource(features: DrawnFeature[]) {
+  function addFeaturesToSource(features: DrawnFeature[], excludeFeatureId?: string | number) {
     const source = <VectorSource>drawLayer.getSource()
-    source?.clear()
-    source?.addFeatures(features)
+    
+    // Filter out the feature being edited (it's in editSource)
+    const featuresToAdd = excludeFeatureId 
+      ? features.filter(f => f.id !== excludeFeatureId)
+      : features
+    
+    // Get current features in source
+    const currentFeatures = source?.getFeatures() || []
+    
+    // Remove features that shouldn't be there
+    currentFeatures.forEach(f => {
+      const drawnF = f as DrawnFeature
+      if (!featuresToAdd.find(feat => feat.id === drawnF.id)) {
+        source?.removeFeature(f)
+      }
+    })
+    
+    // Add features that should be there but aren't
+    featuresToAdd.forEach(f => {
+      if (!currentFeatures.find(feat => (feat as DrawnFeature).id === f.id)) {
+        f.changed() // Trigger re-render
+        source?.addFeature(f)
+      }
+    })
   }
 
   return {

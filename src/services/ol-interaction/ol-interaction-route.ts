@@ -308,9 +308,10 @@ class DrawRoute extends Pointer {
     const coordinate = event.coordinate
     const geometry =
       /** @type {ol.geom.SimpleGeometry} */ this.sketchFeature_.getGeometry()
-    let coordinates, last
+    let last
 
-    coordinates = this.sketchCoords_
+    const coordinates = this.sketchCoords_
+    if (!coordinates) return
     last = coordinates[coordinates.length - 1]
 
     last[0] = coordinate[0]

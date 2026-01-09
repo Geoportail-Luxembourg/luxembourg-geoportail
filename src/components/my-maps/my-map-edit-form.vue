@@ -19,7 +19,6 @@ import { useAlertNotificationsStore } from '@/stores/alert-notifications.store'
 import { AlertNotificationType } from '@/stores/alert-notifications.store.model'
 import { useThemeStore } from '@/stores/config.store'
 import { useMapStore } from '@/stores/map.store'
-import { useDrawStore } from '@/stores/draw.store'
 import useMyMaps from '@/composables/my-maps/my-maps.composable'
 
 import { EditFormModeType } from './my-maps.model'

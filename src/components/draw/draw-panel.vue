@@ -30,7 +30,6 @@ const drawStore = useDrawStore()
 const {
   drawnFeaturesExceptMyMaps: features,
   clipLineActive,
-  showModalMergeLines,
 } = storeToRefs(drawStore)
 const myMaps = useMyMaps()
 const drawingMenuOptions = computed(() => {

@@ -92,7 +92,6 @@ function mergeGeometryLines(features: DrawnFeature[]) {
     const firstCoordFirstGeom = newGeom.getFirstCoordinate()
     const lastCoordFirstGeom = newGeom.getLastCoordinate()
     let prevLength = undefined
-    let idxCanditate = -1
     let exchange = false
     let reverseLine = false
 
@@ -119,7 +118,6 @@ function mergeGeometryLines(features: DrawnFeature[]) {
       ) {
         if (prevLength === undefined || lengthLine1 < prevLength) {
           prevLength = lengthLine1
-          idxCanditate = i
           exchange = true
           reverseLine = true
         }
@@ -130,7 +128,6 @@ function mergeGeometryLines(features: DrawnFeature[]) {
       ) {
         if (prevLength === undefined || lengthLine4 < prevLength) {
           prevLength = lengthLine4
-          idxCanditate = i
           exchange = false
           reverseLine = true
         }
@@ -141,13 +138,11 @@ function mergeGeometryLines(features: DrawnFeature[]) {
       ) {
         if (prevLength === undefined || lengthLine2 < prevLength) {
           prevLength = lengthLine2
-          idxCanditate = i
           exchange = false
           reverseLine = false
         }
       } else if (prevLength === undefined || lengthLine3 < prevLength) {
         prevLength = lengthLine3
-        idxCanditate = i
         exchange = true
         reverseLine = false
       }
@@ -199,9 +194,6 @@ export default function useDrawUtils() {
     activateDrawLineContinue()
 
     if (currentDrawInteraction.value) {
-      feature.editable = true // to display vertex // TODO: move elsewhere
-      feature.changed()
-
       await nextTick() // mandatory! // FIXME: why?
 
       currentDrawInteraction.value?.setActive(true)

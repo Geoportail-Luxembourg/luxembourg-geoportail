@@ -12,7 +12,6 @@ import {
   ShallowRef,
   shallowRef,
   watch,
-  watchEffect,
 } from 'vue'
 import { useTranslation } from 'i18next-vue'
 import { Feature } from 'ol'

@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { onMounted, useTemplateRef, watch } from 'vue'
+import { useTemplateRef, watch } from 'vue'
 import { storeToRefs } from 'pinia'
 
 import useSortable from '@/composables/sortable'
@@ -9,16 +9,13 @@ import {
   DrawnFeature,
   DrawnFeatureId,
 } from '@/services/ol-feature/ol-feature-drawn'
+import { EditStateActive } from '@/stores/draw.store.model'
 
 import FeatureItem from './feature-item.vue'
 
-const props = defineProps<{
-  features: DrawnFeature[]
-}>()
-
 const drawStore = useDrawStore()
 const drawUtils = useDrawUtils()
-const { activeFeatureId, editingFeatureId, featureEditionDocked } =
+const { activeFeatureId, editingFeatureId, editStateActive, featureEditionDocked, drawnFeatures: features } =
   storeToRefs(drawStore)
 const sortableFeatures = useTemplateRef('sortableFeatures')
 let sortElement: ReturnType<typeof useSortable> | undefined = undefined
@@ -35,7 +32,38 @@ function onToggleFeatureSub(featureId: string | number, isOpen: boolean) {
 }
 
 function ontoggleEditFeature(featureId: string | number, isEditing: boolean) {
-  editingFeatureId.value = isEditing ? featureId : undefined
+  if (isEditing) {
+    // Already editing this feature? Ignore
+    if (editingFeatureId.value === featureId) {
+      return
+    }
+    
+    // Set activeFeatureId to sync with draw-select watcher
+    activeFeatureId.value = featureId
+    
+    const feature = features.value.find(f => f.id === featureId)
+    if (feature) {
+      editingFeatureId.value = featureId
+      editStateActive.value = <EditStateActive>(
+        feature.featureType.replace('drawn', 'edit').replace('Continue', '')
+      )
+    }
+  } else {
+    // Not editing anything? Ignore
+    if (editingFeatureId.value === undefined) {
+      return
+    }
+    
+    // Unmark feature when exiting edit mode
+    const feature = features.value.find(f => f.id === featureId)
+    if (feature) {
+      // Feature remains selected and visible
+      feature.changed() // Trigger re-render
+    }
+    
+    editingFeatureId.value = undefined
+    editStateActive.value = undefined
+  }
 }
 
 function onSubmitNewConcentricCircle(payload: {

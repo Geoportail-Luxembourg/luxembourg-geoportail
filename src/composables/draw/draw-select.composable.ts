@@ -30,19 +30,20 @@ export default function useDrawSelect() {
         editingFeatureId.value = undefined
       }
 
-      drawnFeatures.value
-        .filter(f => f.id === oldActiveId)
-        .forEach(oldFeature => {
-          oldFeature.selected = false
-          oldFeature.editable = false
-          oldFeature.changed()
-        })
+      // Only unselect if it's a different feature
+      if (oldActiveId !== undefined && oldActiveId !== newActiveId) {
+        drawnFeatures.value
+          .filter(f => f.id === oldActiveId)
+          .forEach(oldFeature => {
+            oldFeature.selected = false
+            oldFeature.changed()
+          })
+      }
 
       drawnFeatures.value
         .filter(f => f.id === newActiveId)
         .forEach(newFeature => {
           newFeature.selected = true
-          newFeature.editable = !!newEditId
           newFeature.changed()
         })
     }
