@@ -40,6 +40,7 @@ export const useDrawStore = defineStore('draw', () => {
   const featureEditionDocked = ref(false)
   const currentDrawInteraction = ref<Draw | undefined>(undefined)
   const clipLineActive = ref(false)
+  const followRoads = ref(false)
   const queueAddedDrawnFeatures = shallowRef<DrawnFeature[]>([])
   const showModalMergeLines = ref(false)
 
@@ -282,6 +283,7 @@ export const useDrawStore = defineStore('draw', () => {
     featureEditionDocked,
     currentDrawInteraction,
     clipLineActive,
+    followRoads,
     queueAddedDrawnFeatures,
     showModalMergeLines,
     deactivateDraw,

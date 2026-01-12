@@ -24,7 +24,7 @@ type DrawInteractions = {
  */
 export default function useDraw() {
   const drawStore = useDrawStore()
-  const { drawStateActive, drawnFeatures, currentDrawInteraction, editingFeatureId } =
+  const { drawStateActive, editStateActive, drawnFeatures, currentDrawInteraction, editingFeatureId } =
     storeToRefs(drawStore)
   const { createDrawInteraction } = useDrawInteraction()
   const drawLayer = olLayerFactoryService.createOlLayerInteractionDraw()
@@ -41,13 +41,31 @@ export default function useDraw() {
   watch(drawStateActive, drawStateActive => {
     Object.keys(drawInteractions).forEach(key => {
       const interaction = drawInteractions[key as keyof DrawInteractions]
-      if (`${[key as keyof DrawInteractions]}` === `${drawStateActive}`) {
+      // Only activate if we're not in edit mode
+      if (`${[key as keyof DrawInteractions]}` === `${drawStateActive}` && !editStateActive.value) {
         interaction.setActive(true)
         currentDrawInteraction.value = interaction
       } else {
         interaction.setActive(false)
       }
     })
+  })
+  
+  // Watch editStateActive to disable draw interactions when entering edit mode
+  watch(editStateActive, isEditing => {
+    if (isEditing) {
+      // Disable all draw interactions when entering edit mode
+      Object.values(drawInteractions).forEach(interaction => {
+        interaction.setActive(false)
+      })
+    } else if (drawStateActive.value) {
+      // Re-enable the active draw interaction when leaving edit mode
+      const key = drawStateActive.value as keyof DrawInteractions
+      if (drawInteractions[key]) {
+        drawInteractions[key].setActive(true)
+        currentDrawInteraction.value = drawInteractions[key]
+      }
+    }
   })
 
   watch(drawnFeatures, drawnFeatures => {
