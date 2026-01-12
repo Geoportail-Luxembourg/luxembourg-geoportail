@@ -206,7 +206,7 @@ watch(
           @resetLayers="myMapsHelper.resetFromMyMap"
           @saveLayers="myMapsHelper.applyToMyMap"
           @draw:mergelines="() => drawStore.toggleDrawMergeLinesModal(true)"
-          @draw:cutlines="() => drawStore.toggleDrawCutLineMode(true)"
+          @draw:cutlines="() => drawStore.toggleDrawCutLineMode()"
         />
         <FeaturesList :features="features" />
       </div>

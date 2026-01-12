@@ -39,7 +39,7 @@ const map = useMap().getOlMap()
 const { generateDrawnFeature } = useDrawnFeatures()
 const { myMapLayersChanged } = storeToRefs(useAppStore())
 const drawStore = useDrawStore()
-const { drawnFeaturesMyMaps } = storeToRefs(drawStore)
+const { drawnFeaturesMyMaps, clipLineActive } = storeToRefs(drawStore)
 const fileInputRef = ref<HTMLInputElement | null>(null)
 const selectedFile = ref<File | null>(null)
 const menuOptions = computed(() => [
@@ -73,7 +73,9 @@ const menuOptions = computed(() => [
     action: () => emit('draw:mergelines', props.myMap),
   },
   {
-    label: 'Couper une ligne',
+    label: clipLineActive.value
+      ? 'Désactiver mode couper une ligne'
+      : 'Couper une ligne',
     action: () => emit('draw:cutlines', props.myMap),
     separator: true,
   },

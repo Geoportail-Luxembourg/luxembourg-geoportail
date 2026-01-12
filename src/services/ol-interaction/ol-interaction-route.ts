@@ -633,6 +633,10 @@ class DrawRoute extends Pointer {
  * @return `false` to stop event propagation.
  */
 function handleEvent(event: MapBrowserEvent): boolean {
+  if (!this.getActive()) {
+    return true
+  }
+
   this.freehand_ = this.mode_ !== Mode_.POINT && this.freehandCondition_(event)
   let pass = !this.freehand_
   if (
@@ -652,6 +656,10 @@ function handleEvent(event: MapBrowserEvent): boolean {
 }
 
 function handleDownEvent_(event: MapBrowserEvent): boolean {
+  if (!this.getActive()) {
+    return false
+  }
+
   this.shouldHandle_ = !this.freehand_
 
   if (this.freehand_) {
