@@ -1096,6 +1096,9 @@ const featureHash = new FeatureHash({
     for (const key in properties) {
       if (properties[key] === null || properties[key] === undefined) {
         delete properties[key]
+      } else if (key === '__map_id__' || key === 'fid') {
+        // Exclude MyMaps-specific properties from URL encoding
+        delete properties[key]
       } else {
         if (SHORT_PARAM_[key as ShortParamKeys]) {
           const value = properties[key]

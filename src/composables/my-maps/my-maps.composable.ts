@@ -68,6 +68,7 @@ export default function useMyMaps() {
         fetchMyMap(uuid),
         fetchMyMapFeatures(uuid),
       ])
+      
       const newFeatures = features.features?.map((f: MyMapFetchFeatureJson) => {
         const feature = DrawnFeature.generateFromGeoJson(f, {
           map_id: uuid,
@@ -82,6 +83,7 @@ export default function useMyMaps() {
       myMap.value = map
       drawnFeatures.value = [...drawnFeatures.value, ...newFeatures]
     } catch (e) {
+      console.error('[MyMaps] loadMyMap() - ERROR', e)
       handleLoadMapError()
     } finally {
       myMapIsLoading.value = false

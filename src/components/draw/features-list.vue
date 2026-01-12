@@ -13,9 +13,14 @@ import { EditStateActive } from '@/stores/draw.store.model'
 
 import FeatureItem from './feature-item.vue'
 
+// Accept features prop from parent component
+defineProps<{
+  features: DrawnFeature[]
+}>()
+
 const drawStore = useDrawStore()
 const drawUtils = useDrawUtils()
-const { activeFeatureId, editingFeatureId, editStateActive, featureEditionDocked, drawnFeatures: features } =
+const { activeFeatureId, editingFeatureId, editStateActive, featureEditionDocked, drawnFeatures } =
   storeToRefs(drawStore)
 const sortableFeatures = useTemplateRef('sortableFeatures')
 let sortElement: ReturnType<typeof useSortable> | undefined = undefined
@@ -41,7 +46,7 @@ function ontoggleEditFeature(featureId: string | number, isEditing: boolean) {
     // Set activeFeatureId to sync with draw-select watcher
     activeFeatureId.value = featureId
     
-    const feature = features.value.find(f => f.id === featureId)
+    const feature = drawnFeatures.value.find(f => f.id === featureId)
     if (feature) {
       editingFeatureId.value = featureId
       editStateActive.value = <EditStateActive>(
@@ -55,7 +60,7 @@ function ontoggleEditFeature(featureId: string | number, isEditing: boolean) {
     }
     
     // Unmark feature when exiting edit mode
-    const feature = features.value.find(f => f.id === featureId)
+    const feature = drawnFeatures.value.find(f => f.id === featureId)
     if (feature) {
       // Feature remains selected and visible
       feature.changed() // Trigger re-render
