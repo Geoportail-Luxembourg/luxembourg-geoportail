@@ -213,21 +213,38 @@ export default function useMyMaps() {
     }
   }
 
-  function addInMyMap() {
+  async function addInMyMap() {
     if (isMyMapEditable.value) {
-      drawnFeaturesExceptMyMaps.value.forEach(async f => {
-        f.map_id = isMyMapEditable.value
-        const resp = await saveMyMapFeature(
-          <string>f.map_id,
-          f.toGeoJSONString()
-        ).catch(e =>
-          addNotification(
-            t('Erreur inattendue lors de la sauvegarde de votre modification.'),
-            AlertNotificationType.ERROR
+      const featuresToMove = [...drawnFeaturesExceptMyMaps.value]
+      const oldFeatureIds = featuresToMove.map(f => f.id).filter(id => id !== undefined)
+      
+      // Remove old features from URL (drawnFeaturesExceptMyMaps) BEFORE updating their IDs
+      if (oldFeatureIds.length > 0) {
+        drawStore.removeFeature(oldFeatureIds, false) // false = don't update MyMap backend
+      }
+      
+      // Save all features to MyMaps backend and update their IDs
+      await Promise.all(
+        featuresToMove.map(async f => {
+          f.map_id = isMyMapEditable.value
+          const resp = await saveMyMapFeature(
+            <string>f.map_id,
+            f.toGeoJSONString()
+          ).catch(e =>
+            addNotification(
+              t('Erreur inattendue lors de la sauvegarde de votre modification.'),
+              AlertNotificationType.ERROR
+            )
           )
-        )
-        f.id = (<MyMapSaveFeatureJson>resp).id!
-      })
+          if (resp) {
+            f.id = (<MyMapSaveFeatureJson>resp).id!
+            f.fid = (<MyMapSaveFeatureJson>resp).id!
+          }
+        })
+      )
+      
+      // Add the moved features (now with MyMaps IDs) to drawnFeatures
+      drawnFeatures.value = [...drawnFeatures.value, ...featuresToMove]
     }
   }
 
