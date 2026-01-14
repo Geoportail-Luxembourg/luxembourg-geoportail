@@ -215,7 +215,7 @@ watch(
           @draw:mergelines="() => drawStore.toggleDrawMergeLinesModal(true)"
           @draw:cutlines="() => drawStore.toggleDrawCutLineMode()"
         />
-        <FeaturesList :features="features" />
+        <FeaturesList :features="features" idPrefix="mymap" />
       </div>
       <!-- No MyMap selected, display button to create or select one in popups -->
       <template v-else>
