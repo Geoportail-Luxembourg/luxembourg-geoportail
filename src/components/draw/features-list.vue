@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { useTemplateRef, watch, ref, nextTick, onMounted, onUnmounted, onBeforeMount } from 'vue'
+import { useTemplateRef, watch, ref, nextTick } from 'vue'
 import { storeToRefs } from 'pinia'
 
 import useSortable from '@/composables/sortable'
@@ -40,44 +40,33 @@ function onLiFocus(featureId: string | number) {
   focusedFeatureId.value = featureId
 }
 
-function onListBlur() {
-  console.log('onListBlur called for idPrefix:', idPrefix)
-  // Only clear if we're not moving to another element in the same list
-  setTimeout(() => {
-    const activeElement = document.activeElement
-    const isStillInList = activeElement && activeElement.closest('.sortable-features') === sortableFeatures.value
-    if (!isStillInList) {
-      activeListIdPrefix.value = undefined
-      console.log('Cleared activeListIdPrefix')
-    }
-  }, 0)
-}
-
 function onListKeydown(e: KeyboardEvent) {
   // Let Tab navigate naturally - don't intercept it
   if (e.key === 'Tab') return
+  if (!['ArrowDown', 'ArrowUp', ' '].includes(e.key)) return
 
-  let currentIdx = features.findIndex(f => f.id === focusedFeatureId.value)
-  if (currentIdx === -1) currentIdx = 0 // If none focused, start from first
-  if (e.key === 'ArrowDown') {
-    e.preventDefault()
-    e.stopImmediatePropagation()
-    const nextIdx = (currentIdx + 1) % features.length
-    focusedFeatureId.value = features[nextIdx].id
-    nextTick(() => document.getElementById(`${idPrefix}-${focusedFeatureId.value}`)?.focus())
-  } else if (e.key === 'ArrowUp') {
-    e.preventDefault()
-    e.stopImmediatePropagation()
-    const prevIdx = (currentIdx - 1 + features.length) % features.length
-    focusedFeatureId.value = features[prevIdx].id
-    nextTick(() => document.getElementById(`${idPrefix}-${focusedFeatureId.value}`)?.focus())
-  } else if (e.key === ' ') {
-    e.preventDefault()
-    e.stopImmediatePropagation()
+  e.preventDefault()
+  e.stopImmediatePropagation()
+
+  if (e.key === ' ') {
     if (focusedFeatureId.value) {
       activeFeatureId.value = activeFeatureId.value === focusedFeatureId.value ? undefined : focusedFeatureId.value
     }
+    return
   }
+
+  const currentIdx = features.findIndex(f => f.id === focusedFeatureId.value)
+  const validIdx = currentIdx === -1 ? 0 : currentIdx
+  
+  if (e.key === 'ArrowDown') {
+    const nextIdx = (validIdx + 1) % features.length
+    focusedFeatureId.value = features[nextIdx].id
+  } else {
+    const prevIdx = (validIdx - 1 + features.length) % features.length
+    focusedFeatureId.value = features[prevIdx].id
+  }
+  
+  nextTick(() => document.getElementById(`${idPrefix}-${focusedFeatureId.value}`)?.focus())
 }
 
 function onContinueLine(feature: DrawnFeature) {
