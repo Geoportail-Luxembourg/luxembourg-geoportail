@@ -144,7 +144,11 @@ function importFeatures() {
       class="text-white font-bold grow max-w-full text-ellipsis overflow-hidden text-nowrap hover:cursor-pointer"
       role="button"
       :title="myMap.title"
+      :aria-label="t('Éditer le titre de la carte') + ' : ' + myMap.title"
+      tabindex="0"
       @click="emit('edit', myMap)"
+      @keydown.enter="emit('edit', myMap)"
+      @keydown.space.prevent="emit('edit', myMap)"
     >
       {{ myMap.title }}
     </h2>
@@ -161,7 +165,11 @@ function importFeatures() {
     data-cy="mymap-description"
     class="text-white mb-2 hover:cursor-pointer"
     role="button"
+    :aria-label="t('Éditer la description de la carte')"
+    tabindex="0"
     @click="emit('edit', myMap)"
+    @keydown.enter="emit('edit', myMap)"
+    @keydown.space.prevent="emit('edit', myMap)"
   >
     <template v-if="myMap.description">{{ myMap.description }}</template>
     <span v-else class="italic">{{ t('Aucune description') }}</span>
@@ -189,16 +197,26 @@ function importFeatures() {
 
   <div class="flex items-center text-white mr-0.5">
     <span class="text-sm italic grow">
-      <i v-if="myMap.public" class="fa fa-unlock mr-1"></i>
-      <i v-else class="fa fa-lock mr-1"></i>
+      <i 
+        v-if="myMap.public" 
+        class="fa fa-unlock mr-1" 
+        :aria-label="t('Carte publique')"
+      ></i>
+      <i 
+        v-else 
+        class="fa fa-lock mr-1" 
+        :aria-label="t('Carte privée')"
+      ></i>
       {{ t('Carte créée par') }} {{ myMap.user_login }}
     </span>
 
     <input
       type="file"
-      class="hidden"
+      class="sr-only"
       ref="fileInputRef"
+      id="gpx-kml-import"
       accept=".gpx,.kml,.kmz"
+      :aria-label="t('Importer un fichier GPX/KML/KMZ')"
       v-on:change="(e) => selectedFile = (e.target as HTMLInputElement).files?.[0] || null"
     />
 

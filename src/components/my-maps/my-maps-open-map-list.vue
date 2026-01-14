@@ -18,7 +18,8 @@ const emit = defineEmits<{
 }>()
 
 const props = defineProps<{
-  maps: MyMapJson[]
+  maps: MyMapJson[],
+  isLoadingMyMaps: boolean
 }>()
 
 const { t } = useTranslation()
@@ -122,25 +123,38 @@ function sortMap(
         class="mt-2 mb-8 mx-2 flex flex-row gap-2 fixed"
       >
         <div>
+          <label for="map-search-input" class="sr-only">{{ t('Search Maps') }}</label>
           <input
+            id="map-search-input"
             :placeholder="t('Search Maps')"
             class="lux-input"
             type="text"
             v-model="mapNameSearch"
+            :aria-label="t('Search Maps')"
           />
         </div>
-        <DropdownList
-          class="inline-block min-w-36 w-60"
-          :options="categoriesOptions"
-          v-model="categorySearch"
-          @change="v => (categorySearch = v)"
-        ></DropdownList>
-        <DropdownList
-          class="inline-block min-w-36 w-60"
-          :options="ownersOptions"
-          v-model="ownerSearch"
-          @change="v => (ownerSearch = v)"
-        ></DropdownList>
+        <div>
+          <label for="category-filter" class="sr-only">{{ t('Filter results by category') }}</label>
+          <DropdownList
+            id="category-filter"
+            class="inline-block min-w-36 w-60"
+            :options="categoriesOptions"
+            v-model="categorySearch"
+            @change="v => (categorySearch = v)"
+            :aria-label="t('Filter results by category')"
+          ></DropdownList>
+        </div>
+        <div>
+          <label for="owner-filter" class="sr-only">{{ t('Filter results by username') }}</label>
+          <DropdownList
+            id="owner-filter"
+            class="inline-block min-w-36 w-60"
+            :options="ownersOptions"
+            v-model="ownerSearch"
+            @change="v => (ownerSearch = v)"
+            :aria-label="t('Filter results by username')"
+          ></DropdownList>
+        </div>
       </div>
 
       <div
@@ -149,12 +163,13 @@ function sortMap(
       ></div>
 
       <div ref="resultsWrapperDOM" class="px-2 h-96 overflow-y-auto">
-        <table class="w-full">
+        <table class="w-full" role="table" :aria-label="t('Liste des cartes')">
           <thead>
             <tr>
-              <td class="py-2 text-left w-40">
+              <th scope="col" class="py-2 text-left w-40">
                 <button
                   class="text-left text-primary w-full text-nowrap"
+                  :aria-label="t('Trier par titre') + (sortType === 'title' ? (sortAsc ? ' (croissant)' : ' (décroissant)') : '')"
                   @click="
                     () => {
                       sortType = 'title'
@@ -163,7 +178,7 @@ function sortMap(
                   "
                 >
                   {{ t('Titre') }}
-                  <span class="w-5 inline-block">
+                  <span class="w-5 inline-block" aria-hidden="true">
                     <template v-if="sortType === 'title' && !sortAsc"
                       >&#9660;</template
                     >
@@ -172,10 +187,11 @@ function sortMap(
                     >
                   </span>
                 </button>
-              </td>
-              <td class="text-left">
+              </th>
+              <th scope="col" class="text-left">
                 <button
                   class="text-left text-primary text-nowrap w-full"
+                  :aria-label="t('Trier par catégorie') + (sortType === 'category' ? (sortAsc ? ' (croissant)' : ' (décroissant)') : '')"
                   @click="
                     () => {
                       sortType = 'category'
@@ -184,7 +200,7 @@ function sortMap(
                   "
                 >
                   {{ t('Catégorie') }}
-                  <span class="w-5 inline-block">
+                  <span class="w-5 inline-block" aria-hidden="true">
                     <template v-if="sortType === 'category' && !sortAsc"
                       >&#9660;</template
                     >
@@ -193,10 +209,11 @@ function sortMap(
                     >
                   </span>
                 </button>
-              </td>
-              <td class="text-left">
+              </th>
+              <th scope="col" class="text-left">
                 <button
                   class="text-left text-primary text-nowrap w-full"
+                  :aria-label="t('Trier par créateur') + (sortType === 'owner' ? (sortAsc ? ' (croissant)' : ' (décroissant)') : '')"
                   @click="
                     () => {
                       sortType = 'owner'
@@ -205,15 +222,7 @@ function sortMap(
                   "
                 >
                   {{ t('Créateur carte') }}
-                  <span
-                    class="w-5 inline-block"
-                    @click="
-                      () => {
-                        sortType = 'owner'
-                        sortAsc != sortAsc
-                      }
-                    "
-                  >
+                  <span class="w-5 inline-block" aria-hidden="true">
                     <template v-if="sortType === 'owner' && !sortAsc"
                       >&#9660;</template
                     >
@@ -222,10 +231,11 @@ function sortMap(
                     >
                   </span>
                 </button>
-              </td>
-              <td class="text-left">
+              </th>
+              <th scope="col" class="text-left">
                 <button
                   class="text-left text-primary text-nowrap w-full"
+                  :aria-label="t('Trier par date de mise à jour') + (sortType === 'last_feature_update' ? (sortAsc ? ' (croissant)' : ' (décroissant)') : '')"
                   @click="
                     () => {
                       sortType = 'last_feature_update'
@@ -234,15 +244,7 @@ function sortMap(
                   "
                 >
                   {{ t('Dernière Actualisation') }}
-                  <span
-                    class="w-5 inline-block"
-                    @click="
-                      () => {
-                        sortType = 'last_feature_update'
-                        sortAsc != sortAsc
-                      }
-                    "
-                  >
+                  <span class="w-5 inline-block" aria-hidden="true">
                     <template
                       v-if="sortType === 'last_feature_update' && !sortAsc"
                       >&#9660;</template
@@ -253,21 +255,32 @@ function sortMap(
                     >
                   </span>
                 </button>
-              </td>
-              <td></td>
+              </th>
+              <th scope="col"><span class="sr-only">{{ t('Actions') }}</span></th>
             </tr>
           </thead>
 
           <tbody>
-            <tr class="border-t-[1px]" v-for="map in filteredMaps">
+            <tr 
+              class="border-t-[1px]" 
+              v-for="map in filteredMaps" 
+              v-if="!isLoadingMyMaps"
+              :key="map.uuid"
+            >
               <td
                 class="py-2 cursor-pointer text-left w-44"
                 @click="() => emit('select', map.uuid)"
+                role="button"
+                :aria-label="t('Ouvrir la carte') + ' ' + map.title"
+                tabindex="0"
+                @keydown.enter="() => emit('select', map.uuid)"
+                @keydown.space.prevent="() => emit('select', map.uuid)"
               >
                 <span class="line-clamp-2 overflow-hidden" :title="map.title">
                   <i
                     class="mr-2 fa"
-                    :class="{ 'fa-lock': map.public, 'fa-unlock': !map.public }"
+                    :class="{ 'fa-lock': !map.public, 'fa-unlock': map.public }"
+                    :aria-label="map.public ? t('Carte publique') : t('Carte privée')"
                   ></i>
                   {{ map.title }}</span
                 >
@@ -294,22 +307,31 @@ function sortMap(
                 <button
                   v-if="!map.deletedWhileOffline"
                   @click="emit('delete', map as unknown as MyMap)"
+                  :aria-label="t('Supprimer la carte') + ' ' + map.title"
+                  class="hover:text-red-500"
                 >
-                  <i class="fa fa-trash"></i>
+                  <i class="fa fa-trash" aria-hidden="true"></i>
                 </button>
               </td>
               <td>
                 <button
                   v-if="isOffLine && map.dirty"
                   @click="onClickSyncOfflineMaps(map)"
+                  :aria-label="t('Synchroniser la carte') + ' ' + map.title"
+                  class="hover:text-blue-500"
                 >
-                  <i class="fa fa-refresh"></i>
+                  <i class="fa fa-refresh" aria-hidden="true"></i>
                 </button>
               </td>
             </tr>
-            <tr v-if="!filteredMaps.length">
-              <td colspan="6" class="pt-2 border-t-[1px] italic">
-                {{ t('No result') }}
+            <tr v-if="!filteredMaps.length && !isLoadingMyMaps">
+              <td colspan="6" class="pt-2 border-t-[1px] italic" role="status">
+                {{ t('No result', { ns: 'client' }) }}
+              </td>
+            </tr>
+            <tr v-if="isLoadingMyMaps">
+              <td colspan="6" class="pt-2 border-t-[1px] italic" role="status" aria-live="polite" aria-busy="true">
+                {{ t('Chargement des cartes en cours', { ns: 'client' }) }}
               </td>
             </tr>
           </tbody>

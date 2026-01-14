@@ -13,7 +13,8 @@ const emit = defineEmits<{
 }>()
 
 defineProps<{
-  maps: MyMapJson[]
+  maps: MyMapJson[],
+  isLoadingMyMaps: boolean
 }>()
 
 const confirmDeleteMap = ref<MyMap | undefined>(undefined)
@@ -32,6 +33,7 @@ function onDelete(uuid: string) {
   <MyMapsOpenMapList
     v-if="!confirmDeleteMap"
     :maps="maps"
+    :isLoadingMyMaps="isLoadingMyMaps"
     @cancel="emit('cancel')"
     @select="emit('select', $event)"
     @delete="onDeleteOpenConfirm"

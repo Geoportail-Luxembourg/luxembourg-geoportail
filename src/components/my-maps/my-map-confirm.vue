@@ -22,7 +22,7 @@ const title =
 </script>
 
 <template>
-  <ModalDialog :title="title" @close="$emit('cancel')">
+  <ModalDialog :title="title" @close="$emit('cancel')" role="alertdialog">
     <template v-slot:content>
       <template v-if="props.mode === 'clear'">
         {{
