@@ -68,7 +68,7 @@ export default function useMyMaps() {
         fetchMyMap(uuid),
         fetchMyMapFeatures(uuid),
       ])
-      
+
       const newFeatures = features.features?.map((f: MyMapFetchFeatureJson) => {
         const feature = DrawnFeature.generateFromGeoJson(f, {
           map_id: uuid,
@@ -83,6 +83,7 @@ export default function useMyMaps() {
       myMap.value = map
       drawnFeatures.value = [...drawnFeatures.value, ...newFeatures]
     } catch (e) {
+      // eslint-disable-next-line no-console
       console.error('[MyMaps] loadMyMap() - ERROR', e)
       handleLoadMapError()
     } finally {
@@ -216,13 +217,15 @@ export default function useMyMaps() {
   async function addInMyMap() {
     if (isMyMapEditable.value) {
       const featuresToMove = [...drawnFeaturesExceptMyMaps.value]
-      const oldFeatureIds = featuresToMove.map(f => f.id).filter(id => id !== undefined)
-      
+      const oldFeatureIds = featuresToMove
+        .map(f => f.id)
+        .filter(id => id !== undefined)
+
       // Remove old features from URL (drawnFeaturesExceptMyMaps) BEFORE updating their IDs
       if (oldFeatureIds.length > 0) {
         drawStore.removeFeature(oldFeatureIds, false) // false = don't update MyMap backend
       }
-      
+
       // Save all features to MyMaps backend and update their IDs
       await Promise.all(
         featuresToMove.map(async f => {
@@ -230,19 +233,23 @@ export default function useMyMaps() {
           const resp = await saveMyMapFeature(
             <string>f.map_id,
             f.toGeoJSONString()
-          ).catch(e =>
+          ).catch(e => {
+            // eslint-disable-next-line no-console
+            console.error('[MyMaps] Error saving feature:', e)
             addNotification(
-              t('Erreur inattendue lors de la sauvegarde de votre modification.'),
+              t(
+                'Erreur inattendue lors de la sauvegarde de votre modification.'
+              ),
               AlertNotificationType.ERROR
             )
-          )
+          })
           if (resp) {
             f.id = (<MyMapSaveFeatureJson>resp).id!
             f.fid = (<MyMapSaveFeatureJson>resp).id!
           }
         })
       )
-      
+
       // Add the moved features (now with MyMaps IDs) to drawnFeatures
       drawnFeatures.value = [...drawnFeatures.value, ...featuresToMove]
     }

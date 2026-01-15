@@ -23,8 +23,8 @@ function onKeyDown(event: KeyboardEvent) {
 </script>
 
 <template>
-  <button 
-    class="lux-dropdown-list-item" 
+  <button
+    class="lux-dropdown-list-item"
     @click="onClick"
     @keydown.stop="onKeyDown"
     role="menuitem"

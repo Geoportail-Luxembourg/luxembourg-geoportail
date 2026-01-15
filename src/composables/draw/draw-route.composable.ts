@@ -5,12 +5,11 @@
 
 import { ref, onUnmounted, watch } from 'vue'
 import { storeToRefs } from 'pinia'
-import BaseEvent from 'ol/events/Event'
 import Draw from 'ol/interaction/Draw'
+import Feature from 'ol/Feature'
 import { DrawRouteInteraction, DrawRouteEvent } from './draw-route.interaction'
 import useMap from '@/composables/map/map.composable'
 import { useDrawStore } from '@/stores/draw.store'
-import { DrawnFeature } from '@/services/ol-feature/ol-feature-drawn'
 import useDrawnFeatures from './drawn-features.composable'
 import VectorSource from 'ol/source/Vector'
 import VectorLayer from 'ol/layer/Vector'
@@ -18,37 +17,41 @@ import VectorLayer from 'ol/layer/Vector'
 export default function useDrawRoute() {
   const map = useMap().getOlMap()
   const drawStore = useDrawStore()
-  const { drawStateActive, editStateActive, followRoads } = storeToRefs(drawStore)
+  const { drawStateActive, editStateActive, followRoads } =
+    storeToRefs(drawStore)
   const { generateDrawnFeature } = useDrawnFeatures()
-  
+
   const isActive = ref(false)
   const mapMatchingEnabled = ref(true)
   let drawRouteInteraction: DrawRouteInteraction | null = null
   let deactivatedDrawInteraction: Draw | null = null
-  
+
   /**
    * Get the routing API URL from environment
    */
   function getRouteUrl(): string {
     return import.meta.env.VITE_ROUTING_URL || '/route'
   }
-  
+
   /**
    * Gets the source for the draw layer by finding it on the map
    */
   function getDrawLayerSource(): VectorSource | null {
     if (!map) return null
-    
+
     // Find the existing draw layer on the map by its cyLayerType property
     const layers = map.getLayers().getArray()
     for (const layer of layers) {
-      if (layer instanceof VectorLayer && layer.get('cyLayerType') === 'interactionDrawLayer') {
+      if (
+        layer instanceof VectorLayer &&
+        layer.get('cyLayerType') === 'interactionDrawLayer'
+      ) {
         return layer.getSource() as VectorSource | null
       }
     }
     return null
   }
-  
+
   /**
    * Initialize and activate the draw route interaction
    */
@@ -56,7 +59,7 @@ export default function useDrawRoute() {
     if (!map) {
       return
     }
-    
+
     // Find and deactivate the standard Draw interaction
     // Check if there's a drawing in progress that we should continue
     let existingSketch: Feature | null = null
@@ -70,24 +73,24 @@ export default function useDrawRoute() {
           const features = overlaySource?.getFeatures()
           if (features && features.length > 0) {
             existingSketch = features[0]
-            
+
             // Remove the sketch from Draw's overlay so it doesn't show duplicated
             overlaySource.clear()
           }
         }
-        
+
         // Deactivate Draw and store reference
         deactivatedDrawInteraction = interaction
         interaction.setActive(false)
       }
     })
-    
+
     // Get the draw layer source
     const source = getDrawLayerSource()
     if (!source) {
       return
     }
-    
+
     // Create the interaction
     drawRouteInteraction = new DrawRouteInteraction({
       source,
@@ -95,21 +98,21 @@ export default function useDrawRoute() {
       getRouteUrl: getRouteUrl(),
       maxPoints: Infinity, // No limit - let user decide when to finish
       freehand: false,
-      existingSketch // Pass existing sketch to continue drawing
+      existingSketch, // Pass existing sketch to continue drawing
     })
-    
+
     // Listen to drawend event
     const handleDrawEndEvent = (event: any) => {
       handleDrawEnd(event as DrawRouteEvent)
     }
     // @ts-ignore - Custom event type
     drawRouteInteraction.addEventListener('drawend', handleDrawEndEvent)
-    
+
     // Add to map
     map.addInteraction(drawRouteInteraction)
     isActive.value = true
   }
-  
+
   /**
    * Deactivate the draw route interaction
    */
@@ -117,26 +120,26 @@ export default function useDrawRoute() {
     if (!map || !drawRouteInteraction) {
       return
     }
-    
+
     // First, mark the interaction as inactive to stop processing events
     drawRouteInteraction.setActive(false)
-    
+
     // Get the current sketch before removing
     const sketchFeature = (drawRouteInteraction as any).sketchFeature_
     const sketchCoords = (drawRouteInteraction as any).sketchCoords_
-    
+
     // Suspend drawing to keep the sketch visible
     drawRouteInteraction.suspendDrawing()
-    
+
     map.removeInteraction(drawRouteInteraction)
     drawRouteInteraction = null
     isActive.value = false
-    
+
     // Reactivate the standard Draw interaction ONLY if not in edit mode
     if (deactivatedDrawInteraction) {
       if (!editStateActive.value) {
         deactivatedDrawInteraction.setActive(true)
-        
+
         // Inject the sketch into Draw so it can continue
         if (sketchFeature && sketchCoords) {
           ;(deactivatedDrawInteraction as any).sketchFeature_ = sketchFeature
@@ -144,11 +147,11 @@ export default function useDrawRoute() {
           ;(deactivatedDrawInteraction as any).updateSketchFeatures_()
         }
       }
-      
+
       deactivatedDrawInteraction = null
     }
   }
-  
+
   /**
    * Toggle map matching on/off
    */
@@ -161,7 +164,7 @@ export default function useDrawRoute() {
     mapMatchingEnabled.value = !mapMatchingEnabled.value
     return mapMatchingEnabled.value
   }
-  
+
   /**
    * Remove the last point from the route
    */
@@ -170,7 +173,7 @@ export default function useDrawRoute() {
       drawRouteInteraction.removeLastPoint()
     }
   }
-  
+
   /**
    * Finish the current drawing
    */
@@ -179,29 +182,32 @@ export default function useDrawRoute() {
       drawRouteInteraction.finishDrawing()
     }
   }
-  
+
   /**
    * Handle draw end event
    */
   function handleDrawEnd(event: DrawRouteEvent) {
     const olFeature = event.feature
-    
+
     // Use generateDrawnFeature to properly handle MyMaps vs URL state
     // This will automatically set map_id based on isMyMapEditable
     const drawnFeature = generateDrawnFeature(olFeature)
-    
+
     drawStore.addDrawnFeatureToCollection(drawnFeature)
-    
+
     // Select the feature and enter edit mode (same as standard Draw)
     drawStore.selectDrawnFeature(drawnFeature)
   }
-  
+
   /**
    * Watch for changes in followRoads checkbox
    */
-  watch(followRoads, (isFollowingRoads) => {
+  watch(followRoads, isFollowingRoads => {
     // Only activate/deactivate if we're in draw line mode (not edit mode)
-    if (drawStateActive.value === 'drawLine' && editStateActive.value !== 'editLine') {
+    if (
+      drawStateActive.value === 'drawLine' &&
+      editStateActive.value !== 'editLine'
+    ) {
       if (isFollowingRoads) {
         activate({ mapMatching: true })
       } else {
@@ -215,12 +221,20 @@ export default function useDrawRoute() {
    */
   watch(drawStateActive, (newState, oldState) => {
     // When entering line mode with checkbox checked, activate DrawRoute
-    if (newState === 'drawLine' && followRoads.value && editStateActive.value !== 'editLine') {
+    if (
+      newState === 'drawLine' &&
+      followRoads.value &&
+      editStateActive.value !== 'editLine'
+    ) {
       activate({ mapMatching: true })
     }
-    
+
     // When switching away from line mode completely, deactivate and uncheck
-    if (oldState === 'drawLine' && newState !== 'drawLine' && editStateActive.value !== 'editLine') {
+    if (
+      oldState === 'drawLine' &&
+      newState !== 'drawLine' &&
+      editStateActive.value !== 'editLine'
+    ) {
       if (isActive.value) {
         deactivate()
       }
@@ -236,9 +250,14 @@ export default function useDrawRoute() {
     if (newState !== undefined && isActive.value) {
       deactivate()
     }
-    
+
     // When leaving edit mode, re-enable if we're in line mode and checkbox is checked
-    if (oldState !== undefined && newState === undefined && drawStateActive.value === 'drawLine' && followRoads.value) {
+    if (
+      oldState !== undefined &&
+      newState === undefined &&
+      drawStateActive.value === 'drawLine' &&
+      followRoads.value
+    ) {
       activate({ mapMatching: true })
     }
   })
@@ -249,7 +268,7 @@ export default function useDrawRoute() {
   onUnmounted(() => {
     deactivate()
   })
-  
+
   return {
     isActive,
     mapMatchingEnabled,
@@ -257,6 +276,6 @@ export default function useDrawRoute() {
     deactivate,
     toggleMapMatching,
     removeLastPoint,
-    finishDrawing
+    finishDrawing,
   }
 }

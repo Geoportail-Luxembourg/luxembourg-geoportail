@@ -30,7 +30,7 @@ function handleClick(event: MouseEvent) {
 function toggleDropdown(forceOpen?: boolean) {
   const wasOpen = isOpen.value
   isOpen.value = forceOpen ?? !isOpen.value
-  
+
   if (!wasOpen && isOpen.value) {
     // Menu ouvert, focus sur le premier item
     focusedIndex.value = 0
@@ -113,27 +113,29 @@ function focusNextItem() {
 }
 
 function focusPreviousItem() {
-  const prevIndex = focusedIndex.value <= 0 ? props.items.length - 1 : focusedIndex.value - 1
+  const prevIndex =
+    focusedIndex.value <= 0 ? props.items.length - 1 : focusedIndex.value - 1
   focusMenuItem(prevIndex)
 }
 
 function focusMenuItem(index: number) {
   focusedIndex.value = index
-  
+
   if (!ddElement.value) {
     return
   }
-  
+
   const menuItems = ddElement.value.querySelectorAll('[role="menuitem"]')
-  
+
   if (!menuItems || menuItems.length === 0) {
     return
   }
-  
+
   if (menuItems[index]) {
     try {
-      (menuItems[index] as HTMLElement).focus()
+      ;(menuItems[index] as HTMLElement).focus()
     } catch (error) {
+      // eslint-disable-next-line no-console
       console.error('[MenuPopup] Error focusing item:', error)
     }
   }
@@ -141,10 +143,11 @@ function focusMenuItem(index: number) {
 
 function handleGlobalKeyDown(event: KeyboardEvent) {
   if (!isOpen.value) return
-  
+
   try {
     handleKeyDown(event)
   } catch (error) {
+    // eslint-disable-next-line no-console
     console.error('[MenuPopup] Error in handleGlobalKeyDown:', error)
   }
 }
@@ -175,8 +178,8 @@ watch(isOpen, isOpen => {
 
 <template>
   <div class="lux-menu-popup">
-    <button 
-      @click="handleClick" 
+    <button
+      @click="handleClick"
       @keydown="handleKeyDown"
       ref="btnElement"
       :aria-expanded="isOpen"
@@ -202,9 +205,9 @@ watch(isOpen, isOpen => {
           :class="item.separator ? 'border-b-[1px] pb-2 mb-2' : ''"
           role="none"
         >
-          <slot 
-            v-if="item.label" 
-            :name="`item`" 
+          <slot
+            v-if="item.label"
+            :name="`item`"
             :item="item"
             :index="index"
             :isFocused="focusedIndex === index"

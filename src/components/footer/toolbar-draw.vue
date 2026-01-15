@@ -21,7 +21,7 @@ const {
 const { drawStateActive, editStateActive, followRoads } = storeToRefs(drawStore)
 
 // Initialize the composable - watchers inside will handle coordination
-const drawRoute = useDrawRoute()
+useDrawRoute()
 
 onBeforeUnmount(() => {
   setDrawActiveState(undefined)
@@ -99,8 +99,8 @@ onBeforeUnmount(() => {
         class="flex flex-row justify-center text-white bg-tertiary hover:bg-primary py-2 box-content border-y border-x border-gray-400"
       >
         <label class="cursor-pointer">
-          <input 
-            type="checkbox" 
+          <input
+            type="checkbox"
             v-model="followRoads"
             :disabled="editStateActive === 'editLine'"
             class="mr-2 cursor-pointer"

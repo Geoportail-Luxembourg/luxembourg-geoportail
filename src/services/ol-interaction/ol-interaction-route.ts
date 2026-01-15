@@ -308,11 +308,10 @@ class DrawRoute extends Pointer {
     const coordinate = event.coordinate
     const geometry =
       /** @type {ol.geom.SimpleGeometry} */ this.sketchFeature_.getGeometry()
-    let last
 
     const coordinates = this.sketchCoords_
     if (!coordinates) return
-    last = coordinates[coordinates.length - 1]
+    const last = coordinates[coordinates.length - 1]
 
     last[0] = coordinate[0]
     last[1] = coordinate[1]
@@ -354,10 +353,9 @@ class DrawRoute extends Pointer {
     const geometry =
       /** @type {ol.geom.SimpleGeometry} */ this.sketchFeature_.getGeometry()
     let done
-    let coordinates
 
     this.finishCoordinate_ = coordinate.slice()
-    coordinates = this.sketchCoords_
+    const coordinates = this.sketchCoords_
     if (coordinates.length >= this.maxPoints_) {
       if (this.freehand_) {
         coordinates.pop()
@@ -423,6 +421,7 @@ class DrawRoute extends Pointer {
                 geometry.setCoordinates(curCoordinates)
                 this.sketchCoords_ = curCoordinates
               } else {
+                 // eslint-disable-next-line no-console
                 console.log('Erreur de calcul de la route')
               }
               if (this.finishAfterRoute_) {
@@ -652,7 +651,9 @@ function handleEvent(event: MapBrowserEvent): boolean {
     pass = false
   }
 
-  return olInteractionPointer.prototype.handleEvent.call(this, event)
+  // Always call parent method for basic event handling, but return pass to control propagation
+  olInteractionPointer.prototype.handleEvent.call(this, event)
+  return pass
 }
 
 function handleDownEvent_(event: MapBrowserEvent): boolean {

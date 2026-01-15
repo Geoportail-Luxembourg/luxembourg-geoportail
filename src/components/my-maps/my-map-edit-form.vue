@@ -12,9 +12,9 @@ import {
   editMyMap,
   updateMyMap,
   fetchCategories,
-  MyMap,
   MyMapCreatedJson,
 } from '@/services/api/api-mymaps.service'
+import { MyMap } from '@/stores/app.store.model'
 import { useAlertNotificationsStore } from '@/stores/alert-notifications.store'
 import { AlertNotificationType } from '@/stores/alert-notifications.store.model'
 import { useThemeStore } from '@/stores/config.store'
@@ -134,11 +134,11 @@ onBeforeMount(async () => {
       <form class="flex flex-col gap-4">
         <div class="flex flex-col">
           <label for="map-title-input">{{ t('Titre de la carte') }}</label>
-          <input 
-            id="map-title-input" 
-            class="lux-input" 
-            type="text" 
-            v-model="mapTitle" 
+          <input
+            id="map-title-input"
+            class="lux-input"
+            type="text"
+            v-model="mapTitle"
             required
             :aria-required="true"
           />
@@ -152,7 +152,9 @@ onBeforeMount(async () => {
         </div>
 
         <div>
-          <label for="category-select" class="sr-only">{{ t('Please select a Category') }}</label>
+          <label for="category-select" class="sr-only">{{
+            t('Please select a Category')
+          }}</label>
           <DropdownList
             id="category-select"
             class="min-w-36"

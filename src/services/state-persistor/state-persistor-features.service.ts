@@ -41,12 +41,12 @@ class StatePersistorFeaturesService implements StatePersistorService {
       storageFeaturesMapper.urlToFeatures
     )
     const newFeatures = features.filter(f => f != undefined) as DrawnFeature[]
-    
+
     // Ensure URL features don't have a map_id (they should remain independent from MyMaps)
     newFeatures.forEach(f => {
       f.map_id = undefined
     })
-    
+
     drawnFeatures.value = [...drawnFeatures.value, ...newFeatures]
   }
 }

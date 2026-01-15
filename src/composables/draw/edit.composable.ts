@@ -9,7 +9,10 @@ import VectorSource from 'ol/source/Vector'
 import { DrawnFeature } from '@/services/ol-feature/ol-feature-drawn'
 import { useDrawStore } from '@/stores/draw.store'
 import useMap from '../map/map.composable'
-import { DEFAULT_DRAW_ZINDEX, FEATURE_LAYER_TYPE } from '@/services/ol-layer/ol-layer-interaction-draw.helper'
+import {
+  DEFAULT_DRAW_ZINDEX,
+  FEATURE_LAYER_TYPE,
+} from '@/services/ol-layer/ol-layer-interaction-draw.helper'
 
 export default function useEdit() {
   let modifyInteraction: Modify | undefined = undefined
@@ -21,7 +24,7 @@ export default function useEdit() {
   )
   const { updateDrawnFeature } = useDrawStore()
   const map = useMap().getOlMap()
-  
+
   // Create edit layer with style function that delegates to feature's StyleFunction
   const editLayer = new VectorLayer({
     source: new VectorSource({
@@ -52,32 +55,36 @@ export default function useEdit() {
 
   // Update layer with edited feature
   // Use flush: 'post' to ensure draw-select watcher runs first
-  watch(editingFeatureId, fId => {
-    editSource.clear()
+  watch(
+    editingFeatureId,
+    fId => {
+      editSource.clear()
 
-    const feature = <DrawnFeature>drawnFeatures.value.find(f => f.id === fId)
+      const feature = <DrawnFeature>drawnFeatures.value.find(f => f.id === fId)
 
-    if (feature) {
-      // Store reference to original feature
-      originalFeature = feature
-      
-      // Clone the feature to avoid conflicts with drawLayer
-      // OpenLayers doesn't allow the same feature instance in multiple sources
-      const clonedFeature = new DrawnFeature(feature)
-      clonedFeature.setGeometry(feature.getGeometry()?.clone())
-      
-      // Mark as being edited so StyleFunction shows vertex handles
-      clonedFeature.set('__isBeingEdited__', true)
-      
-      editSource.addFeature(clonedFeature)
-      map.render()
-    } else {
-      // Exiting edit mode - clear original reference
-      originalFeature = undefined
-    }
-    // When fId is undefined, the feature goes back to drawLayer automatically
-    // via the watch in draw.composable.ts (it's no longer excluded)
-  }, { flush: 'post' })
+      if (feature) {
+        // Store reference to original feature
+        originalFeature = feature
+
+        // Clone the feature to avoid conflicts with drawLayer
+        // OpenLayers doesn't allow the same feature instance in multiple sources
+        const clonedFeature = new DrawnFeature(feature)
+        clonedFeature.setGeometry(feature.getGeometry()?.clone())
+
+        // Mark as being edited so StyleFunction shows vertex handles
+        clonedFeature.set('__isBeingEdited__', true)
+
+        editSource.addFeature(clonedFeature)
+        map.render()
+      } else {
+        // Exiting edit mode - clear original reference
+        originalFeature = undefined
+      }
+      // When fId is undefined, the feature goes back to drawLayer automatically
+      // via the watch in draw.composable.ts (it's no longer excluded)
+    },
+    { flush: 'post' }
+  )
 
   function clearInteraction() {
     if (modifyInteraction && modifyEndHandler) {
@@ -100,7 +107,7 @@ export default function useEdit() {
     modifyEndHandler = event => {
       const clonedFeature = <DrawnFeature>event.features.getArray()[0]
       clonedFeature.resetProfileData()
-      
+
       // Copy modified geometry from clone back to original feature
       if (originalFeature && clonedFeature) {
         originalFeature.setGeometry(clonedFeature.getGeometry()?.clone())
@@ -109,7 +116,7 @@ export default function useEdit() {
         originalFeature.changed()
         updateDrawnFeature(originalFeature)
       }
-      
+
       // Re-apply the clone's custom style for continued editing
       clonedFeature.setStyle(clonedFeature.getStyleFunction())
       clonedFeature.changed()

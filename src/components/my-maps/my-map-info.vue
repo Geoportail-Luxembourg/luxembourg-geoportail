@@ -5,7 +5,7 @@ import { storeToRefs } from 'pinia'
 
 import MenuPopup from '@/components/common/menu-popup/menu-popup.vue'
 import MenuPopupItem from '@/components/common/menu-popup/menu-popup-item.vue'
-import { MyMap } from '@/services/api/api-mymaps.service'
+import { MyMap } from '@/stores/app.store.model'
 import { useAppStore } from '@/stores/app.store'
 import {
   exportFeatureService,
@@ -115,6 +115,7 @@ watch(selectedFile, async file => {
       drawFeature.fit()
     })
   } catch (error) {
+    // eslint-disable-next-line no-console
     console.error('Error importing file:', error)
   } finally {
     // Reset the file input so the same file can be selected again
@@ -197,16 +198,12 @@ function importFeatures() {
 
   <div class="flex items-center text-white mr-0.5">
     <span class="text-sm italic grow">
-      <i 
-        v-if="myMap.public" 
-        class="fa fa-unlock mr-1" 
+      <i
+        v-if="myMap.public"
+        class="fa fa-unlock mr-1"
         :aria-label="t('Carte publique')"
       ></i>
-      <i 
-        v-else 
-        class="fa fa-lock mr-1" 
-        :aria-label="t('Carte privée')"
-      ></i>
+      <i v-else class="fa fa-lock mr-1" :aria-label="t('Carte privée')"></i>
       {{ t('Carte créée par') }} {{ myMap.user_login }}
     </span>
 

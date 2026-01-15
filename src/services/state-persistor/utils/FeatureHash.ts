@@ -266,10 +266,10 @@ class FeatureHash extends TextFeature {
         featureStyle: drawnFeatureStyle,
       }
     )
-    
+
     // Apply the style function to the feature
     drawnFeature.setStyle(drawnFeature.getStyleFunction())
-    
+
     return drawnFeature
 
     // TODO check defaults:

@@ -163,8 +163,6 @@ function mergeGeometryLines(features: DrawnFeature[]) {
     firstFeature.resetProfileData()
     drawStore.removeFeature(featureIdsToRemove)
 
-    console.log(featureIdsToRemove)
-
     return firstFeature
   }
 }

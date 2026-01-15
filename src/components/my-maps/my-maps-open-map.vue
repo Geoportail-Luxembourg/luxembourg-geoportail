@@ -1,7 +1,8 @@
 <script setup lang="ts">
 import { ref } from 'vue'
 
-import { MyMap, MyMapJson } from '@/services/api/api-mymaps.service'
+import { MyMapJson } from '@/services/api/api-mymaps.service'
+import { MyMap } from '@/stores/app.store.model'
 
 import MyMapsOpenMapList from './my-maps-open-map-list.vue'
 import MyMapConfirm from './my-map-confirm.vue'
@@ -13,7 +14,7 @@ const emit = defineEmits<{
 }>()
 
 defineProps<{
-  maps: MyMapJson[],
+  maps: MyMapJson[]
   isLoadingMyMaps: boolean
 }>()
 
@@ -40,7 +41,7 @@ function onDelete(uuid: string) {
   ></MyMapsOpenMapList>
 
   <MyMapConfirm
-    v-else="confirmDeleteMap"
+    v-else
     :map="confirmDeleteMap"
     :mode="'delete'"
     @cancel="confirmDeleteMap = undefined"

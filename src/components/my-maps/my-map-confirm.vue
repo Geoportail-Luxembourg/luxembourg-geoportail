@@ -2,7 +2,7 @@
 import { useTranslation } from 'i18next-vue'
 
 import ModalDialog from '@/components/common/modal-dialog.vue'
-import { MyMap } from '@/services/api/api-mymaps.service'
+import { MyMap } from '@/stores/app.store.model'
 
 defineEmits<{
   (e: 'cancel'): void

@@ -14,9 +14,9 @@ import { useDrawStore } from '@/stores/draw.store'
 import {
   deleteMyMap,
   fetchMyMaps,
-  MyMap,
   MyMapJson,
 } from '@/services/api/api-mymaps.service'
+import { MyMap } from '@/stores/app.store.model'
 
 import MyMapEditForm from './my-map-edit-form.vue'
 import MyMapInfo from './my-map-info.vue'
@@ -53,7 +53,10 @@ async function refreshModale() {
       return
     }
   } catch (e) {
-    addNotification(t('Erreur lors du chargement des cartes.'), AlertNotificationType.ERROR)
+    addNotification(
+      t('Erreur lors du chargement des cartes.'),
+      AlertNotificationType.ERROR
+    )
   } finally {
     isLoadingMyMaps.value = false
   }
@@ -224,12 +227,16 @@ watch(
         </div>
 
         <div class="flex justify-center flex-col items-center">
-          <button 
-            class="lux-btn mt-3" 
-            @click="openMap" 
+          <button
+            class="lux-btn mt-3"
+            @click="openMap"
             :disabled="isLoadingMyMaps"
             :aria-busy="isLoadingMyMaps"
-            :aria-label="isLoadingMyMaps ? t('Chargement en cours...') : t('Ouvrir une carte', { ns: 'client' })"
+            :aria-label="
+              isLoadingMyMaps
+                ? t('Chargement en cours...')
+                : t('Ouvrir une carte', { ns: 'client' })
+            "
           >
             {{ t('Ouvrir une carte', { ns: 'client' }) }}
           </button>

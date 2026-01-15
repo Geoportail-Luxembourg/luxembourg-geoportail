@@ -90,7 +90,7 @@ class OlInteractionClipLine extends Pointer {
   setMap(map: Map | null) {
     // Don't call overlay_.setMap() here - it's added via map.addLayer() in the composable
     super.setMap(map)
-    
+
     // Listen to features collection changes
     if (this.features_) {
       this.features_.on('add', (evt: any) => {
@@ -239,9 +239,7 @@ function compareIndexes_(a: { index: number }, b: { index: number }): number {
  * @param evt Event.
  * @return Stop drag sequence?
  */
-function handleUpEvent(
-  this: OlInteractionClipLine,
-): boolean {
+function handleUpEvent(this: OlInteractionClipLine): boolean {
   this.handlingDownUpSequence = false
   return false
 }
@@ -255,12 +253,12 @@ function handleDownEvent(this: OlInteractionClipLine, evt: MapBrowserEvent) {
   if (!this.getActive()) {
     return false
   }
-  
+
   this.handlePointerAtPixel_(evt.pixel, evt.map)
   this.dragSegments_ = []
   this.modified_ = false
   const vertexFeature = this.vertexFeature_
-  
+
   if (vertexFeature) {
     const geometry = <Point>vertexFeature.getGeometry()
     const vertex = geometry.getCoordinates()
@@ -282,15 +280,15 @@ function handleDownEvent(this: OlInteractionClipLine, evt: MapBrowserEvent) {
           }
           continue
         }
-        
+
         this.features_.remove(segmentDataMatch.feature)
-        
+
         // Store the original feature's id in OL properties so it survives cloning
         const originalFeatureId = (segmentDataMatch.feature as any).id
         if (originalFeatureId) {
           segmentDataMatch.feature.set('originalFeatureId', originalFeatureId)
         }
-        
+
         const feature1 = segmentDataMatch.feature.clone()
         const feature2 = segmentDataMatch.feature.clone()
         const geometry1 = <LineString>feature1.getGeometry()
@@ -312,7 +310,7 @@ function handleDownEvent(this: OlInteractionClipLine, evt: MapBrowserEvent) {
         geometry2.setCoordinates(coordsPart2)
         this.features_.push(feature1)
         this.features_.push(feature2)
-        
+
         this.dispatchEvent(
           new ModifyEvent(
             'modifyend',

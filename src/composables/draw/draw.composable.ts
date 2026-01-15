@@ -24,8 +24,13 @@ type DrawInteractions = {
  */
 export default function useDraw() {
   const drawStore = useDrawStore()
-  const { drawStateActive, editStateActive, drawnFeatures, currentDrawInteraction, editingFeatureId } =
-    storeToRefs(drawStore)
+  const {
+    drawStateActive,
+    editStateActive,
+    drawnFeatures,
+    currentDrawInteraction,
+    editingFeatureId,
+  } = storeToRefs(drawStore)
   const { createDrawInteraction } = useDrawInteraction()
   const drawLayer = olLayerFactoryService.createOlLayerInteractionDraw()
   const drawInteractions = {
@@ -42,7 +47,10 @@ export default function useDraw() {
     Object.keys(drawInteractions).forEach(key => {
       const interaction = drawInteractions[key as keyof DrawInteractions]
       // Only activate if we're not in edit mode
-      if (`${[key as keyof DrawInteractions]}` === `${drawStateActive}` && !editStateActive.value) {
+      if (
+        `${[key as keyof DrawInteractions]}` === `${drawStateActive}` &&
+        !editStateActive.value
+      ) {
         interaction.setActive(true)
         currentDrawInteraction.value = interaction
       } else {
@@ -50,7 +58,7 @@ export default function useDraw() {
       }
     })
   })
-  
+
   // Watch editStateActive to disable draw interactions when entering edit mode
   watch(editStateActive, isEditing => {
     if (isEditing) {
@@ -68,13 +76,23 @@ export default function useDraw() {
     }
   })
 
-  watch(drawnFeatures, drawnFeatures => {
-    addFeaturesToSource(drawnFeatures as DrawnFeature[], editingFeatureId.value)
-  }, { flush: 'post' })
-  
+  watch(
+    drawnFeatures,
+    drawnFeatures => {
+      addFeaturesToSource(
+        drawnFeatures as DrawnFeature[],
+        editingFeatureId.value
+      )
+    },
+    { flush: 'post' }
+  )
+
   // Also watch editingFeatureId to refresh the draw layer when entering/exiting edit mode
   watch(editingFeatureId, () => {
-    addFeaturesToSource(drawnFeatures.value as DrawnFeature[], editingFeatureId.value)
+    addFeaturesToSource(
+      drawnFeatures.value as DrawnFeature[],
+      editingFeatureId.value
+    )
   })
 
   /**
@@ -86,17 +104,20 @@ export default function useDraw() {
     map.addLayer(drawLayer)
   }
 
-  function addFeaturesToSource(features: DrawnFeature[], excludeFeatureId?: string | number) {
+  function addFeaturesToSource(
+    features: DrawnFeature[],
+    excludeFeatureId?: string | number
+  ) {
     const source = <VectorSource>drawLayer.getSource()
-    
+
     // Filter out the feature being edited (it's in editSource)
-    const featuresToAdd = excludeFeatureId 
+    const featuresToAdd = excludeFeatureId
       ? features.filter(f => f.id !== excludeFeatureId)
       : features
-    
+
     // Get current features in source
     const currentFeatures = source?.getFeatures() || []
-    
+
     // Remove features that shouldn't be there
     currentFeatures.forEach(f => {
       const drawnF = f as DrawnFeature
@@ -104,7 +125,7 @@ export default function useDraw() {
         source?.removeFeature(f)
       }
     })
-    
+
     // Add features that should be there but aren't
     featuresToAdd.forEach(f => {
       if (!currentFeatures.find(feat => (feat as DrawnFeature).id === f.id)) {

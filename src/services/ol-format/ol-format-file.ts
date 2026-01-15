@@ -52,21 +52,24 @@ function computeFeatures(features: Feature<Geometry>[]) {
     const curGeometry = feature.getGeometry()
 
     switch (curGeometry?.getType()) {
-      case 'MultiPolygon':
+      case 'MultiPolygon': {
         const polygons = (<MultiPolygon>curGeometry).getPolygons()
         cleanFeatures.push(
           ...polygons.map(polygon => cloneFeature(feature, polygon))
         )
         break
-      case 'MultiLineString':
+      }
+      case 'MultiLineString': {
         const lines = (<MultiLineString>curGeometry).getLineStrings()
         cleanFeatures.push(...lines.map(line => cloneFeature(feature, line)))
         break
-      case 'MultiPoint':
+      }
+      case 'MultiPoint': {
         const points = (<MultiPoint>curGeometry).getPoints()
         cleanFeatures.push(...points.map(point => cloneFeature(feature, point)))
         break
-      case 'GeometryCollection':
+      }
+      case 'GeometryCollection': {
         const geometryCollection = <GeometryCollection>curGeometry
         cleanFeatures.push(
           ...geometryCollection
@@ -74,6 +77,7 @@ function computeFeatures(features: Feature<Geometry>[]) {
             .map(geom => cloneFeature(feature, geom))
         )
         break
+      }
       default:
         cleanFeatures.push(feature)
         break

@@ -1,12 +1,5 @@
 <script setup lang="ts">
-import {
-  onMounted,
-  onUnmounted,
-  shallowRef,
-  ShallowRef,
-  watch,
-  ref,
-} from 'vue'
+import { onMounted, onUnmounted, shallowRef, ShallowRef, watch, ref } from 'vue'
 
 const props = withDefaults(
   defineProps<{

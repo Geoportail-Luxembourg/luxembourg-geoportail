@@ -5,7 +5,8 @@ import { storeToRefs } from 'pinia'
 
 import ModalDialog from '@/components/common/modal-dialog.vue'
 import DropdownList from '@/components/common/dropdown-list.vue'
-import { MyMap, MyMapJson } from '@/services/api/api-mymaps.service'
+import { MyMapJson } from '@/services/api/api-mymaps.service'
+import { MyMap } from '@/stores/app.store.model'
 import { formatDate } from '@/services/common/formatting.utils'
 import { useAppStore } from '@/stores/app.store'
 
@@ -18,7 +19,7 @@ const emit = defineEmits<{
 }>()
 
 const props = defineProps<{
-  maps: MyMapJson[],
+  maps: MyMapJson[]
   isLoadingMyMaps: boolean
 }>()
 
@@ -56,14 +57,16 @@ const ownersOptions = computed(() =>
 const sortType = ref<SortType | undefined>(undefined)
 const sortAsc = ref(true)
 const filteredMaps = computed(() =>
-  props.maps
-    .filter(filterMap)
-    .sort((a, b) =>
-      sortMap(a, b, sortType.value as unknown as keyof MyMapJson, sortAsc.value)
-    )
+  isLoadingMyMaps.value
+    ? []
+    : props.maps
+        .filter(filterMap)
+        .sort((a, b) =>
+          sortMap(a, b, sortType.value as unknown as keyof MyMapJson, sortAsc.value)
+        )
 )
-const fWrapperRef = useTemplateRef('filtersWrapperDOM')
-const rWrapperRef = useTemplateRef('resultsWrapperDOM')
+const fWrapperRef = useTemplateRef<HTMLElement>('filtersWrapperDOM')
+const rWrapperRef = useTemplateRef<HTMLElement>('resultsWrapperDOM')
 
 onMounted(() => {
   // Dropdown filters with position absolute, add the margins manually here
@@ -81,6 +84,7 @@ onMounted(() => {
 })
 
 function onClickSyncOfflineMaps(map: MyMapJson) {
+  // eslint-disable-next-line no-console
   console.log('TODO', map)
 }
 
@@ -123,7 +127,9 @@ function sortMap(
         class="mt-2 mb-8 mx-2 flex flex-row gap-2 fixed"
       >
         <div>
-          <label for="map-search-input" class="sr-only">{{ t('Search Maps') }}</label>
+          <label for="map-search-input" class="sr-only">{{
+            t('Search Maps')
+          }}</label>
           <input
             id="map-search-input"
             :placeholder="t('Search Maps')"
@@ -134,7 +140,9 @@ function sortMap(
           />
         </div>
         <div>
-          <label for="category-filter" class="sr-only">{{ t('Filter results by category') }}</label>
+          <label for="category-filter" class="sr-only">{{
+            t('Filter results by category')
+          }}</label>
           <DropdownList
             id="category-filter"
             class="inline-block min-w-36 w-60"
@@ -145,7 +153,9 @@ function sortMap(
           ></DropdownList>
         </div>
         <div>
-          <label for="owner-filter" class="sr-only">{{ t('Filter results by username') }}</label>
+          <label for="owner-filter" class="sr-only">{{
+            t('Filter results by username')
+          }}</label>
           <DropdownList
             id="owner-filter"
             class="inline-block min-w-36 w-60"
@@ -169,7 +179,14 @@ function sortMap(
               <th scope="col" class="py-2 text-left w-40">
                 <button
                   class="text-left text-primary w-full text-nowrap"
-                  :aria-label="t('Trier par titre') + (sortType === 'title' ? (sortAsc ? ' (croissant)' : ' (décroissant)') : '')"
+                  :aria-label="
+                    t('Trier par titre') +
+                    (sortType === 'title'
+                      ? sortAsc
+                        ? ' (croissant)'
+                        : ' (décroissant)'
+                      : '')
+                  "
                   @click="
                     () => {
                       sortType = 'title'
@@ -191,7 +208,14 @@ function sortMap(
               <th scope="col" class="text-left">
                 <button
                   class="text-left text-primary text-nowrap w-full"
-                  :aria-label="t('Trier par catégorie') + (sortType === 'category' ? (sortAsc ? ' (croissant)' : ' (décroissant)') : '')"
+                  :aria-label="
+                    t('Trier par catégorie') +
+                    (sortType === 'category'
+                      ? sortAsc
+                        ? ' (croissant)'
+                        : ' (décroissant)'
+                      : '')
+                  "
                   @click="
                     () => {
                       sortType = 'category'
@@ -213,7 +237,14 @@ function sortMap(
               <th scope="col" class="text-left">
                 <button
                   class="text-left text-primary text-nowrap w-full"
-                  :aria-label="t('Trier par créateur') + (sortType === 'owner' ? (sortAsc ? ' (croissant)' : ' (décroissant)') : '')"
+                  :aria-label="
+                    t('Trier par créateur') +
+                    (sortType === 'owner'
+                      ? sortAsc
+                        ? ' (croissant)'
+                        : ' (décroissant)'
+                      : '')
+                  "
                   @click="
                     () => {
                       sortType = 'owner'
@@ -235,7 +266,14 @@ function sortMap(
               <th scope="col" class="text-left">
                 <button
                   class="text-left text-primary text-nowrap w-full"
-                  :aria-label="t('Trier par date de mise à jour') + (sortType === 'last_feature_update' ? (sortAsc ? ' (croissant)' : ' (décroissant)') : '')"
+                  :aria-label="
+                    t('Trier par date de mise à jour') +
+                    (sortType === 'last_feature_update'
+                      ? sortAsc
+                        ? ' (croissant)'
+                        : ' (décroissant)'
+                      : '')
+                  "
                   @click="
                     () => {
                       sortType = 'last_feature_update'
@@ -256,15 +294,16 @@ function sortMap(
                   </span>
                 </button>
               </th>
-              <th scope="col"><span class="sr-only">{{ t('Actions') }}</span></th>
+              <th scope="col">
+                <span class="sr-only">{{ t('Actions') }}</span>
+              </th>
             </tr>
           </thead>
 
           <tbody>
-            <tr 
-              class="border-t-[1px]" 
-              v-for="map in filteredMaps" 
-              v-if="!isLoadingMyMaps"
+            <tr
+              class="border-t-[1px]"
+              v-for="map in filteredMaps"
               :key="map.uuid"
             >
               <td
@@ -280,7 +319,9 @@ function sortMap(
                   <i
                     class="mr-2 fa"
                     :class="{ 'fa-lock': !map.public, 'fa-unlock': map.public }"
-                    :aria-label="map.public ? t('Carte publique') : t('Carte privée')"
+                    :aria-label="
+                      map.public ? t('Carte publique') : t('Carte privée')
+                    "
                   ></i>
                   {{ map.title }}</span
                 >
@@ -330,7 +371,13 @@ function sortMap(
               </td>
             </tr>
             <tr v-if="isLoadingMyMaps">
-              <td colspan="6" class="pt-2 border-t-[1px] italic" role="status" aria-live="polite" aria-busy="true">
+              <td
+                colspan="6"
+                class="pt-2 border-t-[1px] italic"
+                role="status"
+                aria-live="polite"
+                aria-busy="true"
+              >
                 {{ t('Chargement des cartes en cours', { ns: 'client' }) }}
               </td>
             </tr>

@@ -1,6 +1,13 @@
 import { v4 as uuidv4 } from 'uuid'
 import { Feature } from 'ol'
-import { Point, LineString, MultiPoint, Polygon, Geometry, Circle } from 'ol/geom'
+import {
+  Point,
+  LineString,
+  MultiPoint,
+  Polygon,
+  Geometry,
+  Circle,
+} from 'ol/geom'
 import StyleStyle, { StyleFunction } from 'ol/style/Style'
 import StyleRegularShape, {
   Options as RegularShapeOptions,
@@ -313,7 +320,7 @@ export class DrawnFeature extends Feature {
 
   getStyleFunction(): StyleFunction {
     const styles: StyleStyle[] = []
-    
+
     const vertexStyle = new StyleStyle({
       image: new StyleRegularShape({
         radius: 6,
@@ -383,9 +390,12 @@ export class DrawnFeature extends Feature {
       // Show vertex handles when feature is being edited
       if (feature.get('__isBeingEdited__')) {
         styles.push(vertexStyle)
-        
+
         // Show blue center point for circles in edit mode
-        if (feature.featureType === 'drawnCircle' && feature.getGeometry()?.getType() === 'Circle') {
+        if (
+          feature.featureType === 'drawnCircle' &&
+          feature.getGeometry()?.getType() === 'Circle'
+        ) {
           styles.push(circleCenterStyle)
         }
       }
@@ -513,7 +523,10 @@ export class DrawnFeature extends Feature {
       }
       let image = null
       // Only create image for Point and Label features
-      if (feature.featureType === 'drawnPoint' || feature.featureType === 'drawnLabel') {
+      if (
+        feature.featureType === 'drawnPoint' ||
+        feature.featureType === 'drawnLabel'
+      ) {
         if (feature.featureStyle.symbolId) {
           const options = {
             ...imageOptions,

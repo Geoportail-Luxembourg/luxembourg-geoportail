@@ -21,20 +21,18 @@ const { features, idPrefix } = defineProps<{
 
 const drawStore = useDrawStore()
 const drawUtils = useDrawUtils()
-const { activeFeatureId, editingFeatureId, editStateActive, featureEditionDocked, drawnFeatures } =
-  storeToRefs(drawStore)
+const {
+  activeFeatureId,
+  editingFeatureId,
+  editStateActive,
+  featureEditionDocked,
+  drawnFeatures,
+} = storeToRefs(drawStore)
 
 const focusedFeatureId = ref<string | number | undefined>()
 
-const sortableFeatures = useTemplateRef('sortableFeatures')
+const sortableFeatures = useTemplateRef<HTMLElement>('sortableFeatures')
 let sortElement: ReturnType<typeof useSortable> | undefined = undefined
-
-function onListFocus() {
-  if (!focusedFeatureId.value) {
-    focusedFeatureId.value = activeFeatureId.value || (features.length ? features[0].id : undefined)
-  }
-  // Don't auto-focus child element - let Tab navigation work naturally
-}
 
 function onLiFocus(featureId: string | number) {
   focusedFeatureId.value = featureId
@@ -50,14 +48,17 @@ function onListKeydown(e: KeyboardEvent) {
 
   if (e.key === ' ') {
     if (focusedFeatureId.value) {
-      activeFeatureId.value = activeFeatureId.value === focusedFeatureId.value ? undefined : focusedFeatureId.value
+      activeFeatureId.value =
+        activeFeatureId.value === focusedFeatureId.value
+          ? undefined
+          : focusedFeatureId.value
     }
     return
   }
 
   const currentIdx = features.findIndex(f => f.id === focusedFeatureId.value)
   const validIdx = currentIdx === -1 ? 0 : currentIdx
-  
+
   if (e.key === 'ArrowDown') {
     const nextIdx = (validIdx + 1) % features.length
     focusedFeatureId.value = features[nextIdx].id
@@ -65,8 +66,10 @@ function onListKeydown(e: KeyboardEvent) {
     const prevIdx = (validIdx - 1 + features.length) % features.length
     focusedFeatureId.value = features[prevIdx].id
   }
-  
-  nextTick(() => document.getElementById(`${idPrefix}-${focusedFeatureId.value}`)?.focus())
+
+  nextTick(() =>
+    document.getElementById(`${idPrefix}-${focusedFeatureId.value}`)?.focus()
+  )
 }
 
 function onContinueLine(feature: DrawnFeature) {
@@ -92,11 +95,11 @@ function ontoggleEditFeature(featureId: string | number, isEditing: boolean) {
     if (editingFeatureId.value === featureId) {
       return
     }
-    
+
     // Set activeFeatureId to sync with draw-select watcher
     activeFeatureId.value = featureId
     focusedFeatureId.value = featureId
-    
+
     const feature = drawnFeatures.value.find(f => f.id === featureId)
     if (feature) {
       editingFeatureId.value = featureId
@@ -109,14 +112,14 @@ function ontoggleEditFeature(featureId: string | number, isEditing: boolean) {
     if (editingFeatureId.value === undefined) {
       return
     }
-    
+
     // Unmark feature when exiting edit mode
     const feature = drawnFeatures.value.find(f => f.id === featureId)
     if (feature) {
       // Feature remains selected and visible
       feature.changed() // Trigger re-render
     }
-    
+
     editingFeatureId.value = undefined
     editStateActive.value = undefined
   }
@@ -147,7 +150,8 @@ watch(sortableFeatures, elem => {
     sortElement?.destroy()
     sortElement = undefined
   }
-})</script>
+})
+</script>
 
 <template>
   <ul
@@ -156,12 +160,14 @@ watch(sortableFeatures, elem => {
     v-if="features.length"
     role="listbox"
     aria-label="Liste des objets dessinés"
-    :aria-activedescendant="focusedFeatureId ? `${idPrefix}-${focusedFeatureId}` : undefined"
+    :aria-activedescendant="
+      focusedFeatureId ? `${idPrefix}-${focusedFeatureId}` : undefined
+    "
     @keydown="onListKeydown"
   >
     <li
       class="lux-drawing-item"
-      v-for="(feature, idx) in features"
+      v-for="feature in features"
       :id="`${idPrefix}-${feature.id}`"
       :key="feature.id"
       role="option"
