@@ -26,6 +26,8 @@ import { useUserManagerStore } from '@/stores/user-manager.store'
 import { DrawnFeature } from '@/services/ol-feature/ol-feature-drawn'
 import { useDrawStore } from '@/stores/draw.store'
 import { convertPolygonFeatureToCircle } from '@/composables/draw/draw-utils.composable'
+import useMap from '@/composables/map/map.composable'
+import { createEmpty, extend } from 'ol/extent'
 
 let watchersDefined = false
 
@@ -190,6 +192,31 @@ export default function useMyMaps() {
 
     mapStore.removeAllLayers()
     mapStore.addLayers(...myLayers)
+
+    // Set view to MyMap's zoom and center if defined
+    if (
+      myMap.value &&
+      myMap.value.zoom !== null &&
+      myMap.value.x !== null &&
+      myMap.value.y !== null
+    ) {
+      const olMap = useMap().getOlMap()
+      olMap.getView().setZoom(myMap.value.zoom)
+      olMap.getView().setCenter([myMap.value.x, myMap.value.y])
+    } else {
+      // If no saved view, fit to the extent of all MyMap features
+      const olMap = useMap().getOlMap()
+      const extent = createEmpty()
+      drawnFeaturesMyMaps.value.forEach(f => {
+        if (f.getGeometry()) {
+          extend(extent, f.getGeometry()!.getExtent())
+        }
+      })
+      // Only fit if extent is not empty
+      if (extent[0] !== extent[2] || extent[1] !== extent[3]) {
+        olMap.getView().fit(extent, { padding: [20, 20, 20, 20] })
+      }
+    }
   }
 
   function init() {

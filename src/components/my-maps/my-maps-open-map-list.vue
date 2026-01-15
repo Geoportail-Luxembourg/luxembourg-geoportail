@@ -95,13 +95,13 @@ function onClickSyncOfflineMaps(map: MyMapJson) {
 
 function filterMap(map: MyMapJson) {
   const searchOnName = mapNameSearch.value
-    ? map.title.includes(mapNameSearch.value)
+    ? map.title.toLowerCase().includes(mapNameSearch.value.toLowerCase())
     : true
   const searchOnCat = categorySearch.value
-    ? map.category === categorySearch.value
+    ? map.category.toLowerCase() === categorySearch.value.toLowerCase()
     : true
   const searchOnOwner = ownerSearch.value
-    ? map.owner === ownerSearch.value
+    ? map.owner.toLowerCase() === ownerSearch.value.toLowerCase()
     : true
   return searchOnName && searchOnCat && searchOnOwner
 }
