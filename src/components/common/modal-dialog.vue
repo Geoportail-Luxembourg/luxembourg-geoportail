@@ -12,6 +12,10 @@ defineProps({
     default: false,
   },
   title: String,
+  role: {
+    type: String,
+    default: 'dialog',
+  },
 })
 defineEmits<{
   (e: 'close'): void
@@ -44,7 +48,7 @@ function close() {
     >
       <div
         v-if="displayModal"
-        role="dialog"
+        :role="role"
         ref="modal"
         tabindex="0"
         @keydown.esc.stop="close()"

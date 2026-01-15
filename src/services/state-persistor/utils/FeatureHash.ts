@@ -267,6 +267,9 @@ class FeatureHash extends TextFeature {
       }
     )
 
+    // Set editable based on whether this is a URL feature (no map_id) or MyMap feature
+    drawnFeature.editable = drawnFeature.map_id === undefined
+
     // Apply the style function to the feature
     drawnFeature.setStyle(drawnFeature.getStyleFunction())
 

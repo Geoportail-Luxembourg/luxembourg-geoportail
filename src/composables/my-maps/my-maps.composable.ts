@@ -212,8 +212,15 @@ export default function useMyMaps() {
           extend(extent, f.getGeometry()!.getExtent())
         }
       })
-      // Only fit if extent is not empty
-      if (extent[0] !== extent[2] || extent[1] !== extent[3]) {
+      // Only fit if extent is not empty and valid
+      if (
+        extent[0] !== Infinity &&
+        extent[1] !== Infinity &&
+        extent[2] !== -Infinity &&
+        extent[3] !== -Infinity &&
+        extent[0] < extent[2] &&
+        extent[1] < extent[3]
+      ) {
         olMap.getView().fit(extent, { padding: [20, 20, 20, 20] })
       }
     }
@@ -224,8 +231,30 @@ export default function useMyMaps() {
       // Populate MyMap object whenever MyMap uuid changes
       watch(
         myMapId,
-        async (uuid, oldValue) => uuid && uuid !== oldValue && loadMyMap(uuid),
+        async (uuid, oldValue) => {
+          if (uuid && uuid !== oldValue && useMap().getOlMap()) {
+            loadMyMap(uuid)
+          } else if (!uuid && oldValue) {
+            // When closing MyMap, make all MyMap features become URL features
+            drawnFeaturesMyMaps.value.forEach(f => {
+              f.map_id = undefined
+              f.editable = true
+              f.changed()
+            })
+            myMap.value = undefined
+          }
+        },
         { immediate: true }
+      )
+
+      // When map becomes ready, load mymap if needed
+      watch(
+        () => useMap().olMap,
+        olMap => {
+          if (olMap && myMapId.value && !myMap.value) {
+            loadMyMap(myMapId.value)
+          }
+        }
       )
 
       // Populate map (app map) content when MyMap is loaded
@@ -237,6 +266,10 @@ export default function useMyMaps() {
           f.editable = isAuthenticated && (myMap.value?.is_editable ?? false)
           f.changed() // Trigger feature update to refresh UI
         })
+        // Si on se reconnecte, recharger la mymaps pour mettre à jour is_editable
+        if (isAuthenticated && myMapId.value && myMap.value) {
+          loadMyMap(myMapId.value)
+        }
       })
 
       // Check if MyMap content differs from Map store

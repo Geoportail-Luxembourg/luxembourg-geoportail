@@ -56,7 +56,10 @@ statePersistorStyleService.bootstrap()
 statePersistorBgLayerService.bootstrap()
 mvtStyleService.initBackgroundsConfigs()
 statePersistorFeatureInfoService.bootstrap()
-useMyMaps().init()
+
+onMounted(() => {
+  useMyMaps().init()
+})
 
 const {
   embedded,

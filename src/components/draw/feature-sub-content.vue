@@ -1,9 +1,10 @@
 <script setup lang="ts">
-import { inject, provide, Ref, ref, Reactive } from 'vue'
+import { inject, provide, Ref, ref, Reactive, computed } from 'vue'
 import { useTranslation } from 'i18next-vue'
 
 import { DrawnFeature } from '@/services/ol-feature/ol-feature-drawn'
 import { DrawnFeatureStyle } from '@/stores/draw.store.model'
+import useMyMaps from '@/composables/my-maps/my-maps.composable'
 
 import FeatureMenuPopup from './feature-menu-popup.vue'
 import FeatureConfirmDelete from './feature-confirm-delete.vue'
@@ -32,7 +33,13 @@ const emit = defineEmits([
   'submitNewConcentricCircle',
 ])
 const { t } = useTranslation()
+const myMaps = useMyMaps()
 const feature: Reactive<DrawnFeature> = inject('feature')!
+const isEditable = computed(() => {
+  // URL features (no map_id) are always editable
+  // MyMap features are only editable when isMyMapEditable has a value
+  return feature.map_id ? !!myMaps.isMyMapEditable.value : true
+})
 let prevLabel = feature.label
 let prevDescription = feature.description
 // keep deep copy of previous style to be able to revert style on cancel
@@ -112,7 +119,7 @@ function onClickValidate(payload: MouseEvent | FeatureConcentricCirclePayload) {
       <div>
         <!-- Button edit feature: EDIT/END EDITION -->
         <button
-          v-if="feature?.editable"
+          v-if="isEditable"
           data-cy="featItemToggleEdit"
           class="lux-btn-primary"
           @click="emit('toggleEditFeature')"
@@ -135,7 +142,7 @@ function onClickValidate(payload: MouseEvent | FeatureConcentricCirclePayload) {
 
           <!-- Edit current feature -->
           <button
-            v-if="feature?.editable"
+            v-if="isEditable"
             data-cy="featItemActionEdit"
             class="hover:text-tertiary"
             @click="() => (currentEditCompKey = 'FeatureEditInfo')"
@@ -145,7 +152,7 @@ function onClickValidate(payload: MouseEvent | FeatureConcentricCirclePayload) {
 
           <!-- Edit current feature style -->
           <button
-            v-if="feature?.editable"
+            v-if="isEditable"
             data-cy="featItemActionStyle"
             class="hover:text-tertiary"
             @click="() => (currentEditCompKey = 'FeatureEditStyle')"
@@ -155,6 +162,7 @@ function onClickValidate(payload: MouseEvent | FeatureConcentricCirclePayload) {
 
           <!-- Remove feature from the map -->
           <button
+            v-if="isEditable"
             data-cy="featItemActionDelete"
             class="hover:text-tertiary"
             @click="() => (currentEditCompKey = 'FeatureConfirmDelete')"

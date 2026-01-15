@@ -39,7 +39,8 @@ function convertCircleFeatureToPolygon(feature: DrawnFeature): DrawnFeature {
  * @returns The same feature with a circle geometry
  */
 function convertPolygonFeatureToCircle(feature: DrawnFeature): DrawnFeature {
-  const map: Map = useMap().getOlMap()
+  const map: Map | undefined = useMap().getOlMap()
+  if (!map) return feature
   const polygon = feature.getGeometry() as Polygon
   if (
     feature.featureType === 'drawnCircle' &&
@@ -56,7 +57,13 @@ function convertPolygonFeatureToCircle(feature: DrawnFeature): DrawnFeature {
       }
     })
     const circle = new Circle(centroid)
-    setCircleRadius(circle, maxDistance, map)
+    if (map) {
+      setCircleRadius(circle, maxDistance, map)
+    } else {
+      // If map is not available, set radius directly (assuming maxDistance is in meters)
+      // This will be corrected when the map becomes available
+      circle.setRadius(maxDistance)
+    }
     feature.setGeometry(circle as Circle)
   }
   return feature

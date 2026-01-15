@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { inject } from 'vue'
+import { inject, computed } from 'vue'
 import { useTranslation } from 'i18next-vue'
 
 import { type MenuPopupItem as MenuPopupItemType } from '@/components/common/menu-popup/menu-popup.d'
@@ -12,10 +12,18 @@ import {
   type ExportFormat,
 } from '@/services/export-feature/export-feature.service'
 import { lineChangeOrientation } from '@/composables/draw/draw-utils.composable'
+import useMyMaps from '@/composables/my-maps/my-maps.composable'
 
 const { t } = useTranslation()
+const myMaps = useMyMaps()
 const feature = inject<DrawnFeature>('feature')!
 const emit = defineEmits(['newConcentricCircle', 'continueLine'])
+
+const isEditable = computed(() => {
+  // URL features (no map_id) are always editable
+  // MyMap features are only editable when isMyMapEditable has a value
+  return feature.map_id ? !!myMaps.isMyMapEditable.value : true
+})
 
 function download(format: ExportFormat) {
   exportFeatureService.export(
@@ -42,7 +50,7 @@ let drawingMenuOptions = <MenuPopupItemType[]>[
   },
 ]
 
-if (feature?.featureType === 'drawnLine') {
+if (feature?.featureType === 'drawnLine' && isEditable.value) {
   drawingMenuOptions = [
     ...drawingMenuOptions,
     {
@@ -56,7 +64,7 @@ if (feature?.featureType === 'drawnLine') {
   ]
 }
 
-if (feature?.featureType === 'drawnCircle') {
+if (feature?.featureType === 'drawnCircle' && isEditable.value) {
   drawingMenuOptions = [
     ...drawingMenuOptions,
     {

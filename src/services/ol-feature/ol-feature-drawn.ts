@@ -136,6 +136,9 @@ export class DrawnFeature extends Feature {
       options
     )
 
+    // Set editable based on whether this is a URL feature (no map_id) or MyMap feature
+    drawnFeature.editable = drawnFeature.map_id === undefined
+
     const geometryType = feature.getGeometry()?.getType()!
     const typeMapping: Record<string, string> = {
       Point: 'drawnPoint',
