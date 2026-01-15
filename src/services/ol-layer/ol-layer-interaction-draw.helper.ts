@@ -13,7 +13,7 @@ class OlLayerInteractionDrawHelper {
       zIndex: DEFAULT_DRAW_ZINDEX,
       // Use feature's own style function
       style: (feature, resolution) => {
-        const featureStyle = feature.getStyle()
+        const featureStyle = (feature as any).getStyle()
         if (typeof featureStyle === 'function') {
           return featureStyle.call(feature, feature, resolution)
         }

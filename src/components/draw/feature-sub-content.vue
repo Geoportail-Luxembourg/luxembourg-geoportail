@@ -112,6 +112,7 @@ function onClickValidate(payload: MouseEvent | FeatureConcentricCirclePayload) {
       <div>
         <!-- Button edit feature: EDIT/END EDITION -->
         <button
+          v-if="feature?.editable"
           data-cy="featItemToggleEdit"
           class="lux-btn-primary"
           @click="emit('toggleEditFeature')"
@@ -134,6 +135,7 @@ function onClickValidate(payload: MouseEvent | FeatureConcentricCirclePayload) {
 
           <!-- Edit current feature -->
           <button
+            v-if="feature?.editable"
             data-cy="featItemActionEdit"
             class="hover:text-tertiary"
             @click="() => (currentEditCompKey = 'FeatureEditInfo')"
@@ -143,6 +145,7 @@ function onClickValidate(payload: MouseEvent | FeatureConcentricCirclePayload) {
 
           <!-- Edit current feature style -->
           <button
+            v-if="feature?.editable"
             data-cy="featItemActionStyle"
             class="hover:text-tertiary"
             @click="() => (currentEditCompKey = 'FeatureEditStyle')"

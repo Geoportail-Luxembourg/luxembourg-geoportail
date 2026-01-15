@@ -98,7 +98,7 @@ export default function useDrawRoute() {
       getRouteUrl: getRouteUrl(),
       maxPoints: Infinity, // No limit - let user decide when to finish
       freehand: false,
-      existingSketch, // Pass existing sketch to continue drawing
+      existingSketch: existingSketch || undefined, // Convert null to undefined
     })
 
     // Listen to drawend event

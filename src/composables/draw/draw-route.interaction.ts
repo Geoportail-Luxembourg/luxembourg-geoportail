@@ -588,18 +588,14 @@ function handleEvent_(
 /**
  * Handle down event
  */
-function handleDownEvent_(
-  this: DrawRouteInteraction,
-): boolean {
+function handleDownEvent_(this: DrawRouteInteraction): boolean {
   return true
 }
 
 /**
  * Handle up event
  */
-function handleUpEvent_(
-  this: DrawRouteInteraction,
-): boolean {
+function handleUpEvent_(this: DrawRouteInteraction): boolean {
   // All click handling is done in handleEvent_ via singleclick/dblclick
   return false
 }

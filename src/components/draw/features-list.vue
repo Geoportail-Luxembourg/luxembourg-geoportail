@@ -102,6 +102,7 @@ function ontoggleEditFeature(featureId: string | number, isEditing: boolean) {
 
     const feature = drawnFeatures.value.find(f => f.id === featureId)
     if (feature) {
+      if (!feature.editable) return
       editingFeatureId.value = featureId
       editStateActive.value = <EditStateActive>(
         feature.featureType.replace('drawn', 'edit').replace('Continue', '')

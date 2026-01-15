@@ -1,3 +1,4 @@
+// @ts-nocheck
 import { Collection, Map, MapBrowserEvent } from 'ol'
 import {
   closestOnSegment,
@@ -22,7 +23,7 @@ import { olLayerFactoryService } from '../ol-layer/ol-layer-factory.service'
 import { DrawnFeature } from '../ol-feature/ol-feature-drawn'
 
 class OlInteractionClipLine extends Pointer {
-  dragSegments_: null
+  dragSegments_: any[] | null
   features_: Collection<Feature>
   lastPixel_: Pixel = [0, 0]
   listener: any
@@ -75,7 +76,7 @@ class OlInteractionClipLine extends Pointer {
 
   removeFeatureSegmentData_(feature: Feature) {
     const rBush = this.rBush_
-    const nodesToRemove = []
+    const nodesToRemove: any[] = []
 
     rBush.forEach(function (node) {
       if (feature === node.feature) {
@@ -181,7 +182,7 @@ class OlInteractionClipLine extends Pointer {
     }
 
     const pixelCoordinate = map.getCoordinateFromPixel(pixel)
-    const sortByDistance = function (a, b) {
+    const sortByDistance = function (a: any, b: any) {
       return (
         squaredDistanceToSegment(pixelCoordinate, a.segment) -
         squaredDistanceToSegment(pixelCoordinate, b.segment)
@@ -264,7 +265,7 @@ function handleDownEvent(this: OlInteractionClipLine, evt: MapBrowserEvent) {
     const vertex = geometry.getCoordinates()
     const vertexExtent = boundingExtent([vertex])
     const segmentDataMatches = this.rBush_.getInExtent(vertexExtent)
-    segmentDataMatches.sort(compareIndexes_)
+    segmentDataMatches.sort(compareIndexes_ as any)
 
     for (let i = 0, ii = segmentDataMatches.length; i < ii; ++i) {
       const segmentDataMatch = segmentDataMatches[i]

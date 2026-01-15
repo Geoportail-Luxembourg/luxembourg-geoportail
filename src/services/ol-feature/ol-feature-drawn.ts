@@ -52,6 +52,7 @@ export class DrawnFeature extends Feature {
   description: string
   display_order: number
   selected: boolean
+  editable: boolean
   map_id: string | undefined // mymap uuid
   saving: boolean
   featureType: DrawnFeatureType
@@ -77,12 +78,14 @@ export class DrawnFeature extends Feature {
       this.description = drawnFeature.description
       this.display_order = drawnFeature.display_order
       this.selected = drawnFeature.selected
+      this.editable = drawnFeature.editable
       this._featureStyle = drawnFeature.featureStyle
       this.id = drawnFeature.id
       this.saving = drawnFeature.saving
       this.setProperties(drawnFeature.getProperties())
     } else {
       super(geometryOrProperties)
+      this.editable = false
     }
   }
 
@@ -125,6 +128,7 @@ export class DrawnFeature extends Feature {
         description: '',
         display_order: undefined,
         selected: false,
+        editable: false,
         map_id: undefined,
         saving: false,
         featureType: undefined,
@@ -133,15 +137,16 @@ export class DrawnFeature extends Feature {
     )
 
     const geometryType = feature.getGeometry()?.getType()!
-    const typeMapping = {
+    const typeMapping: Record<string, string> = {
       Point: 'drawnPoint',
       LineString: 'drawnLine',
       Polygon: 'drawnPolygon',
       Circle: 'drawnCircle',
     }
 
-    if (drawnFeature.featureType === undefined && geometryType in typeMapping) {
-      drawnFeature.featureType = typeMapping[geometryType]
+    if (drawnFeature.featureType === undefined) {
+      drawnFeature.featureType = (typeMapping[geometryType] ||
+        'drawnPolygon') as DrawnFeatureType
     }
 
     drawnFeature.featureStyle = getDefaultDrawnFeatureStyle()
@@ -275,7 +280,7 @@ export class DrawnFeature extends Feature {
     }
   }
 
-  fromProperties(properties) {
+  fromProperties(properties: any) {
     if (!properties) return
 
     this.description = properties.description ?? this.description
@@ -302,6 +307,7 @@ export class DrawnFeature extends Feature {
       size: properties.size ?? this.featureStyle.size,
       symbolId: properties.symbolId ?? this.featureStyle.symbolId,
       symboltype: properties.symboltype ?? this.featureStyle.symboltype,
+      arrowcolor: properties.arrowcolor ?? this.featureStyle.arrowcolor,
     }
   }
 

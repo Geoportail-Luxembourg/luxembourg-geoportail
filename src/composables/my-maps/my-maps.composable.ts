@@ -81,6 +81,10 @@ export default function useMyMaps() {
       }) as DrawnFeature[]
 
       myMap.value = map
+      // Set editable property based on authentication and map permissions
+      newFeatures.forEach(f => {
+        f.editable = authenticated.value && map.is_editable
+      })
       drawnFeatures.value = [...drawnFeatures.value, ...newFeatures]
     } catch (e) {
       // eslint-disable-next-line no-console
@@ -181,7 +185,7 @@ export default function useMyMaps() {
 
             return undefined
           })
-          .filter(l => l !== undefined)
+          .filter((l): l is Layer => l !== undefined)
       : []
 
     mapStore.removeAllLayers()
@@ -199,6 +203,14 @@ export default function useMyMaps() {
 
       // Populate map (app map) content when MyMap is loaded
       watch(myMap, myMap => myMap && resetFromMyMap())
+
+      // Update editable property of mymaps features when authentication changes
+      watch(authenticated, isAuthenticated => {
+        drawnFeaturesMyMaps.value.forEach(f => {
+          f.editable = isAuthenticated && (myMap.value?.is_editable ?? false)
+          f.changed() // Trigger feature update to refresh UI
+        })
+      })
 
       // Check if MyMap content differs from Map store
       watch(

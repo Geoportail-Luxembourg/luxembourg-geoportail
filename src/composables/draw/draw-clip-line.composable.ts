@@ -3,6 +3,7 @@ import { nextTick, onMounted, watch } from 'vue'
 import { useTranslation } from 'i18next-vue'
 import { useDrawStore } from '@/stores/draw.store'
 import { useAlertNotificationsStore } from '@/stores/alert-notifications.store'
+import { listen } from 'ol/events'
 import OlInteractionClipLine from '@/services/ol-interaction/ol-interaction-clipline'
 import useMap from '../map/map.composable'
 import useDrawnFeatures from './drawn-features.composable'
@@ -26,7 +27,7 @@ export default function useClipLine() {
     map.addInteraction(clipLineInteraction)
 
     // Listen to clickmiss event when user clicks but misses the line
-    ;(clipLineInteraction as any).on('clickmiss', () => {
+    listen(clipLineInteraction, 'clickmiss', () => {
       // Only show notification if clip mode is actually active
       if (clipLineActive.value) {
         addNotification(
@@ -38,7 +39,7 @@ export default function useClipLine() {
     })
 
     // Listen to modifyend event when a line is cut
-    clipLineInteraction.on('modifyend', (evt: any) => {
+    listen(clipLineInteraction, 'modifyend', (evt: any) => {
       const features = evt.features.getArray()
 
       if (features.length >= 3) {

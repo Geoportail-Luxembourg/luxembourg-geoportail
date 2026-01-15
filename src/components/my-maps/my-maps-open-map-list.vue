@@ -57,12 +57,17 @@ const ownersOptions = computed(() =>
 const sortType = ref<SortType | undefined>(undefined)
 const sortAsc = ref(true)
 const filteredMaps = computed(() =>
-  isLoadingMyMaps.value
+  props.isLoadingMyMaps
     ? []
     : props.maps
         .filter(filterMap)
         .sort((a, b) =>
-          sortMap(a, b, sortType.value as unknown as keyof MyMapJson, sortAsc.value)
+          sortMap(
+            a,
+            b,
+            sortType.value as unknown as keyof MyMapJson,
+            sortAsc.value
+          )
         )
 )
 const fWrapperRef = useTemplateRef<HTMLElement>('filtersWrapperDOM')
