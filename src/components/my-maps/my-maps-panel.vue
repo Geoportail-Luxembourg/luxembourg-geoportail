@@ -14,9 +14,9 @@ import { useDrawStore } from '@/stores/draw.store'
 import {
   deleteMyMap,
   fetchMyMaps,
-  MyMap,
   MyMapJson,
 } from '@/services/api/api-mymaps.service'
+import { MyMap } from '@/stores/app.store.model'
 
 import MyMapEditForm from './my-map-edit-form.vue'
 import MyMapInfo from './my-map-info.vue'
@@ -39,19 +39,27 @@ const openMapModalState = ref(false) // false => closed
 const confirmDeleteModalState = ref<'clear' | 'delete' | undefined>(undefined) // undefined => closed
 const confirmDeleteModalMyMap = ref<MyMap | undefined>(undefined)
 const myMaps = shallowRef<MyMapJson[]>([]) // All user's MyMaps
+const isLoadingMyMaps = ref(false)
 
 async function refreshModale() {
-  myMaps.value = await fetchMyMaps()
-
-  if (!myMaps.value.length) {
+  isLoadingMyMaps.value = true
+  try {
+    myMaps.value = await fetchMyMaps()
+    if (!myMaps.value.length) {
+      addNotification(
+        t('You have no existing Maps, please create a New Map'),
+        AlertNotificationType.WARNING
+      )
+      return
+    }
+  } catch (e) {
     addNotification(
-      t('You have no existing Maps, please create a New Map'),
-      AlertNotificationType.WARNING
+      t('Erreur lors du chargement des cartes.'),
+      AlertNotificationType.ERROR
     )
-    return
+  } finally {
+    isLoadingMyMaps.value = false
   }
-
-  openMapModalState.value = true
 }
 
 async function openMap() {
@@ -59,7 +67,9 @@ async function openMap() {
     return
   }
 
-  await refreshModale()
+  openMapModalState.value = true
+  // Start loading in background without awaiting
+  refreshModale()
 }
 
 function openEditFormModal(map: MyMap | undefined, mode: EditFormModeType) {
@@ -206,9 +216,9 @@ watch(
           @resetLayers="myMapsHelper.resetFromMyMap"
           @saveLayers="myMapsHelper.applyToMyMap"
           @draw:mergelines="() => drawStore.toggleDrawMergeLinesModal(true)"
-          @draw:cutlines="() => drawStore.toggleDrawCutLineMode(true)"
+          @draw:cutlines="() => drawStore.toggleDrawCutLineMode()"
         />
-        <FeaturesList :features="features" />
+        <FeaturesList :features="features" idPrefix="mymap" />
       </div>
       <!-- No MyMap selected, display button to create or select one in popups -->
       <template v-else>
@@ -217,7 +227,17 @@ watch(
         </div>
 
         <div class="flex justify-center flex-col items-center">
-          <button class="lux-btn mt-3" @click="openMap">
+          <button
+            class="lux-btn mt-3"
+            @click="openMap"
+            :disabled="isLoadingMyMaps"
+            :aria-busy="isLoadingMyMaps"
+            :aria-label="
+              isLoadingMyMaps
+                ? t('Chargement en cours...')
+                : t('Ouvrir une carte', { ns: 'client' })
+            "
+          >
             {{ t('Ouvrir une carte', { ns: 'client' }) }}
           </button>
           <button
@@ -255,6 +275,7 @@ watch(
 
   <MyMapsOpenMap
     :maps="myMaps"
+    :isLoadingMyMaps="isLoadingMyMaps"
     v-if="openMapModalState"
     @cancel="openMapModalState = false"
     @select="onMapSelected"

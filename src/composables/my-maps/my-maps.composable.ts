@@ -1,4 +1,4 @@
-import { computed, ref, watch } from 'vue'
+import { computed, watch } from 'vue'
 import { storeToRefs } from 'pinia'
 import { useTranslation } from 'i18next-vue'
 
@@ -25,6 +25,9 @@ import useBackgroundLayer from '@/composables/background-layer/background-layer.
 import { useUserManagerStore } from '@/stores/user-manager.store'
 import { DrawnFeature } from '@/services/ol-feature/ol-feature-drawn'
 import { useDrawStore } from '@/stores/draw.store'
+import { convertPolygonFeatureToCircle } from '@/composables/draw/draw-utils.composable'
+import useMap from '@/composables/map/map.composable'
+import { createEmpty, extend } from 'ol/extent'
 
 let watchersDefined = false
 
@@ -67,18 +70,27 @@ export default function useMyMaps() {
         fetchMyMap(uuid),
         fetchMyMapFeatures(uuid),
       ])
-      const newFeatures = features.features?.map((f: MyMapFetchFeatureJson) =>
-        DrawnFeature.generateFromGeoJson(f, {
+
+      const newFeatures = features.features?.map((f: MyMapFetchFeatureJson) => {
+        const feature = DrawnFeature.generateFromGeoJson(f, {
           map_id: uuid,
           id: f.id!, // !!! Force reattribution of id from backend
           fid: f.id!, // !!! Force reattribution of fid from backend
           display_order: f.properties?.display_order,
         })
-      ) as DrawnFeature[]
+        // Convert polygon geometries to circles if needed (circles are saved as polygons in MyMaps)
+        return convertPolygonFeatureToCircle(feature)
+      }) as DrawnFeature[]
 
       myMap.value = map
+      // Set editable property based on authentication and map permissions
+      newFeatures.forEach(f => {
+        f.editable = authenticated.value && map.is_editable
+      })
       drawnFeatures.value = [...drawnFeatures.value, ...newFeatures]
     } catch (e) {
+      // eslint-disable-next-line no-console
+      console.error('[MyMaps] loadMyMap() - ERROR', e)
       handleLoadMapError()
     } finally {
       myMapIsLoading.value = false
@@ -175,11 +187,43 @@ export default function useMyMaps() {
 
             return undefined
           })
-          .filter(l => l !== undefined)
+          .filter((l): l is Layer => l !== undefined)
       : []
 
     mapStore.removeAllLayers()
     mapStore.addLayers(...myLayers)
+
+    // Set view to MyMap's zoom and center if defined
+    if (
+      myMap.value &&
+      myMap.value.zoom !== null &&
+      myMap.value.x !== null &&
+      myMap.value.y !== null
+    ) {
+      const olMap = useMap().getOlMap()
+      olMap.getView().setZoom(myMap.value.zoom)
+      olMap.getView().setCenter([myMap.value.x, myMap.value.y])
+    } else {
+      // If no saved view, fit to the extent of all MyMap features
+      const olMap = useMap().getOlMap()
+      const extent = createEmpty()
+      drawnFeaturesMyMaps.value.forEach(f => {
+        if (f.getGeometry()) {
+          extend(extent, f.getGeometry()!.getExtent())
+        }
+      })
+      // Only fit if extent is not empty and valid
+      if (
+        extent[0] !== Infinity &&
+        extent[1] !== Infinity &&
+        extent[2] !== -Infinity &&
+        extent[3] !== -Infinity &&
+        extent[0] < extent[2] &&
+        extent[1] < extent[3]
+      ) {
+        olMap.getView().fit(extent, { padding: [20, 20, 20, 20] })
+      }
+    }
   }
 
   function init() {
@@ -187,12 +231,46 @@ export default function useMyMaps() {
       // Populate MyMap object whenever MyMap uuid changes
       watch(
         myMapId,
-        async (uuid, oldValue) => uuid && uuid !== oldValue && loadMyMap(uuid),
+        async (uuid, oldValue) => {
+          if (uuid && uuid !== oldValue && useMap().getOlMap()) {
+            loadMyMap(uuid)
+          } else if (!uuid && oldValue) {
+            // When closing MyMap, make all MyMap features become URL features
+            drawnFeaturesMyMaps.value.forEach(f => {
+              f.map_id = undefined
+              f.editable = true
+              f.changed()
+            })
+            myMap.value = undefined
+          }
+        },
         { immediate: true }
+      )
+
+      // When map becomes ready, load mymap if needed
+      watch(
+        () => useMap().olMap,
+        olMap => {
+          if (olMap && myMapId.value && !myMap.value) {
+            loadMyMap(myMapId.value)
+          }
+        }
       )
 
       // Populate map (app map) content when MyMap is loaded
       watch(myMap, myMap => myMap && resetFromMyMap())
+
+      // Update editable property of mymaps features when authentication changes
+      watch(authenticated, isAuthenticated => {
+        drawnFeaturesMyMaps.value.forEach(f => {
+          f.editable = isAuthenticated && (myMap.value?.is_editable ?? false)
+          f.changed() // Trigger feature update to refresh UI
+        })
+        // Si on se reconnecte, recharger la mymaps pour mettre à jour is_editable
+        if (isAuthenticated && myMapId.value && myMap.value) {
+          loadMyMap(myMapId.value)
+        }
+      })
 
       // Check if MyMap content differs from Map store
       watch(
@@ -208,21 +286,44 @@ export default function useMyMaps() {
     }
   }
 
-  function addInMyMap() {
+  async function addInMyMap() {
     if (isMyMapEditable.value) {
-      drawnFeaturesExceptMyMaps.value.forEach(async f => {
-        f.map_id = isMyMapEditable.value
-        const resp = await saveMyMapFeature(
-          <string>f.map_id,
-          f.toGeoJSONString()
-        ).catch(e =>
-          addNotification(
-            t('Erreur inattendue lors de la sauvegarde de votre modification.'),
-            AlertNotificationType.ERROR
-          )
-        )
-        f.id = (<MyMapSaveFeatureJson>resp).id!
-      })
+      const featuresToMove = [...drawnFeaturesExceptMyMaps.value]
+      const oldFeatureIds = featuresToMove
+        .map(f => f.id)
+        .filter(id => id !== undefined)
+
+      // Remove old features from URL (drawnFeaturesExceptMyMaps) BEFORE updating their IDs
+      if (oldFeatureIds.length > 0) {
+        drawStore.removeFeature(oldFeatureIds, false) // false = don't update MyMap backend
+      }
+
+      // Save all features to MyMaps backend and update their IDs
+      await Promise.all(
+        featuresToMove.map(async f => {
+          f.map_id = isMyMapEditable.value
+          const resp = await saveMyMapFeature(
+            <string>f.map_id,
+            f.toGeoJSONString()
+          ).catch(e => {
+            // eslint-disable-next-line no-console
+            console.error('[MyMaps] Error saving feature:', e)
+            addNotification(
+              t(
+                'Erreur inattendue lors de la sauvegarde de votre modification.'
+              ),
+              AlertNotificationType.ERROR
+            )
+          })
+          if (resp) {
+            f.id = (<MyMapSaveFeatureJson>resp).id!
+            f.fid = (<MyMapSaveFeatureJson>resp).id!
+          }
+        })
+      )
+
+      // Add the moved features (now with MyMaps IDs) to drawnFeatures
+      drawnFeatures.value = [...drawnFeatures.value, ...featuresToMove]
     }
   }
 

@@ -1,7 +1,14 @@
 import { v4 as uuidv4 } from 'uuid'
 import { Feature } from 'ol'
-import { Point, LineString, MultiPoint, Polygon, Geometry } from 'ol/geom'
-import StyleStyle, { StyleFunction, StyleLike } from 'ol/style/Style'
+import {
+  Point,
+  LineString,
+  MultiPoint,
+  Polygon,
+  Geometry,
+  Circle,
+} from 'ol/geom'
+import StyleStyle, { StyleFunction } from 'ol/style/Style'
 import StyleRegularShape, {
   Options as RegularShapeOptions,
 } from 'ol/style/RegularShape'
@@ -44,8 +51,8 @@ export class DrawnFeature extends Feature {
   label: string
   description: string
   display_order: number
-  editable: boolean
   selected: boolean
+  editable: boolean
   map_id: string | undefined // mymap uuid
   saving: boolean
   featureType: DrawnFeatureType
@@ -70,14 +77,15 @@ export class DrawnFeature extends Feature {
       this.map_id = drawnFeature.map_id
       this.description = drawnFeature.description
       this.display_order = drawnFeature.display_order
-      this.editable = drawnFeature.editable
       this.selected = drawnFeature.selected
+      this.editable = drawnFeature.editable
       this._featureStyle = drawnFeature.featureStyle
       this.id = drawnFeature.id
       this.saving = drawnFeature.saving
       this.setProperties(drawnFeature.getProperties())
     } else {
       super(geometryOrProperties)
+      this.editable = false
     }
   }
 
@@ -119,8 +127,8 @@ export class DrawnFeature extends Feature {
         label: undefined,
         description: '',
         display_order: undefined,
-        editable: true,
         selected: false,
+        editable: false,
         map_id: undefined,
         saving: false,
         featureType: undefined,
@@ -128,20 +136,27 @@ export class DrawnFeature extends Feature {
       options
     )
 
+    // Set editable based on whether this is a URL feature (no map_id) or MyMap feature
+    drawnFeature.editable = drawnFeature.map_id === undefined
+
     const geometryType = feature.getGeometry()?.getType()!
-    const typeMapping = {
+    const typeMapping: Record<string, string> = {
       Point: 'drawnPoint',
       LineString: 'drawnLine',
       Polygon: 'drawnPolygon',
       Circle: 'drawnCircle',
     }
 
-    if (drawnFeature.featureType === undefined && geometryType in typeMapping) {
-      drawnFeature.featureType = typeMapping[geometryType]
+    if (drawnFeature.featureType === undefined) {
+      drawnFeature.featureType = (typeMapping[geometryType] ||
+        'drawnPolygon') as DrawnFeatureType
     }
 
     drawnFeature.featureStyle = getDefaultDrawnFeatureStyle()
-    drawnFeature.setStyle(feature.getStyle())
+    // Read properties from the feature if available
+    drawnFeature.fromProperties(feature.getProperties())
+    // Always set the style function - don't copy from source feature
+    drawnFeature.setStyle(drawnFeature.getStyleFunction())
 
     return drawnFeature
   }
@@ -152,8 +167,11 @@ export class DrawnFeature extends Feature {
     ) as Feature<Geometry>
     const drawnFeature = DrawnFeature.generateFromFeature(feature, options)
 
-    drawnFeature.fromProperties(geoJson.properties)
-    drawnFeature.setStyle(feature.getStyle())
+    // GeoJSON readFeature already sets properties on the feature, so we read from there
+    const properties = feature.getProperties()
+    drawnFeature.fromProperties(properties)
+    // Ensure style function is set after loading properties
+    drawnFeature.setStyle(drawnFeature.getStyleFunction())
     return drawnFeature
   }
 
@@ -267,7 +285,7 @@ export class DrawnFeature extends Feature {
     }
   }
 
-  fromProperties(properties) {
+  fromProperties(properties: any) {
     if (!properties) return
 
     this.description = properties.description ?? this.description
@@ -275,10 +293,11 @@ export class DrawnFeature extends Feature {
     this.label = properties.name ?? this.label
     this.map_id = properties.__map_id__ ?? this.map_id
 
-    if (properties.isLabel !== undefined) {
-      this.featureType = properties.isLabel ? 'drawnLabel' : this.featureType
-    } else if (properties.isCircle !== undefined) {
-      this.featureType = properties.isCircle ? 'drawnCircle' : this.featureType
+    // Determine featureType from properties - check isCircle first, then isLabel
+    if (properties.isCircle === true) {
+      this.featureType = 'drawnCircle'
+    } else if (properties.isLabel === true) {
+      this.featureType = 'drawnLabel'
     }
 
     this.featureStyle = {
@@ -293,6 +312,7 @@ export class DrawnFeature extends Feature {
       size: properties.size ?? this.featureStyle.size,
       symbolId: properties.symbolId ?? this.featureStyle.symbolId,
       symboltype: properties.symboltype ?? this.featureStyle.symboltype,
+      arrowcolor: properties.arrowcolor ?? this.featureStyle.arrowcolor,
     }
   }
 
@@ -311,6 +331,7 @@ export class DrawnFeature extends Feature {
 
   getStyleFunction(): StyleFunction {
     const styles: StyleStyle[] = []
+
     const vertexStyle = new StyleStyle({
       image: new StyleRegularShape({
         radius: 6,
@@ -339,6 +360,26 @@ export class DrawnFeature extends Feature {
       },
     })
 
+    const circleCenterStyle = new StyleStyle({
+      image: new StyleCircle({
+        radius: 8,
+        fill: new StyleFill({
+          color: [0, 0, 255, 0.8],
+        }),
+        stroke: new StyleStroke({
+          color: [255, 255, 255, 1],
+          width: 2,
+        }),
+      }),
+      geometry: function (feature) {
+        const geom = feature.getGeometry()
+        if (geom instanceof Circle) {
+          return new Point(geom.getCenter())
+        }
+        return undefined
+      },
+    })
+
     const fillStyle = new StyleFill()
     const arrowUrl = ARROW_URL
     const curMap = this.map
@@ -354,11 +395,20 @@ export class DrawnFeature extends Feature {
         feature = this
       }
 
-      // First, clear the styles
+      // Clear the styles array
       styles.length = 0
 
-      if (feature.editable && feature.selected) {
+      // Show vertex handles when feature is being edited
+      if (feature.get('__isBeingEdited__')) {
         styles.push(vertexStyle)
+
+        // Show blue center point for circles in edit mode
+        if (
+          feature.featureType === 'drawnCircle' &&
+          feature.getGeometry()?.getType() === 'Circle'
+        ) {
+          styles.push(circleCenterStyle)
+        }
       }
 
       const order = feature.display_order ?? 0
@@ -460,7 +510,7 @@ export class DrawnFeature extends Feature {
       let stroke
       let featureStroke = feature.featureStyle.stroke
       if (featureStroke > 0) {
-        if (!feature.editable && feature.selected) {
+        if (feature.selected) {
           featureStroke = featureStroke + 3
         }
         stroke = new StyleStroke({
@@ -471,7 +521,7 @@ export class DrawnFeature extends Feature {
       }
 
       let featureSize = feature.featureStyle.size
-      if (!feature.editable && feature.selected) {
+      if (feature.selected) {
         featureSize = featureSize + 3
       }
       const imageOptions = {
@@ -483,55 +533,61 @@ export class DrawnFeature extends Feature {
         radius: featureSize,
       }
       let image = null
-      if (feature.featureStyle.symbolId) {
-        const options = {
-          ...imageOptions,
-          ...{
-            src:
-              MYMAPS_SYMBOL_URL +
-              '/' +
-              feature.featureStyle.symbolId +
-              '?scale=' +
-              featureSize,
-            scale: 1,
-            rotation: feature.featureStyle.angle,
-          },
-        }
-        image = new StyleIcon(options)
-      } else {
-        const shape = feature.featureStyle.shape
-        if (shape === 'circle') {
-          image = new StyleCircle(imageOptions as CircleOptions)
-        } else if (shape === 'square') {
-          Object.assign(imageOptions, {
-            points: 4,
-            angle: Math.PI / 4,
-            rotation: feature.featureStyle.angle,
-          })
-          image = new StyleRegularShape(imageOptions as RegularShapeOptions)
-        } else if (shape === 'triangle') {
-          Object.assign(imageOptions, {
-            points: 3,
-            angle: 0,
-            rotation: feature.featureStyle.angle,
-          })
-          image = new StyleRegularShape(imageOptions as RegularShapeOptions)
-        } else if (shape === 'star') {
-          Object.assign(imageOptions, {
-            points: 5,
-            angle: Math.PI / 4,
-            rotation: feature.featureStyle.angle,
-            radius2: featureSize,
-          })
-          image = new StyleRegularShape(imageOptions as RegularShapeOptions)
-        } else if (shape === 'cross') {
-          Object.assign(imageOptions, {
-            points: 4,
-            angle: 0,
-            rotation: feature.featureStyle.angle,
-            radius2: 0,
-          })
-          image = new StyleRegularShape(imageOptions as RegularShapeOptions)
+      // Only create image for Point and Label features
+      if (
+        feature.featureType === 'drawnPoint' ||
+        feature.featureType === 'drawnLabel'
+      ) {
+        if (feature.featureStyle.symbolId) {
+          const options = {
+            ...imageOptions,
+            ...{
+              src:
+                MYMAPS_SYMBOL_URL +
+                '/' +
+                feature.featureStyle.symbolId +
+                '?scale=' +
+                featureSize,
+              scale: 1,
+              rotation: feature.featureStyle.angle,
+            },
+          }
+          image = new StyleIcon(options)
+        } else {
+          const shape = feature.featureStyle.shape
+          if (shape === 'circle') {
+            image = new StyleCircle(imageOptions as CircleOptions)
+          } else if (shape === 'square') {
+            Object.assign(imageOptions, {
+              points: 4,
+              angle: Math.PI / 4,
+              rotation: feature.featureStyle.angle,
+            })
+            image = new StyleRegularShape(imageOptions as RegularShapeOptions)
+          } else if (shape === 'triangle') {
+            Object.assign(imageOptions, {
+              points: 3,
+              angle: 0,
+              rotation: feature.featureStyle.angle,
+            })
+            image = new StyleRegularShape(imageOptions as RegularShapeOptions)
+          } else if (shape === 'star') {
+            Object.assign(imageOptions, {
+              points: 5,
+              angle: Math.PI / 4,
+              rotation: feature.featureStyle.angle,
+              radius2: featureSize,
+            })
+            image = new StyleRegularShape(imageOptions as RegularShapeOptions)
+          } else if (shape === 'cross') {
+            Object.assign(imageOptions, {
+              points: 4,
+              angle: 0,
+              rotation: feature.featureStyle.angle,
+              radius2: 0,
+            })
+            image = new StyleRegularShape(imageOptions as RegularShapeOptions)
+          }
         }
       }
 
@@ -558,6 +614,15 @@ export class DrawnFeature extends Feature {
           styles.push(
             new StyleStyle({
               image,
+              fill: fillStyle,
+              stroke,
+              zIndex: order,
+            })
+          )
+        } else {
+          // For LineString and Polygon without image (no point style)
+          styles.push(
+            new StyleStyle({
               fill: fillStyle,
               stroke,
               zIndex: order,

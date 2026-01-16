@@ -11,6 +11,14 @@ class OlLayerInteractionDrawHelper {
         features: [],
       }),
       zIndex: DEFAULT_DRAW_ZINDEX,
+      // Use feature's own style function
+      style: (feature, resolution) => {
+        const featureStyle = (feature as any).getStyle()
+        if (typeof featureStyle === 'function') {
+          return featureStyle.call(feature, feature, resolution)
+        }
+        return featureStyle
+      },
     })
     olLayer.set('cyLayerType', FEATURE_LAYER_TYPE)
 

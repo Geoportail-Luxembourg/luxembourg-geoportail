@@ -1,11 +1,12 @@
 <script setup lang="ts">
+import { onBeforeUnmount } from 'vue'
 import { useTranslation } from 'i18next-vue'
 import { storeToRefs } from 'pinia'
 
 import { useDrawStore } from '@/stores/draw.store'
+import useDrawRoute from '@/composables/draw/draw-route.composable'
 
 import ButtonText from './button-text.vue'
-import { onBeforeUnmount } from 'vue'
 
 const { t } = useTranslation()
 const drawStore = useDrawStore()
@@ -17,12 +18,16 @@ const {
   toggleDrawPoint,
   setDrawActiveState,
 } = drawStore
-const { drawStateActive, editStateActive } = storeToRefs(drawStore)
+const { drawStateActive, editStateActive, followRoads } = storeToRefs(drawStore)
+
+// Initialize the composable - watchers inside will handle coordination
+useDrawRoute()
 
 onBeforeUnmount(() => {
   setDrawActiveState(undefined)
 })
 </script>
+
 <template>
   <div data-cy="toolbarDraw">
     <ul
@@ -93,8 +98,13 @@ onBeforeUnmount(() => {
       <li
         class="flex flex-row justify-center text-white bg-tertiary hover:bg-primary py-2 box-content border-y border-x border-gray-400"
       >
-        <label>
-          <input type="checkbox" />
+        <label class="cursor-pointer">
+          <input
+            type="checkbox"
+            v-model="followRoads"
+            :disabled="editStateActive === 'editLine'"
+            class="mr-2 cursor-pointer"
+          />
           {{ t('Suivre la route', { ns: 'client' }) }}
         </label>
       </li>

@@ -375,12 +375,22 @@ export interface MyMapFetchFeatureJson {
   properties: {
     map_id: string
     description: string
+    name: string
     color: string
-    stroke: string
+    stroke: number
     linestyle: string
+    opacity: number
+    showOrientation: boolean
+    shape: string
+    size: number
+    angle: number
     isLabel: boolean
-    label: string
+    isCircle: boolean
+    symbolId: string
+    symboltype: string
     display_order: number
+    fid?: number
+    __map_id__?: string
   }
 }
 

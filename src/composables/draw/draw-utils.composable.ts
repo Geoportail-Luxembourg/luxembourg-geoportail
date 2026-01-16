@@ -39,7 +39,8 @@ function convertCircleFeatureToPolygon(feature: DrawnFeature): DrawnFeature {
  * @returns The same feature with a circle geometry
  */
 function convertPolygonFeatureToCircle(feature: DrawnFeature): DrawnFeature {
-  const map: Map = useMap().getOlMap()
+  const map: Map | undefined = useMap().getOlMap()
+  if (!map) return feature
   const polygon = feature.getGeometry() as Polygon
   if (
     feature.featureType === 'drawnCircle' &&
@@ -56,7 +57,13 @@ function convertPolygonFeatureToCircle(feature: DrawnFeature): DrawnFeature {
       }
     })
     const circle = new Circle(centroid)
-    setCircleRadius(circle, maxDistance, map)
+    if (map) {
+      setCircleRadius(circle, maxDistance, map)
+    } else {
+      // If map is not available, set radius directly (assuming maxDistance is in meters)
+      // This will be corrected when the map becomes available
+      circle.setRadius(maxDistance)
+    }
     feature.setGeometry(circle as Circle)
   }
   return feature
@@ -92,7 +99,6 @@ function mergeGeometryLines(features: DrawnFeature[]) {
     const firstCoordFirstGeom = newGeom.getFirstCoordinate()
     const lastCoordFirstGeom = newGeom.getLastCoordinate()
     let prevLength = undefined
-    let idxCanditate = -1
     let exchange = false
     let reverseLine = false
 
@@ -119,7 +125,6 @@ function mergeGeometryLines(features: DrawnFeature[]) {
       ) {
         if (prevLength === undefined || lengthLine1 < prevLength) {
           prevLength = lengthLine1
-          idxCanditate = i
           exchange = true
           reverseLine = true
         }
@@ -130,7 +135,6 @@ function mergeGeometryLines(features: DrawnFeature[]) {
       ) {
         if (prevLength === undefined || lengthLine4 < prevLength) {
           prevLength = lengthLine4
-          idxCanditate = i
           exchange = false
           reverseLine = true
         }
@@ -141,13 +145,11 @@ function mergeGeometryLines(features: DrawnFeature[]) {
       ) {
         if (prevLength === undefined || lengthLine2 < prevLength) {
           prevLength = lengthLine2
-          idxCanditate = i
           exchange = false
           reverseLine = false
         }
       } else if (prevLength === undefined || lengthLine3 < prevLength) {
         prevLength = lengthLine3
-        idxCanditate = i
         exchange = true
         reverseLine = false
       }
@@ -167,8 +169,6 @@ function mergeGeometryLines(features: DrawnFeature[]) {
 
     firstFeature.resetProfileData()
     drawStore.removeFeature(featureIdsToRemove)
-
-    console.log(featureIdsToRemove)
 
     return firstFeature
   }
@@ -199,9 +199,6 @@ export default function useDrawUtils() {
     activateDrawLineContinue()
 
     if (currentDrawInteraction.value) {
-      feature.editable = true // to display vertex // TODO: move elsewhere
-      feature.changed()
-
       await nextTick() // mandatory! // FIXME: why?
 
       currentDrawInteraction.value?.setActive(true)

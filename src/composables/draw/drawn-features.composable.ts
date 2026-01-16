@@ -31,12 +31,17 @@ export default function useDrawnFeatures() {
       feature.get('name') ||
       `${t(featureGeomName)} ${drawnFeatures.value.length + 1}`
 
-    return DrawnFeature.generateFromFeature(feature, {
+    const drawnFeature = DrawnFeature.generateFromFeature(feature, {
       label,
       display_order: drawnFeatures.value.length,
       featureType,
       map_id: isMyMapEditable.value,
     })
+
+    // Restore style from feature properties if available
+    drawnFeature.fromProperties(feature.getProperties())
+
+    return drawnFeature
   }
 
   // TODO: some geometry validity checks have not been ported to draw-utils

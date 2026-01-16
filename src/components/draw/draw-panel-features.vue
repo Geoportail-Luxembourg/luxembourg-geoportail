@@ -8,5 +8,5 @@ const { drawnFeaturesExceptMyMaps: features } = storeToRefs(drawStore)
 </script>
 
 <template>
-  <FeaturesList :features="features" />
+  <FeaturesList :features="features" idPrefix="draw" />
 </template>

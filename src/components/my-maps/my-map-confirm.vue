@@ -2,7 +2,7 @@
 import { useTranslation } from 'i18next-vue'
 
 import ModalDialog from '@/components/common/modal-dialog.vue'
-import { MyMap } from '@/services/api/api-mymaps.service'
+import { MyMap } from '@/stores/app.store.model'
 
 defineEmits<{
   (e: 'cancel'): void
@@ -22,7 +22,7 @@ const title =
 </script>
 
 <template>
-  <ModalDialog :title="title" @close="$emit('cancel')">
+  <ModalDialog :title="title" @close="$emit('cancel')" role="alertdialog">
     <template v-slot:content>
       <template v-if="props.mode === 'clear'">
         {{

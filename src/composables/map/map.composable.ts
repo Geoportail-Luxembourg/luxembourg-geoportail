@@ -28,6 +28,10 @@ export default function useMap() {
     return map
   }
 
+  function hasOlMap() {
+    return !!olMap.value
+  }
+
   /**
    * Creates and return an OpenLayers map
    * 'keyboardEventTarget': document options is mandatory to use "esc" and "back" on keydown
@@ -188,6 +192,7 @@ export default function useMap() {
   return {
     olMap,
     getOlMap,
+    hasOlMap,
     createMap,
     equalsLayer,
     hasLayer,

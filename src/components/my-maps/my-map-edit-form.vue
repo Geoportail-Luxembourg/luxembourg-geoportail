@@ -12,14 +12,13 @@ import {
   editMyMap,
   updateMyMap,
   fetchCategories,
-  MyMap,
   MyMapCreatedJson,
 } from '@/services/api/api-mymaps.service'
+import { MyMap } from '@/stores/app.store.model'
 import { useAlertNotificationsStore } from '@/stores/alert-notifications.store'
 import { AlertNotificationType } from '@/stores/alert-notifications.store.model'
 import { useThemeStore } from '@/stores/config.store'
 import { useMapStore } from '@/stores/map.store'
-import { useDrawStore } from '@/stores/draw.store'
 import useMyMaps from '@/composables/my-maps/my-maps.composable'
 
 import { EditFormModeType } from './my-maps.model'
@@ -134,8 +133,15 @@ onBeforeMount(async () => {
     <template v-slot:content>
       <form class="flex flex-col gap-4">
         <div class="flex flex-col">
-          <label>{{ t('Titre de la carte') }}</label>
-          <input class="lux-input" type="text" v-model="mapTitle" />
+          <label for="map-title-input">{{ t('Titre de la carte') }}</label>
+          <input
+            id="map-title-input"
+            class="lux-input"
+            type="text"
+            v-model="mapTitle"
+            required
+            :aria-required="true"
+          />
         </div>
 
         <div>
@@ -146,18 +152,24 @@ onBeforeMount(async () => {
         </div>
 
         <div>
+          <label for="category-select" class="sr-only">{{
+            t('Please select a Category')
+          }}</label>
           <DropdownList
+            id="category-select"
             class="min-w-36"
             :placeholder="t('Please select a Category')"
             :options="categoriesOptions"
             v-model="category"
             @change="v => (category = v)"
+            :aria-label="t('Please select a Category')"
           ></DropdownList>
         </div>
 
         <div class="flex flex-col">
-          <label>{{ t('Description') }}</label>
+          <label for="map-description-input">{{ t('Description') }}</label>
           <textarea
+            id="map-description-input"
             class="lux-input"
             rows="3"
             v-model="mapDescription"

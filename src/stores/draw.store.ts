@@ -26,12 +26,12 @@ export const useDrawStore = defineStore('draw', () => {
   const drawStateActive = ref<DrawStateActive>(undefined)
   const editStateActive = ref<EditStateActive>(undefined)
   const drawnFeatures = ref<DrawnFeature[]>([])
-  const drawnFeaturesExceptMyMaps = computed(
-    () => drawnFeatures.value.filter(f => !f.map_id) as DrawnFeature[]
-  )
-  const drawnFeaturesMyMaps = computed(
-    () => drawnFeatures.value.filter(f => f.map_id) as DrawnFeature[]
-  )
+  const drawnFeaturesExceptMyMaps = computed(() => {
+    return drawnFeatures.value.filter(f => !f.map_id) as DrawnFeature[]
+  })
+  const drawnFeaturesMyMaps = computed(() => {
+    return drawnFeatures.value.filter(f => f.map_id) as DrawnFeature[]
+  })
   const editingFeature = computed(() =>
     editingFeatureId.value
       ? drawnFeatures.value.find(f => f.id === editingFeatureId.value)
@@ -40,6 +40,7 @@ export const useDrawStore = defineStore('draw', () => {
   const featureEditionDocked = ref(false)
   const currentDrawInteraction = ref<Draw | undefined>(undefined)
   const clipLineActive = ref(false)
+  const followRoads = ref(false)
   const queueAddedDrawnFeatures = shallowRef<DrawnFeature[]>([])
   const showModalMergeLines = ref(false)
 
@@ -222,7 +223,8 @@ export const useDrawStore = defineStore('draw', () => {
   function removeAllFeatures() {
     activeFeatureId.value = undefined
     editingFeatureId.value = undefined
-    drawnFeatures.value = []
+    // Keep MyMaps features, only remove URL features (without map_id)
+    drawnFeatures.value = drawnFeatures.value.filter(f => f.map_id)
   }
 
   function reorderFeatures(featuresId: string[]) {
@@ -281,6 +283,7 @@ export const useDrawStore = defineStore('draw', () => {
     featureEditionDocked,
     currentDrawInteraction,
     clipLineActive,
+    followRoads,
     queueAddedDrawnFeatures,
     showModalMergeLines,
     deactivateDraw,

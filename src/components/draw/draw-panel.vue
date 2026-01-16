@@ -27,11 +27,8 @@ const { toggleMyMapsOpen } = appStore
 const { feedbackOpen, feedbackanfOpen, feedbackageOpen, feedbackcruesOpen } =
   storeToRefs(appStore)
 const drawStore = useDrawStore()
-const {
-  drawnFeaturesExceptMyMaps: features,
-  clipLineActive,
-  showModalMergeLines,
-} = storeToRefs(drawStore)
+const { drawnFeaturesExceptMyMaps: features, clipLineActive } =
+  storeToRefs(drawStore)
 const myMaps = useMyMaps()
 const drawingMenuOptions = computed(() => {
   const menu = [
