@@ -23,12 +23,23 @@ export default function useSortable(
     sortableParams.onSort = event => params.onSort(event.to.children)
   }
 
-  element &&
-    (sortable = Sortable.create(element, {
-      ...sortableParams,
-      // eslint-disable-next-line @typescript-eslint/no-unused-vars
-      ...((params && (({ onSort, ...rest }) => rest)(params)) || {}), // inline synthax to extract onSort
-    }))
+  createSortable()
 
-  return sortable
+  function createSortable() {
+    element &&
+      (sortable = Sortable.create(element, {
+        ...sortableParams,
+        // eslint-disable-next-line @typescript-eslint/no-unused-vars
+        ...((params && (({ onSort, ...rest }) => rest)(params)) || {}), // inline synthax to extract onSort
+      }))
+  }
+
+  function destroySortable() {
+    sortable?.destroy()
+  }
+
+  return {
+    sortable,
+    destroy: destroySortable,
+  }
 }

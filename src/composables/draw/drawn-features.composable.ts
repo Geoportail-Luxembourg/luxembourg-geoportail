@@ -1,109 +1,47 @@
 import { t } from 'i18next'
 import { storeToRefs } from 'pinia'
+
 import { Feature } from 'ol'
-import { Point, Circle, Geometry, LineString } from 'ol/geom'
-import Polygon from 'ol/geom/Polygon'
-import { Coordinate } from 'ol/coordinate'
+import { Geometry } from 'ol/geom'
 
 import { useDrawStore } from '@/stores/draw.store'
-import { useAppStore } from '@/stores/app.store'
-import { screenSizeIsAtLeast } from '@/services/common/device.utils'
-import { DrawnFeature } from '@/services/draw/drawn-feature'
-import { DrawnFeatureType, DrawnFeatureStyle } from '@/stores/draw.store.model'
+import { DrawnFeature } from '@/services/ol-feature/ol-feature-drawn'
+import { DrawnFeatureType } from '@/stores/draw.store.model'
+import useMyMaps from '@/composables/my-maps/my-maps.composable'
 
 export default function useDrawnFeatures() {
   const drawStore = useDrawStore()
   const { drawStateActive, drawnFeatures } = storeToRefs(drawStore)
-  const { addDrawnFeature } = drawStore
-  const { feedbackOpen, feedbackanfOpen, feedbackageOpen, feedbackcruesOpen } =
-    storeToRefs(useAppStore())
-  const { toggleMyMapsOpen } = useAppStore()
+  const { isMyMapEditable } = useMyMaps()
 
-  const features = drawnFeatures.value as DrawnFeature[]
-
-  function addFeature(feature: Feature<Geometry>) {
-    const nbFeatures = features.length
+  function generateDrawnFeature(feature: Feature<Geometry>) {
+    const featureGeomName = feature
+      .getGeometry()
+      ?.getType()
+      .replace('String', '')!
     const featureType = (
       drawStateActive.value === 'drawCircle'
         ? 'drawnCircle'
         : drawStateActive.value === 'drawLabel'
         ? 'drawnLabel'
-        : `drawn${feature.getGeometry()?.getType().replace('String', '')}`
+        : `drawn${featureGeomName}`
     ) as DrawnFeatureType
 
-    const name =
+    const label =
       feature.get('name') ||
-      `${t(featureType.replace('drawn', ''))} ${drawnFeatures.value.length + 1}`
+      `${t(featureGeomName)} ${drawnFeatures.value.length + 1}`
 
-    const featureStyle = {
-      angle: 0,
-      color: '#ed1c24',
-      arrowcolor: undefined,
-      stroke: 1.25,
-      linestyle: 'plain',
-      opacity: 0.2,
-      showOrientation: false,
-      shape: 'circle',
-      symbolId: undefined,
-      symboltype: undefined,
-      size: 10,
-    } as DrawnFeatureStyle
-
-    const drawnFeature = Object.assign(new DrawnFeature(), feature, {
-      id: Math.floor(Math.random() * Date.now()),
-      label: name,
-      description: '',
-      display_order: nbFeatures,
-      editable: true,
-      selected: false,
-      map_id: undefined, // mymap uuid
-      // TODO Mymaps
-      // map_id: this.appMymaps_.isEditable() ? this.appMymaps_.getMapId() : undefined,
-      saving: false,
+    const drawnFeature = DrawnFeature.generateFromFeature(feature, {
+      label,
+      display_order: drawnFeatures.value.length,
       featureType,
-      featureStyle,
+      map_id: isMyMapEditable.value,
     })
 
-    addDrawnFeature(drawnFeature)
+    // Restore style from feature properties if available
+    drawnFeature.fromProperties(feature.getProperties())
 
-    if (
-      screenSizeIsAtLeast('md') &&
-      feedbackOpen.value !== true &&
-      feedbackanfOpen.value !== true &&
-      feedbackageOpen.value !== true &&
-      feedbackcruesOpen.value !== true
-    ) {
-      toggleMyMapsOpen(true)
-    }
-  }
-
-  /**
-   * Get cordinates of a features, used to get anchor for edition popup on the map
-   * @param feature The ol feature to get the coordinates from
-   * @returns The coordinates of the feature or undefined
-   */
-  function getFeatCoordinates(feature: Feature<Geometry>) {
-    const geometry = feature.getGeometry()
-    let coordinates: Coordinate | undefined = undefined
-
-    if (geometry) {
-      switch (geometry.getType()) {
-        case 'Point':
-          coordinates = (<Point>geometry).getFlatCoordinates()
-          break
-        case 'LineString':
-          coordinates = (<LineString>geometry).getFlatMidpoint()
-          break
-        case 'Polygon':
-          coordinates = (<Polygon>geometry).getFlatInteriorPoint()
-          break
-        case 'Circle':
-          coordinates = (<Circle>geometry).getCenter()
-          break
-      }
-    }
-
-    return coordinates
+    return drawnFeature
   }
 
   // TODO: some geometry validity checks have not been ported to draw-utils
@@ -169,18 +107,7 @@ export default function useDrawnFeatures() {
   //   return name
   // }
 
-  // function saveFeature(feature: Feature) {
-  //   // TODO Mymaps: saveFeatureInMymaps_
-  //   // if (this.appMymaps_.isEditable() &&
-  //   //     !!feature.get('__map_id__')) {
-  //   //   this.saveFeatureInMymaps_(feature);
-  //   // }
-  //   // DONE in state persistor
-  //   encodeFeaturesInUrl(features.getArray())
-  // }
-
   return {
-    addFeature,
-    getFeatCoordinates,
+    generateDrawnFeature,
   }
 }

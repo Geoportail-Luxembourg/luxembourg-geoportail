@@ -32,7 +32,7 @@ import Text from 'ol/style/Text'
 import Stroke from 'ol/style/Stroke'
 import Fill from 'ol/style/Fill'
 import Style from 'ol/style/Style'
-import { DrawnFeature } from '@/services/draw/drawn-feature'
+import { DrawnFeature } from '@/services/ol-feature/ol-feature-drawn'
 import { DrawnFeatureStyle } from '@/stores/draw.store.model'
 import { colorRgbArrayToHex } from '@/services/colors.utils'
 
@@ -258,7 +258,6 @@ class FeatureHash extends TextFeature {
         id: Math.floor(Math.random() * Date.now()),
         label: name,
         description,
-        editable: false,
         display_order: defaultOrder,
         selected: false,
         map_id: undefined, // ??? TODO : check use of this param
@@ -267,6 +266,13 @@ class FeatureHash extends TextFeature {
         featureStyle: drawnFeatureStyle,
       }
     )
+
+    // Set editable based on whether this is a URL feature (no map_id) or MyMap feature
+    drawnFeature.editable = drawnFeature.map_id === undefined
+
+    // Apply the style function to the feature
+    drawnFeature.setStyle(drawnFeature.getStyleFunction())
+
     return drawnFeature
 
     // TODO check defaults:
@@ -285,7 +291,7 @@ class FeatureHash extends TextFeature {
    * Encode a feature into a logical sequence of characters.
    */
   writeFeatureText(feature: Feature, opt_options: any) {
-    const encodedParts: String[] = []
+    const encodedParts: string[] = []
 
     // encode geometry
 
@@ -583,13 +589,12 @@ function encodeStyleText_(textStyle: Text, encodedStyles: string[]) {
  */
 function readLineStringGeometry_(this: FeatureHash, text: string) {
   text = text.substring(2, text.length - 1)
-  const flatCoordinates = (this as any)?.decodeCoordinates_(text)
-  return new olGeomLineString(flatCoordinates)
+  const flatCoordinates = this.decodeCoordinates_(text, [])
+  return new olGeomLineString(flatCoordinates, 'XY')
 }
 
 /**
  * Read a logical sequence of characters and return a corresponding
- * {@link ol.geom.MultiLineString}.
  */
 function readMultiLineStringGeometry_(this: FeatureHash, text: string) {
   text = text.substring(2, text.length - 1)
@@ -813,7 +818,6 @@ function castValue_(key: string, value: string) {
     'size',
   ]
   const boolProperties = [
-    luxFormatFeatureProperties.IS_CIRCLE,
     luxFormatFeatureProperties.IS_RECTANGLE,
     luxFormatFeatureProperties.IS_TEXT,
     luxFormatFeatureProperties.SHOW_MEASURE,
@@ -1094,6 +1098,9 @@ const featureHash = new FeatureHash({
     const properties: any = feature.toProperties()
     for (const key in properties) {
       if (properties[key] === null || properties[key] === undefined) {
+        delete properties[key]
+      } else if (key === '__map_id__' || key === 'fid') {
+        // Exclude MyMaps-specific properties from URL encoding
         delete properties[key]
       } else {
         if (SHORT_PARAM_[key as ShortParamKeys]) {

@@ -9,11 +9,11 @@ import {
 } from 'ol/geom'
 
 import { PROJECTION_WGS84 } from '@/composables/map/map.composable'
-import { DrawnFeature } from '@/services/draw/drawn-feature'
-import { convertCircleFeatureToPolygon } from '@/composables/draw/draw-utils'
+import { DrawnFeature } from '@/services/ol-feature/ol-feature-drawn'
+import { convertCircleFeatureToPolygon } from '@/composables/draw/draw-utils.composable'
 import { ExportFeature } from './export-feature'
 
-vi.mock('@/composables/draw/draw-utils', () => ({
+vi.mock('@/composables/draw/draw-utils.composable', () => ({
   convertCircleFeatureToPolygon: vi.fn(),
 }))
 

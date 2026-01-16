@@ -12,7 +12,6 @@ import {
   ShallowRef,
   shallowRef,
   watch,
-  watchEffect,
 } from 'vue'
 import { useTranslation } from 'i18next-vue'
 import { Feature } from 'ol'
@@ -23,7 +22,7 @@ import ElevationProfile from '@/components/common/graph/elevation-profile.vue'
 import { ProfileData } from '@/components/common/graph/elevation-profile'
 import useProfilePosition from '@/composables/map/profile-position.composable'
 import { useProfilePositionStore } from '@/stores/profile-position.store'
-import { DrawnFeature } from '@/services/draw/drawn-feature'
+import { DrawnFeature } from '@/services/ol-feature/ol-feature-drawn'
 import {
   exportFeatureService,
   FeatExport,
@@ -81,15 +80,43 @@ onUnmounted(() => {
   profilePositionStore.setPosition(undefined, undefined)
 })
 
-watchEffect(() => {
-  // Watch update of feature geom to trigger update the profile
-  if (props.feature && !props.feature.profileData) {
-    profileData.value = undefined // Force refresh the graph
-    props.feature?.getProfile().then(data => (profileData.value = data))
-  } else {
-    profileData.value = undefined
+// watchEffect(() => {
+//   // Watch update of feature geom to trigger update the profile
+//   if (props.feature && !props.feature.profileData) {
+//     profileData.value = undefined // Force refresh the graph
+//     props.feature?.getProfile().then(data => (profileData.value = data))
+//   } else {
+//     profileData.value = undefined
+//   }
+// })
+
+watch(
+  () => props.feature,
+  (newFeature, oldFeature) => {
+    if (newFeature !== oldFeature) {
+      if (props.feature && !props.feature.profileData) {
+        profileData.value = undefined // Force refresh the graph
+        props.feature?.getProfile().then(data => (profileData.value = data))
+      } else {
+        profileData.value = undefined
+      }
+    }
   }
-})
+)
+
+watch(
+  () => props.feature?.profileData,
+  (newProfileData, oldProfileData) => {
+    if (newProfileData !== oldProfileData) {
+      if (props.feature && !props.feature.profileData) {
+        profileData.value = undefined // Force refresh the graph
+        props.feature?.getProfile().then(data => (profileData.value = data))
+      } else {
+        profileData.value = undefined
+      }
+    }
+  }
+)
 
 watch(
   profileData,

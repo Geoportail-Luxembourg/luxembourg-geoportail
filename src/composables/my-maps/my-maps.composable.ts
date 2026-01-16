@@ -1,0 +1,375 @@
+import { computed, watch } from 'vue'
+import { storeToRefs } from 'pinia'
+import { useTranslation } from 'i18next-vue'
+
+import { useAlertNotificationsStore } from '@/stores/alert-notifications.store'
+import { AlertNotificationType } from '@/stores/alert-notifications.store.model'
+import { useAppStore } from '@/stores/app.store'
+import { MyMap } from '@/stores/app.store.model'
+import { useThemeStore } from '@/stores/config.store'
+import { useMapStore } from '@/stores/map.store'
+import { Layer } from '@/stores/map.store.model'
+import {
+  clearMyMap as clearMyMapApi,
+  deleteMyMapFeature,
+  fetchMyMap,
+  fetchMyMapFeatures,
+  MyMapFetchFeatureJson,
+  MyMapSaveFeatureJson,
+  saveMyMapFeature,
+  updateMyMap,
+} from '@/services/api/api-mymaps.service'
+import useThemes from '@/composables/themes/themes.composable'
+import useLayers from '@/composables/layers/layers.composable'
+import useBackgroundLayer from '@/composables/background-layer/background-layer.composable'
+import { useUserManagerStore } from '@/stores/user-manager.store'
+import { DrawnFeature } from '@/services/ol-feature/ol-feature-drawn'
+import { useDrawStore } from '@/stores/draw.store'
+import { convertPolygonFeatureToCircle } from '@/composables/draw/draw-utils.composable'
+import useMap from '@/composables/map/map.composable'
+import { createEmpty, extend } from 'ol/extent'
+
+let watchersDefined = false
+
+export default function useMyMaps() {
+  const { t } = useTranslation()
+  const appStore = useAppStore()
+  const mapStore = useMapStore()
+  const drawStore = useDrawStore()
+  const { drawnFeatures, drawnFeaturesMyMaps, drawnFeaturesExceptMyMaps } =
+    storeToRefs(drawStore)
+  const themeStore = useThemeStore()
+  const { addNotification } = useAlertNotificationsStore()
+  const { authenticated } = storeToRefs(useUserManagerStore())
+  const { myMap, myMapId, myMapIsLoading, myMapLayersChanged } =
+    storeToRefs(appStore)
+  const { layers, bgLayer } = storeToRefs(mapStore)
+  const themes = useThemes()
+  const { themeName } = storeToRefs(themeStore)
+  const { initLayer } = useLayers()
+  const { setBgLayer } = useBackgroundLayer()
+  const isMyMapEditable = computed(() =>
+    myMap.value?.is_editable && authenticated.value
+      ? myMap.value.uuid
+      : undefined
+  )
+
+  function handleLoadMapError() {
+    addNotification(
+      t('Erreur inattendue lors du chargement de votre carte.'),
+      AlertNotificationType.ERROR
+    )
+  }
+
+  async function loadMyMap(uuid: string) {
+    myMap.value = undefined
+    myMapIsLoading.value = true
+
+    try {
+      const [map, features] = await Promise.all([
+        fetchMyMap(uuid),
+        fetchMyMapFeatures(uuid),
+      ])
+
+      const newFeatures = features.features?.map((f: MyMapFetchFeatureJson) => {
+        const feature = DrawnFeature.generateFromGeoJson(f, {
+          map_id: uuid,
+          id: f.id!, // !!! Force reattribution of id from backend
+          fid: f.id!, // !!! Force reattribution of fid from backend
+          display_order: f.properties?.display_order,
+        })
+        // Convert polygon geometries to circles if needed (circles are saved as polygons in MyMaps)
+        return convertPolygonFeatureToCircle(feature)
+      }) as DrawnFeature[]
+
+      myMap.value = map
+      // Set editable property based on authentication and map permissions
+      newFeatures.forEach(f => {
+        f.editable = authenticated.value && map.is_editable
+      })
+      drawnFeatures.value = [...drawnFeatures.value, ...newFeatures]
+    } catch (e) {
+      // eslint-disable-next-line no-console
+      console.error('[MyMaps] loadMyMap() - ERROR', e)
+      handleLoadMapError()
+    } finally {
+      myMapIsLoading.value = false
+    }
+  }
+
+  function openMyMap(uuid: string) {
+    myMapId.value = uuid
+  }
+
+  function closeMyMap() {
+    // When closing mymaps, remove all mymaps features from the map view (don't save to mymaps backend)
+    myMapId.value && drawStore.removeMyMapsFeature(myMapId.value)
+
+    myMapId.value = undefined
+    myMap.value = undefined
+  }
+
+  async function clearMyMap(uuid: string) {
+    const cleared = await clearMyMapApi(uuid)
+
+    if (cleared) {
+      drawnFeaturesMyMaps.value.forEach(f => deleteMyMapFeature(f.id))
+      drawStore.removeMyMapsFeature(uuid)
+    }
+
+    return cleared
+  }
+
+  /**
+   * Update MyMap with (app) map content (apply changes on layers/bgLayer)
+   * and save MyMap changes to api
+   */
+  async function applyToMyMap() {
+    if (myMap.value) {
+      const layersToSave = layers.value.reverse()
+      myMap.value.bg_layer = bgLayer.value?.name ?? 'blank'
+      myMap.value.bg_opacity = 1
+      myMap.value.layers = layersToSave.map(l => l.name).join(',')
+      myMap.value.layers_opacity = layersToSave
+        .map(l => l.opacity ?? '1')
+        .join(',')
+      myMap.value.layers_visibility = layersToSave.map(() => 'true').join(',') // layersVisibility: Is it usefull?
+      myMap.value.layers_indices = layersToSave.map((l, i) => i).join(',')
+
+      updateMyMap(
+        myMap.value.uuid,
+        myMap.value.bg_layer,
+        myMap.value.bg_opacity,
+        myMap.value.layers,
+        myMap.value.layers_opacity,
+        myMap.value.layers_visibility,
+        myMap.value.layers_indices,
+        themeName.value
+      ).catch(() =>
+        addNotification(
+          t('Erreur inattendue lors de la mise à jour de votre carte.'),
+          AlertNotificationType.ERROR
+        )
+      )
+    }
+  }
+
+  /**
+   * Update the (app) map with the MyMap content: layers and bgLayer
+   */
+  function resetFromMyMap() {
+    // Set background layer, same as in MyMap definition
+    setBgLayer(undefined, myMap.value?.bg_layer)
+
+    // Load layers from MyMaps definition and set layers to the map
+    const myOpacities = myMap.value?.layers_opacity
+      ? myMap.value?.layers_opacity.split(',').map(o => parseInt(o, 10))
+      : []
+    const myVisibilities = myMap.value?.layers_visibility
+      ? myMap.value?.layers_visibility
+          .split(',')
+          .map(v => (v === 'false' ? false : true))
+      : []
+    const myLayers: Layer[] = myMap.value?.layers
+      ? myMap.value?.layers
+          .split(',')
+          .map((lName, index) => {
+            const l = themes.findByName(lName.trim())
+
+            if (l) {
+              const layer = initLayer(l as unknown as Layer)
+
+              layer.opacity =
+                myVisibilities[index] ?? 1 === 1 ? myOpacities[index] : 0
+
+              return layer
+            }
+
+            return undefined
+          })
+          .filter((l): l is Layer => l !== undefined)
+      : []
+
+    mapStore.removeAllLayers()
+    mapStore.addLayers(...myLayers)
+
+    // Set view to MyMap's zoom and center if defined
+    if (
+      myMap.value &&
+      myMap.value.zoom !== null &&
+      myMap.value.x !== null &&
+      myMap.value.y !== null
+    ) {
+      const olMap = useMap().getOlMap()
+      olMap.getView().setZoom(myMap.value.zoom)
+      olMap.getView().setCenter([myMap.value.x, myMap.value.y])
+    } else {
+      // If no saved view, fit to the extent of all MyMap features
+      const olMap = useMap().getOlMap()
+      const extent = createEmpty()
+      drawnFeaturesMyMaps.value.forEach(f => {
+        if (f.getGeometry()) {
+          extend(extent, f.getGeometry()!.getExtent())
+        }
+      })
+      // Only fit if extent is not empty and valid
+      if (
+        extent[0] !== Infinity &&
+        extent[1] !== Infinity &&
+        extent[2] !== -Infinity &&
+        extent[3] !== -Infinity &&
+        extent[0] < extent[2] &&
+        extent[1] < extent[3]
+      ) {
+        olMap.getView().fit(extent, { padding: [20, 20, 20, 20] })
+      }
+    }
+  }
+
+  function init() {
+    if (!watchersDefined) {
+      // Populate MyMap object whenever MyMap uuid changes
+      watch(
+        myMapId,
+        async (uuid, oldValue) => {
+          if (uuid && uuid !== oldValue && useMap().getOlMap()) {
+            loadMyMap(uuid)
+          } else if (!uuid && oldValue) {
+            // When closing MyMap, make all MyMap features become URL features
+            drawnFeaturesMyMaps.value.forEach(f => {
+              f.map_id = undefined
+              f.editable = true
+              f.changed()
+            })
+            myMap.value = undefined
+          }
+        },
+        { immediate: true }
+      )
+
+      // When map becomes ready, load mymap if needed
+      watch(
+        () => useMap().olMap,
+        olMap => {
+          if (olMap && myMapId.value && !myMap.value) {
+            loadMyMap(myMapId.value)
+          }
+        }
+      )
+
+      // Populate map (app map) content when MyMap is loaded
+      watch(myMap, myMap => myMap && resetFromMyMap())
+
+      // Update editable property of mymaps features when authentication changes
+      watch(authenticated, isAuthenticated => {
+        drawnFeaturesMyMaps.value.forEach(f => {
+          f.editable = isAuthenticated && (myMap.value?.is_editable ?? false)
+          f.changed() // Trigger feature update to refresh UI
+        })
+        // Si on se reconnecte, recharger la mymaps pour mettre à jour is_editable
+        if (isAuthenticated && myMapId.value && myMap.value) {
+          loadMyMap(myMapId.value)
+        }
+      })
+
+      // Check if MyMap content differs from Map store
+      watch(
+        [layers, bgLayer, myMap],
+        ([layers, bgLayer, myMap]) =>
+          (myMapLayersChanged.value = myMap
+            ? myMapCompareLayers(myMap, layers, bgLayer)
+            : false),
+        { immediate: true, deep: true }
+      )
+
+      watchersDefined = true
+    }
+  }
+
+  async function addInMyMap() {
+    if (isMyMapEditable.value) {
+      const featuresToMove = [...drawnFeaturesExceptMyMaps.value]
+      const oldFeatureIds = featuresToMove
+        .map(f => f.id)
+        .filter(id => id !== undefined)
+
+      // Remove old features from URL (drawnFeaturesExceptMyMaps) BEFORE updating their IDs
+      if (oldFeatureIds.length > 0) {
+        drawStore.removeFeature(oldFeatureIds, false) // false = don't update MyMap backend
+      }
+
+      // Save all features to MyMaps backend and update their IDs
+      await Promise.all(
+        featuresToMove.map(async f => {
+          f.map_id = isMyMapEditable.value
+          const resp = await saveMyMapFeature(
+            <string>f.map_id,
+            f.toGeoJSONString()
+          ).catch(e => {
+            // eslint-disable-next-line no-console
+            console.error('[MyMaps] Error saving feature:', e)
+            addNotification(
+              t(
+                'Erreur inattendue lors de la sauvegarde de votre modification.'
+              ),
+              AlertNotificationType.ERROR
+            )
+          })
+          if (resp) {
+            f.id = (<MyMapSaveFeatureJson>resp).id!
+            f.fid = (<MyMapSaveFeatureJson>resp).id!
+          }
+        })
+      )
+
+      // Add the moved features (now with MyMaps IDs) to drawnFeatures
+      drawnFeatures.value = [...drawnFeatures.value, ...featuresToMove]
+    }
+  }
+
+  function checkAuth() {
+    if (!authenticated.value) {
+      addNotification(t("Veuillez vous identifier afin d'accéder à vos cartes"))
+      appStore.toggleAuthFormOpen(true)
+      return false
+    }
+
+    return true
+  }
+
+  return {
+    isMyMapEditable,
+    init,
+    addInMyMap,
+    loadMyMap,
+    checkAuth,
+    clearMyMap,
+    closeMyMap,
+    openMyMap,
+    applyToMyMap,
+    resetFromMyMap,
+  }
+}
+
+function myMapCompareLayers(
+  myMap: MyMap,
+  layers: Layer[],
+  bgLayer: Layer | null | undefined
+) {
+  const selectedLayers = layers.map(l => l.name).join(',')
+  const selectedOpacities = layers.map(l => l.opacity).join(',')
+
+  if (
+    selectedLayers !== (myMap.layers ?? '') ||
+    selectedOpacities !== (myMap.layers_opacity ?? '')
+  ) {
+    return true
+  }
+
+  if ((bgLayer?.name ?? 'blank') !== (myMap.bg_layer ?? 'blank')) {
+    // NB. myMap.bg_layer ?? 'blank' => consider "null" or "undefined" as 'blank' bg
+    return true
+  }
+
+  return false
+}

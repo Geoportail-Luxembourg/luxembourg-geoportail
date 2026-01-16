@@ -1,12 +1,10 @@
-import { watchEffect, WatchStopHandle } from 'vue'
+import { watch, watchEffect, WatchStopHandle } from 'vue'
+import { storeToRefs } from 'pinia'
 
 import { useAppStore } from '@/stores/app.store'
 import { SP_KEY_MAPID } from './state-persistor.model'
 import { storageHelper } from './storage/storage.helper'
-
-// TODO: handle "My Map" functionality in v4
-// for now, only mapId x Permalink is implemented (for bg selection, use case when there is a mapId in the permalink)
-// see legacy LayerPermalinkManager l. 609
+import useMyMaps from '@/composables/my-maps/my-maps.composable'
 
 class StatePersistorMyMapService {
   bootstrap() {
@@ -21,23 +19,30 @@ class StatePersistorMyMapService {
   }
 
   persist() {
-    // TODO: activate persist if needed when implementing "My Map"
-    // const appStore = useAppStore()
-    // const { mapId } = storeToRefs(appStore)
-    // watch(
-    //   mapId,
-    //   (value, oldValue) => {
-    //     if (oldValue !== value) {
-    //       storageHelper.setValue(SP_KEY_MAPID, value)
-    //     }
-    //   },
-    //   { immediate: true }
-    // )
+    const appStore = useAppStore()
+    const { myMap } = storeToRefs(appStore)
+
+    watch(
+      myMap, // ! watch only myMap changes, not on mapId
+      (value, oldValue) => {
+        if (oldValue?.uuid !== value?.uuid) {
+          if (value) {
+            storageHelper.setValue(SP_KEY_MAPID, value.uuid)
+          } else {
+            storageHelper.removeItem(SP_KEY_MAPID)
+          }
+        }
+      },
+      { immediate: true }
+    )
   }
 
   restore() {
-    const mapId = <string | undefined>storageHelper.getValue(SP_KEY_MAPID)
-    useAppStore().setMapId(mapId)
+    const myMapUuid = <string | undefined>storageHelper.getValue(SP_KEY_MAPID)
+
+    if (myMapUuid) {
+      useMyMaps().openMyMap(myMapUuid)
+    }
   }
 }
 

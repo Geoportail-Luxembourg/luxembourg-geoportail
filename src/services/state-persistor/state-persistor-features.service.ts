@@ -4,7 +4,7 @@ import { SP_KEY_FEATURES, StatePersistorService } from './state-persistor.model'
 import { storageHelper } from './storage/storage.helper'
 import { storageFeaturesMapper } from './state-persistor-features.mapper'
 import { useDrawStore } from '@/stores/draw.store'
-import { DrawnFeature } from '@/services/draw/drawn-feature'
+import { DrawnFeature } from '@/services/ol-feature/ol-feature-drawn'
 
 class StatePersistorFeaturesService implements StatePersistorService {
   bootstrap() {
@@ -41,6 +41,12 @@ class StatePersistorFeaturesService implements StatePersistorService {
       storageFeaturesMapper.urlToFeatures
     )
     const newFeatures = features.filter(f => f != undefined) as DrawnFeature[]
+
+    // Ensure URL features don't have a map_id (they should remain independent from MyMaps)
+    newFeatures.forEach(f => {
+      f.map_id = undefined
+    })
+
     drawnFeatures.value = [...drawnFeatures.value, ...newFeatures]
   }
 }
