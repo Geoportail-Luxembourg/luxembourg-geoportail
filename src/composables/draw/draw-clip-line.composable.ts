@@ -7,6 +7,8 @@ import { listen } from 'ol/events'
 import OlInteractionClipLine from '@/services/ol-interaction/ol-interaction-clipline'
 import useMap from '../map/map.composable'
 import useDrawnFeatures from './drawn-features.composable'
+import { DrawnFeature } from '@/services/ol-feature/ol-feature-drawn'
+import { LineString } from 'ol/geom'
 
 export default function useClipLine() {
   const { t } = useTranslation()
@@ -88,8 +90,29 @@ export default function useClipLine() {
         drawStore.removeFeature(originalFeatureId)
 
         // Add the two new features to the store
-        const drawnFeature1 = generateDrawnFeature(feature1)
-        const drawnFeature2 = generateDrawnFeature(feature2)
+        // If the original feature is a DrawnFeature, clone it to preserve style and other custom properties
+        let drawnFeature1
+        let drawnFeature2
+        const originalIsDrawnFeature =
+          typeof (originalFeature as any).clone === 'function' &&
+          (originalFeature as any).featureStyle !== undefined
+
+        if (originalIsDrawnFeature) {
+          // Use clone to preserve style and metadata, then replace geometry with the clipped parts
+          drawnFeature1 = (originalFeature as DrawnFeature).clone()
+          drawnFeature1.setGeometry(
+            (feature1.getGeometry() as LineString).clone()
+          )
+
+          drawnFeature2 = (originalFeature as DrawnFeature).clone()
+          drawnFeature2.setGeometry(
+            (feature2.getGeometry() as LineString).clone()
+          )
+        } else {
+          // Fallback: generate from the clipped ol Features (may lose custom style properties)
+          drawnFeature1 = generateDrawnFeature(feature1)
+          drawnFeature2 = generateDrawnFeature(feature2)
+        }
 
         drawStore.addDrawnFeatureToCollection(drawnFeature1)
         drawStore.addDrawnFeatureToCollection(drawnFeature2)

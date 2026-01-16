@@ -153,6 +153,8 @@ export class DrawnFeature extends Feature {
     }
 
     drawnFeature.featureStyle = getDefaultDrawnFeatureStyle()
+    // Read properties from the feature if available
+    drawnFeature.fromProperties(feature.getProperties())
     // Always set the style function - don't copy from source feature
     drawnFeature.setStyle(drawnFeature.getStyleFunction())
 
