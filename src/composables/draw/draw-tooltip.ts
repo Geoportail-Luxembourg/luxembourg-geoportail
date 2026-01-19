@@ -7,6 +7,7 @@ import OlMap from 'ol/Map'
 import { DrawEvent } from 'ol/interaction/Draw'
 import { getLength, getArea } from '@/services/common/measurement.utils'
 import { formatLength, formatArea } from '@/services/common/formatting.utils'
+import { listen as olListen } from 'ol/events'
 
 class DrawTooltip {
   private measureTooltipElement: HTMLElement | null = null
@@ -33,6 +34,57 @@ class DrawTooltip {
     if (this.changeEventKey !== null) {
       unByKey(this.changeEventKey)
       this.changeEventKey = null
+    }
+  }
+
+  /**
+   * Create a persistent measurement overlay anchored at the middle of the
+   * provided geometry. Returns a disposer function to remove the overlay.
+   */
+  public createPersistentMeasurement(map: OlMap, geometry: Geometry) {
+    const el = document.createElement('div')
+    el.classList.add('lux-tooltip')
+
+    const overlay = new Overlay({
+      element: el,
+      offset: [0, -15],
+      positioning: 'bottom-center',
+      stopEvent: false,
+    })
+    map.addOverlay(overlay)
+
+    const proj = map.getView().getProjection()
+
+    const update = () => {
+      let coord: any = undefined
+      let output = ''
+      if (geometry.getType() === 'LineString') {
+        const geom = geometry as LineString
+        coord = geom.getCoordinateAt(0.5)
+        if (coord !== null) {
+          output = formatLength(getLength(geom, proj))
+        }
+      } else if (geometry.getType() === 'Polygon') {
+        const geom = geometry as Polygon
+        const verticesCount = geom.getCoordinates()[0].length
+        if (verticesCount > 2) {
+          coord = geom.getInteriorPoint().getCoordinates()
+        }
+        if (coord !== null) {
+          output = formatArea(getArea(geom))
+        }
+      }
+
+      el.innerText = output
+      overlay.setPosition(coord)
+    }
+
+    const key = olListen(geometry, 'change', update, this)
+    update()
+
+    return () => {
+      unByKey(key)
+      el.parentNode?.removeChild(el)
     }
   }
 
@@ -65,7 +117,8 @@ class DrawTooltip {
     let output = ''
     if (geometry.getType() === 'LineString') {
       const geom = geometry as LineString
-      coord = geom.getLastCoordinate()
+      // Position tooltip at the middle of the line instead of the last vertex
+      coord = geom.getCoordinateAt(0.5)
       if (coord !== null) {
         output = formatLength(getLength(geom, proj))
       }
