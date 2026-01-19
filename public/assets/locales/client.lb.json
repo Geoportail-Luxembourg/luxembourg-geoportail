@@ -2483,6 +2483,8 @@
   "Click to start drawing area": "Klickt fir mam Moossen vun enger Fläch unzefänken",
   "Click to continue drawing the polygon<br>Double-click or click last point to finish": "Klickt fir mam Zeechnen vum Polygon weiderzefueren <br> Duebelklick fir ofzeschléissen",
   "measure_continue_instruction_area": "Klickt fir mam Zeechnen vum Polygon weiderzefueren <br> Duebelklick fir ofzeschléissen",
+  "measure_start_instruction_azimuth": "Klickt fir mam Moossen vum Azimut unzefänken",
+  "measure_continue_instruction_azimuth": "Klickt fir mam Zeechnen vum Krees weiderzefueren <br> Duebelklick fir ofzeschléissen",
   "Click to start drawing azimut": "Klickt fir mam Moossen vun engem Azimut unzefänken",
   "Click to finish": "Klickt fir ofzeschléissen",
   "Vous êtes en mode découpage.<br> Veuillez cliquer sur une ligne pour la couper en deux.": "Dir sidd am Schneidmodus<br>Klickt w.e.g. op eng Linn fir se an Zwee ze schneiden.",

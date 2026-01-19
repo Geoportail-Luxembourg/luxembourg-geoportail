@@ -62,7 +62,7 @@ class DrawTooltip {
         const geom = geometry as LineString
         coord = geom.getCoordinateAt(0.5)
         if (coord !== null) {
-          output = formatLength(getLength(geom, proj))
+          output = formatLength(getLength(geom, proj), 1)
         }
       } else if (geometry.getType() === 'Polygon') {
         const geom = geometry as Polygon
@@ -136,7 +136,10 @@ class DrawTooltip {
       coord = geom.getLastCoordinate()
       const center = geom.getCenter()
       if (center !== null && coord !== null) {
-        output = formatLength(getLength(new LineString([center, coord]), proj))
+        output = formatLength(
+          getLength(new LineString([center, coord]), proj),
+          1
+        )
       }
     }
     if (this.measureTooltipElement) {

@@ -2762,6 +2762,8 @@
   "Click to continue drawing the line<br>Double-click or click last point to finish": "Klicken Sie um mit dem Zeichnen der Linie fortzufahren <br> Doppelklick zum Abschließen",
   "measure_continue_instruction": "Klicken Sie um mit dem Zeichnen der Linie fortzufahren <br> Doppelklick zum Abschließen",
   "measure_continue_instruction_area": "Klicken Sie um mit dem Zeichnen des Polygons fortzufahren <br> Doppelklick zum Abschließen",
+  "measure_start_instruction_azimuth": "Klicken Sie um mit dem Messen des Azimuts zu beginnen",
+  "measure_continue_instruction_azimuth": "Klicken Sie um mit dem Zeichnen des Kreises fortzufahren <br> Doppelklick zum Abschließen",
   "measure_finish_instruction": "Doppelklick zum Abschließen",
   "Click to continue drawing the polygon<br>Double-click or click last point to finish": "Klicken Sie um mit dem Zeichnen des Polygons fortzufahren <br> Doppelklick zum Abschließen",
   "Click to start drawing azimut": "Klicken Sie um mit dem Messen des Azimuts anzufangen",

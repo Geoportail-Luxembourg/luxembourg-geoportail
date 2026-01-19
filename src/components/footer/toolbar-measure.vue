@@ -24,8 +24,9 @@ const tools = [
   },
   {
     label: t('Azimut'),
-    active: () => false,
-    onClick: () => alert('TODO Azimut'),
+    active: () => currentMode.value === 'azimuth',
+    onClick: () =>
+      currentMode.value === 'azimuth' ? deactivate() : void activate('azimuth'),
   },
   {
     label: t('Profile'),
