@@ -7,18 +7,20 @@ import useMeasure from '@/composables/measure/measure.composable'
 const { toggleLidarOpen, toggleElevationProfileToolbarOpen } = useAppStore()
 const { t } = useTranslation()
 
-const { activate, deactivate, reset, isActive } = useMeasure()
+const { activate, deactivate, reset, currentMode } = useMeasure()
 
 const tools = [
   {
     label: t('Length'),
-    active: () => isActive.value,
-    onClick: () => (isActive.value ? deactivate() : activate()),
+    active: () => currentMode.value === 'length',
+    onClick: () =>
+      currentMode.value === 'length' ? deactivate() : void activate('length'),
   },
   {
     label: t('Surface'),
-    active: () => false,
-    onClick: () => alert('TODO Surface'),
+    active: () => currentMode.value === 'area',
+    onClick: () =>
+      currentMode.value === 'area' ? deactivate() : void activate('area'),
   },
   {
     label: t('Azimut'),

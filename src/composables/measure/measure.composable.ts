@@ -29,6 +29,7 @@ export default function useMeasure() {
       width: 4,
     }),
   })
+  // Polygon styles are created dynamically when needed (to include Fill)
 
   function ensureLayer() {
     if (!map) return null
@@ -72,7 +73,9 @@ export default function useMeasure() {
     hintOverlay.value = null
   }
 
-  function activate() {
+  const currentMode = ref<'length' | 'area' | undefined>(undefined)
+
+  async function activate(mode: 'length' | 'area' = 'length') {
     if (!map) return
     if (isActive.value) return
 
@@ -82,20 +85,28 @@ export default function useMeasure() {
     const source = layer.getSource()!
     const interaction = new Draw({
       source,
-      type: 'LineString',
+      type: mode === 'area' ? 'Polygon' : 'LineString',
       freehand: false,
       maxPoints: Infinity,
     })
     interaction.setActive(true)
 
-    // drawstart: enable tooltip and hint
+    // drawstart: enable tooltip and hint (message depends on mode)
     listen(interaction, 'drawstart', evt => {
       drawTooltip.add(map, evt as DrawEvent)
-      // switch hint to continuing message
-      createHintOverlay('measure_continue_instruction')
+      // switch hint to continuing message depending on mode
+      createHintOverlay(
+        mode === 'area'
+          ? 'measure_continue_instruction_area'
+          : 'measure_continue_instruction'
+      )
     })
     // place hint overlay immediately and start following pointer
-    createHintOverlay('measure_start_instruction')
+    createHintOverlay(
+      mode === 'area'
+        ? 'measure_start_instruction_area'
+        : 'measure_start_instruction'
+    )
     pointerMoveKey.value = listen(map, 'pointermove', (e: any) => {
       if (hintOverlay.value) hintOverlay.value.setPosition(e.coordinate)
     })
@@ -119,7 +130,19 @@ export default function useMeasure() {
 
       const feature: Feature | undefined = (evt as DrawEvent).feature
       if (feature) {
-        feature.setStyle(MEASURE_STYLE)
+        if (mode === 'area') {
+          // apply polygon style with translucent fill (dynamic import for Fill)
+          import('ol/style').then(({ Fill }) => {
+            feature.setStyle(
+              new Style({
+                stroke: new Stroke({ color: '#ff8c00', width: 3 }),
+                fill: new (Fill as any)({ color: 'rgba(255,140,0,0.15)' }),
+              })
+            )
+          })
+        } else {
+          feature.setStyle(MEASURE_STYLE)
+        }
         // mark as measurement for easy reset
         feature.set('isMeasurement', true)
       }
@@ -132,11 +155,13 @@ export default function useMeasure() {
         // ignore errors during cleanup
       }
       drawInteraction.value = null
+      currentMode.value = undefined
       isActive.value = false
     })
 
     map.addInteraction(interaction)
     drawInteraction.value = interaction
+    currentMode.value = mode
     isActive.value = true
   }
 
@@ -174,6 +199,7 @@ export default function useMeasure() {
     deactivate,
     reset,
     isActive,
+    currentMode,
     measureLayer,
   }
 }
