@@ -7,7 +7,6 @@ import OlMap from 'ol/Map'
 import { DrawEvent } from 'ol/interaction/Draw'
 import { getLength, getArea } from '@/services/common/measurement.utils'
 import { formatLength, formatArea } from '@/services/common/formatting.utils'
-import { listen as olListen } from 'ol/events'
 
 class DrawTooltip {
   private measureTooltipElement: HTMLElement | null = null
@@ -79,10 +78,11 @@ class DrawTooltip {
       overlay.setPosition(coord)
     }
 
-    const key = olListen(geometry, 'change', update, this)
+    const key = listen(geometry, 'change', update, this)
     update()
 
     return () => {
+      map.removeOverlay(overlay)
       unByKey(key)
       el.parentNode?.removeChild(el)
     }

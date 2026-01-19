@@ -25,7 +25,7 @@ export default function useMeasure() {
   type Mode = 'length' | 'area' | 'azimuth'
   const currentMode = ref<Mode | undefined>(undefined)
   const azimuthPreviewOverlay = ref<Overlay | null>(null)
-  const azimuthTransient = ref<any>(null)
+  const azimuthPreviewState = ref<any>(null)
 
   const { t } = useTranslation()
   const { warn: logWarn, error: logError } = createLogger('MEASURE')
@@ -115,22 +115,7 @@ export default function useMeasure() {
       stopEvent: false,
     })
     ov.setPosition(coord)
-    // No debug logging here by default
-    try {
-      map
-        .getOverlays()
-        .getArray()
-        .forEach(o => {
-          try {
-            const _el2 = (o as any).getElement && (o as any).getElement()
-            void _el2
-          } catch (e) {
-            // ignore
-          }
-        })
-    } catch (e) {
-      // ignore
-    }
+
     map.addOverlay(ov as any)
     return ov
   }
@@ -295,7 +280,7 @@ export default function useMeasure() {
           }
         })
 
-        azimuthTransient.value = {
+        azimuthPreviewState.value = {
           radial: previewRadial,
           preview: previewCircle,
           key,
@@ -304,7 +289,7 @@ export default function useMeasure() {
         // ensure transient cleanup is run on reset
         persistentRemovers.push(() => {
           try {
-            unByKey(azimuthTransient.value?.key)
+            unByKey(azimuthPreviewState.value?.key)
           } catch (e) {
             // ignore
           }
@@ -315,10 +300,10 @@ export default function useMeasure() {
             // ignore
           }
           try {
-            if (azimuthTransient.value?.radial)
-              src!.removeFeature(azimuthTransient.value.radial)
-            if (azimuthTransient.value?.preview)
-              src!.removeFeature(azimuthTransient.value.preview)
+            if (azimuthPreviewState.value?.radial)
+              src!.removeFeature(azimuthPreviewState.value.radial)
+            if (azimuthPreviewState.value?.preview)
+              src!.removeFeature(azimuthPreviewState.value.preview)
           } catch (e) {
             // ignore
           }
@@ -441,11 +426,6 @@ export default function useMeasure() {
 
             let finalOv: Overlay | null = null
             if (!alreadyFinalized) {
-              try {
-                void src!.getFeatures().length
-              } catch (e) {
-                // ignore
-              }
               // create a final persistent overlay for this azimuth
               const measurementId = uuidv4()
               try {
@@ -489,8 +469,6 @@ export default function useMeasure() {
               } catch (e) {
                 // ignore
               }
-            } else {
-              // final overlay already created for this feature, skipping creation
             }
 
             // fetch elevation for center and edge to compute Δh
@@ -557,16 +535,16 @@ export default function useMeasure() {
         // ignore errors during cleanup
       }
       // cleanup azimuth transient radial feature
-      if (azimuthTransient.value) {
+      if (azimuthPreviewState.value) {
         try {
-          const { radial, preview, key } = azimuthTransient.value as any
+          const { radial, preview, key } = azimuthPreviewState.value as any
           unByKey(key)
           if (radial) src!.removeFeature(radial)
           if (preview) src!.removeFeature(preview)
         } catch (e) {
           // ignore
         }
-        azimuthTransient.value = null
+        azimuthPreviewState.value = null
       }
       drawInteraction.value = null
       currentMode.value = undefined
@@ -609,9 +587,9 @@ export default function useMeasure() {
     }
     removeHintOverlay()
     // cleanup azimuth transient features if present (cancelled drawing)
-    if (azimuthTransient.value) {
+    if (azimuthPreviewState.value) {
       try {
-        const { radial, preview, key } = azimuthTransient.value as any
+        const { radial, preview, key } = azimuthPreviewState.value as any
         unByKey(key)
         const src = measureLayer.value?.getSource()
         if (src) {
@@ -621,7 +599,7 @@ export default function useMeasure() {
       } catch (e) {
         // ignore
       }
-      azimuthTransient.value = null
+      azimuthPreviewState.value = null
     }
     // remove preview overlay only (keep final overlays persistent)
     if (azimuthPreviewOverlay.value && map) {
@@ -642,17 +620,7 @@ export default function useMeasure() {
 
     // First run persistent removers (overlays, radial features, explicit removers)
     try {
-      try {
-        void map.getOverlays().getArray().length
-      } catch (e) {
-        // ignore
-      }
       persistentRemovers.forEach(r => r())
-      try {
-        void map.getOverlays().getArray().length
-      } catch (e) {
-        // ignore
-      }
     } catch (e) {
       // ignore
     }
@@ -736,8 +704,6 @@ export default function useMeasure() {
     }
     lastPointerCoord.value = null
 
-    // remove persistent overlays
-    persistentRemovers.forEach(r => r())
     // No-op: final overlays are removed via persistentRemovers; preview overlay handled separately
     // Remove any leftover measurement overlays (safeguard) — overlays created for measures use
     // the 'lux-tooltip' class so we can safely remove them here during reset

@@ -31,13 +31,6 @@ export async function fetchProfileJson(
   nbPoints = 100
 ) {
   const payload = { geom, nbPoints: nbPoints + '', layers, id: id + '' }
-  // Debug info suppressed in production; silent no-op to avoid noisy logging
-  try {
-    void { url: PROFILE_URL, payload }
-  } catch (e) {
-    // ignore
-  }
-
   const response = await fetchApi(PROFILE_URL, payload, 'POST')
 
   if (!response.ok) {
@@ -57,14 +50,6 @@ export async function fetchProfileJson(
   }
 
   const json = <ProfileJson>await response.json()
-  try {
-    void {
-      profileLength: json?.profile?.length ?? 0,
-      sample: (json?.profile && json.profile.slice(0, 3)) || null,
-    }
-  } catch (e) {
-    // ignore
-  }
 
   return json
 }
