@@ -6,13 +6,14 @@ import Overlay from 'ol/Overlay'
 import Style from 'ol/style/Style'
 import Stroke from 'ol/style/Stroke'
 import Feature from 'ol/Feature'
+import Geometry from 'ol/geom/Geometry'
 import LineString from 'ol/geom/LineString'
 import Circle from 'ol/geom/Circle'
 import { toLonLat } from 'ol/proj'
 import { getLength } from '@/services/common/measurement.utils'
 import { formatLength } from '@/services/common/formatting.utils'
 import { getElevation } from '@/components/draw/feature-measurements-helper'
-import { listen } from 'ol/events'
+import { EventsKey, listen } from 'ol/events'
 import { unByKey } from 'ol/Observable'
 import { v4 as uuidv4 } from 'uuid'
 
@@ -25,7 +26,13 @@ export default function useMeasure() {
   type Mode = 'length' | 'area' | 'azimuth'
   const currentMode = ref<Mode | undefined>(undefined)
   const azimuthPreviewOverlay = ref<Overlay | null>(null)
-  const azimuthPreviewState = ref<any>(null)
+  interface AzimuthPreviewState {
+    radial: Feature<Geometry> | null
+    preview: Feature<Geometry> | null
+    key: EventsKey | null
+  }
+
+  const azimuthPreviewState = ref<AzimuthPreviewState | null>(null)
 
   const { t } = useTranslation()
   const { warn: logWarn, error: logError } = createLogger('MEASURE')
@@ -33,7 +40,7 @@ export default function useMeasure() {
   const isActive = ref(false)
   const measureLayer = ref<VectorLayer | null>(null)
   const drawInteraction = ref<Draw | null>(null)
-  const pointerMoveKey = ref<any>(null)
+  const pointerMoveKey = ref<EventsKey | null>(null)
   const lastPointerCoord = ref<[number, number] | null>(null)
   const hintOverlay = ref<Overlay | null>(null)
   const persistentRemovers: Array<() => void> = []
@@ -47,13 +54,19 @@ export default function useMeasure() {
   const AZIMUTH_PREVIEW_STYLE = new Style({
     stroke: new Stroke({ color: '#ff8c00', width: 2, lineDash: [6, 6] }),
   })
+  // Overlay offsets & positioning constants (keeps tooltip spacing consistent)
+  const TOOLTIP_VERTICAL_OFFSET = -15
+  const HINT_VERTICAL_OFFSET = -30
+  const TOOLTIP_OFFSET: [number, number] = [0, TOOLTIP_VERTICAL_OFFSET]
+  const HINT_OFFSET: [number, number] = [0, HINT_VERTICAL_OFFSET]
+  const TOOLTIP_POSITIONING = 'bottom-center' as const
 
   function removeHintOverlay() {
     if (!hintOverlay.value || !map) return
     try {
       map.removeOverlay(hintOverlay.value as any)
     } catch (e) {
-      // ignore
+      logWarn('[measure] removeHintOverlay failed', e)
     }
     hintOverlay.value = null
   }
@@ -68,8 +81,8 @@ export default function useMeasure() {
       el.innerHTML = text
       const ov = new Overlay({
         element: el,
-        offset: [0, -30],
-        positioning: 'bottom-center',
+        offset: HINT_OFFSET,
+        positioning: TOOLTIP_POSITIONING,
         stopEvent: false,
       })
       hintOverlay.value = ov
@@ -77,7 +90,7 @@ export default function useMeasure() {
       const pos = position || (map.getView() && map.getView().getCenter())
       if (pos) hintOverlay.value.setPosition(pos as any)
     } catch (e) {
-      // ignore
+      logWarn('[measure] showHintOverlay failed', e)
     }
   }
 
@@ -86,17 +99,19 @@ export default function useMeasure() {
     [lon2, lat2]: [number, number]
   ) {
     // returns bearing in degrees from point1 -> point2
-    const φ1 = (lat1 * Math.PI) / 180
-    const φ2 = (lat2 * Math.PI) / 180
-    const λ1 = (lon1 * Math.PI) / 180
-    const λ2 = (lon2 * Math.PI) / 180
-    const y = Math.sin(λ2 - λ1) * Math.cos(φ2)
+    // Converted to signed range [-180, 180]: positive = eastward, negative = westward
+    const lat1rad = (lat1 * Math.PI) / 180
+    const lat2rad = (lat2 * Math.PI) / 180
+    const lon1rad = (lon1 * Math.PI) / 180
+    const lon2rad = (lon2 * Math.PI) / 180
+    const y = Math.sin(lon2rad - lon1rad) * Math.cos(lat2rad)
     const x =
-      Math.cos(φ1) * Math.sin(φ2) -
-      Math.sin(φ1) * Math.cos(φ2) * Math.cos(λ2 - λ1)
-    const θ = Math.atan2(y, x)
-    const deg = ((θ * 180) / Math.PI + 360) % 360
-    return deg
+      Math.cos(lat1rad) * Math.sin(lat2rad) -
+      Math.sin(lat1rad) * Math.cos(lat2rad) * Math.cos(lon2rad - lon1rad)
+    const ang2rad = Math.atan2(y, x)
+    const deg360 = ((ang2rad * 180) / Math.PI + 360) % 360
+    // map 0..360 to -180..180
+    return deg360 > 180 ? deg360 - 360 : deg360
   }
 
   function createFinalAzimuthOverlay(
@@ -110,8 +125,8 @@ export default function useMeasure() {
     if (measurementId && el.dataset) el.dataset.measurementId = measurementId
     const ov = new Overlay({
       element: el,
-      offset: [0, -15],
-      positioning: 'bottom-center',
+      offset: TOOLTIP_OFFSET,
+      positioning: TOOLTIP_POSITIONING,
       stopEvent: false,
     })
     ov.setPosition(coord)
@@ -147,7 +162,7 @@ export default function useMeasure() {
           hintOverlay.value.setPosition(event.coordinate as any)
         }
       } catch (e) {
-        // ignore
+        logWarn('[measure] pointermove handler failed', e)
       }
     })
 
@@ -173,11 +188,11 @@ export default function useMeasure() {
               pos
             )
           } catch (e) {
-            // ignore
+            logWarn('[measure] drawstart hint update failed', e)
           }
         }
       } catch (e) {
-        // ignore
+        logWarn('[measure] drawstart handler failed', e)
       }
     })
 
@@ -212,8 +227,8 @@ export default function useMeasure() {
         el.innerHTML = ''
         const ov = new Overlay({
           element: el,
-          offset: [0, -15],
-          positioning: 'bottom-center',
+          offset: TOOLTIP_OFFSET,
+          positioning: TOOLTIP_POSITIONING,
           stopEvent: false,
         })
         azimuthPreviewOverlay.value = ov
@@ -226,7 +241,7 @@ export default function useMeasure() {
             center
           )
         } catch (e) {
-          // ignore
+          logWarn('[measure] showHintOverlay (azimuth) failed', e)
         }
 
         // pointermove handler to update preview geometry/content
@@ -242,7 +257,7 @@ export default function useMeasure() {
                 edge,
               ])
             } catch (e) {
-              // ignore
+              logWarn('[measure] previewRadial.setCoordinates failed', e)
             }
             // update circle radius
             try {
@@ -252,7 +267,7 @@ export default function useMeasure() {
                 )
               )
             } catch (e) {
-              // ignore
+              logWarn('[measure] previewCircle.setRadius failed', e)
             }
             // update overlay content and position
             try {
@@ -273,10 +288,10 @@ export default function useMeasure() {
               ]
               azimuthPreviewOverlay.value?.setPosition(mid)
             } catch (e) {
-              // ignore
+              logWarn('[measure] azimuth preview overlay update failed', e)
             }
           } catch (err) {
-            // ignore
+            logWarn('[measure] azimuth pointermove outer failed', err)
           }
         })
 
@@ -289,27 +304,34 @@ export default function useMeasure() {
         // ensure transient cleanup is run on reset
         persistentRemovers.push(() => {
           try {
-            unByKey(azimuthPreviewState.value?.key)
+            const k = azimuthPreviewState.value?.key
+            if (k) unByKey(k as EventsKey)
           } catch (e) {
-            // ignore
+            logWarn('[measure] unByKey for azimuth preview failed', e)
           }
           try {
             if (azimuthPreviewOverlay.value && map)
               map.removeOverlay(azimuthPreviewOverlay.value as any)
+            // ensure we clear the cached ref when persistent cleanup runs
+            azimuthPreviewOverlay.value = null
           } catch (e) {
-            // ignore
+            logWarn('[measure] removing azimuth preview overlay failed', e)
           }
           try {
             if (azimuthPreviewState.value?.radial)
-              src!.removeFeature(azimuthPreviewState.value.radial)
+              src!.removeFeature(
+                azimuthPreviewState.value.radial as Feature<Geometry>
+              )
             if (azimuthPreviewState.value?.preview)
-              src!.removeFeature(azimuthPreviewState.value.preview)
+              src!.removeFeature(
+                azimuthPreviewState.value.preview as Feature<Geometry>
+              )
           } catch (e) {
-            // ignore
+            logWarn('[measure] removing azimuth preview features failed', e)
           }
         })
       } catch (e) {
-        // ignore
+        logWarn('[measure] azimuth drawstart handler failed', e)
       }
     })
 
@@ -327,10 +349,13 @@ export default function useMeasure() {
       // remove hint overlay when finishing draw
       removeHintOverlay()
       if (pointerMoveKey.value) {
-        unByKey(pointerMoveKey.value)
+        try {
+          unByKey(pointerMoveKey.value as EventsKey)
+        } catch (e) {
+          logWarn('[measure] unByKey(pointerMoveKey) failed', e)
+        }
         pointerMoveKey.value = null
       }
-      removeHintOverlay()
 
       const feature: Feature | undefined = (evt as DrawEvent).feature
       if (feature) {
@@ -409,9 +434,10 @@ export default function useMeasure() {
               try {
                 map.removeOverlay(azimuthPreviewOverlay.value as any)
               } catch (e) {
-                // ignore
+                logWarn('[measure] removing azimuth preview overlay failed', e)
               }
-              azimuthPreviewOverlay.value = null
+              // don't null the reference here; persistentRemovers will clear it
+              // to avoid duplicate-removal attempts and keep cleanup centralized
             }
 
             // avoid creating a final overlay twice for the same feature
@@ -419,9 +445,13 @@ export default function useMeasure() {
             try {
               alreadyFinalized =
                 (feature as any)?.get &&
-                (feature as any).get('finalOverlayCreated')
+                (!!(feature as any).get('measurementId') ||
+                  !!(feature as any).get('finalOverlayRef'))
             } catch (e) {
-              // ignore
+              logWarn(
+                '[measure] checking measurementId/finalOverlayRef failed',
+                e
+              )
             }
 
             let finalOv: Overlay | null = null
@@ -431,12 +461,12 @@ export default function useMeasure() {
               try {
                 ;(feature as any).set('measurementId', measurementId)
               } catch (e) {
-                // ignore
+                logWarn('[measure] setting measurementId on feature failed', e)
               }
               try {
                 radialFeature.set('measurementId', measurementId)
               } catch (e) {
-                // ignore
+                logWarn('[measure] setting measurementId on radial failed', e)
               }
               finalOv = createFinalAzimuthOverlay(
                 `${bearingText} — ${radius} — Δh: N/A`,
@@ -449,12 +479,12 @@ export default function useMeasure() {
                 if (el && (el as any).dataset)
                   (el as any).dataset.measurementId = measurementId
               } catch (e) {
-                // ignore
+                logWarn('[measure] annotating final overlay element failed', e)
               }
               try {
                 ;(feature as any).set('finalOverlayRef', finalOv)
               } catch (e) {
-                // ignore
+                logWarn('[measure] setting finalOverlayRef failed', e)
               }
               // ensure the feature itself is removed on reset
               try {
@@ -463,11 +493,11 @@ export default function useMeasure() {
                   try {
                     src!.removeFeature(feat)
                   } catch (e) {
-                    // ignore
+                    logWarn('[measure] removing persistent feature failed', e)
                   }
                 })
               } catch (e) {
-                // ignore
+                logWarn('[measure] registering persistent remover failed', e)
               }
             }
 
@@ -532,17 +562,17 @@ export default function useMeasure() {
         interaction.setActive(false)
         map.removeInteraction(interaction as unknown as any)
       } catch (e) {
-        // ignore errors during cleanup
+        logWarn('[measure] removing draw interaction failed', e)
       }
       // cleanup azimuth transient radial feature
       if (azimuthPreviewState.value) {
         try {
-          const { radial, preview, key } = azimuthPreviewState.value as any
-          unByKey(key)
-          if (radial) src!.removeFeature(radial)
-          if (preview) src!.removeFeature(preview)
+          const { radial, preview, key } = azimuthPreviewState.value
+          if (key) unByKey(key as EventsKey)
+          if (radial) src!.removeFeature(radial as Feature<Geometry>)
+          if (preview) src!.removeFeature(preview as Feature<Geometry>)
         } catch (e) {
-          // ignore
+          logWarn('[measure] cleanup azimuth preview state failed', e)
         }
         azimuthPreviewState.value = null
       }
@@ -568,7 +598,7 @@ export default function useMeasure() {
         lastPointerCoord.value ?? (map.getView() && map.getView().getCenter())
       showHintOverlay(t(key) as string, pos as [number, number])
     } catch (e) {
-      // ignore
+      logWarn('[measure] showHintOverlay (start hint) failed', e)
     }
   }
 
@@ -582,22 +612,29 @@ export default function useMeasure() {
     }
     drawTooltip.remove()
     if (pointerMoveKey.value) {
-      unByKey(pointerMoveKey.value)
+      try {
+        unByKey(pointerMoveKey.value as EventsKey)
+      } catch (e) {
+        logWarn('[measure] unByKey(pointerMoveKey) failed', e)
+      }
       pointerMoveKey.value = null
     }
     removeHintOverlay()
     // cleanup azimuth transient features if present (cancelled drawing)
     if (azimuthPreviewState.value) {
       try {
-        const { radial, preview, key } = azimuthPreviewState.value as any
-        unByKey(key)
+        const { radial, preview, key } = azimuthPreviewState.value
+        if (key) unByKey(key as EventsKey)
         const src = measureLayer.value?.getSource()
         if (src) {
           if (radial) src!.removeFeature(radial)
           if (preview) src!.removeFeature(preview)
         }
       } catch (e) {
-        // ignore
+        logWarn(
+          '[measure] cleaning up azimuthPreviewState in deactivate failed',
+          e
+        )
       }
       azimuthPreviewState.value = null
     }
@@ -606,7 +643,10 @@ export default function useMeasure() {
       try {
         map.removeOverlay(azimuthPreviewOverlay.value as any)
       } catch (e) {
-        // ignore
+        logWarn(
+          '[measure] removing azimuth preview overlay in deactivate failed',
+          e
+        )
       }
       azimuthPreviewOverlay.value = null
     }
@@ -622,7 +662,7 @@ export default function useMeasure() {
     try {
       persistentRemovers.forEach(r => r())
     } catch (e) {
-      // ignore
+      logWarn('[measure] running persistent removers failed', e)
     }
     persistentRemovers.length = 0
 
@@ -634,47 +674,37 @@ export default function useMeasure() {
           const srcLayer = (l as any).getSource && (l as any).getSource()
           if (!srcLayer || !srcLayer.getFeatures) return
 
-          // remove measurement-related features
+          // Remove any measurement-related features in a single pass.
+          // This covers features explicitly flagged as measurements (azimuth
+          // radials/previews/finalized) and also removes Circle geometries as a
+          // fallback in case a Circle slipped through without flags.
           srcLayer
             .getFeatures()
             .slice()
             .forEach((f: any) => {
               try {
-                if (
+                const isFlaggedMeasurement =
                   f.get &&
                   (f.get('isMeasurement') ||
                     f.get('isAzimuthRadial') ||
                     f.get('isAzimuth') ||
                     f.get('isAzimuthPreview') ||
-                    (f.get('finalOverlayCreated') &&
-                      f.get('isMeasurement') === undefined))
-                ) {
-                  srcLayer.removeFeature(f)
-                }
-              } catch (e) {
-                // ignore
-              }
-            })
+                    f.get('measurementId') ||
+                    f.get('finalOverlayRef'))
 
-          // Force remove any Circle geometries
-          srcLayer
-            .getFeatures()
-            .slice()
-            .forEach((f: any) => {
-              try {
-                if (
+                const isCircle =
                   f.getGeometry &&
                   f.getGeometry().getType &&
                   f.getGeometry().getType() === 'Circle'
-                ) {
+
+                if (isFlaggedMeasurement || isCircle) {
                   srcLayer.removeFeature(f)
                 }
               } catch (e) {
-                // ignore
+                logWarn('[measure] removing measurement features failed', e)
               }
             })
 
-          // If this is a measure layer, remove it entirely to avoid duplicates on next activate
           try {
             if (
               (l as any).get &&
@@ -683,10 +713,10 @@ export default function useMeasure() {
               map.removeLayer(l)
             }
           } catch (e) {
-            // ignore
+            logWarn('[measure] removing interaction measure layer failed', e)
           }
         } catch (e) {
-          // ignore
+          logWarn('[measure] iterating layers during reset failed', e)
         }
       })
 
@@ -694,35 +724,19 @@ export default function useMeasure() {
       try {
         removeAllMeasurementOverlays(map)
       } catch (e) {
-        // ignore
+        logWarn('[measure] removeAllMeasurementOverlays failed', e)
       }
 
       // ensure our cached reference is cleared so the layer will be recreated on next use
       measureLayer.value = null
     } catch (e) {
-      // ignore
+      logWarn('[measure] reset encountered an unexpected error', e)
     }
     lastPointerCoord.value = null
 
     // No-op: final overlays are removed via persistentRemovers; preview overlay handled separately
-    // Remove any leftover measurement overlays (safeguard) — overlays created for measures use
-    // the 'lux-tooltip' class so we can safely remove them here during reset
-    try {
-      const overlays = map.getOverlays().getArray().slice()
-      overlays.forEach((ov: Overlay) => {
-        try {
-          const el = (ov as any).getElement && (ov as any).getElement()
-          if (el && el.classList && el.classList.contains('lux-tooltip')) {
-            map.removeOverlay(ov as any)
-          }
-        } catch (e) {
-          // ignore
-        }
-      })
-    } catch (e) {
-      // ignore
-    }
-    persistentRemovers.length = 0
+    // Any leftover overlays (dataset.measurementId or class 'lux-tooltip') are removed
+    // by `removeAllMeasurementOverlays` earlier, so no additional pass is necessary here.
   }
 
   return {
@@ -743,7 +757,12 @@ export function removeAllMeasurementOverlays(m: any) {
     overlays.forEach((ov: Overlay) => {
       try {
         const el = (ov as any).getElement && (ov as any).getElement()
-        if (el && el.dataset && el.dataset.measurementId) {
+        // Remove overlays that are explicitly tagged with a measurement id
+        // or that use the 'lux-tooltip' class (safeguard for transient tooltips)
+        const hasMeasurementId = el && el.dataset && el.dataset.measurementId
+        const isTooltip =
+          el && el.classList && el.classList.contains('lux-tooltip')
+        if (hasMeasurementId || isTooltip) {
           m.removeOverlay(ov)
         }
       } catch (e) {
