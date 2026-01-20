@@ -1,45 +1,78 @@
+import { storeToRefs } from 'pinia'
 import { listen } from 'ol/events'
 import Draw, { DrawEvent, Options } from 'ol/interaction/Draw'
+
 import useMap from '@/composables/map/map.composable'
+import { useDrawStore } from '@/stores/draw.store'
+import { DrawnFeature } from '@/services/ol-feature/ol-feature-drawn'
+
 import useDrawnFeatures from './drawn-features.composable'
 import drawTooltip from './draw-tooltip'
 
-export default function useDrawInteraction(options: Options) {
-  const { addFeature } = useDrawnFeatures()
-  const drawInteraction = new Draw(options)
-  drawInteraction.setActive(false)
+export default function useDrawInteraction() {
+  const drawStore = useDrawStore()
+  const { generateDrawnFeature } = useDrawnFeatures()
+  const { addDrawnFeatureToCollection } = drawStore
+  const { activeFeatureId, drawnFeatures } = storeToRefs(drawStore)
   const map = useMap().getOlMap()
-  map.addInteraction(drawInteraction)
 
-  listen(drawInteraction, 'drawstart', event =>
-    drawTooltip.add(map, event as DrawEvent)
-  )
-  listen(drawInteraction, 'drawend', event => {
-    onDrawEnd(event as DrawEvent)
-  })
-  listen(document, 'keyup', event => {
-    onKeyUp(event as KeyboardEvent)
-  })
+  /**
+   * NB. 'drawend' event is triggered when "Continue line" ends
+   */
+  function onDrawEnd(event: DrawEvent, type: 'new' | 'update' = 'new') {
+    let currentDrawnFeature
 
-  function onDrawEnd(event: DrawEvent) {
     drawTooltip.remove()
-    addFeature(event.feature)
     event.stopPropagation()
+
+    if (type === 'new') {
+      currentDrawnFeature = generateDrawnFeature(event.feature)
+      addDrawnFeatureToCollection(currentDrawnFeature)
+    } else {
+      currentDrawnFeature = <DrawnFeature>(
+        drawnFeatures.value.find(f => f.id === activeFeatureId.value)
+      )
+    }
+
+    currentDrawnFeature.resetProfileData()
+    drawStore.selectDrawnFeature(currentDrawnFeature)
   }
 
   /**
    * Deactivate this interaction if the ESC key is pressed.
    * @param event
    */
-  function onKeyUp(event: KeyboardEvent) {
+  function onKeyUp(drawInteraction: Draw, event: KeyboardEvent) {
     if (event.key === 'Escape') {
       drawTooltip.remove()
       drawInteraction.finishDrawing()
-      drawInteraction.setActive(false)
     }
   }
 
+  function createDrawInteraction(
+    options: Options,
+    type: 'new' | 'update' = 'new'
+  ) {
+    const drawInteraction = new Draw(options)
+    drawInteraction.setActive(false)
+
+    listen(drawInteraction, 'drawstart', event =>
+      drawTooltip.add(map, <DrawEvent>event)
+    )
+    listen(drawInteraction, 'drawend', event =>
+      // WARNING: drawend is triggered when "Continue line"
+      onDrawEnd(<DrawEvent>event, type)
+    )
+    listen(document, 'keyup', event =>
+      onKeyUp(drawInteraction, <KeyboardEvent>event)
+    )
+
+    map.addInteraction(drawInteraction)
+
+    return drawInteraction
+  }
+
   return {
-    drawInteraction,
+    createDrawInteraction,
   }
 }

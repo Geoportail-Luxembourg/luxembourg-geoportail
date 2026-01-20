@@ -6,11 +6,15 @@ const ELEVATION_URL = import.meta.env.VITE_ELEVATION_URL
 const MAP_CRS = 'EPSG:3857'
 const ELEVATION_CRS = 'EPSG:2169'
 
-export const getElevation = async (coordinate: Coordinate) => {
+export const getElevation = async (
+  coordinate: Coordinate,
+  signal?: AbortSignal
+) => {
   const lonlat = transform(coordinate, MAP_CRS, ELEVATION_CRS)
   try {
     const response = await fetch(
-      `${ELEVATION_URL}?lon=${lonlat[0]}&lat=${lonlat[1]}`
+      `${ELEVATION_URL}?lon=${lonlat[0]}&lat=${lonlat[1]}`,
+      { signal }
     )
     if (!response.ok) {
       throw new Error('Network response was not ok')

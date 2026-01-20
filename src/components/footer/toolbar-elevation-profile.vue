@@ -6,7 +6,7 @@ import { useTranslation } from 'i18next-vue'
 import FeatureElevationProfile from '@/components/feature-elevation-profile/feature-elevation-profile.vue'
 import useDrawElevationProfileInteraction from '@/composables/elevation-profile/draw-elevation-profile-interaction.composable'
 import { useElevationProfileStore } from '@/stores/elevation-profile.store'
-import { DrawnFeature } from '@/services/draw/drawn-feature'
+import { DrawnFeature } from '@/services/ol-feature/ol-feature-drawn'
 import useMap from '@/composables/map/map.composable'
 
 const { t } = useTranslation()

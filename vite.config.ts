@@ -1,7 +1,9 @@
 import { fileURLToPath, URL } from 'url'
 import { defineConfig } from 'vitest/config'
 import { loadEnv, type UserConfig } from 'vite'
-import IstanbulPlugin from 'vite-plugin-istanbul'
+// Note: `vite-plugin-istanbul` is ESM-only. Import it dynamically inside the
+// config callback when coverage instrumentation is requested to avoid a
+// "tried to load by `require`" error during build.
 import vue from '@vitejs/plugin-vue'
 import type { RootNode, TemplateChildNode } from '@vue/compiler-core'
 import { resolve } from 'path'
@@ -15,7 +17,7 @@ function removeDataTestAttrs(node: RootNode | TemplateChildNode) {
 }
 
 // https://vitejs.dev/config/
-export default defineConfig(({ command, mode }) => {
+export default defineConfig(async ({ command, mode }) => {
   const backendHost = 'http://localhost:8080' // used for local dev
   const base: UserConfig = {
     plugins: [
@@ -38,12 +40,41 @@ export default defineConfig(({ command, mode }) => {
     },
     server: {
       proxy: {
-        '/getvtstyle': backendHost,
-        '/uploadvtstyle': backendHost,
-        '/deletevtstyle': backendHost,
-        '/getpermalinkstyle': backendHost,
-        '/uploadpermalinkstyle': backendHost,
-        '/deletepermalinkstyle': backendHost,
+        '/getvtstyle': {
+          target: backendHost,
+          changeOrigin: true,
+          secure: false,
+        },
+        '/uploadvtstyle': {
+          target: backendHost,
+          changeOrigin: true,
+          secure: false,
+        },
+        '/deletevtstyle': {
+          target: backendHost,
+          changeOrigin: true,
+          secure: false,
+        },
+        '/getpermalinkstyle': {
+          target: backendHost,
+          changeOrigin: true,
+          secure: false,
+        },
+        '/uploadpermalinkstyle': {
+          target: backendHost,
+          changeOrigin: true,
+          secure: false,
+        },
+        '/deletepermalinkstyle': {
+          target: backendHost,
+          changeOrigin: true,
+          secure: false,
+        },
+        '/getuserinfo': {
+          target: backendHost,
+          changeOrigin: true,
+          secure: false,
+        },
       },
     },
   }
@@ -52,6 +83,8 @@ export default defineConfig(({ command, mode }) => {
   if (env.INSTRUMENT_COVERAGE) {
     base.server = { hmr: false } // disable hot reload of files modified by coverage tests
     base.build = { sourcemap: 'hidden' } // disable warning which says coverage enabled by Istanbul
+    // Dynamically import ESM-only plugin
+    const IstanbulPlugin = (await import('vite-plugin-istanbul')).default
     base.plugins = [...(base.plugins || []), IstanbulPlugin()] // add Istanbul plugin for code instrumentation
   }
 

@@ -1,6 +1,7 @@
 import { Ref, ref } from 'vue'
 import { acceptHMRUpdate, defineStore } from 'pinia'
 import { StyleSection } from '@/composables/mvt-styles/mvt-styles.model'
+import { MyMap } from './app.store.model'
 
 export const DEFAULT_LANG = 'fr'
 export const DEFAULT_LAYER_PANEL_OPENED = true
@@ -19,13 +20,17 @@ export const DEFAULT_SHARE_OPENED = false
 export const useAppStore = defineStore(
   'app',
   () => {
+    const authFormOpened = ref(false)
     const embedded = ref(false)
     const lang = ref(DEFAULT_LANG)
     const layersOpen = ref(DEFAULT_LAYER_PANEL_OPENED)
     const legendsOpen = ref(DEFAULT_LEGENDS_PANEL_OPENED)
     const myLayersTabOpen = ref(DEFAULT_MY_LAYERS_TAB_OPENED)
     const themeGridOpen = ref(DEFAULT_THEME_GRID_OPENED)
-    const mapId: Ref<string | undefined> = ref() // => MyMaps map id
+    const myMapId: Ref<string | undefined> = ref() // => MyMaps map id
+    const myMap = ref<MyMap | undefined>(undefined) // MyMap map object
+    const myMapIsLoading = ref(false)
+    const myMapLayersChanged = ref(false)
     const myMapsOpen = ref(DEFAULT_MYMAPS_OPENED)
     const infoOpen = ref(DEFAULT_INFO_OPENED)
     const shareOpen = ref(DEFAULT_SHARE_OPENED)
@@ -98,10 +103,6 @@ export const useAppStore = defineStore(
       remoteLayersOpen.value = open
     }
 
-    function setMapId(id: string | undefined) {
-      mapId.value = id
-    }
-
     function openStyleEditorPanel() {
       styleEditorOpen.value = true
       layersOpen.value = false
@@ -110,6 +111,10 @@ export const useAppStore = defineStore(
     function closeStyleEditorPanel() {
       styleEditorOpen.value = false
       layersOpen.value = true
+    }
+
+    function toggleAuthFormOpen(open?: boolean) {
+      authFormOpened.value = open ?? !authFormOpened.value
     }
 
     function toggleDrawToolbarOpen(open?: boolean) {
@@ -127,12 +132,21 @@ export const useAppStore = defineStore(
     function toggleInfoOpen(open?: boolean) {
       infoOpen.value = open ?? !infoOpen.value
     }
+
     function toggleShareOpen(open?: boolean) {
       shareOpen.value = open ?? !shareOpen.value
+
+      if (shareOpen.value) {
+        drawToolbarOpen.value = false
+        measureToolbarOpen.value = false
+        printToolbarOpen.value = false
+      }
     }
+
     function toggleLidarOpen(open?: boolean) {
       lidarOpen.value = open ?? !lidarOpen.value
     }
+
     function togglePrintToolbarOpen(open?: boolean) {
       printToolbarOpen.value = open ?? !printToolbarOpen.value
     }
@@ -147,13 +161,17 @@ export const useAppStore = defineStore(
     }
 
     return {
+      authFormOpened,
       embedded,
       lang,
       layersOpen,
       legendsOpen,
       myLayersTabOpen,
       themeGridOpen,
-      mapId,
+      myMapId,
+      myMap,
+      myMapIsLoading,
+      myMapLayersChanged,
       myMapsOpen,
       infoOpen,
       shareOpen,
@@ -170,16 +188,16 @@ export const useAppStore = defineStore(
       elevationProfileToolbarOpen,
       isOffLine,
       isApp,
-      setIsApp,
       printToolbarOpen,
+      setIsApp,
       setLang,
       setLayersOpen,
       setMyLayersTabOpen,
       setThemeGridOpen,
       setRemoteLayersOpen,
-      setMapId,
       openStyleEditorPanel,
       closeStyleEditorPanel,
+      toggleAuthFormOpen,
       toggleDrawToolbarOpen,
       togglePrintToolbarOpen,
       toggleMyMapsOpen,

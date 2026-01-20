@@ -1,9 +1,10 @@
 <script setup lang="ts">
-import { inject, provide, Ref, ref, Reactive } from 'vue'
+import { inject, provide, Ref, ref, Reactive, computed } from 'vue'
 import { useTranslation } from 'i18next-vue'
 
-import { DrawnFeature } from '@/services/draw/drawn-feature'
+import { DrawnFeature } from '@/services/ol-feature/ol-feature-drawn'
 import { DrawnFeatureStyle } from '@/stores/draw.store.model'
+import useMyMaps from '@/composables/my-maps/my-maps.composable'
 
 import FeatureMenuPopup from './feature-menu-popup.vue'
 import FeatureConfirmDelete from './feature-confirm-delete.vue'
@@ -12,20 +13,33 @@ import FeatureEditStyle from './feature-edit-style.vue'
 import FeatureConcentricCircle from './feature-concentric-circle.vue'
 import FeatureMeasurements from './feature-measurements.vue'
 
+interface FeatureConcentricCirclePayload {
+  radius: number
+  baseFeature: DrawnFeature
+}
+
 defineProps<{
   isDocked: boolean
   isEditingFeature: boolean
 }>()
 const emit = defineEmits([
+  'continueLine',
   'toggleEditFeature',
   'toggleDock',
   'clickDelete',
   'resetInfo',
   'resetStyle',
   'submitEditFeature',
+  'submitNewConcentricCircle',
 ])
 const { t } = useTranslation()
+const myMaps = useMyMaps()
 const feature: Reactive<DrawnFeature> = inject('feature')!
+const isEditable = computed(() => {
+  // URL features (no map_id) are always editable
+  // MyMap features are only editable when isMyMapEditable has a value
+  return feature.map_id ? !!myMaps.isMyMapEditable.value : true
+})
 let prevLabel = feature.label
 let prevDescription = feature.description
 // keep deep copy of previous style to be able to revert style on cancel
@@ -53,33 +67,32 @@ function onClickCancel() {
   currentEditCompKey.value = undefined
 }
 
-function onClickValidate() {
+function onClickValidate(payload: MouseEvent | FeatureConcentricCirclePayload) {
   const currentComponent =
     editComponents[currentEditCompKey.value as keyof typeof editComponents]
 
   prevLabel = feature.label
   prevDescription = feature.description
   prevStyle = { ...feature.featureStyle }
-  if (currentComponent === FeatureConfirmDelete) {
-    emit('clickDelete')
-  } else if (
-    currentComponent === FeatureEditInfo ||
-    currentComponent === FeatureEditStyle
-  ) {
-    // reactivate highlighting of selected feature
-    feature.selected = true
-    emit('submitEditFeature')
-  } else {
-    alert('TODO: Draw feature click onClickValidate()')
-  }
-  currentEditCompKey.value = undefined
-}
 
-function onClickEditStyle() {
-  // deactivate highlighting of selected feature
-  feature.selected = false
-  feature.changed()
-  currentEditCompKey.value = 'FeatureEditStyle'
+  switch (currentComponent) {
+    case FeatureConcentricCircle:
+      emit('submitNewConcentricCircle', payload)
+      break
+    case FeatureConfirmDelete:
+      emit('clickDelete')
+      break
+    case FeatureEditInfo:
+    case FeatureEditStyle:
+      // reactivate highlighting of selected feature
+      feature.selected = true
+      emit('submitEditFeature')
+      break
+    default:
+      alert('Not implemented')
+  }
+
+  currentEditCompKey.value = undefined
 }
 </script>
 
@@ -106,9 +119,10 @@ function onClickEditStyle() {
       <div>
         <!-- Button edit feature: EDIT/END EDITION -->
         <button
+          v-if="isEditable"
           data-cy="featItemToggleEdit"
           class="lux-btn-primary"
-          @click="emit('toggleEditFeature', feature)"
+          @click="emit('toggleEditFeature')"
         >
           {{ isEditingFeature ? t('Terminer édition') : t("Editer l'objet") }}
         </button>
@@ -128,6 +142,7 @@ function onClickEditStyle() {
 
           <!-- Edit current feature -->
           <button
+            v-if="isEditable"
             data-cy="featItemActionEdit"
             class="hover:text-tertiary"
             @click="() => (currentEditCompKey = 'FeatureEditInfo')"
@@ -137,15 +152,17 @@ function onClickEditStyle() {
 
           <!-- Edit current feature style -->
           <button
+            v-if="isEditable"
             data-cy="featItemActionStyle"
             class="hover:text-tertiary"
-            @click="onClickEditStyle()"
+            @click="() => (currentEditCompKey = 'FeatureEditStyle')"
           >
             <i class="fa fa-paint-brush"></i>
           </button>
 
           <!-- Remove feature from the map -->
           <button
+            v-if="isEditable"
             data-cy="featItemActionDelete"
             class="hover:text-tertiary"
             @click="() => (currentEditCompKey = 'FeatureConfirmDelete')"
@@ -154,7 +171,12 @@ function onClickEditStyle() {
           </button>
 
           <!-- Menu dropdown with all other possible actions on feature -->
-          <FeatureMenuPopup />
+          <FeatureMenuPopup
+            @continueLine="emit('continueLine')"
+            @newConcentricCircle="
+              () => (currentEditCompKey = 'FeatureConcentricCircle')
+            "
+          />
         </div>
       </div>
     </div>
@@ -165,10 +187,12 @@ function onClickEditStyle() {
   <component
     v-else
     :is="editComponents[currentEditCompKey as keyof typeof editComponents]"
+    @cancel="onClickCancel"
+    @validate="onClickValidate"
   >
     <!-- Dynamic component content here -->
 
-    <!-- Customise footer with Cancel and Validate btns -->
+    <!-- Customise footer with Cancel and Validate btns, WARNING: some sub component may override this slot -->
     <template v-slot:footer>
       <div class="mt-3 text-right">
         <button

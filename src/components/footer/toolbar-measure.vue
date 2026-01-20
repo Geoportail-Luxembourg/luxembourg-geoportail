@@ -2,24 +2,43 @@
 import { useTranslation } from 'i18next-vue'
 import { useAppStore } from '@/stores/app.store'
 import ButtonText from './button-text.vue'
+import useMeasure from '@/composables/measure/measure.composable'
+
 const { toggleLidarOpen, toggleElevationProfileToolbarOpen } = useAppStore()
 const { t } = useTranslation()
 
+const { activate, deactivate, reset, currentMode } = useMeasure()
+
 const tools = [
-  { label: t('Length'), active: false, onClick: () => alert('TODO Length') },
-  { label: t('Surface'), active: false, onClick: () => alert('TODO Surface') },
-  { label: t('Azimut'), active: false, onClick: () => alert('TODO Azimut') },
+  {
+    label: t('Length'),
+    active: () => currentMode.value === 'length',
+    onClick: () =>
+      currentMode.value === 'length' ? deactivate() : activate('length'),
+  },
+  {
+    label: t('Surface'),
+    active: () => currentMode.value === 'area',
+    onClick: () =>
+      currentMode.value === 'area' ? deactivate() : activate('area'),
+  },
+  {
+    label: t('Azimut'),
+    active: () => currentMode.value === 'azimuth',
+    onClick: () =>
+      currentMode.value === 'azimuth' ? deactivate() : activate('azimuth'),
+  },
   {
     label: t('Profile'),
-    active: false,
+    active: () => false,
     onClick: () => toggleElevationProfileToolbarOpen(true),
   },
   {
     label: t('Profil Lidar'),
-    active: false,
+    active: () => false,
     onClick: () => toggleLidarOpen(true),
   },
-  { label: t('Reset'), active: false, onClick: () => alert('TODO Reset') },
+  { label: t('Reset'), active: () => false, onClick: () => reset() },
 ]
 </script>
 <template>
@@ -30,7 +49,7 @@ const tools = [
       <li v-for="(tool, index) in tools" :key="index">
         <button-text
           :label="tool.label"
-          :active="tool.active"
+          :active="tool.active()"
           @click="tool.onClick"
         />
       </li>

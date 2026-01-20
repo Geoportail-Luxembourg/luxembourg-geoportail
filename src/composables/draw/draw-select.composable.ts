@@ -1,13 +1,12 @@
 import { watch } from 'vue'
 import { storeToRefs } from 'pinia'
+import { listen } from 'ol/events'
 
 import useMap from '@/composables/map/map.composable'
-import { listen } from 'ol/events'
-import { getUid } from 'ol/util'
 import { useDrawStore } from '@/stores/draw.store'
 import { useAppStore } from '@/stores/app.store'
 import { useMapStore } from '@/stores/map.store'
-import { DrawnFeature } from '@/services/draw/drawn-feature'
+import { DrawnFeature } from '@/services/ol-feature/ol-feature-drawn'
 
 export default function useDrawSelect() {
   const map = useMap().getOlMap()
@@ -24,24 +23,31 @@ export default function useDrawSelect() {
 
   listen(map, 'click', event => handleClick(event))
 
-  watch(activeFeatureId, (newId, oldId) => {
-    if (editingFeatureId.value !== newId) {
-      editingFeatureId.value = undefined
+  watch(
+    [activeFeatureId, editingFeatureId],
+    ([newActiveId, newEditId], [oldActiveId, oldEditId]) => {
+      if (oldEditId !== newEditId && newEditId !== newActiveId) {
+        editingFeatureId.value = undefined
+      }
+
+      // Only unselect if it's a different feature
+      if (oldActiveId !== undefined && oldActiveId !== newActiveId) {
+        drawnFeatures.value
+          .filter(f => f.id === oldActiveId)
+          .forEach(oldFeature => {
+            oldFeature.selected = false
+            oldFeature.changed()
+          })
+      }
+
+      drawnFeatures.value
+        .filter(f => f.id === newActiveId)
+        .forEach(newFeature => {
+          newFeature.selected = true
+          newFeature.changed()
+        })
     }
-    drawnFeatures.value
-      .filter(f => getUid(f) === oldId)
-      .forEach(oldFeature => {
-        oldFeature.selected = false
-        oldFeature.changed()
-      })
-    drawnFeatures.value
-      .filter(f => getUid(f) === newId)
-      .forEach(newFeature => {
-        newFeature.selected = true
-        newFeature.editable = false
-        newFeature.changed()
-      })
-  })
+  )
 
   const handleClick = function (event: any) {
     const pixel = event.pixel
@@ -52,7 +58,7 @@ export default function useDrawSelect() {
     ) {
       return true
     }
-    activeFeatureId.value = undefined
+
     const featureFound = map.forEachFeatureAtPixel(
       pixel,
       feature => {
@@ -64,7 +70,7 @@ export default function useDrawSelect() {
           (featureMatch && layers.value.length === 0)
         ) {
           appStore.toggleMyMapsOpen(true)
-          activeFeatureId.value = getUid(feature)
+          activeFeatureId.value = (<DrawnFeature>feature).id
 
           return true
         }

@@ -70,7 +70,7 @@ describe('Test style edition of Point feature', () => {
         const featureLayers = olMap
           .getLayers()
           .getArray()
-          .filter((l: Layer) => l.get('cyLayerType') === 'featureLayer')
+          .filter((l: Layer) => l.get('cyLayerType') === 'interactionDrawLayer')
         const features = featureLayers
           .map((l: Layer) =>
             (l.getSource() as VectorSource<Geometry>)?.getFeatures()
@@ -102,7 +102,7 @@ describe('Test style edition of Point feature', () => {
         const featureLayers = olMap
           .getLayers()
           .getArray()
-          .filter((l: Layer) => l.get('cyLayerType') === 'featureLayer')
+          .filter((l: Layer) => l.get('cyLayerType') === 'interactionDrawLayer')
         const features = featureLayers
           .map((l: Layer) =>
             (l.getSource() as VectorSource<Geometry>)?.getFeatures()
@@ -140,7 +140,7 @@ describe('Test style edition of Label feature', () => {
         const featureLayers = olMap
           .getLayers()
           .getArray()
-          .filter((l: Layer) => l.get('cyLayerType') === 'featureLayer')
+          .filter((l: Layer) => l.get('cyLayerType') === 'interactionDrawLayer')
         const features = featureLayers
           .map((l: Layer) =>
             (l.getSource() as VectorSource<Geometry>)?.getFeatures()
@@ -193,7 +193,7 @@ describe('Test style edition of Line feature', () => {
         const featureLayers = olMap
           .getLayers()
           .getArray()
-          .filter((l: Layer) => l.get('cyLayerType') === 'featureLayer')
+          .filter((l: Layer) => l.get('cyLayerType') === 'interactionDrawLayer')
         const features = featureLayers
           .map((l: Layer) =>
             (l.getSource() as VectorSource<Geometry>)?.getFeatures()
@@ -241,7 +241,7 @@ describe('Test style edition of Polygon feature', () => {
         const featureLayers = olMap
           .getLayers()
           .getArray()
-          .filter((l: Layer) => l.get('cyLayerType') === 'featureLayer')
+          .filter((l: Layer) => l.get('cyLayerType') === 'interactionDrawLayer')
         const features = featureLayers
           .map((l: Layer) =>
             (l.getSource() as VectorSource<Geometry>)?.getFeatures()
@@ -288,7 +288,7 @@ describe('Test style edition of Circle feature', () => {
         const featureLayers = olMap
           .getLayers()
           .getArray()
-          .filter((l: Layer) => l.get('cyLayerType') === 'featureLayer')
+          .filter((l: Layer) => l.get('cyLayerType') === 'interactionDrawLayer')
         const features = featureLayers
           .map((l: Layer) =>
             (l.getSource() as VectorSource<Geometry>)?.getFeatures()

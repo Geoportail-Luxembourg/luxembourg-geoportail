@@ -671,7 +671,7 @@ class FeatureStyleHelper {
     } else if (geometry instanceof olGeomMultiPoint) {
       type = styleGeometryType.MULTI_POINT
     } else if (geometry instanceof olGeomPolygon) {
-      if (feature.get(luxFormatFeatureProperties.IS_CIRCLE)) {
+      if (feature.get('isCircle')) {
         type = styleGeometryType.CIRCLE
       } else if (feature.get(luxFormatFeatureProperties.IS_RECTANGLE)) {
         type = styleGeometryType.RECTANGLE

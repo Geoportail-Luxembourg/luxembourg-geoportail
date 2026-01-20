@@ -1,4 +1,5 @@
 import { fetchApi } from './api.service'
+import { createLogger } from '@/lib/logging/namespacedLogger'
 
 const PROFILE_URL = import.meta.env.VITE_PROFILE_URL
 
@@ -33,6 +34,18 @@ export async function fetchProfileJson(
   const response = await fetchApi(PROFILE_URL, payload, 'POST')
 
   if (!response.ok) {
+    // Try to capture server response body for debugging
+    let text = ''
+    try {
+      text = await response.text()
+    } catch (e) {
+      // ignore
+    }
+    const { error: apiError } = createLogger('PROFILE')
+    apiError('[fetchProfileJson] non-ok response', {
+      status: response.status,
+      body: text,
+    })
     throw new Error('Error while trying to get profile')
   }
 

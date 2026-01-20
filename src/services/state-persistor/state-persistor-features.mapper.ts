@@ -1,9 +1,9 @@
 import {
   convertCircleFeatureToPolygon,
   convertPolygonFeatureToCircle,
-} from '@/composables/draw/draw-utils'
+} from '@/composables/draw/draw-utils.composable'
 import featureHash from './utils/FeatureHash'
-import { DrawnFeature } from '@/services/draw/drawn-feature'
+import { DrawnFeature } from '@/services/ol-feature/ol-feature-drawn'
 
 /**
  * Note that the mapper converts circles to polygons and back to circles.
@@ -14,6 +14,7 @@ import { DrawnFeature } from '@/services/draw/drawn-feature'
 class StorageFeaturesMapper {
   featuresToUrl(features: DrawnFeature[] | null): string {
     if (!features) return ''
+
     const featuresToEncode = features
       .filter(feature => !feature.map_id)
       .sort((a, b) => a.display_order - b.display_order)
@@ -21,6 +22,7 @@ class StorageFeaturesMapper {
         const newFeature = new DrawnFeature(feature) // create new instance to avoid converting ol feature to polygon
         return convertCircleFeatureToPolygon(newFeature)
       })
+
     return featuresToEncode.length > 0
       ? featureHash.writeFeatures(featuresToEncode)
       : ''

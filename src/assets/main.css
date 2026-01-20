@@ -33,6 +33,7 @@
   /*********** Baseline, reset styles ***********/
   input[type='range'] {
     @apply cursor-pointer bg-transparent appearance-none;
+    border: none;
   }
 
   /******** Chrome, Safari, Opera and Edge Chromium styles ********/
@@ -202,6 +203,11 @@
 
   .lux-collapse.expanded {
     @apply max-h-[3000px];
+  }
+
+  /* Hint tooltip for measure tool */
+  .lux-tooltip--hint {
+    @apply bg-white text-sm text-primary px-2 py-1 rounded border border-gray-300 shadow-sm;
   }
 
   .lux-layer-manager-item {
@@ -436,6 +442,8 @@
 
   .lux-drawing-item-content input[type='number'] {
     @apply py-[2px] px-1;
+    color: var(--color-default);
+    background-color: white;
   }
 
   .lux-menu-popup-list {

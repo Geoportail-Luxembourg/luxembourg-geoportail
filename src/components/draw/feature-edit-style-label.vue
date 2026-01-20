@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { DrawnFeature } from '@/services/draw/drawn-feature'
+import { DrawnFeature } from '@/services/ol-feature/ol-feature-drawn'
 
 defineProps<{
   feature: DrawnFeature

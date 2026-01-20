@@ -13,29 +13,29 @@ import SearchDropdown from '@/components/search/search-dropdown.vue'
 
 const { t } = useTranslation()
 const appStore = useAppStore()
-const { toggleThemeGrid } = appStore
+const { toggleAuthFormOpen, toggleThemeGrid } = appStore
+const { authFormOpened } = storeToRefs(appStore)
 const { themeName } = storeToRefs(useThemeStore())
 const { authenticated } = storeToRefs(useUserManagerStore())
-const isAuthFormOpened = ref(false)
 const isLangOpened = ref(false)
 const isMobileSearchOpen = ref(false)
 
 // Close auth form dropdown when authentification done
 watch(
   authenticated,
-  authenticated => authenticated && (isAuthFormOpened.value = false)
+  authenticated => authenticated && toggleAuthFormOpen(false)
 )
 
 function onToggleDropdownLang(isOpen: boolean) {
   isLangOpened.value = isOpen
 
   if (isOpen) {
-    isAuthFormOpened.value = false
+    toggleAuthFormOpen(false)
   }
 }
 
 function onToggleDropdownAuth(isOpen: boolean) {
-  isAuthFormOpened.value = isOpen
+  toggleAuthFormOpen(isOpen)
 
   if (isOpen) {
     isLangOpened.value = false
@@ -97,7 +97,7 @@ function onToggleDropdownAuth(isOpen: boolean) {
             data-cy="authFormIcon"
             class="lux-navbar-dropdown lux-navbar-dropdown-auth h-full"
             :enableClickOutside="false"
-            :isOpen="isAuthFormOpened"
+            :isOpen="authFormOpened"
             @toggleDropdown="onToggleDropdownAuth"
           >
             <auth-form class="w-80" />

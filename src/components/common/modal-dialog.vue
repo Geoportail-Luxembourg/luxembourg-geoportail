@@ -12,6 +12,10 @@ defineProps({
     default: false,
   },
   title: String,
+  role: {
+    type: String,
+    default: 'dialog',
+  },
 })
 defineEmits<{
   (e: 'close'): void
@@ -44,7 +48,7 @@ function close() {
     >
       <div
         v-if="displayModal"
-        role="dialog"
+        :role="role"
         ref="modal"
         tabindex="0"
         @keydown.esc.stop="close()"
@@ -52,11 +56,13 @@ function close() {
       >
         <div class="bg-white shadow-modal rounded-lg overflow-hidden w-[700px]">
           <!-- header (title)-->
-          <div class="relative flex flex-row justify-center p-4 border-b-[1px]">
-            <h4 class="text-xl">{{ title }}</h4>
+          <div
+            class="relative flex flex-row items-center py-2 px-4 border-b-[1px]"
+          >
+            <h4 class="text-xl grow">{{ title }}</h4>
             <button
               type="button"
-              class="absolute right-2 top-1 text-slate-400 text-[24px]"
+              class="text-slate-400 text-2xl"
               data-dismiss="modal"
               aria-label="Close"
               @click="close()"
@@ -75,12 +81,7 @@ function close() {
           <div v-if="footer" class="p-[15px] border-t-[1px]">
             <slot name="footer">
               <div class="flex flex-row justify-end">
-                <button
-                  type="button"
-                  class="lux-btn"
-                  data-dismiss="modal"
-                  @click="close()"
-                >
+                <button class="lux-btn" data-dismiss="modal" @click="close()">
                   {{ t('Close', { ns: 'client' }) }}
                 </button>
               </div>

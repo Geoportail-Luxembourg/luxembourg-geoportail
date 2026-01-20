@@ -21,15 +21,15 @@ const selectedValue: ShallowRef<string | undefined> = shallowRef()
 const direction = toRef(props.direction)
 
 function onClickItem(event: MouseEvent) {
+  event.preventDefault()
   selectedValue.value = (event.target as HTMLElement).dataset.value
   emit('change', selectedValue.value)
 }
 
 function getPlaceholder() {
-  return (
-    props.placeholder ??
-    props.options.find(o => o.value === props.modelValue)?.label
-  )
+  return props.modelValue !== undefined
+    ? props.options.find(o => o.value === props.modelValue)?.label
+    : props.placeholder
 }
 </script>
 

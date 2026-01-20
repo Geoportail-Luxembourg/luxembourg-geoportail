@@ -2,7 +2,7 @@
 import { computed, inject, ref, watchEffect } from 'vue'
 import { useTranslation } from 'i18next-vue'
 
-import { DrawnFeature } from '@/services/draw/drawn-feature'
+import { DrawnFeature } from '@/services/ol-feature/ol-feature-drawn'
 import FeatureElevationProfile from '@/components/feature-elevation-profile/feature-elevation-profile.vue'
 import {
   getArea,
@@ -10,16 +10,15 @@ import {
   getCircleLength,
   getCircleRadius,
   getLength,
+  setCircleRadius,
 } from '@/services/common/measurement.utils'
 import { Circle, Geometry, Point, Polygon } from 'ol/geom'
-import { Projection } from 'ol/proj'
 import useMap from '@/composables/map/map.composable'
 import {
   getDebouncedElevation,
   getElevation,
 } from './feature-measurements-helper'
 import { useDrawStore } from '@/stores/draw.store'
-import { setRadius } from '@/services/draw/draw.helper'
 
 defineProps<{
   isEditingFeature?: boolean
@@ -28,7 +27,7 @@ defineProps<{
 const { t } = useTranslation()
 const drawStore = useDrawStore()
 const map = useMap().getOlMap()
-const mapProjection: Projection = map.getView().getProjection()
+const mapProjection = map.getView().getProjection()
 
 const feature = ref<DrawnFeature | undefined>(inject('feature'))
 const featureType = ref<string>(feature.value?.featureType || '')
@@ -60,7 +59,6 @@ const featRadius = computed(() =>
     : undefined
 )
 const inputRadius = ref<number>(featRadius.value || 0)
-
 const featElevation = ref<number | undefined>()
 
 watchEffect(async () => {
@@ -90,7 +88,12 @@ watchEffect(() => {
 
 function onClickValidateRadius(radius: number) {
   if (feature.value) {
-    setRadius(feature.value as DrawnFeature, radius, map, drawStore)
+    // TODO: move in composable
+    const geometry = <Circle>feature.value.getGeometry()
+    if (geometry?.getType() === 'Circle') {
+      setCircleRadius(geometry, radius, map)
+      drawStore.updateDrawnFeature(<DrawnFeature>feature.value)
+    }
   }
 }
 </script>
@@ -124,9 +127,9 @@ function onClickValidateRadius(radius: number) {
       <div v-else class="flex">
         <input
           data-cy="featItemInputRadius"
-          class="form-control block bg-secondary text-white border !border-gray-300"
+          class="form-control block bg-secondary border !border-gray-300"
           type="number"
-          v-model="inputRadius"
+          v-model.number="inputRadius"
           @keyup.enter="onClickValidateRadius(inputRadius)"
         />
         <button

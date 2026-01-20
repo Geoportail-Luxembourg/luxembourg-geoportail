@@ -1,7 +1,7 @@
 import { describe, it, expect, vi } from 'vitest'
 import { Map } from 'ol'
 import { ExportFeatureProfileCsv } from './export-feature-profile-csv'
-import { DrawnFeature } from '@/services/draw/drawn-feature'
+import { DrawnFeature } from '@/services/ol-feature/ol-feature-drawn'
 
 vi.mock('ol/proj', () => ({
   toLonLat: vi.fn(coords => coords.map((c: number) => c + 100)),

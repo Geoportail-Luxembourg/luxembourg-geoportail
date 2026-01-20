@@ -1,10 +1,11 @@
 <script setup lang="ts">
-import { useAppStore } from '@/stores/app.store'
-import { useDrawStore } from '@/stores/draw.store'
-import { useFeatureInfoStore } from '@/stores/feature-info.store'
 import { useTranslation } from 'i18next-vue'
 import { storeToRefs } from 'pinia'
 import { watch } from 'vue'
+
+import { useAppStore } from '@/stores/app.store'
+import { useDrawStore } from '@/stores/draw.store'
+import { useFeatureInfoStore } from '@/stores/feature-info.store'
 import ButtonIcon from './button-icon.vue'
 import ButtonLink from './button-link.vue'
 import ToolbarDraw from './toolbar-draw.vue'
@@ -34,6 +35,7 @@ const {
   measureToolbarOpen,
   elevationProfileToolbarOpen,
   styleEditorOpen,
+  myMapLayersChanged,
   myMapsOpen,
   infoOpen,
   shareOpen,
@@ -162,7 +164,9 @@ function onClickInfoIcon() {
       -->
       <li data-cy="mymapsOpenClose">
         <button-icon
-          :label="t('my_maps', { ns: 'client' })"
+          :label="
+            t('my_maps', { ns: 'client' }) + (myMapLayersChanged ? '(*)' : '')
+          "
           :aria-label="
             myMapsOpen
               ? t('Close my maps panel')

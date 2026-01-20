@@ -4,7 +4,7 @@ import { Geometry, LineString, Point } from 'ol/geom'
 
 import useMap from '@/composables/map/map.composable'
 import * as ApiProfileService from '@/services/api/api-profile.service'
-import { DrawnFeature } from './drawn-feature'
+import { DrawnFeature } from './ol-feature-drawn'
 
 const mockViewSize = [99, 100]
 const profileDataFixtures = {

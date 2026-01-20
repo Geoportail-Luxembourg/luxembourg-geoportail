@@ -2,14 +2,13 @@
 import { inject, ref, watchEffect } from 'vue'
 
 import MapPopup from '@/components/map/map-popup.vue'
-import useDrawnFeatures from '@/composables/draw/drawn-features.composable'
-import { DrawnFeature } from '@/services/draw/drawn-feature'
+import { DrawnFeature } from '@/services/ol-feature/ol-feature-drawn'
+import { getFeatCoordinates } from '@/services/ol-feature/ol-feature.utils'
 import { debounce } from '@/services/utils'
 
 defineProps<{
   isDocked: boolean
 }>()
-const { getFeatCoordinates } = useDrawnFeatures()
 const emit = defineEmits(['closePopup'])
 const feature: DrawnFeature | undefined = inject('feature')
 const popupAnchor: any = ref(getUnreactiveCoords())
