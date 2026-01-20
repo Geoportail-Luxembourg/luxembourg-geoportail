@@ -14,19 +14,19 @@ const tools = [
     label: t('Length'),
     active: () => currentMode.value === 'length',
     onClick: () =>
-      currentMode.value === 'length' ? deactivate() : void activate('length'),
+      currentMode.value === 'length' ? deactivate() : activate('length'),
   },
   {
     label: t('Surface'),
     active: () => currentMode.value === 'area',
     onClick: () =>
-      currentMode.value === 'area' ? deactivate() : void activate('area'),
+      currentMode.value === 'area' ? deactivate() : activate('area'),
   },
   {
     label: t('Azimut'),
     active: () => currentMode.value === 'azimuth',
     onClick: () =>
-      currentMode.value === 'azimuth' ? deactivate() : void activate('azimuth'),
+      currentMode.value === 'azimuth' ? deactivate() : activate('azimuth'),
   },
   {
     label: t('Profile'),

@@ -1,4 +1,4 @@
-import { ref } from 'vue'
+import { ref, onUnmounted } from 'vue'
 import Draw, { DrawEvent } from 'ol/interaction/Draw'
 import VectorSource from 'ol/source/Vector'
 import VectorLayer from 'ol/layer/Vector'
@@ -44,6 +44,8 @@ export default function useMeasure() {
   const lastPointerCoord = ref<[number, number] | null>(null)
   const hintOverlay = ref<Overlay | null>(null)
   const persistentRemovers: Array<() => void> = []
+  // persistentRemovers is cleared by `reset()` and also on component unmount
+  // to avoid leaks if the composable is used across multiple mount/unmount cycles.
 
   const MEASURE_STYLE = new Style({
     stroke: new Stroke({
@@ -137,13 +139,41 @@ export default function useMeasure() {
 
   function activate(mode: Mode) {
     if (!map) return
-    // ensure measure layer exists
+    // ensure a single measure layer exists on the map
+    // Try to reuse cached reference first, otherwise search the map for a
+    // previously created 'interactionMeasureLayer' to avoid adding duplicates
     let src = measureLayer.value?.getSource() as VectorSource | undefined
     if (!src) {
-      src = new VectorSource()
-      measureLayer.value = new VectorLayer({ source: src })
-      ;(measureLayer.value as any).set('cyLayerType', 'interactionMeasureLayer')
-      map.addLayer(measureLayer.value as any)
+      // search existing layers on the map for the interaction measure layer
+      try {
+        const layers = map.getLayers().getArray()
+        for (const l of layers) {
+          try {
+            if (
+              (l as any).get &&
+              (l as any).get('cyLayerType') === 'interactionMeasureLayer'
+            ) {
+              measureLayer.value = l as VectorLayer
+              src = (measureLayer.value as any).getSource() as VectorSource
+              break
+            }
+          } catch (e) {
+            // ignore errors checking individual layers
+          }
+        }
+      } catch (e) {
+        // ignore if map layers cannot be iterated
+      }
+
+      if (!src) {
+        src = new VectorSource()
+        measureLayer.value = new VectorLayer({ source: src })
+        ;(measureLayer.value as any).set(
+          'cyLayerType',
+          'interactionMeasureLayer'
+        )
+        map.addLayer(measureLayer.value as any)
+      }
     }
 
     const drawType =
@@ -436,8 +466,15 @@ export default function useMeasure() {
               } catch (e) {
                 logWarn('[measure] removing azimuth preview overlay failed', e)
               }
-              // don't null the reference here; persistentRemovers will clear it
-              // to avoid duplicate-removal attempts and keep cleanup centralized
+              // Null the cached preview overlay ref immediately after successful removal
+              // to avoid stale references or accidental reuse. persistentRemovers
+              // still contains a safe cleanup step but will no-op if the ref is null,
+              // preventing double-removal attempts and making ownership clearer.
+              try {
+                azimuthPreviewOverlay.value = null
+              } catch (e) {
+                // defensive: ignore any unexpected errors when clearing the ref
+              }
             }
 
             // avoid creating a final overlay twice for the same feature
@@ -475,9 +512,13 @@ export default function useMeasure() {
               )
               try {
                 // annotate overlay element so reset can find it
-                const el = finalOv?.getElement()
-                if (el && (el as any).dataset)
-                  (el as any).dataset.measurementId = measurementId
+                // Guard against finalOv or its element being undefined before accessing dataset
+                const el = finalOv
+                  ? finalOv.getElement && finalOv.getElement()
+                  : null
+                if (el && (el as any).dataset) {
+                  ;(el as any).dataset.measurementId = measurementId
+                }
               } catch (e) {
                 logWarn('[measure] annotating final overlay element failed', e)
               }
@@ -488,10 +529,9 @@ export default function useMeasure() {
               }
               // ensure the feature itself is removed on reset
               try {
-                const feat = feature
                 persistentRemovers.push(() => {
                   try {
-                    src!.removeFeature(feat)
+                    src!.removeFeature(feature)
                   } catch (e) {
                     logWarn('[measure] removing persistent feature failed', e)
                   }
@@ -501,13 +541,60 @@ export default function useMeasure() {
               }
             }
 
+            // helper to update the final overlay content and position
+            const updateFinalOverlay = (
+              ov: Overlay | null,
+              pos: [number, number],
+              bearingVal: number,
+              radiusStr: string,
+              dh: number | null
+            ) => {
+              if (!ov) return
+              try {
+                const el = ov ? ov.getElement && ov.getElement() : null
+                if (el) {
+                  el.innerHTML =
+                    dh === null
+                      ? `${bearingVal.toFixed(1)}° — ${radiusStr} — Δh: N/A`
+                      : `${bearingVal.toFixed(1)}° — ${radiusStr} — Δh: ${dh} m`
+                }
+                ov.setPosition(pos)
+              } catch (e) {
+                logWarn('[measure] updating final overlay failed', e)
+              }
+            }
+
             // fetch elevation for center and edge to compute Δh
+            // Use an AbortController so this async task can be cancelled on reset
+            const controller = new AbortController()
+            const abortRemover = () => {
+              try {
+                controller.abort()
+              } catch (e) {
+                /* ignore */
+              }
+            }
+            persistentRemovers.push(abortRemover)
             ;(async () => {
               try {
                 const [eCenter, eEdge] = await Promise.all([
-                  getElevation(center as [number, number]),
-                  getElevation(edge as [number, number]),
+                  getElevation(center as [number, number], controller.signal),
+                  getElevation(edge as [number, number], controller.signal),
                 ])
+
+                // If the final overlay was removed (e.g., reset called), skip updates
+                try {
+                  const overlays = map.getOverlays().getArray()
+                  if (!finalOv || overlays.indexOf(finalOv) === -1) {
+                    // cleanup the abort remover we added earlier
+                    const idx = persistentRemovers.indexOf(abortRemover)
+                    if (idx !== -1) persistentRemovers.splice(idx, 1)
+                    return
+                  }
+                } catch (e) {
+                  // if overlay inspection fails, proceed cautiously
+                }
+
                 if (eCenter === null || eEdge === null) {
                   logWarn(
                     '[measure][azimuth] elevation data missing for points',
@@ -518,35 +605,25 @@ export default function useMeasure() {
                       edge,
                     }
                   )
-                  if (finalOv) {
-                    const el = finalOv.getElement()
-                    if (el)
-                      el.innerHTML = `${bearing.toFixed(
-                        1
-                      )}° — ${radius} — Δh: N/A`
-                    finalOv.setPosition(mid)
-                  }
+                  updateFinalOverlay(finalOv, mid, bearing, radius, null)
                 } else {
                   const dh = Math.round(eEdge - eCenter)
-                  if (finalOv) {
-                    const el = finalOv.getElement()
-                    if (el)
-                      el.innerHTML = `${bearing.toFixed(
-                        1
-                      )}° — ${radius} — Δh: ${dh} m`
-                    finalOv.setPosition(mid)
-                  }
+                  updateFinalOverlay(finalOv, mid, bearing, radius, dh)
                 }
               } catch (err) {
+                // fetch may be aborted or fail; log and try to update safely
                 logError('[measure][azimuth] elevation request failed', err)
-                if (finalOv) {
-                  const el = finalOv.getElement()
-                  if (el)
-                    el.innerHTML = `${bearing.toFixed(
-                      1
-                    )}° — ${radius} — Δh: N/A`
-                  finalOv.setPosition(mid)
+                try {
+                  const overlays = map.getOverlays().getArray()
+                  if (!finalOv || overlays.indexOf(finalOv) === -1) return
+                } catch (e) {
+                  // ignore
                 }
+                updateFinalOverlay(finalOv, mid, bearing, radius, null)
+              } finally {
+                // remove the abort remover now that the async work is done
+                const idx = persistentRemovers.indexOf(abortRemover)
+                if (idx !== -1) persistentRemovers.splice(idx, 1)
               }
             })()
           }
@@ -627,8 +704,8 @@ export default function useMeasure() {
         if (key) unByKey(key as EventsKey)
         const src = measureLayer.value?.getSource()
         if (src) {
-          if (radial) src!.removeFeature(radial)
-          if (preview) src!.removeFeature(preview)
+          if (radial) src.removeFeature(radial)
+          if (preview) src.removeFeature(preview)
         }
       } catch (e) {
         logWarn(
@@ -738,6 +815,15 @@ export default function useMeasure() {
     // Any leftover overlays (dataset.measurementId or class 'lux-tooltip') are removed
     // by `removeAllMeasurementOverlays` earlier, so no additional pass is necessary here.
   }
+
+  // Ensure cleanup if the component using this composable unmounts without calling `reset()`.
+  onUnmounted(() => {
+    try {
+      reset()
+    } catch (e) {
+      logWarn('[measure] reset on unmount failed', e)
+    }
+  })
 
   return {
     activate,

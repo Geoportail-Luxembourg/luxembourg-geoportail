@@ -2476,7 +2476,6 @@
   "Click to start drawing profile": "Click to start measuring a profile",
   "Click to continue drawing the line<br>Double-click or click last point to finish": "Click to continue drawing the line<br>Double-click to finish",
   "measure_continue_instruction": "Click to continue drawing the line<br>Double-click to finish",
-  "measure_finish_instruction": "Double-click to finish",
   "Click to start drawing length": "Click to start measuring a distance",
   "measure_start_instruction": "Click to start measuring a distance",
   "measure_start_instruction_area": "Click to start measuring an area",
