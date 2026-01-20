@@ -7,6 +7,7 @@ import { authService } from '@/services/auth/auth.service'
 import { useAlertNotificationsStore } from '@/stores/alert-notifications.store'
 import { AlertNotificationType } from '@/stores/alert-notifications.store.model'
 import { useAppStore } from '@/stores/app.store'
+import { useThemeStore } from '@/stores/config.store'
 import { useUserManagerStore } from '@/stores/user-manager.store'
 import { User } from '@/stores/user-manager.store.model'
 
@@ -17,6 +18,7 @@ const MYACCOUNT_NEW_URL = import.meta.env.VITE_MYACCOUNT_NEW_URL
 const { t } = useTranslation()
 const { addNotification } = useAlertNotificationsStore()
 const { lang, isApp } = storeToRefs(useAppStore())
+const themeStore = useThemeStore()
 const userManagerStore = useUserManagerStore()
 const { setCurrentUser, clearUser } = userManagerStore
 const { authenticated, currentUser } = storeToRefs(userManagerStore)
@@ -48,9 +50,7 @@ function logout() {
     .then(() => {
       clearUser()
       // Reload themes to remove user-specific layers
-      if ((window as any).reloadThemes) {
-        ;(window as any).reloadThemes()
-      }
+      themeStore.loadThemes()
     })
     .catch(() =>
       addNotification(
@@ -75,9 +75,7 @@ function submit() {
 function onAuthenticateSuccess(user: User) {
   setCurrentUser(user)
   // Reload themes to get user-specific layers
-  if ((window as any).reloadThemes) {
-    ;(window as any).reloadThemes()
-  }
+  themeStore.loadThemes()
 }
 
 function onAuthenticateFailure() {

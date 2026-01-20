@@ -9,7 +9,6 @@ import { createPinia } from 'pinia'
 import formatMeasureDirective from '@/directives/format-measure.directive'
 import { initProjections } from '@/services/projection.utils'
 import { useThemeStore } from '@/stores/config.store'
-import { themesApiFixture } from './__fixtures__/themes.api.fixture'
 
 import App from './App.vue'
 
@@ -51,45 +50,8 @@ i18next
 
     app.mount('#app')
 
-    // Fetch themes from backend with fallback to fixture
-    async function loadThemes() {
-      const themeStore = useThemeStore()
-
-      // Build themes URL from VITE_V3_API_HOST or default to /themes
-      const base = (import.meta.env.VITE_V3_API_HOST as string) || ''
-      const baseNoSlash = base.replace(/\/$/, '')
-      const cacheVersion = Date.now()
-      const themesUrl = baseNoSlash
-        ? `${baseNoSlash}/themes?interface=main&background=background&cache_version=${cacheVersion}`
-        : `/themes?interface=main&background=background&cache_version=${cacheVersion}`
-
-      try {
-        const resp = await fetch(themesUrl, {
-          credentials:
-            (import.meta.env.VITE_CREDENTIALS_ORIGIN as RequestCredentials) ||
-            'same-origin',
-        })
-
-        if (!resp.ok) throw new Error(`Failed to fetch themes: ${resp.status}`)
-
-        const data = await resp.json()
-        if (!Array.isArray(data?.themes) || data.themes.length === 0) {
-          themeStore.setThemes(themesApiFixture())
-          return
-        }
-
-        themeStore.setThemes(data)
-      } catch (error) {
-        // Fallback to fixture to keep behaviour stable in dev/test
-        themeStore.setThemes(themesApiFixture())
-      }
-    }
-
-    // Expose reload function globally for auth
-    ;(window as any).reloadThemes = loadThemes
-
-    // Initial load
-    loadThemes()
+    // Load themes on app init
+    useThemeStore().loadThemes()
   })
 
 async function registerServiceWorker(swUrl: string) {
