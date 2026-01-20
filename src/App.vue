@@ -24,14 +24,12 @@ import { statePersistorAppService } from '@/services/state-persistor/state-persi
 import { statePersistorStyleService } from '@/services/state-persistor/state-persistor-bgstyle.service'
 import { statePersistorMyMapService } from '@/services/state-persistor/state-persistor-mymap.service'
 import { statePersistorFeatureInfoService } from '@/services/state-persistor/state-persistor-featureinfo.service'
-
+import useNetwork from '@/composables/network/network.composable'
+import { createLogger } from '@/lib/logging/namespacedLogger'
 import useMap from '@/composables/map/map.composable'
 import useMvtStyles from '@/composables/mvt-styles/mvt-styles.composable'
 import useMyMaps from '@/composables/my-maps/my-maps.composable'
-import useNetwork from '@/composables/network/network.composable'
-import { createLogger } from '@/lib/logging/namespacedLogger'
 import { useAppStore } from '@/stores/app.store'
-
 const { t } = useTranslation()
 const appStore = useAppStore()
 const mvtStyleService = useMvtStyles()
