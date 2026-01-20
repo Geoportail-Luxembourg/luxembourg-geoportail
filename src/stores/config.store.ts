@@ -2,6 +2,7 @@ import { acceptHMRUpdate, defineStore } from 'pinia'
 import { computed, ref, shallowRef, ShallowRef } from 'vue'
 
 import { ConfigModel } from '@/composables/themes/themes.model'
+import { themesApiFixture } from '@/__fixtures__/themes.api.fixture'
 
 const DEFAULT_CURRENT_THEME = 'main'
 const ROOT_NAME_3D = 'root_3d'
@@ -41,6 +42,37 @@ export const useThemeStore = defineStore(
       themeName.value = decodeURIComponent(name)
     }
 
+    async function loadThemes() {
+      // Build themes URL from VITE_V3_API_HOST or default to /themes
+      const base = (import.meta.env.VITE_V3_API_HOST as string) || ''
+      const baseNoSlash = base.replace(/\/$/, '')
+      const cacheVersion = Date.now()
+      const themesUrl = baseNoSlash
+        ? `${baseNoSlash}/themes?interface=main&background=background&cache_version=${cacheVersion}`
+        : `/themes?interface=main&background=background&cache_version=${cacheVersion}`
+
+      try {
+        const resp = await fetch(themesUrl, {
+          credentials:
+            (import.meta.env.VITE_CREDENTIALS_ORIGIN as RequestCredentials) ||
+            'same-origin',
+        })
+
+        if (!resp.ok) throw new Error(`Failed to fetch themes: ${resp.status}`)
+
+        const data = await resp.json()
+        if (!Array.isArray(data?.themes) || data.themes.length === 0) {
+          setThemes(themesApiFixture())
+          return
+        }
+
+        setThemes(data)
+      } catch (error) {
+        // Fallback to fixture to keep behaviour stable in dev/test
+        setThemes(themesApiFixture())
+      }
+    }
+
     return {
       config,
       themes,
@@ -50,6 +82,7 @@ export const useThemeStore = defineStore(
       layerTrees_3d,
       setTheme,
       setThemes,
+      loadThemes,
     }
   },
   {}

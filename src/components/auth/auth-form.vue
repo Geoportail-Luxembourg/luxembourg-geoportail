@@ -7,6 +7,7 @@ import { authService } from '@/services/auth/auth.service'
 import { useAlertNotificationsStore } from '@/stores/alert-notifications.store'
 import { AlertNotificationType } from '@/stores/alert-notifications.store.model'
 import { useAppStore } from '@/stores/app.store'
+import { useThemeStore } from '@/stores/config.store'
 import { useUserManagerStore } from '@/stores/user-manager.store'
 import { User } from '@/stores/user-manager.store.model'
 
@@ -17,6 +18,7 @@ const MYACCOUNT_NEW_URL = import.meta.env.VITE_MYACCOUNT_NEW_URL
 const { t } = useTranslation()
 const { addNotification } = useAlertNotificationsStore()
 const { lang, isApp } = storeToRefs(useAppStore())
+const themeStore = useThemeStore()
 const userManagerStore = useUserManagerStore()
 const { setCurrentUser, clearUser } = userManagerStore
 const { authenticated, currentUser } = storeToRefs(userManagerStore)
@@ -45,7 +47,11 @@ onMounted(() => {
 function logout() {
   authService
     .logout()
-    .then(() => clearUser())
+    .then(() => {
+      clearUser()
+      // Reload themes to remove user-specific layers
+      themeStore.loadThemes()
+    })
     .catch(() =>
       addNotification(
         t('Une erreur est survenue durant la déconnexion.'),
@@ -68,6 +74,8 @@ function submit() {
 
 function onAuthenticateSuccess(user: User) {
   setCurrentUser(user)
+  // Reload themes to get user-specific layers
+  themeStore.loadThemes()
 }
 
 function onAuthenticateFailure() {

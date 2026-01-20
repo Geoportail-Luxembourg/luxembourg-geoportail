@@ -9,7 +9,6 @@ import { createPinia } from 'pinia'
 import formatMeasureDirective from '@/directives/format-measure.directive'
 import { initProjections } from '@/services/projection.utils'
 import { useThemeStore } from '@/stores/config.store'
-import { themesApiFixture } from './__fixtures__/themes.api.fixture'
 
 import App from './App.vue'
 
@@ -51,7 +50,8 @@ i18next
 
     app.mount('#app')
 
-    useThemeStore().setThemes(themesApiFixture())
+    // Load themes on app init
+    useThemeStore().loadThemes()
   })
 
 async function registerServiceWorker(swUrl: string) {
