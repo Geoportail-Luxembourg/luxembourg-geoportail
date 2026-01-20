@@ -1,13 +1,21 @@
-import { Feature, Map } from 'ol'
+import { Feature } from 'ol'
 import { Point } from 'ol/geom'
 import { ExportFeatureShapefile } from './export-feature-shapefile'
+import { vi } from 'vitest'
 
 describe('ExportFeatureShapefile', () => {
   let exportFeatureShapefile: ExportFeatureShapefile
   let features: Feature[]
 
   beforeEach(() => {
-    exportFeatureShapefile = new ExportFeatureShapefile(new Map({}))
+    const mockMap = {
+      on: vi.fn(),
+      getView: vi.fn(() => ({
+        getProjection: vi.fn(() => 'EPSG:4326'),
+      })),
+      getSize: vi.fn(() => [100, 100]),
+    }
+    exportFeatureShapefile = new ExportFeatureShapefile(mockMap as any)
     features = [
       new Feature({
         geometry: new Point([0, 0]),

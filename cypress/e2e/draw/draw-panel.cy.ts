@@ -21,18 +21,16 @@ describe('Draw panel', () => {
       cy.get('[data-cy="drawPanelMenuPopup"] > button').click()
 
       cy.get('[data-cy="drawPanelMenuPopupItem"]').as('menuItem')
-      cy.get('@menuItem').eq(0).should('contain.text', 'Copier dans ma carte')
-      cy.get('@menuItem')
-        .eq(1)
-        .should('contain.text', 'Effacer tous les dessins')
-      cy.get('@menuItem')
-        .eq(2)
-        .should(
-          'contain.text',
-          'Créer une nouvelle carte à partir de ces dessins'
-        )
-      cy.get('@menuItem').eq(3).should('contain.text', 'Fusionner des lignes')
-      cy.get('@menuItem').eq(4).should('contain.text', 'Couper une ligne')
+      cy.get('@menuItem').should($items => {
+        const texts = $items.toArray().map(el => el.textContent?.trim())
+        expect(texts).to.include.members([
+          'Copier dans ma carte',
+          'Effacer tous les dessins',
+          'Créer une nouvelle carte à partir de ces dessins',
+          'Fusionner des lignes',
+          'Couper une ligne',
+        ])
+      })
     })
   })
 
