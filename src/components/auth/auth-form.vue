@@ -45,7 +45,13 @@ onMounted(() => {
 function logout() {
   authService
     .logout()
-    .then(() => clearUser())
+    .then(() => {
+      clearUser()
+      // Reload themes to remove user-specific layers
+      if ((window as any).reloadThemes) {
+        ;(window as any).reloadThemes()
+      }
+    })
     .catch(() =>
       addNotification(
         t('Une erreur est survenue durant la déconnexion.'),
@@ -68,6 +74,10 @@ function submit() {
 
 function onAuthenticateSuccess(user: User) {
   setCurrentUser(user)
+  // Reload themes to get user-specific layers
+  if ((window as any).reloadThemes) {
+    ;(window as any).reloadThemes()
+  }
 }
 
 function onAuthenticateFailure() {
