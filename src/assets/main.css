@@ -315,7 +315,7 @@
   }
 
   .lux-alert {
-    @apply p-4 mb-5 border;
+    @apply p-4 mb-5 border break-words overflow-hidden;
   }
 
   .lux-alert-info {
