@@ -22,8 +22,9 @@ export const INFO_FEATURE_LAYER_TYPE = 'infoFeatureLayer'
 
 export default function useLocationInfo() {
   const map = useMap().getOlMap()
-  let holdTimeoutId: number | undefined = undefined
+  const holdTimeoutId: number | undefined = undefined
   let startPixel: Coordinate | null = null
+  let startTime: number | null = null // Track when the pointer was pressed
   const { infoOpen } = storeToRefs(useAppStore())
   const { locationInfoCoords, hidePointer } = storeToRefs(
     useLocationInfoStore()
@@ -73,31 +74,49 @@ export default function useLocationInfo() {
 
   function handleClick(event: MapBrowserEvent<PointerEvent>) {
     startPixel = event.pixel
+    startTime = Date.now() // Record when pointer down happened
     if (event.originalEvent.button === 2) {
       // if right mouse click
       locationInfoCoords.value = getClickCoordinate(event)
       clearContent()
-    } else if (event.originalEvent.pointerType === 'touch') {
-      window.clearTimeout(holdTimeoutId)
-      holdTimeoutId = window.setTimeout(() => {
-        locationInfoCoords.value = getClickCoordinate(event)
-        clearContent()
-      })
     }
+    // Don't setup hold timeout on pointerdown for touch - it interferes with panning
+    // The pointerup handler will check if it was a long hold
   }
 
   listen(map, 'pointerup', event => {
-    if (
-      startPixel &&
-      (event as MapBrowserEvent<PointerEvent>).originalEvent.button === 0
-    ) {
-      // if left mouse click
-      if (!hidePointer.value) {
-        locationInfoCoords.value = undefined
+    const pointerEvent = (event as MapBrowserEvent<PointerEvent>).originalEvent
+
+    if (startPixel && startTime !== null) {
+      const pixel = (event as MapBrowserEvent<PointerEvent>).pixel
+      const deltaX = Math.abs(startPixel[0] - pixel[0])
+      const deltaY = Math.abs(startPixel[1] - pixel[1])
+      const timeDelta = Date.now() - startTime
+
+      // Check if this was a hold (touch press for 500ms without significant movement)
+      if (
+        pointerEvent.pointerType === 'touch' &&
+        deltaX + deltaY < 6 &&
+        timeDelta >= 400 // 400ms threshold for long press
+      ) {
+        locationInfoCoords.value = getClickCoordinate(
+          event as MapBrowserEvent<PointerEvent>
+        )
+        clearContent()
+      } else if (
+        pointerEvent.button === 0 && // left mouse click
+        deltaX + deltaY < 6 // no significant movement
+      ) {
+        // Left click without movement
+        if (!hidePointer.value) {
+          locationInfoCoords.value = undefined
+        }
       }
     }
+
     window.clearTimeout(holdTimeoutId)
     startPixel = null
+    startTime = null
   })
 
   listen(map, 'pointermove', event => {
@@ -106,6 +125,7 @@ export default function useLocationInfo() {
       const deltaX = Math.abs(startPixel[0] - pixel[0])
       const deltaY = Math.abs(startPixel[1] - pixel[1])
       if (deltaX + deltaY > 6) {
+        // Movement detected - this is a pan, not a click/hold
         window.clearTimeout(holdTimeoutId)
         startPixel = null
       }
