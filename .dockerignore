@@ -1,0 +1,19 @@
+node_modules
+npm-debug.log*
+yarn-error.log*
+*.log
+
+.git
+.gitignore
+
+# Build outputs
+/dist
+/bundle
+/coverage
+
+# Tooling / IDE
+.vscode
+.idea
+
+# Tests not needed in image
+/cypress

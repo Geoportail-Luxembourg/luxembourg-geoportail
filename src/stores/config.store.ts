@@ -2,7 +2,6 @@ import { acceptHMRUpdate, defineStore } from 'pinia'
 import { computed, ref, shallowRef, ShallowRef } from 'vue'
 
 import { ConfigModel } from '@/composables/themes/themes.model'
-import { themesApiFixture } from '@/__fixtures__/themes.api.fixture'
 
 const DEFAULT_CURRENT_THEME = 'main'
 const ROOT_NAME_3D = 'root_3d'
@@ -62,14 +61,24 @@ export const useThemeStore = defineStore(
 
         const data = await resp.json()
         if (!Array.isArray(data?.themes) || data.themes.length === 0) {
-          setThemes(themesApiFixture())
+          if (import.meta.env.DEV || import.meta.env.MODE === 'e2e') {
+            const { themesApiFixture } = await import(
+              '@/__fixtures__/themes.api.fixture'
+            )
+            setThemes(themesApiFixture())
+          }
           return
         }
 
         setThemes(data)
       } catch (error) {
         // Fallback to fixture to keep behaviour stable in dev/test
-        setThemes(themesApiFixture())
+        if (import.meta.env.DEV || import.meta.env.MODE === 'e2e') {
+          const { themesApiFixture } = await import(
+            '@/__fixtures__/themes.api.fixture'
+          )
+          setThemes(themesApiFixture())
+        }
       }
     }
 
