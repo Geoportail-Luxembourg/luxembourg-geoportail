@@ -22,7 +22,6 @@ export const INFO_FEATURE_LAYER_TYPE = 'infoFeatureLayer'
 
 export default function useLocationInfo() {
   const map = useMap().getOlMap()
-  const holdTimeoutId: number | undefined = undefined
   let startPixel: Coordinate | null = null
   let startTime: number | null = null // Track when the pointer was pressed
   const { infoOpen } = storeToRefs(useAppStore())
@@ -93,7 +92,7 @@ export default function useLocationInfo() {
       const deltaY = Math.abs(startPixel[1] - pixel[1])
       const timeDelta = Date.now() - startTime
 
-      // Check if this was a hold (touch press for 500ms without significant movement)
+      // Check if this was a hold (touch press for 400ms without significant movement)
       if (
         pointerEvent.pointerType === 'touch' &&
         deltaX + deltaY < 6 &&
@@ -114,7 +113,6 @@ export default function useLocationInfo() {
       }
     }
 
-    window.clearTimeout(holdTimeoutId)
     startPixel = null
     startTime = null
   })
@@ -126,8 +124,8 @@ export default function useLocationInfo() {
       const deltaY = Math.abs(startPixel[1] - pixel[1])
       if (deltaX + deltaY > 6) {
         // Movement detected - this is a pan, not a click/hold
-        window.clearTimeout(holdTimeoutId)
         startPixel = null
+        startTime = null
       }
     }
   })
