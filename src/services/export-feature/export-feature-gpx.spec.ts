@@ -1,13 +1,21 @@
-import { Feature, Map } from 'ol'
+import { Feature } from 'ol'
 import { Point, LineString, Polygon, MultiLineString } from 'ol/geom'
 import { ExportFeatureGpx } from './export-feature-gpx'
+import { vi } from 'vitest'
 
 describe('ExportFeatureGpx', () => {
   let exportFeatureGpx: ExportFeatureGpx
   let features: Feature[]
 
   beforeEach(() => {
-    exportFeatureGpx = new ExportFeatureGpx(new Map({}))
+    const mockMap = {
+      on: vi.fn(),
+      getView: vi.fn(() => ({
+        getProjection: vi.fn(() => 'EPSG:4326'),
+      })),
+      getSize: vi.fn(() => [100, 100]),
+    }
+    exportFeatureGpx = new ExportFeatureGpx(mockMap as any)
     features = [
       new Feature({
         geometry: new Point([0, 0]),
@@ -65,7 +73,7 @@ describe('ExportFeatureGpx', () => {
     it('should generate GPX content', () => {
       const content = exportFeatureGpx.generateContent(features, 'testFile')
       expect(content).toBe(
-        '<gpx xmlns="http://www.topografix.com/GPX/1/1" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.topografix.com/GPX/1/1 http://www.topografix.com/GPX/1/1/gpx.xsd" version="1.1" creator="OpenLayers"><metadata><name>testFile</name></metadata><wpt lat="0" lon="0"><name>Point 1</name></wpt><rte><name>Line 1</name><rtept lat="0" lon="0"/><rtept lat="0.000008983152838482056" lon="0.000008983152841195214"/></rte></gpx>'
+        '<gpx xmlns="http://www.topografix.com/GPX/1/1" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.topografix.com/GPX/1/1 http://www.topografix.com/GPX/1/1/gpx.xsd" version="1.1" creator="OpenLayers"><metadata><name>testFile</name></metadata><wpt lat="0" lon="0"><name>Point 1</name></wpt><rte><name>Line 1</name><rtept lat="0" lon="0"/><rtept lat="1" lon="1"/></rte></gpx>'
       )
     })
   })

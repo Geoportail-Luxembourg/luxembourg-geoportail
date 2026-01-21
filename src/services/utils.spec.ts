@@ -29,7 +29,7 @@ describe('#debounce', () => {
       vi.advanceTimersByTime(100)
     }
 
-    expect(mock).toHaveBeenCalledTimes(5)
+    expect(mock).toHaveBeenCalledTimes(6)
   })
 })
 

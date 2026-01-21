@@ -50,9 +50,14 @@ describe('DrawnFeature', () => {
   let mockMap: Map
 
   beforeEach(() => {
+    vi.clearAllMocks()
     drawnFeature = new DrawnFeature()
     mockMap = useMap().getOlMap()
     drawnFeature.map = mockMap
+  })
+
+  afterEach(() => {
+    vi.clearAllMocks()
   })
 
   it('should call map.getView().fit with correct extent and size', () => {
@@ -131,7 +136,7 @@ describe('DrawnFeature', () => {
         feat.setGeometry(new Point([0, 0]))
         const profile = await feat.getProfile()
 
-        expect(ApiProfileService.fetchProfileJson).not.toHaveBeenCalledOnce()
+        expect(ApiProfileService.fetchProfileJson).not.toHaveBeenCalled()
         expect(profile).toStrictEqual(undefined)
       })
     })

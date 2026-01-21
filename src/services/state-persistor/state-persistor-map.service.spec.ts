@@ -1,6 +1,8 @@
 import { MapBrowserEvent } from 'ol'
 import ObjectEventType from 'ol/ObjectEventType'
 import { ObjectEvent } from 'ol/Object'
+import { vi, describe, it, expect, beforeEach, afterEach } from 'vitest'
+import { createTestingPinia } from '@pinia/testing'
 
 import proj4 from 'proj4'
 
@@ -14,6 +16,10 @@ import { register } from 'ol/proj/proj4'
 let fakeStorage: { [key: string]: string | number } = {}
 
 describe('StatePersistorMapService', () => {
+  createTestingPinia({
+    createSpy: vi.fn,
+  })
+
   const map = useMap()
   map.createMap()
   const olMap = map.getOlMap()
@@ -34,6 +40,7 @@ describe('StatePersistorMapService', () => {
 
   beforeEach(() => {
     fakeStorage = {}
+    vi.clearAllMocks()
     vi.useFakeTimers()
     vi.spyOn(storageHelper, 'setValue')
     vi.mock('./storage/storage.helper', () => {

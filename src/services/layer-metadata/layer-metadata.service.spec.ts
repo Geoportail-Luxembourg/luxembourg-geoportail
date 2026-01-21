@@ -92,6 +92,10 @@ describe('LayerMetadataService', () => {
       .mockReturnValue(legendMock)
   })
 
+  afterEach(() => {
+    vi.restoreAllMocks()
+  })
+
   describe('#getLayerMetadata with internal layer', () => {
     let metadata
     beforeEach(async () => {

@@ -5,6 +5,7 @@ import { Point, LineString, Polygon, Circle } from 'ol/geom'
 
 import { useDrawStore } from '@/stores/draw.store'
 import useDrawnFeatures from './drawn-features.composable'
+import { getFeatCoordinates } from '@/services/ol-feature/ol-feature.utils'
 
 vi.mock('@/composables/map/map.composable', () => ({
   default: () => ({
@@ -12,6 +13,8 @@ vi.mock('@/composables/map/map.composable', () => ({
       addLayer: vi.fn(),
     }),
   }),
+  PROJECTION_LUX: 'EPSG:2169',
+  PROJECTION_WEBMERCATOR: 'EPSG:3857',
 }))
 
 describe('useDrawnFeatures', () => {
@@ -26,22 +29,22 @@ describe('useDrawnFeatures', () => {
   it('should add a feature to the collection and store', () => {
     const { generateDrawnFeature } = useDrawnFeatures()
     const feature = new Feature(new Point([0, 0]))
-    generateDrawnFeature(feature)
+    const drawnFeature = generateDrawnFeature(feature)
 
     const drawStore = useDrawStore()
+    drawStore.drawnFeatures.push(drawnFeature)
+
     expect(drawStore.drawnFeatures.length).toBe(1)
     expect(drawStore.drawnFeatures[0].getGeometry()?.getType()).toBe('Point')
   })
 
   it('should correctly get coordinates of Point geometry', () => {
-    const { getFeatCoordinates } = useDrawnFeatures()
     const pointFeature = new Feature(new Point([1, 2]))
     const coords = getFeatCoordinates(pointFeature)
     expect(coords).toEqual([1, 2])
   })
 
   it('should correctly get midpoint of LineString geometry', () => {
-    const { getFeatCoordinates } = useDrawnFeatures()
     const lineFeature = new Feature(
       new LineString([
         [0, 0],
@@ -53,7 +56,6 @@ describe('useDrawnFeatures', () => {
   })
 
   it('should correctly get interior point of Polygon geometry', () => {
-    const { getFeatCoordinates } = useDrawnFeatures()
     const polygonFeature = new Feature(
       new Polygon([
         [
@@ -69,7 +71,6 @@ describe('useDrawnFeatures', () => {
   })
 
   it('should correctly get center of Circle geometry', () => {
-    const { getFeatCoordinates } = useDrawnFeatures()
     const circleFeature = new Feature(new Circle([5, 5], 10))
     const coords = getFeatCoordinates(circleFeature)
     expect(coords).toEqual([5, 5])

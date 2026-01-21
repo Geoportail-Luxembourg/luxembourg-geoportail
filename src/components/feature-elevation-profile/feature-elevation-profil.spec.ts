@@ -79,6 +79,9 @@ describe('FeatureElevationProfile', () => {
     })
 
     await nextTick()
+    // Wait for the promise returned by getProfile to resolve
+    await wrapper.vm.$nextTick()
+    await new Promise(resolve => setTimeout(resolve, 0))
 
     expect(wrapper.text()).toContain('Δ+699')
     expect(wrapper.text()).toContain('Δ-814')
@@ -121,6 +124,9 @@ describe('FeatureElevationProfile', () => {
     })
 
     await nextTick()
+    // Wait for the promise returned by getProfile to resolve
+    await new Promise(resolve => setTimeout(resolve, 0))
+    await wrapper.vm.$nextTick()
     await wrapper.find('[data-cy="featItemProfileCSV"]').trigger('click')
 
     expect(exportFeatureService.export).toHaveBeenCalled()
