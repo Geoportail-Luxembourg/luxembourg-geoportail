@@ -25,7 +25,7 @@ export interface Attributes {
   path?: string
   thumb?: string
   category_id?: number
-  PF: {
+  PF?: {
     [key: string]: unknown
   }
   measurements: FeatureMeasurement[]
