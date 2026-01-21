@@ -102,37 +102,37 @@ watch(feedbackOpen, isOpen => {
 
 <template>
   <!-- Layer panel -->
-  <div v-if="layersOpen" class="w-full md:w-80 bg-secondary z-10">
+  <div v-if="layersOpen" class="w-4/5 md:w-80 bg-secondary z-10">
     <layer-panel />
   </div>
 
   <!-- Legends panel -->
-  <div v-if="legendsOpen" class="w-full md:w-80 bg-secondary z-10">
+  <div v-if="legendsOpen" class="w-4/5 md:w-80 bg-secondary z-10">
     <legends-panel />
   </div>
 
   <!-- Style editor -->
-  <div v-if="styleEditorOpen" class="w-full md:w-80 bg-secondary z-10">
+  <div v-if="styleEditorOpen" class="w-4/5 md:w-80 bg-secondary z-10">
     <style-panel />
   </div>
 
   <!-- MyMaps panel -->
-  <div v-if="myMapsOpen" class="w-full md:w-80 bg-secondary z-10">
+  <div v-if="myMapsOpen" class="w-4/5 md:w-80 bg-secondary z-10">
     <my-maps-panel />
   </div>
 
   <!-- Info panel -->
-  <div v-show="infoOpen" class="w-full md:w-80 bg-secondary z-10">
+  <div v-show="infoOpen" class="w-4/5 md:w-80 bg-secondary z-10">
     <info-panel />
   </div>
 
   <!-- Feedback panel -->
-  <div v-if="feedbackOpen" class="w-full md:w-80 bg-secondary z-10">
+  <div v-if="feedbackOpen" class="w-4/5 md:w-80 bg-secondary z-10">
     <feedback-panel />
   </div>
 
   <!-- lidar panel -->
-  <div v-show="lidarOpen" class="w-full md:w-80 bg-secondary z-10">
+  <div v-show="lidarOpen" class="w-4/5 md:w-80 bg-secondary z-10">
     <lidar-config-panel></lidar-config-panel>
   </div>
 </template>
