@@ -17,7 +17,7 @@ function onClose(uuid: string) {
   <Teleport to="body">
     <div
       v-if="notifications.length"
-      class="lux-notifications fixed w-[500px] top-10 left-1/2 ml-[-250px] z-[9999]"
+      class="lux-notifications fixed w-[calc(100%-2rem)] max-w-[500px] top-10 left-1/2 -translate-x-1/2 z-[9999] mx-4 sm:mx-0"
       data-cy="alertNotifications"
     >
       <Notification
