@@ -57,7 +57,7 @@
     "@babel/cli": "^7.25.7",
     "@babel/core": "^7.25.8",
     "@babel/preset-env": "^7.25.8",
-    "@cypress/code-coverage": "^3.10.0",
+    "@cypress/code-coverage": "^3.14.7",
     "@istanbuljs/nyc-config-typescript": "^1.0.2",
     "@pinia/testing": "^0.0.14",
     "@rushstack/eslint-patch": "^1.1.4",
