@@ -16,6 +16,9 @@ import StyleStroke from 'ol/style/Stroke'
 import { useAppStore } from '@/stores/app.store'
 import { useLocationInfoStore } from '@/stores/location-info.store'
 import { useFeatureInfoStore } from '@/stores/feature-info.store'
+import { useDrawStore } from '@/stores/draw.store'
+import { useLidarStore } from '@/stores/lidar.store'
+import { isInActiveMode } from './info.utils'
 
 export const DEFAULT_INFO_ZINDEX = 1501
 export const INFO_FEATURE_LAYER_TYPE = 'infoFeatureLayer'
@@ -24,11 +27,13 @@ export default function useLocationInfo() {
   const map = useMap().getOlMap()
   let startPixel: Coordinate | null = null
   let startTime: number | null = null // Track when the pointer was pressed
-  const { infoOpen } = storeToRefs(useAppStore())
+  const { infoOpen, measureToolbarOpen } = storeToRefs(useAppStore())
   const { locationInfoCoords, hidePointer } = storeToRefs(
     useLocationInfoStore()
   )
   const { clearContent } = useFeatureInfoStore()
+  const { drawStateActive, editStateActive } = storeToRefs(useDrawStore())
+  const { measureActive } = storeToRefs(useLidarStore())
 
   const infoFeatureLayer = new VectorLayer({
     source: new VectorSource({
@@ -84,6 +89,18 @@ export default function useLocationInfo() {
   }
 
   listen(map, 'pointerup', event => {
+    // Don't process clicks when in draw, edit, or measure mode
+    if (
+      isInActiveMode(
+        drawStateActive,
+        editStateActive,
+        measureActive,
+        measureToolbarOpen
+      )
+    ) {
+      return
+    }
+
     const pointerEvent = (event as MapBrowserEvent<PointerEvent>).originalEvent
 
     if (startPixel && startTime !== null) {

@@ -23,10 +23,12 @@ import { Pixel } from 'ol/pixel'
 import { throttle } from '@/services/utils'
 import { useMapStore } from '@/stores/map.store'
 import { useLocationInfoStore } from '@/stores/location-info.store'
+import { useLidarStore } from '@/stores/lidar.store'
 import { getFeatureInfoJson } from '@/services/api/api-feature-info.service'
 import { OLLAYER_PROP_METADATA } from '@/services/ol-layer/ol-layer.model'
 import ImageLayer from 'ol/layer/Image'
 import { ImageWMS } from 'ol/source'
+import { isInActiveMode } from './info.utils'
 
 export default function useFeatureInfo() {
   const map = useMap().getOlMap()
@@ -43,6 +45,8 @@ export default function useFeatureInfo() {
     useLocationInfoStore()
   )
   const { maxZoom } = storeToRefs(useMapStore())
+  const { measureActive } = storeToRefs(useLidarStore())
+  const { measureToolbarOpen } = storeToRefs(useAppStore())
 
   const responses = ref<FeatureInfoJSON[]>([])
   const lastHighlightedFeatures = ref<FeatureJSON[]>([])
@@ -92,8 +96,12 @@ export default function useFeatureInfo() {
         // appActivetool.value.isActive() || => corresponds to: measureActive, streetviewActive
         evt.originalEvent.button === 2 || // right click
         (isStreetviewActive.value && locationInfoCoords.value) ||
-        drawStateActive.value ||
-        editStateActive.value ||
+        isInActiveMode(
+          drawStateActive,
+          editStateActive,
+          measureActive,
+          measureToolbarOpen
+        ) ||
         isLoading.value
       ) {
         return
