@@ -735,23 +735,7 @@ onMounted(() => {
 
 /* Route details scroll */
 .route-details-scroll {
-  @apply max-h-96 overflow-y-auto bg-secondary rounded;
-}
-
-.route-details-scroll::-webkit-scrollbar {
-  @apply w-2;
-}
-
-.route-details-scroll::-webkit-scrollbar-track {
-  @apply bg-tertiary rounded;
-}
-
-.route-details-scroll::-webkit-scrollbar-thumb {
-  @apply bg-white rounded;
-}
-
-.route-details-scroll::-webkit-scrollbar-thumb:hover {
-  @apply bg-gray-300;
+  @apply bg-secondary rounded;
 }
 
 .route-details-step {
