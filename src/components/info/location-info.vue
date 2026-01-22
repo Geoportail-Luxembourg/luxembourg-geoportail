@@ -26,13 +26,16 @@ import { downloadUrl } from '@/services/utils'
 
 import { useAlertNotificationsStore } from '@/stores/alert-notifications.store'
 import { AlertNotificationType } from '@/stores/alert-notifications.store.model'
+import { useRoutingStore } from '@/stores/routing.store'
+import { useAppStore } from '@/stores/app.store'
 
 import { usePrintStore } from '@/stores/print.store'
 import { getQRUrl } from '@/services/url.utils'
 
 const { t } = useTranslation()
-const { locationInfoCoords, locationInfoInfos, routingFeatureTemp } =
-  storeToRefs(useLocationInfoStore())
+const { locationInfoCoords, locationInfoInfos } = storeToRefs(
+  useLocationInfoStore()
+)
 const { currentUser } = storeToRefs(useUserManagerStore())
 const { addNotification } = useAlertNotificationsStore()
 
@@ -147,12 +150,28 @@ function addRoutePoint() {
     return
   }
   const point = new Feature(new Point(locationInfoCoords.value))
-  if (address.value && address.value.distance <= 100) {
-    point.set('label', formatAddress(address.value))
-  } else {
-    point.set('label', formattedCoordinates.value['Luref'])
-  }
-  routingFeatureTemp.value = point
+  const label =
+    address.value && address.value.distance <= 100
+      ? formatAddress(address.value)
+      : formattedCoordinates.value['Luref']
+  point.set('label', label)
+
+  // Convert to WGS84 for routing (setRoutePoint expects EPSG:4326)
+  const coords4326 = transform(
+    locationInfoCoords.value,
+    map.getView().getProjection(),
+    PROJECTION_WGS84
+  ) as [number, number]
+
+  // Find first empty route slot
+  const routingStore = useRoutingStore()
+  const targetIndex = routingStore.routes.findIndex(
+    route => !route || route.trim() === ''
+  )
+  const index = targetIndex === -1 ? routingStore.routes.length : targetIndex
+
+  routingStore.setStartPoint(coords4326, label, index)
+  useAppStore().toggleRoutingOpen(true)
 }
 
 async function downloadRapportForageVirtuel() {

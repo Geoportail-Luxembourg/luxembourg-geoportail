@@ -67,6 +67,7 @@ const {
   infoOpen,
   styleEditorOpen,
   lidarOpen,
+  routingPanelOpen,
   isOffLine,
 } = storeToRefs(appStore)
 
@@ -76,6 +77,7 @@ watch(styleEditorOpen, timeoutResizeMap)
 watch(myMapsOpen, timeoutResizeMap)
 watch(infoOpen, timeoutResizeMap)
 watch(lidarOpen, timeoutResizeMap)
+watch(routingPanelOpen, timeoutResizeMap)
 
 function timeoutResizeMap() {
   setTimeout(() => map.resize(), 50)

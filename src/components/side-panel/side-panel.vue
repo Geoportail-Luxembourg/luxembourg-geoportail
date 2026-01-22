@@ -5,6 +5,7 @@ import { storeToRefs } from 'pinia'
 import LayerPanel from '@/components/layer-panel/layer-panel.vue'
 import LegendsPanel from '@/components/legends/legends-panel.vue'
 import StylePanel from '@/components/style-selector/style-panel.vue'
+import RoutingPanel from '@/components/routing/RoutingPanel.vue'
 import MyMapsPanel from '@/components/my-maps/my-maps-panel.vue'
 import InfoPanel from '@/components/info/info-panel.vue'
 import LidarConfigPanel from '@/components/lidar/lidar-config-panel.vue'
@@ -19,11 +20,15 @@ const {
   myMapsOpen,
   infoOpen,
   lidarOpen,
+  routingPanelOpen,
   feedbackOpen,
   styleEditorOpen,
   themeGridOpen,
   drawToolbarOpen,
 } = storeToRefs(appStore)
+
+const maxExtent = JSON.parse(import.meta.env.VITE_DEFAULT_MAX_EXTENT)
+const routingUrl = import.meta.env.VITE_ROUTING_URL || ''
 
 watch(layersOpen, layersOpen => {
   if (layersOpen) {
@@ -31,6 +36,7 @@ watch(layersOpen, layersOpen => {
       legendsOpen.value =
       myMapsOpen.value =
       styleEditorOpen.value =
+      routingPanelOpen.value =
       feedbackOpen.value =
         false
   }
@@ -43,6 +49,7 @@ watch(myMapsOpen, myMapsOpen => {
       themeGridOpen.value =
       legendsOpen.value =
       infoOpen.value =
+      routingPanelOpen.value =
       feedbackOpen.value =
         false
   }
@@ -56,6 +63,7 @@ watch(legendsOpen, legendsOpen => {
       themeGridOpen.value =
       infoOpen.value =
       lidarOpen.value =
+      routingPanelOpen.value =
       feedbackOpen.value =
         false
   }
@@ -70,6 +78,7 @@ watch(drawToolbarOpen, drawToolbarOpen => {
     infoOpen.value = false
     lidarOpen.value = false
     feedbackOpen.value = false
+    routingPanelOpen.value = false
   }
 })
 
@@ -82,6 +91,7 @@ watch(infoOpen, infoOpen => {
       legendsOpen.value =
       lidarOpen.value =
       feedbackOpen.value =
+      routingPanelOpen.value =
         false
   }
 })
@@ -95,6 +105,21 @@ watch(feedbackOpen, isOpen => {
       legendsOpen.value =
       lidarOpen.value =
       infoOpen.value =
+      routingPanelOpen.value =
+        false
+  }
+})
+
+watch(routingPanelOpen, isOpen => {
+  if (isOpen) {
+    layersOpen.value =
+      legendsOpen.value =
+      myMapsOpen.value =
+      styleEditorOpen.value =
+      feedbackOpen.value =
+      infoOpen.value =
+      lidarOpen.value =
+      themeGridOpen.value =
         false
   }
 })
@@ -129,6 +154,14 @@ watch(feedbackOpen, isOpen => {
   <!-- Feedback panel -->
   <div v-if="feedbackOpen" class="w-4/5 md:w-80 bg-secondary z-10">
     <feedback-panel />
+  </div>
+
+  <!-- Routing panel -->
+  <div v-if="routingPanelOpen" class="w-4/5 md:w-80 bg-secondary z-10">
+    <routing-panel
+      :max-extent="maxExtent"
+      :poi-search-service-url="routingUrl"
+    />
   </div>
 
   <!-- lidar panel -->

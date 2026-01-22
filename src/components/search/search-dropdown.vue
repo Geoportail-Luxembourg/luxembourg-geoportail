@@ -10,6 +10,8 @@ import { useThemeStore } from '@/stores/config.store'
 import useLayers from '@/composables/layers/layers.composable'
 import useBackgroundLayer from '@/composables/background-layer/background-layer.composable'
 import useThemes from '@/composables/themes/themes.composable'
+import { useRoutingStore } from '@/stores/routing.store'
+import { useAppStore } from '@/stores/app.store'
 import FilterPanel from './filter-panel.vue'
 import { curFilters, esMatch } from '@/composables/search/search-filters'
 import { transformExtent } from 'ol/proj.js'
@@ -18,6 +20,7 @@ import { useMetadataStore } from '@/stores/metadata.store'
 import { LayerId, Layer } from '@/stores/map.store.model'
 
 const { setMetadataLayer } = useMetadataStore()
+const { toggleRoutingOpen } = useAppStore()
 const filterIconColor = computed(() =>
   isFilterPanelOpen.value ? 'var(--color-tertiary)' : '#ffffff'
 )
@@ -171,7 +174,7 @@ function processResultFeaturesearch(data: any, selectResult: Function) {
         label: label,
         layer_name: feature.properties.layer_name,
         entry: feature,
-        showRoutingButton: false,
+        showRoutingButton: true,
         showInfoButton: false,
       }
     }),
@@ -248,7 +251,62 @@ function onRoutingClick(result: {
   showRoutingButton: boolean
   showInfoButton: boolean
 }) {
-  // TODO: Implement routing logic
+  const routingStore = useRoutingStore()
+
+  toggleRoutingOpen(true)
+  routingStore.openPanel()
+
+  // Handle GeoJSON object
+  if (result.entry) {
+    const entry = result.entry as any
+    let coords: [number, number] | null = null
+
+    // Check if it's a GeoJSON feature
+    if (entry.geometry && entry.geometry.coordinates) {
+      const geomCoords = entry.geometry.coordinates
+
+      // Handle Point geometry
+      if (entry.geometry.type === 'Point') {
+        coords = geomCoords as [number, number]
+      } else if (Array.isArray(geomCoords[0])) {
+        // Handle LineString, Polygon, etc - take first coordinate
+        coords = geomCoords[0] as [number, number]
+      }
+    }
+    // Check if it's an OpenLayers feature
+    else if (entry.getGeometry) {
+      const geometry = entry.getGeometry()
+      if (geometry.getFirstCoordinate) {
+        coords = geometry.getFirstCoordinate()
+      } else if (geometry.getCoordinates) {
+        const allCoords = geometry.getCoordinates()
+        coords = Array.isArray(allCoords[0]) ? allCoords[0] : allCoords
+      }
+    }
+
+    if (!coords) {
+      closeDropdown()
+      return
+    }
+
+    // GeoJSON coordinates are in EPSG:4326 (lon/lat), NOT in map projection!
+    // So coords are already in EPSG:4326, no transformation needed
+
+    // Find first empty route slot or add new one
+    const routingState = routingStore.routes
+    let targetIndex = routingState.findIndex(
+      route => !route || route.trim() === ''
+    )
+
+    if (targetIndex === -1) {
+      // No empty slot, add new route
+      targetIndex = routingState.length
+    }
+
+    routingStore.setStartPoint(coords, result.label, targetIndex)
+  }
+
+  closeDropdown()
 }
 function processResultCmssearch(data: any, selectResult: Function) {
   searchResults.value.push({
@@ -502,7 +560,7 @@ function getDataCoordinates(newQuery: string, token: number) {
         label: label,
         layer_name: 'Coordinates',
         entry: feature,
-        showRoutingButton: false,
+        showRoutingButton: true,
         showInfoButton: false,
       }
     }),
