@@ -19,8 +19,10 @@
             ]"
             @click="setMode(3)"
             :title="t('Car mode')"
+            :aria-label="t('Mode voiture')"
+            :aria-pressed="routingState.transportMode === 3"
           >
-            <span class="fa fa-car"></span>
+            <span class="fa fa-car" aria-hidden="true"></span>
           </button>
           <button
             :class="[
@@ -29,8 +31,10 @@
             ]"
             @click="setMode(1)"
             :title="t('Pedestrian mode')"
+            :aria-label="t('Mode piéton')"
+            :aria-pressed="routingState.transportMode === 1"
           >
-            <span class="fa fa-male"></span>
+            <span class="fa fa-male" aria-hidden="true"></span>
           </button>
           <button
             :class="[
@@ -39,8 +43,10 @@
             ]"
             @click="setMode(2)"
             :title="t('Bicycle mode')"
+            :aria-label="t('Mode vélo')"
+            :aria-pressed="routingState.transportMode === 2"
           >
-            <span class="fa fa-bicycle"></span>
+            <span class="fa fa-bicycle" aria-hidden="true"></span>
           </button>
 
           <!-- Action buttons -->
@@ -49,22 +55,25 @@
             class="mode-btn"
             @click="createMapFromRoute"
             :title="t('Save to my maps')"
+            :aria-label="t('Sauvegarder la route dans Mes cartes')"
           >
-            <span class="fa fa-save"></span>
+            <span class="fa fa-save" aria-hidden="true"></span>
           </button>
           <button
             class="mode-btn"
             @click="clearRoutes()"
             :title="t('Clear all')"
+            :aria-label="t('Effacer tous les points de route')"
           >
-            <span class="fa fa-trash"></span>
+            <span class="fa fa-trash" aria-hidden="true"></span>
           </button>
           <button
             class="mode-btn"
             @click="exchangeRoutes()"
             :title="t('Swap start and end')"
+            :aria-label="t('Échanger départ et arrivée')"
           >
-            <span class="fa fa-exchange"></span>
+            <span class="fa fa-exchange" aria-hidden="true"></span>
           </button>
         </div>
       </div>
@@ -90,22 +99,59 @@
               class="lux-input w-full"
               :placeholder="$t('Indiquez une adresse, un lieu')"
               :route-number="key + 1"
+              :aria-expanded="
+                activeSearchIndex === key && addressResults.length > 0
+              "
+              :aria-haspopup="
+                activeSearchIndex === key && addressResults.length > 0
+                  ? 'listbox'
+                  : undefined
+              "
+              :aria-activedescendant="
+                activeSearchIndex === key && highlightedIndex >= 0
+                  ? `address-${key}-${highlightedIndex}`
+                  : undefined
+              "
+              :aria-describedby="
+                activeSearchIndex === key && addressResults.length > 0
+                  ? `address-help-${key}`
+                  : undefined
+              "
+              role="combobox"
+              aria-autocomplete="list"
               @input="onRouteInputChange(key)"
-              @blur="handleRouteInput(key)"
-              @focus="activeSearchIndex = key"
+              @blur="handleRouteInputBlur(key)"
+              @focus="handleRouteInputFocus(key)"
+              @keydown="handleRouteInputKeydown($event, key)"
             />
 
             <!-- Address dropdown -->
             <div
               v-if="activeSearchIndex === key && addressResults.length > 0"
               class="address-dropdown"
+              role="listbox"
+              :aria-label="$t('Résultats de recherche d\'adresse')"
             >
+              <div id="address-help-{{ key }}" class="sr-only">
+                {{
+                  $t(
+                    'Utilisez les flèches pour naviguer, Entrée pour sélectionner, Échap pour fermer'
+                  )
+                }}
+              </div>
               <ul>
                 <li
                   v-for="(result, idx) in addressResults"
                   :key="idx"
+                  :id="`address-${key}-${idx}`"
+                  :class="[
+                    'address-item',
+                    { 'address-item-highlighted': highlightedIndex === idx },
+                  ]"
+                  role="option"
+                  :aria-selected="highlightedIndex === idx"
                   @click="selectAddress(key, result)"
-                  class="address-item"
+                  @mouseenter="setHighlightedIndex(idx)"
                 >
                   {{ result.label }}
                 </li>
@@ -119,11 +165,23 @@
               class="mode-btn"
               @click="whereAmI(key)"
               :title="t('Use my location')"
+              :aria-label="
+                $t('Utiliser ma position actuelle pour le point {number}', {
+                  number: key + 1,
+                })
+              "
             >
-              <span class="fa fa-crosshairs"></span>
+              <span class="fa fa-crosshairs" aria-hidden="true"></span>
             </button>
-            <button v-else class="mode-btn" @click="clearRoute(key)">
-              <span class="fa fa-trash"></span>
+            <button
+              v-else
+              class="mode-btn"
+              @click="clearRoute(key)"
+              :aria-label="
+                $t('Effacer le point de route {number}', { number: key + 1 })
+              "
+            >
+              <span class="fa fa-trash" aria-hidden="true"></span>
             </button>
 
             <div class="tooltip routing-tooltip">
@@ -311,9 +369,7 @@ const { startCoordinate, startLabel, targetRouteIndex } =
 const sortableRoutesRef = useTemplateRef<HTMLDivElement>('sortableRoutes')
 
 // Generate stable IDs for routes to track them across reorders
-let nextRouteId = 0
 const routeIds = ref<number[]>([0, 1])
-nextRouteId = 2
 
 const {
   routingState,
@@ -401,6 +457,7 @@ const {
 const criteriaDropdownOpen = ref(false)
 const { searchAddresses, searchResults: addressResults } = useAddressSearch()
 const activeSearchIndex = ref<number | null>(null)
+const highlightedIndex = ref(-1)
 const searchDebounceTimer = ref<number | null>(null)
 
 function mapTransportMode(mode: number): number {
@@ -440,21 +497,15 @@ onMounted(() => {
   }
 })
 
-// Watch routes array length and sync IDs
-watch(
-  () => routingState.value.routes.length,
-  (newLength, oldLength) => {
-    if (newLength > oldLength) {
-      // Route added
-      for (let i = oldLength; i < newLength; i++) {
-        routeIds.value.push(nextRouteId++)
-      }
-    } else if (newLength < oldLength) {
-      // Route removed
-      routeIds.value.splice(newLength)
-    }
+// Watch for address results changes to reset highlight
+watch(addressResults, newResults => {
+  if (newResults.length > 0 && activeSearchIndex.value !== null) {
+    highlightedIndex.value = 0
+    nextTick(() => scrollToHighlightedItem(activeSearchIndex.value!))
+  } else {
+    highlightedIndex.value = -1
   }
-)
+})
 
 function onRouteInputChange(key: number) {
   if (searchDebounceTimer.value) {
@@ -475,9 +526,88 @@ function onRouteInputChange(key: number) {
 function selectAddress(key: number, result: any) {
   routingState.value.routes[key] = result.label
   activeSearchIndex.value = null
+  highlightedIndex.value = -1
 
   if (result.coordinates) {
     setRoutePoint(key, result.coordinates, result.label)
+  }
+}
+
+function handleRouteInputFocus(key: number) {
+  activeSearchIndex.value = key
+  // Initialize highlight to first item if results exist
+  if (addressResults.value.length > 0) {
+    highlightedIndex.value = 0
+    scrollToHighlightedItem(key)
+  } else {
+    highlightedIndex.value = -1
+  }
+}
+
+function handleRouteInputBlur(key: number) {
+  // Delay hiding dropdown to allow for clicks on options
+  setTimeout(() => {
+    if (activeSearchIndex.value === key) {
+      activeSearchIndex.value = null
+      highlightedIndex.value = -1
+    }
+  }, 150)
+}
+
+function handleRouteInputKeydown(event: KeyboardEvent, key: number) {
+  if (activeSearchIndex.value !== key || addressResults.value.length === 0) {
+    return
+  }
+
+  switch (event.key) {
+    case 'ArrowDown':
+      event.preventDefault()
+      highlightedIndex.value = Math.min(
+        highlightedIndex.value + 1,
+        addressResults.value.length - 1
+      )
+      scrollToHighlightedItem(key)
+      break
+    case 'ArrowUp':
+      event.preventDefault()
+      highlightedIndex.value = Math.max(highlightedIndex.value - 1, 0)
+      scrollToHighlightedItem(key)
+      break
+    case 'Enter':
+      event.preventDefault()
+      if (
+        highlightedIndex.value >= 0 &&
+        highlightedIndex.value < addressResults.value.length
+      ) {
+        selectAddress(key, addressResults.value[highlightedIndex.value])
+      }
+      break
+    case 'Escape':
+      event.preventDefault()
+      activeSearchIndex.value = null
+      highlightedIndex.value = -1
+      break
+  }
+}
+
+function scrollToHighlightedItem(key: number) {
+  nextTick(() => {
+    const highlightedElement = document.getElementById(
+      `address-${key}-${highlightedIndex.value}`
+    )
+    if (highlightedElement) {
+      highlightedElement.scrollIntoView({
+        behavior: 'smooth',
+        block: 'nearest',
+      })
+    }
+  })
+}
+
+function setHighlightedIndex(index: number) {
+  highlightedIndex.value = index
+  if (activeSearchIndex.value !== null) {
+    scrollToHighlightedItem(activeSearchIndex.value)
   }
 }
 
@@ -505,11 +635,6 @@ function toggleCriteriaDropdown() {
 function selectCriteria(value: number) {
   setCriteria(value)
   criteriaDropdownOpen.value = false
-}
-
-function handleRouteInput(key: number) {
-  // Placeholder hook for future analytics/telemetry
-  void routingState.value.routes[key]
 }
 
 function exportGpx() {
@@ -710,6 +835,14 @@ onMounted(() => {
 
 .address-item {
   @apply px-3 py-2 hover:bg-secondary hover:text-white cursor-pointer border-b border-tertiary last:border-b-0 text-sm;
+}
+
+.address-item-highlighted {
+  @apply bg-secondary text-white;
+}
+
+.sr-only {
+  @apply absolute w-px h-px p-0 -m-px overflow-hidden whitespace-nowrap border-0;
 }
 
 .tooltip-container {
