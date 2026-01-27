@@ -24,6 +24,7 @@ import { throttle } from '@/services/utils'
 import { useMapStore } from '@/stores/map.store'
 import { useLocationInfoStore } from '@/stores/location-info.store'
 import { useLidarStore } from '@/stores/lidar.store'
+import { useElevationProfileStore } from '@/stores/elevation-profile.store'
 import { getFeatureInfoJson } from '@/services/api/api-feature-info.service'
 import { OLLAYER_PROP_METADATA } from '@/services/ol-layer/ol-layer.model'
 import { isParcelLayerIdent } from '@/composables/layers/layers.composable'
@@ -46,7 +47,8 @@ export default function useFeatureInfo() {
     useLocationInfoStore()
   )
   const { maxZoom } = storeToRefs(useMapStore())
-  const { measureActive } = storeToRefs(useLidarStore())
+  const { measureActive, drawLidarActive } = storeToRefs(useLidarStore())
+  const { drawElevationProfileActive } = storeToRefs(useElevationProfileStore())
   const { measureToolbarOpen } = storeToRefs(useAppStore())
 
   const responses = ref<FeatureInfoJSON[]>([])
@@ -101,7 +103,9 @@ export default function useFeatureInfo() {
           drawStateActive,
           editStateActive,
           measureActive,
-          measureToolbarOpen
+          measureToolbarOpen,
+          drawLidarActive,
+          drawElevationProfileActive
         ) ||
         isLoading.value
       ) {

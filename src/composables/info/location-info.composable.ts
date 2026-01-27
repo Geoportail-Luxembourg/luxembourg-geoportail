@@ -18,6 +18,7 @@ import { useLocationInfoStore } from '@/stores/location-info.store'
 import { useFeatureInfoStore } from '@/stores/feature-info.store'
 import { useDrawStore } from '@/stores/draw.store'
 import { useLidarStore } from '@/stores/lidar.store'
+import { useElevationProfileStore } from '@/stores/elevation-profile.store'
 import { isInActiveMode } from './info.utils'
 
 export const DEFAULT_INFO_ZINDEX = 1501
@@ -33,7 +34,8 @@ export default function useLocationInfo() {
   )
   const { clearContent } = useFeatureInfoStore()
   const { drawStateActive, editStateActive } = storeToRefs(useDrawStore())
-  const { measureActive } = storeToRefs(useLidarStore())
+  const { measureActive, drawLidarActive } = storeToRefs(useLidarStore())
+  const { drawElevationProfileActive } = storeToRefs(useElevationProfileStore())
 
   const infoFeatureLayer = new VectorLayer({
     source: new VectorSource({
@@ -95,7 +97,9 @@ export default function useLocationInfo() {
         drawStateActive,
         editStateActive,
         measureActive,
-        measureToolbarOpen
+        measureToolbarOpen,
+        drawLidarActive,
+        drawElevationProfileActive
       )
     ) {
       return
