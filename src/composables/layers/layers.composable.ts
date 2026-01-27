@@ -11,6 +11,27 @@ import { useThemeStore } from '@/stores/config.store'
 import { useAlertNotificationsStore } from '@/stores/alert-notifications.store'
 import useThemes from '@/composables/themes/themes.composable'
 import { AlertNotificationType } from '@/stores/alert-notifications.store.model'
+import { olLayerSearchService } from '@/services/ol-layer/ol-layer-search.service'
+import { featureInfoLayerService } from '@/services/info/feature-info-layer.service'
+
+// Whitelist of layer identifiers / names that should be considered "parcel" layers
+const PARCEL_LAYER_WHITELIST = [
+  'parcels',
+  'parcels_labels',
+  'parcels_go',
+  'parcels_prof',
+  'parcels_labels_go',
+  'parcels_labels_prof',
+  'cadastre',
+]
+
+function isParcelLayerIdent(value?: string | number | null): boolean {
+  if (value === undefined || value === null) return false
+  const v = String(value).toLowerCase()
+  return PARCEL_LAYER_WHITELIST.some(s => v.includes(s))
+}
+
+export { isParcelLayerIdent }
 
 export default function useLayers() {
   const themes = useThemes()
@@ -102,6 +123,20 @@ export default function useLayers() {
     if (excludedLayers.length > 0) {
       mapStore.removeLayers(...excludedLayers.map(_layer => _layer.id))
 
+      // If a parcel layer has been removed, also clear parcel highlights
+      const removedIsParcel = excludedLayers.some(
+        _layer =>
+          isParcelLayerIdent(_layer.layers) || isParcelLayerIdent(_layer.name)
+      )
+      if (removedIsParcel) {
+        try {
+          olLayerSearchService.clearParcelHighlights()
+          featureInfoLayerService.clearParcelHighlights()
+        } catch (e) {
+          // ignore errors — best effort
+        }
+      }
+
       notificationsStore.addNotification(
         i18next.t(
           'The layer <b>{{layersToRemove}}</b> has been removed because it cannot be displayed while the layer <b>{{layer}}</b> is displayed',
@@ -146,6 +181,16 @@ export default function useLayers() {
         ),
         AlertNotificationType.WARNING
       )
+      // If the layer that caused the bg deactivation is a parcel layer,
+      // remove parcel highlights as they cannot be displayed anymore.
+      if (isParcelLayerIdent(layer.layers) || isParcelLayerIdent(layer.name)) {
+        try {
+          olLayerSearchService.clearParcelHighlights()
+          featureInfoLayerService.clearParcelHighlights()
+        } catch (e) {
+          // ignore
+        }
+      }
     }
   }
 

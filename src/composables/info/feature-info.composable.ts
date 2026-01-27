@@ -26,6 +26,7 @@ import { useLocationInfoStore } from '@/stores/location-info.store'
 import { useLidarStore } from '@/stores/lidar.store'
 import { getFeatureInfoJson } from '@/services/api/api-feature-info.service'
 import { OLLAYER_PROP_METADATA } from '@/services/ol-layer/ol-layer.model'
+import { isParcelLayerIdent } from '@/composables/layers/layers.composable'
 import ImageLayer from 'ol/layer/Image'
 import { ImageWMS } from 'ol/source'
 import { isInActiveMode } from './info.utils'
@@ -343,7 +344,23 @@ export default function useFeatureInfo() {
 
     lastHighlightedFeatures.value = []
     for (let i = 0; i < responses.value.length; i++) {
-      lastHighlightedFeatures.value.push(...responses.value[i].features)
+      const resp = responses.value[i]
+      const isParcelLayer =
+        isParcelLayerIdent(resp.layerLabel) || isParcelLayerIdent(resp.layer)
+      // annotate features so downstream highlight service can detect parcels
+      resp.features.forEach(f => {
+        try {
+          if (!f.properties) f.properties = {}
+          if (isParcelLayer) {
+            f.properties['layer_name'] = 'Parcelle'
+            f.properties['isParcel'] = true
+          }
+        } catch (e) {
+          // ignore
+        }
+      })
+      // Debug: response annotated (removed verbose logging)
+      lastHighlightedFeatures.value.push(...resp.features)
     }
     featureInfoLayerService.highlightFeatures(
       lastHighlightedFeatures.value,
