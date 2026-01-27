@@ -8,10 +8,12 @@ import { ref } from 'vue'
  */
 export const useElevationProfileStore = defineStore('elevation-profile', () => {
   const drawElevationProfileActive = ref<boolean>(false)
+  const justFinishedDrawing = ref<boolean>(false)
   const currentProfileFeature = ref<Feature | null>(null)
 
   return {
     drawElevationProfileActive,
+    justFinishedDrawing,
     currentProfileFeature,
   }
 })

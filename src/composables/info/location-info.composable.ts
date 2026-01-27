@@ -34,8 +34,15 @@ export default function useLocationInfo() {
   )
   const { clearContent } = useFeatureInfoStore()
   const { drawStateActive, editStateActive } = storeToRefs(useDrawStore())
-  const { measureActive, drawLidarActive } = storeToRefs(useLidarStore())
-  const { drawElevationProfileActive } = storeToRefs(useElevationProfileStore())
+  const {
+    measureActive,
+    drawLidarActive,
+    justFinishedDrawing: justFinishedDrawingLidar,
+  } = storeToRefs(useLidarStore())
+  const {
+    drawElevationProfileActive,
+    justFinishedDrawing: justFinishedDrawingElevation,
+  } = storeToRefs(useElevationProfileStore())
 
   const infoFeatureLayer = new VectorLayer({
     source: new VectorSource({
@@ -99,7 +106,9 @@ export default function useLocationInfo() {
         measureActive,
         measureToolbarOpen,
         drawLidarActive,
-        drawElevationProfileActive
+        drawElevationProfileActive,
+        justFinishedDrawingLidar,
+        justFinishedDrawingElevation
       )
     ) {
       return

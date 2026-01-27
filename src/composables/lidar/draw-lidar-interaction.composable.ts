@@ -22,8 +22,12 @@ let lidarManager: LidarManager
 export default function useDrawLidarInteraction() {
   const appStore = useAppStore()
   const lidarStore = useLidarStore()
-  const { drawLidarActive, currentProfileFeature, profileWidth } =
-    storeToRefs(lidarStore)
+  const {
+    drawLidarActive,
+    currentProfileFeature,
+    profileWidth,
+    justFinishedDrawing,
+  } = storeToRefs(lidarStore)
   const { lidarOpen } = storeToRefs(appStore)
   let map: Map
   const drawInteraction = new Draw({ type: 'LineString' })
@@ -105,9 +109,14 @@ export default function useDrawLidarInteraction() {
   function onDrawEnd(event: DrawEvent) {
     drawInteraction.finishDrawing()
     drawLidarActive.value = false
+    justFinishedDrawing.value = true
     event.stopPropagation()
     currentProfileFeature.value = event!.feature
     generatePlot()
+    // Reset the flag after a short delay to allow the feature-info timeout to pass
+    setTimeout(() => {
+      justFinishedDrawing.value = false
+    }, 600)
   }
 
   /**

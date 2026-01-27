@@ -47,8 +47,15 @@ export default function useFeatureInfo() {
     useLocationInfoStore()
   )
   const { maxZoom } = storeToRefs(useMapStore())
-  const { measureActive, drawLidarActive } = storeToRefs(useLidarStore())
-  const { drawElevationProfileActive } = storeToRefs(useElevationProfileStore())
+  const {
+    measureActive,
+    drawLidarActive,
+    justFinishedDrawing: justFinishedDrawingLidar,
+  } = storeToRefs(useLidarStore())
+  const {
+    drawElevationProfileActive,
+    justFinishedDrawing: justFinishedDrawingElevation,
+  } = storeToRefs(useElevationProfileStore())
   const { measureToolbarOpen } = storeToRefs(useAppStore())
 
   const responses = ref<FeatureInfoJSON[]>([])
@@ -105,7 +112,9 @@ export default function useFeatureInfo() {
           measureActive,
           measureToolbarOpen,
           drawLidarActive,
-          drawElevationProfileActive
+          drawElevationProfileActive,
+          justFinishedDrawingLidar,
+          justFinishedDrawingElevation
         ) ||
         isLoading.value
       ) {

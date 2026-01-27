@@ -23,9 +23,11 @@ import drawTooltip from '@/composables/draw/draw-tooltip'
 export default function useDrawElevationProfileInteraction() {
   const appStore = useAppStore()
   const elevationProfileStore = useElevationProfileStore()
-  const { drawElevationProfileActive, currentProfileFeature } = storeToRefs(
-    elevationProfileStore
-  )
+  const {
+    drawElevationProfileActive,
+    currentProfileFeature,
+    justFinishedDrawing,
+  } = storeToRefs(elevationProfileStore)
   const { elevationProfileToolbarOpen } = storeToRefs(appStore)
 
   let map: Map
@@ -129,8 +131,13 @@ export default function useDrawElevationProfileInteraction() {
     drawTooltip.remove()
     drawInteraction.finishDrawing()
     drawElevationProfileActive.value = false
+    justFinishedDrawing.value = true
     event.stopPropagation()
     currentProfileFeature.value = event.feature
+    // Reset the flag after a short delay to allow the feature-info timeout to pass
+    setTimeout(() => {
+      justFinishedDrawing.value = false
+    }, 600)
   }
 
   /**

@@ -1,7 +1,7 @@
 import { Ref } from 'vue'
 
 /**
- * Check if any active mode is enabled (draw, edit, measure, lidar draw, or elevation profile draw)
+ * Check if any active mode is enabled (draw, edit, measure, lidar draw, elevation profile draw, or just finished drawing)
  */
 export function isInActiveMode(
   drawStateActive: Ref<string | undefined>,
@@ -9,7 +9,9 @@ export function isInActiveMode(
   measureActive: Ref<boolean>,
   measureToolbarOpen: Ref<boolean>,
   drawLidarActive: Ref<boolean>,
-  drawElevationProfileActive: Ref<boolean>
+  drawElevationProfileActive: Ref<boolean>,
+  justFinishedDrawingLidar: Ref<boolean>,
+  justFinishedDrawingElevation: Ref<boolean>
 ): boolean {
   return (
     drawStateActive.value !== undefined ||
@@ -17,6 +19,8 @@ export function isInActiveMode(
     measureActive.value === true ||
     measureToolbarOpen.value === true ||
     drawLidarActive.value === true ||
-    drawElevationProfileActive.value === true
+    drawElevationProfileActive.value === true ||
+    justFinishedDrawingLidar.value === true ||
+    justFinishedDrawingElevation.value === true
   )
 }

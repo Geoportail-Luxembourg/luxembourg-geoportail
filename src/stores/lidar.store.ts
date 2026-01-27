@@ -5,6 +5,7 @@ import { Feature } from 'ol'
 export const useLidarStore = defineStore('lidar', () => {
   const drawLidarActive = ref<boolean>(false)
   const measureActive = ref<boolean>(false)
+  const justFinishedDrawing = ref<boolean>(false)
   const profileWidth = ref<number>(5)
   const currentProfileFeature = ref<Feature | null>(null)
   const lidarConfig = {
@@ -240,5 +241,6 @@ export const useLidarStore = defineStore('lidar', () => {
     currentProfileFeature,
     lidarConfig,
     measureActive,
+    justFinishedDrawing,
   }
 })
