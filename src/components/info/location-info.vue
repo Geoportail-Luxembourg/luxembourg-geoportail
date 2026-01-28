@@ -49,8 +49,8 @@ const clickCoordinateLuref: Ref<Coordinate | undefined> = ref()
 const formattedCoordinates: Ref<{ [k: string]: string }> = ref({})
 const downloadingRepport: Ref<boolean> = ref(false)
 const isInBoxOfLidar: Ref<boolean> = ref(false)
-const userRole: Ref<string> = ref('ACT') // or 'Tous Publics'
-const userType: Ref<string> = ref('base')
+const userRole: Ref<string> = ref('Tous Publics')
+const userType: Ref<string> = ref('prive')
 
 // initialise map listeners for location info
 useLocationInfo()
