@@ -118,12 +118,27 @@ class FeatureInfoLayerService {
           if (curFeature.getId() == null) {
             curFeature.setId(undefined)
           }
+          // mark as parcel when indicated by source properties
+          try {
+            if (
+              curFeature.get('layer_name') === 'Parcelle' ||
+              curFeature.get('isParcel')
+            ) {
+              curFeature.set('isParcel', true)
+            }
+          } catch (e) {
+            // ignore
+          }
           if (curFeature.getGeometry()?.getType() === 'GeometryCollection') {
             const geomCollection =
               curFeature.getGeometry() as GeometryCollection
             geomCollection.getGeometriesArray().forEach(geometry => {
               const newFeature = curFeature.clone()
               newFeature.setGeometry(geometry)
+              // preserve parcel flag on cloned features
+              if (curFeature.get('isParcel')) {
+                newFeature.set('isParcel', true)
+              }
               this.featureLayer.getSource()?.addFeature(newFeature)
             })
           } else {
@@ -143,6 +158,21 @@ class FeatureInfoLayerService {
 
   clearFeatures(): void {
     this.featureLayer.getSource()?.clear()
+  }
+
+  clearParcelHighlights(): void {
+    const src = this.featureLayer.getSource()
+    if (!src) return
+    const feats = src.getFeatures() || []
+    for (const f of feats) {
+      try {
+        if (f.get && f.get('isParcel')) {
+          src.removeFeature(f)
+        }
+      } catch (e) {
+        // ignore
+      }
+    }
   }
 }
 export const featureInfoLayerService = new FeatureInfoLayerService()

@@ -16,6 +16,7 @@ export const DEFAULT_FEEDBACKAGE_OPENED = false
 export const DEFAULT_FEEDBACKCRUES_OPENED = false
 export const DEFAULT_LIDAR_OPENED = false
 export const DEFAULT_SHARE_OPENED = false
+export const DEFAULT_ROUTING_OPENED = false
 
 export const useAppStore = defineStore(
   'app',
@@ -50,6 +51,7 @@ export const useAppStore = defineStore(
     const isOffLine = ref(false)
     const isApp = ref(false) // Is the app displayed for Android or Ios?
 
+    const routingPanelOpen = ref(DEFAULT_ROUTING_OPENED)
     function setIsApp(value: boolean) {
       isApp.value = value
     }
@@ -160,6 +162,10 @@ export const useAppStore = defineStore(
       feedbackOpen.value = open ?? !feedbackOpen.value
     }
 
+    function toggleRoutingOpen(open?: boolean) {
+      routingPanelOpen.value = open ?? !routingPanelOpen.value
+    }
+
     return {
       authFormOpened,
       embedded,
@@ -185,6 +191,7 @@ export const useAppStore = defineStore(
       remoteLayersOpen,
       drawToolbarOpen,
       measureToolbarOpen,
+      routingPanelOpen,
       elevationProfileToolbarOpen,
       isOffLine,
       isApp,
@@ -208,6 +215,7 @@ export const useAppStore = defineStore(
       toggleLegendsOpen,
       toggleElevationProfileToolbarOpen,
       toggleFeedbackOpen,
+      toggleRoutingOpen,
     }
   },
   {}

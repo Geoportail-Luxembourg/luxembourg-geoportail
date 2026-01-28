@@ -178,7 +178,7 @@ function toggleLayerComparator() {
 
     <!-- Preload webfont -->
     <div class="lux-preload">
-      <i class="fa-regular fa-trash-can"></i>
+      <i class="fa-solid fa-trash-can"></i>
     </div>
   </div>
 </template>

@@ -74,8 +74,10 @@ function submit() {
 
 function onAuthenticateSuccess(user: User) {
   setCurrentUser(user)
-  // Reload themes to get user-specific layers
-  themeStore.loadThemes()
+  // Reload themes to get user-specific layers, but not if auto-authenticated (already loaded in main.ts)
+  if (!autoAuthenticated.value) {
+    themeStore.loadThemes()
+  }
 }
 
 function onAuthenticateFailure() {

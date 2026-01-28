@@ -27,6 +27,7 @@ const {
   toggleInfoOpen,
   toggleShareOpen,
   toggleFeedbackOpen,
+  toggleRoutingOpen,
 } = appStore
 const {
   layersOpen,
@@ -43,6 +44,7 @@ const {
   themeGridOpen,
   printToolbarOpen,
   feedbackOpen,
+  routingPanelOpen,
   isOffLine,
 } = storeToRefs(appStore)
 const { setEditActiveState } = drawStore
@@ -56,6 +58,7 @@ function onClickLayersIcon() {
     myMapsOpen.value = false
     infoOpen.value = false
     lidarOpen.value = false
+    routingPanelOpen.value = false
   }
 
   themeGridOpen.value = false
@@ -68,6 +71,7 @@ watch(drawToolbarOpen, isOpen => {
     printToolbarOpen.value = false
     shareOpen.value = false
     lidarOpen.value = false
+    routingPanelOpen.value = false
   } else {
     // Deactivate edition mode when draw toolbar is closed
     setEditActiveState(undefined)
@@ -80,6 +84,7 @@ watch(measureToolbarOpen, isOpen => {
     printToolbarOpen.value = false
     shareOpen.value = false
     lidarOpen.value = false
+    routingPanelOpen.value = false
   }
 })
 watch(elevationProfileToolbarOpen, isOpen => {
@@ -89,6 +94,7 @@ watch(elevationProfileToolbarOpen, isOpen => {
     printToolbarOpen.value = false
     shareOpen.value = false
     lidarOpen.value = false
+    routingPanelOpen.value = false
   }
 })
 watch(printToolbarOpen, isOpen => {
@@ -98,6 +104,7 @@ watch(printToolbarOpen, isOpen => {
     elevationProfileToolbarOpen.value = false
     shareOpen.value = false
     lidarOpen.value = false
+    routingPanelOpen.value = false
   }
 })
 watch(shareOpen, isOpen => {
@@ -107,6 +114,7 @@ watch(shareOpen, isOpen => {
     elevationProfileToolbarOpen.value = false
     printToolbarOpen.value = false
     lidarOpen.value = false
+    routingPanelOpen.value = false
   }
 })
 watch(lidarOpen, isOpen => {
@@ -122,6 +130,7 @@ watch(lidarOpen, isOpen => {
       styleEditorOpen.value =
       myMapsOpen.value =
       infoOpen.value =
+      routingPanelOpen.value =
         false
   }
 })
@@ -132,6 +141,21 @@ const { setDisplayStarOnMobile } = featureInfoStore
 function onClickInfoIcon() {
   toggleInfoOpen()
   setDisplayStarOnMobile(false)
+}
+
+function onClickRoutingIcon() {
+  const open = !routingPanelOpen.value
+  toggleRoutingOpen(open)
+
+  if (open) {
+    layersOpen.value = false
+    legendsOpen.value = false
+    myMapsOpen.value = false
+    infoOpen.value = false
+    styleEditorOpen.value = false
+    lidarOpen.value = false
+    feedbackOpen.value = false
+  }
 }
 </script>
 
@@ -208,10 +232,16 @@ function onClickInfoIcon() {
       </li>
       <li v-if="!isOffLine">
         <button-icon
-          class="text-gray-300"
           :label="t('Routing', { ns: 'client' })"
-          :aria-label="t('Routing tool - not yet implemented')"
+          :aria-label="
+            routingPanelOpen
+              ? t('Close routing panel')
+              : t('Open routing panel to calculate routes')
+          "
           icon="routing"
+          :active="routingPanelOpen"
+          @click="onClickRoutingIcon"
+          data-cy="routingOpenClose"
         >
         </button-icon>
       </li>

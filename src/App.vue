@@ -67,6 +67,7 @@ const {
   infoOpen,
   styleEditorOpen,
   lidarOpen,
+  routingPanelOpen,
   isOffLine,
 } = storeToRefs(appStore)
 
@@ -76,6 +77,7 @@ watch(styleEditorOpen, timeoutResizeMap)
 watch(myMapsOpen, timeoutResizeMap)
 watch(infoOpen, timeoutResizeMap)
 watch(lidarOpen, timeoutResizeMap)
+watch(routingPanelOpen, timeoutResizeMap)
 
 function timeoutResizeMap() {
   setTimeout(() => map.resize(), 50)
@@ -91,7 +93,7 @@ onUnmounted(() => {
 </script>
 
 <template>
-  <div class="h-screen flex flex-col overflow-hidden">
+  <div class="app-container flex flex-col overflow-hidden">
     <!-- Accessibility: Announce offline status changes to screen readers -->
     <div role="status" aria-live="polite" aria-atomic="true" class="sr-only">
       <span v-if="isOffLine">

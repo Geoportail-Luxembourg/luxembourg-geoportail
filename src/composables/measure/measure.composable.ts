@@ -16,6 +16,7 @@ import { getElevation } from '@/components/draw/feature-measurements-helper'
 import { EventsKey, listen } from 'ol/events'
 import { unByKey } from 'ol/Observable'
 import { v4 as uuidv4 } from 'uuid'
+import { DEFAULT_DRAW_ZINDEX } from '@/services/ol-layer/ol-layer-interaction-draw.helper'
 
 import useMap from '@/composables/map/map.composable'
 import drawTooltip from '@/composables/draw/draw-tooltip'
@@ -167,7 +168,10 @@ export default function useMeasure() {
 
       if (!src) {
         src = new VectorSource()
-        measureLayer.value = new VectorLayer({ source: src })
+        measureLayer.value = new VectorLayer({
+          source: src,
+          zIndex: DEFAULT_DRAW_ZINDEX + 1,
+        })
         ;(measureLayer.value as any).set(
           'cyLayerType',
           'interactionMeasureLayer'
