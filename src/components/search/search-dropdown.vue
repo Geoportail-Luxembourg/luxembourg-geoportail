@@ -63,6 +63,7 @@ const layerLookup: { [key: string]: string[] } = {
   FLIK_Provisoire: ['asta_flik_parcels_provisoire'],
   asta_esp: ['asta_esp_esp'],
   nom_de_rue: ['roads', 'roads_labels'],
+  Commune: ['communes'],
 }
 let handleDataSourcesToken = 0
 const groupOrder = [
