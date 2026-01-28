@@ -74,16 +74,16 @@
 
   .location-button {
     @apply lux-control;
-    bottom: 55px;
+    bottom: 75px;
   }
 
   .map-3d-button {
     @apply lux-control;
-    bottom: 105px;
+    bottom: 125px;
   }
 
   .infobar-button {
     @apply lux-control;
-    bottom: 5px;
+    bottom: 25px;
   }
 }
