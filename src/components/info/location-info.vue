@@ -86,7 +86,7 @@ async function updateInfo(location: Coordinate | undefined) {
 
 watch(currentUser, user => {
   userRole.value = user?.role || 'anonymous'
-  userType.value = user?.role || 'base'
+  userType.value = user?.typeUtilisateur || 'base'
 })
 
 // For print, save ref to element to access content in print composable
@@ -102,6 +102,7 @@ const isCyclomediaAvailable = computed(
     userType.value === 'commune' ||
     userRole.value === 'MinTour'
 )
+
 const isImagesObliquesAvailable = computed(() => true)
 
 const lidarUrl = computed(() =>
