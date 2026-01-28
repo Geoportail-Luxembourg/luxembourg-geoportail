@@ -33,6 +33,7 @@
 
   .ol-full-screen {
     @apply left-2 top-36 right-auto;
+    @apply hidden md:block;
   }
 
   .ol-rotate {
