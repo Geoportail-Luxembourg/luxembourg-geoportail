@@ -52,15 +52,29 @@ export default function useAddressSearch() {
             const geometry = feature.geometry
             if (geometry.type === 'Point' && geometry.coordinates) {
               coordinates = geometry.coordinates as [number, number]
-            } else if (geometry.coordinates) {
-              // For other geometry types, try to get first coordinate
+            } else if (geometry.type === 'Polygon' && geometry.coordinates) {
+              // For Polygon, take first point of first ring
               const coords = geometry.coordinates
-              if (Array.isArray(coords) && coords.length > 0) {
-                if (Array.isArray(coords[0]) && coords[0].length >= 2) {
-                  coordinates = [coords[0][0] as number, coords[0][1] as number]
-                } else if (coords.length >= 2) {
-                  coordinates = [coords[0] as number, coords[1] as number]
-                }
+              if (
+                Array.isArray(coords) &&
+                coords.length > 0 &&
+                Array.isArray(coords[0]) &&
+                coords[0].length > 0 &&
+                Array.isArray(coords[0][0]) &&
+                coords[0][0].length >= 2
+              ) {
+                coordinates = [coords[0][0][0], coords[0][0][1]]
+              }
+            } else if (geometry.type === 'LineString' && geometry.coordinates) {
+              // For LineString, take first point
+              const coords = geometry.coordinates
+              if (
+                Array.isArray(coords) &&
+                coords.length > 0 &&
+                Array.isArray(coords[0]) &&
+                coords[0].length >= 2
+              ) {
+                coordinates = [coords[0][0], coords[0][1]]
               }
             }
           }

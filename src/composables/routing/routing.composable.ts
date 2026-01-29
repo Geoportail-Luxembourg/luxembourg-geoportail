@@ -393,6 +393,21 @@ export default function useRouting(
   ) {
     if (!map) return
 
+    if (
+      !lonLat ||
+      lonLat.length !== 2 ||
+      isNaN(lonLat[0]) ||
+      isNaN(lonLat[1])
+    ) {
+      // eslint-disable-next-line no-console
+      console.error(
+        '[Routing] Invalid coordinates for route point:',
+        lonLat,
+        label
+      )
+      return
+    }
+
     const projected = transform(
       lonLat,
       'EPSG:4326',

@@ -79,9 +79,10 @@
       </div>
 
       <!-- Route inputs -->
-
-      <!-- Route inputs -->
-      <div class="routing-routes mb-4" ref="sortableRoutes">
+      <div v-if="isLoading" class="flex justify-center py-4">
+        <span class="fa fa-spinner fa-spin text-white"></span>
+      </div>
+      <div v-else class="routing-routes mb-4" ref="sortableRoutes">
         <div
           v-for="(route, key) in routingState.routes"
           :key="routeIds[key]"
@@ -371,6 +372,72 @@ const sortableRoutesRef = useTemplateRef<HTMLDivElement>('sortableRoutes')
 // Generate stable IDs for routes to track them across reorders
 const routeIds = ref<number[]>([0, 1])
 
+const isLoading = ref(false)
+
+let sortableInstance: ReturnType<typeof useSortable> | null = null
+
+function initSortable() {
+  if (sortableInstance) {
+    sortableInstance.destroy()
+  }
+  if (sortableRoutesRef.value) {
+    sortableInstance = useSortable(sortableRoutesRef.value, {
+      onSort: () => {
+        // Reorder based on new DOM order
+        const container = sortableRoutesRef.value
+        if (!container) return
+
+        const newRouteIds: number[] = []
+        const newRoutes: string[] = []
+        const newFeatures: Feature<Geometry>[] = []
+
+        // Read new order from DOM
+        for (const child of container.children) {
+          if (child.classList.contains('routing-route-container')) {
+            const routeId = parseInt(
+              (child as HTMLElement).getAttribute('data-route-id') || '0',
+              10
+            )
+            newRouteIds.push(routeId)
+
+            // Find original index by ID
+            const originalIndex = routeIds.value.indexOf(routeId)
+            if (originalIndex >= 0) {
+              newRoutes.push(routingState.value.routes[originalIndex] || '')
+              const feature =
+                routingState.value.features.getArray()[originalIndex]
+              if (feature) {
+                newFeatures.push(feature)
+              }
+            }
+          }
+        }
+
+        // Check if order changed
+        const orderChanged = newRouteIds.some(
+          (id, i) => id !== routeIds.value[i]
+        )
+        if (!orderChanged) return
+
+        // Update all arrays
+        routeIds.value.splice(0, routeIds.value.length, ...newRouteIds)
+        routingState.value.routes.splice(
+          0,
+          routingState.value.routes.length,
+          ...newRoutes
+        )
+        routingState.value.features.clear()
+        newFeatures.forEach(feature =>
+          routingState.value.features.push(feature)
+        )
+
+        // Trigger recalculation
+        recalculateRoute()
+      },
+    })
+  }
+}
+
 const {
   routingState,
   distance,
@@ -410,7 +477,12 @@ const {
           projection,
           'EPSG:4326'
         )
-        waypoints.push(`${coord4326[1]},${coord4326[0]}`)
+        if (!isNaN(coord4326[0]) && !isNaN(coord4326[1])) {
+          waypoints.push(`${coord4326[1]},${coord4326[0]}`)
+        } else {
+          // eslint-disable-next-line no-console
+          console.error('[Routing] Skipping invalid waypoint:', coord4326)
+        }
       }
     })
 
@@ -425,16 +497,60 @@ const {
     })
 
     try {
+      isLoading.value = true
       const response = await fetch(`${routingApiUrl}?${params.toString()}`)
-      if (!response.ok) return
+      if (!response.ok) {
+        // eslint-disable-next-line no-console
+        console.error(
+          '[Routing] Route calculation failed:',
+          response.status,
+          response.statusText,
+          await response.text()
+        )
+        addNotification(
+          t('Erreur lors du calcul de la route'),
+          AlertNotificationType.ERROR
+        )
+        return
+      }
 
       const data = await response.json()
 
-      const parser = new GeoJSON()
-      const parsedFeatures = parser.readFeatures(data, {
-        dataProjection: 'EPSG:4326',
-        featureProjection: projection,
-      })
+      if ('success' in data && !data.success && !data.geometry) {
+        // eslint-disable-next-line no-console
+        console.error('[Routing] API returned error:', data.errorMessages, data)
+        addNotification(
+          t('Erreur lors du calcul de la route: ') +
+            (data.errorMessages?.join(', ') || t('Erreur inconnue')),
+          AlertNotificationType.ERROR
+        )
+        return
+      }
+
+      let parsedFeatures: Feature[]
+      try {
+        const parser = new GeoJSON()
+        let geoJsonData
+        if (data.type === 'FeatureCollection') {
+          geoJsonData = data
+        } else if (data.geometry) {
+          geoJsonData = data.geometry
+        } else {
+          throw new Error('No GeoJSON data found in response')
+        }
+        parsedFeatures = parser.readFeatures(geoJsonData, {
+          dataProjection: 'EPSG:4326',
+          featureProjection: projection,
+        })
+      } catch (parseErr) {
+        // eslint-disable-next-line no-console
+        console.error('[Routing] Error parsing GeoJSON:', parseErr, data)
+        addNotification(
+          t("Erreur lors de l'analyse de la réponse du serveur"),
+          AlertNotificationType.ERROR
+        )
+        return
+      }
 
       state.routeFeatures.clear()
       state.stepFeatures.clear()
@@ -446,6 +562,12 @@ const {
       // Log routing errors for debugging
       // eslint-disable-next-line no-console
       console.error('[Routing] Error fetching route:', err)
+      addNotification(
+        t('Erreur lors du calcul de la route'),
+        AlertNotificationType.ERROR
+      )
+    } finally {
+      isLoading.value = false
     }
   },
   async geometry => {
@@ -507,6 +629,13 @@ watch(addressResults, newResults => {
   }
 })
 
+// Watch loading to reinitialize sortable after DOM update
+watch(isLoading, (newVal, oldVal) => {
+  if (oldVal && !newVal) {
+    nextTick(() => initSortable())
+  }
+})
+
 function onRouteInputChange(key: number) {
   if (searchDebounceTimer.value) {
     clearTimeout(searchDebounceTimer.value)
@@ -528,8 +657,21 @@ function selectAddress(key: number, result: any) {
   activeSearchIndex.value = null
   highlightedIndex.value = -1
 
-  if (result.coordinates) {
+  if (
+    result.coordinates &&
+    Array.isArray(result.coordinates) &&
+    result.coordinates.length === 2 &&
+    !isNaN(result.coordinates[0]) &&
+    !isNaN(result.coordinates[1])
+  ) {
     setRoutePoint(key, result.coordinates, result.label)
+  } else {
+    // eslint-disable-next-line no-console
+    console.error('[Routing] Invalid coordinates from search result:', result)
+    addNotification(
+      t('Coordonnées invalides pour cette adresse'),
+      AlertNotificationType.WARNING
+    )
   }
 }
 
@@ -734,62 +876,7 @@ async function createMapFromRoute() {
 onMounted(() => {
   init()
   // Initialize sortable for route reordering
-  if (sortableRoutesRef.value) {
-    useSortable(sortableRoutesRef.value, {
-      onSort: () => {
-        // Reorder based on new DOM order
-        const container = sortableRoutesRef.value
-        if (!container) return
-
-        const newRouteIds: number[] = []
-        const newRoutes: string[] = []
-        const newFeatures: Feature<Geometry>[] = []
-
-        // Read new order from DOM
-        for (const child of container.children) {
-          if (child.classList.contains('routing-route-container')) {
-            const routeId = parseInt(
-              (child as HTMLElement).getAttribute('data-route-id') || '0',
-              10
-            )
-            newRouteIds.push(routeId)
-
-            // Find original index by ID
-            const originalIndex = routeIds.value.indexOf(routeId)
-            if (originalIndex >= 0) {
-              newRoutes.push(routingState.value.routes[originalIndex] || '')
-              const feature =
-                routingState.value.features.getArray()[originalIndex]
-              if (feature) {
-                newFeatures.push(feature)
-              }
-            }
-          }
-        }
-
-        // Check if order changed
-        const orderChanged = newRouteIds.some(
-          (id, i) => id !== routeIds.value[i]
-        )
-        if (!orderChanged) return
-
-        // Update all arrays
-        routeIds.value.splice(0, routeIds.value.length, ...newRouteIds)
-        routingState.value.routes.splice(
-          0,
-          routingState.value.routes.length,
-          ...newRoutes
-        )
-        routingState.value.features.clear()
-        newFeatures.forEach(feature =>
-          routingState.value.features.push(feature)
-        )
-
-        // Trigger recalculation
-        recalculateRoute()
-      },
-    })
-  }
+  initSortable()
 })
 </script>
 
