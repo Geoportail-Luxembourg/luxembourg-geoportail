@@ -85,9 +85,9 @@
       <div v-else class="routing-routes mb-4" ref="sortableRoutes">
         <div
           v-for="(route, key) in routingState.routes"
-          :key="routeIds[key]"
+          :key="key"
           class="routing-route-container mb-2"
-          :data-route-id="routeIds[key]"
+          :data-route-id="key"
         >
           <div class="route-number drag-handle">{{ key + 1 }}</div>
 
@@ -370,7 +370,7 @@ const { startCoordinate, startLabel, targetRouteIndex } =
 const sortableRoutesRef = useTemplateRef<HTMLDivElement>('sortableRoutes')
 
 // Generate stable IDs for routes to track them across reorders
-const routeIds = ref<number[]>([0, 1])
+// const routeIds = ref<number[]>([0, 1])
 
 const isLoading = ref(false)
 
@@ -383,6 +383,10 @@ function initSortable() {
   if (sortableRoutesRef.value) {
     sortableInstance = useSortable(sortableRoutesRef.value, {
       onSort: () => {
+        // Clear existing route before reordering
+        routingState.value.routeFeatures.clear()
+        routingState.value.stepFeatures.clear()
+
         // Reorder based on new DOM order
         const container = sortableRoutesRef.value
         if (!container) return
@@ -400,27 +404,15 @@ function initSortable() {
             )
             newRouteIds.push(routeId)
 
-            // Find original index by ID
-            const originalIndex = routeIds.value.indexOf(routeId)
-            if (originalIndex >= 0) {
-              newRoutes.push(routingState.value.routes[originalIndex] || '')
-              const feature =
-                routingState.value.features.getArray()[originalIndex]
-              if (feature) {
-                newFeatures.push(feature)
-              }
+            newRoutes.push(routingState.value.routes[routeId] || '')
+            const feature = routingState.value.features.getArray()[routeId]
+            if (feature) {
+              newFeatures.push(feature.clone())
             }
           }
         }
 
-        // Check if order changed
-        const orderChanged = newRouteIds.some(
-          (id, i) => id !== routeIds.value[i]
-        )
-        if (!orderChanged) return
-
         // Update all arrays
-        routeIds.value.splice(0, routeIds.value.length, ...newRouteIds)
         routingState.value.routes.splice(
           0,
           routingState.value.routes.length,
@@ -430,6 +422,10 @@ function initSortable() {
         newFeatures.forEach(feature =>
           routingState.value.features.push(feature)
         )
+
+        // Clear route features again after updating input features
+        routingState.value.routeFeatures.clear()
+        routingState.value.stepFeatures.clear()
 
         // Trigger recalculation
         recalculateRoute()
@@ -478,7 +474,13 @@ const {
           'EPSG:4326'
         )
         if (!isNaN(coord4326[0]) && !isNaN(coord4326[1])) {
-          waypoints.push(`${coord4326[1]},${coord4326[0]}`)
+          const waypoint = `${coord4326[1]},${coord4326[0]}`
+          if (
+            waypoints.length === 0 ||
+            waypoints[waypoints.length - 1] !== waypoint
+          ) {
+            waypoints.push(waypoint)
+          }
         } else {
           // eslint-disable-next-line no-console
           console.error('[Routing] Skipping invalid waypoint:', coord4326)
