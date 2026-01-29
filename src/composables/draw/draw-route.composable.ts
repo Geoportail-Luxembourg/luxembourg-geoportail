@@ -166,6 +166,20 @@ export default function useDrawRoute() {
   }
 
   /**
+   * Set map matching on/off
+   */
+  function setMapMatching(enabled: boolean): boolean {
+    if (drawRouteInteraction) {
+      drawRouteInteraction.setMapMatching(enabled)
+      const newState = drawRouteInteraction.getMapMatching()
+      mapMatchingEnabled.value = newState
+      return newState
+    }
+    mapMatchingEnabled.value = enabled
+    return mapMatchingEnabled.value
+  }
+
+  /**
    * Remove the last point from the route
    */
   function removeLastPoint() {
@@ -209,9 +223,16 @@ export default function useDrawRoute() {
       editStateActive.value !== 'editLine'
     ) {
       if (isFollowingRoads) {
-        activate({ mapMatching: true })
+        if (isActive.value) {
+          setMapMatching(true)
+        } else {
+          activate({ mapMatching: true })
+        }
       } else {
-        deactivate()
+        if (isActive.value) {
+          setMapMatching(false)
+        }
+        // If not active, do nothing
       }
     }
   })
