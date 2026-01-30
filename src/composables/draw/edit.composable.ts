@@ -18,6 +18,7 @@ export default function useEdit() {
   let modifyInteraction: Modify | undefined = undefined
   let modifyEndHandler: ((event: ModifyEvent) => void) | undefined = undefined
   let originalFeature: DrawnFeature | undefined = undefined // Store reference to original
+  let geometryChangeHandler: (() => void) | undefined = undefined // Store geometry change handler
 
   const { editStateActive, editingFeatureId, drawnFeatures } = storeToRefs(
     useDrawStore()
@@ -69,7 +70,16 @@ export default function useEdit() {
         // Clone the feature to avoid conflicts with drawLayer
         // OpenLayers doesn't allow the same feature instance in multiple sources
         const clonedFeature = new DrawnFeature(feature)
+        clonedFeature.setId(feature.id) // Ensure the cloned feature has the same id
         clonedFeature.setGeometry(feature.getGeometry()?.clone())
+
+        // Listen to geometry changes on the cloned feature for real-time UI updates
+        // Note: We don't update the original geometry during mouse modification to avoid conflicts with input changes
+        // The UI will be updated through the computed properties in feature-measurements
+        geometryChangeHandler = () => {
+          // Geometry changed - UI will update automatically through computed properties
+        }
+        clonedFeature.getGeometry()?.on('change', geometryChangeHandler)
 
         // Mark as being edited so StyleFunction shows vertex handles
         clonedFeature.set('__isBeingEdited__', true)
@@ -77,8 +87,12 @@ export default function useEdit() {
         editSource.addFeature(clonedFeature)
         map.render()
       } else {
-        // Exiting edit mode - clear original reference
+        // Exiting edit mode - clear original reference and geometry change handler
+        if (originalFeature && geometryChangeHandler) {
+          originalFeature.getGeometry()?.un('change', geometryChangeHandler)
+        }
         originalFeature = undefined
+        geometryChangeHandler = undefined
       }
       // When fId is undefined, the feature goes back to drawLayer automatically
       // via the watch in draw.composable.ts (it's no longer excluded)

@@ -3,6 +3,7 @@ import { Circle, LineString } from 'ol/geom'
 import Polygon, { fromCircle } from 'ol/geom/Polygon'
 import { getDistance } from 'ol/sphere'
 import { toLonLat } from 'ol/proj'
+import VectorLayer from 'ol/layer/Vector'
 
 import { DrawnFeature } from '@/services/ol-feature/ol-feature-drawn'
 import { setCircleRadius } from '@/services/common/measurement.utils'
@@ -206,8 +207,52 @@ export default function useDrawUtils() {
     }
   }
 
+  function updateCircleRadius(feature: DrawnFeature, radius: number) {
+    const geometry = feature.getGeometry()
+    if (geometry?.getType() === 'Circle') {
+      setCircleRadius(geometry as Circle, radius, map)
+      feature.changed() // Trigger re-render
+      drawStore.updateDrawnFeature(feature)
+
+      // If feature is being edited, also update the clone in edit layer
+      const { editingFeatureId } = storeToRefs(drawStore)
+      if (editingFeatureId.value === feature.id) {
+        // Find the edit layer by looking for a layer with cyLayerType 'interactionDrawLayer' that has the feature
+        const layers = map.getLayers().getArray()
+        const editLayer = layers.find(layer => {
+          const zIndex = (layer as VectorLayer).getZIndex()
+          return (
+            layer.get('cyLayerType') === 'interactionDrawLayer' &&
+            zIndex &&
+            zIndex > 1000 &&
+            ((layer as VectorLayer).getSource() as any)
+              ?.getFeatures()
+              .some((f: Feature) => f.getId() === feature.id)
+          )
+        }) as VectorLayer | undefined
+        if (editLayer) {
+          const editSource = editLayer.getSource()
+          if (editSource) {
+            const editFeatures = editSource.getFeatures()
+            const editFeature = editFeatures.find(f => f.getId() === feature.id)
+            if (
+              editFeature &&
+              editFeature.getGeometry()?.getType() === 'Circle'
+            ) {
+              setCircleRadius(editFeature.getGeometry() as Circle, radius, map)
+              editFeature.changed()
+              editSource.changed() // Force source update
+              map.render() // Force re-render
+            }
+          }
+        }
+      }
+    }
+  }
+
   return {
     createConcentricCircle,
     continueLine,
+    updateCircleRadius,
   }
 }
