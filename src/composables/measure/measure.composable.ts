@@ -177,6 +177,9 @@ export default function useMeasure() {
           'interactionMeasureLayer'
         )
         map.addLayer(measureLayer.value as any)
+        // ...existing code...
+      } else {
+        // ...existing code...
       }
     }
 
@@ -371,6 +374,7 @@ export default function useMeasure() {
 
     // drawend: finalize style and keep feature on layer, then deactivate tool
     listen(interaction, 'drawend', evt => {
+      // ...existing code...
       // Create persistent measurement overlay anchored at middle of line for non-azimuth modes
       const geom = (evt as DrawEvent).feature?.getGeometry()
       if (geom && map && currentMode.value !== 'azimuth') {
@@ -660,6 +664,7 @@ export default function useMeasure() {
       drawInteraction.value = null
       currentMode.value = undefined
       isActive.value = false
+      // ...existing code...
     })
 
     map.addInteraction(interaction)
@@ -684,8 +689,12 @@ export default function useMeasure() {
   }
 
   function deactivate() {
+    // ...existing code...
     if (!map) return
-    if (!isActive.value) return
+    if (!isActive.value) {
+      // ...existing code...
+      return
+    }
     if (drawInteraction.value) {
       drawInteraction.value.setActive(false)
       map.removeInteraction(drawInteraction.value as unknown as any)
@@ -719,7 +728,7 @@ export default function useMeasure() {
       }
       azimuthPreviewState.value = null
     }
-    // remove preview overlay only (keep final overlays persistent)
+    // remove preview overlay only (keep final overlays persistent until reset is called)
     if (azimuthPreviewOverlay.value && map) {
       try {
         map.removeOverlay(azimuthPreviewOverlay.value as any)
@@ -733,68 +742,75 @@ export default function useMeasure() {
     }
     lastPointerCoord.value = null
     isActive.value = false
+    // ...existing code...
+    // Note: We keep measureLayer and all finalized features visible on the map
+    // They will only be removed when reset() is called
   }
 
   function reset() {
+    // ...existing code...
     // Ensure interaction and overlays removed
     deactivate()
 
     // First run persistent removers (overlays, radial features, explicit removers)
     try {
+      // ...existing code...
       persistentRemovers.forEach(r => r())
     } catch (e) {
       logWarn('[measure] running persistent removers failed', e)
     }
     persistentRemovers.length = 0
+    // ...existing code...
 
     try {
-      // Iterate all layers and remove measurement features from any vector source.
+      // Only iterate measure layers, not draw layers (to avoid removing MyMaps features)
       const layers = map.getLayers().getArray().slice()
       layers.forEach(l => {
         try {
-          const srcLayer = (l as any).getSource && (l as any).getSource()
-          if (!srcLayer || !srcLayer.getFeatures) return
+          // Only process layers that are measure layers
+          const isMeasureLayer =
+            (l as any).get &&
+            (l as any).get('cyLayerType') === 'interactionMeasureLayer'
 
-          // Remove any measurement-related features in a single pass.
-          // This covers features explicitly flagged as measurements (azimuth
-          // radials/previews/finalized) and also removes Circle geometries as a
-          // fallback in case a Circle slipped through without flags.
-          srcLayer
-            .getFeatures()
-            .slice()
-            .forEach((f: any) => {
-              try {
-                const isFlaggedMeasurement =
-                  f.get &&
-                  (f.get('isMeasurement') ||
-                    f.get('isAzimuthRadial') ||
-                    f.get('isAzimuth') ||
-                    f.get('isAzimuthPreview') ||
-                    f.get('measurementId') ||
-                    f.get('finalOverlayRef'))
-
-                const isCircle =
-                  f.getGeometry &&
-                  f.getGeometry().getType &&
-                  f.getGeometry().getType() === 'Circle'
-
-                if (isFlaggedMeasurement || isCircle) {
-                  srcLayer.removeFeature(f)
-                }
-              } catch (e) {
-                logWarn('[measure] removing measurement features failed', e)
-              }
-            })
-
-          try {
-            if (
+          if (isMeasureLayer) {
+            // Remove the entire measure layer
+            map.removeLayer(l)
+          } else {
+            // For other layers, only remove explicitly flagged measurement features
+            // (but skip draw layers to preserve MyMaps)
+            const isDrawLayer =
               (l as any).get &&
-              (l as any).get('cyLayerType') === 'interactionMeasureLayer'
-            ) {
-              map.removeLayer(l)
+              (l as any).get('cyLayerType') === 'interactionDrawLayer'
+            if (isDrawLayer) {
+              // Skip draw layers entirely - they contain MyMaps features
+              return
             }
-          } catch (e) {
-            logWarn('[measure] removing interaction measure layer failed', e)
+
+            const srcLayer = (l as any).getSource && (l as any).getSource()
+            if (!srcLayer || !srcLayer.getFeatures) return
+
+            // Remove only explicitly flagged measurement features from non-draw, non-measure layers
+            srcLayer
+              .getFeatures()
+              .slice()
+              .forEach((f: any) => {
+                try {
+                  const isFlaggedMeasurement =
+                    f.get &&
+                    (f.get('isMeasurement') ||
+                      f.get('isAzimuthRadial') ||
+                      f.get('isAzimuth') ||
+                      f.get('isAzimuthPreview') ||
+                      f.get('measurementId') ||
+                      f.get('finalOverlayRef'))
+
+                  if (isFlaggedMeasurement) {
+                    srcLayer.removeFeature(f)
+                  }
+                } catch (e) {
+                  logWarn('[measure] removing measurement features failed', e)
+                }
+              })
           }
         } catch (e) {
           logWarn('[measure] iterating layers during reset failed', e)
@@ -807,9 +823,9 @@ export default function useMeasure() {
       } catch (e) {
         logWarn('[measure] removeAllMeasurementOverlays failed', e)
       }
-
-      // ensure our cached reference is cleared so the layer will be recreated on next use
+      // ...existing code...
       measureLayer.value = null
+      // ...existing code...
     } catch (e) {
       logWarn('[measure] reset encountered an unexpected error', e)
     }
@@ -820,12 +836,16 @@ export default function useMeasure() {
     // by `removeAllMeasurementOverlays` earlier, so no additional pass is necessary here.
   }
 
-  // Ensure cleanup if the component using this composable unmounts without calling `reset()`.
+  // Note: We intentionally do NOT call reset() on unmount because measurements
+  // should persist on the map even if the toolbar component is unmounted.
+  // Users must explicitly click the Reset button to clear measurements.
   onUnmounted(() => {
     try {
-      reset()
+      // Only deactivate the current tool, but keep measurements visible
+      deactivate()
+      // ...existing code...
     } catch (e) {
-      logWarn('[measure] reset on unmount failed', e)
+      logWarn('[measure] deactivate on unmount failed', e)
     }
   })
 
