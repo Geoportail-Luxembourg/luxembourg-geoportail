@@ -5,21 +5,23 @@ import { storeToRefs } from 'pinia'
 const { toggleLidarOpen } = useAppStore()
 import useDrawLidarInteraction from '@/composables/lidar/draw-lidar-interaction.composable'
 import { useLidarStore } from '@/stores/lidar.store'
+import { useMatomo } from '@/composables/matomo/matomo.composable'
 const lidarStore = useLidarStore()
 const { measureActive } = storeToRefs(lidarStore)
 const { t } = useTranslation()
 const lidarDrawInteraction = useDrawLidarInteraction()
+const matomo = useMatomo()
 function exportCsv() {
   lidarDrawInteraction.exportCsv()
-  // todo PIWIK
+  matomo.trackLidarExportCsv()
 }
 function exportPng() {
   lidarDrawInteraction.exportPng()
-  // todo PIWIK
+  matomo.trackLidarExportPng()
 }
 function exportLas() {
   lidarDrawInteraction.exportLas()
-  // todo PIWIK
+  matomo.trackLidarExportLas()
 }
 function toggleMeasure() {
   measureActive.value = !measureActive.value

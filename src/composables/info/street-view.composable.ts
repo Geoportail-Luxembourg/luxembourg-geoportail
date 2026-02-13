@@ -13,6 +13,7 @@ import { containsCoordinate } from 'ol/extent'
 import { loadGoogleapis } from '@/services/info/street-view'
 import { SvCompassFeature } from '@/services/info/sv-compass-feature'
 import { SvDirectionFeature } from '@/services/info/sv-direction-feature'
+import { useMatomo } from '@/composables/matomo/matomo.composable'
 
 import {} from 'google.maps'
 
@@ -129,7 +130,7 @@ export default function useStreeView(streetViewDiv: Ref<HTMLElement | null>) {
         // @ts-ignore
         googleMapService = window.google.maps
       }
-      // todo PIWIK
+      useMatomo().trackStreetView()
       if (streetViewService === null) {
         streetViewService = new googleMapService!.StreetViewService()
       }

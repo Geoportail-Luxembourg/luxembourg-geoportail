@@ -20,12 +20,15 @@ import { useDrawStore } from '@/stores/draw.store'
 import { useLidarStore } from '@/stores/lidar.store'
 import { useElevationProfileStore } from '@/stores/elevation-profile.store'
 import { isInActiveMode } from './info.utils'
+import { useMatomo } from '@/composables/matomo/matomo.composable'
+import { MATOMO_CATEGORIES } from '@/composables/matomo/matomo.model'
 
 export const DEFAULT_INFO_ZINDEX = 1501
 export const INFO_FEATURE_LAYER_TYPE = 'infoFeatureLayer'
 
 export default function useLocationInfo() {
   const map = useMap().getOlMap()
+  const matomo = useMatomo()
   let startPixel: Coordinate | null = null
   let startTime: number | null = null // Track when the pointer was pressed
   const { infoOpen, measureToolbarOpen } = storeToRefs(useAppStore())
@@ -92,6 +95,16 @@ export default function useLocationInfo() {
       // if right mouse click
       locationInfoCoords.value = getClickCoordinate(event)
       clearContent()
+      // Track right-click location info opening
+      try {
+        matomo.trackEvent(
+          MATOMO_CATEGORIES.MAP,
+          'OpenLocationInfo',
+          'rightclick'
+        )
+      } catch (e) {
+        // ignore tracking errors
+      }
     }
     // Don't setup hold timeout on pointerdown for touch - it interferes with panning
     // The pointerup handler will check if it was a long hold

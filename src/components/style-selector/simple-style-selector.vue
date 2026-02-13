@@ -16,6 +16,9 @@ const { bgStyle } = storeToRefs(styleStore)
 const simpleStyleConf = bgConfigFixture().simple_styles.road
 const simpleStyles = ref(simpleStyleConf)
 
+import { useMatomo } from '@/composables/matomo/matomo.composable'
+const matomo = useMatomo()
+
 // does not seem to work with "computed" => therefore using "watch"
 watch(
   bgStyle,
@@ -29,6 +32,14 @@ watch(
 
 function onStylingSelected(item: SimpleStyle) {
   styleStore.setSimpleStyle(item)
+  // Track opening/selection like v3: VTSimpleEditor/<label>
+  // Use unlocalized label (matches v3 behaviour)
+  const label = (item as any).unlocalized_label || (item as any).label
+  if (label) {
+    matomo.trackPageView(`VTSimpleEditor/${label}`)
+  } else {
+    matomo.trackPageView('VTSimpleEditor')
+  }
 }
 </script>
 

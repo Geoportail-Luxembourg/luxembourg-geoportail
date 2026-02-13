@@ -9,6 +9,7 @@ import { toLonLat } from 'ol/proj'
 
 import useControl from '@/composables/control/control.composable'
 import { useMapStore } from '@/stores/map.store'
+import { useMatomo } from '@/composables/matomo/matomo.composable'
 
 const LUX_VCS_URL = import.meta.env.VITE_LUX_VCS_URL
 const LUX_VCS_COORDINATES = [6.13, 49.61]
@@ -29,6 +30,7 @@ const zoomToCesiumAltitude = {
 
 const mapStore = useMapStore()
 const { t } = useTranslation()
+const matomo = useMatomo()
 const props = withDefaults(
   defineProps<{
     className?: string
@@ -110,6 +112,7 @@ function getHeadingFromRotation(rotation: number) {
       target="lux3d"
       :href="linkTo3dMap"
       :title="t(props.tipLabel)"
+      @click="matomo.track3DActivation()"
       >3D</a
     >
   </div>

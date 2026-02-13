@@ -15,6 +15,7 @@ import useThemes from '@/composables/themes/themes.composable'
 import { AlertNotificationType } from '@/stores/alert-notifications.store.model'
 import { olLayerSearchService } from '@/services/ol-layer/ol-layer-search.service'
 import { featureInfoLayerService } from '@/services/info/feature-info-layer.service'
+import { useMatomo } from '@/composables/matomo/matomo.composable'
 
 // Whitelist of layer identifiers / names that should be considered "parcel" layers
 const PARCEL_LAYER_WHITELIST = [
@@ -289,7 +290,7 @@ export default function useLayers() {
         handleExclusionLayers(layer)
 
         const addLayers = is3d ? mapStore.add3dLayers : mapStore.addLayers
-        addLayers(
+        const layersToAdd = [
           initLayer(layer),
           ...linkedLayers.map(layerId =>
             // TODO: not sure if the layer exclusion is working correctly for linked layers?
@@ -302,8 +303,16 @@ export default function useLayers() {
             initLayer(
               themes.findById(parseInt(layerId, 10)) as unknown as Layer
             )
-          )
-        )
+          ),
+        ]
+
+        addLayers(...layersToAdd)
+
+        // Track layer addition in Matomo
+        const matomo = useMatomo()
+        layersToAdd.forEach(layer => {
+          matomo.trackLayerAdd(layer.name)
+        })
       }
     }
   }
