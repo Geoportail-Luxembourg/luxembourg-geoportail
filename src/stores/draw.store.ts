@@ -3,6 +3,8 @@ import { computed, ref, shallowRef } from 'vue'
 import { useTranslation } from 'i18next-vue'
 import { Draw } from 'ol/interaction'
 import { Type } from 'ol/geom/Geometry'
+import { useMatomo } from '@/composables/matomo/matomo.composable'
+import { MATOMO_CATEGORIES } from '@/composables/matomo/matomo.model'
 
 import {
   DrawnFeature,
@@ -21,6 +23,7 @@ import { AlertNotificationType } from './alert-notifications.store.model'
 export const useDrawStore = defineStore('draw', () => {
   const { t } = useTranslation()
   const { addNotification } = useAlertNotificationsStore()
+  const matomo = useMatomo()
   const activeFeatureId = ref<DrawnFeatureId | undefined>(undefined)
   const editingFeatureId = ref<DrawnFeatureId | undefined>(undefined)
   const drawStateActive = ref<DrawStateActive>(undefined)
@@ -88,6 +91,14 @@ export const useDrawStore = defineStore('draw', () => {
       editingFeatureId.value = undefined
     }
     drawStateActive.value = newState
+    // Track activation of drawing tools (point, label, line, polygon, circle)
+    if (newState) {
+      try {
+        matomo.trackEvent(MATOMO_CATEGORIES.MAP, 'ActivateDraw', newState)
+      } catch (e) {
+        // ignore tracking errors
+      }
+    }
   }
 
   function setEditActiveState(newState: EditStateActive) {

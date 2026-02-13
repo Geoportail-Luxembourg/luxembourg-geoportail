@@ -7,6 +7,7 @@ import { useAppStore } from '@/stores/app.store'
 
 import useDrawLidarInteraction from '@/composables/lidar/draw-lidar-interaction.composable'
 import { useLidarStore } from '@/stores/lidar.store'
+import { useMatomo } from '@/composables/matomo/matomo.composable'
 
 type LangKey = 'fr' | 'en' | 'de' | 'lb'
 
@@ -30,6 +31,7 @@ const classifications =
   lidarStore.lidarConfig.serverConfig.classification_colors
 
 let lidarDrawInteraction: any = useDrawLidarInteraction()
+const matomo = useMatomo()
 
 onMounted(() => {
   lidarDrawInteraction.init()
@@ -37,17 +39,17 @@ onMounted(() => {
 
 function exportCsv() {
   lidarDrawInteraction.exportCsv()
-  // todo PIWIK
+  matomo.trackLidarExportCsv()
 }
 
 function exportPng() {
   lidarDrawInteraction.exportPng()
-  // todo PIWIK
+  matomo.trackLidarExportPng()
 }
 
 function exportLas() {
   lidarDrawInteraction.exportLas()
-  // todo PIWIK
+  matomo.trackLidarExportLas()
 }
 
 function resetPlot() {

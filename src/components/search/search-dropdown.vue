@@ -18,9 +18,11 @@ import { transformExtent } from 'ol/proj.js'
 import useMap from '@/composables/map/map.composable'
 import { useMetadataStore } from '@/stores/metadata.store'
 import { LayerId, Layer } from '@/stores/map.store.model'
+import { useMatomo } from '@/composables/matomo/matomo.composable'
 
 const { setMetadataLayer } = useMetadataStore()
 const { toggleRoutingOpen } = useAppStore()
+const matomo = useMatomo()
 const filterIconColor = computed(() =>
   isFilterPanelOpen.value ? 'var(--color-tertiary)' : '#ffffff'
 )
@@ -337,6 +339,7 @@ function selectResultFeatureSearch(result: {
   layer_name: string
   entry: object
 }) {
+  trackSearchCategory(result.layer_name || 'Features')
   searchQuery.value = result.label // Set the selected label as the
   olLayerSearchService.highlightFeatures(
     [result.entry],
@@ -351,6 +354,7 @@ function selectResultFullTextSearch(result: {
   layer_name: string
   entry: object
 }) {
+  trackSearchCategory(result.layer_name || 'Addresses')
   searchQuery.value = result.label
   addLayerFromSearch(result.layer_name)
   switch (result.layer_name) {
@@ -379,6 +383,7 @@ function selectResultBackgroundLayerSearch(result: {
   layer_id: number
   name: string
 }) {
+  trackSearchCategory('Background Layers')
   const backgroundLayer = useBackgroundLayer()
   backgroundLayer.setBgLayer(result.layer_id)
   closeDropdown()
@@ -388,6 +393,7 @@ function selectResulLayerSearch(result: {
   layer_id: string
   text: string
 }) {
+  trackSearchCategory('Layers')
   useLayers().toggleLayer(result.layer_id, true, false, false)
   closeDropdown()
 }
@@ -397,6 +403,7 @@ function selectResultCmsSearch(result: {
   text: string
   language: string
 }) {
+  trackSearchCategory('Website Pages')
   // Open the URL in a new tab
   window.open('https://www.geoportail.lu' + result.url, '_blank')
   closeDropdown()
@@ -407,9 +414,18 @@ function selectResultCoordinateSearch(result: {
   label: string
   entry: object
 }) {
+  trackSearchCategory('Coordinates')
   searchQuery.value = result.label // Set the selected label as the
   olLayerSearchService.highlightFeatures([result.entry], true, maxZoom.value)
   closeDropdown()
+}
+
+function trackSearchCategory(category: string) {
+  try {
+    matomo.trackEvent(category, 'SelectResult')
+  } catch (e) {
+    // ignore tracking errors
+  }
 }
 function processResultBackgroundsearch(data: any, selectResult: Function) {
   searchResults.value.push({

@@ -17,8 +17,10 @@ import { Coordinate } from 'ol/coordinate'
 import olGeomPolygon from 'ol/geom/Polygon'
 import { LidarManager } from '@/services/lidar/lidar-manager'
 import drawTooltip from '@/composables/draw/draw-tooltip'
+import { useMatomo } from '@/composables/matomo/matomo.composable'
 
 let lidarManager: LidarManager
+const matomo = useMatomo()
 export default function useDrawLidarInteraction() {
   const appStore = useAppStore()
   const lidarStore = useLidarStore()
@@ -202,7 +204,7 @@ export default function useDrawLidarInteraction() {
       false,
       profileWidth.value
     )
-    // todo PIWIK
+    matomo.trackLidarGraph()
   }
 
   function exportCsv() {

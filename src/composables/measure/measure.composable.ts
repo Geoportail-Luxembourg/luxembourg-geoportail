@@ -22,6 +22,8 @@ import useMap from '@/composables/map/map.composable'
 import drawTooltip from '@/composables/draw/draw-tooltip'
 import { useTranslation } from 'i18next-vue'
 import { createLogger } from '@/lib/logging/namespacedLogger'
+import { useMatomo } from '@/composables/matomo/matomo.composable'
+import { MATOMO_CATEGORIES } from '@/composables/matomo/matomo.model'
 
 export default function useMeasure() {
   type Mode = 'length' | 'area' | 'azimuth'
@@ -38,6 +40,7 @@ export default function useMeasure() {
   const { t } = useTranslation()
   const { warn: logWarn, error: logError } = createLogger('MEASURE')
   const map = useMap().getOlMap()
+  const matomo = useMatomo()
   const isActive = ref(false)
   const measureLayer = ref<VectorLayer | null>(null)
   const drawInteraction = ref<Draw | null>(null)
@@ -685,6 +688,12 @@ export default function useMeasure() {
       showHintOverlay(t(key) as string, pos as [number, number])
     } catch (e) {
       logWarn('[measure] showHintOverlay (start hint) failed', e)
+    }
+    // Track activation of measurement tool in Matomo
+    try {
+      matomo.trackEvent(MATOMO_CATEGORIES.MAP, 'ActivateMeasure', mode)
+    } catch (e) {
+      // ignore tracking errors
     }
   }
 

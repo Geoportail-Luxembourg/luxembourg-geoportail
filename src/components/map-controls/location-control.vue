@@ -14,6 +14,8 @@ import type Map from 'ol/Map'
 
 import useControl from '@/composables/control/control.composable'
 import useMap from '@/composables/map/map.composable'
+import { useMatomo } from '@/composables/matomo/matomo.composable'
+import { MATOMO_CATEGORIES } from '@/composables/matomo/matomo.model'
 import { useAlertNotificationsStore } from '@/stores/alert-notifications.store'
 import { AlertNotificationType } from '@/stores/alert-notifications.store.model'
 
@@ -34,6 +36,8 @@ const props = withDefaults(
 
 const controlElement = ref<HTMLElement | null>(null)
 const isTracking = ref(false)
+
+const matomo = useMatomo()
 
 let geolocation: Geolocation | null = null
 let positionFeature: Feature<Point> | null = null
@@ -65,6 +69,12 @@ function handleCenterToLocation() {
     initFeatureOverlay()
     map?.getView().setZoom(17)
     geolocation?.setTracking(true)
+    // Track usage of geolocation: user activated the locate feature
+    try {
+      matomo.trackEvent(MATOMO_CATEGORIES.MAP, 'Locate', 'geolocation-button')
+    } catch (e) {
+      // swallow errors to avoid breaking UX if tracking fails
+    }
   } else {
     clearFeatureOverlay()
     geolocation?.setTracking(false)
