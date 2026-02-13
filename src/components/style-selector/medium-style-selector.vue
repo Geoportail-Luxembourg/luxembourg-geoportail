@@ -32,7 +32,7 @@ function changeStyle(i: number, newStyle: StyleItem) {
   )
   styleStore.disableExpertStyle()
   // Track medium style change similar to v3 openVTMediumEditor
-  const label = newStyle.label || newStyle.name
+  const label = newStyle.label
   const matomo = useMatomo()
   if (label) {
     matomo.trackPageView(`VTMediumEditor/${label}`)

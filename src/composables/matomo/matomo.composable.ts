@@ -95,7 +95,7 @@ class MatomoService {
    * Generic method for all event tracking
    */
   trackEvent(
-    category: MatomoCategory,
+    category: MatomoCategory | string,
     action: string,
     name?: string,
     value?: number

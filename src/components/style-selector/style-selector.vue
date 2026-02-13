@@ -65,9 +65,9 @@ function onTogglePanel(panelName: StyleSection) {
 // Watch for panel opens to match v3 behaviour (openVTSimpleEditor / openVTMediumEditor / openVTExpertEditor)
 watch(
   () => openedSection.value,
-  newSection => {
+  (newSection: StyleSection | undefined) => {
     if (!newSection) return
-    switch (newSection) {
+    switch (newSection as StyleSection) {
       case StyleSection.simpleStyle:
         matomo.trackPageView('openVTSimpleEditor')
         break
