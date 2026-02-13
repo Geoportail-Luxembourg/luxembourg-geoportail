@@ -37,6 +37,7 @@ const tools = [
     label: t('Profil Lidar'),
     active: () => false,
     onClick: () => toggleLidarOpen(true),
+    className: 'lidar-profile-tool',
   },
   { label: t('Reset'), active: () => false, onClick: () => reset() },
 ]
@@ -46,7 +47,7 @@ const tools = [
     <ul
       class="absolute bottom-full top-auto z-20 flex flex-row justify-start divide-y-0 divide-x divide-gray-400 divide-solid box-content border-y-0 border-x border-gray-400"
     >
-      <li v-for="(tool, index) in tools" :key="index">
+      <li v-for="(tool, index) in tools" :key="index" :class="tool.className">
         <button-text
           :label="tool.label"
           :active="tool.active()"
@@ -56,3 +57,11 @@ const tools = [
     </ul>
   </div>
 </template>
+
+<style scoped>
+@media (max-width: 768px) {
+  .lidar-profile-tool {
+    display: none;
+  }
+}
+</style>

@@ -90,6 +90,12 @@ function clearMeasure() {
   justify-content: center;
   box-shadow: 0 1px 4px rgba(0, 0, 0, 0.1);
 }
+
+@media (max-width: 900px), (max-height: 820px) {
+  .lidar-graph__measure-controls {
+    display: none !important;
+  }
+}
 </style>
 <template>
   <div class="lidarprofile-container">
@@ -125,7 +131,7 @@ function clearMeasure() {
             >
               {{ t('Export LAS') }}
             </button>
-            <div>
+            <div class="lidar-graph__measure-controls">
               <p>
                 <button
                   class="lux-btn mt-3"

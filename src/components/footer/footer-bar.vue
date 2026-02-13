@@ -294,7 +294,6 @@ function onClickRoutingIcon() {
       <!-- Print tools -->
       <button-icon
         v-if="!isOffLine"
-        class="hidden sm:block"
         :label="t('Imprimer', { ns: 'client' })"
         :aria-label="
           printToolbarOpen
