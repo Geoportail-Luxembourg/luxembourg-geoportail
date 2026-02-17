@@ -45,8 +45,17 @@ describe('PrintService', () => {
   })
 
   it('should return correct nearest scale', () => {
-    const nearestScale = printService.getNearestScale(1000, 'A2 landscape', 96)
-    expect(nearestScale).toBe(125000)
+    const map = {
+      getSize: () => [1000, 1000],
+      getView: () => ({
+        getCenter: () => [0, 0],
+        getProjection: () => 'EPSG:3857',
+        getResolution: () => 3.3,
+      }),
+    } as any
+
+    const nearestScale = printService.getNearestScale(map, 'A2 landscape')
+    expect(nearestScale).toBe(5000)
   })
 
   it('should return correct print URL', async () => {

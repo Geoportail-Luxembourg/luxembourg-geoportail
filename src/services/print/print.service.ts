@@ -65,8 +65,29 @@ const LAYOUTS = [
 
 const DPI = 127
 
-const getWidth = (scale: number, width: number, resolution: number): number =>
-  Math.round(((width / DOTS_PER_INCH / INCHES_PER_METER) * scale) / resolution)
+const getOptimalScale = (
+  mapSize: number[],
+  mapResolution: number,
+  printMapSize: number[],
+  printMapScales: number[]
+): number => {
+  const mapWidth = mapSize[0] * mapResolution
+  const mapHeight = mapSize[1] * mapResolution
+  const dotsPerMeter = DOTS_PER_INCH * INCHES_PER_METER
+
+  const scaleWidth = (mapWidth * dotsPerMeter) / printMapSize[0]
+  const scaleHeight = (mapHeight * dotsPerMeter) / printMapSize[1]
+  const scale = Math.min(scaleWidth, scaleHeight)
+
+  let optimal = -1
+  for (let i = 0; i < printMapScales.length; i += 1) {
+    if (scale > printMapScales[i]) {
+      optimal = printMapScales[i]
+    }
+  }
+
+  return optimal
+}
 
 const getViewCenterResolution = (map: Map): number => {
   const view = map.getView()
@@ -209,18 +230,28 @@ export class PrintService {
     return MAP_SIZES_[LAYOUTS.indexOf(layout)]
   }
 
-  getNearestScale(width: number, layout: string, resolution: number): number {
+  getNearestScale(map: Map, layout: string): number {
     const scales = this.getScales()
+    const viewCenterResolution = getViewCenterResolution(map)
+
+    if (!viewCenterResolution) {
+      return scales[0]
+    }
+
     const layoutWidth: number =
       MAP_SIZES_[LAYOUTS.indexOf(layout)][0] || MAP_SIZES_[0][0]
-
-    return (
+    const layoutHeight: number =
+      MAP_SIZES_[LAYOUTS.indexOf(layout)][1] || MAP_SIZES_[0][1]
+    const mapSize = map.getSize() || [0, 0]
+    const printMapSize = [layoutWidth, layoutHeight]
+    const optimalScale = getOptimalScale(
+      mapSize,
+      viewCenterResolution,
+      printMapSize,
       scales
-        .reverse()
-        .find(
-          (scale: number) => getWidth(scale, layoutWidth, resolution) < width
-        ) || scales[0]
     )
+
+    return optimalScale !== -1 ? optimalScale : scales[0]
   }
 
   async getShortLink(): Promise<string> {
