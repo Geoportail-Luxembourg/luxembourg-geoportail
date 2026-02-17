@@ -52,7 +52,7 @@ describe('Layer metadata utils', () => {
     })
     it('gets metadata links', () => {
       expect(links).toEqual([
-        'https://data.public.lu/fr/datasets/limites-administratives-du-grand-duche-de-luxembourg/',
+        '||https://data.public.lu/fr/datasets/limites-administratives-du-grand-duche-de-luxembourg/|WWW:LINK-1.0-http--link',
       ])
     })
   })

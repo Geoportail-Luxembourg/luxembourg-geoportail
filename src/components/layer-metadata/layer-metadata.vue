@@ -45,6 +45,65 @@ const description = computed(() =>
     : layerMetadata.value?.description?.slice(0, MAX_DESCRIPTION_LENGTH)
 )
 
+type ApiLink = {
+  label: string
+  url: string
+  serviceLabel: string
+}
+
+type ParsedLink = {
+  label: string
+  url: string
+  serviceType: string
+}
+
+const parsedLinks = computed<ParsedLink[]>(() => {
+  const links = layerMetadata.value?.link ?? []
+
+  return links
+    .map(rawLink => {
+      const [labelPart = '', rest = ''] = rawLink.split('||')
+      if (!rest.includes('|')) {
+        return undefined
+      }
+
+      const firstPipeIndex = rest.indexOf('|')
+      const url = rest.slice(0, firstPipeIndex).trim()
+      const serviceType = rest.slice(firstPipeIndex + 1).trim()
+
+      if (!url || !serviceType) {
+        return undefined
+      }
+
+      return {
+        label: labelPart.trim(),
+        url,
+        serviceType,
+      }
+    })
+    .filter((link): link is ParsedLink => Boolean(link))
+})
+
+const apiLinks = computed<ApiLink[]>(() =>
+  parsedLinks.value
+    .filter(link => link.serviceType !== 'WWW:LINK-1.0-http--link')
+    .map(link => ({
+      label: link.label,
+      url: link.url,
+      serviceLabel: link.serviceType.includes('OGC API')
+        ? 'OGC:API'
+        : link.serviceType.includes('WMS')
+        ? 'WMS'
+        : link.serviceType,
+    }))
+)
+
+const resourceLinks = computed<ParsedLink[]>(() =>
+  parsedLinks.value.filter(
+    link => link.serviceType === 'WWW:LINK-1.0-http--link'
+  )
+)
+
 function showFullDescription() {
   displayFullDescription.value = true
 }
@@ -129,20 +188,55 @@ function closeLayerMetadata() {
           :label="t(`Contrainte d'utilisation`)"
           :value="layerMetadata.legalConstraints"
         ></layer-metadata-item>
-        <div class="col-span-3" v-if="layerMetadata.link?.length !== 0">
+
+        <!-- API -->
+        <div class="col-span-3 grid gap-2 grid-cols-3" v-if="apiLinks.length">
+          <span class="font-bold">{{ t('API') }}</span>
+          <div class="col-span-2 space-y-2">
+            <div
+              class="flex items-start gap-3"
+              v-for="link in apiLinks"
+              :key="link.url + link.serviceLabel"
+            >
+              <span
+                class="inline-flex flex-col items-center justify-center rounded bg-gray-100 px-2 py-1 text-[10px] leading-tight text-gray-700"
+              >
+                <i class="fa fa-globe"></i>
+                <span>{{ link.serviceLabel }}</span>
+              </span>
+              <span>
+                <a
+                  v-if="link.label"
+                  class="text-secondary hover:underline"
+                  target="_blank"
+                  :href="link.url"
+                >
+                  {{ link.label }}
+                </a>
+                <span v-else>{{ link.url }}</span>
+              </span>
+            </div>
+          </div>
+        </div>
+
+        <!-- Resources -->
+        <div class="col-span-3" v-if="resourceLinks.length">
           <div
             class="grid gap-2 grid-cols-3"
-            v-for="link in layerMetadata.link"
-            :key="link"
+            v-for="link in resourceLinks"
+            :key="link.url"
           >
             <span class="font-bold">{{ t('Url vers la resource') }}</span>
             <span class="col-span-2">
               <a
+                v-if="link.label"
                 class="text-secondary hover:underline"
                 target="_blank"
-                :href="link"
-                >{{ link }}</a
+                :href="link.url"
               >
+                {{ link.label }}
+              </a>
+              <span v-else>{{ link.url }}</span>
             </span>
           </div>
         </div>

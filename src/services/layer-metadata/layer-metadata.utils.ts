@@ -25,17 +25,40 @@ export function stringToHtml(str: string): HTMLElement {
 
 export function getMetadataLinks(link: string | string[]): string[] {
   const links: string[] = []
+
+  const pushUnique = (value: string) => {
+    if (value && links.indexOf(value) === -1) {
+      links.push(value)
+    }
+  }
   function splitLink(link: string) {
     if (!link) {
       return
     }
 
+    const [labelPart = '', rest = ''] = link.split('||')
+    const isApiFormat = link.includes('||') && !labelPart.includes('|')
+
+    if (isApiFormat && rest.includes('|')) {
+      const firstPipeIndex = rest.indexOf('|')
+      const url = rest.slice(0, firstPipeIndex).trim()
+      const [serviceType = ''] = rest.slice(firstPipeIndex + 1).split('|')
+      const trimmedServiceType = serviceType.trim()
+
+      if (url && trimmedServiceType) {
+        pushUnique(`${labelPart.trim()}||${url}|${trimmedServiceType}`)
+        return
+      }
+      return
+    }
+
     const currentLink = link.split('|')
-    if (
-      currentLink[3] === 'WWW:LINK-1.0-http--link' &&
-      links.indexOf(currentLink[2]) === -1
-    ) {
-      links.push(currentLink[2])
+    const url = currentLink[2]?.trim()
+    const serviceType = currentLink[3]?.trim()
+
+    if (url && serviceType) {
+      pushUnique(`||${url}|${serviceType}`)
+      return
     }
   }
   if (Array.isArray(link)) {
