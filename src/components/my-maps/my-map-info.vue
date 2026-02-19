@@ -97,7 +97,11 @@ const menuOptions = computed(() => [
     action: () => download('shapefile'),
   },
   {
-    label: 'Importer un fichier GPX/KML/KMZ',
+    label: 'Exporter un GeoJSON',
+    action: () => download('geojson'),
+  },
+  {
+    label: 'Importer un GPX/KML/KMZ',
     action: () => importFeatures(),
   },
 ])
