@@ -81,4 +81,9 @@ describe('#sanitizeFilename', () => {
   it('should handle filenames with only special characters', () => {
     expect(sanitizeFilename('###@@@$$$')).toBe('_')
   })
+
+  it('should handle undefined or null', () => {
+    expect(sanitizeFilename(undefined)).toBe('_')
+    expect(sanitizeFilename(null)).toBe('_')
+  })
 })
