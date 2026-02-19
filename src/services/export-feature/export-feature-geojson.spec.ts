@@ -11,7 +11,13 @@ describe('ExportFeatureGeojson', () => {
     global.URL.createObjectURL = vi.fn(() => 'blob:http://localhost/test')
     global.URL.revokeObjectURL = vi.fn()
 
-    exportFeatureGeojson = new ExportFeatureGeojson(new Map({}))
+    const mapStub = {
+      getView: () => ({
+        getProjection: () => 'EPSG:3857',
+      }),
+    } as unknown as Map
+
+    exportFeatureGeojson = new ExportFeatureGeojson(mapStub)
     features = [
       new Feature({
         geometry: new Point([0, 0]),

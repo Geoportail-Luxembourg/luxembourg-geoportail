@@ -101,7 +101,7 @@ const menuOptions = computed(() => [
     action: () => download('geojson'),
   },
   {
-    label: 'Importer un GPX/KML/KMZ',
+    label: 'Importer un GPX/KML/KMZ/GeoJSON',
     action: () => importFeatures(),
   },
 ])
@@ -216,8 +216,8 @@ function importFeatures() {
       class="sr-only"
       ref="fileInputRef"
       id="gpx-kml-import"
-      accept=".gpx,.kml,.kmz"
-      :aria-label="t('Importer un fichier GPX/KML/KMZ')"
+      accept=".gpx,.kml,.kmz,.geojson"
+      :aria-label="t('Importer un fichier GPX/KML/KMZ/GeoJSON')"
       v-on:change="(e) => selectedFile = (e.target as HTMLInputElement).files?.[0] || null"
     />
 
