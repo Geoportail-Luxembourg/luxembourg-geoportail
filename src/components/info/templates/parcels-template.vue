@@ -138,7 +138,7 @@ h2 {
                   @click="openPreviewMesurage(measurement)"
                   >No {{ measurement.measurementNumber }}
                   {{ t('MESURAGE_' + measurement.description) }}
-                  {{ formatDate(measurement.date_document) }}</a
+                  {{ formatDate(measurement.date_document, 'fr-FR', false) }}</a
                 >
                 <a
                   v-if="measurement.is_downloadable"
