@@ -70,10 +70,22 @@ const cumulativeElevation = computed(
 const isLoading = computed(() => props.feature && !profileData.value)
 const isDrawing = computed(() => !props.feature)
 
+async function loadProfile() {
+  if (!props.feature) {
+    return
+  }
+
+  try {
+    const data = await props.feature.getProfile()
+    profileData.value = data
+  } catch (error) {
+    profileData.value = undefined
+  }
+}
+
 onMounted(() => {
   // Force get profile data when mounted (eg. when user click on a another drawn line, must populate data)
-  props.feature &&
-    props.feature.getProfile().then(data => (profileData.value = data))
+  loadProfile()
 })
 
 onUnmounted(() => {
@@ -96,7 +108,7 @@ watch(
     if (newFeature !== oldFeature) {
       if (props.feature && !props.feature.profileData) {
         profileData.value = undefined // Force refresh the graph
-        props.feature?.getProfile().then(data => (profileData.value = data))
+        loadProfile()
       } else {
         profileData.value = undefined
       }
@@ -110,7 +122,7 @@ watch(
     if (newProfileData !== oldProfileData) {
       if (props.feature && !props.feature.profileData) {
         profileData.value = undefined // Force refresh the graph
-        props.feature?.getProfile().then(data => (profileData.value = data))
+        loadProfile()
       } else {
         profileData.value = undefined
       }
@@ -118,10 +130,9 @@ watch(
   }
 )
 
-watch(
-  profileData,
-  profileData => (profilePosition.profileData.value = profileData)
-)
+watch(profileData, profileData => {
+  profilePosition.profileData.value = profileData
+})
 
 function exportCSV() {
   props.feature &&

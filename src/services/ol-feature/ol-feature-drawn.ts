@@ -3,10 +3,12 @@ import { Feature } from 'ol'
 import {
   Point,
   LineString,
+  MultiLineString,
   MultiPoint,
   Polygon,
   Geometry,
   Circle,
+  GeometryCollection,
 } from 'ol/geom'
 import StyleStyle, { StyleFunction } from 'ol/style/Style'
 import StyleRegularShape, {
@@ -211,17 +213,15 @@ export class DrawnFeature extends Feature {
    */
   async getProfile() {
     const geom = this.getGeometry()
+    const profileGeometry = this.resolveProfileGeometry(geom)
 
-    if (
-      geom?.getType() !== 'LineString' &&
-      geom?.getType() !== 'MultiLineString'
-    ) {
+    if (!profileGeometry) {
       return
     }
 
     if (this.profileData === undefined) {
       const geomJson = new olFormatGeoJSON().writeGeometry(
-        this.getGeometry()!,
+        profileGeometry,
         encodeOptions
       )
 
@@ -261,6 +261,43 @@ export class DrawnFeature extends Feature {
     }
 
     return this.profileData
+  }
+
+  private resolveProfileGeometry(geom?: Geometry): Geometry | undefined {
+    if (!geom) {
+      return undefined
+    }
+
+    const geomType = geom.getType()
+    if (geomType === 'LineString' || geomType === 'MultiLineString') {
+      return geom
+    }
+
+    if (geom instanceof GeometryCollection) {
+      const lineCoordinates: number[][][] = []
+
+      geom.getGeometries().forEach(child => {
+        if (child instanceof LineString) {
+          lineCoordinates.push(child.getCoordinates())
+          return
+        }
+        if (child instanceof MultiLineString) {
+          lineCoordinates.push(...child.getCoordinates())
+        }
+      })
+
+      if (lineCoordinates.length === 0) {
+        return undefined
+      }
+
+      if (lineCoordinates.length === 1) {
+        return new LineString(lineCoordinates[0])
+      }
+
+      return new MultiLineString(lineCoordinates)
+    }
+
+    return undefined
   }
 
   toProperties() {
