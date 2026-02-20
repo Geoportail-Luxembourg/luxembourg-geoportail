@@ -170,6 +170,7 @@ h2 {
             class="lux-btn inline-block mb-1"
             :href="`https://shop.geoportail.lu/Portail/express_mesurage/?ids=['${feature.attributes.textstring}']&camefrom=mapv3_go&lang=${i18next.language}`"
             target="_blank"
+            rel="noopener noreferrer"
             >{{ t('Constitution de dossier de mesurage') }}</a
           >
         </div>
@@ -184,6 +185,7 @@ h2 {
             class="lux-btn inline-block mb-1"
             :href="`https://xxpfo.intranet.etat.lu/xxpfoi/detail_parcelle.do?noParcelle=${feature.attributes.textstring}`"
             target="_blank"
+            rel="noopener noreferrer"
             >{{ t('Ouvrir la PF') }}</a
           >
         </div>
@@ -197,8 +199,9 @@ h2 {
           >
             <!-- Niveau 1: Numéro de mesurage -->
             <div class="measurement-number-group">
-              <div
-                class="measurement-number-header cursor-pointer hover:bg-gray-100 py-1 px-2 rounded"
+              <button
+                class="measurement-number-header w-full text-left cursor-pointer hover:bg-gray-100 py-0 px-2 rounded"
+                :aria-expanded="isMeasurementNumberExpanded(measurementNumber)"
                 @click="toggleMeasurementNumber(measurementNumber)"
               >
                 <i
@@ -208,9 +211,10 @@ h2 {
                       ? 'fa-caret-up'
                       : 'fa-caret-down'
                   "
+                  aria-hidden="true"
                 ></i>
                 <span>{{ t('No') }} {{ measurementNumber }}</span>
-              </div>
+              </button>
 
               <!-- Niveau 2: Types de mesurages -->
               <div
@@ -222,8 +226,14 @@ h2 {
                   :key="description"
                 >
                   <div class="measurement-type-group">
-                    <div
-                      class="measurement-type-header cursor-pointer hover:bg-gray-100 py-0 px-2 rounded"
+                    <button
+                      class="measurement-type-header w-full text-left cursor-pointer hover:bg-gray-100 py-0 px-2 rounded"
+                      :aria-expanded="
+                        isMeasurementTypeExpanded(
+                          measurementNumber,
+                          description
+                        )
+                      "
                       @click="
                         toggleMeasurementType(measurementNumber, description)
                       "
@@ -238,9 +248,10 @@ h2 {
                             ? 'fa-caret-up'
                             : 'fa-caret-down'
                         "
+                        aria-hidden="true"
                       ></i>
                       <span>{{ t('MESURAGE_' + description) }}</span>
-                    </div>
+                    </button>
 
                     <!-- Niveau 3: Documents avec dates -->
                     <ul
@@ -258,7 +269,7 @@ h2 {
                       >
                         <li>
                           <template v-if="document.document_id">
-                            <a
+                            <button
                               class="cursor-pointer text-blue-600 hover:underline"
                               @click="openPreviewMesurage(document)"
                             >
@@ -269,12 +280,22 @@ h2 {
                                   false
                                 )
                               }}
-                            </a>
+                            </button>
                             <a
                               v-if="document.is_downloadable"
                               class="ml-2"
                               target="_blank"
+                              rel="noopener noreferrer"
                               :href="`${DOWNLOAD_MEASUREMENT_URL}?document_id=${document.document_id}`"
+                              :aria-label="
+                                t('Télécharger le mesurage du') +
+                                ' ' +
+                                formatDate(
+                                  document.date_document,
+                                  'fr-FR',
+                                  false
+                                )
+                              "
                             >
                               <i class="fa fa-download" aria-hidden="true"></i
                             ></a>
@@ -298,12 +319,14 @@ h2 {
           class="lux-btn inline-block mb-1"
           :href="`https://historique.geoportail.lu/?id=${feature.attributes.textstring}`"
           target="_blank"
+          rel="noopener noreferrer"
           >{{ t('Historique de la parcelle') }}</a
         >
         <a
           class="lux-btn inline-block mb-1"
           :href="`https://commande.geoportail.lu/?ids=['${feature.attributes.textstring}']&camefrom=mapv3&lang=${i18next.language}`"
           target="_blank"
+          rel="noopener noreferrer"
           >{{ t('Commander un extrait') }}</a
         >
       </template>
