@@ -18,8 +18,10 @@ defineProps<{
 }>()
 
 const DOWNLOAD_MEASUREMENT_URL = import.meta.env.VITE_DOWNLOAD_MEASUREMENT_URL
+const THUMBNAIL_MEASUREMENT_URL = import.meta.env.VITE_THUMBNAIL_MEASUREMENT_URL
 const { t } = useTranslation()
 const selectedMeasurement: Ref<FeatureMeasurement | undefined> = ref()
+const viewMode = ref<'links' | 'thumbnails'>('links')
 
 // Gestion de l'expansion hiérarchique
 const expandedMeasurementNumbers = ref<Set<string>>(new Set())
@@ -189,7 +191,43 @@ h2 {
             >{{ t('Ouvrir la PF') }}</a
           >
         </div>
-        <span>{{ t('Lien vers les mesurages') }}</span> :
+        <div class="mt-1 mb-1">
+          <span>{{ t('Lien vers les mesurages') }}</span> :
+          <div
+            class="flex rounded overflow-hidden border border-gray-300 text-sm mt-1"
+            role="group"
+            :aria-label="t('Mode d\'affichage des mesurages')"
+          >
+            <button
+              class="flex flex-col items-center px-3 py-1 transition-colors"
+              :class="
+                viewMode === 'links'
+                  ? 'bg-primary text-white'
+                  : 'bg-white text-gray-700 hover:bg-gray-100'
+              "
+              :aria-pressed="viewMode === 'links'"
+              :aria-label="t('Afficher les liens')"
+              @click="viewMode = 'links'"
+            >
+              <i class="fa fa-list" aria-hidden="true"></i>
+              <span class="text-xs mt-0.5">{{ t('Liens') }}</span>
+            </button>
+            <button
+              class="flex flex-col items-center px-3 py-1 transition-colors border-l border-gray-300"
+              :class="
+                viewMode === 'thumbnails'
+                  ? 'bg-primary text-white'
+                  : 'bg-white text-gray-700 hover:bg-gray-100'
+              "
+              :aria-pressed="viewMode === 'thumbnails'"
+              :aria-label="t('Afficher les aperçus')"
+              @click="viewMode = 'thumbnails'"
+            >
+              <i class="fa fa-th-large" aria-hidden="true"></i>
+              <span class="text-xs mt-0.5">{{ t('Aperçus') }}</span>
+            </button>
+          </div>
+        </div>
         <div class="measurement-hierarchy">
           <template
             v-for="(
@@ -253,9 +291,10 @@ h2 {
                       <span>{{ t('MESURAGE_' + description) }}</span>
                     </button>
 
-                    <!-- Niveau 3: Documents avec dates -->
+                    <!-- Niveau 3 mode liens : liste avec dates -->
                     <ul
                       v-if="
+                        viewMode === 'links' &&
                         isMeasurementTypeExpanded(
                           measurementNumber,
                           description
@@ -300,7 +339,6 @@ h2 {
                               <i class="fa fa-download" aria-hidden="true"></i
                             ></a>
                           </template>
-
                           <template v-else>
                             <span class="text-gray-500">{{
                               t('Mesurage non disponible')
@@ -309,6 +347,61 @@ h2 {
                         </li>
                       </template>
                     </ul>
+
+                    <!-- Niveau 3 mode miniatures : grille d'images -->
+                    <div
+                      v-if="
+                        viewMode === 'thumbnails' &&
+                        isMeasurementTypeExpanded(
+                          measurementNumber,
+                          description
+                        )
+                      "
+                      class="flex flex-wrap gap-2 pl-4 mt-1"
+                    >
+                      <template
+                        v-for="document in documents"
+                        :key="document.document_id"
+                      >
+                        <div
+                          v-if="document.document_id"
+                          class="flex flex-col items-center"
+                        >
+                          <button
+                            class="border border-gray-300 rounded overflow-hidden hover:border-blue-500 focus:outline-none focus:ring-2 focus:ring-blue-400"
+                            :aria-label="
+                              t('Prévisualiser le mesurage du') +
+                              ' ' +
+                              formatDate(document.date_document, 'fr-FR', false)
+                            "
+                            @click="openPreviewMesurage(document)"
+                          >
+                            <img
+                              :src="`${THUMBNAIL_MEASUREMENT_URL}?document_id=${document.document_id}`"
+                              :alt="
+                                t('Aperçu mesurage du') +
+                                ' ' +
+                                formatDate(
+                                  document.date_document,
+                                  'fr-FR',
+                                  false
+                                )
+                              "
+                              class="w-24 h-24 object-cover"
+                              loading="lazy"
+                            />
+                          </button>
+                          <span class="text-xs text-gray-600 mt-0.5">{{
+                            formatDate(document.date_document, 'fr-FR', false)
+                          }}</span>
+                        </div>
+                        <div v-else class="flex items-center">
+                          <span class="text-gray-500 text-sm">{{
+                            t('Mesurage non disponible')
+                          }}</span>
+                        </div>
+                      </template>
+                    </div>
                   </div>
                 </template>
               </div>
