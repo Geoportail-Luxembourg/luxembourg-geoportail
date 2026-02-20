@@ -1,3 +1,4 @@
+f
 <script setup lang="ts">
 import { ref, Ref } from 'vue'
 import i18next from 'i18next'
@@ -19,6 +20,68 @@ defineProps<{
 const DOWNLOAD_MEASUREMENT_URL = import.meta.env.VITE_DOWNLOAD_MEASUREMENT_URL
 const { t } = useTranslation()
 const selectedMeasurement: Ref<FeatureMeasurement | undefined> = ref()
+
+// Gestion de l'expansion hiérarchique
+const expandedMeasurementNumbers = ref<Set<string>>(new Set())
+const expandedTypes = ref<Map<string, Set<string>>>(new Map())
+
+function toggleMeasurementNumber(measurementNumber: string) {
+  if (expandedMeasurementNumbers.value.has(measurementNumber)) {
+    expandedMeasurementNumbers.value.delete(measurementNumber)
+  } else {
+    expandedMeasurementNumbers.value.add(measurementNumber)
+  }
+}
+
+function toggleMeasurementType(measurementNumber: string, description: string) {
+  const key = `${measurementNumber}_${description}`
+  if (!expandedTypes.value.has(measurementNumber)) {
+    expandedTypes.value.set(measurementNumber, new Set())
+  }
+  const types = expandedTypes.value.get(measurementNumber)!
+  if (types.has(key)) {
+    types.delete(key)
+  } else {
+    types.add(key)
+  }
+}
+
+function isMeasurementNumberExpanded(measurementNumber: string): boolean {
+  return expandedMeasurementNumbers.value.has(measurementNumber)
+}
+
+function isMeasurementTypeExpanded(
+  measurementNumber: string,
+  description: string
+): boolean {
+  const key = `${measurementNumber}_${description}`
+  const types = expandedTypes.value.get(measurementNumber)
+  return types ? types.has(key) : false
+}
+
+function groupMeasurementsByHierarchy(measurements: FeatureMeasurement[]) {
+  const grouped: Record<string, Record<string, FeatureMeasurement[]>> = {}
+
+  measurements.forEach(measurement => {
+    // Ignorer les documents sans measurementType
+    if (!measurement.measurementType) {
+      return
+    }
+
+    const measurementNumber = String(measurement.measurementNumber)
+    const description = String(measurement.description)
+
+    if (!grouped[measurementNumber]) {
+      grouped[measurementNumber] = {}
+    }
+    if (!grouped[measurementNumber][description]) {
+      grouped[measurementNumber][description] = []
+    }
+    grouped[measurementNumber][description].push(measurement)
+  })
+
+  return grouped
+}
 
 function openPreviewMesurage(measurement: FeatureMeasurement) {
   selectedMeasurement.value = measurement
@@ -125,37 +188,112 @@ h2 {
           >
         </div>
         <span>{{ t('Lien vers les mesurages') }}</span> :
-        <ul class="list-disc pl-6">
+        <div class="measurement-hierarchy">
           <template
-            v-for="measurement in feature.attributes.measurements"
-            :key="measurement.measurementNumber"
+            v-for="(
+              typesByDescription, measurementNumber
+            ) in groupMeasurementsByHierarchy(feature.attributes.measurements)"
+            :key="measurementNumber"
           >
-            <li>
-              <template v-if="measurement.document_id">
-                <a
-                  class="cursor-pointer"
-                  target="_blank"
-                  @click="openPreviewMesurage(measurement)"
-                  >No {{ measurement.measurementNumber }}
-                  {{ t('MESURAGE_' + measurement.description) }}
-                  {{ formatDate(measurement.date_document, 'fr-FR', false) }}</a
-                >
-                <a
-                  v-if="measurement.is_downloadable"
-                  target="_blank"
-                  :href="`${DOWNLOAD_MEASUREMENT_URL}?document_id=${measurement.document_id}`"
-                >
-                  <i class="fa fa-download" aria-hidden="true"></i
-                ></a>
-              </template>
+            <!-- Niveau 1: Numéro de mesurage -->
+            <div class="measurement-number-group">
+              <div
+                class="measurement-number-header cursor-pointer hover:bg-gray-100 py-1 px-2 rounded"
+                @click="toggleMeasurementNumber(measurementNumber)"
+              >
+                <i
+                  class="fa fa-sharp fa-solid mr-2 text-sm"
+                  :class="
+                    isMeasurementNumberExpanded(measurementNumber)
+                      ? 'fa-caret-up'
+                      : 'fa-caret-down'
+                  "
+                ></i>
+                <span>{{ t('No') }} {{ measurementNumber }}</span>
+              </div>
 
-              <template v-else>
-                <span>{{ t('Mesurage non disponible') }}</span> :
-                {{ measurement.measurementNumber }}
-              </template>
-            </li>
+              <!-- Niveau 2: Types de mesurages -->
+              <div
+                v-if="isMeasurementNumberExpanded(measurementNumber)"
+                class="pl-6"
+              >
+                <template
+                  v-for="(documents, description) in typesByDescription"
+                  :key="description"
+                >
+                  <div class="measurement-type-group">
+                    <div
+                      class="measurement-type-header cursor-pointer hover:bg-gray-100 py-0 px-2 rounded"
+                      @click="
+                        toggleMeasurementType(measurementNumber, description)
+                      "
+                    >
+                      <i
+                        class="fa fa-sharp fa-solid mr-2 text-sm"
+                        :class="
+                          isMeasurementTypeExpanded(
+                            measurementNumber,
+                            description
+                          )
+                            ? 'fa-caret-up'
+                            : 'fa-caret-down'
+                        "
+                      ></i>
+                      <span>{{ t('MESURAGE_' + description) }}</span>
+                    </div>
+
+                    <!-- Niveau 3: Documents avec dates -->
+                    <ul
+                      v-if="
+                        isMeasurementTypeExpanded(
+                          measurementNumber,
+                          description
+                        )
+                      "
+                      class="list-disc pl-10 mt-0"
+                    >
+                      <template
+                        v-for="document in documents"
+                        :key="document.document_id"
+                      >
+                        <li>
+                          <template v-if="document.document_id">
+                            <a
+                              class="cursor-pointer text-blue-600 hover:underline"
+                              @click="openPreviewMesurage(document)"
+                            >
+                              {{
+                                formatDate(
+                                  document.date_document,
+                                  'fr-FR',
+                                  false
+                                )
+                              }}
+                            </a>
+                            <a
+                              v-if="document.is_downloadable"
+                              class="ml-2"
+                              target="_blank"
+                              :href="`${DOWNLOAD_MEASUREMENT_URL}?document_id=${document.document_id}`"
+                            >
+                              <i class="fa fa-download" aria-hidden="true"></i
+                            ></a>
+                          </template>
+
+                          <template v-else>
+                            <span class="text-gray-500">{{
+                              t('Mesurage non disponible')
+                            }}</span>
+                          </template>
+                        </li>
+                      </template>
+                    </ul>
+                  </div>
+                </template>
+              </div>
+            </div>
           </template>
-        </ul>
+        </div>
         <a
           class="lux-btn inline-block mb-1"
           :href="`https://historique.geoportail.lu/?id=${feature.attributes.textstring}`"
