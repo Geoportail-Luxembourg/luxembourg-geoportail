@@ -4415,5 +4415,7 @@
   "Close print toolbar": "Dréckleescht zoumaachen",
   "Open print toolbar to create a PDF of the map": "Dréckleescht opmaachen fir e PDF vun der Kaart ze erstellen",
   "Close share panel": "Deele-Panel zoumaachen",
-  "Open share panel to create a shareable link": "Deele-Panel opmaachen fir en deelbaren Link ze erstellen"
+  "Open share panel to create a shareable link": "Deele-Panel opmaachen fir en deelbaren Link ze erstellen",
+  "target_audience_GO": "Technische Fichieren",
+  "target_audience_ACT": "Intern technische Fichieren"
 }

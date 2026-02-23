@@ -25,7 +25,8 @@ const viewMode = ref<'links' | 'thumbnails'>('links')
 
 // Gestion de l'expansion hiérarchique
 const expandedMeasurementNumbers = ref<Set<string>>(new Set())
-const expandedTypes = ref<Map<string, Set<string>>>(new Map())
+const expandedAudiences = ref<Map<string, Set<string>>>(new Map())
+const expandedDocumentTypes = ref<Map<string, Set<string>>>(new Map())
 
 function toggleMeasurementNumber(measurementNumber: string) {
   if (expandedMeasurementNumbers.value.has(measurementNumber)) {
@@ -35,12 +36,29 @@ function toggleMeasurementNumber(measurementNumber: string) {
   }
 }
 
-function toggleMeasurementType(measurementNumber: string, description: string) {
-  const key = `${measurementNumber}_${description}`
-  if (!expandedTypes.value.has(measurementNumber)) {
-    expandedTypes.value.set(measurementNumber, new Set())
+function toggleAudience(measurementNumber: string, audience: string) {
+  const key = `${measurementNumber}_${audience}`
+  if (!expandedAudiences.value.has(measurementNumber)) {
+    expandedAudiences.value.set(measurementNumber, new Set())
   }
-  const types = expandedTypes.value.get(measurementNumber)!
+  const audiences = expandedAudiences.value.get(measurementNumber)!
+  if (audiences.has(key)) {
+    audiences.delete(key)
+  } else {
+    audiences.add(key)
+  }
+}
+
+function toggleDocumentType(
+  measurementNumber: string,
+  audience: string,
+  description: string
+) {
+  const key = `${measurementNumber}_${audience}_${description}`
+  if (!expandedDocumentTypes.value.has(measurementNumber)) {
+    expandedDocumentTypes.value.set(measurementNumber, new Set())
+  }
+  const types = expandedDocumentTypes.value.get(measurementNumber)!
   if (types.has(key)) {
     types.delete(key)
   } else {
@@ -52,17 +70,30 @@ function isMeasurementNumberExpanded(measurementNumber: string): boolean {
   return expandedMeasurementNumbers.value.has(measurementNumber)
 }
 
-function isMeasurementTypeExpanded(
+function isAudienceExpanded(
   measurementNumber: string,
+  audience: string
+): boolean {
+  const key = `${measurementNumber}_${audience}`
+  const audiences = expandedAudiences.value.get(measurementNumber)
+  return audiences ? audiences.has(key) : false
+}
+
+function isDocumentTypeExpanded(
+  measurementNumber: string,
+  audience: string,
   description: string
 ): boolean {
-  const key = `${measurementNumber}_${description}`
-  const types = expandedTypes.value.get(measurementNumber)
+  const key = `${measurementNumber}_${audience}_${description}`
+  const types = expandedDocumentTypes.value.get(measurementNumber)
   return types ? types.has(key) : false
 }
 
 function groupMeasurementsByHierarchy(measurements: FeatureMeasurement[]) {
-  const grouped: Record<string, Record<string, FeatureMeasurement[]>> = {}
+  const grouped: Record<
+    string,
+    Record<string, Record<string, FeatureMeasurement[]>>
+  > = {}
 
   measurements.forEach(measurement => {
     // Ignorer les documents sans measurementType
@@ -71,18 +102,29 @@ function groupMeasurementsByHierarchy(measurements: FeatureMeasurement[]) {
     }
 
     const measurementNumber = String(measurement.measurementNumber)
+    const targetAudience = String(measurement.target_audience || 'public')
     const description = String(measurement.description)
 
     if (!grouped[measurementNumber]) {
       grouped[measurementNumber] = {}
     }
-    if (!grouped[measurementNumber][description]) {
-      grouped[measurementNumber][description] = []
+    if (!grouped[measurementNumber][targetAudience]) {
+      grouped[measurementNumber][targetAudience] = {}
     }
-    grouped[measurementNumber][description].push(measurement)
+    if (!grouped[measurementNumber][targetAudience][description]) {
+      grouped[measurementNumber][targetAudience][description] = []
+    }
+    grouped[measurementNumber][targetAudience][description].push(measurement)
   })
 
   return grouped
+}
+
+function getAudienceOrder(audiences: string[]): string[] {
+  const order = ['public', 'GO', 'ACT']
+  return audiences
+    .filter(a => order.includes(a))
+    .sort((a, b) => order.indexOf(a) - order.indexOf(b))
 }
 
 function openPreviewMesurage(measurement: FeatureMeasurement) {
@@ -194,7 +236,7 @@ h2 {
         <div class="mt-1 mb-1">
           <span>{{ t('Lien vers les mesurages') }}</span> :
           <div
-            class="flex rounded overflow-hidden border border-gray-300 text-sm mt-1"
+            class="flex rounded overflow-hidden text-sm mt-1"
             role="group"
             :aria-label="t('Mode d\'affichage des mesurages')"
           >
@@ -231,7 +273,7 @@ h2 {
         <div class="measurement-hierarchy">
           <template
             v-for="(
-              typesByDescription, measurementNumber
+              documentsByAudience, measurementNumber
             ) in groupMeasurementsByHierarchy(feature.attributes.measurements)"
             :key="measurementNumber"
           >
@@ -254,155 +296,385 @@ h2 {
                 <span>{{ t('No') }} {{ measurementNumber }}</span>
               </button>
 
-              <!-- Niveau 2: Types de mesurages -->
+              <!-- Niveau 2: Audiences -->
               <div
                 v-if="isMeasurementNumberExpanded(measurementNumber)"
                 class="pl-6"
               >
                 <template
-                  v-for="(documents, description) in typesByDescription"
-                  :key="description"
+                  v-for="audience in getAudienceOrder(
+                    Object.keys(documentsByAudience)
+                  )"
+                  :key="audience"
                 >
-                  <div class="measurement-type-group">
-                    <button
-                      class="measurement-type-header w-full text-left cursor-pointer hover:bg-gray-100 py-0 px-2 rounded"
-                      :aria-expanded="
-                        isMeasurementTypeExpanded(
-                          measurementNumber,
-                          description
-                        )
-                      "
-                      @click="
-                        toggleMeasurementType(measurementNumber, description)
-                      "
+                  <!-- Si l'audience est "public", afficher directement les types de documents sans le header audience -->
+                  <template v-if="audience === 'public'">
+                    <template
+                      v-for="(documents, description) in documentsByAudience[
+                        audience
+                      ]"
+                      :key="description"
                     >
-                      <i
-                        class="fa fa-sharp fa-solid mr-2 text-sm"
-                        :class="
-                          isMeasurementTypeExpanded(
-                            measurementNumber,
-                            description
-                          )
-                            ? 'fa-caret-up'
-                            : 'fa-caret-down'
-                        "
-                        aria-hidden="true"
-                      ></i>
-                      <span>{{ t('MESURAGE_' + description) }}</span>
-                    </button>
-
-                    <!-- Niveau 3 mode liens : liste avec dates -->
-                    <ul
-                      v-if="
-                        viewMode === 'links' &&
-                        isMeasurementTypeExpanded(
-                          measurementNumber,
-                          description
-                        )
-                      "
-                      class="list-disc pl-10 mt-0"
-                    >
-                      <template
-                        v-for="document in documents"
-                        :key="document.document_id"
-                      >
-                        <li>
-                          <template v-if="document.document_id">
-                            <button
-                              class="cursor-pointer text-blue-600 hover:underline"
-                              @click="openPreviewMesurage(document)"
-                            >
-                              {{
-                                formatDate(
-                                  document.date_document,
-                                  'fr-FR',
-                                  false
-                                )
-                              }}
-                            </button>
-                            <a
-                              v-if="document.is_downloadable"
-                              class="ml-2"
-                              target="_blank"
-                              rel="noopener noreferrer"
-                              :href="`${DOWNLOAD_MEASUREMENT_URL}?document_id=${document.document_id}`"
-                              :aria-label="
-                                t('Télécharger le mesurage du') +
-                                ' ' +
-                                formatDate(
-                                  document.date_document,
-                                  'fr-FR',
-                                  false
-                                )
-                              "
-                            >
-                              <i class="fa fa-download" aria-hidden="true"></i
-                            ></a>
-                          </template>
-                          <template v-else>
-                            <span class="text-gray-500">{{
-                              t('Mesurage non disponible')
-                            }}</span>
-                          </template>
-                        </li>
-                      </template>
-                    </ul>
-
-                    <!-- Niveau 3 mode miniatures : grille d'images -->
-                    <div
-                      v-if="
-                        viewMode === 'thumbnails' &&
-                        isMeasurementTypeExpanded(
-                          measurementNumber,
-                          description
-                        )
-                      "
-                      class="flex flex-wrap gap-2 pl-4 mt-1"
-                    >
-                      <template
-                        v-for="document in documents"
-                        :key="document.document_id"
-                      >
-                        <div
-                          v-if="document.document_id"
-                          class="flex flex-col items-center"
+                      <div class="measurement-type-group pl-0">
+                        <button
+                          class="measurement-type-header w-full text-left cursor-pointer hover:bg-gray-100 py-0 px-2 rounded"
+                          :aria-expanded="
+                            isDocumentTypeExpanded(
+                              measurementNumber,
+                              audience,
+                              description
+                            )
+                          "
+                          @click="
+                            toggleDocumentType(
+                              measurementNumber,
+                              audience,
+                              description
+                            )
+                          "
                         >
-                          <button
-                            class="border border-gray-300 rounded overflow-hidden hover:border-blue-500 focus:outline-none focus:ring-2 focus:ring-blue-400"
-                            :aria-label="
-                              t('Prévisualiser le mesurage du') +
-                              ' ' +
-                              formatDate(document.date_document, 'fr-FR', false)
+                          <i
+                            class="fa fa-sharp fa-solid mr-2 text-sm"
+                            :class="
+                              isDocumentTypeExpanded(
+                                measurementNumber,
+                                audience,
+                                description
+                              )
+                                ? 'fa-caret-up'
+                                : 'fa-caret-down'
                             "
-                            @click="openPreviewMesurage(document)"
+                            aria-hidden="true"
+                          ></i>
+                          <span>{{ t('MESURAGE_' + description) }}</span>
+                        </button>
+
+                        <!-- Niveau 4: Documents (mode liens) -->
+                        <ul
+                          v-if="
+                            viewMode === 'links' &&
+                            isDocumentTypeExpanded(
+                              measurementNumber,
+                              audience,
+                              description
+                            )
+                          "
+                          class="list-disc pl-10 mt-0"
+                        >
+                          <template
+                            v-for="document in documents"
+                            :key="document.document_id"
                           >
-                            <img
-                              :src="`${THUMBNAIL_MEASUREMENT_URL}?document_id=${document.document_id}`"
-                              :alt="
-                                t('Aperçu mesurage du') +
-                                ' ' +
+                            <li>
+                              <template v-if="document.document_id">
+                                <button
+                                  class="cursor-pointer text-blue-600 hover:underline"
+                                  @click="openPreviewMesurage(document)"
+                                >
+                                  {{
+                                    formatDate(
+                                      document.date_document,
+                                      'fr-FR',
+                                      false
+                                    )
+                                  }}
+                                </button>
+                                <a
+                                  v-if="document.is_downloadable"
+                                  class="ml-2"
+                                  target="_blank"
+                                  rel="noopener noreferrer"
+                                  :href="`${DOWNLOAD_MEASUREMENT_URL}?document_id=${document.document_id}`"
+                                  :aria-label="
+                                    t('Télécharger le mesurage du') +
+                                    ' ' +
+                                    formatDate(
+                                      document.date_document,
+                                      'fr-FR',
+                                      false
+                                    )
+                                  "
+                                >
+                                  <i
+                                    class="fa fa-download"
+                                    aria-hidden="true"
+                                  ></i
+                                ></a>
+                              </template>
+                              <template v-else>
+                                <span class="text-gray-500">{{
+                                  t('Mesurage non disponible')
+                                }}</span>
+                              </template>
+                            </li>
+                          </template>
+                        </ul>
+
+                        <!-- Niveau 4: Documents (mode miniatures) -->
+                        <div
+                          v-if="
+                            viewMode === 'thumbnails' &&
+                            isDocumentTypeExpanded(
+                              measurementNumber,
+                              audience,
+                              description
+                            )
+                          "
+                          class="flex flex-wrap gap-2 pl-4 mt-1"
+                        >
+                          <template
+                            v-for="document in documents"
+                            :key="document.document_id"
+                          >
+                            <div
+                              v-if="document.document_id"
+                              class="flex flex-col items-center"
+                            >
+                              <button
+                                class="border border-gray-300 rounded overflow-hidden hover:border-blue-500 focus:outline-none focus:ring-2 focus:ring-blue-400"
+                                :aria-label="
+                                  t('Prévisualiser le mesurage du') +
+                                  ' ' +
+                                  formatDate(
+                                    document.date_document,
+                                    'fr-FR',
+                                    false
+                                  )
+                                "
+                                @click="openPreviewMesurage(document)"
+                              >
+                                <img
+                                  :src="`${THUMBNAIL_MEASUREMENT_URL}?document_id=${document.document_id}`"
+                                  :alt="
+                                    t('Aperçu mesurage du') +
+                                    ' ' +
+                                    formatDate(
+                                      document.date_document,
+                                      'fr-FR',
+                                      false
+                                    )
+                                  "
+                                  class="w-24 h-24 object-cover"
+                                  loading="lazy"
+                                />
+                              </button>
+                              <span class="text-xs text-gray-600 mt-0.5">{{
                                 formatDate(
                                   document.date_document,
                                   'fr-FR',
                                   false
                                 )
+                              }}</span>
+                            </div>
+                            <div v-else class="flex items-center">
+                              <span class="text-gray-500 text-sm">{{
+                                t('Mesurage non disponible')
+                              }}</span>
+                            </div>
+                          </template>
+                        </div>
+                      </div>
+                    </template>
+                  </template>
+
+                  <!-- Si l'audience n'est pas "public", afficher avec le header audience -->
+                  <template v-else>
+                    <div class="measurement-audience-group">
+                      <button
+                        class="measurement-audience-header w-full text-left cursor-pointer hover:bg-gray-100 py-0 px-2 rounded"
+                        :aria-expanded="
+                          isAudienceExpanded(measurementNumber, audience)
+                        "
+                        @click="toggleAudience(measurementNumber, audience)"
+                      >
+                        <i
+                          class="fa fa-sharp fa-solid mr-2 text-sm"
+                          :class="
+                            isAudienceExpanded(measurementNumber, audience)
+                              ? 'fa-caret-up'
+                              : 'fa-caret-down'
+                          "
+                          aria-hidden="true"
+                        ></i>
+                        <span>{{
+                          t(`target_audience_${audience}`, audience)
+                        }}</span>
+                      </button>
+
+                      <!-- Niveau 3: Types de documents -->
+                      <div
+                        v-if="isAudienceExpanded(measurementNumber, audience)"
+                        class="pl-6"
+                      >
+                        <template
+                          v-for="(
+                            documents, description
+                          ) in documentsByAudience[audience]"
+                          :key="description"
+                        >
+                          <div class="measurement-type-group">
+                            <button
+                              class="measurement-type-header w-full text-left cursor-pointer hover:bg-gray-100 py-0 px-2 rounded"
+                              :aria-expanded="
+                                isDocumentTypeExpanded(
+                                  measurementNumber,
+                                  audience,
+                                  description
+                                )
                               "
-                              class="w-24 h-24 object-cover"
-                              loading="lazy"
-                            />
-                          </button>
-                          <span class="text-xs text-gray-600 mt-0.5">{{
-                            formatDate(document.date_document, 'fr-FR', false)
-                          }}</span>
-                        </div>
-                        <div v-else class="flex items-center">
-                          <span class="text-gray-500 text-sm">{{
-                            t('Mesurage non disponible')
-                          }}</span>
-                        </div>
-                      </template>
+                              @click="
+                                toggleDocumentType(
+                                  measurementNumber,
+                                  audience,
+                                  description
+                                )
+                              "
+                            >
+                              <i
+                                class="fa fa-sharp fa-solid mr-2 text-sm"
+                                :class="
+                                  isDocumentTypeExpanded(
+                                    measurementNumber,
+                                    audience,
+                                    description
+                                  )
+                                    ? 'fa-caret-up'
+                                    : 'fa-caret-down'
+                                "
+                                aria-hidden="true"
+                              ></i>
+                              <span>{{ t('MESURAGE_' + description) }}</span>
+                            </button>
+
+                            <!-- Niveau 4: Documents (mode liens) -->
+                            <ul
+                              v-if="
+                                viewMode === 'links' &&
+                                isDocumentTypeExpanded(
+                                  measurementNumber,
+                                  audience,
+                                  description
+                                )
+                              "
+                              class="list-disc pl-10 mt-0"
+                            >
+                              <template
+                                v-for="document in documents"
+                                :key="document.document_id"
+                              >
+                                <li>
+                                  <template v-if="document.document_id">
+                                    <button
+                                      class="cursor-pointer text-blue-600 hover:underline"
+                                      @click="openPreviewMesurage(document)"
+                                    >
+                                      {{
+                                        formatDate(
+                                          document.date_document,
+                                          'fr-FR',
+                                          false
+                                        )
+                                      }}
+                                    </button>
+                                    <a
+                                      v-if="document.is_downloadable"
+                                      class="ml-2"
+                                      target="_blank"
+                                      rel="noopener noreferrer"
+                                      :href="`${DOWNLOAD_MEASUREMENT_URL}?document_id=${document.document_id}`"
+                                      :aria-label="
+                                        t('Télécharger le mesurage du') +
+                                        ' ' +
+                                        formatDate(
+                                          document.date_document,
+                                          'fr-FR',
+                                          false
+                                        )
+                                      "
+                                    >
+                                      <i
+                                        class="fa fa-download"
+                                        aria-hidden="true"
+                                      ></i
+                                    ></a>
+                                  </template>
+                                  <template v-else>
+                                    <span class="text-gray-500">{{
+                                      t('Mesurage non disponible')
+                                    }}</span>
+                                  </template>
+                                </li>
+                              </template>
+                            </ul>
+
+                            <!-- Niveau 4: Documents (mode miniatures) -->
+                            <div
+                              v-if="
+                                viewMode === 'thumbnails' &&
+                                isDocumentTypeExpanded(
+                                  measurementNumber,
+                                  audience,
+                                  description
+                                )
+                              "
+                              class="flex flex-wrap gap-2 pl-4 mt-1"
+                            >
+                              <template
+                                v-for="document in documents"
+                                :key="document.document_id"
+                              >
+                                <div
+                                  v-if="document.document_id"
+                                  class="flex flex-col items-center"
+                                >
+                                  <button
+                                    class="border border-gray-300 rounded overflow-hidden hover:border-blue-500 focus:outline-none focus:ring-2 focus:ring-blue-400"
+                                    :aria-label="
+                                      t('Prévisualiser le mesurage du') +
+                                      ' ' +
+                                      formatDate(
+                                        document.date_document,
+                                        'fr-FR',
+                                        false
+                                      )
+                                    "
+                                    @click="openPreviewMesurage(document)"
+                                  >
+                                    <img
+                                      :src="`${THUMBNAIL_MEASUREMENT_URL}?document_id=${document.document_id}`"
+                                      :alt="
+                                        t('Aperçu mesurage du') +
+                                        ' ' +
+                                        formatDate(
+                                          document.date_document,
+                                          'fr-FR',
+                                          false
+                                        )
+                                      "
+                                      class="w-24 h-24 object-cover"
+                                      loading="lazy"
+                                    />
+                                  </button>
+                                  <span class="text-xs text-gray-600 mt-0.5">{{
+                                    formatDate(
+                                      document.date_document,
+                                      'fr-FR',
+                                      false
+                                    )
+                                  }}</span>
+                                </div>
+                                <div v-else class="flex items-center">
+                                  <span class="text-gray-500 text-sm">{{
+                                    t('Mesurage non disponible')
+                                  }}</span>
+                                </div>
+                              </template>
+                            </div>
+                          </div>
+                        </template>
+                      </div>
                     </div>
-                  </div>
+                  </template>
                 </template>
               </div>
             </div>

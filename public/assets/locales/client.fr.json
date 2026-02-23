@@ -4709,5 +4709,7 @@
   "Close print toolbar": "Fermer la barre d'outils d'impression",
   "Open print toolbar to create a PDF of the map": "Ouvrir la barre d'outils d'impression pour créer un PDF de la carte",
   "Close share panel": "Fermer le panneau de partage",
-  "Open share panel to create a shareable link": "Ouvrir le panneau de partage pour créer un lien partageable"
+  "Open share panel to create a shareable link": "Ouvrir le panneau de partage pour créer un lien partageable",
+  "target_audience_GO": "Dossiers techniques",
+  "target_audience_ACT": "Dossiers techniques internes"
 }

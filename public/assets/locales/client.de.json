@@ -4695,5 +4695,7 @@
   "Close print toolbar": "Druck-Symbolleiste schließen",
   "Open print toolbar to create a PDF of the map": "Druck-Symbolleiste öffnen, um ein PDF der Karte zu erstellen",
   "Close share panel": "Teilen-Panel schließen",
-  "Open share panel to create a shareable link": "Teilen-Panel öffnen, um einen teilbaren Link zu erstellen"
+  "Open share panel to create a shareable link": "Teilen-Panel öffnen, um einen teilbaren Link zu erstellen",
+  "target_audience_GO": "Technische Dateien",
+  "target_audience_ACT": "Interne technische Dateien"
 }

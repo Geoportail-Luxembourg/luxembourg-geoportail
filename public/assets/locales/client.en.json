@@ -4426,5 +4426,7 @@
   "Close print toolbar": "Close print toolbar",
   "Open print toolbar to create a PDF of the map": "Open print toolbar to create a PDF of the map",
   "Close share panel": "Close share panel",
-  "Open share panel to create a shareable link": "Open share panel to create a shareable link"
+  "Open share panel to create a shareable link": "Open share panel to create a shareable link",
+  "target_audience_GO": "Technical files",
+  "target_audience_ACT": "Internal technical files"
 }
