@@ -127,6 +127,45 @@ function getAudienceOrder(audiences: string[]): string[] {
     .sort((a, b) => order.indexOf(a) - order.indexOf(b))
 }
 
+function generateFormatPlaceholder(formatLabel: string): string {
+  const W = 96
+  const H = 96
+  const canvas = document.createElement('canvas')
+  canvas.width = W
+  canvas.height = H
+  const ctx = canvas.getContext('2d')!
+  ctx.fillStyle = '#ffffff'
+  ctx.fillRect(0, 0, W, H)
+  ctx.strokeStyle = '#cccccc'
+  ctx.strokeRect(0.5, 0.5, W - 1, H - 1)
+  ctx.fillStyle = '#555555'
+  ctx.font = 'bold 13px sans-serif'
+  ctx.textAlign = 'center'
+  ctx.textBaseline = 'middle'
+  ctx.fillText(formatLabel.toUpperCase(), W / 2, H / 2)
+  return canvas.toDataURL('image/png')
+}
+
+function getThumbnailUrl(document: FeatureMeasurement): string {
+  const formats: string[] =
+    (document.available_formats as unknown as string[]) ?? []
+  const hasPdfOrTiff = formats.some(
+    f => f.toLowerCase() === 'pdf' || f.toLowerCase() === 'tiff'
+  )
+  if (!hasPdfOrTiff && formats.length > 0) {
+    return generateFormatPlaceholder(formats[0])
+  }
+  return `${THUMBNAIL_MEASUREMENT_URL}?document_id=${document.document_id}`
+}
+
+function hasPdfOrTiffFormat(document: FeatureMeasurement): boolean {
+  const formats: string[] =
+    (document.available_formats as unknown as string[]) ?? []
+  return formats.some(
+    f => f.toLowerCase() === 'pdf' || f.toLowerCase() === 'tiff'
+  )
+}
+
 function openPreviewMesurage(measurement: FeatureMeasurement) {
   selectedMeasurement.value = measurement
 }
@@ -367,7 +406,9 @@ h2 {
                           >
                             <li>
                               <template v-if="document.document_id">
+                                <!-- PDF/TIFF : ouvrir la modale de prévisualisation -->
                                 <button
+                                  v-if="hasPdfOrTiffFormat(document)"
                                   class="cursor-pointer text-blue-600 hover:underline"
                                   @click="openPreviewMesurage(document)"
                                 >
@@ -379,6 +420,23 @@ h2 {
                                     )
                                   }}
                                 </button>
+                                <!-- Autre format : texte non cliquable -->
+                                <span v-else class="text-gray-700">
+                                  {{
+                                    formatDate(
+                                      document.date_document,
+                                      'fr-FR',
+                                      false
+                                    )
+                                  }}
+                                  <span
+                                    >({{
+                                      (
+                                        document.available_formats as unknown as string[]
+                                      )[0].toUpperCase()
+                                    }})</span
+                                  >
+                                </span>
                                 <a
                                   v-if="document.is_downloadable"
                                   class="ml-2"
@@ -430,7 +488,9 @@ h2 {
                               v-if="document.document_id"
                               class="flex flex-col items-center"
                             >
+                              <!-- PDF/TIFF : ouvrir la modale -->
                               <button
+                                v-if="hasPdfOrTiffFormat(document)"
                                 class="border border-gray-300 rounded overflow-hidden hover:border-blue-500 focus:outline-none focus:ring-2 focus:ring-blue-400"
                                 :aria-label="
                                   t('Prévisualiser le mesurage du') +
@@ -444,7 +504,7 @@ h2 {
                                 @click="openPreviewMesurage(document)"
                               >
                                 <img
-                                  :src="`${THUMBNAIL_MEASUREMENT_URL}?document_id=${document.document_id}`"
+                                  :src="getThumbnailUrl(document)"
                                   :alt="
                                     t('Aperçu mesurage du') +
                                     ' ' +
@@ -458,6 +518,26 @@ h2 {
                                   loading="lazy"
                                 />
                               </button>
+                              <!-- Autre format : placeholder non cliquable -->
+                              <div
+                                v-else
+                                class="border border-gray-300 rounded overflow-hidden"
+                              >
+                                <img
+                                  :src="getThumbnailUrl(document)"
+                                  :alt="
+                                    t('Aperçu mesurage du') +
+                                    ' ' +
+                                    formatDate(
+                                      document.date_document,
+                                      'fr-FR',
+                                      false
+                                    )
+                                  "
+                                  class="w-24 h-24 object-cover"
+                                  loading="lazy"
+                                />
+                              </div>
                               <span class="text-xs text-gray-600 mt-0.5">{{
                                 formatDate(
                                   document.date_document,
@@ -564,7 +644,9 @@ h2 {
                               >
                                 <li>
                                   <template v-if="document.document_id">
+                                    <!-- PDF/TIFF : ouvrir la modale de prévisualisation -->
                                     <button
+                                      v-if="hasPdfOrTiffFormat(document)"
                                       class="cursor-pointer text-blue-600 hover:underline"
                                       @click="openPreviewMesurage(document)"
                                     >
@@ -576,6 +658,23 @@ h2 {
                                         )
                                       }}
                                     </button>
+                                    <!-- Autre format : texte non cliquable -->
+                                    <span v-else class="text-gray-700">
+                                      {{
+                                        formatDate(
+                                          document.date_document,
+                                          'fr-FR',
+                                          false
+                                        )
+                                      }}
+                                      <span
+                                        >({{
+                                          (
+                                            document.available_formats as unknown as string[]
+                                          )[0].toUpperCase()
+                                        }})</span
+                                      >
+                                    </span>
                                     <a
                                       v-if="document.is_downloadable"
                                       class="ml-2"
@@ -627,7 +726,9 @@ h2 {
                                   v-if="document.document_id"
                                   class="flex flex-col items-center"
                                 >
+                                  <!-- PDF/TIFF : ouvrir la modale -->
                                   <button
+                                    v-if="hasPdfOrTiffFormat(document)"
                                     class="border border-gray-300 rounded overflow-hidden hover:border-blue-500 focus:outline-none focus:ring-2 focus:ring-blue-400"
                                     :aria-label="
                                       t('Prévisualiser le mesurage du') +
@@ -641,7 +742,7 @@ h2 {
                                     @click="openPreviewMesurage(document)"
                                   >
                                     <img
-                                      :src="`${THUMBNAIL_MEASUREMENT_URL}?document_id=${document.document_id}`"
+                                      :src="getThumbnailUrl(document)"
                                       :alt="
                                         t('Aperçu mesurage du') +
                                         ' ' +
@@ -655,6 +756,26 @@ h2 {
                                       loading="lazy"
                                     />
                                   </button>
+                                  <!-- Autre format : placeholder non cliquable -->
+                                  <div
+                                    v-else
+                                    class="border border-gray-300 rounded overflow-hidden"
+                                  >
+                                    <img
+                                      :src="getThumbnailUrl(document)"
+                                      :alt="
+                                        t('Aperçu mesurage du') +
+                                        ' ' +
+                                        formatDate(
+                                          document.date_document,
+                                          'fr-FR',
+                                          false
+                                        )
+                                      "
+                                      class="w-24 h-24 object-cover"
+                                      loading="lazy"
+                                    />
+                                  </div>
                                   <span class="text-xs text-gray-600 mt-0.5">{{
                                     formatDate(
                                       document.date_document,

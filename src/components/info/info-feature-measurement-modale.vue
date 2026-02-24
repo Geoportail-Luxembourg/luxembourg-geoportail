@@ -13,11 +13,29 @@ const DOWNLOAD_PREVIEW_URL = import.meta.env.VITE_DOWNLOAD_PREVIEW_URL
 const DOWNLOAD_MEASUREMENT_URL = import.meta.env.VITE_DOWNLOAD_MEASUREMENT_URL
 
 const { t, i18next } = useTranslation()
-const previewUrl = computed(() =>
-  sanitizeUrl(
-    DOWNLOAD_PREVIEW_URL + '?document_id=' + props.measurement.document_id
+
+const formats = computed<string[]>(
+  () => (props.measurement.available_formats as unknown as string[]) ?? []
+)
+
+const hasPdfOrTiff = computed(() =>
+  formats.value.some(
+    f => f.toLowerCase() === 'pdf' || f.toLowerCase() === 'tiff'
   )
 )
+
+const previewUrl = computed(() => {
+  if (!hasPdfOrTiff.value && formats.value.length > 0) {
+    // Format directement affichable dans le navigateur (ex: png, jpeg…)
+    // On utilise le endpoint de téléchargement en passant le format explicitement
+    return sanitizeUrl(
+      `${DOWNLOAD_MEASUREMENT_URL}?document_id=${props.measurement.document_id}&format=${formats.value[0]}`
+    )
+  }
+  return sanitizeUrl(
+    DOWNLOAD_PREVIEW_URL + '?document_id=' + props.measurement.document_id
+  )
+})
 </script>
 
 <template>
