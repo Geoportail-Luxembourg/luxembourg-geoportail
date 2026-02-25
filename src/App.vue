@@ -25,6 +25,11 @@ import { statePersistorStyleService } from '@/services/state-persistor/state-per
 import { statePersistorMyMapService } from '@/services/state-persistor/state-persistor-mymap.service'
 import { statePersistorFeatureInfoService } from '@/services/state-persistor/state-persistor-featureinfo.service'
 import useNetwork from '@/composables/network/network.composable'
+import useMobileTile from '@/composables/offline/mobile-tile.composable'
+import OfflineMobileButton from '@/components/offline/offline-mobile-button.vue'
+import OfflineMobileAlertModal from '@/components/offline/offline-mobile-alert-modal.vue'
+import OfflineMobileErrorModal from '@/components/offline/offline-mobile-error-modal.vue'
+import OfflineMobileReloadModal from '@/components/offline/offline-mobile-reload-modal.vue'
 import { createLogger } from '@/lib/logging/namespacedLogger'
 import useMap from '@/composables/map/map.composable'
 import useMvtStyles from '@/composables/mvt-styles/mvt-styles.composable'
@@ -39,6 +44,10 @@ const matomo = useMatomo()
 
 // Initialize network detection FIRST to set offline state before template renders
 const network = useNetwork()
+
+// Initialize mobile tile service (only active when ?embeddedserver= is present)
+const mobileTile = useMobileTile()
+mobileTile.init()
 const { log: swLog } = createLogger('SW')
 swLog(
   '[App.vue] After useNetwork() - appStore.isOffLine:',
@@ -138,6 +147,8 @@ onUnmounted(() => {
           <slider-comparator class="absolute top-0" />
           <remote-layers />
           <layer-metadata />
+          <!-- Mobile offline tile button (only visible when ?embeddedserver= is set) -->
+          <offline-mobile-button />
         </div>
 
         <!-- Background selector -->
@@ -158,6 +169,11 @@ onUnmounted(() => {
         class="sm:w-full flex-shrink-0 md:h-14 fixed bottom-5 sm:static"
       />
       <alert-notifications />
+
+      <!-- Mobile offline modals (auto-shown based on tile sync status) -->
+      <offline-mobile-alert-modal />
+      <offline-mobile-error-modal />
+      <offline-mobile-reload-modal />
     </template>
 
     <!-- ----------------------------- -->

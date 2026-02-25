@@ -24,16 +24,99 @@ import {
 } from '@/services/state-persistor/state-persistor.model'
 
 export default function useMvtStyles() {
-  function getDefaultMapBoxStyleUrl(label: string | undefined) {
+  function getEmbeddedServerBaseUrl() {
     const server = urlStorage.getItem(SP_KEY_EMBEDDED_SERVER)
+    if (!server) return null
     const proto = urlStorage.getItem(SP_KEY_EMBEDDED_SERVER_PROTOCOL) || 'http'
-    const url =
-      (server ? `${proto}://${server}` : styleUrlHelper.vectortilesUrl) +
-      `/styles/${label}/style.json`
-    return url
+    return `${proto}://${server}`
+  }
+
+  function rewriteStyleUrls(
+    style: StyleSpecification,
+    baseUrl: string,
+    styleUrl: string
+  ): StyleSpecification {
+    // Remove trailing slash from baseUrl for consistent path construction
+    const baseUrlNormalized = baseUrl.replace(/\/$/, '')
+    const defaultOrigin = styleUrlHelper.vectortilesUrl
+      ? new URL(styleUrlHelper.vectortilesUrl).origin
+      : undefined
+    const styleOrigin = new URL(styleUrl).origin
+    const allowedOrigins = [defaultOrigin, styleOrigin].filter(
+      (origin): origin is string => Boolean(origin)
+    )
+
+    const rewrite = (rawUrl: string) => {
+      if (rawUrl.startsWith('mapbox://')) return rawUrl
+
+      if (rawUrl.startsWith('http://') || rawUrl.startsWith('https://')) {
+        const urlObj = new URL(rawUrl)
+        const origin = urlObj.origin
+        if (allowedOrigins.includes(origin)) {
+          // Replace origin with baseUrl, preserving the path
+          return rawUrl.replace(origin, baseUrlNormalized)
+        }
+        return rawUrl
+      }
+
+      if (rawUrl.startsWith('//')) {
+        const urlObj = new URL(`https:${rawUrl}`)
+        const origin = urlObj.origin
+        if (allowedOrigins.includes(origin)) {
+          // Replace protocol + origin with baseUrl, preserving the path
+          return rawUrl.replace(/^\/\/[^/]+/, baseUrlNormalized)
+        }
+        return rawUrl
+      }
+
+      if (rawUrl.startsWith('/')) {
+        return `${baseUrlNormalized}${rawUrl}`
+      }
+
+      return `${baseUrlNormalized}/${rawUrl}`
+    }
+
+    const rewritten = JSON.parse(JSON.stringify(style)) as StyleSpecification
+
+    if (typeof rewritten.sprite === 'string') {
+      rewritten.sprite = rewrite(rewritten.sprite)
+    }
+
+    if (typeof rewritten.glyphs === 'string') {
+      rewritten.glyphs = rewrite(rewritten.glyphs)
+    }
+
+    if (rewritten.sources) {
+      Object.values(rewritten.sources).forEach(source => {
+        if (source && typeof source === 'object') {
+          if (typeof (source as any).url === 'string') {
+            ;(source as any).url = rewrite((source as any).url)
+          }
+          if (Array.isArray((source as any).tiles)) {
+            ;(source as any).tiles = (source as any).tiles.map((tile: string) =>
+              rewrite(tile)
+            )
+          }
+        }
+      })
+    }
+
+    return rewritten
+  }
+
+  function getDefaultMapBoxStyleUrl(label: string | undefined) {
+    const baseUrl = getEmbeddedServerBaseUrl()
+    if (baseUrl) {
+      return `${baseUrl}/styles/${label}/style.json`
+    }
+    return `${styleUrlHelper.vectortilesUrl}/styles/${label}/style.json`
   }
 
   function getDefaultMapBoxStyleXYZ(label: string | undefined) {
+    const baseUrl = getEmbeddedServerBaseUrl()
+    if (baseUrl) {
+      return `${baseUrl}/styles/${label}/{z}/{x}/{y}.png`
+    }
     return `${styleUrlHelper.vectortilesUrl}/styles/${label}/{z}/{x}/{y}.png`
   }
 
@@ -62,7 +145,7 @@ export default function useMvtStyles() {
     styleStore.setBgVectorSources(newVectorSources)
   }
 
-  function setConfigForLayer(
+  async function setConfigForLayer(
     label: string,
     keyword: string,
     isAuthenticated: boolean = false
@@ -77,7 +160,7 @@ export default function useMvtStyles() {
     const defaultMapBoxStyle = getDefaultMapBoxStyleUrl(keyword)
     const defaultMapBoxStyleXYZ = getDefaultMapBoxStyleXYZ(keyword)
 
-    const config = {
+    const config: IMvtConfig = {
       label,
       defaultMapBoxStyle,
       defaultMapBoxStyleXYZ,
@@ -88,6 +171,23 @@ export default function useMvtStyles() {
 
     const serial = urlStorage.getItem(SP_KEY_SERIAL)
     // const serialLayer = urlStorage.getItem(SP_KEY_SERIAL_LAYERS)
+
+    const embeddedBaseUrl = getEmbeddedServerBaseUrl()
+    if (embeddedBaseUrl) {
+      try {
+        const response = await fetch(defaultMapBoxStyle)
+        if (response.ok) {
+          const styleJson = (await response.json()) as StyleSpecification
+          config.style = rewriteStyleUrls(
+            styleJson,
+            embeddedBaseUrl,
+            defaultMapBoxStyle
+          )
+        }
+      } catch {
+        // fallback to default URL
+      }
+    }
 
     if (serial) {
       // if (isValidSerial(serial)) {

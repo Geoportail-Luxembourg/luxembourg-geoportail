@@ -82,6 +82,36 @@
     bottom: 125px;
   }
 
+  .offline-mobile-button {
+    @apply lux-control;
+    bottom: 175px;
+  }
+
+  .offline-mobile-wrapper {
+    position: absolute;
+    right: 0.5rem;
+    bottom: 175px;
+    z-index: 2;
+    display: flex;
+    align-items: flex-end;
+  }
+
+  .offline-mobile-wrapper .offline-mobile-button {
+    position: relative;
+    right: auto;
+    bottom: auto;
+    z-index: auto;
+  }
+
+  .offline-mobile-menu {
+    position: absolute;
+    bottom: 0;
+    right: calc(100% + 0.25rem); /* flush left of the button column */
+    width: 14rem;
+    @apply bg-white rounded shadow-lg border border-gray-200 p-3 flex flex-col;
+    z-index: 50;
+  }
+
   .infobar-button {
     @apply lux-control;
     bottom: 25px;

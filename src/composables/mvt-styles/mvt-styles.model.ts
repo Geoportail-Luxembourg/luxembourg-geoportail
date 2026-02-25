@@ -19,7 +19,7 @@ export interface IMvtConfig {
   defaultMapBoxStyleXYZ: string
   xyz: string
   xyz_custom: string
-  style: string
+  style: string | StyleSpecification
 }
 export type VectorSourceDict = Map<LayerId, IMvtConfig>
 export type VectorStyleDict = Map<LayerId, StyleSpecification>
