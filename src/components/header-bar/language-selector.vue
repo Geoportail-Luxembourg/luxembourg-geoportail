@@ -8,9 +8,11 @@ import DropdownList from '@/components/common/dropdown-list.vue'
 import { useAppStore } from '@/stores/app.store'
 import { layerMetadataService } from '@/services/layer-metadata/layer-metadata.service'
 import { statePersistorLangService } from '@/services/state-persistor/state-persistor-lang.service'
+import { useMatomo } from '@/composables/matomo/matomo.composable'
 
 const { i18next, t } = useTranslation()
 const { setLang } = useAppStore()
+const matomo = useMatomo()
 const { lang } = storeToRefs(useAppStore())
 const availableLanguages = computed(() =>
   ['en', 'de', 'fr', 'lb'].map(lang => ({
@@ -34,6 +36,10 @@ watch(
 function changeLanguages(lang: string) {
   i18next.changeLanguage(lang)
   setLang(lang)
+  matomo.trackLanguageChange(lang)
+  // Ensure a tracking hit is sent: setCustomVariable alone is queued but
+  // doesn't generate a network request—send a pageview like v3 did.
+  matomo.trackPageView()
 }
 </script>
 

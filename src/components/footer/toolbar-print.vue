@@ -93,15 +93,7 @@ onMounted(() => {
 
   // Initial values
   changeLayout(layouts.value[0].value)
-  changeScale(
-    printService
-      .getNearestScale(
-        map.getSize()![0],
-        layout.value,
-        map.getView().getResolution()!
-      )
-      .toString()
-  )
+  changeScale(printService.getNearestScale(map, layout.value).toString())
 })
 onUnmounted(() => {
   map.removeLayer(mask)

@@ -2,9 +2,13 @@ import type { Map } from 'ol'
 import { Feature } from 'ol'
 import type { Geometry } from 'ol/geom'
 import JSZip from 'jszip'
-import { gpxToFeatures, kmlToFeatures } from './ol-format/ol-format-file'
+import {
+  geojsonToFeatures,
+  gpxToFeatures,
+  kmlToFeatures,
+} from './ol-format/ol-format-file'
 
-export type FileExtension = 'gpx' | 'kml' | 'kmz'
+export type FileExtension = 'gpx' | 'kml' | 'kmz' | 'geojson'
 
 export interface FileReadResult {
   content: string | ArrayBuffer
@@ -21,12 +25,15 @@ export function getFileExtension(fileName: string): string | undefined {
 }
 
 /**
- * Check if file extension is valid for import, valid extensions are: gpx, kml, kmz
+ * Check if file extension is valid for import, valid extensions are: gpx, kml, kmz, geojson
  */
 export function isValidFileExtension(
   extension: string | undefined
 ): extension is FileExtension {
-  return extension !== undefined && ['gpx', 'kml', 'kmz'].includes(extension)
+  return (
+    extension !== undefined &&
+    ['gpx', 'kml', 'kmz', 'geojson'].includes(extension)
+  )
 }
 
 /**
@@ -55,13 +62,20 @@ export function readFileContent(file: File, map: Map): Promise<FileReadResult> {
 
       try {
         let features: Feature<Geometry>[]
-
-        if (extension === 'kmz') {
-          features = await importFromKMZ(content as ArrayBuffer, map)
-        } else if (extension === 'kml') {
-          features = importFromKML(content as string, map)
-        } else {
-          features = importFromGPX(content as string, map)
+        switch (extension) {
+          case 'kmz':
+            features = await importFromKMZ(content as ArrayBuffer, map)
+            break
+          case 'kml':
+            features = importFromKML(content as string, map)
+            break
+          case 'geojson':
+            features = importFromGeoJSON(content as string, map)
+            break
+          case 'gpx':
+          default:
+            features = importFromGPX(content as string, map)
+            break
         }
 
         resolve({
@@ -99,6 +113,13 @@ export function importFromKML(content: string, map: Map) {
  */
 export function importFromGPX(content: string, map: Map) {
   return gpxToFeatures(content, map)
+}
+
+/**
+ * Import features from GeoJSON content and add them to the map
+ */
+export function importFromGeoJSON(content: string, map: Map) {
+  return geojsonToFeatures(content, map)
 }
 
 /**

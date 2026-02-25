@@ -89,6 +89,21 @@ class OlLayerSearchService {
     this.featureLayer.getSource()?.clear()
   }
 
+  clearParcelHighlights(): void {
+    const src = this.featureLayer.getSource()
+    if (!src) return
+    const feats = src.getFeatures() || []
+    for (const f of feats) {
+      try {
+        if (f.get && f.get('isParcel')) {
+          src.removeFeature(f)
+        }
+      } catch (e) {
+        // ignore errors while checking feature properties
+      }
+    }
+  }
+
   fitFeatures(features: any, maxZoom?: number, dataProjection?: string): void {
     const encOpt: ReadOptions = {
       dataProjection: dataProjection || PROJECTION_WGS84,
@@ -167,18 +182,35 @@ class OlLayerSearchService {
           if (curFeature.getId() == null) {
             curFeature.setId(undefined)
           }
+          // mark as parcel when indicated by source properties
+          try {
+            if (
+              curFeature.get('layer_name') === 'Parcelle' ||
+              curFeature.get('isParcel')
+            ) {
+              curFeature.set('isParcel', true)
+            }
+          } catch (e) {
+            // ignore if property access fails
+          }
+
           if (curFeature.getGeometry()?.getType() === 'GeometryCollection') {
             const geomCollection =
               curFeature.getGeometry() as GeometryCollection
             geomCollection.getGeometriesArray().forEach(geometry => {
               const newFeature = curFeature.clone()
               newFeature.setGeometry(geometry)
+              // preserve parcel flag on cloned features
+              if (curFeature.get('isParcel')) {
+                newFeature.set('isParcel', true)
+              }
               this.featureLayer.getSource()?.addFeature(newFeature)
             })
           } else {
             this.featureLayer.getSource()?.addFeature(curFeature)
           }
         }
+        // (removed debug summary)
         if (fit && extent) {
           const fitOptions: FitOptions = {
             size: this.map.getSize() as Size,

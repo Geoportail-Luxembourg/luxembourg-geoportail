@@ -10,28 +10,65 @@ import {
   getCircleLength,
   getCircleRadius,
   getLength,
-  setCircleRadius,
 } from '@/services/common/measurement.utils'
 import { Circle, Geometry, Point, Polygon } from 'ol/geom'
+import VectorLayer from 'ol/layer/Vector'
 import useMap from '@/composables/map/map.composable'
 import {
   getDebouncedElevation,
   getElevation,
 } from './feature-measurements-helper'
-import { useDrawStore } from '@/stores/draw.store'
+import useDrawUtils from '@/composables/draw/draw-utils.composable'
 
-defineProps<{
-  isEditingFeature?: boolean
-}>()
+const props = withDefaults(
+  defineProps<{
+    isEditingFeature?: boolean
+  }>(),
+  {
+    isEditingFeature: false,
+  }
+)
 
 const { t } = useTranslation()
-const drawStore = useDrawStore()
 const map = useMap().getOlMap()
 const mapProjection = map.getView().getProjection()
+const { updateCircleRadius } = useDrawUtils()
 
-const feature = ref<DrawnFeature | undefined>(inject('feature'))
+const feature = ref<DrawnFeature | undefined>(
+  inject('feature') as DrawnFeature | undefined
+)
 const featureType = ref<string>(feature.value?.featureType || '')
-const featureGeometry = ref<Geometry | undefined>(feature.value?.getGeometry())
+const featureGeometry = computed(() => {
+  // If editing, try to get geometry from the edit layer clone for real-time updates
+  if (props.isEditingFeature && feature.value) {
+    const layers = map.getLayers().getArray()
+    const editLayer = layers.find(layer => {
+      const zIndex = (layer as VectorLayer).getZIndex()
+      return (
+        layer.get('cyLayerType') === 'interactionDrawLayer' &&
+        zIndex &&
+        zIndex > 1000 &&
+        ((layer as VectorLayer).getSource() as any)
+          ?.getFeatures()
+          .some((f: any) => f.getId() === feature.value!.id)
+      )
+    }) as VectorLayer | undefined
+    if (editLayer) {
+      const editSource = editLayer.getSource()
+      if (editSource) {
+        const editFeatures = editSource.getFeatures()
+        const editFeature = editFeatures.find(
+          f => f.getId() === feature.value!.id
+        )
+        if (editFeature) {
+          return editFeature.getGeometry()
+        }
+      }
+    }
+  }
+  // Otherwise use the original feature geometry
+  return feature.value?.getGeometry()
+})
 
 const featLength = computed(() => {
   if (featureGeometry.value) {
@@ -88,12 +125,7 @@ watchEffect(() => {
 
 function onClickValidateRadius(radius: number) {
   if (feature.value) {
-    // TODO: move in composable
-    const geometry = <Circle>feature.value.getGeometry()
-    if (geometry?.getType() === 'Circle') {
-      setCircleRadius(geometry, radius, map)
-      drawStore.updateDrawnFeature(<DrawnFeature>feature.value)
-    }
+    updateCircleRadius(feature.value as DrawnFeature, radius)
   }
 }
 </script>

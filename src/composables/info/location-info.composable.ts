@@ -16,19 +16,36 @@ import StyleStroke from 'ol/style/Stroke'
 import { useAppStore } from '@/stores/app.store'
 import { useLocationInfoStore } from '@/stores/location-info.store'
 import { useFeatureInfoStore } from '@/stores/feature-info.store'
+import { useDrawStore } from '@/stores/draw.store'
+import { useLidarStore } from '@/stores/lidar.store'
+import { useElevationProfileStore } from '@/stores/elevation-profile.store'
+import { isInActiveMode } from './info.utils'
+import { useMatomo } from '@/composables/matomo/matomo.composable'
+import { MATOMO_CATEGORIES } from '@/composables/matomo/matomo.model'
 
 export const DEFAULT_INFO_ZINDEX = 1501
 export const INFO_FEATURE_LAYER_TYPE = 'infoFeatureLayer'
 
 export default function useLocationInfo() {
   const map = useMap().getOlMap()
+  const matomo = useMatomo()
   let startPixel: Coordinate | null = null
   let startTime: number | null = null // Track when the pointer was pressed
-  const { infoOpen } = storeToRefs(useAppStore())
+  const { infoOpen, measureToolbarOpen } = storeToRefs(useAppStore())
   const { locationInfoCoords, hidePointer } = storeToRefs(
     useLocationInfoStore()
   )
   const { clearContent } = useFeatureInfoStore()
+  const { drawStateActive, editStateActive } = storeToRefs(useDrawStore())
+  const {
+    measureActive,
+    drawLidarActive,
+    justFinishedDrawing: justFinishedDrawingLidar,
+  } = storeToRefs(useLidarStore())
+  const {
+    drawElevationProfileActive,
+    justFinishedDrawing: justFinishedDrawingElevation,
+  } = storeToRefs(useElevationProfileStore())
 
   const infoFeatureLayer = new VectorLayer({
     source: new VectorSource({
@@ -78,12 +95,38 @@ export default function useLocationInfo() {
       // if right mouse click
       locationInfoCoords.value = getClickCoordinate(event)
       clearContent()
+      // Track right-click location info opening
+      try {
+        matomo.trackEvent(
+          MATOMO_CATEGORIES.MAP,
+          'OpenLocationInfo',
+          'rightclick'
+        )
+      } catch (e) {
+        // ignore tracking errors
+      }
     }
     // Don't setup hold timeout on pointerdown for touch - it interferes with panning
     // The pointerup handler will check if it was a long hold
   }
 
   listen(map, 'pointerup', event => {
+    // Don't process clicks when in draw, edit, or measure mode
+    if (
+      isInActiveMode(
+        drawStateActive,
+        editStateActive,
+        measureActive,
+        measureToolbarOpen,
+        drawLidarActive,
+        drawElevationProfileActive,
+        justFinishedDrawingLidar,
+        justFinishedDrawingElevation
+      )
+    ) {
+      return
+    }
+
     const pointerEvent = (event as MapBrowserEvent<PointerEvent>).originalEvent
 
     if (startPixel && startTime !== null) {

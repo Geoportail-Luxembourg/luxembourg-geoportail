@@ -10,14 +10,19 @@ import { useThemeStore } from '@/stores/config.store'
 import useLayers from '@/composables/layers/layers.composable'
 import useBackgroundLayer from '@/composables/background-layer/background-layer.composable'
 import useThemes from '@/composables/themes/themes.composable'
+import { useRoutingStore } from '@/stores/routing.store'
+import { useAppStore } from '@/stores/app.store'
 import FilterPanel from './filter-panel.vue'
 import { curFilters, esMatch } from '@/composables/search/search-filters'
 import { transformExtent } from 'ol/proj.js'
 import useMap from '@/composables/map/map.composable'
 import { useMetadataStore } from '@/stores/metadata.store'
 import { LayerId, Layer } from '@/stores/map.store.model'
+import { useMatomo } from '@/composables/matomo/matomo.composable'
 
 const { setMetadataLayer } = useMetadataStore()
+const { toggleRoutingOpen } = useAppStore()
+const matomo = useMatomo()
 const filterIconColor = computed(() =>
   isFilterPanelOpen.value ? 'var(--color-tertiary)' : '#ffffff'
 )
@@ -60,6 +65,7 @@ const layerLookup: { [key: string]: string[] } = {
   FLIK_Provisoire: ['asta_flik_parcels_provisoire'],
   asta_esp: ['asta_esp_esp'],
   nom_de_rue: ['roads', 'roads_labels'],
+  Commune: ['communes'],
 }
 let handleDataSourcesToken = 0
 const groupOrder = [
@@ -171,7 +177,7 @@ function processResultFeaturesearch(data: any, selectResult: Function) {
         label: label,
         layer_name: feature.properties.layer_name,
         entry: feature,
-        showRoutingButton: false,
+        showRoutingButton: true,
         showInfoButton: false,
       }
     }),
@@ -248,7 +254,62 @@ function onRoutingClick(result: {
   showRoutingButton: boolean
   showInfoButton: boolean
 }) {
-  // TODO: Implement routing logic
+  const routingStore = useRoutingStore()
+
+  toggleRoutingOpen(true)
+  routingStore.openPanel()
+
+  // Handle GeoJSON object
+  if (result.entry) {
+    const entry = result.entry as any
+    let coords: [number, number] | null = null
+
+    // Check if it's a GeoJSON feature
+    if (entry.geometry && entry.geometry.coordinates) {
+      const geomCoords = entry.geometry.coordinates
+
+      // Handle Point geometry
+      if (entry.geometry.type === 'Point') {
+        coords = geomCoords as [number, number]
+      } else if (Array.isArray(geomCoords[0])) {
+        // Handle LineString, Polygon, etc - take first coordinate
+        coords = geomCoords[0] as [number, number]
+      }
+    }
+    // Check if it's an OpenLayers feature
+    else if (entry.getGeometry) {
+      const geometry = entry.getGeometry()
+      if (geometry.getFirstCoordinate) {
+        coords = geometry.getFirstCoordinate()
+      } else if (geometry.getCoordinates) {
+        const allCoords = geometry.getCoordinates()
+        coords = Array.isArray(allCoords[0]) ? allCoords[0] : allCoords
+      }
+    }
+
+    if (!coords) {
+      closeDropdown()
+      return
+    }
+
+    // GeoJSON coordinates are in EPSG:4326 (lon/lat), NOT in map projection!
+    // So coords are already in EPSG:4326, no transformation needed
+
+    // Find first empty route slot or add new one
+    const routingState = routingStore.routes
+    let targetIndex = routingState.findIndex(
+      route => !route || route.trim() === ''
+    )
+
+    if (targetIndex === -1) {
+      // No empty slot, add new route
+      targetIndex = routingState.length
+    }
+
+    routingStore.setStartPoint(coords, result.label, targetIndex)
+  }
+
+  closeDropdown()
 }
 function processResultCmssearch(data: any, selectResult: Function) {
   searchResults.value.push({
@@ -278,6 +339,7 @@ function selectResultFeatureSearch(result: {
   layer_name: string
   entry: object
 }) {
+  trackSearchCategory(result.layer_name || 'Features')
   searchQuery.value = result.label // Set the selected label as the
   olLayerSearchService.highlightFeatures(
     [result.entry],
@@ -292,6 +354,7 @@ function selectResultFullTextSearch(result: {
   layer_name: string
   entry: object
 }) {
+  trackSearchCategory(result.layer_name || 'Addresses')
   searchQuery.value = result.label
   addLayerFromSearch(result.layer_name)
   switch (result.layer_name) {
@@ -320,6 +383,7 @@ function selectResultBackgroundLayerSearch(result: {
   layer_id: number
   name: string
 }) {
+  trackSearchCategory('Background Layers')
   const backgroundLayer = useBackgroundLayer()
   backgroundLayer.setBgLayer(result.layer_id)
   closeDropdown()
@@ -329,6 +393,7 @@ function selectResulLayerSearch(result: {
   layer_id: string
   text: string
 }) {
+  trackSearchCategory('Layers')
   useLayers().toggleLayer(result.layer_id, true, false, false)
   closeDropdown()
 }
@@ -338,6 +403,7 @@ function selectResultCmsSearch(result: {
   text: string
   language: string
 }) {
+  trackSearchCategory('Website Pages')
   // Open the URL in a new tab
   window.open('https://www.geoportail.lu' + result.url, '_blank')
   closeDropdown()
@@ -348,9 +414,18 @@ function selectResultCoordinateSearch(result: {
   label: string
   entry: object
 }) {
+  trackSearchCategory('Coordinates')
   searchQuery.value = result.label // Set the selected label as the
   olLayerSearchService.highlightFeatures([result.entry], true, maxZoom.value)
   closeDropdown()
+}
+
+function trackSearchCategory(category: string) {
+  try {
+    matomo.trackEvent(category, 'SelectResult')
+  } catch (e) {
+    // ignore tracking errors
+  }
 }
 function processResultBackgroundsearch(data: any, selectResult: Function) {
   searchResults.value.push({
@@ -502,7 +577,7 @@ function getDataCoordinates(newQuery: string, token: number) {
         label: label,
         layer_name: 'Coordinates',
         entry: feature,
-        showRoutingButton: false,
+        showRoutingButton: true,
         showInfoButton: false,
       }
     }),

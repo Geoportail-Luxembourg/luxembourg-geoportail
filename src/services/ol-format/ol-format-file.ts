@@ -2,6 +2,7 @@ import type { Map } from 'ol'
 import { Feature } from 'ol'
 import olFormatKML from 'ol/format/KML'
 import olFormatGPX from 'ol/format/GPX'
+import olFormatGeoJSON from 'ol/format/GeoJSON'
 import type {
   Geometry,
   GeometryCollection,
@@ -26,6 +27,19 @@ export function kmlToFeatures(content: string, map: Map): Feature<Geometry>[] {
 
 export function gpxToFeatures(content: string, map: Map): Feature<Geometry>[] {
   const format = new olFormatGPX()
+  const features = format.readFeatures(content, {
+    dataProjection: PROJECTION_WGS84,
+    featureProjection: map.getView().getProjection(),
+  })
+
+  return computeFeatures(features)
+}
+
+export function geojsonToFeatures(
+  content: string,
+  map: Map
+): Feature<Geometry>[] {
+  const format = new olFormatGeoJSON()
   const features = format.readFeatures(content, {
     dataProjection: PROJECTION_WGS84,
     featureProjection: map.getView().getProjection(),

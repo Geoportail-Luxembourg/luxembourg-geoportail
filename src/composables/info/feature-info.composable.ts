@@ -23,10 +23,14 @@ import { Pixel } from 'ol/pixel'
 import { throttle } from '@/services/utils'
 import { useMapStore } from '@/stores/map.store'
 import { useLocationInfoStore } from '@/stores/location-info.store'
+import { useLidarStore } from '@/stores/lidar.store'
+import { useElevationProfileStore } from '@/stores/elevation-profile.store'
 import { getFeatureInfoJson } from '@/services/api/api-feature-info.service'
 import { OLLAYER_PROP_METADATA } from '@/services/ol-layer/ol-layer.model'
+import { isParcelLayerIdent } from '@/composables/layers/layers.composable'
 import ImageLayer from 'ol/layer/Image'
 import { ImageWMS } from 'ol/source'
+import { isInActiveMode } from './info.utils'
 
 export default function useFeatureInfo() {
   const map = useMap().getOlMap()
@@ -43,6 +47,16 @@ export default function useFeatureInfo() {
     useLocationInfoStore()
   )
   const { maxZoom } = storeToRefs(useMapStore())
+  const {
+    measureActive,
+    drawLidarActive,
+    justFinishedDrawing: justFinishedDrawingLidar,
+  } = storeToRefs(useLidarStore())
+  const {
+    drawElevationProfileActive,
+    justFinishedDrawing: justFinishedDrawingElevation,
+  } = storeToRefs(useElevationProfileStore())
+  const { measureToolbarOpen } = storeToRefs(useAppStore())
 
   const responses = ref<FeatureInfoJSON[]>([])
   const lastHighlightedFeatures = ref<FeatureJSON[]>([])
@@ -92,8 +106,16 @@ export default function useFeatureInfo() {
         // appActivetool.value.isActive() || => corresponds to: measureActive, streetviewActive
         evt.originalEvent.button === 2 || // right click
         (isStreetviewActive.value && locationInfoCoords.value) ||
-        drawStateActive.value ||
-        editStateActive.value ||
+        isInActiveMode(
+          drawStateActive,
+          editStateActive,
+          measureActive,
+          measureToolbarOpen,
+          drawLidarActive,
+          drawElevationProfileActive,
+          justFinishedDrawingLidar,
+          justFinishedDrawingElevation
+        ) ||
         isLoading.value
       ) {
         return
@@ -335,7 +357,23 @@ export default function useFeatureInfo() {
 
     lastHighlightedFeatures.value = []
     for (let i = 0; i < responses.value.length; i++) {
-      lastHighlightedFeatures.value.push(...responses.value[i].features)
+      const resp = responses.value[i]
+      const isParcelLayer =
+        isParcelLayerIdent(resp.layerLabel) || isParcelLayerIdent(resp.layer)
+      // annotate features so downstream highlight service can detect parcels
+      resp.features.forEach(f => {
+        try {
+          if (!f.properties) f.properties = {}
+          if (isParcelLayer) {
+            f.properties['layer_name'] = 'Parcelle'
+            f.properties['isParcel'] = true
+          }
+        } catch (e) {
+          // ignore
+        }
+      })
+      // Debug: response annotated (removed verbose logging)
+      lastHighlightedFeatures.value.push(...resp.features)
     }
     featureInfoLayerService.highlightFeatures(
       lastHighlightedFeatures.value,

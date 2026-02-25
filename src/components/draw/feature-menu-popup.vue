@@ -48,6 +48,10 @@ let drawingMenuOptions = <MenuPopupItemType[]>[
     label: 'Exporter un Shapefile',
     action: () => download('shapefile'),
   },
+  {
+    label: 'Exporter un GeoJSON',
+    action: () => download('geojson'),
+  },
 ]
 
 if (feature?.featureType === 'drawnLine' && isEditable.value) {

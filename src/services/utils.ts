@@ -142,8 +142,9 @@ export const isEdge = testUserAgent(/Edge/i)
  * @param name The string to sanitize.
  * @return The sanitized string.
  */
-export function sanitizeFilename(filename: string) {
-  return filename.replace(/\s+/g, '_').replace(/[^a-z0-9\-_]/gi, '') || '_'
+export function sanitizeFilename(filename?: string | null) {
+  const normalized = typeof filename === 'string' ? filename : ''
+  return normalized.replace(/\s+/g, '_').replace(/[^a-z0-9\-_]/gi, '') || '_'
 }
 
 export async function downloadUrl(

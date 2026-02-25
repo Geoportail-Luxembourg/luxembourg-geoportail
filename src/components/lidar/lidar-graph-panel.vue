@@ -5,21 +5,23 @@ import { storeToRefs } from 'pinia'
 const { toggleLidarOpen } = useAppStore()
 import useDrawLidarInteraction from '@/composables/lidar/draw-lidar-interaction.composable'
 import { useLidarStore } from '@/stores/lidar.store'
+import { useMatomo } from '@/composables/matomo/matomo.composable'
 const lidarStore = useLidarStore()
 const { measureActive } = storeToRefs(lidarStore)
 const { t } = useTranslation()
 const lidarDrawInteraction = useDrawLidarInteraction()
+const matomo = useMatomo()
 function exportCsv() {
   lidarDrawInteraction.exportCsv()
-  // todo PIWIK
+  matomo.trackLidarExportCsv()
 }
 function exportPng() {
   lidarDrawInteraction.exportPng()
-  // todo PIWIK
+  matomo.trackLidarExportPng()
 }
 function exportLas() {
   lidarDrawInteraction.exportLas()
-  // todo PIWIK
+  matomo.trackLidarExportLas()
 }
 function toggleMeasure() {
   measureActive.value = !measureActive.value
@@ -88,6 +90,12 @@ function clearMeasure() {
   justify-content: center;
   box-shadow: 0 1px 4px rgba(0, 0, 0, 0.1);
 }
+
+@media (max-width: 900px), (max-height: 820px) {
+  .lidar-graph__measure-controls {
+    display: none !important;
+  }
+}
 </style>
 <template>
   <div class="lidarprofile-container">
@@ -123,7 +131,7 @@ function clearMeasure() {
             >
               {{ t('Export LAS') }}
             </button>
-            <div>
+            <div class="lidar-graph__measure-controls">
               <p>
                 <button
                   class="lux-btn mt-3"

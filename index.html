@@ -3,11 +3,44 @@
   <head>
     <meta charset="UTF-8" />
     <link rel="icon" href="/favicon.ico" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta
+      name="viewport"
+      content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no"
+    />
     <title>Luxembourg Geoportail</title>
     <link rel="stylesheet" href="/assets/font-awesome-6.2.0.all.min.css" />
+
+    <!-- Matomo Analytics -->
+    <script type="text/javascript">
+      var _paq = (window._paq = window._paq || [])
+      /* tracker methods like "setCustomDimension" should be called before "trackPageView" */
+      _paq.push(['enableLinkTracking'])
+      ;(function () {
+        var u = 'https://statistics.geoportail.lu/'
+        _paq.push(['setTrackerUrl', u + 'piwik.php'])
+        _paq.push(['setSiteId', '%VITE_MATOMO_SITE_ID%']) // Default to 'main' theme (will be overridden by theme changes)
+        var d = document,
+          g = d.createElement('script'),
+          s = d.getElementsByTagName('script')[0]
+        g.type = 'text/javascript'
+        g.async = true
+        g.defer = true
+        g.src = u + 'piwik.js'
+        s.parentNode.insertBefore(g, s)
+      })()
+    </script>
+    <!-- End Matomo Code -->
   </head>
   <body>
+    <noscript>
+      <p>
+        <img
+          src="https://statistics.geoportail.lu/piwik.php?idsite=%VITE_MATOMO_SITE_ID%&amp;rec=1"
+          style="border: 0"
+          alt=""
+        />
+      </p>
+    </noscript>
     <div id="app"></div>
     <script type="module" src="/src/main.ts"></script>
   </body>

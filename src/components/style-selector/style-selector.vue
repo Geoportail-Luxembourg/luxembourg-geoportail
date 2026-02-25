@@ -12,6 +12,7 @@ import { useMapStore } from '@/stores/map.store'
 import { useStyleStore } from '@/stores/style.store'
 import useMvtStyles from '@/composables/mvt-styles/mvt-styles.composable'
 import { StyleSection } from '@/composables/mvt-styles/mvt-styles.model'
+import { useMatomo } from '@/composables/matomo/matomo.composable'
 
 const { t } = useTranslation()
 const mapStore = useMapStore()
@@ -27,6 +28,8 @@ const styleCapabilities = computed(() =>
 )
 
 const styleEditors = computed(() => styleCapabilities.value.styleEditors)
+
+const matomo = useMatomo()
 
 watch(bgLayer, bgLayer => {
   if (!styles.isLayerStyleEditable(bgLayer)) {
@@ -58,6 +61,25 @@ function onTogglePanel(panelName: StyleSection) {
   openedSection.value =
     openedSection.value === panelName ? undefined : panelName
 }
+
+// Watch for panel opens to match v3 behaviour (openVTSimpleEditor / openVTMediumEditor / openVTExpertEditor)
+watch(
+  () => openedSection.value,
+  (newSection: StyleSection | undefined) => {
+    if (!newSection) return
+    switch (newSection as StyleSection) {
+      case StyleSection.simpleStyle:
+        matomo.trackPageView('openVTSimpleEditor')
+        break
+      case StyleSection.mediumStyle:
+        matomo.trackPageView('openVTMediumEditor')
+        break
+      case StyleSection.advancedStyle:
+        matomo.trackPageView('openVTExpertEditor')
+        break
+    }
+  }
+)
 </script>
 
 <template>

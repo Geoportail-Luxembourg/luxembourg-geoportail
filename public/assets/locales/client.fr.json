@@ -2212,6 +2212,7 @@
   "Exporter un GPX": "Exporter un GPX",
   "Exporter un KML": "Exporter un KML",
   "Exporter un Shapefile": "Exporter un Shapefile",
+  "Exporter un GeoJSON": "Exporter un GeoJSON",
   "Continuer la ligne": "Continuer la ligne",
   "Changer sens de la ligne": "Changer le sens de la ligne",
   "Créer cercle concentrique": "Créer cercle concentrique",
@@ -2313,7 +2314,7 @@
   "Fusionner des lignes": "Fusionner des lignes",
   "Couper une ligne": "Couper une ligne",
   "Désactiver mode couper une ligne": "Désactiver mode couper une ligne",
-  "Importer un GPX/KML/KMZ": "Importer un fichier GPX/KML/KMZ",
+  "Importer un GPX/KML/KMZ/GeoJSON": "Importer un fichier GPX/KML/KMZ/GeoJSON",
   "Copier dans ma carte": "Copier dans ma carte",
   "Effacer tous les dessins": "Effacer tous les dessins",
   "Créer une nouvelle carte à partir de ces dessins": "Créer une nouvelle carte à partir de ces dessins",
@@ -4708,5 +4709,7 @@
   "Close print toolbar": "Fermer la barre d'outils d'impression",
   "Open print toolbar to create a PDF of the map": "Ouvrir la barre d'outils d'impression pour créer un PDF de la carte",
   "Close share panel": "Fermer le panneau de partage",
-  "Open share panel to create a shareable link": "Ouvrir le panneau de partage pour créer un lien partageable"
+  "Open share panel to create a shareable link": "Ouvrir le panneau de partage pour créer un lien partageable",
+  "target_audience_GO": "Dossiers techniques",
+  "target_audience_ACT": "Dossiers techniques internes"
 }

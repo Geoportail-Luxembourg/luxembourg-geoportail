@@ -2,7 +2,6 @@ import { defineStore, acceptHMRUpdate } from 'pinia'
 import { ref, Ref } from 'vue'
 import { SvFeature } from '@/stores/location-info.store.model'
 import { Coordinate } from 'ol/coordinate'
-import { Feature } from 'ol'
 
 export const useLocationInfoStore = defineStore('info', () => {
   const locationInfoCoords: Ref<Coordinate | undefined> = ref(undefined)
@@ -22,7 +21,6 @@ export const useLocationInfoStore = defineStore('info', () => {
   const streetViewLoading: Ref<boolean> = ref(false)
   const panoPositionChanging: Ref<boolean> = ref(false)
   const svFeature: Ref<SvFeature | undefined> = ref(undefined)
-  const routingFeatureTemp: Ref<Feature | undefined> = ref(undefined)
 
   return {
     locationInfoCoords,
@@ -33,7 +31,6 @@ export const useLocationInfoStore = defineStore('info', () => {
     streetViewLoading,
     panoPositionChanging,
     svFeature,
-    routingFeatureTemp,
   }
 })
 

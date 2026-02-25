@@ -2219,6 +2219,7 @@
   "Exporter un GPX": "GPX exportieren",
   "Exporter un KML": "KML exportieren",
   "Exporter un Shapefile": "Ein Shapefile exportieren",
+  "Exporter un GeoJSON": "Ein GeoJSON exportieren",
   "Continuer la ligne": "Linie weiterzeichnen",
   "Changer sens de la ligne": "Richtung der Linie ändern",
   "Créer cercle concentrique": "Konzentrischen Kreis erstellen",
@@ -2322,7 +2323,7 @@
   "Fusionner des lignes": "Linien zusammenfügen",
   "Couper une ligne": "Eine Linie schneiden",
   "Désactiver mode couper une ligne": "Schneidmodus deaktivieren",
-  "Importer un GPX/KML/KMZ": "Eine GPX/KML/KMZ - Datei importieren",
+  "Importer un GPX/KML/KMZ/GeoJSON": "Eine GPX/KML/KMZ/GeoJSON - Datei importieren",
   "Copier dans ma carte": "In meine Karte kopieren",
   "Effacer tous les dessins": "Alle Zeichnungen Löschen",
   "Créer une nouvelle carte à partir de ces dessins": "Neue Karte von diesen Zeichnungen erstellen",
@@ -4694,5 +4695,7 @@
   "Close print toolbar": "Druck-Symbolleiste schließen",
   "Open print toolbar to create a PDF of the map": "Druck-Symbolleiste öffnen, um ein PDF der Karte zu erstellen",
   "Close share panel": "Teilen-Panel schließen",
-  "Open share panel to create a shareable link": "Teilen-Panel öffnen, um einen teilbaren Link zu erstellen"
+  "Open share panel to create a shareable link": "Teilen-Panel öffnen, um einen teilbaren Link zu erstellen",
+  "target_audience_GO": "Technische Dateien",
+  "target_audience_ACT": "Interne technische Dateien"
 }

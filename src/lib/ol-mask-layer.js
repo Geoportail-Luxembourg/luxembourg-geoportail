@@ -1,6 +1,7 @@
 import Layer from 'ol/layer/Layer.js'
 import { createCanvasContext2D } from 'ol/dom.js'
 import { toRadians } from 'ol/math.js'
+import { getPointResolution } from 'ol/proj.js'
 
 const INCHES_PER_METER = 39.37
 const DOTS_PER_INCH = 72
@@ -39,7 +40,7 @@ class Mask extends Layer {
     this.context_.lineTo(cwidth, 0)
     this.context_.lineTo(cwidth, cheight)
     this.context_.lineTo(0, cheight)
-    this.context_.lineTo(0, 0)
+    this.context_.moveTo(0, 0)
     this.context_.closePath()
 
     const size = this.getSize()
@@ -52,12 +53,26 @@ class Mask extends Layer {
     if (!scale) {
       return
     }
-    const resolution = frameState.viewState.resolution
 
-    const extentHalfWidth =
-      ((width / DOTS_PER_INCH / INCHES_PER_METER) * scale) / resolution / 2
-    const extentHalfHeight =
-      ((height / DOTS_PER_INCH / INCHES_PER_METER) * scale) / resolution / 2
+    // Use getPointResolution to account for projection distortion (same as v3)
+    const viewResolution = frameState.viewState.resolution
+    const viewCenter = frameState.viewState.center
+    const viewProjection = frameState.viewState.projection
+    const resolution = getPointResolution(
+      viewProjection,
+      viewResolution,
+      viewCenter
+    )
+
+    // Calculate extent in ground meters at the given scale
+    // Then convert to pixels at CURRENT resolution for display
+    const groundWidthMeters = (width / DOTS_PER_INCH / INCHES_PER_METER) * scale
+    const groundHeightMeters =
+      (height / DOTS_PER_INCH / INCHES_PER_METER) * scale
+
+    // Convert ground distance to pixels at current map resolution
+    const extentHalfWidth = groundWidthMeters / resolution / 2
+    const extentHalfHeight = groundHeightMeters / resolution / 2
 
     const rotation =
       this.getRotation() !== undefined ? toRadians(this.getRotation()) : 0

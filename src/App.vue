@@ -29,11 +29,13 @@ import { createLogger } from '@/lib/logging/namespacedLogger'
 import useMap from '@/composables/map/map.composable'
 import useMvtStyles from '@/composables/mvt-styles/mvt-styles.composable'
 import useMyMaps from '@/composables/my-maps/my-maps.composable'
+import { useMatomo } from '@/composables/matomo/matomo.composable'
 import { useAppStore } from '@/stores/app.store'
 const { t } = useTranslation()
 const appStore = useAppStore()
 const mvtStyleService = useMvtStyles()
 const map = useMap()
+const matomo = useMatomo()
 
 // Initialize network detection FIRST to set offline state before template renders
 const network = useNetwork()
@@ -55,6 +57,9 @@ statePersistorBgLayerService.bootstrap()
 mvtStyleService.initBackgroundsConfigs()
 statePersistorFeatureInfoService.bootstrap()
 
+// Initialize Matomo tracking
+matomo.init()
+
 onMounted(() => {
   useMyMaps().init()
 })
@@ -67,6 +72,7 @@ const {
   infoOpen,
   styleEditorOpen,
   lidarOpen,
+  routingPanelOpen,
   isOffLine,
 } = storeToRefs(appStore)
 
@@ -76,6 +82,17 @@ watch(styleEditorOpen, timeoutResizeMap)
 watch(myMapsOpen, timeoutResizeMap)
 watch(infoOpen, timeoutResizeMap)
 watch(lidarOpen, timeoutResizeMap)
+watch(routingPanelOpen, timeoutResizeMap)
+
+// Track opening of the style editor panel like v3's openVTEditor
+watch(
+  () => styleEditorOpen.value,
+  opened => {
+    if (opened) {
+      matomo.trackPageView('openVTEditor')
+    }
+  }
+)
 
 function timeoutResizeMap() {
   setTimeout(() => map.resize(), 50)
@@ -91,7 +108,7 @@ onUnmounted(() => {
 </script>
 
 <template>
-  <div class="h-screen flex flex-col overflow-hidden">
+  <div class="app-container flex flex-col overflow-hidden">
     <!-- Accessibility: Announce offline status changes to screen readers -->
     <div role="status" aria-live="polite" aria-atomic="true" class="sr-only">
       <span v-if="isOffLine">

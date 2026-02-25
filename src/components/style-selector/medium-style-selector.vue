@@ -8,6 +8,7 @@ import MediumStyleItem from './medium-style-item.vue'
 import { StyleItem } from '@/composables/mvt-styles/mvt-styles.model'
 import { Layer } from '@/stores/map.store.model'
 import { useStyleStore } from '@/stores/style.store'
+import { useMatomo } from '@/composables/matomo/matomo.composable'
 
 const COLOR_EDITABLE_LAYERS = ['basemap_2015_global']
 
@@ -30,6 +31,14 @@ function changeStyle(i: number, newStyle: StyleItem) {
     index === i ? newStyle : item
   )
   styleStore.disableExpertStyle()
+  // Track medium style change similar to v3 openVTMediumEditor
+  const label = newStyle.label
+  const matomo = useMatomo()
+  if (label) {
+    matomo.trackPageView(`VTMediumEditor/${label}`)
+  } else {
+    matomo.trackPageView('openVTMediumEditor')
+  }
 }
 </script>
 

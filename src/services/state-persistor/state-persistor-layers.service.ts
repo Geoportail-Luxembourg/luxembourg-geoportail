@@ -4,6 +4,7 @@ import { storeToRefs } from 'pinia'
 import { useMapStore } from '@/stores/map.store'
 import { Layer } from '@/stores/map.store.model'
 import { useThemeStore } from '@/stores/config.store'
+import { useMatomo } from '@/composables/matomo/matomo.composable'
 
 import {
   SP_KEY_LAYERS,
@@ -83,7 +84,14 @@ class StatePersistorLayersService implements StatePersistorService {
       storageHelper.removeItem(SP_KEY_V2_LAYERSVISIBILITY)
     }
 
-    mapStore.addLayers(...((layers?.filter(layer => layer) as Layer[]) || []))
+    const layersToAdd = (layers?.filter(layer => layer) as Layer[]) || []
+    mapStore.addLayers(...layersToAdd)
+
+    // Track initial layers in Matomo (restored from URL/storage)
+    const matomo = useMatomo()
+    layersToAdd.forEach(layer => {
+      matomo.trackLayerAdd(layer.name)
+    })
   }
 
   restoreLayersOpacities(layers: (Layer | undefined)[], version: number) {

@@ -14,14 +14,18 @@ export type FormatMeasureType = 'elevation' | 'length' | 'area'
  * <span v-format-measure.elevation="value"></span>
  */
 
-export function formatDate(dateString: string, language: string = 'fr-FR') {
+export function formatDate(
+  dateString: string,
+  language: string = 'fr-FR',
+  includeTime = true
+) {
   if (!dateString) {
     return ''
   }
 
   return new Intl.DateTimeFormat(language, {
     dateStyle: 'short',
-    timeStyle: 'short',
+    ...(includeTime ? { timeStyle: 'short' } : {}),
   }).format(new Date(dateString))
 }
 

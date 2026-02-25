@@ -2,6 +2,7 @@ import { BaseCustomizer } from '@geoblocks/mapfishprint'
 import { Map } from 'ol'
 import LayerGroup from 'ol/layer/Group'
 import BaseLayer from 'ol/layer/Layer.js'
+import { getPointResolution } from 'ol/proj'
 import { DOTS_PER_INCH, INCHES_PER_METER } from '@/lib/ol-mask-layer'
 import { urlPathStorage } from '@/services/state-persistor/storage/url-storage-as-path'
 import { fetchApi } from '@/services/api/api.service'
@@ -64,8 +65,54 @@ const LAYOUTS = [
 
 const DPI = 127
 
-const getWidth = (scale: number, width: number, resolution: number): number =>
-  Math.round(((width / DOTS_PER_INCH / INCHES_PER_METER) * scale) / resolution)
+const getOptimalScale = (
+  mapSize: number[],
+  mapResolution: number,
+  printMapSize: number[],
+  printMapScales: number[]
+): number => {
+  const mapWidth = mapSize[0] * mapResolution
+  const mapHeight = mapSize[1] * mapResolution
+  const dotsPerMeter = DOTS_PER_INCH * INCHES_PER_METER
+
+  const scaleWidth = (mapWidth * dotsPerMeter) / printMapSize[0]
+  const scaleHeight = (mapHeight * dotsPerMeter) / printMapSize[1]
+  const scale = Math.min(scaleWidth, scaleHeight)
+
+  let optimal = -1
+  for (let i = 0; i < printMapScales.length; i += 1) {
+    if (scale > printMapScales[i]) {
+      optimal = printMapScales[i]
+    }
+  }
+
+  return optimal
+}
+
+const getViewCenterResolution = (map: Map): number => {
+  const view = map.getView()
+  const viewCenter = view.getCenter()
+  const viewProjection = view.getProjection()
+  const viewResolution = view.getResolution()
+
+  if (!viewCenter || !viewProjection || viewResolution === undefined) {
+    return viewResolution ?? 0
+  }
+
+  return getPointResolution(viewProjection, viewResolution, viewCenter)
+}
+
+const adjustScale = (map: Map, scale: number): number => {
+  const viewResolution = map.getView().getResolution()
+  const viewCenterResolution = getViewCenterResolution(map)
+
+  if (!viewResolution || !viewCenterResolution) {
+    return scale
+  }
+
+  const factor = viewResolution / viewCenterResolution
+  return scale * factor
+}
 
 export class PrintService {
   getScales(): number[] {
@@ -120,9 +167,11 @@ export class PrintService {
     const customizer = new BaseCustomizer()
     const shortUrl = await this.getShortLink()
 
+    const adjustedScale = adjustScale(map, options.scale)
+
     const mapSpec = await encoder.encodeMap({
       map,
-      scale: options.scale,
+      scale: adjustedScale,
       printResolution: map.getView().getResolution()!,
       dpi: DPI,
       customizer,
@@ -181,18 +230,28 @@ export class PrintService {
     return MAP_SIZES_[LAYOUTS.indexOf(layout)]
   }
 
-  getNearestScale(width: number, layout: string, resolution: number): number {
+  getNearestScale(map: Map, layout: string): number {
     const scales = this.getScales()
+    const viewCenterResolution = getViewCenterResolution(map)
+
+    if (!viewCenterResolution) {
+      return scales[0]
+    }
+
     const layoutWidth: number =
       MAP_SIZES_[LAYOUTS.indexOf(layout)][0] || MAP_SIZES_[0][0]
-
-    return (
+    const layoutHeight: number =
+      MAP_SIZES_[LAYOUTS.indexOf(layout)][1] || MAP_SIZES_[0][1]
+    const mapSize = map.getSize() || [0, 0]
+    const printMapSize = [layoutWidth, layoutHeight]
+    const optimalScale = getOptimalScale(
+      mapSize,
+      viewCenterResolution,
+      printMapSize,
       scales
-        .reverse()
-        .find(
-          (scale: number) => getWidth(scale, layoutWidth, resolution) < width
-        ) || scales[0]
     )
+
+    return optimalScale !== -1 ? optimalScale : scales[0]
   }
 
   async getShortLink(): Promise<string> {

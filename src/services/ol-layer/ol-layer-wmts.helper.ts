@@ -60,9 +60,17 @@ class OlLayerWmtsHelper {
   }
 
   setLayerTime(olLayer: OlLayer, olSource: WmtsSource, time: string) {
-    const newLayerName: string = olLayer.get(OLLAYER_PROP_METADATA)[
-      'time_layers'
-    ][time]
+    const metadata = olLayer.get(OLLAYER_PROP_METADATA)
+    if (!metadata || !metadata.time_layers || !metadata.time_layers[time]) {
+      // eslint-disable-next-line no-console
+      console.warn(
+        `[WMTS] Cannot set time ${time} for layer: time_layers not configured`,
+        metadata
+      )
+      return
+    }
+
+    const newLayerName: string = metadata.time_layers[time]
     const oldUrls = olSource.getUrls()
 
     if (oldUrls) {

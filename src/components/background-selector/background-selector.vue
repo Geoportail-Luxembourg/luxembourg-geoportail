@@ -13,11 +13,13 @@ import { useMapStore } from '@/stores/map.store'
 import BackgroundSelectorItem from './background-selector-item.vue'
 import { bgConfigFixture } from '@/__fixtures__/background.config.fixture'
 import { ThemeNodeModel } from '@/composables/themes/themes.model'
+import { useMatomo } from '@/composables/matomo/matomo.composable'
 
 const { t, i18next } = useTranslation()
 const backgroundLayer = useBackgroundLayer()
 const mapStore = useMapStore()
 const themeStore = useThemeStore()
+const matomo = useMatomo()
 const { bgLayer: bgLayerContext, is3dMesh } = storeToRefs(mapStore)
 
 const props = defineProps({
@@ -90,6 +92,7 @@ watch(
 function setBackgroundLayer(layer: IBackgroundLayer) {
   backgroundLayer.setBgLayer(layer.id)
   isOpen.value = false
+  matomo.trackBackgroundLayer(layer.name)
 }
 
 function toggleSelector() {

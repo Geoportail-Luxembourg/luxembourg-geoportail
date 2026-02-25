@@ -10,6 +10,8 @@ import { useAppStore } from '@/stores/app.store'
 import { useThemeStore } from '@/stores/config.store'
 import { useUserManagerStore } from '@/stores/user-manager.store'
 import { User } from '@/stores/user-manager.store.model'
+import { useMatomo } from '@/composables/matomo/matomo.composable'
+import { MATOMO_CATEGORIES } from '@/composables/matomo/matomo.model'
 
 const MYACCOUNT_URL = import.meta.env.VITE_MYACCOUNT_URL
 const MYACCOUNT_RECOVER_URL = import.meta.env.VITE_MYACCOUNT_RECOVER_URL
@@ -25,6 +27,7 @@ const { authenticated, currentUser } = storeToRefs(userManagerStore)
 const autoAuthenticated = ref(false) // Will be set to true if user is authenticated via cookie on first call AuthService.getUserInfo()
 const userName = ref('')
 const userPassword = ref('')
+const matomo = useMatomo()
 
 watch(authenticated, authenticated => {
   if (!autoAuthenticated.value && authenticated) {
@@ -74,8 +77,18 @@ function submit() {
 
 function onAuthenticateSuccess(user: User) {
   setCurrentUser(user)
-  // Reload themes to get user-specific layers
-  themeStore.loadThemes()
+  // Track login with returned role id
+  try {
+    if (user && user.roleId !== undefined && user.roleId !== null) {
+      matomo.trackEvent(MATOMO_CATEGORIES.USER, 'Login', String(user.roleId))
+    }
+  } catch (e) {
+    // swallow tracking errors
+  }
+  // Reload themes to get user-specific layers, but not if auto-authenticated (already loaded in main.ts)
+  if (!autoAuthenticated.value) {
+    themeStore.loadThemes()
+  }
 }
 
 function onAuthenticateFailure() {
