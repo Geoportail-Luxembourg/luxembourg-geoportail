@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { watch } from 'vue'
+import { onMounted, onUnmounted, watch } from 'vue'
 import { storeToRefs } from 'pinia'
 
 import LayerPanel from '@/components/layer-panel/layer-panel.vue'
@@ -11,6 +11,7 @@ import InfoPanel from '@/components/info/info-panel.vue'
 import LidarConfigPanel from '@/components/lidar/lidar-config-panel.vue'
 import FeedbackPanel from '@/components/feedback/feedback-panel.vue'
 import { screenSizeIsAtLeast } from '@/services/common/device.utils'
+import { ignoreNextMapMove } from '@/services/map/map-move-detection.service'
 import { useAppStore } from '@/stores/app.store'
 
 const appStore = useAppStore()
@@ -30,8 +31,33 @@ const {
 const maxExtent = JSON.parse(import.meta.env.VITE_DEFAULT_MAX_EXTENT)
 const routingUrl = import.meta.env.VITE_ROUTING_URL || ''
 
+// Close any open side panel when the map is moved in mobile mode (w-4/5 = 80%)
+function handleMapMoved() {
+  // Only close panels when in mobile view (using w-4/5 class = 80% width)
+  // which means screen is below md breakpoint (< 768px)
+  if (!screenSizeIsAtLeast('md')) {
+    layersOpen.value = false
+    legendsOpen.value = false
+    myMapsOpen.value = false
+    infoOpen.value = false
+    styleEditorOpen.value = false
+    feedbackOpen.value = false
+    routingPanelOpen.value = false
+  }
+}
+
+onMounted(() => {
+  window.addEventListener('map-moved', handleMapMoved)
+})
+
+onUnmounted(() => {
+  window.removeEventListener('map-moved', handleMapMoved)
+})
+
 watch(layersOpen, layersOpen => {
   if (layersOpen) {
+    // Ignore the next map movement to prevent closing the panel right after opening
+    ignoreNextMapMove()
     lidarOpen.value =
       legendsOpen.value =
       myMapsOpen.value =
@@ -44,6 +70,7 @@ watch(layersOpen, layersOpen => {
 
 watch(myMapsOpen, myMapsOpen => {
   if (myMapsOpen) {
+    ignoreNextMapMove()
     styleEditorOpen.value =
       layersOpen.value =
       themeGridOpen.value =
@@ -57,6 +84,7 @@ watch(myMapsOpen, myMapsOpen => {
 
 watch(legendsOpen, legendsOpen => {
   if (legendsOpen) {
+    ignoreNextMapMove()
     myMapsOpen.value =
       styleEditorOpen.value =
       layersOpen.value =
@@ -71,6 +99,7 @@ watch(legendsOpen, legendsOpen => {
 
 watch(drawToolbarOpen, drawToolbarOpen => {
   if (drawToolbarOpen && screenSizeIsAtLeast('md')) {
+    ignoreNextMapMove()
     myMapsOpen.value = true
     layersOpen.value = false
     legendsOpen.value = false
@@ -84,6 +113,7 @@ watch(drawToolbarOpen, drawToolbarOpen => {
 
 watch(infoOpen, infoOpen => {
   if (infoOpen) {
+    ignoreNextMapMove()
     myMapsOpen.value =
       styleEditorOpen.value =
       layersOpen.value =
@@ -98,6 +128,7 @@ watch(infoOpen, infoOpen => {
 
 watch(feedbackOpen, isOpen => {
   if (isOpen) {
+    ignoreNextMapMove()
     myMapsOpen.value =
       styleEditorOpen.value =
       layersOpen.value =
@@ -112,6 +143,7 @@ watch(feedbackOpen, isOpen => {
 
 watch(routingPanelOpen, isOpen => {
   if (isOpen) {
+    ignoreNextMapMove()
     layersOpen.value =
       legendsOpen.value =
       myMapsOpen.value =
