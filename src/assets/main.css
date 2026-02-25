@@ -25,6 +25,7 @@
   /* Fix for mobile browsers where 100vh includes URL bar */
   :root {
     --app-height: 100vh;
+    font-size: 16px;
   }
 
   @supports (height: 100dvh) {

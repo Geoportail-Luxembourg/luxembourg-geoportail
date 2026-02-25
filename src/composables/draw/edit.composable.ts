@@ -1,10 +1,12 @@
 import { watch } from 'vue'
 import { storeToRefs } from 'pinia'
+import { listen, unlistenByKey, EventsKey } from 'ol/events'
 
 import { noModifierKeys, singleClick } from 'ol/events/condition'
 import Modify, { ModifyEvent } from 'ol/interaction/Modify'
 import VectorLayer from 'ol/layer/Vector'
 import VectorSource from 'ol/source/Vector'
+import LineString from 'ol/geom/LineString'
 
 import { DrawnFeature } from '@/services/ol-feature/ol-feature-drawn'
 import { useDrawStore } from '@/stores/draw.store'
@@ -19,6 +21,7 @@ export default function useEdit() {
   let modifyEndHandler: ((event: ModifyEvent) => void) | undefined = undefined
   let originalFeature: DrawnFeature | undefined = undefined // Store reference to original
   let geometryChangeHandler: (() => void) | undefined = undefined // Store geometry change handler
+  let keyupListenerKey: EventsKey | undefined = undefined // Store keyup listener key
 
   const { editStateActive, editingFeatureId, drawnFeatures } = storeToRefs(
     useDrawStore()
@@ -51,6 +54,9 @@ export default function useEdit() {
 
     if (active) {
       createModifyInteraction()
+      attachKeyListener()
+    } else {
+      detachKeyListener()
     }
   })
 
@@ -106,6 +112,90 @@ export default function useEdit() {
       map.removeInteraction(modifyInteraction)
       modifyInteraction = undefined
       modifyEndHandler = undefined
+    }
+  }
+
+  /**
+   * Handle DEL key press to remove the last point from the edited feature
+   */
+  function onKeyUp(event: KeyboardEvent) {
+    if (event.key === 'Backspace' && originalFeature) {
+      removeLastPoint()
+    }
+  }
+
+  /**
+   * Attach keyboard listener for DEL key
+   */
+  function attachKeyListener() {
+    if (!keyupListenerKey) {
+      keyupListenerKey = listen(document, 'keyup', event =>
+        onKeyUp(event as KeyboardEvent)
+      )
+    }
+  }
+
+  /**
+   * Detach keyboard listener
+   */
+  function detachKeyListener() {
+    if (keyupListenerKey) {
+      unlistenByKey(keyupListenerKey)
+      keyupListenerKey = undefined
+    }
+  }
+
+  /**
+   * Remove the last point from the edited feature (for LineString and Polygon geometries)
+   */
+  function removeLastPoint() {
+    if (!originalFeature) return
+
+    const geometry = originalFeature.getGeometry()
+    if (!geometry) return
+
+    const geomType = geometry.getType()
+    let pointRemoved = false
+
+    if (geomType === 'LineString' || geomType === 'MultiLineString') {
+      const lineString = geometry as LineString
+      const coordinates = lineString.getCoordinates()
+
+      // Only remove if there are more than 2 points
+      if (coordinates.length > 2) {
+        coordinates.splice(-1, 1)
+        lineString.setCoordinates(coordinates)
+        pointRemoved = true
+      }
+    } else if (geomType === 'Polygon') {
+      const polygon = geometry as any // Polygon type
+      const rings = polygon.getCoordinates()
+
+      if (rings.length > 0) {
+        const ring = rings[0]
+        // For polygons, keep at least 4 points (3 unique + 1 to close the ring)
+        if (ring.length > 4) {
+          ring.splice(-2, 1) // Remove the second-to-last point, keeping the closing point
+          polygon.setCoordinates(rings)
+          pointRemoved = true
+        }
+      }
+    }
+
+    if (pointRemoved) {
+      originalFeature.resetProfileData()
+      originalFeature.changed()
+      updateDrawnFeature(originalFeature)
+
+      // Also update the cloned feature in the edit layer
+      const clonedFeature = editSource.getFeatures()[0] as DrawnFeature
+      if (clonedFeature) {
+        clonedFeature.setGeometry(geometry.clone())
+        clonedFeature.resetProfileData()
+        clonedFeature.changed()
+      }
+
+      map.render()
     }
   }
 

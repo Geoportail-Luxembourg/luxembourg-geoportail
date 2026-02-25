@@ -40,12 +40,15 @@ export default function useDrawInteraction() {
 
   /**
    * Deactivate this interaction if the ESC key is pressed.
+   * Remove last drawn point if the DEL key is pressed.
    * @param event
    */
   function onKeyUp(drawInteraction: Draw, event: KeyboardEvent) {
     if (event.key === 'Escape') {
       drawTooltip.remove()
       drawInteraction.finishDrawing()
+    } else if (event.key === 'Backspace' && drawInteraction.getActive()) {
+      drawInteraction.removeLastPoint()
     }
   }
 

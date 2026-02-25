@@ -160,4 +160,37 @@ describe('Draw "Line"', () => {
       cy.get('*[data-cy="featItemName"]').should('have.length', 2)
     })
   })
+
+  describe('When editing a line and pressing DEL key', () => {
+    it('removes the last point from the line', () => {
+      cy.wait('@profile-fixture')
+      // Get initial length
+      cy.get('[data-cy="featItemLength"]').then($lengthBefore => {
+        const lengthBefore = $lengthBefore.text()
+        expect(lengthBefore).to.contain('42.31 km')
+      })
+
+      // Click on the feature to select it
+      cy.get('[data-cy="featItemName"]').click()
+
+      // Click edit button
+      cy.get('[data-cy="featItemToggleEdit"]').click()
+
+      // Press DEL key to remove last point
+      cy.get('body').type('{del}')
+
+      // Wait for profile recalculation and verify length has decreased
+      cy.wait('@profile-fixture')
+      cy.get('[data-cy="featItemLength"]').should($length => {
+        const text = $length.text()
+        // The length should be less than 42.31 km since we removed the last point
+        expect(text).to.match(/\d+\.\d+\s*km/)
+        // Extract the numeric value
+        const match = text.match(/(\d+\.\d+)/)
+        if (match) {
+          expect(parseFloat(match[1])).to.be.lessThan(42.31)
+        }
+      })
+    })
+  })
 })
