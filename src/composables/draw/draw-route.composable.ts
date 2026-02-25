@@ -5,6 +5,7 @@
 
 import { ref, onUnmounted, watch } from 'vue'
 import { storeToRefs } from 'pinia'
+import { listen, unlistenByKey, EventsKey } from 'ol/events'
 import Draw from 'ol/interaction/Draw'
 import Feature from 'ol/Feature'
 import { DrawRouteInteraction, DrawRouteEvent } from './draw-route.interaction'
@@ -25,6 +26,7 @@ export default function useDrawRoute() {
   const mapMatchingEnabled = ref(true)
   let drawRouteInteraction: DrawRouteInteraction | null = null
   let deactivatedDrawInteraction: Draw | null = null
+  let keyupListenerKey: EventsKey | undefined = undefined
 
   /**
    * Get the routing API URL from environment
@@ -111,6 +113,15 @@ export default function useDrawRoute() {
     // Add to map
     map.addInteraction(drawRouteInteraction)
     isActive.value = true
+
+    // Listen DEL key to remove last drawn point
+    if (!keyupListenerKey) {
+      keyupListenerKey = listen(document, 'keyup', event => {
+        if ((event as KeyboardEvent).key === 'Backspace' && isActive.value) {
+          removeLastPoint()
+        }
+      })
+    }
   }
 
   /**
@@ -134,6 +145,12 @@ export default function useDrawRoute() {
     map.removeInteraction(drawRouteInteraction)
     drawRouteInteraction = null
     isActive.value = false
+
+    // Detach DEL key listener
+    if (keyupListenerKey) {
+      unlistenByKey(keyupListenerKey)
+      keyupListenerKey = undefined
+    }
 
     // Reactivate the standard Draw interaction ONLY if not in edit mode
     if (deactivatedDrawInteraction) {
