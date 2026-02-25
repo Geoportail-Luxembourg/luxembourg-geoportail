@@ -79,7 +79,7 @@ const previewUrl = computed(() => {
           v-else
           class="lux-btn ml-3"
           target="_blank"
-          :href="`${DOWNLOAD_MEASUREMENT_URL}?document_id=${measurement.document_id}`"
+          :href="`${DOWNLOAD_MEASUREMENT_URL}?document_id=${measurement.document_id}&format=${formats[0]}`"
         >
           {{ t('Télécharger') }}
         </a>

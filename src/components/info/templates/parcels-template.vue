@@ -442,7 +442,7 @@ h2 {
                                   class="ml-2"
                                   target="_blank"
                                   rel="noopener noreferrer"
-                                  :href="`${DOWNLOAD_MEASUREMENT_URL}?document_id=${document.document_id}`"
+                                  :href="`${DOWNLOAD_MEASUREMENT_URL}?document_id=${document.document_id}&format=${(document.available_formats as unknown as string[])[0]}`"
                                   :aria-label="
                                     t('Télécharger le mesurage du') +
                                     ' ' +
@@ -680,7 +680,7 @@ h2 {
                                       class="ml-2"
                                       target="_blank"
                                       rel="noopener noreferrer"
-                                      :href="`${DOWNLOAD_MEASUREMENT_URL}?document_id=${document.document_id}`"
+                                      :href="`${DOWNLOAD_MEASUREMENT_URL}?document_id=${document.document_id}&format=${(document.available_formats as unknown as string[])[0]}`"
                                       :aria-label="
                                         t('Télécharger le mesurage du') +
                                         ' ' +
