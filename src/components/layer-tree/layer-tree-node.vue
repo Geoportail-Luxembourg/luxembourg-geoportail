@@ -21,7 +21,9 @@ const { setMetadataLayer } = useMetadataStore()
 const isParent = !!props.node.children
 const isRoot = props.node.depth === 0
 const isMaxDepth = props.node.depth >= 10
-const label = computed(() => t(props.node.name, { ns: 'client' }))
+const label = computed(() =>
+  t(props.node.label ?? props.node.name, { ns: 'client' })
+)
 
 function toggleLayer(node: LayerTreeNodeModel) {
   emit('toggleLayer', node)

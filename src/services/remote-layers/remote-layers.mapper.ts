@@ -22,13 +22,14 @@ export function remoteLayersToLayerTreeMapper(
   urlWms: string,
   depth = 0
 ): LayerTreeNodeModel {
-  const { name = '', type = REMOTE_SERVICE_TYPE.WMS, children } = node
+  const { name = '', title, type = REMOTE_SERVICE_TYPE.WMS, children } = node
   const id = `${type}||${urlWms}||${name}`.split('-').join('%2D')
   const mapStore = useMapStore()
 
   return {
     id,
     name,
+    label: title || name,
     depth,
     children: children
       ?.sort(sortLayerTreeNoChildrenFirst)

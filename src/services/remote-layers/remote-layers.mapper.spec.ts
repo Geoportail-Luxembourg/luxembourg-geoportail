@@ -27,13 +27,15 @@ describe('remoteLayersToLayerTreeMapper', () => {
     const remoteWmsLayers: RemoteLayer[] = [
       {
         name: 'RootLayer',
+        title: 'Root Layer Title',
         type: 'WMS',
         children: [
           {
             name: 'Layer1',
+            title: 'Layer 1 Title',
             type: 'WMS',
             children: [
-              { name: 'Layer1-1', type: 'WMS' },
+              { name: 'Layer1-1', title: 'Layer 1-1 Title', type: 'WMS' },
               {
                 name: 'Layer1-2',
                 type: 'WMS',
@@ -51,11 +53,13 @@ describe('remoteLayersToLayerTreeMapper', () => {
     const expectedLayerWmsTree = {
       id: 'WMS||http://example.com||RootLayer',
       name: 'RootLayer',
+      label: 'Root Layer Title',
       depth: 0,
       children: [
         {
           id: 'WMS||http://example.com||Layer2',
           name: 'Layer2',
+          label: 'Layer2',
           depth: 1,
           children: undefined,
           checked: false,
@@ -64,6 +68,7 @@ describe('remoteLayersToLayerTreeMapper', () => {
         {
           id: 'WMS||http://example.com||Layer3',
           name: 'Layer3',
+          label: 'Layer3',
           depth: 1,
           children: [],
           checked: false,
@@ -72,11 +77,13 @@ describe('remoteLayersToLayerTreeMapper', () => {
         {
           id: 'WMS||http://example.com||Layer1',
           name: 'Layer1',
+          label: 'Layer 1 Title',
           depth: 1,
           children: [
             {
               id: 'WMS||http://example.com||Layer1%2D1',
               name: 'Layer1-1',
+              label: 'Layer 1-1 Title',
               depth: 2,
               children: undefined,
               checked: false,
@@ -85,6 +92,7 @@ describe('remoteLayersToLayerTreeMapper', () => {
             {
               id: 'WMS||http://example.com||Layer1%2D2',
               name: 'Layer1-2',
+              label: 'Layer1-2',
               depth: 2,
               children: undefined,
               checked: false,
@@ -131,11 +139,13 @@ describe('remoteLayersToLayerTreeMapper', () => {
     const expectedLayerWmtsTree = {
       id: 'WMTS||http://example.com||',
       name: '',
+      label: '',
       depth: 0,
       children: [
         {
           id: 'WMTS||http://example.com||Layer1%2D1',
           name: 'Layer1-1',
+          label: 'Layer1-1',
           depth: 1,
           children: undefined,
           checked: false,
@@ -144,6 +154,7 @@ describe('remoteLayersToLayerTreeMapper', () => {
         {
           id: 'WMTS||http://example.com||Layer1%2D2',
           name: 'Layer1-2',
+          label: 'Layer1-2',
           depth: 1,
           children: undefined,
           checked: false,
