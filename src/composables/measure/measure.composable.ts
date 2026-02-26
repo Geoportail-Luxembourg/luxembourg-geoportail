@@ -175,7 +175,34 @@ export default function useMeasure() {
         drawTooltip.remove()
         interaction.finishDrawing()
       } else if (event.key === 'Backspace' && interaction.getActive()) {
-        interaction.removeLastPoint()
+        if (mode === 'azimuth') {
+          // Circle geometry doesn't support removeLastPoint cleanly —
+          // abort the current drawing and reactivate so the user can start fresh
+          try {
+            interaction.abortDrawing()
+          } catch (e) {
+            // ignore
+          }
+          // Clean up the azimuth preview state
+          try {
+            if (azimuthPreviewOverlay.value && map) {
+              map.removeOverlay(azimuthPreviewOverlay.value as any)
+              azimuthPreviewOverlay.value = null
+            }
+            if (azimuthPreviewState.value?.radial)
+              src!.removeFeature(
+                azimuthPreviewState.value.radial as Feature<Geometry>
+              )
+            if (azimuthPreviewState.value?.preview)
+              src!.removeFeature(
+                azimuthPreviewState.value.preview as Feature<Geometry>
+              )
+          } catch (e) {
+            // ignore
+          }
+        } else {
+          interaction.removeLastPoint()
+        }
       }
     })
     persistentRemovers.push(() => unByKey(keyupListenerKey))
