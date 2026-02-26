@@ -1,4 +1,4 @@
-import { ref, onUnmounted } from 'vue'
+import { ref, onUnmounted, toRaw } from 'vue'
 import Draw, { DrawEvent } from 'ol/interaction/Draw'
 import VectorSource from 'ol/source/Vector'
 import VectorLayer from 'ol/layer/Vector'
@@ -51,6 +51,8 @@ export default function useMeasure() {
   const persistentRemovers: Array<() => void> = []
   // persistentRemovers is cleared by `reset()` and also on component unmount
   // to avoid leaks if the composable is used across multiple mount/unmount cycles.
+  // Stores the active keyup remover so deactivate() can clean it up without reset()
+  let activeKeyupRemover: (() => void) | null = null
 
   const AZIMUTH_PREVIEW_STYLE = new Style({
     stroke: new Stroke({ color: '#ff8c00', width: 2, lineDash: [6, 6] }),
@@ -120,7 +122,9 @@ export default function useMeasure() {
     // ensure a single measure layer exists on the map
     // Try to reuse cached reference first, otherwise search the map for a
     // previously created 'interactionMeasureLayer' to avoid adding duplicates
-    let src = measureLayer.value?.getSource() as VectorSource | undefined
+    // Use toRaw() to unwrap any Vue Proxy wrapper — VectorSource must be the raw
+    // object for Array.includes() identity checks to work across activate() calls.
+    let src = toRaw(measureLayer.value?.getSource()) as VectorSource | undefined
     if (!src) {
       // search existing layers on the map for the interaction measure layer
       try {
@@ -132,7 +136,9 @@ export default function useMeasure() {
               (l as any).get('cyLayerType') === 'interactionMeasureLayer'
             ) {
               measureLayer.value = l as VectorLayer
-              src = (measureLayer.value as any).getSource() as VectorSource
+              src = toRaw(
+                (measureLayer.value as any).getSource()
+              ) as VectorSource
               break
             }
           } catch (e) {
@@ -205,7 +211,19 @@ export default function useMeasure() {
         }
       }
     })
-    persistentRemovers.push(() => unByKey(keyupListenerKey))
+    // keyup listener is only needed while the draw interaction is active;
+    // we store a reference so it can be removed on drawend AND on deactivate/reset.
+    const removeKeyupListener = () => {
+      try {
+        unByKey(keyupListenerKey)
+      } catch (e) {
+        // ignore
+      }
+      activeKeyupRemover = null
+    }
+    activeKeyupRemover = removeKeyupListener
+    // Register for reset() cleanup as well (in case drawing is aborted without drawend)
+    persistentRemovers.push(removeKeyupListener)
 
     // pointer move for live preview (also move hint overlay if present)
     pointerMoveKey.value = listen(map, 'pointermove', (event: any) => {
@@ -403,6 +421,16 @@ export default function useMeasure() {
         persistentRemovers.push(disposer)
       }
 
+      // remove the keyup listener — no longer needed once drawing is done;
+      // also remove from persistentRemovers so reset() doesn't double-call it.
+      try {
+        removeKeyupListener()
+        const kIdx = persistentRemovers.indexOf(removeKeyupListener)
+        if (kIdx !== -1) persistentRemovers.splice(kIdx, 1)
+      } catch (e) {
+        logWarn('[measure] unByKey(keyupListenerKey) failed', e)
+      }
+
       // remove transient tooltip and hint
       drawTooltip.remove()
       // remove hint overlay when finishing draw
@@ -519,23 +547,21 @@ export default function useMeasure() {
             }
 
             // fetch elevation for center and edge to compute Δh
-            const controller = new AbortController()
-            const abortRemover = () => {
-              try {
-                controller.abort()
-              } catch (e) {
-                /* ignore */
-              }
+            // Use a cancelled flag instead of AbortController so the signal
+            // cannot be silently aborted and cause null returns on 2nd+ measurements.
+            let elevationCancelled = false
+            const cancelElevation = () => {
+              elevationCancelled = true
             }
-            persistentRemovers.push(abortRemover)
+            persistentRemovers.push(cancelElevation)
             ;(async () => {
               try {
                 const [eCenter, eEdge] = await Promise.all([
-                  getElevation(center as [number, number], controller.signal),
-                  getElevation(edge as [number, number], controller.signal),
+                  getElevation(center as [number, number]),
+                  getElevation(edge as [number, number]),
                 ])
-
-                // If the radial feature was removed (reset), skip
+                // If cancelled (reset called) or radial feature was removed, skip update
+                if (elevationCancelled) return
                 if (!src!.getFeatures().includes(radialFeature)) return
 
                 if (eCenter === null || eEdge === null) {
@@ -552,11 +578,14 @@ export default function useMeasure() {
                 }
               } catch (err) {
                 logError('[measure][azimuth] elevation request failed', err)
-                if (src!.getFeatures().includes(radialFeature)) {
+                if (
+                  !elevationCancelled &&
+                  src!.getFeatures().includes(radialFeature)
+                ) {
                   applyAzimuthTextStyle(`${bearingText} — ${radius} — Δh: N/A`)
                 }
               } finally {
-                const idx = persistentRemovers.indexOf(abortRemover)
+                const idx = persistentRemovers.indexOf(cancelElevation)
                 if (idx !== -1) persistentRemovers.splice(idx, 1)
               }
             })()
@@ -631,6 +660,16 @@ export default function useMeasure() {
       drawInteraction.value.setActive(false)
       map.removeInteraction(drawInteraction.value as unknown as any)
       drawInteraction.value = null
+    }
+    // Clean up keyup listener immediately (it's tied to the now-removed interaction)
+    if (activeKeyupRemover) {
+      try {
+        const kIdx = persistentRemovers.indexOf(activeKeyupRemover)
+        if (kIdx !== -1) persistentRemovers.splice(kIdx, 1)
+        activeKeyupRemover() // sets activeKeyupRemover = null internally
+      } catch (e) {
+        logWarn('[measure] removeKeyupListener in deactivate failed', e)
+      }
     }
     drawTooltip.remove()
     if (pointerMoveKey.value) {
