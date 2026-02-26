@@ -23,6 +23,7 @@ export function remoteLayersToLayerTreeMapper(
   depth = 0
 ): LayerTreeNodeModel {
   const { name = '', title, type = REMOTE_SERVICE_TYPE.WMS, children } = node
+  // Encode dashes as %2D for v3 compatibility (v3 uses dash as layer separator)
   const id = `${type}||${urlWms}||${name}`.split('-').join('%2D')
   const mapStore = useMapStore()
 
@@ -40,8 +41,25 @@ export function remoteLayersToLayerTreeMapper(
 }
 
 export function remoteLayerIdtoLayer(layerId: string) {
-  const id = decodeURIComponent(layerId)
+  // Some permalinks double-encode the layer ID (e.g. %257C%257C instead of %7C%7C).
+  // Decode until the string stabilises so that split('||') works correctly.
+  let id = layerId
+  try {
+    let prev = id
+    do {
+      prev = id
+      id = decodeURIComponent(id)
+    } while (id !== prev)
+  } catch {
+    // malformed URI — keep last successfully decoded value
+  }
+
   const [type, url, name] = id.split('||')
+
+  if (!type || !url) {
+    console.warn(`[remoteLayerIdtoLayer] malformed layerId: ${layerId}`) // eslint-disable-line no-console
+    return null
+  }
 
   return remoteLayerToLayer({
     id,

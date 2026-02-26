@@ -32,6 +32,10 @@ class ProxyUrlHelper {
    * @returns The url proxyfied (if needed)
    */
   getProxyfiedUrl(url: string) {
+    if (!url) {
+      return url
+    }
+
     if (url.indexOf('httpsproxy') > 0) {
       return url
     }
