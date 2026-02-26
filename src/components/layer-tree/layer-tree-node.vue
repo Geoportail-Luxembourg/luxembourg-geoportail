@@ -57,6 +57,7 @@ function toggleParent(node: LayerTreeNodeModel) {
       <div class="grow">{{ label }}</div>
       <div class="leading-6">
         <div
+          aria-hidden="true"
           class="fa-sharp fa-solid"
           :class="node.expanded ? 'fa-minus' : 'fa-plus'"
         ></div>
@@ -86,16 +87,23 @@ function toggleParent(node: LayerTreeNodeModel) {
   <div v-else class="flex text-tertiary pr-2">
     <button
       :data-cy="`layerMetadata-${node.id}`"
+      :aria-label="
+        t('Layer information: {name}', { name: label, ns: 'client' })
+      "
       class="self-start before:text-[.85rem] before:transform before:translate-y-[.1rem] before:inline-block before:content-['\f129'] fa-solid fa-fw fa-fh fa-info"
       @click="setMetadataLayer(node as unknown as Layer)"
     ></button>
     <button
+      role="checkbox"
+      :aria-checked="node.checked"
+      :aria-label="label"
       class="w-full text-left"
       :class="{ 'font-bold': node.checked }"
       @click="toggleLayer(node)"
       :data-cy="`layerLabel-${node.id}`"
     >
       <i
+        aria-hidden="true"
         class="fa-solid"
         :class="node.checked ? 'fa-check-square' : 'fa-square'"
       ></i>

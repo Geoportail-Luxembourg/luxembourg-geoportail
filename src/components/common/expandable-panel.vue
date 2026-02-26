@@ -1,11 +1,17 @@
 <script lang="ts" setup>
-defineProps<{
+import { computed } from 'vue'
+
+const props = defineProps<{
   expanded: boolean
   title: string
 }>()
 defineEmits<{
   (e: 'togglePanel'): void
 }>()
+
+const panelId = computed(
+  () => `expandable-panel-${props.title.replace(/\s+/g, '-').toLowerCase()}`
+)
 </script>
 
 <template>
@@ -14,6 +20,7 @@ defineEmits<{
     @click="$emit('togglePanel')"
     class="group w-full text-left flex px-2 py-1.5 uppercase bg-tertiary"
     :aria-expanded="expanded"
+    :aria-controls="panelId"
   >
     <span class="grow" :class="expanded ? 'text-white' : 'text-secondary'">
       {{ title }}
@@ -21,6 +28,7 @@ defineEmits<{
 
     <span class="leading-6">
       <span
+        aria-hidden="true"
         class="fa fa-sharp fa-solid group-hover:text-white text-primary"
         :class="expanded ? 'fa-caret-up' : 'fa-caret-down'"
       ></span>
@@ -29,7 +37,7 @@ defineEmits<{
 
   <!-- Dropdown content -->
   <transition name="slide">
-    <div v-if="expanded">
+    <div :id="panelId" v-if="expanded">
       <slot></slot>
     </div>
   </transition>

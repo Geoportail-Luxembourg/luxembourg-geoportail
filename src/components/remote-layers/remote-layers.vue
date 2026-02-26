@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { shallowRef, ShallowRef, watchEffect } from 'vue'
+import { ref, shallowRef, ShallowRef, watchEffect } from 'vue'
 import { storeToRefs } from 'pinia'
 import { useTranslation } from 'i18next-vue'
 
@@ -29,7 +29,7 @@ const layerTree: ShallowRef<LayerTreeNodeModel | undefined> = shallowRef()
 const { remoteLayersOpen } = storeToRefs(useAppStore())
 const { setRemoteLayersOpen } = useAppStore()
 
-let isLoading = false
+const isLoading = ref(false)
 let inputRemoteUrl: string
 let currentRemoteUrl: string
 let currentRemoteEndpoint: OgcClientWmsEndpoint | WmtsEndpoint
@@ -53,12 +53,12 @@ remoteLayersService.fetchRemoteWmsEndpoint().then(wmsLayersFetch => {
 })
 
 async function getRemoteEndpoint(url: string) {
-  isLoading = true
+  isLoading.value = true
   currentRemoteEndpoint = await remoteLayersService
     .getRemoteEndpoint(url)
     .catch(() => alert(t('Impossible de contacter ce WMS', { ns: 'client' })))
   currentRemoteUrl = url
-  isLoading = false
+  isLoading.value = false
 }
 
 async function getRemoteLayers() {
@@ -128,14 +128,24 @@ function toggleLayer(node: LayerTreeNodeModel) {
     @close="setRemoteLayersOpen(false)"
   >
     <template v-slot:content>
-      <div class="relative text-center" data-cy="remoteLayerModalContent">
+      <fieldset
+        class="relative text-center border-none p-0 m-0"
+        data-cy="remoteLayerModalContent"
+      >
+        <legend class="sr-only">
+          {{ t('Add external data', { ns: 'client' }) }}
+        </legend>
         <dropdown-list
           class="lux-remote-services-dropdown"
           :options="wmsLayers"
           :placeholder="t('Predefined wms', { ns: 'client' })"
           @change="onChangeRemoteEndpoint"
         ></dropdown-list>
+        <label for="remote-wms-url" class="sr-only">{{
+          t('Choose or write a WMS url', { ns: 'client' })
+        }}</label>
         <input
+          id="remote-wms-url"
           class="lux-input w-[300px]"
           type="url"
           :placeholder="
@@ -146,12 +156,24 @@ function toggleLayer(node: LayerTreeNodeModel) {
           :value="currentRemoteUrl || ''"
           @change="onChangeRemoteUrl"
         />
-        <button type="button" class="lux-btn" @click="onClickGetLayers">
+        <button
+          type="button"
+          class="lux-btn"
+          :aria-label="
+            t('Get the layers for the entered URL', { ns: 'client' })
+          "
+          @click="onClickGetLayers"
+        >
           {{ t('Get the layers', { ns: 'client' }) }}
         </button>
-      </div>
+      </fieldset>
 
-      <div class="text-center" v-if="!isLoading && currentRemoteEndpoint">
+      <div
+        class="text-center"
+        aria-live="polite"
+        aria-atomic="true"
+        v-if="!isLoading && currentRemoteEndpoint"
+      >
         <span class="lux-label">{{
           t('Description du service :', {
             ns: 'client',
@@ -167,8 +189,13 @@ function toggleLayer(node: LayerTreeNodeModel) {
         }}</span>
         {{ currentRemoteEndpoint.getServiceInfo()?.constraints }}
       </div>
-      <div v-if="isLoading" class="text-center">
-        <div class="fa fa-refresh fa-spin"></div>
+      <div
+        v-if="isLoading"
+        role="status"
+        aria-live="polite"
+        class="text-center"
+      >
+        <span aria-hidden="true" class="fa fa-refresh fa-spin"></span>
         <span>{{
           t('Chargement des informations', {
             ns: 'client',
