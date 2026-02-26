@@ -168,6 +168,18 @@ export default function useMeasure() {
         : ('LineString' as any)
     const interaction = new Draw({ type: drawType, source: src })
 
+    // Keyboard shortcuts: ESC finishes drawing, Backspace removes last point
+    const keyupListenerKey = listen(document, 'keyup', (evt: Event) => {
+      const event = evt as KeyboardEvent
+      if (event.key === 'Escape') {
+        drawTooltip.remove()
+        interaction.finishDrawing()
+      } else if (event.key === 'Backspace' && interaction.getActive()) {
+        interaction.removeLastPoint()
+      }
+    })
+    persistentRemovers.push(() => unByKey(keyupListenerKey))
+
     // pointer move for live preview (also move hint overlay if present)
     pointerMoveKey.value = listen(map, 'pointermove', (event: any) => {
       lastPointerCoord.value = event.coordinate as [number, number]
