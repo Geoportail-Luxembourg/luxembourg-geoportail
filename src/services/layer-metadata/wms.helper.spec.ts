@@ -35,3 +35,39 @@ describe('WmsHelper', () => {
     expect(spyWmsMetadata).toHaveBeenCalledOnce()
   })
 })
+
+describe('WmsHelper.extractLegendUrl', () => {
+  it('returns undefined when styles is undefined', () => {
+    expect(wmsHelper.extractLegendUrl(undefined)).toBeUndefined()
+  })
+
+  it('returns undefined when styles is empty', () => {
+    expect(wmsHelper.extractLegendUrl([])).toBeUndefined()
+  })
+
+  it('returns undefined when no style has a legendUrl', () => {
+    expect(
+      wmsHelper.extractLegendUrl([{ name: 'default' }, { name: 'other' }])
+    ).toBeUndefined()
+  })
+
+  it('prefers the legendUrl of the "default" style', () => {
+    const styles = [
+      { name: 'other', legendUrl: 'http://example.com/legend-other' },
+      { name: 'default', legendUrl: 'http://example.com/legend-default' },
+    ]
+    expect(wmsHelper.extractLegendUrl(styles)).toBe(
+      'http://example.com/legend-default'
+    )
+  })
+
+  it('falls back to the first style with a legendUrl when no "default" style exists', () => {
+    const styles = [
+      { name: 'style1', legendUrl: 'http://example.com/legend-style1' },
+      { name: 'style2', legendUrl: 'http://example.com/legend-style2' },
+    ]
+    expect(wmsHelper.extractLegendUrl(styles)).toBe(
+      'http://example.com/legend-style1'
+    )
+  })
+})
