@@ -12,11 +12,12 @@ class StatePersistorStyleService {
   styleWatcher: WatchStopHandle
   bootstrap() {
     const styleStore = useStyleStore()
+    const mapStore = useMapStore()
     let stop: WatchStopHandle
     let activatePersistance: boolean = false
     // eslint-disable-next-line prefer-const
     stop = watchEffect(() => {
-      if (styleStore.bgVectorSources) {
+      if (styleStore.bgVectorSources && mapStore.bgLayer) {
         this.restore(false)
         if (activatePersistance) this.persist()
         activatePersistance = true
