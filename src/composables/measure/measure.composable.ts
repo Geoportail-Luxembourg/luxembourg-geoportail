@@ -169,7 +169,7 @@ export default function useMeasure() {
     const interaction = new Draw({ type: drawType, source: src })
 
     // Keyboard shortcuts: ESC finishes drawing, Backspace removes last point
-    const keyupListenerKey = listen(document, 'keyup', (evt: Event) => {
+    const keyupListenerKey = listen(document, 'keyup', (evt: unknown) => {
       const event = evt as KeyboardEvent
       if (event.key === 'Escape') {
         drawTooltip.remove()
