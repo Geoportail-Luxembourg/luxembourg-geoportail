@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { computed, onUnmounted, onActivated, Ref, ref, watchEffect } from 'vue'
+import { computed, onUnmounted, onActivated, reactive } from 'vue'
 import { storeToRefs } from 'pinia'
 import { useTranslation } from 'i18next-vue'
 
@@ -17,19 +17,13 @@ const mapStore = useMapStore()
 const layersService = useLayers()
 const { layers, bgLayer } = storeToRefs(mapStore)
 const layersReversed = computed(() => [...layers.value].reverse()) // copy layers for inversion in UI, otherwise will modify current array
-const layersLegendsStatus: Ref<Map<LayerId, boolean>> = ref(new Map())
-const someLegendExists = ref(false)
-
-watchEffect(
-  () =>
-    (someLegendExists.value = [...layersLegendsStatus.value].some(
-      // eslint-disable-next-line @typescript-eslint/no-unused-vars
-      ([layerId, hasLegend]) => hasLegend
-    ))
+const layersLegendsStatus = reactive(new Map<LayerId, boolean>())
+const someLegendExists = computed(() =>
+  [...layersLegendsStatus].some(([, hasLegend]) => hasLegend)
 )
 
-onUnmounted(() => layersLegendsStatus.value.clear())
-onActivated(() => layersLegendsStatus.value.clear())
+onUnmounted(() => layersLegendsStatus.clear())
+onActivated(() => layersLegendsStatus.clear())
 </script>
 
 <template>
@@ -78,6 +72,12 @@ onActivated(() => layersLegendsStatus.value.clear())
           class="pt-10"
           :key="bgLayer.id"
           :layer="bgLayer"
+          @has-legend="
+            (hasLegend: boolean) => bgLayer && layersLegendsStatus.set(bgLayer.id, hasLegend)
+          "
+          @removed-legend="
+            () => bgLayer && layersLegendsStatus.delete(bgLayer.id)
+          "
         >
           <template #title>
             <h1 class="pb-5">
