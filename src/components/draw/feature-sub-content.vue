@@ -155,7 +155,12 @@ function onClickValidate(payload: MouseEvent | FeatureConcentricCirclePayload) {
             v-if="isEditable"
             data-cy="featItemActionStyle"
             class="hover:text-tertiary"
-            @click="() => (currentEditCompKey = 'FeatureEditStyle')"
+            @click="
+              () => {
+                if (isEditingFeature) emit('toggleEditFeature')
+                currentEditCompKey = 'FeatureEditStyle'
+              }
+            "
           >
             <i class="fa fa-paint-brush"></i>
           </button>
