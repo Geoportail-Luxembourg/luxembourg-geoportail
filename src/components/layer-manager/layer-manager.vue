@@ -52,7 +52,16 @@ onMounted(() => {
 })
 
 function sortMethod(elements: HTMLCollection, is3d?: boolean) {
-  const layersIds = [...elements].map(val => Number(val.id)).reverse()
+  // Keep layer IDs as strings since remote WMS layers use string IDs (e.g., "WMS||url||name")
+  // Internal layers use numeric IDs which are stored as string attributes in the DOM
+  const layersIds = [...elements]
+    .map(val => {
+      const id = val.id
+      // Try to parse as number for internal layers, otherwise keep as string
+      const numericId = Number(id)
+      return isNaN(numericId) ? id : numericId
+    })
+    .reverse()
   mapStore.reorderLayers(layersIds, is3d)
 }
 

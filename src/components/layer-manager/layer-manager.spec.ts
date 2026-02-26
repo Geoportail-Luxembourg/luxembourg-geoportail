@@ -111,11 +111,31 @@ describe('LayerManager', () => {
         const layerCollection = document.createElement('div')
         const layer1 = document.createElement('div')
         const layer2 = document.createElement('div')
+        layer1.id = '1'
+        layer2.id = '2'
         layerCollection.appendChild(layer1)
         layerCollection.appendChild(layer2)
 
         await wrapper.vm.sortMethod(layerCollection.children)
         expect(mapStore.reorderLayers).toHaveBeenCalledTimes(1)
+        expect(mapStore.reorderLayers).toHaveBeenCalledWith([2, 1], undefined)
+      })
+
+      it('#sortMethod with remote WMS layer', async () => {
+        const layerCollection = document.createElement('div')
+        const internalLayer = document.createElement('div')
+        const wmsLayer = document.createElement('div')
+        internalLayer.id = '1'
+        wmsLayer.id =
+          'WMS||https://ows.terrestris.de/osm%2Dgray/service||OSM%2DWMS'
+        layerCollection.appendChild(internalLayer)
+        layerCollection.appendChild(wmsLayer)
+
+        await wrapper.vm.sortMethod(layerCollection.children)
+        expect(mapStore.reorderLayers).toHaveBeenCalledWith(
+          ['WMS||https://ows.terrestris.de/osm%2Dgray/service||OSM%2DWMS', 1],
+          undefined
+        )
       })
     })
   })
