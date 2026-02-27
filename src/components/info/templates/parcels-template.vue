@@ -1,6 +1,6 @@
 f
 <script setup lang="ts">
-import { ref, Ref } from 'vue'
+import { ref, Ref, computed } from 'vue'
 import i18next from 'i18next'
 import { useTranslation } from 'i18next-vue'
 import {
@@ -12,7 +12,7 @@ import { isThemeAvailable, translateAndjoin } from './template-utilities'
 import InfoFeatureLayout from '../info-feature-layout.vue'
 import InfoFeatureMeasurementModale from '../info-feature-measurement-modale.vue'
 
-defineProps<{
+const props = defineProps<{
   layers: FeatureInfoJSON
   currentUrl?: string
 }>()
@@ -27,6 +27,32 @@ const viewMode = ref<'links' | 'thumbnails'>('links')
 const expandedMeasurementNumbers = ref<Set<string>>(new Set())
 const expandedAudiences = ref<Map<string, Set<string>>>(new Map())
 const expandedDocumentTypes = ref<Map<string, Set<string>>>(new Map())
+
+// Initialiser les mesurages publics comme ouverts
+const groupedMeasurements = computed(() => {
+  const measurements = props.layers.features?.[0]?.attributes?.measurements
+  if (!measurements) return {}
+
+  const grouped = groupMeasurementsByHierarchy(measurements)
+
+  // Ouvrir automatiquement les mesurages qui ont des documents publics
+  Object.entries(grouped).forEach(([measurementNumber, audiences]) => {
+    if (audiences['public']) {
+      expandedMeasurementNumbers.value.add(measurementNumber)
+
+      // Ouvrir aussi les types de documents publics
+      Object.keys(audiences['public']).forEach(description => {
+        const key = `${measurementNumber}_public_${description}`
+        if (!expandedDocumentTypes.value.has(measurementNumber)) {
+          expandedDocumentTypes.value.set(measurementNumber, new Set())
+        }
+        expandedDocumentTypes.value.get(measurementNumber)!.add(key)
+      })
+    }
+  })
+
+  return grouped
+})
 
 function toggleMeasurementNumber(measurementNumber: string) {
   if (expandedMeasurementNumbers.value.has(measurementNumber)) {
@@ -312,7 +338,7 @@ h2 {
         <div class="measurement-hierarchy">
           <template
             v-for="[measurementNumber, documentsByAudience] in Object.entries(
-              groupMeasurementsByHierarchy(feature.attributes.measurements)
+              groupedMeasurements
             ).sort((a, b) => Number(b[0]) - Number(a[0]))"
             :key="measurementNumber"
           >
