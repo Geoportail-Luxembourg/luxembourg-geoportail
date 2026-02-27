@@ -311,9 +311,9 @@ h2 {
         </div>
         <div class="measurement-hierarchy">
           <template
-            v-for="(
-              documentsByAudience, measurementNumber
-            ) in groupMeasurementsByHierarchy(feature.attributes.measurements)"
+            v-for="[measurementNumber, documentsByAudience] in Object.entries(
+              groupMeasurementsByHierarchy(feature.attributes.measurements)
+            ).sort((a, b) => Number(b[0]) - Number(a[0]))"
             :key="measurementNumber"
           >
             <!-- Niveau 1: Numéro de mesurage -->
