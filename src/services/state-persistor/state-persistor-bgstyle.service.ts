@@ -14,13 +14,11 @@ class StatePersistorStyleService {
     const styleStore = useStyleStore()
     const mapStore = useMapStore()
     let stop: WatchStopHandle
-    let activatePersistance: boolean = false
     // eslint-disable-next-line prefer-const
     stop = watchEffect(() => {
       if (styleStore.bgVectorSources && mapStore.bgLayer) {
         this.restore(false)
-        if (activatePersistance) this.persist()
-        activatePersistance = true
+        this.persist()
         stop && stop() // test if exists, for HMR support
       }
     })
@@ -47,14 +45,15 @@ class StatePersistorStyleService {
                   value || [],
                   storageStyleMapper.styleToLocalStorage
                 )
+                storageHelper.setValue(
+                  SP_KEY_SERIAL,
+                  value || [],
+                  storageStyleMapper.styleToSerial
+                )
               } else {
                 storageHelper.removeItem(mapStore.bgLayer.name)
+                storageHelper.removeItem(SP_KEY_SERIAL)
               }
-              storageHelper.setValue(
-                SP_KEY_SERIAL,
-                value || [],
-                storageStyleMapper.styleToSerial
-              )
             }
           }
         },
