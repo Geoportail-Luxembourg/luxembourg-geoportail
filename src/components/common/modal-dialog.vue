@@ -2,6 +2,7 @@
 import { useTranslation } from 'i18next-vue'
 import { ShallowRef, shallowRef, onMounted, ref } from 'vue'
 const { t } = useTranslation()
+const titleId = `modal-title-${Math.random().toString(36).slice(2)}`
 defineProps({
   footer: {
     type: Boolean,
@@ -20,10 +21,13 @@ defineProps({
 defineEmits<{
   (e: 'close'): void
 }>()
-// focus for esc key
-const modal = ref()
+// focus first focusable element inside modal for accessibility
+const modal = ref<HTMLElement>()
 onMounted(() => {
-  modal.value.focus()
+  const focusable = modal.value?.querySelector<HTMLElement>(
+    'button, [href], input, select, textarea, [tabindex]:not([tabindex="-1"])'
+  )
+  ;(focusable ?? modal.value)?.focus()
 })
 const displayModal: ShallowRef<boolean> = shallowRef(true)
 function close() {
@@ -49,8 +53,10 @@ function close() {
       <div
         v-if="displayModal"
         :role="role"
+        :aria-labelledby="titleId"
+        :aria-modal="true"
         ref="modal"
-        tabindex="0"
+        tabindex="-1"
         @keydown.esc.stop="close()"
         class="fixed inset-x-0 inset-y-8 flex items-start justify-center z-[1100] outline-none"
       >
@@ -59,7 +65,7 @@ function close() {
           <div
             class="relative flex flex-row items-center py-2 px-4 border-b-[1px]"
           >
-            <h4 class="text-xl grow">{{ title }}</h4>
+            <h4 :id="titleId" class="text-xl grow">{{ title }}</h4>
             <button
               type="button"
               class="text-slate-400 text-2xl"

@@ -88,6 +88,9 @@ export default function useMyMaps() {
         f.editable = authenticated.value && map.is_editable
       })
       drawnFeatures.value = [...drawnFeatures.value, ...newFeatures]
+
+      // Fit map to features extent after they are loaded (as in v3)
+      fitToMyMapFeatures()
     } catch (e) {
       // eslint-disable-next-line no-console
       console.error('[MyMaps] loadMyMap() - ERROR', e)
@@ -155,6 +158,32 @@ export default function useMyMaps() {
   }
 
   /**
+   * Fit map view to the extent of all MyMap features (as in v3)
+   */
+  function fitToMyMapFeatures() {
+    const olMap = useMap().getOlMap()
+    const extent = createEmpty()
+
+    drawnFeaturesMyMaps.value.forEach(f => {
+      if (f.getGeometry()) {
+        extend(extent, f.getGeometry()!.getExtent())
+      }
+    })
+
+    // Only fit if extent is not empty and valid
+    if (
+      extent[0] !== Infinity &&
+      extent[1] !== Infinity &&
+      extent[2] !== -Infinity &&
+      extent[3] !== -Infinity &&
+      extent[0] < extent[2] &&
+      extent[1] < extent[3]
+    ) {
+      olMap.getView().fit(extent, { size: olMap.getSize() })
+    }
+  }
+
+  /**
    * Update the (app) map with the MyMap content: layers and bgLayer
    */
   function resetFromMyMap() {
@@ -193,37 +222,7 @@ export default function useMyMaps() {
     mapStore.removeAllLayers()
     mapStore.addLayers(...myLayers)
 
-    // Set view to MyMap's zoom and center if defined
-    if (
-      myMap.value &&
-      myMap.value.zoom !== null &&
-      myMap.value.x !== null &&
-      myMap.value.y !== null
-    ) {
-      const olMap = useMap().getOlMap()
-      olMap.getView().setZoom(myMap.value.zoom)
-      olMap.getView().setCenter([myMap.value.x, myMap.value.y])
-    } else {
-      // If no saved view, fit to the extent of all MyMap features
-      const olMap = useMap().getOlMap()
-      const extent = createEmpty()
-      drawnFeaturesMyMaps.value.forEach(f => {
-        if (f.getGeometry()) {
-          extend(extent, f.getGeometry()!.getExtent())
-        }
-      })
-      // Only fit if extent is not empty and valid
-      if (
-        extent[0] !== Infinity &&
-        extent[1] !== Infinity &&
-        extent[2] !== -Infinity &&
-        extent[3] !== -Infinity &&
-        extent[0] < extent[2] &&
-        extent[1] < extent[3]
-      ) {
-        olMap.getView().fit(extent, { padding: [20, 20, 20, 20] })
-      }
-    }
+    // Note: Map view will be fitted to features extent after they are loaded in loadMyMap()
   }
 
   function init() {

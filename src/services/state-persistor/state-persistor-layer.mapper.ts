@@ -18,7 +18,10 @@ class StorageLayerMapper {
   layerIdsToLayers(layerIdsText: string | null) {
     const themes = useThemes()
     const layers = useLayers()
-    const layerIds = layerIdsText ? layerIdsText.split(STORAGE_SEPARATOR) : []
+    // Decode %2D back to dashes before splitting by separator (v3 compatibility)
+    const layerIds = layerIdsText
+      ? layerIdsText.split('%2D').join('-').split(STORAGE_SEPARATOR)
+      : []
 
     return layerIds
       .map(layerId => {

@@ -6,6 +6,7 @@ import { platformModifierKeyOnly } from 'ol/events/condition'
 
 import { useAppStore } from '@/stores/app.store'
 import useMap from '@/composables/map/map.composable'
+import useMapMoveDetection from '@/composables/map/map-move-detection.composable'
 import { OlSynchronizer } from '@/composables/map/ol.synchronizer'
 import { OlViewSynchronizer } from '@/composables/map/ol-view.synchronizer'
 import useDraw from '@/composables/draw/draw.composable'
@@ -16,6 +17,7 @@ import useEdit from '@/composables/draw/edit.composable'
 import { statePersistorMapService } from '@/services/state-persistor/state-persistor-map.service'
 import { statePersistorFeaturesService } from '@/services/state-persistor/state-persistor-features.service'
 import { statePersistorLocationInfo } from '@/services/state-persistor/state-persistor-location-info'
+import { setMapMoveDetectionInstance } from '@/services/map/map-move-detection.service'
 import AttributionControl from '../map-controls/attribution-control.vue'
 import LocationControl from '../map-controls/location-control.vue'
 import InfobarControl from '../map-controls/infobar-control.vue'
@@ -67,6 +69,13 @@ if (props.v4_standalone) {
   featureInfo.init()
   // Initialise search
   olLayerSearchService.init(olMap)
+  // Initialise map move detection for mobile side panel closing
+  const mapMoveDetection = useMapMoveDetection()
+  mapMoveDetection.listenToMapMove(() => {
+    window.dispatchEvent(new CustomEvent('map-moved'))
+  })
+  // Expose the instance so side-panel can ignore moveend on state changes
+  setMapMoveDetectionInstance(mapMoveDetection)
 }
 
 const DEFAULT_EXTENT = [

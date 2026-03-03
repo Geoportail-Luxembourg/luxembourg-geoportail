@@ -1,10 +1,12 @@
-import { ref, onUnmounted } from 'vue'
+import { ref, onUnmounted, toRaw } from 'vue'
 import Draw, { DrawEvent } from 'ol/interaction/Draw'
 import VectorSource from 'ol/source/Vector'
 import VectorLayer from 'ol/layer/Vector'
 import Overlay from 'ol/Overlay'
 import Style from 'ol/style/Style'
 import Stroke from 'ol/style/Stroke'
+import Fill from 'ol/style/Fill'
+import Text from 'ol/style/Text'
 import Feature from 'ol/Feature'
 import Geometry from 'ol/geom/Geometry'
 import LineString from 'ol/geom/LineString'
@@ -15,7 +17,6 @@ import { formatLength } from '@/services/common/formatting.utils'
 import { getElevation } from '@/components/draw/feature-measurements-helper'
 import { EventsKey, listen } from 'ol/events'
 import { unByKey } from 'ol/Observable'
-import { v4 as uuidv4 } from 'uuid'
 import { DEFAULT_DRAW_ZINDEX } from '@/services/ol-layer/ol-layer-interaction-draw.helper'
 
 import useMap from '@/composables/map/map.composable'
@@ -50,13 +51,9 @@ export default function useMeasure() {
   const persistentRemovers: Array<() => void> = []
   // persistentRemovers is cleared by `reset()` and also on component unmount
   // to avoid leaks if the composable is used across multiple mount/unmount cycles.
+  // Stores the active keyup remover so deactivate() can clean it up without reset()
+  let activeKeyupRemover: (() => void) | null = null
 
-  const MEASURE_STYLE = new Style({
-    stroke: new Stroke({
-      color: '#ff8c00',
-      width: 4,
-    }),
-  })
   const AZIMUTH_PREVIEW_STYLE = new Style({
     stroke: new Stroke({ color: '#ff8c00', width: 2, lineDash: [6, 6] }),
   })
@@ -120,33 +117,14 @@ export default function useMeasure() {
     return deg360 > 180 ? deg360 - 360 : deg360
   }
 
-  function createFinalAzimuthOverlay(
-    text: string,
-    coord: [number, number],
-    measurementId?: string
-  ): Overlay {
-    const el = document.createElement('div')
-    el.className = 'lux-tooltip'
-    el.innerHTML = text
-    if (measurementId && el.dataset) el.dataset.measurementId = measurementId
-    const ov = new Overlay({
-      element: el,
-      offset: TOOLTIP_OFFSET,
-      positioning: TOOLTIP_POSITIONING,
-      stopEvent: false,
-    })
-    ov.setPosition(coord)
-
-    map.addOverlay(ov as any)
-    return ov
-  }
-
   function activate(mode: Mode) {
     if (!map) return
     // ensure a single measure layer exists on the map
     // Try to reuse cached reference first, otherwise search the map for a
     // previously created 'interactionMeasureLayer' to avoid adding duplicates
-    let src = measureLayer.value?.getSource() as VectorSource | undefined
+    // Use toRaw() to unwrap any Vue Proxy wrapper — VectorSource must be the raw
+    // object for Array.includes() identity checks to work across activate() calls.
+    let src = toRaw(measureLayer.value?.getSource()) as VectorSource | undefined
     if (!src) {
       // search existing layers on the map for the interaction measure layer
       try {
@@ -158,7 +136,9 @@ export default function useMeasure() {
               (l as any).get('cyLayerType') === 'interactionMeasureLayer'
             ) {
               measureLayer.value = l as VectorLayer
-              src = (measureLayer.value as any).getSource() as VectorSource
+              src = toRaw(
+                (measureLayer.value as any).getSource()
+              ) as VectorSource
               break
             }
           } catch (e) {
@@ -193,6 +173,57 @@ export default function useMeasure() {
         ? ('Polygon' as any)
         : ('LineString' as any)
     const interaction = new Draw({ type: drawType, source: src })
+
+    // Keyboard shortcuts: ESC finishes drawing, Backspace removes last point
+    const keyupListenerKey = listen(document, 'keyup', (evt: unknown) => {
+      const event = evt as KeyboardEvent
+      if (event.key === 'Escape') {
+        drawTooltip.remove()
+        interaction.finishDrawing()
+      } else if (event.key === 'Backspace' && interaction.getActive()) {
+        if (mode === 'azimuth') {
+          // Circle geometry doesn't support removeLastPoint cleanly —
+          // abort the current drawing and reactivate so the user can start fresh
+          try {
+            interaction.abortDrawing()
+          } catch (e) {
+            // ignore
+          }
+          // Clean up the azimuth preview state
+          try {
+            if (azimuthPreviewOverlay.value && map) {
+              map.removeOverlay(azimuthPreviewOverlay.value as any)
+              azimuthPreviewOverlay.value = null
+            }
+            if (azimuthPreviewState.value?.radial)
+              src!.removeFeature(
+                azimuthPreviewState.value.radial as Feature<Geometry>
+              )
+            if (azimuthPreviewState.value?.preview)
+              src!.removeFeature(
+                azimuthPreviewState.value.preview as Feature<Geometry>
+              )
+          } catch (e) {
+            // ignore
+          }
+        } else {
+          interaction.removeLastPoint()
+        }
+      }
+    })
+    // keyup listener is only needed while the draw interaction is active;
+    // we store a reference so it can be removed on drawend AND on deactivate/reset.
+    const removeKeyupListener = () => {
+      try {
+        unByKey(keyupListenerKey)
+      } catch (e) {
+        // ignore
+      }
+      activeKeyupRemover = null
+    }
+    activeKeyupRemover = removeKeyupListener
+    // Register for reset() cleanup as well (in case drawing is aborted without drawend)
+    persistentRemovers.push(removeKeyupListener)
 
     // pointer move for live preview (also move hint overlay if present)
     pointerMoveKey.value = listen(map, 'pointermove', (event: any) => {
@@ -378,11 +409,26 @@ export default function useMeasure() {
     // drawend: finalize style and keep feature on layer, then deactivate tool
     listen(interaction, 'drawend', evt => {
       // ...existing code...
-      // Create persistent measurement overlay anchored at middle of line for non-azimuth modes
-      const geom = (evt as DrawEvent).feature?.getGeometry()
+      // Create persistent measurement label (OL Text style) for non-azimuth modes
+      const drawnFeature = (evt as DrawEvent).feature
+      const geom = drawnFeature?.getGeometry()
       if (geom && map && currentMode.value !== 'azimuth') {
-        const disposer = drawTooltip.createPersistentMeasurement(map, geom)
+        const disposer = drawTooltip.createPersistentMeasurement(
+          map,
+          geom,
+          drawnFeature
+        )
         persistentRemovers.push(disposer)
+      }
+
+      // remove the keyup listener — no longer needed once drawing is done;
+      // also remove from persistentRemovers so reset() doesn't double-call it.
+      try {
+        removeKeyupListener()
+        const kIdx = persistentRemovers.indexOf(removeKeyupListener)
+        if (kIdx !== -1) persistentRemovers.splice(kIdx, 1)
+      } catch (e) {
+        logWarn('[measure] unByKey(keyupListenerKey) failed', e)
       }
 
       // remove transient tooltip and hint
@@ -401,26 +447,16 @@ export default function useMeasure() {
       const feature: Feature | undefined = (evt as DrawEvent).feature
       if (feature) {
         if (mode === 'area') {
-          // apply polygon style with translucent fill (dynamic import for Fill)
-          import('ol/style').then(({ Fill }) => {
-            feature.setStyle(
-              new Style({
-                stroke: new Stroke({ color: '#ff8c00', width: 3 }),
-                fill: new (Fill as any)({ color: 'rgba(255,140,0,0.15)' }),
-              })
-            )
-          })
+          // style already applied by createPersistentMeasurement (stroke + fill + text)
         } else if (mode === 'azimuth') {
           // finalize azimuth: create a proper Circle geometry and a persistent radial line,
           // show radius label and compute elevation diff for Δh
-          import('ol/style').then(({ Fill }) => {
-            feature.setStyle(
-              new Style({
-                stroke: new Stroke({ color: '#ff8c00', width: 3 }),
-                fill: new (Fill as any)({ color: 'rgba(255,140,0,0.05)' }),
-              })
-            )
-          })
+          feature.setStyle(
+            new Style({
+              stroke: new Stroke({ color: '#ff8c00', width: 3 }),
+              fill: new Fill({ color: 'rgba(255,140,0,0.05)' }),
+            })
+          )
 
           const geom = feature.getGeometry() as any
           // For azimuth, Draw uses Circle geometry: use center + radius and pointer direction to compute edge
@@ -440,24 +476,17 @@ export default function useMeasure() {
             const radiusGeom = new Circle(center, radiusVal)
             feature.setGeometry(radiusGeom)
 
-            // add a persistent radial feature (center -> edge)
+            // add a persistent radial feature (center -> edge) with OL Text style for print
             const radialFeature = new Feature({
               geometry: new LineString([center, edge]),
             })
-            radialFeature.setStyle(
-              new Style({ stroke: new Stroke({ color: '#ff8c00', width: 2 }) })
-            )
             radialFeature.set('isMeasurement', true)
             radialFeature.set('isAzimuthRadial', true)
             src!.addFeature(radialFeature)
             // ensure radial removed on reset
             persistentRemovers.push(() => src!.removeFeature(radialFeature))
 
-            // place azimuth overlay at the midpoint of the radial (show radius/bearing/Δh)
-            const mid: [number, number] = [
-              (center[0] + edge[0]) / 2,
-              (center[1] + edge[1]) / 2,
-            ]
+            // compute bearing and radius label
             const bearing = computeBearing(
               toLonLat(center) as [number, number],
               toLonLat(edge) as [number, number]
@@ -477,169 +506,92 @@ export default function useMeasure() {
               } catch (e) {
                 logWarn('[measure] removing azimuth preview overlay failed', e)
               }
-              // Null the cached preview overlay ref immediately after successful removal
-              // to avoid stale references or accidental reuse. persistentRemovers
-              // still contains a safe cleanup step but will no-op if the ref is null,
-              // preventing double-removal attempts and making ownership clearer.
               try {
                 azimuthPreviewOverlay.value = null
               } catch (e) {
-                // defensive: ignore any unexpected errors when clearing the ref
+                // ignore
               }
             }
 
-            // avoid creating a final overlay twice for the same feature
-            let alreadyFinalized = false
-            try {
-              alreadyFinalized =
-                (feature as any)?.get &&
-                (!!(feature as any).get('measurementId') ||
-                  !!(feature as any).get('finalOverlayRef'))
-            } catch (e) {
-              logWarn(
-                '[measure] checking measurementId/finalOverlayRef failed',
-                e
-              )
-            }
-
-            let finalOv: Overlay | null = null
-            if (!alreadyFinalized) {
-              // create a final persistent overlay for this azimuth
-              const measurementId = uuidv4()
-              try {
-                ;(feature as any).set('measurementId', measurementId)
-              } catch (e) {
-                logWarn('[measure] setting measurementId on feature failed', e)
-              }
-              try {
-                radialFeature.set('measurementId', measurementId)
-              } catch (e) {
-                logWarn('[measure] setting measurementId on radial failed', e)
-              }
-              finalOv = createFinalAzimuthOverlay(
-                `${bearingText} — ${radius} — Δh: N/A`,
-                mid,
-                measurementId
-              )
-              try {
-                // annotate overlay element so reset can find it
-                // Guard against finalOv or its element being undefined before accessing dataset
-                const el = finalOv
-                  ? finalOv.getElement && finalOv.getElement()
-                  : null
-                if (el && (el as any).dataset) {
-                  ;(el as any).dataset.measurementId = measurementId
-                }
-              } catch (e) {
-                logWarn('[measure] annotating final overlay element failed', e)
-              }
-              try {
-                ;(feature as any).set('finalOverlayRef', finalOv)
-              } catch (e) {
-                logWarn('[measure] setting finalOverlayRef failed', e)
-              }
-              // ensure the feature itself is removed on reset
-              try {
-                persistentRemovers.push(() => {
-                  try {
-                    src!.removeFeature(feature)
-                  } catch (e) {
-                    logWarn('[measure] removing persistent feature failed', e)
-                  }
+            // Helper: apply OL Text style on radialFeature with the given label
+            const applyAzimuthTextStyle = (label: string) => {
+              radialFeature.setStyle(
+                new Style({
+                  stroke: new Stroke({ color: '#ff8c00', width: 2 }),
+                  text: new Text({
+                    text: label,
+                    font: 'bold 13px sans-serif',
+                    fill: new Fill({ color: '#333333' }),
+                    stroke: new Stroke({ color: '#ffffff', width: 3 }),
+                    overflow: true,
+                    placement: 'line',
+                  }),
                 })
-              } catch (e) {
-                logWarn('[measure] registering persistent remover failed', e)
-              }
+              )
             }
 
-            // helper to update the final overlay content and position
-            const updateFinalOverlay = (
-              ov: Overlay | null,
-              pos: [number, number],
-              bearingVal: number,
-              radiusStr: string,
-              dh: number | null
-            ) => {
-              if (!ov) return
-              try {
-                const el = ov ? ov.getElement && ov.getElement() : null
-                if (el) {
-                  el.innerHTML =
-                    dh === null
-                      ? `${bearingVal.toFixed(1)}° — ${radiusStr} — Δh: N/A`
-                      : `${bearingVal.toFixed(1)}° — ${radiusStr} — Δh: ${dh} m`
+            // Set initial label (Δh not yet known)
+            applyAzimuthTextStyle(`${bearingText} — ${radius} — Δh: N/A`)
+
+            // ensure the circle feature itself is removed on reset
+            try {
+              persistentRemovers.push(() => {
+                try {
+                  src!.removeFeature(feature)
+                } catch (e) {
+                  logWarn('[measure] removing persistent feature failed', e)
                 }
-                ov.setPosition(pos)
-              } catch (e) {
-                logWarn('[measure] updating final overlay failed', e)
-              }
+              })
+            } catch (e) {
+              logWarn('[measure] registering persistent remover failed', e)
             }
 
             // fetch elevation for center and edge to compute Δh
-            // Use an AbortController so this async task can be cancelled on reset
-            const controller = new AbortController()
-            const abortRemover = () => {
-              try {
-                controller.abort()
-              } catch (e) {
-                /* ignore */
-              }
+            // Use a cancelled flag instead of AbortController so the signal
+            // cannot be silently aborted and cause null returns on 2nd+ measurements.
+            let elevationCancelled = false
+            const cancelElevation = () => {
+              elevationCancelled = true
             }
-            persistentRemovers.push(abortRemover)
+            persistentRemovers.push(cancelElevation)
             ;(async () => {
               try {
                 const [eCenter, eEdge] = await Promise.all([
-                  getElevation(center as [number, number], controller.signal),
-                  getElevation(edge as [number, number], controller.signal),
+                  getElevation(center as [number, number]),
+                  getElevation(edge as [number, number]),
                 ])
-
-                // If the final overlay was removed (e.g., reset called), skip updates
-                try {
-                  const overlays = map.getOverlays().getArray()
-                  if (!finalOv || overlays.indexOf(finalOv) === -1) {
-                    // cleanup the abort remover we added earlier
-                    const idx = persistentRemovers.indexOf(abortRemover)
-                    if (idx !== -1) persistentRemovers.splice(idx, 1)
-                    return
-                  }
-                } catch (e) {
-                  // if overlay inspection fails, proceed cautiously
-                }
+                // If cancelled (reset called) or radial feature was removed, skip update
+                if (elevationCancelled) return
+                if (!src!.getFeatures().includes(radialFeature)) return
 
                 if (eCenter === null || eEdge === null) {
                   logWarn(
                     '[measure][azimuth] elevation data missing for points',
-                    {
-                      eCenter,
-                      eEdge,
-                      center,
-                      edge,
-                    }
+                    { eCenter, eEdge }
                   )
-                  updateFinalOverlay(finalOv, mid, bearing, radius, null)
+                  applyAzimuthTextStyle(`${bearingText} — ${radius} — Δh: N/A`)
                 } else {
                   const dh = Math.round(eEdge - eCenter)
-                  updateFinalOverlay(finalOv, mid, bearing, radius, dh)
+                  applyAzimuthTextStyle(
+                    `${bearingText} — ${radius} — Δh: ${dh} m`
+                  )
                 }
               } catch (err) {
-                // fetch may be aborted or fail; log and try to update safely
                 logError('[measure][azimuth] elevation request failed', err)
-                try {
-                  const overlays = map.getOverlays().getArray()
-                  if (!finalOv || overlays.indexOf(finalOv) === -1) return
-                } catch (e) {
-                  // ignore
+                if (
+                  !elevationCancelled &&
+                  src!.getFeatures().includes(radialFeature)
+                ) {
+                  applyAzimuthTextStyle(`${bearingText} — ${radius} — Δh: N/A`)
                 }
-                updateFinalOverlay(finalOv, mid, bearing, radius, null)
               } finally {
-                // remove the abort remover now that the async work is done
-                const idx = persistentRemovers.indexOf(abortRemover)
+                const idx = persistentRemovers.indexOf(cancelElevation)
                 if (idx !== -1) persistentRemovers.splice(idx, 1)
               }
             })()
           }
         } else {
-          feature.setStyle(MEASURE_STYLE)
+          // style already applied by createPersistentMeasurement (stroke + text)
         }
         // mark as measurement for easy reset
         feature.set('isMeasurement', true)
@@ -708,6 +660,16 @@ export default function useMeasure() {
       drawInteraction.value.setActive(false)
       map.removeInteraction(drawInteraction.value as unknown as any)
       drawInteraction.value = null
+    }
+    // Clean up keyup listener immediately (it's tied to the now-removed interaction)
+    if (activeKeyupRemover) {
+      try {
+        const kIdx = persistentRemovers.indexOf(activeKeyupRemover)
+        if (kIdx !== -1) persistentRemovers.splice(kIdx, 1)
+        activeKeyupRemover() // sets activeKeyupRemover = null internally
+      } catch (e) {
+        logWarn('[measure] removeKeyupListener in deactivate failed', e)
+      }
     }
     drawTooltip.remove()
     if (pointerMoveKey.value) {

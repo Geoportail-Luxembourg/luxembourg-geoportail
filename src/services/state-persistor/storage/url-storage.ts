@@ -108,7 +108,8 @@ export class UrlStorage implements Storage {
     const params = new URLSearchParams(
       new URL(window.location.toString()).search
     )
-    params.set(encodeURIComponent(key), encodeURIComponent(value))
+    // URLSearchParams.set() already encodes automatically — no need for encodeURIComponent
+    params.set(key, value)
 
     try {
       window.history.replaceState(null, '', '?' + params.toString())
@@ -118,8 +119,8 @@ export class UrlStorage implements Storage {
   }
 
   getItem(key: string): string | null {
-    const value = this.getSnappedUrl().searchParams.get(key)
-    return value !== null ? decodeURIComponent(value) : value
+    // URLSearchParams.get() already decodes automatically
+    return this.getSnappedUrl().searchParams.get(key)
   }
 
   removeItem(key: string) {

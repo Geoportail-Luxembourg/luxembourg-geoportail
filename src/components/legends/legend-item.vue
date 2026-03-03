@@ -43,7 +43,7 @@ async function getLayerLegend() {
 </script>
 
 <template>
-  <!-- Has legend -->
+  <!-- Has HTML legend (internal layers) -->
   <div
     class="lux-legend"
     v-if="layerMetadata && layerMetadata.legendHtml?.innerHTML"
@@ -52,6 +52,11 @@ async function getLayerLegend() {
     <div
       v-dompurify-html="translate(layerMetadata.legendHtml?.innerHTML)"
     ></div>
+  </div>
+  <!-- Has image legend URL (remote WMS/WMTS layers) -->
+  <div class="lux-legend" v-else-if="layerMetadata && layerMetadata.legendUrl">
+    <slot name="title" />
+    <img :src="layerMetadata.legendUrl" :alt="t('Legend')" />
   </div>
   <!-- No legend, display error message if asked -->
   <div v-else-if="!layerMetadata?.hasLegend && displayEmptyLegend">

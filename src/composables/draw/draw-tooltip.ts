@@ -6,6 +6,8 @@ import { unByKey } from 'ol/Observable'
 import { Circle, Geometry, LineString, Polygon } from 'ol/geom'
 import OlMap from 'ol/Map'
 import { DrawEvent } from 'ol/interaction/Draw'
+import Feature from 'ol/Feature'
+import { Style, Stroke, Fill, Text } from 'ol/style'
 import { getLength, getArea } from '@/services/common/measurement.utils'
 import { formatLength, formatArea } from '@/services/common/formatting.utils'
 
@@ -38,72 +40,79 @@ class DrawTooltip {
   }
 
   /**
-   * Create a persistent measurement overlay anchored at the middle of the
-   * provided geometry. Returns a disposer function to remove the overlay.
+   * Create a persistent measurement label by applying an OL Text style directly
+   * on the feature. This replaces the HTML overlay so the label is encoded by
+   * mapfishprint and appears in printed output.
+   * Returns a disposer function that resets the feature style.
    */
-  public createPersistentMeasurement(map: OlMap, geometry: Geometry) {
-    const el = document.createElement('div')
-    el.classList.add('lux-tooltip')
-
-    const overlay = new Overlay({
-      element: el,
-      offset: [0, -15],
-      positioning: 'bottom-center',
-      stopEvent: false,
-    })
-    map.addOverlay(overlay)
-
+  public createPersistentMeasurement(
+    map: OlMap,
+    geometry: Geometry,
+    feature: Feature
+  ) {
     const proj = map.getView().getProjection()
 
-    const update = () => {
-      let coord: Coordinate | undefined = undefined
-      let output = ''
-      if (geometry.getType() === 'LineString') {
+    const isLine = geometry.getType() === 'LineString'
+    const isPoly = geometry.getType() === 'Polygon'
+
+    const measureStroke = new Stroke({
+      color: '#ff8c00',
+      width: isLine ? 4 : 3,
+    })
+    const measureFill = isPoly
+      ? new Fill({ color: 'rgba(255,140,0,0.15)' })
+      : undefined
+    const textFill = new Fill({ color: '#333333' })
+    const textStroke = new Stroke({ color: '#ffffff', width: 3 })
+
+    const getLabel = (): { text: string; coord: Coordinate | undefined } => {
+      let coord: Coordinate | undefined
+      let text = ''
+      if (isLine) {
         const geom = geometry as LineString
         coord = geom.getCoordinateAt(0.5)
-        if (coord != null) {
-          output = formatLength(getLength(geom, proj), 1)
-        }
-      } else if (geometry.getType() === 'Polygon') {
+        if (coord) text = formatLength(getLength(geom, proj), 1)
+      } else if (isPoly) {
         const geom = geometry as Polygon
-        const verticesCount = geom.getCoordinates()[0].length
-        if (verticesCount > 2) {
-          coord = geom.getInteriorPoint().getCoordinates()
-        }
-        if (coord != null) {
-          output = formatArea(getArea(geom))
-        }
+        const verts = geom.getCoordinates()[0].length
+        if (verts > 2) coord = geom.getInteriorPoint().getCoordinates()
+        if (coord) text = formatArea(getArea(geom))
       }
-
-      el.innerText = output
-      overlay.setPosition(coord)
+      return { text, coord }
     }
 
-    const key = listen(geometry, 'change', update, this)
-    update()
+    const applyStyle = () => {
+      const { text } = getLabel()
+      feature.setStyle(
+        new Style({
+          stroke: measureStroke,
+          fill: measureFill,
+          text: text
+            ? new Text({
+                text,
+                font: 'bold 13px sans-serif',
+                fill: textFill,
+                stroke: textStroke,
+                overflow: true,
+              })
+            : undefined,
+        })
+      )
+    }
+
+    applyStyle()
+
+    // Keep style updated if geometry changes (shouldn't happen after drawend, but defensive)
+    const key = listen(geometry, 'change', applyStyle, this)
 
     return () => {
-      // Remove overlay from map first. In some OL implementations this also
-      // removes the overlay's element from the DOM; in others it may not,
-      // so we defensively remove the element if it remains attached to avoid
-      // leaving orphan nodes.
-      try {
-        map.removeOverlay(overlay)
-      } catch (e) {
-        // ignore
-      }
       try {
         unByKey(key)
-      } catch (e) {
+      } catch (_) {
         // ignore
       }
-      try {
-        if (el.parentNode) {
-          el.parentNode.removeChild(el)
-        }
-      } catch (e) {
-        // ignore failures removing the element, keep cleanup best-effort
-      }
+      // Reset to no explicit style so the layer default applies
+      feature.setStyle(undefined)
     }
   }
 

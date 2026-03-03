@@ -10,6 +10,8 @@ export interface LayerMetadataModel {
   responsibleParty?: ResponsibleParty
   metadataLink?: string
   legendHtml?: HTMLElement
+  /** Legend image URL for remote WMS/WMTS layers (extracted from capabilities styles) */
+  legendUrl?: string
   hasLegend?: boolean
   isError?: boolean
 }
