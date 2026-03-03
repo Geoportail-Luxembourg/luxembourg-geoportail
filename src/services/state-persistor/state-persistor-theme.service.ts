@@ -1,6 +1,7 @@
 import { watch, watchEffect, WatchStopHandle } from 'vue'
 
 import { useThemeStore } from '@/stores/config.store'
+import useThemes from '@/composables/themes/themes.composable'
 
 import { SP_KEY_THEME } from './state-persistor.model'
 import { storageHelper } from './storage/storage.helper'
@@ -39,8 +40,23 @@ class StatePersistorThemeService {
     const theme = <string | undefined>storageHelper.getValue(SP_KEY_THEME)
 
     if (theme) {
-      const { setTheme } = useThemeStore()
-      setTheme(theme)
+      const themeStore = useThemeStore()
+      themeStore.setTheme(theme)
+
+      // When opening a direct link, the themes config is not loaded yet when
+      // restore() is called, so setThemeZooms cannot find the theme metadata.
+      // Watch for the theme object (populated once loadThemes() completes) and
+      // apply the zoom constraints as soon as the data is available.
+      const stopWatch = watch(
+        () => themeStore.theme,
+        themeData => {
+          if (themeData) {
+            useThemes().setThemeZooms(themeData.name)
+            stopWatch()
+          }
+        },
+        { immediate: true }
+      )
     }
   }
 }

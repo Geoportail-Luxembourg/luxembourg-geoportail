@@ -144,6 +144,7 @@ export default function useThemes() {
     findBgLayerByName,
     findAnyLayerById,
     setTheme,
+    setThemeZooms,
     findThemeNamesByLayerId,
   }
 }
