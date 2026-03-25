@@ -90,6 +90,7 @@ export class DrawRouteInteraction extends PointerInteraction {
   private sketchLine_: Feature | null = null
   private sketchCoords_: Coordinate[] = []
   private finishCoordinate_: Coordinate | null = null
+  private cursorPoint_: Feature | null = null // point bleu visible avant le 1er clic
 
   // Map matching state
   private lastWaypoints_: string = ''
@@ -208,6 +209,9 @@ export class DrawRouteInteraction extends PointerInteraction {
     }
 
     this.updateSketchFeatures_()
+
+    // Notify listeners that drawing has started (e.g. to activate tooltip)
+    this.dispatchEvent(new DrawRouteEvent('drawstart', this.sketchFeature_))
   }
 
   /**
@@ -472,6 +476,12 @@ export class DrawRouteInteraction extends PointerInteraction {
       this.clickTimeout_ = null
     }
 
+    // Remove pre-draw cursor point if still present
+    if (this.cursorPoint_ && this.source_) {
+      this.source_.removeFeature(this.cursorPoint_)
+      this.cursorPoint_ = null
+    }
+
     if (sketchFeature) {
       // Remove sketch features from source
       if (this.source_) {
@@ -515,7 +525,27 @@ export class DrawRouteInteraction extends PointerInteraction {
    */
   private handlePointerMove_(event: MapBrowserEvent<any>): boolean {
     if (this.sketchFeature_) {
+      // Drawing in progress: update the sketch line
       this.modifyDrawing_(event.coordinate)
+      // Hide the pre-draw cursor point if it was shown
+      if (this.cursorPoint_ && this.source_) {
+        this.source_.removeFeature(this.cursorPoint_)
+        this.cursorPoint_ = null
+      }
+    } else {
+      // Before the first click: show / move the cursor guide point
+      if (!this.cursorPoint_) {
+        this.cursorPoint_ = new Feature({
+          geometry: new Point(event.coordinate),
+        })
+        this.cursorPoint_.setStyle(this.style_)
+        if (this.source_) {
+          this.source_.addFeature(this.cursorPoint_)
+        }
+      } else {
+        const geom = this.cursorPoint_.getGeometry() as Point
+        geom.setCoordinates(event.coordinate)
+      }
     }
     return true
   }
@@ -574,11 +604,9 @@ function handleEvent_(
     return false
   }
 
-  // Handle pointer move for sketch update
+  // Handle pointer move for sketch update and pre-draw cursor point
   if (event.type === 'pointermove') {
-    if (self.finishCoordinate_) {
-      self.modifyDrawing_(event.coordinate)
-    }
+    self.handlePointerMove_(event)
   }
 
   // Let the pointer interaction handle other events
@@ -601,11 +629,8 @@ function handleUpEvent_(this: DrawRouteInteraction): boolean {
 }
 
 /**
- * Handle move event
+ * Handle move event - no-op, handled in handleEvent_ to cover both pre-draw and in-draw moves
  */
-function handleMoveEvent_(
-  this: DrawRouteInteraction,
-  event: MapBrowserEvent<any>
-): boolean {
-  return (this as any).handlePointerMove_(event)
+function handleMoveEvent_(this: DrawRouteInteraction): boolean {
+  return true
 }
