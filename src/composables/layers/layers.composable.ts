@@ -73,21 +73,47 @@ export default function useLayers() {
     try {
       const timeConfig = JSON.parse(layer.metadata.time_config)
 
+      // Preserve widget and mode already set by the theme config, so they are
+      // not overridden by the local defaults derived from time_config.
+      const themeWidget = layer.time?.widget
+      const themeMode = layer.time?.mode
+
       // Handle time_links -> time_layers (WMTS case)
       if (timeConfig.time_links && typeof timeConfig.time_links === 'object') {
         layer.metadata.time_layers = timeConfig.time_links
 
         // Create time config for WMTS layers
+        // time_links keys may be short dates like "2001-08" or "2001-08-01"; normalise them to
+        // full ISO 8601 strings so that `new Date(value)` is always valid across all browsers.
+        const normalizeToISO = (key: string): string => {
+          // Already a full ISO string (contains 'T' or is longer than 10 chars with timezone)
+          if (key.includes('T') || key.includes('Z')) return key
+          // "YYYY-MM" → treat as first day of the month UTC
+          const parts = key.split('-')
+          if (parts.length === 2) return `${parts[0]}-${parts[1]}-01T00:00:00Z`
+          // "YYYY-MM-DD" → add time
+          if (parts.length === 3) return `${key}T00:00:00Z`
+          return key
+        }
+
         const timeKeys = Object.keys(timeConfig.time_links)
         if (timeKeys.length > 0) {
-          // Sort keys to get min/max
-          timeKeys.sort()
+          const isoKeys = timeKeys.map(normalizeToISO).sort()
+          // Also expose the ISO-keyed version of time_layers for the slider values
+          const isoTimeLayers: Record<string, string> = {}
+          timeKeys.forEach(k => {
+            isoTimeLayers[normalizeToISO(k)] = timeConfig.time_links[k]
+          })
+          layer.metadata.time_layers = isoTimeLayers
+
           layer.time = {
-            minValue: timeKeys[0],
-            maxValue: timeKeys[timeKeys.length - 1],
-            mode: LayerTimeMode.VALUE,
-            resolution: TimeResolution.YEAR, // Default for WMTS time links
-            widget: LayerTimeWidget.DATEPICKER,
+            minValue: isoKeys[0],
+            maxValue: isoKeys[isoKeys.length - 1],
+            values: isoKeys,
+            // Use theme-provided values when available; fall back to local defaults
+            mode: themeMode ?? LayerTimeMode.VALUE,
+            resolution: TimeResolution.MONTH, // time_links are typically per-month snapshots
+            widget: themeWidget ?? LayerTimeWidget.DATEPICKER,
           }
         }
       }
@@ -121,8 +147,28 @@ export default function useLayers() {
 
       // Handle default_time
       if (timeConfig.default_time && layer.time) {
-        layer.time.minDefValue = timeConfig.default_time
-        layer.time.maxDefValue = timeConfig.default_time
+        // default_time may be a short key like "2025-05"; resolve it to the corresponding
+        // ISO value in time_layers (if available) or normalise it the same way we do for keys.
+        const rawDefault = timeConfig.default_time as string
+        const isoDefault =
+          layer.metadata.time_layers?.[rawDefault] !== undefined
+            ? // time_layers already uses ISO keys at this point
+              Object.keys(layer.metadata.time_layers ?? {}).find(k =>
+                k.startsWith(
+                  rawDefault.includes('T')
+                    ? rawDefault
+                    : `${rawDefault.split('-').slice(0, 2).join('-')}`
+                )
+              ) ?? rawDefault
+            : rawDefault.includes('T') || rawDefault.includes('Z')
+            ? rawDefault
+            : rawDefault.split('-').length === 2
+            ? `${rawDefault}-01T00:00:00Z`
+            : rawDefault.split('-').length === 3
+            ? `${rawDefault}T00:00:00Z`
+            : rawDefault
+        layer.time.minDefValue = isoDefault
+        layer.time.maxDefValue = isoDefault
       }
     } catch (error) {
       // eslint-disable-next-line no-console

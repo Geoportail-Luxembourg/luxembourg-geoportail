@@ -34,7 +34,16 @@ export function formatTimeValue(
   toUTC?: boolean
 ) {
   const { t } = useTranslation()
-  const dateISOString = new Date(time).toISOString()
+  const parsedDate = new Date(time)
+  if (isNaN(parsedDate.getTime())) {
+    // eslint-disable-next-line no-console
+    console.error(
+      '[formatTimeValue] Invalid date value received:',
+      time,
+      typeof time
+    )
+  }
+  const dateISOString = parsedDate.toISOString()
 
   const resolutionPatterns = {
     [TimeResolution.YEAR]: t('yyyy'),

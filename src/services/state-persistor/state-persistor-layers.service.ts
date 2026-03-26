@@ -125,8 +125,10 @@ class StatePersistorLayersService implements StatePersistorService {
     const defaultTimes = time.split('/')
 
     // Use min and max default values to restore previous state
-    layer.currentTimeMinValue = defaultTimes[0]
-    layer.currentTimeMaxValue = defaultTimes[1]
+    // Guard against empty strings coming from a misaligned permalink (e.g. a layer
+    // that has since been removed shifts the time segments for remaining layers).
+    if (defaultTimes[0]) layer.currentTimeMinValue = defaultTimes[0]
+    if (defaultTimes[1]) layer.currentTimeMaxValue = defaultTimes[1]
   }
 
   getOpacitiesFromStorage() {
