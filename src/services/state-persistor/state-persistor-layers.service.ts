@@ -4,7 +4,14 @@ import { storeToRefs } from 'pinia'
 import { useMapStore } from '@/stores/map.store'
 import { Layer } from '@/stores/map.store.model'
 import { useThemeStore } from '@/stores/config.store'
+import i18next from 'i18next'
+import { useAppStore } from '@/stores/app.store'
+import { useAlertNotificationsStore } from '@/stores/alert-notifications.store'
+import { AlertNotificationType } from '@/stores/alert-notifications.store.model'
 import { useMatomo } from '@/composables/matomo/matomo.composable'
+import useLayers from '@/composables/layers/layers.composable'
+import useThemes from '@/composables/themes/themes.composable'
+import { remoteLayersService } from '@/services/remote-layers/remote-layers.service'
 
 import {
   SP_KEY_LAYERS,
@@ -18,6 +25,8 @@ import {
 } from './state-persistor.model'
 import { storageLayerMapper } from './state-persistor-layer.mapper'
 import { storageHelper } from './storage/storage.helper'
+
+const STORAGE_SEPARATOR = '-'
 
 class StatePersistorLayersService implements StatePersistorService {
   bootstrap() {
@@ -92,6 +101,106 @@ class StatePersistorLayersService implements StatePersistorService {
     layersToAdd.forEach(layer => {
       matomo.trackLayerAdd(layer.name)
     })
+
+    // If some layers from the URL could not be resolved (e.g. they belong to
+    // private themes only available after authentication), open the login form
+    // and watch for a themes reload (triggered after a successful login) so we
+    // can add the missing layers once the user is authenticated.
+    if (version !== 2) {
+      const rawLayersValue = <string | null>(
+        storageHelper.getValue(SP_KEY_LAYERS)
+      )
+      if (rawLayersValue) {
+        const requestedIds = rawLayersValue
+          .split('%2D')
+          .join('-')
+          .split(STORAGE_SEPARATOR)
+          .filter(id => !remoteLayersService.isRemoteLayer(id))
+          .map(id => parseInt(id, 10))
+          .filter(id => !isNaN(id))
+
+        const resolvedIds = new Set(layersToAdd.map(l => l.id))
+        const missingIds = requestedIds.filter(id => !resolvedIds.has(id))
+
+        if (missingIds.length > 0) {
+          // Open auth form so the user can log in
+          useAppStore().toggleAuthFormOpen(true)
+
+          // Notify the user that some layers require authentication
+          useAlertNotificationsStore().addNotification(
+            i18next.t(
+              'Certaines couches sont protégées. Veuillez vous connecter avec un utilisateur disposant les droits de visualiser cette couche.'
+            ),
+            AlertNotificationType.WARNING
+          )
+
+          // Watch for themes to reload after login and add the still-missing layers
+          const themeStore = useThemeStore()
+          const stopWatch = watch(
+            () => themeStore.themes,
+            themes => {
+              if (!themes) return
+              // themes has changed (reloaded after login) — try to resolve the missing layers
+              const themesComposable = useThemes()
+              const layersComposable = useLayers()
+              const nowResolved: Layer[] = []
+
+              for (const id of missingIds) {
+                const found = themesComposable.findById(id)
+                if (found) {
+                  const initialised = layersComposable.initLayer(
+                    found as unknown as Layer
+                  )
+                  if (initialised) nowResolved.push(initialised)
+                }
+              }
+
+              if (nowResolved.length > 0) {
+                // Restore opacities for the newly added layers using the
+                // original opacities string from the URL, aligned by position.
+                const rawOpacities = <string | null>(
+                  storageHelper.getValue(SP_KEY_OPACITIES)
+                )
+                const rawTimes = <string | null>(
+                  storageHelper.getValue(SP_KEY_TIME_SELECTIONS)
+                )
+                // Reconstruct full ordered list (resolved + newly resolved) to
+                // apply opacities/times at their original URL index positions.
+                const allRequestedIds = rawLayersValue
+                  .split('%2D')
+                  .join('-')
+                  .split(STORAGE_SEPARATOR)
+                const opacities = rawOpacities
+                  ? rawOpacities.split(STORAGE_SEPARATOR).map(Number)
+                  : []
+                const times = rawTimes ? rawTimes.split('--') : []
+
+                nowResolved.forEach(layer => {
+                  const idx = allRequestedIds.indexOf(String(layer.id))
+                  if (idx !== -1) {
+                    if (opacities[idx] !== undefined)
+                      layer.opacity = opacities[idx]
+                    if (times[idx]) {
+                      const defaultTimes = times[idx].split('/')
+                      if (defaultTimes[0])
+                        layer.currentTimeMinValue = defaultTimes[0]
+                      if (defaultTimes[1])
+                        layer.currentTimeMaxValue = defaultTimes[1]
+                    }
+                  }
+                })
+
+                mapStore.addLayers(...nowResolved)
+                const matomo = useMatomo()
+                nowResolved.forEach(l => matomo.trackLayerAdd(l.name))
+              }
+
+              stopWatch && stopWatch()
+            }
+          )
+        }
+      }
+    }
   }
 
   restoreLayersOpacities(layers: (Layer | undefined)[], version: number) {

@@ -11,6 +11,7 @@ export const useThemeStore = defineStore(
   'config',
   () => {
     const config: ShallowRef<ConfigModel | undefined> = shallowRef()
+    const themesLoading = ref(false)
     const themeName = ref(DEFAULT_CURRENT_THEME)
     const themes = computed(() => config.value?.themes)
     const theme = computed(() =>
@@ -42,6 +43,7 @@ export const useThemeStore = defineStore(
     }
 
     async function loadThemes() {
+      themesLoading.value = true
       // Build themes URL from VITE_V3_API_HOST or default to /themes
       const base = (import.meta.env.VITE_V3_API_HOST as string) || ''
       const baseNoSlash = base.replace(/\/$/, '')
@@ -67,10 +69,12 @@ export const useThemeStore = defineStore(
             )
             setThemes(themesApiFixture())
           }
+          themesLoading.value = false
           return
         }
 
         setThemes(data)
+        themesLoading.value = false
       } catch (error) {
         // Fallback to fixture to keep behaviour stable in dev/test
         if (import.meta.env.DEV || import.meta.env.MODE === 'e2e') {
@@ -79,12 +83,14 @@ export const useThemeStore = defineStore(
           )
           setThemes(themesApiFixture())
         }
+        themesLoading.value = false
       }
     }
 
     return {
       config,
       themes,
+      themesLoading,
       themeName,
       theme,
       bgLayers,
