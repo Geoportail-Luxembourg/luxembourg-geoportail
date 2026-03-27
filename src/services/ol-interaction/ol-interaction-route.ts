@@ -154,8 +154,8 @@ class DrawRoute extends Pointer {
     this.minPoints_ = options.minPoints
       ? options.minPoints
       : this.mode_ === Mode_.POLYGON
-      ? 3
-      : 2
+        ? 3
+        : 2
     this.maxPoints_ = options.maxPoints ? options.maxPoints : Infinity
     this.finishCondition_ = options.finishCondition
       ? options.finishCondition

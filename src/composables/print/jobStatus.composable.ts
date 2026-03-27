@@ -19,9 +19,8 @@ export function useJobStatus() {
 
   const pollJobStatus = async (jobId: string) => {
     try {
-      const { status, done, downloadURL } = await printService.getJobStatus(
-        jobId
-      )
+      const { status, done, downloadURL } =
+        await printService.getJobStatus(jobId)
       jobStatus.value = status
       if (jobInError(status)) {
         error.value = true

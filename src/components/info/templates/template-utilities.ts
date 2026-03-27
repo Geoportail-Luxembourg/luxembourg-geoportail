@@ -196,7 +196,7 @@ export function joinAttributes(
  * @param prefix
  */
 export function translateAndjoin(textArray: string[], prefix: string) {
-  if (typeof textArray === undefined) {
+  if (typeof textArray === 'undefined') {
     return ''
   }
 

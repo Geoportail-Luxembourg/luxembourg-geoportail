@@ -64,9 +64,8 @@ export const useThemeStore = defineStore(
         const data = await resp.json()
         if (!Array.isArray(data?.themes) || data.themes.length === 0) {
           if (import.meta.env.DEV || import.meta.env.MODE === 'e2e') {
-            const { themesApiFixture } = await import(
-              '@/__fixtures__/themes.api.fixture'
-            )
+            const { themesApiFixture } =
+              await import('@/__fixtures__/themes.api.fixture')
             setThemes(themesApiFixture())
           }
           themesLoading.value = false
@@ -78,9 +77,8 @@ export const useThemeStore = defineStore(
       } catch (error) {
         // Fallback to fixture to keep behaviour stable in dev/test
         if (import.meta.env.DEV || import.meta.env.MODE === 'e2e') {
-          const { themesApiFixture } = await import(
-            '@/__fixtures__/themes.api.fixture'
-          )
+          const { themesApiFixture } =
+            await import('@/__fixtures__/themes.api.fixture')
           setThemes(themesApiFixture())
         }
         themesLoading.value = false

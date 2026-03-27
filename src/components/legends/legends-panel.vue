@@ -73,7 +73,8 @@ onActivated(() => layersLegendsStatus.clear())
           :key="bgLayer.id"
           :layer="bgLayer"
           @has-legend="
-            (hasLegend: boolean) => bgLayer && layersLegendsStatus.set(bgLayer.id, hasLegend)
+            (hasLegend: boolean) =>
+              bgLayer && layersLegendsStatus.set(bgLayer.id, hasLegend)
           "
           @removed-legend="
             () => bgLayer && layersLegendsStatus.delete(bgLayer.id)

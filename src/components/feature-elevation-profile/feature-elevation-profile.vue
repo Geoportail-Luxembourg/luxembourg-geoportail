@@ -206,8 +206,8 @@ function onOutProfile() {
         isLoading
           ? t('Please wait, the profile is loading.')
           : isDrawing
-          ? t('Draw a line on the map to display an elevation profile.')
-          : ''
+            ? t('Draw a line on the map to display an elevation profile.')
+            : ''
       }}</span>
     </div>
 

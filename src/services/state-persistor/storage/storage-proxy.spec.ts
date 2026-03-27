@@ -52,7 +52,7 @@ describe('Storage Proxy', () => {
       describe('when read storage for this specific key returns a storage', () => {
         it('returns the value for the key', () => {
           storageProxy.storageForKey = vi.fn(
-            () => ({ getItem: () => 'Value in storage' } as unknown as Storage)
+            () => ({ getItem: () => 'Value in storage' }) as unknown as Storage
           )
 
           expect(storageProxy.getValue('any key')).toBe('Value in storage')

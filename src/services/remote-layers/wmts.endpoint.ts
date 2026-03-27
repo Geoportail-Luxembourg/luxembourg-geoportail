@@ -50,7 +50,7 @@ export class WmtsEndpoint {
               title: layer.Title,
               tileMatrixSetLink: layer.TileMatrixSetLink,
               wgs84BoundingBox: layer.WGS84BoundingBox,
-            } as RemoteLayer)
+            }) as RemoteLayer
         ),
       },
     ]

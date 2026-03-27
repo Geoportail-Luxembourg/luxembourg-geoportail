@@ -40,9 +40,8 @@ export default function useFeatureInfo() {
   const { toggleInfoOpen } = useAppStore()
   const { layersOpen, myMapsOpen } = storeToRefs(useAppStore())
   const { findById } = useThemes()
-  const { drawStateActive, editStateActive, drawnFeatures } = storeToRefs(
-    useDrawStore()
-  )
+  const { drawStateActive, editStateActive, drawnFeatures } =
+    storeToRefs(useDrawStore())
   const { locationInfoCoords, isStreetviewActive } = storeToRefs(
     useLocationInfoStore()
   )

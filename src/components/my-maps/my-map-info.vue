@@ -218,7 +218,9 @@ function importFeatures() {
       id="gpx-kml-import"
       accept=".gpx,.kml,.kmz,.geojson"
       :aria-label="t('Importer un fichier GPX/KML/KMZ/GeoJSON')"
-      v-on:change="(e) => selectedFile = (e.target as HTMLInputElement).files?.[0] || null"
+      v-on:change="
+        e => (selectedFile = (e.target as HTMLInputElement).files?.[0] || null)
+      "
     />
 
     <!-- Dropdown menu -->

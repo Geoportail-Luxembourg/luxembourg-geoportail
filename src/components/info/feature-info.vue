@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { VNodeRef } from 'vue'
+import { ComponentPublicInstance } from 'vue'
 import { storeToRefs } from 'pinia'
 import { usePrintStore } from '@/stores/print.store'
 import { Feature } from 'ol'
@@ -68,8 +68,8 @@ const map = useMap().getOlMap()
 
 // For print, save ref to element to access content in print composable
 const { featureInfoPrintableRef } = storeToRefs(usePrintStore())
-const setPrintableRef = (el: VNodeRef | undefined) => {
-  return (featureInfoPrintableRef.value = el)
+const setPrintableRef = (el: Element | ComponentPublicInstance | null) => {
+  featureInfoPrintableRef.value = el ?? undefined
 }
 
 const templates = {

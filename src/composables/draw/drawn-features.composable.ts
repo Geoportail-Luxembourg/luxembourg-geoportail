@@ -23,8 +23,8 @@ export default function useDrawnFeatures() {
       drawStateActive.value === 'drawCircle'
         ? 'drawnCircle'
         : drawStateActive.value === 'drawLabel'
-        ? 'drawnLabel'
-        : `drawn${featureGeomName}`
+          ? 'drawnLabel'
+          : `drawn${featureGeomName}`
     ) as DrawnFeatureType
 
     const label =

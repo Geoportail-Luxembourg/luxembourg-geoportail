@@ -21,7 +21,7 @@ export interface WmtsCapabilitiesLayer {
         MinTileCol: number
         MaxTileCol: number
       }[]
-    }
+    },
   ]
   Title: string
   WGS84BoundingBox: number[]
@@ -58,7 +58,7 @@ export interface RemoteLayer {
         MinTileCol: number
         MaxTileCol: number
       }[]
-    }
+    },
   ]
   wgs84BoundingBox?: number[]
 }

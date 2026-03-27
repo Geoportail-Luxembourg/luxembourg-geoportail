@@ -53,12 +53,15 @@ export function throttle<T extends (...args: any[]) => void>(
       lastRan = Date.now()
     } else {
       clearTimeout(lastFunc)
-      lastFunc = setTimeout(function () {
-        if (Date.now() - lastRan >= limit) {
-          fn.apply(context, args)
-          lastRan = Date.now()
-        }
-      }, limit - (Date.now() - lastRan))
+      lastFunc = setTimeout(
+        function () {
+          if (Date.now() - lastRan >= limit) {
+            fn.apply(context, args)
+            lastRan = Date.now()
+          }
+        },
+        limit - (Date.now() - lastRan)
+      )
     }
   }
 }
@@ -91,8 +94,8 @@ export function stringToBoolean(text: string | null) {
   return text?.trim() === 'true'
     ? true
     : text?.trim() === 'false'
-    ? false
-    : undefined
+      ? false
+      : undefined
 }
 
 export function isHiDpi() {

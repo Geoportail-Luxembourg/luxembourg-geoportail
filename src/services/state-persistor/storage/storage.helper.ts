@@ -12,8 +12,8 @@ class StorageHelper {
     this.intialVersion = version
       ? Math.max(2, Math.min(version, 3))
       : isV3(paramKeys)
-      ? 3
-      : 2
+        ? 3
+        : 2
 
     // Force update url version to 3
     this.setValue(SP_KEY_VERSION, 3)

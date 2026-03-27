@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { computed, Ref, ref, watch, VNodeRef } from 'vue'
+import { computed, ComponentPublicInstance, Ref, ref, watch } from 'vue'
 import { useTranslation } from 'i18next-vue'
 import { transform } from 'ol/proj'
 import { storeToRefs } from 'pinia'
@@ -91,8 +91,8 @@ watch(currentUser, user => {
 
 // For print, save ref to element to access content in print composable
 const { locationInfoPrintableRef } = storeToRefs(usePrintStore())
-const setPrintableRef = (el: VNodeRef | undefined) => {
-  return (locationInfoPrintableRef.value = el)
+const setPrintableRef = (el: Element | ComponentPublicInstance | null) => {
+  locationInfoPrintableRef.value = el ?? undefined
 }
 
 const isRapportForageVirtuelAvailable = computed(() => userRole.value === 'ACT')
@@ -267,7 +267,7 @@ watch(downloadingRepport, downloadingRepport => {
         </h3>
         <input
           aria-labelledby="short_url_title"
-          onclick="this.select();"
+          onclick="this.select()"
           class="lux-input"
           type="text"
           :value="shortUrl"

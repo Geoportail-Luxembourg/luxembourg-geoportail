@@ -46,7 +46,9 @@ const { t } = useTranslation()
       </div>
       <div>
         <a
-          :href="<string>(feature.attributes['address_homepage_'+ i18next.language])"
+          :href="
+            <string>feature.attributes['address_homepage_' + i18next.language]
+          "
           >{{ t('Homepage') }}</a
         >
       </div>

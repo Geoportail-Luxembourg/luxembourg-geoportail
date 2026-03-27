@@ -187,9 +187,13 @@ watch(sortableFeatures, elem => {
         @toggleEditFeature="ontoggleEditFeature"
         @toggleDock="() => (featureEditionDocked = !featureEditionDocked)"
         @closePopup="() => (featureEditionDocked = false)"
-        @clickDelete="(featureId: DrawnFeatureId) => drawStore.removeFeature(featureId)"
+        @clickDelete="
+          (featureId: DrawnFeatureId) => drawStore.removeFeature(featureId)
+        "
         @continueLine="() => onContinueLine(<DrawnFeature>feature)"
-        @submitFeature="(feature: DrawnFeature) => drawStore.updateDrawnFeature(feature)"
+        @submitFeature="
+          (feature: DrawnFeature) => drawStore.updateDrawnFeature(feature)
+        "
         @submitNewConcentricCircle="onSubmitNewConcentricCircle"
       />
     </li>

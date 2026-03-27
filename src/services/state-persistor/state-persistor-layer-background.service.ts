@@ -71,8 +71,8 @@ class StatePersistorBgLayerService implements StatePersistorService {
     const bgLayer = !bgLayerName
       ? storageLayerMapper.bgLayerNameToBgLayer(DEFAULT_BGLAYER_NAME)
       : version === 2
-      ? this.getBgLayerFromStorageV2(bgLayerName)
-      : storageLayerMapper.bgLayerNameToBgLayer(bgLayerName)
+        ? this.getBgLayerFromStorageV2(bgLayerName)
+        : storageLayerMapper.bgLayerNameToBgLayer(bgLayerName)
 
     return bgLayer
   }
