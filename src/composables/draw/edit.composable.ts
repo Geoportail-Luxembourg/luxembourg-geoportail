@@ -125,7 +125,7 @@ export default function useEdit() {
   }
 
   /**
-   * Attach keyboard listener for DEL key
+   * Attach keyboard listener for Backspace key
    */
   function attachKeyListener() {
     if (!keyupListenerKey) {
