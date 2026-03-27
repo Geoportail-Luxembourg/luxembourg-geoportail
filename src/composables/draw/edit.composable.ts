@@ -116,7 +116,7 @@ export default function useEdit() {
   }
 
   /**
-   * Handle DEL key press to remove the last point from the edited feature
+   * Handle Backspace key press to remove the last point from the edited feature
    */
   function onKeyUp(event: KeyboardEvent) {
     if (event.key === 'Backspace' && originalFeature) {
