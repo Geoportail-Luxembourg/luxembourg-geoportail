@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { computed, watch } from 'vue'
+import { computed } from 'vue'
 import { storeToRefs } from 'pinia'
 
 import useThemes from '@/composables/themes/themes.composable'
@@ -8,7 +8,6 @@ import { useAppStore } from '@/stores/app.store'
 
 import ThemeGrid from './theme-grid.vue'
 import ThemeSelectorButton from './theme-selector-button.vue'
-import { themeSelectorService } from '@/components/theme-selector/theme-selector.service'
 
 const appStore = useAppStore()
 const { setThemeGridOpen } = appStore
@@ -21,16 +20,6 @@ const themes = computed(
     themesFromStore.value?.filter(
       theme => theme.metadata?.display_in_switcher === true
     ) || []
-)
-
-watch(
-  themeName,
-  themeName => {
-    if (themeName) {
-      themeSelectorService.setCurrentThemeColors(themeName)
-    }
-  },
-  { immediate: true }
 )
 
 function toggleThemesGrid() {

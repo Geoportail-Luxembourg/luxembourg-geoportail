@@ -36,6 +36,8 @@ import useMvtStyles from '@/composables/mvt-styles/mvt-styles.composable'
 import useMyMaps from '@/composables/my-maps/my-maps.composable'
 import { useMatomo } from '@/composables/matomo/matomo.composable'
 import { useAppStore } from '@/stores/app.store'
+import { useThemeStore } from '@/stores/config.store'
+import { themeSelectorService } from '@/components/theme-selector/theme-selector.service'
 const { t } = useTranslation()
 const appStore = useAppStore()
 const mvtStyleService = useMvtStyles()
@@ -68,6 +70,20 @@ statePersistorFeatureInfoService.bootstrap()
 
 // Initialize Matomo tracking
 matomo.init()
+
+// Apply theme colors as soon as themeName is set (e.g. from URL permalink),
+// regardless of which panel is open. The theme-selector.vue component does the
+// same watch but is only mounted when the layers tab is open.
+const themeStore = useThemeStore()
+watch(
+  () => themeStore.themeName,
+  themeName => {
+    if (themeName) {
+      themeSelectorService.setCurrentThemeColors(themeName)
+    }
+  },
+  { immediate: true }
+)
 
 onMounted(() => {
   useMyMaps().init()

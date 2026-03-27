@@ -177,7 +177,7 @@ describe('Draw "Line"', () => {
       cy.get('[data-cy="featItemToggleEdit"]').click()
 
       // Press DEL key to remove last point
-      cy.get('body').type('{del}')
+      cy.get('body').type('{backspace}')
 
       // Wait for profile recalculation and verify length has decreased
       cy.wait('@profile-fixture')

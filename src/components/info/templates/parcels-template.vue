@@ -1,6 +1,5 @@
-f
 <script setup lang="ts">
-import { ref, Ref, computed } from 'vue'
+import { ref, Ref, computed, watch } from 'vue'
 import i18next from 'i18next'
 import { useTranslation } from 'i18next-vue'
 import {
@@ -28,31 +27,39 @@ const expandedMeasurementNumbers = ref<Set<string>>(new Set())
 const expandedAudiences = ref<Map<string, Set<string>>>(new Map())
 const expandedDocumentTypes = ref<Map<string, Set<string>>>(new Map())
 
-// Initialiser les mesurages publics comme ouverts
+// Pure computed: derives grouped structure without side effects
 const groupedMeasurements = computed(() => {
   const measurements = props.layers.features?.[0]?.attributes?.measurements
   if (!measurements) return {}
-
-  const grouped = groupMeasurementsByHierarchy(measurements)
-
-  // Ouvrir automatiquement les mesurages qui ont des documents publics
-  Object.entries(grouped).forEach(([measurementNumber, audiences]) => {
-    if (audiences['public']) {
-      expandedMeasurementNumbers.value.add(measurementNumber)
-
-      // Ouvrir aussi les types de documents publics
-      Object.keys(audiences['public']).forEach(description => {
-        const key = `${measurementNumber}_public_${description}`
-        if (!expandedDocumentTypes.value.has(measurementNumber)) {
-          expandedDocumentTypes.value.set(measurementNumber, new Set())
-        }
-        expandedDocumentTypes.value.get(measurementNumber)!.add(key)
-      })
-    }
-  })
-
-  return grouped
+  return groupMeasurementsByHierarchy(measurements)
 })
+
+// Initialise expanded state whenever layers change (or on first mount)
+watch(
+  groupedMeasurements,
+  grouped => {
+    // Reset expansion state so stale entries from previous layers are cleared
+    expandedMeasurementNumbers.value = new Set()
+    expandedDocumentTypes.value = new Map()
+
+    // Ouvrir automatiquement les mesurages qui ont des documents publics
+    Object.entries(grouped).forEach(([measurementNumber, audiences]) => {
+      if (audiences['public']) {
+        expandedMeasurementNumbers.value.add(measurementNumber)
+
+        // Ouvrir aussi les types de documents publics
+        Object.keys(audiences['public']).forEach(description => {
+          const key = `${measurementNumber}_public_${description}`
+          if (!expandedDocumentTypes.value.has(measurementNumber)) {
+            expandedDocumentTypes.value.set(measurementNumber, new Set())
+          }
+          expandedDocumentTypes.value.get(measurementNumber)!.add(key)
+        })
+      }
+    })
+  },
+  { immediate: true }
+)
 
 function toggleMeasurementNumber(measurementNumber: string) {
   if (expandedMeasurementNumbers.value.has(measurementNumber)) {

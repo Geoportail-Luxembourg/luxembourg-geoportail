@@ -12,6 +12,7 @@ import { DrawRouteInteraction, DrawRouteEvent } from './draw-route.interaction'
 import useMap from '@/composables/map/map.composable'
 import { useDrawStore } from '@/stores/draw.store'
 import useDrawnFeatures from './drawn-features.composable'
+import drawTooltip from './draw-tooltip'
 import VectorSource from 'ol/source/Vector'
 import VectorLayer from 'ol/layer/Vector'
 
@@ -101,6 +102,13 @@ export default function useDrawRoute() {
       maxPoints: Infinity, // No limit - let user decide when to finish
       freehand: false,
       existingSketch: existingSketch || undefined, // Convert null to undefined
+    })
+
+    // Listen to drawstart event to activate the measurement tooltip
+    // @ts-ignore - Custom event type
+    drawRouteInteraction.addEventListener('drawstart', (event: any) => {
+      const drawRouteEvent = event as DrawRouteEvent
+      drawTooltip.addForFeature(map, drawRouteEvent.feature)
     })
 
     // Listen to drawend event
@@ -219,6 +227,9 @@ export default function useDrawRoute() {
    */
   function handleDrawEnd(event: DrawRouteEvent) {
     const olFeature = event.feature
+
+    // Remove the measurement tooltip (same as standard Draw interaction)
+    drawTooltip.remove()
 
     // Use generateDrawnFeature to properly handle MyMaps vs URL state
     // This will automatically set map_id based on isMyMapEditable

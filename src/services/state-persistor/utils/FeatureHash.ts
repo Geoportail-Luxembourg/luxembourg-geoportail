@@ -179,7 +179,12 @@ class FeatureHash extends TextFeature {
           const part = parts[i]
           const keyVal = part.split('*')
           let key = keyVal[0]
-          const value = keyVal[1]
+          let value = keyVal[1]
+          try {
+            value = decodeURIComponent(value)
+          } catch {
+            // keep original value if decoding fails
+          }
           if (!this.setStyle_ && FeatureHashLegacyProperties[key]) {
             key = FeatureHashLegacyProperties[key]
           }

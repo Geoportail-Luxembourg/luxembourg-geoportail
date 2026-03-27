@@ -8,6 +8,7 @@ import LayerManager from '@/components/layer-manager/layer-manager.vue'
 import SidePanelLayout from '@/components/common/side-panel-layout.vue'
 import { useAppStore } from '@/stores/app.store'
 import { useMapStore } from '@/stores/map.store'
+import { useThemeStore } from '@/stores/config.store'
 import useOffline from '@/composables/offline/offline.composable'
 
 const { t } = useTranslation()
@@ -15,6 +16,7 @@ const appStore = useAppStore()
 const { setLayersOpen } = appStore
 const { myLayersTabOpen } = storeToRefs(appStore)
 const { layers } = storeToRefs(useMapStore())
+const { themesLoading } = storeToRefs(useThemeStore())
 const showCatalogButton = computed(() => !useOffline().isOffLine.value)
 const showMyLayersTab = computed(
   () => myLayersTabOpen.value || useOffline().isOffLine.value
@@ -62,6 +64,11 @@ function onDisplayCatalog() {
         :aria-expanded="!showMyLayersTab"
       >
         {{ t('Catalog', { ns: 'client' }) }}
+        <i
+          v-if="themesLoading"
+          class="fa-solid fa-arrows-rotate animate-spin ml-1 text-xs"
+          aria-hidden="true"
+        ></i>
       </button>
     </template>
 

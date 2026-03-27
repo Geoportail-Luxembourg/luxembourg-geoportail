@@ -17,8 +17,12 @@ class DrawTooltip {
   private changeEventKey: EventsKey | null = null
 
   public add(map: OlMap, event: DrawEvent) {
+    this.addForFeature(map, event.feature)
+  }
+
+  public addForFeature(map: OlMap, feature: Feature) {
     this.createMeasureTooltip(map)
-    const geometry = event.feature.getGeometry()
+    const geometry = feature.getGeometry()
     if (geometry === undefined) return
     const proj = map.getView().getProjection()
 
