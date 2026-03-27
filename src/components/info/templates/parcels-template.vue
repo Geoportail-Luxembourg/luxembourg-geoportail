@@ -1,4 +1,3 @@
-f
 <script setup lang="ts">
 import { ref, Ref, computed } from 'vue'
 import i18next from 'i18next'
