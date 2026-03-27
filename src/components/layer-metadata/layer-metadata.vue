@@ -93,8 +93,8 @@ const apiLinks = computed<ApiLink[]>(() =>
       serviceLabel: link.serviceType.includes('OGC API')
         ? 'OGC:API'
         : link.serviceType.includes('WMS')
-        ? 'WMS'
-        : link.serviceType,
+          ? 'WMS'
+          : link.serviceType,
     }))
 )
 

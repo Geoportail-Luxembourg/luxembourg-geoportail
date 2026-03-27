@@ -170,8 +170,8 @@ export default function useMeasure() {
       mode === 'azimuth'
         ? ('Circle' as any)
         : mode === 'area'
-        ? ('Polygon' as any)
-        : ('LineString' as any)
+          ? ('Polygon' as any)
+          : ('LineString' as any)
     const interaction = new Draw({ type: drawType, source: src })
 
     // Keyboard shortcuts: ESC finishes drawing, Backspace removes last point
@@ -633,8 +633,8 @@ export default function useMeasure() {
         mode === 'azimuth'
           ? 'measure_start_instruction_azimuth'
           : mode === 'area'
-          ? 'measure_start_instruction_area'
-          : 'measure_start_instruction'
+            ? 'measure_start_instruction_area'
+            : 'measure_start_instruction'
       const pos =
         lastPointerCoord.value ?? (map.getView() && map.getView().getCenter())
       showHintOverlay(t(key) as string, pos as [number, number])

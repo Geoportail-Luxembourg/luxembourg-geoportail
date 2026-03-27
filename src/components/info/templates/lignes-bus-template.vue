@@ -53,8 +53,8 @@ const { t } = useTranslation()
               feature.attributes.category_id === 400
                 ? 'avl'
                 : feature.attributes.category_id === 401
-                ? 'rgtr'
-                : 'tice'
+                  ? 'rgtr'
+                  : 'tice'
             }`"
             target="_blank"
             >{{ feature.attributes.label }}</a

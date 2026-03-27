@@ -23,9 +23,8 @@ export default function useEdit() {
   let geometryChangeHandler: (() => void) | undefined = undefined // Store geometry change handler
   let keyupListenerKey: EventsKey | undefined = undefined // Store keyup listener key
 
-  const { editStateActive, editingFeatureId, drawnFeatures } = storeToRefs(
-    useDrawStore()
-  )
+  const { editStateActive, editingFeatureId, drawnFeatures } =
+    storeToRefs(useDrawStore())
   const { updateDrawnFeature } = useDrawStore()
   const map = useMap().getOlMap()
 

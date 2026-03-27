@@ -8,7 +8,7 @@ import { DrawnFeature } from '@/services/ol-feature/ol-feature-drawn'
 import { downloadFile, sanitizeFilename } from '@/services/utils'
 
 export abstract class ExportFeature<
-  F extends Feature<Geometry> | Feature<Geometry>[]
+  F extends Feature<Geometry> | Feature<Geometry>[],
 > {
   encodeOptions: { dataProjection: string; featureProjection: Projection }
 

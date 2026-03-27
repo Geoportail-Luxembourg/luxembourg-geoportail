@@ -153,20 +153,20 @@ export default function useLayers() {
         const isoDefault =
           layer.metadata.time_layers?.[rawDefault] !== undefined
             ? // time_layers already uses ISO keys at this point
-              Object.keys(layer.metadata.time_layers ?? {}).find(k =>
+              (Object.keys(layer.metadata.time_layers ?? {}).find(k =>
                 k.startsWith(
                   rawDefault.includes('T')
                     ? rawDefault
                     : `${rawDefault.split('-').slice(0, 2).join('-')}`
                 )
-              ) ?? rawDefault
+              ) ?? rawDefault)
             : rawDefault.includes('T') || rawDefault.includes('Z')
-            ? rawDefault
-            : rawDefault.split('-').length === 2
-            ? `${rawDefault}-01T00:00:00Z`
-            : rawDefault.split('-').length === 3
-            ? `${rawDefault}T00:00:00Z`
-            : rawDefault
+              ? rawDefault
+              : rawDefault.split('-').length === 2
+                ? `${rawDefault}-01T00:00:00Z`
+                : rawDefault.split('-').length === 3
+                  ? `${rawDefault}T00:00:00Z`
+                  : rawDefault
         layer.time.minDefValue = isoDefault
         layer.time.maxDefValue = isoDefault
       }

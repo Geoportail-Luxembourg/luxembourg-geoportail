@@ -238,8 +238,8 @@ class FeatureHash extends TextFeature {
     const featureType = this.getCastShortProperty(feature, 'isCircle')
       ? 'drawnCircle'
       : this.getCastShortProperty(feature, 'isLabel')
-      ? 'drawnLabel'
-      : `drawn${geomType?.replace('String', '')}`
+        ? 'drawnLabel'
+        : `drawn${geomType?.replace('String', '')}`
 
     const drawnFeatureStyle = <DrawnFeatureStyle>{
       showOrientation: false,

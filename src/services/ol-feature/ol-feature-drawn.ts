@@ -468,67 +468,66 @@ export class DrawnFeature extends Feature {
         if (arrowColor === undefined || arrowColor === null) {
           arrowColor = color
         }
-        ;(feature.getGeometry() as LineString)?.forEachSegment(function (
-          start,
-          end
-        ) {
-          const arrowPoint = new Point([
-            (start[0] + end[0]) / 2,
-            (start[1] + end[1]) / 2,
-          ])
-          const dx = end[0] - start[0]
-          const dy = end[1] - start[1]
+        ;(feature.getGeometry() as LineString)?.forEachSegment(
+          function (start, end) {
+            const arrowPoint = new Point([
+              (start[0] + end[0]) / 2,
+              (start[1] + end[1]) / 2,
+            ])
+            const dx = end[0] - start[0]
+            const dy = end[1] - start[1]
 
-          if (prevArrow != undefined) {
-            const pt1 = curMap.getPixelFromCoordinate(
-                arrowPoint.getCoordinates()
-              ),
-              pt2 = curMap.getPixelFromCoordinate(prevArrow.getCoordinates()),
-              w = pt2[0] - pt1[0],
-              h = pt2[1] - pt1[1]
-            distance = Math.sqrt(w * w + h * h)
+            if (prevArrow != undefined) {
+              const pt1 = curMap.getPixelFromCoordinate(
+                  arrowPoint.getCoordinates()
+                ),
+                pt2 = curMap.getPixelFromCoordinate(prevArrow.getCoordinates()),
+                w = pt2[0] - pt1[0],
+                h = pt2[1] - pt1[1]
+              distance = Math.sqrt(w * w + h * h)
+            }
+            if (!prevArrow || distance > 600) {
+              const src = arrowUrl
+              const rotation = Math.PI / 2 - Math.atan2(dy, dx)
+              styles.push(
+                new StyleStyle({
+                  geometry: arrowPoint,
+                  zIndex: order,
+                  image: new StyleIcon({
+                    color: arrowColor,
+                    rotation,
+                    src,
+                  }),
+                })
+              )
+              // TODO: 3D
+              // const modelColor = colorStringToRgba(arrowColor, 1)
+              // arrowPoint.set('olcs_model', () => {
+              //   const coordinates = arrowPoint.getCoordinates()
+              //   const center = transform(coordinates, 'EPSG:3857', 'EPSG:4326')
+              //   return {
+              //     cesiumOptions: {
+              //       url: arrowModelUrl,
+              //       // Adding a tiny translation along Z would allow the arrows not to sink into the terrain.
+              //       // However it does not work, the model is always clamped to the ground.
+              //       modelMatrix: olcsCore.createMatrixAtCoordinates(
+              //         center,
+              //         rotation
+              //       ),
+              //       heightReference: Cesium.HeightReference.CLAMP_TO_GROUND,
+              //       minimumPixelSize: 80,
+              //       color: olcsCore.convertColorToCesium(modelColor),
+              //       // It would be great to have a silouhette around the 3d arrow to better distinguish it from the underlying line.
+              //       // But for some reason Cesium is throwing an error with the model we are using.
+              //       // silhouetteColor: Cesium.Color.WHITE,
+              //       // silhouetteSize: 3
+              //     },
+              //   }
+              // })
+              prevArrow = arrowPoint
+            }
           }
-          if (!prevArrow || distance > 600) {
-            const src = arrowUrl
-            const rotation = Math.PI / 2 - Math.atan2(dy, dx)
-            styles.push(
-              new StyleStyle({
-                geometry: arrowPoint,
-                zIndex: order,
-                image: new StyleIcon({
-                  color: arrowColor,
-                  rotation,
-                  src,
-                }),
-              })
-            )
-            // TODO: 3D
-            // const modelColor = colorStringToRgba(arrowColor, 1)
-            // arrowPoint.set('olcs_model', () => {
-            //   const coordinates = arrowPoint.getCoordinates()
-            //   const center = transform(coordinates, 'EPSG:3857', 'EPSG:4326')
-            //   return {
-            //     cesiumOptions: {
-            //       url: arrowModelUrl,
-            //       // Adding a tiny translation along Z would allow the arrows not to sink into the terrain.
-            //       // However it does not work, the model is always clamped to the ground.
-            //       modelMatrix: olcsCore.createMatrixAtCoordinates(
-            //         center,
-            //         rotation
-            //       ),
-            //       heightReference: Cesium.HeightReference.CLAMP_TO_GROUND,
-            //       minimumPixelSize: 80,
-            //       color: olcsCore.convertColorToCesium(modelColor),
-            //       // It would be great to have a silouhette around the 3d arrow to better distinguish it from the underlying line.
-            //       // But for some reason Cesium is throwing an error with the model we are using.
-            //       // silhouetteColor: Cesium.Color.WHITE,
-            //       // silhouetteSize: 3
-            //     },
-            //   }
-            // })
-            prevArrow = arrowPoint
-          }
-        })
+        )
       }
       let lineDash
       if (feature.featureStyle.linestyle) {

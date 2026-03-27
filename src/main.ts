@@ -74,9 +74,12 @@ async function registerServiceWorker(swUrl: string) {
 function setupPeriodicSwUpdate(
   registration: ServiceWorkerRegistration
 ): () => void {
-  const intervalId = window.setInterval(() => {
-    registration.update()
-  }, 60 * 60 * 1000) // Check every hour
+  const intervalId = window.setInterval(
+    () => {
+      registration.update()
+    },
+    60 * 60 * 1000
+  ) // Check every hour
 
   const cleanup = () => {
     window.clearInterval(intervalId)

@@ -43,10 +43,10 @@ export default function useBackgroundLayer() {
    */
   function setBgLayer(layerId?: number, layerName?: string) {
     const newBgLayer = layerName
-      ? <Layer>theme.findBgLayerByName(layerName) ?? null
+      ? (<Layer>theme.findBgLayerByName(layerName) ?? null)
       : layerId
-      ? <Layer>theme.findBgLayerById(layerId) ?? null
-      : null
+        ? (<Layer>theme.findBgLayerById(layerId) ?? null)
+        : null
     setMapBackground(newBgLayer)
   }
 

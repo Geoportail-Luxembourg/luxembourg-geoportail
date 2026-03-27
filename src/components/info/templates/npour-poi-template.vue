@@ -100,16 +100,22 @@ h3,
       >
 
       <span
-        v-if="hasProperty('website', feature, 3) && (feature.attributes.website as string).startsWith('http')"
+        v-if="
+          hasProperty('website', feature, 3) &&
+          (feature.attributes.website as string).startsWith('http')
+        "
         ><a target="_blank" :href="feature.attributes.website as string">{{
           feature.attributes.website
         }}</a></span
       >
       <span
-        v-if="hasProperty('website', feature, 3) && !(feature.attributes.website as string).startsWith('http')"
+        v-if="
+          hasProperty('website', feature, 3) &&
+          !(feature.attributes.website as string).startsWith('http')
+        "
         ><a
           target="_blank"
-          :href="'http://'+(feature.attributes.website as string)"
+          :href="'http://' + (feature.attributes.website as string)"
           >{{ feature.attributes.website }}</a
         ></span
       >

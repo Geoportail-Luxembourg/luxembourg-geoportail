@@ -209,7 +209,7 @@ export default function useMyMaps() {
               const layer = initLayer(l as unknown as Layer)
 
               layer.opacity =
-                myVisibilities[index] ?? 1 === 1 ? myOpacities[index] : 0
+                (myVisibilities[index] ?? 1 === 1) ? myOpacities[index] : 0
 
               return layer
             }

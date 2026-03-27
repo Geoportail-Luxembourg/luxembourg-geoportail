@@ -53,7 +53,7 @@ class StatePersistorLayerComparatorService implements StatePersistorService {
     if (typeof lc !== 'undefined' && lc !== null) {
       toggleSlider(lc)
 
-      if (typeof sliderRatio !== undefined && sliderRatio !== null) {
+      if (typeof sliderRatio !== 'undefined' && sliderRatio !== null) {
         setRatio(sliderRatio ?? DEFAULT_SLIDER_RATIO)
       }
     }

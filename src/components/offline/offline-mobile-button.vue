@@ -226,7 +226,9 @@ const statusDescription = computed(() => {
   border: 1px solid var(--color-gray);
   border-radius: 0.25rem;
   cursor: pointer;
-  transition: background-color 150ms, color 150ms;
+  transition:
+    background-color 150ms,
+    color 150ms;
 }
 
 .menu-btn:hover:not(:disabled) {

@@ -22,9 +22,8 @@ import { useJobStatus } from './jobStatus.composable'
  */
 export function usePrint() {
   const { t } = useTranslation()
-  const { featureInfoPrintableRef, locationInfoPrintableRef } = storeToRefs(
-    usePrintStore()
-  )
+  const { featureInfoPrintableRef, locationInfoPrintableRef } =
+    storeToRefs(usePrintStore())
   const { locationInfoCoords } = storeToRefs(useLocationInfoStore())
   const { startPolling, clearPolling, url, error, loading } = useJobStatus()
   const map = useMap().getOlMap()
