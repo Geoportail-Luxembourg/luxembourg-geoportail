@@ -252,7 +252,6 @@ h2 {
             feature.attributes.PF.farmingTypes &&
             Object.keys(feature.attributes.PF.farmingTypes).length > 0
           "
-          class="flex"
         >
           <span>{{ t('Nature') }}</span> :
           {{
@@ -267,7 +266,6 @@ h2 {
             feature.attributes.PF.occupations &&
             Object.keys(feature.attributes.PF.occupations).length > 0
           "
-          class="flex"
         >
           <span>{{ t('Occupation') }}</span> :
           {{
@@ -277,7 +275,7 @@ h2 {
             )
           }}
         </div>
-        <div class="flex">
+        <div>
           <span>{{ t('Dernier mesurage') }}</span> :
           {{ feature.attributes.PF.measurementNumber }}
         </div>
