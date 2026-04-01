@@ -139,7 +139,6 @@ export default function useRouting(
   let tooltipOverlay: Overlay | null = null
 
   // Feature collections
-  const modifyFeaturesCollection = new Collection<Feature<Geometry>>()
   let highlightOverlay: VectorLayer | null = null
   let source: VectorSource | null = null
   let routeLayer: VectorLayer<VectorSource> | null = null
@@ -258,7 +257,6 @@ export default function useRouting(
 
     // Select interaction (click)
     selectInteraction = new Select({
-      features: modifyFeaturesCollection,
       condition: click,
       filter: (feature: Feature) => {
         return (
@@ -282,9 +280,9 @@ export default function useRouting(
     selectInteractionPM.setActive(false)
     listen(selectInteractionPM, 'select', handleShowHideTooltip)
 
-    // Modify interaction
+    // Modify interaction — operates directly on the waypoint features
     modifyInteraction = new Modify({
-      features: modifyFeaturesCollection,
+      features: routingState.value.features,
     })
     map.addInteraction(modifyInteraction)
     modifyInteraction.setActive(true)
@@ -427,23 +425,27 @@ export default function useRouting(
   }
 
   /**
-   * Handle modify end event
+   * Handle modify end event — called after the user drags a waypoint on the map.
+   * Identifies the moved feature by matching it in the features collection,
+   * reverse-geocodes its new position, and recalculates the route.
    */
-  function handleModifyEndStepFeature() {
-    const lastIdx = routingState.value.features.getLength() - 1
-    const lastFeature = routingState.value.features.removeAt(lastIdx)
-    const lastLabel = routingState.value.routes[lastIdx]
+  function handleModifyEndStepFeature(event: any) {
+    // The event exposes the features that were modified
+    const modifiedFeatures: Feature[] = event?.features?.getArray?.() ?? []
+    if (modifiedFeatures.length === 0) return
 
-    const feature = modifyFeaturesCollection.getArray()[0]
-    if (!feature) return
-
+    const feature = modifiedFeatures[0]
     const geometry = feature.getGeometry()
     if (!geometry || !(geometry instanceof Point)) return
 
-    const clonedFeature = feature.clone()
+    // Find the index of this feature in the waypoints collection
+    const featureIdx = routingState.value.features.getArray().indexOf(feature)
+    if (featureIdx === -1) return
+
     const coords = geometry.getFirstCoordinate() as [number, number]
 
     onReverseGeocode(coords).then(resp => {
+      let label = coords.toString()
       if (resp['count'] > 0) {
         const address = resp['results'][0]
         const formattedAddress =
@@ -454,25 +456,17 @@ export default function useRouting(
           address['postal_code'] +
           ' ' +
           address['locality']
-        let label = formattedAddress
-
-        if (!(label.length > 0 && Math.round(address['distance']) <= 100)) {
-          label = coords.toString()
+        if (
+          formattedAddress.length > 0 &&
+          Math.round(address['distance']) <= 100
+        ) {
+          label = formattedAddress
         }
-
-        clonedFeature.set('label', label)
-        routingState.value.routes[lastIdx] = label
       }
+      feature.set('label', label)
+      routingState.value.routes[featureIdx] = label
+      onGetRoute(routingState.value)
     })
-
-    insertFeatureAt(lastIdx + 1, clonedFeature)
-
-    if (lastFeature !== undefined && lastFeature !== null) {
-      addRoute(lastLabel)
-      insertFeatureAt(lastIdx + 2, lastFeature)
-    }
-
-    onGetRoute(routingState.value)
   }
 
   /**
@@ -600,7 +594,6 @@ export default function useRouting(
   function clearRoutes() {
     // Use store's reset() to ensure all state is properly cleared
     routingStore.reset()
-    modifyFeaturesCollection.clear()
 
     if (source) {
       source.setAttributions(undefined)
@@ -627,7 +620,6 @@ export default function useRouting(
 
     routingState.value.routeFeatures.clear()
     routingState.value.stepFeatures.clear()
-    modifyFeaturesCollection.clear()
     routeDesc.value = []
 
     if (source) {
