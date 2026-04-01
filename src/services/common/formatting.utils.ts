@@ -50,7 +50,7 @@ export function formatMeasure(
     case 'elevation':
       return formatElevation(value, digits)
     case 'area':
-      return formatArea(value, digits)
+      return formatArea(value)
     case 'length':
     default:
       return formatLength(value, digits)
@@ -70,37 +70,36 @@ export function formatElevation(value: number | string, digits = 0): string {
 }
 
 /**
- * Format a value in meters (or km if up to 1000), 2 digits by default
+ * Format a value in meters (or km if >= 1000), 0 digit by default for m, 2 for km
  * @param value The value (in m) to format
- * @param digits The digits to fixed
- * @returns The formatted value, or the original value if invalid number
+ * @param digits The digits to fixed (applies to both m and km)
+ * @returns The formatted value, or N/A if null, or empty string if invalid
  */
-export function formatLength(value: number | null, digits = 2): string {
+export function formatLength(value: number | null, digits = 0): string {
   // null covers API errors or unavailable data (eg. elevation)
   if (value === null) {
     return i18next.t('N/A', { ns: 'client' })
+  } else if (isNaN(value)) {
+    return ''
   } else if (value < 1000) {
     return `${value.toFixed(digits)} m`
-  } else if (value >= 1000) {
-    return `${(value / 1000).toFixed(digits)} km`
   } else {
-    return ''
+    return `${(value / 1000).toFixed(Math.max(digits, 2))} km`
   }
 }
 
 /**
- * Format a value in m² or km² (if >= 1 000 000 m²), 2 digits by default
+ * Format a value in m² or km² (if >= 1 000 000 m²)
  * @param value The value (in m²) to format
- * @param digits The digits to fixed
- * @returns The formatted value as "x.xx m²" or "x.xx km²", or empty string if invalid
+ * @returns The formatted value as "x m²" or "x.xx km²", or empty string if invalid
  */
-export function formatArea(value: number, digits = 2): string {
+export function formatArea(value: number): string {
   if (value === null || isNaN(value)) {
     return ''
   } else if (value < 1000000) {
-    return `${value.toFixed(digits)} m²`
+    return `${Math.round(value)} m²`
   } else {
-    return `${(value / 1000000).toFixed(digits)} km²`
+    return `${(value / 1000000).toFixed(2)} km²`
   }
 }
 
