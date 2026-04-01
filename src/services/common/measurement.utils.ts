@@ -7,12 +7,8 @@ import {
   Projection,
   transform,
 } from 'ol/proj'
-import {
-  getDistance as haversineDistance,
-  getArea as getOlArea,
-} from 'ol/sphere'
 import { Map } from 'ol'
-import { PROJECTION_WGS84 } from '@/composables/map/map.composable'
+import { PROJECTION_LUX } from '@/composables/map/map.composable'
 
 const getLength = function (geom: Geometry, projection: Projection): number {
   let length = 0
@@ -23,15 +19,25 @@ const getLength = function (geom: Geometry, projection: Projection): number {
     coordinates = (geom as LineString).getCoordinates() as Coordinate[]
   }
   for (let i = 0, ii = coordinates.length - 1; i < ii; ++i) {
-    const c1 = transform(coordinates[i], projection, PROJECTION_WGS84)
-    const c2 = transform(coordinates[i + 1], projection, PROJECTION_WGS84)
-    length += haversineDistance(c1, c2)
+    const c1 = transform(coordinates[i], projection, PROJECTION_LUX)
+    const c2 = transform(coordinates[i + 1], projection, PROJECTION_LUX)
+    const dx = c2[0] - c1[0]
+    const dy = c2[1] - c1[1]
+    length += Math.sqrt(dx * dx + dy * dy)
   }
   return length
 }
 
-const getArea = function (polygon: Polygon): number {
-  return Math.abs(getOlArea(polygon))
+const getArea = function (polygon: Polygon, projection?: Projection): number {
+  const proj = projection || (PROJECTION_LUX as unknown as Projection)
+  const coords = polygon
+    .getCoordinates()[0]
+    .map((c: Coordinate) => transform(c, proj, PROJECTION_LUX))
+  let area = 0
+  for (let i = 0, ii = coords.length - 1; i < ii; ++i) {
+    area += coords[i][0] * coords[i + 1][1] - coords[i + 1][0] * coords[i][1]
+  }
+  return Math.abs(area / 2)
 }
 
 const getCircleLength = function (circle: Circle, proj: Projection): number {

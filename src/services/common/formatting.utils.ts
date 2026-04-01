@@ -89,20 +89,18 @@ export function formatLength(value: number | null, digits = 2): string {
 }
 
 /**
- * Format a value in meters² (or km² if up to 1000000), 2 digits by default
+ * Format a value in m² or km² (if >= 1 000 000 m²), 2 digits by default
  * @param value The value (in m²) to format
  * @param digits The digits to fixed
- * @returns The formatted value, or the original value if invalid number
+ * @returns The formatted value as "x.xx m²" or "x.xx km²", or empty string if invalid
  */
 export function formatArea(value: number, digits = 2): string {
-  if (value === null) {
-    return i18next.t('N/A', { ns: 'client' })
+  if (value === null || isNaN(value)) {
+    return ''
   } else if (value < 1000000) {
     return `${value.toFixed(digits)} m²`
-  } else if (value >= 1000000) {
-    return `${(value / 1000000).toFixed(digits)} km²`
   } else {
-    return ''
+    return `${(value / 1000000).toFixed(digits)} km²`
   }
 }
 

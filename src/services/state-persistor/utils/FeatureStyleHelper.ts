@@ -632,7 +632,7 @@ class FeatureStyleHelper {
           this.decimals_
         )
       } else {
-        measure = formatArea(getArea(geometry))
+        measure = formatArea(getArea(geometry, this.projection_!))
       }
     } else if (geometry instanceof olGeomLineString) {
       measure = formatLength(getLength(geometry, this.projection_!))

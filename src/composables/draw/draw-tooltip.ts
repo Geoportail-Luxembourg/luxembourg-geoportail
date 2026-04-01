@@ -80,7 +80,7 @@ class DrawTooltip {
         const geom = geometry as Polygon
         const verts = geom.getCoordinates()[0].length
         if (verts > 2) coord = geom.getInteriorPoint().getCoordinates()
-        if (coord) text = formatArea(getArea(geom))
+        if (coord) text = formatArea(getArea(geom, proj))
       }
       return { text, coord }
     }
@@ -161,7 +161,7 @@ class DrawTooltip {
         coord = geom.getInteriorPoint().getCoordinates()
       }
       if (coord != null) {
-        output = formatArea(getArea(geom))
+        output = formatArea(getArea(geom, proj))
       }
     } else if (geometry.getType() === 'Circle') {
       const geom = geometry as Circle
