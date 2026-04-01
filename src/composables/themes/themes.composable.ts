@@ -99,7 +99,18 @@ export default function useThemes() {
   function findBgLayerByName(name: string) {
     const { bgLayers } = useThemeStore()
 
-    return bgLayers.find(l => l.name === name)
+    return (
+      bgLayers.find(l => l.name === name) ??
+      bgLayers.find(l => {
+        const aliases = l.metadata?.layer_aliases
+        if (!aliases) return false
+        return aliases
+          .replace(/[[\]]/g, '')
+          .split(',')
+          .map(a => a.trim())
+          .includes(name)
+      })
+    )
   }
 
   /**
