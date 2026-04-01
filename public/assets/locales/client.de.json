@@ -2219,6 +2219,7 @@
   "Exporter un GPX": "GPX exportieren",
   "Exporter un KML": "KML exportieren",
   "Exporter un Shapefile": "Ein Shapefile exportieren",
+  "Exporter un GeoPackage": "Ein GeoPackage exportieren",
   "Exporter un GeoJSON": "Ein GeoJSON exportieren",
   "Continuer la ligne": "Linie weiterzeichnen",
   "Changer sens de la ligne": "Richtung der Linie ändern",

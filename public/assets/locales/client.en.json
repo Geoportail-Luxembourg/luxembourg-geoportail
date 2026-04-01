@@ -1906,6 +1906,7 @@
   "Exporter un GPX": "Export GPX",
   "Exporter un KML": "Export KML",
   "Exporter un Shapefile": "Export a Shapefile",
+  "Exporter un GeoPackage": "Export a GeoPackage",
   "Exporter un GeoJSON": "Export GeoJSON",
   "Continuer la ligne": "Continue line",
   "Changer sens de la ligne": "Change line direction",

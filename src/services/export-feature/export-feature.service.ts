@@ -4,10 +4,17 @@ import { Geometry } from 'ol/geom'
 import { ExportFeatureGpx } from './export-feature-gpx'
 import { ExportFeatureKml } from './export-feature-kml'
 import { ExportFeatureShapefile } from './export-feature-shapefile'
+import { ExportFeatureGpkg } from './export-feature-gpkg'
 import { ExportFeatureProfileCsv } from './export-feature-profile-csv'
 import { ExportFeatureGeojson } from './export-feature-geojson'
 
-export type ExportFormat = 'kml' | 'gpx' | 'shapefile' | 'geojson' | 'csv'
+export type ExportFormat =
+  | 'kml'
+  | 'gpx'
+  | 'shapefile'
+  | 'gpkg'
+  | 'geojson'
+  | 'csv'
 export type FeatExport = Feature<Geometry> & Feature<Geometry>[]
 
 export class ExportFeatureService {
@@ -29,6 +36,8 @@ export class ExportFeatureService {
         return new ExportFeatureKml(map)
       case 'shapefile':
         return new ExportFeatureShapefile(map)
+      case 'gpkg':
+        return new ExportFeatureGpkg(map)
       case 'geojson':
         return new ExportFeatureGeojson(map)
       case 'csv': // !!! CSV format exports profile from LineString geom only
