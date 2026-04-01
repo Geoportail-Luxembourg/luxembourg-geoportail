@@ -173,7 +173,7 @@ class StatePersistorLayersService implements StatePersistorService {
                 const opacities = rawOpacities
                   ? rawOpacities.split(STORAGE_SEPARATOR).map(Number)
                   : []
-                const times = rawTimes ? rawTimes.split('--') : []
+                const times = rawTimes ? rawTimes.split('--').reverse() : []
 
                 nowResolved.forEach(layer => {
                   const idx = allRequestedIds.indexOf(String(layer.id))
