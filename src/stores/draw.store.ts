@@ -136,8 +136,19 @@ export const useDrawStore = defineStore('draw', () => {
           AlertNotificationType.ERROR
         )
       )
+      const oldId = feature.id
       feature.id = (<MyMapSaveFeatureJson>resp).id!
       feature.fid = (<MyMapSaveFeatureJson>resp).id!
+      // A newly drawn feature saved to MyMap is always editable by the current user
+      feature.editable = true
+
+      // The server assigned a new numeric ID. If editingFeatureId / activeFeatureId
+      // still reference the old temporary UUID, update them so that subsequent
+      // edit sessions can find the feature by its real ID.
+      if (activeFeatureId.value === oldId) activeFeatureId.value = feature.id
+      if (editingFeatureId.value === oldId) {
+        editingFeatureId.value = feature.id
+      }
     }
   }
 
