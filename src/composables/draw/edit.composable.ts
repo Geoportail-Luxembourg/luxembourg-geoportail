@@ -28,7 +28,9 @@ export default function useEdit() {
   const { updateDrawnFeature } = useDrawStore()
   const map = useMap().getOlMap()
 
-  // Create edit layer with style function that delegates to feature's StyleFunction
+  // Create edit layer with style function that delegates to feature's StyleFunction.
+  // We use getStyle() (already stored on the feature via setStyle()) rather than
+  // getStyleFunction() so we never rebuild the closure on every render frame.
   const editLayer = new VectorLayer({
     source: new VectorSource({
       features: [],
@@ -36,9 +38,13 @@ export default function useEdit() {
     zIndex: DEFAULT_DRAW_ZINDEX + 1, // Above draw layer
     style: (feature, resolution) => {
       const drawnFeature = feature as DrawnFeature
-      const styleFunc = drawnFeature.getStyleFunction()
-      if (styleFunc) {
-        return styleFunc.call(drawnFeature, drawnFeature, resolution)
+      const styleFunc = drawnFeature.getStyle()
+      if (typeof styleFunc === 'function') {
+        return (styleFunc as Function).call(
+          drawnFeature,
+          drawnFeature,
+          resolution
+        )
       }
       return []
     },
@@ -203,6 +209,10 @@ export default function useEdit() {
       source: editSource,
       pixelTolerance: 20,
       deleteCondition: event => noModifierKeys(event) && singleClick(event),
+      // Disable pointer snapping to segment midpoints: for lines with many points,
+      // the default snapping computes the closest point on every segment on each
+      // pointermove event (O(n)), which causes noticeable lag.
+      snapToPointer: false,
       // Let OpenLayers use its default blue style during modification
       // The feature will get its custom style back after modifyend
     })
@@ -211,17 +221,17 @@ export default function useEdit() {
       const clonedFeature = <DrawnFeature>event.features.getArray()[0]
       clonedFeature.resetProfileData()
 
-      // Copy modified geometry from clone back to original feature
+      // Copy modified geometry from clone back to original feature.
+      // No need to rebuild the StyleFunction: geometry changed but style parameters
+      // are unchanged, so the cached StyleFunction is still valid.
       if (originalFeature && clonedFeature) {
         originalFeature.setGeometry(clonedFeature.getGeometry()?.clone())
         originalFeature.resetProfileData()
-        originalFeature.setStyle(originalFeature.getStyleFunction())
         originalFeature.changed()
         updateDrawnFeature(originalFeature)
       }
 
-      // Re-apply the clone's custom style for continued editing
-      clonedFeature.setStyle(clonedFeature.getStyleFunction())
+      // Trigger re-render of the clone with its current (cached) style
       clonedFeature.changed()
     }
 
