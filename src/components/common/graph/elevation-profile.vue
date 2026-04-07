@@ -12,6 +12,11 @@ defineProps<{
   highlightDistance?: number
 }>()
 
+const emit = defineEmits<{
+  (e: 'hover:profile', point: any, dist: number): void
+  (e: 'out:profile'): void
+}>()
+
 const { t } = useTranslation()
 </script>
 
@@ -20,6 +25,8 @@ const { t } = useTranslation()
     v-if="profileData"
     :dataset="profileData"
     :highlightDistance="highlightDistance"
+    @hover:profile="(point, dist) => emit('hover:profile', point, dist)"
+    @out:profile="emit('out:profile')"
     :labelXFormatter="
       (factor: number) => `${t('Distance')} [${factor === 1 ? 'm' : 'km'}]`
     "

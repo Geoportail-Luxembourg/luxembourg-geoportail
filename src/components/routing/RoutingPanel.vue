@@ -9,78 +9,95 @@
 
     <template v-slot:content>
       <!-- Mode Selection -->
-      <div class="routing-modes mb-4">
-        <div class="flex gap-2 mb-3">
+      <div class="routing-component">
+        <div class="routing-icon-container container-fluid">
           <!-- Transport modes -->
-          <button
+          <span
             :class="[
-              'mode-btn',
-              { 'mode-btn-active': routingState.transportMode === 3 },
+              'routing-icon',
+              { selected: routingState.transportMode === 3 },
             ]"
             @click="setMode(3)"
             :title="t('Car mode')"
             :aria-label="t('Mode voiture')"
+            role="button"
             :aria-pressed="routingState.transportMode === 3"
           >
-            <span class="fa fa-car" aria-hidden="true"></span>
-          </button>
-          <button
+            <span class="icon-Car" aria-hidden="true"></span>
+          </span>
+          <span
             :class="[
-              'mode-btn',
-              { 'mode-btn-active': routingState.transportMode === 1 },
+              'routing-icon',
+              { selected: routingState.transportMode === 1 },
             ]"
             @click="setMode(1)"
             :title="t('Pedestrian mode')"
             :aria-label="t('Mode piéton')"
+            role="button"
             :aria-pressed="routingState.transportMode === 1"
           >
-            <span class="fa fa-male" aria-hidden="true"></span>
-          </button>
-          <button
+            <span class="icon-Pedestrian" aria-hidden="true"></span>
+          </span>
+          <span
             :class="[
-              'mode-btn',
-              { 'mode-btn-active': routingState.transportMode === 2 },
+              'routing-icon',
+              { selected: routingState.transportMode === 2 },
             ]"
             @click="setMode(2)"
             :title="t('Bicycle mode')"
             :aria-label="t('Mode vélo')"
+            role="button"
             :aria-pressed="routingState.transportMode === 2"
           >
-            <span class="fa fa-bicycle" aria-hidden="true"></span>
-          </button>
+            <span class="icon-Bike" aria-hidden="true"></span>
+          </span>
 
-          <!-- Action buttons -->
-          <button
-            v-if="isRoute"
-            class="mode-btn"
-            @click="createMapFromRoute"
-            :title="t('Save to my maps')"
-            :aria-label="t('Sauvegarder la route dans Mes cartes')"
-          >
-            <span class="fa fa-save" aria-hidden="true"></span>
-          </button>
-          <button
-            class="mode-btn"
-            @click="clearRoutes()"
-            :title="t('Clear all')"
-            :aria-label="t('Effacer tous les points de route')"
-          >
-            <span class="fa fa-trash" aria-hidden="true"></span>
-          </button>
-          <button
-            class="mode-btn"
-            @click="exchangeRoutes()"
-            :title="t('Swap start and end')"
-            :aria-label="t('Échanger départ et arrivée')"
-          >
-            <span class="fa fa-exchange" aria-hidden="true"></span>
-          </button>
+          <!-- Action buttons (positioned right via CSS like v3) -->
+          <span class="routing-icon">
+            <span
+              v-if="isRoute"
+              class="fa fa-floppy-o icon-Trash"
+              @click="createMapFromRoute"
+              @keydown.enter.space.prevent="createMapFromRoute"
+              :title="t('Save to my maps')"
+              :aria-label="t('Sauvegarder la route dans Mes cartes')"
+              role="button"
+              tabindex="0"
+            ></span>
+            <span
+              class="fa fa-trash icon-Trash"
+              @click="clearRoutes()"
+              @keydown.enter.space.prevent="clearRoutes()"
+              :title="t('Clear all')"
+              :aria-label="t('Effacer tous les points de route')"
+              role="button"
+              tabindex="0"
+            ></span>
+            <span
+              class="icon-Switch"
+              @click="exchangeRoutes()"
+              @keydown.enter.space.prevent="exchangeRoutes()"
+              :title="t('Swap start and end')"
+              :aria-label="t('Échanger départ et arrivée')"
+              role="button"
+              tabindex="0"
+            ></span>
+          </span>
         </div>
       </div>
+      <!-- end .routing-component -->
 
       <!-- Route inputs -->
-      <div v-if="isLoading" class="flex justify-center py-4">
-        <span class="fa fa-spinner fa-spin text-white"></span>
+      <div
+        v-if="isLoading"
+        class="flex justify-center py-4"
+        role="status"
+        :aria-label="$t('Calcul de l\'itinéraire en cours')"
+      >
+        <span
+          class="fa fa-spinner fa-spin text-white"
+          aria-hidden="true"
+        ></span>
       </div>
       <div v-else class="routing-routes mb-4" ref="sortableRoutes">
         <div
@@ -89,7 +106,15 @@
           class="routing-route-container mb-2"
           :data-route-id="key"
         >
-          <div class="route-number drag-handle">{{ key + 1 }}</div>
+          <div
+            class="route-number drag-handle"
+            :aria-label="
+              $t('Point {number}, glisser pour réordonner', { number: key + 1 })
+            "
+            :title="$t('Glisser pour réordonner')"
+          >
+            {{ key + 1 }}
+          </div>
 
           <div class="route-input-wrapper flex-1">
             <input
@@ -133,7 +158,7 @@
               role="listbox"
               :aria-label="$t('Résultats de recherche d\'adresse')"
             >
-              <div id="address-help-{{ key }}" class="sr-only">
+              <div :id="`address-help-${key}`" class="sr-only">
                 {{
                   $t(
                     'Utilisez les flèches pour naviguer, Entrée pour sélectionner, Échap pour fermer'
@@ -204,19 +229,42 @@
           <button
             class="lux-btn whitespace-nowrap"
             @click="toggleCriteriaDropdown()"
+            :aria-expanded="criteriaDropdownOpen"
+            aria-haspopup="listbox"
+            aria-controls="criteria-dropdown"
           >
             {{
               routingState.criteria === 0
                 ? $t('Le plus rapide')
                 : $t('Le plus court')
             }}
-            <span class="fa fa-chevron-down ml-2"></span>
+            <span class="fa fa-chevron-down ml-2" aria-hidden="true"></span>
           </button>
-          <ul v-if="criteriaDropdownOpen" class="lux-dropdown-list" role="menu">
-            <li class="lux-dropdown-list-item" @click="selectCriteria(0)">
+          <ul
+            v-if="criteriaDropdownOpen"
+            id="criteria-dropdown"
+            class="lux-dropdown-list"
+            role="listbox"
+            :aria-label="$t('Critère de calcul')"
+          >
+            <li
+              class="lux-dropdown-list-item"
+              @click="selectCriteria(0)"
+              role="option"
+              :aria-selected="routingState.criteria === 0"
+              tabindex="0"
+              @keydown.enter.space.prevent="selectCriteria(0)"
+            >
               {{ $t('Le plus rapide') }}
             </li>
-            <li class="lux-dropdown-list-item" @click="selectCriteria(1)">
+            <li
+              class="lux-dropdown-list-item"
+              @click="selectCriteria(1)"
+              role="option"
+              :aria-selected="routingState.criteria === 1"
+              tabindex="0"
+              @keydown.enter.space.prevent="selectCriteria(1)"
+            >
               {{ $t('Le plus court') }}
             </li>
           </ul>
@@ -224,61 +272,104 @@
       </div>
 
       <!-- Route Info -->
-      <div v-if="isRoute" class="route-info-wrapper">
-        <!-- General info -->
-        <div class="mb-4">
-          <div class="flex gap-4">
-            <div>
-              <div class="text-xs text-tertiary uppercase">
-                {{ $t('Distance') }}
+      <div class="route-info-wrapper printable">
+        <div class="route-info" v-if="isRoute">
+          <!-- General info -->
+          <div
+            class="route-general route-info-container"
+            role="region"
+            :aria-label="$t('Résumé de l\'itinéraire')"
+          >
+            <dl class="route-general-info-container">
+              <div class="route-single-info">
+                <dt class="route-info-title">{{ $t('Distance') }}</dt>
+                <dd class="route-info-data route-info-general-data">
+                  {{ formatDistance(distance) }}
+                </dd>
               </div>
-              <div class="text-lg font-bold text-white">
-                {{ formatDistance(distance) }}
+              <div class="route-single-info">
+                <dt class="route-info-title">{{ $t('Temps') }}</dt>
+                <dd class="route-info-data route-info-general-data">
+                  {{ secondsToHHmmss(time) }}
+                </dd>
               </div>
-            </div>
-            <div>
-              <div class="text-xs text-tertiary uppercase">
-                {{ $t('Temps') }}
-              </div>
-              <div class="text-lg font-bold text-white">
-                {{ secondsToHHmmss(time) }}
-              </div>
-            </div>
+            </dl>
           </div>
-        </div>
 
-        <!-- Elevation Profile -->
-        <div v-if="profileData.length > 0" class="mb-4">
-          <h3 class="text-white mb-2">
-            {{ $t('Dénivelé lors de votre trajet') }}
-          </h3>
-          <elevation-profile />
-        </div>
-
-        <!-- Route Details -->
-        <div class="mb-4">
-          <div class="flex justify-between items-center mb-2">
-            <h3 class="text-white">{{ $t('Détail de votre trajet') }}</h3>
-            <button
-              class="text-secondary hover:text-white text-sm"
-              @click="exportGpx()"
-              :title="t('Download GPX')"
+          <!-- Elevation Profile -->
+          <div
+            v-if="profileData.length > 0"
+            class="route-graphic-container route-info-container"
+            role="region"
+            :aria-label="$t('Dénivelé lors de votre trajet')"
+          >
+            <h3 class="route-info-title" style="margin-bottom: 10px">
+              {{ $t('Dénivelé lors de votre trajet') }}
+            </h3>
+            <dl
+              class="elevation-summary"
+              :aria-label="$t('Valeurs de dénivelé')"
             >
-              <span class="fa fa-download mr-1"></span>
-              {{ $t('Télécharger') }}
-            </button>
+              <div class="elevation-entry">
+                <dt class="elevation-label" :title="$t('Dénivelé positif')">
+                  Δ+
+                </dt>
+                <dd>{{ Math.round(elevationGain) }} m</dd>
+              </div>
+              <div class="elevation-entry">
+                <dt class="elevation-label" :title="$t('Dénivelé négatif')">
+                  Δ−
+                </dt>
+                <dd>{{ Math.round(elevationLoss) }} m</dd>
+              </div>
+              <div class="elevation-entry">
+                <dt class="elevation-label" :title="$t('Dénivelé net')">Δ</dt>
+                <dd>
+                  {{ Math.round(elevationGain - elevationLoss) >= 0 ? '+' : ''
+                  }}{{ Math.round(elevationGain - elevationLoss) }} m
+                </dd>
+              </div>
+            </dl>
+            <elevation-profile
+              :profile-data="profileData"
+              @hover:profile="(_, dist) => highlightProfilePoint(dist)"
+              @out:profile="clearHighlight()"
+            />
           </div>
 
-          <div class="route-details-scroll">
+          <!-- Route Details -->
+          <div class="route-details route-info-container">
+            <h3 class="route-info-title">
+              <span>{{ $t('Détail de votre trajet') }}</span>
+              <div
+                class="no-print route-details-download"
+                role="button"
+                tabindex="0"
+                @click="exportGpx()"
+                @keydown.enter.space.prevent="exportGpx()"
+                :aria-label="t('Télécharger le fichier GPX')"
+                :title="t('Download GPX')"
+              >
+                <small>{{ $t('Télécharger') }}</small>
+                <span class="icon-Download" aria-hidden="true"></span>
+              </div>
+            </h3>
+
             <div
               v-for="(step, key) in routeDesc"
               :key="key"
               class="route-details-step"
+              role="button"
+              tabindex="0"
+              :aria-label="`${step.description} — ${formatDistance(step.cumulativeDistance || 0)} — ${secondsToHHmmss(step.cumulativeTime || 0)}`"
               @mouseleave="clearHighlight()"
               @mouseover="
                 highlightPosition(step.lon, step.lat, step.description)
               "
+              @focus="highlightPosition(step.lon, step.lat, step.description)"
+              @blur="clearHighlight()"
               @click="center(step.lon, step.lat)"
+              @keydown.enter.space.prevent="center(step.lon, step.lat)"
             >
               <div class="route-instruction">
                 <span
@@ -289,8 +380,10 @@
                 ></span>
                 {{ step.description }}
               </div>
-              <div class="route-instruction-data">
-                {{ formatDistance(step.cumulativeDistance || 0) }} •
+              <div class="route-info-data route-instruction-data">
+                {{ formatDistance(step.cumulativeDistance || 0) }}
+              </div>
+              <div class="route-info-data route-instruction-data">
                 {{ secondsToHHmmss(step.cumulativeTime || 0) }}
               </div>
             </div>
@@ -299,9 +392,9 @@
       </div>
 
       <!-- Tips -->
-      <div v-if="!isRoute" class="lux-alert lux-alert-info mb-3">
-        <strong>{{ $t('Petite astuce!') }}</strong>
-        <p class="mt-1">
+      <div v-if="!isRoute" class="routes-tip">
+        <h3>{{ $t('Petite astuce!') }}</h3>
+        <p>
           {{
             $t(
               'Cliquez droit (ou appui long sur mobile) à un endroit sur la carte pour ajouter rapidement une adresse.'
@@ -440,6 +533,8 @@ const {
   time,
   routeDesc,
   profileData,
+  elevationGain,
+  elevationLoss,
   isRoute,
   showRedirect,
   init,
@@ -450,6 +545,7 @@ const {
   exchangeRoutes,
   center,
   highlightPosition,
+  highlightProfilePoint,
   clearHighlight,
   getIconDirectionClass,
   setMode,
@@ -882,8 +978,148 @@ onMounted(() => {
 })
 </script>
 
-<style scoped>
-/* Mode buttons - consistent with app theme */
+<style scoped lang="postcss">
+@font-face {
+  font-family: 'apart-geoportail';
+  src: url('/src/assets/fonts/apart-geoportail.woff') format('woff');
+  font-weight: normal;
+  font-style: normal;
+}
+
+/* =============================================
+   Routing component - inspired by v3 styling
+   ============================================= */
+
+.routing-component {
+  margin: 20px 0 0 0;
+}
+
+/* Icon container */
+.routing-component .routing-icon-container {
+  margin: 0 0 20px 0;
+  position: relative;
+  font-family: 'apart-geoportail' !important;
+}
+
+/* Transport mode icons */
+.routing-component .routing-icon {
+  display: inline-block;
+  opacity: 0.5;
+  transition: opacity 0.15s linear;
+  cursor: pointer;
+}
+
+.routing-component .routing-icon + .routing-icon {
+  margin: 0 0 0 20px;
+}
+
+.routing-component .routing-icon [class^='icon-']::before {
+  font-size: 19px;
+}
+
+.routing-component .routing-icon.selected {
+  opacity: 1;
+}
+
+.routing-component .routing-icon:hover {
+  opacity: 1;
+}
+
+/* Last icon group (actions: save, clear, switch) - right aligned */
+.routing-component .routing-icon:last-of-type {
+  position: absolute;
+  top: 0;
+  right: 10px;
+  opacity: 1;
+}
+
+/* apart-geoportail icon definitions */
+.icon-Download::before {
+  content: '\e900';
+  color: #fff;
+  font-family: 'apart-geoportail' !important;
+}
+
+.icon-Bike::before {
+  content: '\e901';
+  color: #fff;
+  font-family: 'apart-geoportail' !important;
+}
+
+.icon-Car::before {
+  content: '\e902';
+  color: #fff;
+  font-family: 'apart-geoportail' !important;
+}
+
+.icon-Direction::before {
+  font-family: 'apart-geoportail' !important;
+  content: '\e903';
+  color: #000;
+  font-size: 6px;
+}
+
+.icon-Pedestrian::before {
+  content: '\e904';
+  color: #fff;
+  font-family: 'apart-geoportail' !important;
+}
+
+.icon-Route::before {
+  content: '\e905';
+  color: #fff;
+  font-family: 'apart-geoportail' !important;
+}
+
+.icon-Switch::before {
+  content: '\e906';
+  color: #fff;
+  font-family: 'apart-geoportail' !important;
+}
+
+.icon-Target::before {
+  content: '\e907';
+  color: #fff;
+  font-family: 'apart-geoportail' !important;
+  font-size: 19px;
+}
+
+.icon-Trash::before {
+  color: #fff;
+  font-size: 19px;
+}
+
+/* Direction icon rotations */
+.icon-Direction.s-e {
+  transform: rotate(45deg);
+}
+.icon-Direction.south {
+  transform: rotate(90deg);
+}
+.icon-Direction.north {
+  transform: rotate(270deg);
+}
+.icon-Direction.west {
+  transform: rotate(180deg);
+}
+.icon-Direction.east {
+  transform: rotate(0deg);
+}
+.icon-Direction.n-e {
+  transform: rotate(315deg);
+}
+.icon-Direction.n-w {
+  transform: rotate(225deg);
+}
+.icon-Direction.s-w {
+  transform: rotate(135deg);
+}
+
+/* =============================================
+   Route inputs list (original v4 style)
+   ============================================= */
+
+/* Mode buttons */
 .mode-btn {
   @apply w-10 h-10 flex items-center justify-center rounded text-white bg-secondary hover:bg-tertiary transition-colors cursor-pointer border-none;
   font-size: 18px;
@@ -893,7 +1129,6 @@ onMounted(() => {
   @apply bg-tertiary;
 }
 
-/* Route input styling */
 .routing-routes {
   @apply flex flex-col gap-2;
 }
@@ -924,6 +1159,7 @@ onMounted(() => {
 
 .address-item {
   @apply px-3 py-2 hover:bg-secondary hover:text-white cursor-pointer border-b border-tertiary last:border-b-0 text-sm;
+  color: #333;
 }
 
 .address-item-highlighted {
@@ -950,30 +1186,220 @@ onMounted(() => {
   @apply block;
 }
 
-/* Route info wrapper */
+/* =============================================
+   Route info section
+   ============================================= */
+
 .route-info-wrapper {
-  @apply mt-4 pt-3 border-t border-tertiary;
+  overflow: auto;
 }
 
-/* Route details scroll */
-.route-details-scroll {
-  @apply bg-secondary rounded;
+@media screen and (max-width: 767px) {
+  .route-info-wrapper {
+    overflow: visible;
+  }
+  .route-info {
+    padding-bottom: 50px;
+  }
+}
+
+.route-info-container {
+  padding: 20px 12px 25px 10px;
+}
+
+.route-info-container:not(:last-of-type) {
+  border-bottom: 1px solid #8394a0;
+}
+
+.route-general {
+  background-color: #e6eaec;
+  padding: 20px 12px 25px 12px;
+}
+
+@media screen and (max-width: 767px) {
+  .route-general {
+    padding: 0;
+  }
+}
+
+.route-general-info-container {
+  display: table;
+  width: 100%;
+}
+
+.route-single-info {
+  display: table-cell;
+  width: auto;
+}
+
+@media screen and (max-width: 767px) {
+  .route-single-info {
+    width: 33.33333%;
+    padding: 12px;
+  }
+  .route-single-info:not(:last-of-type) {
+    border-right: 1px solid;
+  }
+}
+
+.route-info-title {
+  font-size: 18px;
+  line-height: 19px;
+  font-weight: bold;
+  color: #fff;
+}
+
+.route-info-title-sm {
+  font-size: 14px;
+  font-weight: bold;
+  color: #666;
+}
+
+/* Reset dl/dt/dd to match previous div layout */
+dl.route-general-info-container,
+dl.elevation-summary {
+  margin: 0;
+  padding: 0;
+}
+
+dt,
+dd {
+  display: block;
+  margin: 0;
+  padding: 0;
+}
+
+.elevation-summary {
+  display: flex;
+  gap: 20px;
+  margin-bottom: 12px;
+}
+
+.elevation-summary .elevation-entry {
+  display: flex;
+  align-items: baseline;
+  gap: 4px;
+  font-size: 16px;
+  line-height: 20px;
+  color: #333;
+}
+
+.elevation-label {
+  font-weight: bold;
+  color: #8394a0;
+}
+
+/* Override text color for light bg sections */
+.route-general .route-info-title,
+.route-graphic-container .route-info-title {
+  color: #333;
+}
+
+.route-info-data {
+  color: #8394a0;
+}
+
+.route-info-data.route-info-general-data {
+  font-size: 18px;
+  font-weight: bold;
+  line-height: 22px;
+  padding-top: 10px;
+  color: #333;
+}
+
+/* Route details section */
+.route-details {
+  background-color: #fff;
+}
+
+.route-details .route-info-title {
+  position: relative;
+  color: #333;
+}
+
+.route-details-download {
+  position: absolute;
+  bottom: 0;
+  right: 0;
+  cursor: pointer;
+}
+
+.route-details-download small {
+  font-size: 11px;
+  line-height: 10px;
+  color: #8394a0;
+  margin-right: 3px;
 }
 
 .route-details-step {
-  @apply p-2 border-l-4 border-quaternary hover:bg-tertiary cursor-pointer transition-colors text-white text-sm;
+  font-size: 16px;
+  line-height: 20px;
+  border-bottom: 1px solid #8394a0;
+  padding: 10px 10px 10px 30px;
+  margin: 0 -12px 0 0;
+  position: relative;
+  cursor: pointer;
 }
 
-.route-instruction {
-  @apply font-semibold mb-1;
+.route-details-step:hover::before {
+  content: '';
+  width: 4px;
+  position: absolute;
+  top: 10px;
+  bottom: 10px;
+  left: 0;
+  margin: 0 0 0 -12px;
+  background-color: var(--color-secondary);
 }
 
-.route-instruction-data {
-  @apply text-xs text-tertiary;
+.route-details-step .route-instruction {
+  margin-bottom: 10px;
+  position: relative;
+  color: #333;
 }
 
-/* Icon direction - using simple unicode for now */
-.icon-Direction {
-  @apply mr-2 inline-block;
+.route-details-step .icon-Direction {
+  position: absolute;
+  top: 0;
+  right: 100%;
+  margin-right: 6px;
+}
+
+.route-details-step .route-instruction-data {
+  font-size: 16px;
+  line-height: 19px;
+  display: inline-block;
+  margin: 0 10px 0 0;
+  color: #8394a0;
+}
+
+/* Elevation profile container */
+.route-graphic-container {
+  background-color: #fff;
+}
+
+/* =============================================
+   Tips section
+   ============================================= */
+
+.routes-tip {
+  padding: 30px 20px;
+  text-align: center;
+  background-color: #fff;
+  margin-top: 10px;
+}
+
+.routes-tip h3 {
+  font-size: 20px;
+  line-height: 20px;
+  font-weight: bold;
+  margin: 0 0 10px 0;
+  color: #333;
+}
+
+.routes-tip p {
+  font-size: 14px;
+  line-height: 20px;
+  color: #333;
 }
 </style>
