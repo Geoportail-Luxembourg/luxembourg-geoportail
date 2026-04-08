@@ -318,7 +318,7 @@ function closeLayerMetadata() {
               class="text-secondary hover:underline"
               target="_blank"
               :href="layerMetadata.metadataLink"
-              >{{ t('link') }}</a
+              >{{ t('lien vers le geocatalogue') }}</a
             >
           </span>
         </div>
