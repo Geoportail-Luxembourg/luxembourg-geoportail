@@ -1089,6 +1089,10 @@ onMounted(() => {
   font-size: 19px;
 }
 
+.icon-Switch {
+  margin-left: 12px;
+}
+
 /* Direction icon rotations */
 .icon-Direction.s-e {
   transform: rotate(45deg);
