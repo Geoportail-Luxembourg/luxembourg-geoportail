@@ -196,7 +196,7 @@ watch(
   >
     <template v-slot:header>
       <h1>
-        {{ t('My Maps', { ns: 'client' }) }}
+        {{ t('My Maps', { ns: 'app' }) }}
       </h1>
     </template>
 
@@ -223,7 +223,7 @@ watch(
       <!-- No MyMap selected, display button to create or select one in popups -->
       <template v-else>
         <div class="text-white">
-          {{ t('Create, save and share your own maps.', { ns: 'client' }) }}
+          {{ t('Create, save and share your own maps.', { ns: 'app' }) }}
         </div>
 
         <div class="flex justify-center flex-col items-center">
@@ -235,16 +235,16 @@ watch(
             :aria-label="
               isLoadingMyMaps
                 ? t('Chargement en cours...')
-                : t('Ouvrir une carte', { ns: 'client' })
+                : t('Ouvrir une carte', { ns: 'app' })
             "
           >
-            {{ t('Ouvrir une carte', { ns: 'client' }) }}
+            {{ t('Ouvrir une carte', { ns: 'app' }) }}
           </button>
           <button
             class="lux-btn mt-3"
             @click="openEditFormModal(undefined, EditFormModeType.CREATE)"
           >
-            {{ t('Créer une nouvelle carte', { ns: 'client' }) }}
+            {{ t('Créer une nouvelle carte', { ns: 'app' }) }}
           </button>
         </div>
       </template>

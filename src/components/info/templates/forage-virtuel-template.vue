@@ -57,7 +57,7 @@ async function generateRepport() {
       "Votre rapport est en train d'être généré. Un email vous sera envoyé à l'adresse {{email}} dès qu'il sera disponible",
       {
         email: mail.value,
-        ns: 'client',
+        ns: 'app',
       }
     ),
     AlertNotificationType.INFO

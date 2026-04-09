@@ -56,7 +56,7 @@ async function getRemoteEndpoint(url: string) {
   isLoading.value = true
   currentRemoteEndpoint = await remoteLayersService
     .getRemoteEndpoint(url)
-    .catch(() => alert(t('Impossible de contacter ce WMS', { ns: 'client' })))
+    .catch(() => alert(t('Impossible de contacter ce WMS', { ns: 'app' })))
   currentRemoteUrl = url
   isLoading.value = false
 }
@@ -124,7 +124,7 @@ function toggleLayer(node: LayerTreeNodeModel) {
 <template>
   <ModalDialog
     v-if="remoteLayersOpen"
-    :title="t('Add external data', { ns: 'client' })"
+    :title="t('Add external data', { ns: 'app' })"
     @close="setRemoteLayersOpen(false)"
   >
     <template v-slot:content>
@@ -133,16 +133,16 @@ function toggleLayer(node: LayerTreeNodeModel) {
         data-cy="remoteLayerModalContent"
       >
         <legend class="sr-only">
-          {{ t('Add external data', { ns: 'client' }) }}
+          {{ t('Add external data', { ns: 'app' }) }}
         </legend>
         <dropdown-list
           class="lux-remote-services-dropdown"
           :options="wmsLayers"
-          :placeholder="t('Predefined wms', { ns: 'client' })"
+          :placeholder="t('Predefined wms', { ns: 'app' })"
           @change="onChangeRemoteEndpoint"
         ></dropdown-list>
         <label for="remote-wms-url" class="sr-only">{{
-          t('Choose or write a WMS url', { ns: 'client' })
+          t('Choose or write a WMS url', { ns: 'app' })
         }}</label>
         <input
           id="remote-wms-url"
@@ -150,7 +150,7 @@ function toggleLayer(node: LayerTreeNodeModel) {
           type="url"
           :placeholder="
             t('Choose or write a WMS url', {
-              ns: 'client',
+              ns: 'app',
             })
           "
           :value="currentRemoteUrl || ''"
@@ -159,12 +159,10 @@ function toggleLayer(node: LayerTreeNodeModel) {
         <button
           type="button"
           class="lux-btn"
-          :aria-label="
-            t('Get the layers for the entered URL', { ns: 'client' })
-          "
+          :aria-label="t('Get the layers for the entered URL', { ns: 'app' })"
           @click="onClickGetLayers"
         >
-          {{ t('Get the layers', { ns: 'client' }) }}
+          {{ t('Get the layers', { ns: 'app' }) }}
         </button>
       </fieldset>
 
@@ -176,7 +174,7 @@ function toggleLayer(node: LayerTreeNodeModel) {
       >
         <span class="lux-label">{{
           t('Description du service :', {
-            ns: 'client',
+            ns: 'app',
           })
         }}</span>
         {{ currentRemoteEndpoint.getServiceInfo()?.abstract }}
@@ -184,7 +182,7 @@ function toggleLayer(node: LayerTreeNodeModel) {
       <div class="text-center" v-if="!isLoading && currentRemoteEndpoint">
         <span class="lux-label">{{
           t('Access constraints :', {
-            ns: 'client',
+            ns: 'app',
           })
         }}</span>
         {{ currentRemoteEndpoint.getServiceInfo()?.constraints }}
@@ -198,7 +196,7 @@ function toggleLayer(node: LayerTreeNodeModel) {
         <span aria-hidden="true" class="fa fa-refresh fa-spin"></span>
         <span>{{
           t('Chargement des informations', {
-            ns: 'client',
+            ns: 'app',
           })
         }}</span>
       </div>

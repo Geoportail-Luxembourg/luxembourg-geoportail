@@ -34,7 +34,7 @@ watch(infoOpen, isOpen => {
   >
     <template v-slot:header>
       <h1>
-        {{ t('infos', { ns: 'client' }) }}
+        {{ t('infos', { ns: 'app' }) }}
       </h1>
     </template>
 

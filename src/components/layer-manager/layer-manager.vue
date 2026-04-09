@@ -97,7 +97,7 @@ function toggleLayerComparator() {
 <template>
   <div>
     <div v-if="isOffLine && layers.length === 0" class="text-black">
-      {{ t('No layer selected', { ns: 'client' }) }}
+      {{ t('No layer selected', { ns: 'app' }) }}
     </div>
     <ul
       ref="sortableLayers3d"
@@ -174,14 +174,14 @@ function toggleLayerComparator() {
         class="bg-white text-primary hover:bg-primary hover:text-white border border-slate-300 py-1.5 px-2.5"
         @click="emit('displayCatalog')"
       >
-        {{ t('+ Add layers', { ns: 'client' }) }}
+        {{ t('+ Add layers', { ns: 'app' }) }}
       </button>
       <button
         data-cy="addRemoteLayer"
         class="bg-white text-primary hover:bg-primary hover:text-white border border-slate-300 py-1.5 px-2.5"
         @click="setRemoteLayersOpen(true)"
       >
-        {{ t('+ Add external Wms', { ns: 'client' }) }}
+        {{ t('+ Add external Wms', { ns: 'app' }) }}
       </button>
     </div>
 

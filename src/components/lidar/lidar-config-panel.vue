@@ -103,7 +103,7 @@ input[type='number'] {
   >
     <template v-slot:header>
       <h1>
-        {{ t('lidar', { ns: 'client' }) }}
+        {{ t('lidar', { ns: 'app' }) }}
       </h1>
     </template>
     <template v-slot:content>

@@ -35,7 +35,7 @@ onBeforeUnmount(() => {
     >
       <li>
         <button-text
-          :label="t('Draw Point', { ns: 'client' })"
+          :label="t('Draw Point', { ns: 'app' })"
           :active="
             drawStateActive === 'drawPoint' || editStateActive === 'editPoint'
           "
@@ -46,7 +46,7 @@ onBeforeUnmount(() => {
       </li>
       <li>
         <button-text
-          :label="t('Label', { ns: 'client' })"
+          :label="t('Label', { ns: 'app' })"
           :active="
             drawStateActive === 'drawLabel' || editStateActive === 'editLabel'
           "
@@ -57,7 +57,7 @@ onBeforeUnmount(() => {
       </li>
       <li>
         <button-text
-          :label="t('Line', { ns: 'client' })"
+          :label="t('Line', { ns: 'app' })"
           :active="
             drawStateActive === 'drawLine' || editStateActive === 'editLine'
           "
@@ -68,7 +68,7 @@ onBeforeUnmount(() => {
       </li>
       <li>
         <button-text
-          :label="t('Polygon', { ns: 'client' })"
+          :label="t('Polygon', { ns: 'app' })"
           :active="
             drawStateActive === 'drawPolygon' ||
             editStateActive === 'editPolygon'
@@ -80,7 +80,7 @@ onBeforeUnmount(() => {
       </li>
       <li>
         <button-text
-          :label="t('Circle', { ns: 'client' })"
+          :label="t('Circle', { ns: 'app' })"
           :active="
             drawStateActive === 'drawCircle' || editStateActive === 'editCircle'
           "
@@ -105,7 +105,7 @@ onBeforeUnmount(() => {
             :disabled="editStateActive === 'editLine'"
             class="mr-2 cursor-pointer"
           />
-          {{ t('Suivre la route', { ns: 'client' }) }}
+          {{ t('Suivre la route', { ns: 'app' }) }}
         </label>
       </li>
     </ul>

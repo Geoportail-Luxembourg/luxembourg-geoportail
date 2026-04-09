@@ -16,7 +16,7 @@ const appStore = useAppStore()
   >
     <template v-slot:header>
       <h1>
-        {{ t('Vector tiles editor', { ns: 'client' }) }}
+        {{ t('Vector tiles editor', { ns: 'app' }) }}
       </h1>
     </template>
 

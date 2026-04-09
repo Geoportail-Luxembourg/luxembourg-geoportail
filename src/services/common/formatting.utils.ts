@@ -43,7 +43,7 @@ export function formatMeasure(
   type?: FormatMeasureType
 ) {
   if (value == null || isNaN(value)) {
-    return i18next.t('N/A', { ns: 'client' })
+    return i18next.t('N/A', { ns: 'app' })
   }
 
   switch (type) {
@@ -78,7 +78,7 @@ export function formatElevation(value: number | string, digits = 0): string {
 export function formatLength(value: number | null, digits = 0): string {
   // null covers API errors or unavailable data (eg. elevation)
   if (value === null) {
-    return i18next.t('N/A', { ns: 'client' })
+    return i18next.t('N/A', { ns: 'app' })
   } else if (isNaN(value)) {
     return ''
   } else if (value < 1000) {
@@ -110,7 +110,7 @@ export function formatArea(value: number): string {
  */
 export function formatAddress(address: AddressResult | undefined) {
   if (address === undefined) {
-    return i18next.t('N/A', { ns: 'client' })
+    return i18next.t('N/A', { ns: 'app' })
   }
   return `${address.number}, ${address.street}, ${address.postal_code} ${address.locality}`
 }

@@ -169,7 +169,7 @@ function onClickRoutingIcon() {
     >
       <li data-cy="layersOpenClose">
         <button-icon
-          :label="t('layers', { ns: 'client' })"
+          :label="t('layers', { ns: 'app' })"
           :aria-label="
             layersOpen
               ? t('Close layers panel')
@@ -189,7 +189,7 @@ function onClickRoutingIcon() {
       <li data-cy="mymapsOpenClose">
         <button-icon
           :label="
-            t('my_maps', { ns: 'client' }) + (myMapLayersChanged ? '(*)' : '')
+            t('my_maps', { ns: 'app' }) + (myMapLayersChanged ? '(*)' : '')
           "
           :aria-label="
             myMapsOpen
@@ -204,7 +204,7 @@ function onClickRoutingIcon() {
       </li>
       <li v-if="!isOffLine" data-cy="infoOpenClose">
         <button-icon
-          :label="`${t('Infos', { ns: 'client' })}${
+          :label="`${t('Infos', { ns: 'app' })}${
             displayStarOnMobile ? '(*)' : ''
           }`"
           :aria-label="
@@ -220,7 +220,7 @@ function onClickRoutingIcon() {
       </li>
       <li v-if="!isOffLine" data-cy="legendsOpenClose">
         <button-icon
-          :label="t('Legends', { ns: 'client' })"
+          :label="t('Legends', { ns: 'app' })"
           :aria-label="
             legendsOpen ? t('Close legends panel') : t('Open legends panel')
           "
@@ -232,7 +232,7 @@ function onClickRoutingIcon() {
       </li>
       <li v-if="!isOffLine">
         <button-icon
-          :label="t('Routing', { ns: 'client' })"
+          :label="t('Routing', { ns: 'app' })"
           :aria-label="
             routingPanelOpen
               ? t('Close routing panel')
@@ -261,7 +261,7 @@ function onClickRoutingIcon() {
       <share-panel v-if="shareOpen" />
       <toolbar-elevation-profile v-if="elevationProfileToolbarOpen" />
       <button-icon
-        :label="t('Dessin', { ns: 'client' })"
+        :label="t('Dessin', { ns: 'app' })"
         :aria-label="
           drawToolbarOpen
             ? t('Close drawing toolbar')
@@ -278,7 +278,7 @@ function onClickRoutingIcon() {
       <template v-if="!isOffLine">
         <toolbar-measure v-if="measureToolbarOpen" />
         <button-icon
-          :label="t('Mesurer', { ns: 'client' })"
+          :label="t('Mesurer', { ns: 'app' })"
           :aria-label="
             measureToolbarOpen
               ? t('Close measure toolbar')
@@ -294,7 +294,7 @@ function onClickRoutingIcon() {
       <!-- Print tools -->
       <button-icon
         v-if="!isOffLine"
-        :label="t('Imprimer', { ns: 'client' })"
+        :label="t('Imprimer', { ns: 'app' })"
         :aria-label="
           printToolbarOpen
             ? t('Close print toolbar')
@@ -310,7 +310,7 @@ function onClickRoutingIcon() {
       <!-- Social sharing tools -->
       <button-icon
         v-if="!isOffLine"
-        :label="t('Partager', { ns: 'client' })"
+        :label="t('Partager', { ns: 'app' })"
         :aria-label="
           shareOpen
             ? t('Close share panel')
@@ -332,13 +332,13 @@ function onClickRoutingIcon() {
     >
       <ButtonLink
         class="hidden lg:flex text-gray-500"
-        :label="t('What\'s new', { ns: 'client' })"
+        :label="t('What\'s new', { ns: 'app' })"
         :link="`https://geoportail.lu/${i18next.language}/questions/whats-new/`"
       >
       </ButtonLink>
       <ButtonLink
         class="hidden lg:flex text-gray-500"
-        :label="t('Geocatalogue', { ns: 'client' })"
+        :label="t('Geocatalogue', { ns: 'app' })"
         :link="geonetworkUrl"
       >
       </ButtonLink>
@@ -346,39 +346,39 @@ function onClickRoutingIcon() {
         class="hidden lg:flex h-full flex-col justify-center px-[7px] uppercase hover:text-white hover:bg-primary text-gray-500"
         :class="{ 'bg-primary text-white': feedbackOpen }"
         :aria-pressed="feedbackOpen ? 'true' : 'false'"
-        :aria-label="t('Feedback', { ns: 'client' })"
+        :aria-label="t('Feedback', { ns: 'app' })"
         @click="() => toggleFeedbackOpen()"
         data-cy="feedbackButton"
       >
-        {{ t('Feedback', { ns: 'client' }) }}
+        {{ t('Feedback', { ns: 'app' }) }}
       </button>
       <ButtonLink
         class="hidden lg:flex text-gray-500"
-        :label="t('A Propos', { ns: 'client' })"
+        :label="t('A Propos', { ns: 'app' })"
         :link="`https://www.geoportail.lu/${i18next.language}/propos/`"
       >
       </ButtonLink>
       <ButtonLink
         class="hidden lg:flex text-gray-500"
-        :label="t('Aide', { ns: 'client' })"
+        :label="t('Aide', { ns: 'app' })"
         :link="`https://www.geoportail.lu/${i18next.language}/documentation/`"
       >
       </ButtonLink>
       <ButtonLink
         class="hidden lg:flex text-gray-500"
-        :label="t('Contact', { ns: 'client' })"
+        :label="t('Contact', { ns: 'app' })"
         :link="`https://www.geoportail.lu/${i18next.language}/propos/contactez-nous/`"
       >
       </ButtonLink>
       <ButtonLink
         class="text-gray-500"
-        :label="t('Legalites', { ns: 'client' })"
+        :label="t('Legalites', { ns: 'app' })"
         :link="`https://www.geoportail.lu/${i18next.language}/propos/mentions-legales/`"
       >
       </ButtonLink>
       <ButtonLink
         class="text-gray-500"
-        :label="t('ACT', { ns: 'client' })"
+        :label="t('ACT', { ns: 'app' })"
         :link="`http://www.act.public.lu/`"
       >
       </ButtonLink>

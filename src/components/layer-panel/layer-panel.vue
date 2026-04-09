@@ -39,7 +39,7 @@ function onDisplayCatalog() {
     <!-- Panel title and close button -->
     <template v-slot:header>
       <h1>
-        {{ t('layers', { ns: 'client' }) }}
+        {{ t('layers', { ns: 'app' }) }}
       </h1>
     </template>
 
@@ -52,7 +52,7 @@ function onDisplayCatalog() {
         :class="showMyLayersTab ? 'bg-primary' : 'bg-tertiary'"
         :aria-expanded="showMyLayersTab"
       >
-        {{ t('my_layers', { ns: 'client' }) }}
+        {{ t('my_layers', { ns: 'app' }) }}
         <span v-if="layers.length">({{ layers.length }})</span>
       </button>
       <button
@@ -63,7 +63,7 @@ function onDisplayCatalog() {
         :class="showMyLayersTab ? 'bg-tertiary' : 'bg-primary'"
         :aria-expanded="!showMyLayersTab"
       >
-        {{ t('Catalog', { ns: 'client' }) }}
+        {{ t('Catalog', { ns: 'app' }) }}
         <i
           v-if="themesLoading"
           class="fa-solid fa-arrows-rotate animate-spin ml-1 text-xs"

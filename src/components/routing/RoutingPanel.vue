@@ -4,7 +4,7 @@
     :close-fn="() => appStore.toggleRoutingOpen(false)"
   >
     <template v-slot:header>
-      <h1>{{ t('itineraire', { ns: 'client' }) }}</h1>
+      <h1>{{ t('itineraire', { ns: 'app' }) }}</h1>
     </template>
 
     <template v-slot:content>
@@ -908,7 +908,7 @@ async function createMapFromRoute() {
 
   // Create map title and description
   const mapTitle =
-    t('Route du', { ns: 'client' }) +
+    t('Route du', { ns: 'app' }) +
     ' ' +
     new Date().toLocaleDateString(i18next.language, {
       day: '2-digit',
@@ -954,7 +954,7 @@ async function createMapFromRoute() {
 
     addNotification(
       t('Une copie de votre route a été enregistrée dans Mymaps.', {
-        ns: 'client',
+        ns: 'app',
       }),
       AlertNotificationType.INFO
     )

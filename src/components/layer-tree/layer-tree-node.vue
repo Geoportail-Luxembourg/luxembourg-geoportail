@@ -87,9 +87,7 @@ function toggleParent(node: LayerTreeNodeModel) {
   <div v-else class="flex text-tertiary pr-2">
     <button
       :data-cy="`layerMetadata-${node.id}`"
-      :aria-label="
-        t('Layer information: {name}', { name: label, ns: 'client' })
-      "
+      :aria-label="t('Layer information: {name}', { name: label, ns: 'app' })"
       class="self-start before:text-[.85rem] before:transform before:translate-y-[.1rem] before:inline-block before:content-['\f129'] fa-solid fa-fw fa-fh fa-info"
       @click="setMetadataLayer(node as unknown as Layer)"
     ></button>

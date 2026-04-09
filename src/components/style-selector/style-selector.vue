@@ -124,7 +124,7 @@ watch(
       @click="resetStyle"
       class="lux-btn my-2"
     >
-      {{ t('Réinitialiser style', { ns: 'client' }) }}
+      {{ t('Réinitialiser style', { ns: 'app' }) }}
     </button>
   </div>
 </template>
