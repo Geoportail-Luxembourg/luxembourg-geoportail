@@ -35,3 +35,46 @@ node tools/translations/sync-v3-to-app.cjs --prune-client
 - The script updates keys when a matching key exists in v3 or in `client.{lang}.json`.
 - Keys missing from both sources are reported in the terminal output.
 - With `--prune-client`, migrated used keys are removed from `client.{lang}.json`.
+
+## `transform-tx-v3-po-to-v4-json.cjs`
+
+Goal:
+
+- Read legacy v3 Transifex pulls stored as `.po` files
+- Convert them to sorted JSON dictionaries for the v4 locale files
+- Keep `app.{lang}.json` managed separately as JSON through Transifex
+
+Default mapping:
+
+- `tools/translations/transifex/v3-po/client.{lang}.po` -> `public/assets/locales/client.{lang}.json`
+- `tools/translations/transifex/v3-po/server.{lang}.po` -> `public/assets/locales/server.{lang}.json`
+- `tools/translations/transifex/v3-po/legends.{lang}.po` -> `public/assets/locales/legends.{lang}.json`
+- `tools/translations/transifex/v3-po/tooltips.{lang}.po` -> `public/assets/locales/tooltips.{lang}.json`
+
+### Usage
+
+```bash
+node tools/translations/transform-tx-v3-po-to-v4-json.cjs
+```
+
+### Useful options
+
+```bash
+node tools/translations/transform-tx-v3-po-to-v4-json.cjs --dry-run
+node tools/translations/transform-tx-v3-po-to-v4-json.cjs --langs=fr,de,en,lb
+node tools/translations/transform-tx-v3-po-to-v4-json.cjs --namespaces=client,tooltips,legends,server
+node tools/translations/transform-tx-v3-po-to-v4-json.cjs --input-dir=tools/translations/transifex/v3-po
+```
+
+### Typical workflow
+
+```bash
+tx pull -a
+node tools/translations/transform-tx-v3-po-to-v4-json.cjs
+```
+
+Notes:
+
+- `app.{lang}.json` is pulled directly as JSON via Transifex.
+- Legacy v3 namespaces are pulled as `.po` files first, then transformed locally.
+- Empty `msgstr` values fall back to `msgid` during conversion.
