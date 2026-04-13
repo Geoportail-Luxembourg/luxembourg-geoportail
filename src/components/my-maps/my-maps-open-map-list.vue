@@ -372,7 +372,7 @@ function sortMap(
             </tr>
             <tr v-if="!filteredMaps.length && !isLoadingMyMaps">
               <td colspan="6" class="pt-2 border-t-[1px] italic" role="status">
-                {{ t('No result', { ns: 'client' }) }}
+                {{ t('No result', { ns: 'app' }) }}
               </td>
             </tr>
             <tr v-if="isLoadingMyMaps">
@@ -383,7 +383,7 @@ function sortMap(
                 aria-live="polite"
                 aria-busy="true"
               >
-                {{ t('Chargement des cartes en cours', { ns: 'client' }) }}
+                {{ t('Chargement des cartes en cours', { ns: 'app' }) }}
               </td>
             </tr>
           </tbody>

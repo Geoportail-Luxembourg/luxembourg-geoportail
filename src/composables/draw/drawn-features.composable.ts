@@ -57,9 +57,9 @@ export default function useDrawnFeatures() {
   //   switch (feature.getGeometry()?.getType()) {
   //     case 'Point': {
   //       if (drawStateActive.value === 'drawLabel') {
-  //         name = t('Label', { ns: 'client' })
+  //         name = t('Label', { ns: 'app' })
   //       } else {
-  //         name = t('Point', { ns: 'client' })
+  //         name = t('Point', { ns: 'app' })
   //       }
   //       break
   //     }
@@ -85,18 +85,18 @@ export default function useDrawnFeatures() {
   //         }
   //         curLineStringGeom.setCoordinates(curLineStringCooridnates)
   //       }
-  //       name = t('LineString', { ns: 'client' })
+  //       name = t('LineString', { ns: 'app' })
   //       break
   //     }
   //     case 'Polygon': {
   //       if (feature.get('isCircle')) {
-  //         name = t('Circle', { ns: 'client' })
+  //         name = t('Circle', { ns: 'app' })
   //       } else {
   //         const featureGeom = feature.getGeometry() as Polygon
   //         if (featureGeom.getLinearRing(0)!.getCoordinates().length < 4) {
   //           return
   //         }
-  //         name = t('Polygon', { ns: 'client' })
+  //         name = t('Polygon', { ns: 'app' })
   //       }
   //       break
   //     }

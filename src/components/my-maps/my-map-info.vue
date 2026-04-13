@@ -97,6 +97,10 @@ const menuOptions = computed(() => [
     action: () => download('shapefile'),
   },
   {
+    label: 'Exporter un GeoPackage',
+    action: () => download('gpkg'),
+  },
+  {
     label: 'Exporter un GeoJSON',
     action: () => download('geojson'),
   },

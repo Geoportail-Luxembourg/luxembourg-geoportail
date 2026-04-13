@@ -110,7 +110,7 @@ onUnmounted(() => {
           class="cursor-pointer w-full p-2 lux-input"
           type="text"
           v-model="title"
-          :placeholder="t('Title', { ns: 'client' })"
+          :placeholder="t('Title', { ns: 'app' })"
           data-cy="printTitle"
         />
       </div>

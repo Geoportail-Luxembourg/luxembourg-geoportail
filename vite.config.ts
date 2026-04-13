@@ -75,6 +75,12 @@ export default defineConfig(async ({ command, mode }) => {
           changeOrigin: true,
           secure: false,
         },
+        '/wmts-proxy': {
+          target: 'http://wmts3.geoportail.lu',
+          changeOrigin: true,
+          secure: false,
+          rewrite: path => path.replace(/^\/wmts-proxy/, ''),
+        },
       },
     },
   }

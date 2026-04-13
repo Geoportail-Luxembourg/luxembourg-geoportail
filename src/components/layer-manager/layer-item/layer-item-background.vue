@@ -26,7 +26,7 @@ const showInfoButton = computed(() => !useOffline().isOffLine.value)
 
 function getLabel() {
   // TODO: use getLabel from useLayer? not working as composable is not updated
-  return t(props.layer.name, { ns: 'client' })
+  return t(props.layer.name, { ns: 'app' })
 }
 </script>
 

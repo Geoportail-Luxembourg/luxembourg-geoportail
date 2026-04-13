@@ -110,7 +110,7 @@ onUnmounted(() => {
         for="embed-code-input"
         class="block text-white text-sm font-medium mb-2"
       >
-        {{ t('Integrate', { ns: 'client' }) }}
+        {{ t('Integrate', { ns: 'app' }) }}
       </label>
       <div class="flex gap-2">
         <input
@@ -118,7 +118,7 @@ onUnmounted(() => {
           type="text"
           class="flex-1 px-3 py-2 lux-input cursor-pointer"
           :value="iframeCode"
-          :aria-label="t('Integrate', { ns: 'client' })"
+          :aria-label="t('Integrate', { ns: 'app' })"
           @click="selectInput"
           readonly
           data-cy="embedCodeInput"
@@ -126,10 +126,10 @@ onUnmounted(() => {
         <button
           @click="openIframePreview"
           class="bg-white disabled:opacity-75 disabled:cursor-not-allowed text-primary hover:bg-primary hover:text-white border border-slate-300 py-1.5 px-2.5"
-          :aria-label="t('Preview', { ns: 'client' })"
+          :aria-label="t('Preview', { ns: 'app' })"
           data-cy="previewButton"
         >
-          {{ t('Preview', { ns: 'client' }) }}
+          {{ t('Preview', { ns: 'app' }) }}
         </button>
       </div>
     </div>
@@ -167,13 +167,13 @@ onUnmounted(() => {
           <!-- Size selector -->
           <div>
             <label for="iframe-size-select" class="sr-only">
-              {{ t('Select iframe size', { ns: 'client' }) }}
+              {{ t('Select iframe size', { ns: 'app' }) }}
             </label>
             <select
               id="iframe-size-select"
               v-model="iframeSize"
               class="w-full px-3 py-2 border border-gray-300 rounded"
-              :aria-label="t('Select iframe size', { ns: 'client' })"
+              :aria-label="t('Select iframe size', { ns: 'app' })"
               data-cy="iframeSizeSelect"
             >
               <option value="small">{{ t('small', { ns: 'app' }) }}</option>
@@ -220,7 +220,7 @@ onUnmounted(() => {
               :height="iframeHeight"
               frameborder="0"
               style="border: 0"
-              :title="t('Embed map preview', { ns: 'client' })"
+              :title="t('Embed map preview', { ns: 'app' })"
               data-cy="iframePreview"
             ></iframe>
           </div>
@@ -228,7 +228,7 @@ onUnmounted(() => {
           <!-- Iframe code with copy button -->
           <div class="flex gap-2">
             <label for="iframe-code-input" class="sr-only">
-              {{ t('Iframe code', { ns: 'client' }) }}
+              {{ t('Iframe code', { ns: 'app' }) }}
             </label>
             <input
               id="iframe-code-input"
@@ -237,16 +237,16 @@ onUnmounted(() => {
               @click="selectInput"
               readonly
               class="flex-1 px-3 py-2 border border-gray-300 rounded cursor-pointer"
-              :aria-label="t('Iframe code', { ns: 'client' })"
+              :aria-label="t('Iframe code', { ns: 'app' })"
               data-cy="iframeCodeInput"
             />
             <button
               @click="copyIframeCode"
               class="bg-white disabled:opacity-75 disabled:cursor-not-allowed text-primary hover:bg-primary hover:text-white border border-slate-300 py-1.5 px-2.5"
-              :aria-label="t('Copy', { ns: 'client' })"
+              :aria-label="t('Copy', { ns: 'app' })"
               data-cy="copyIframeCodeButton"
             >
-              {{ t('Copy', { ns: 'client' }) }}
+              {{ t('Copy', { ns: 'app' }) }}
             </button>
           </div>
         </div>

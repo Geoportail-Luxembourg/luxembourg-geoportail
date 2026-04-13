@@ -173,7 +173,7 @@ class StatePersistorLayersService implements StatePersistorService {
                 const opacities = rawOpacities
                   ? rawOpacities.split(STORAGE_SEPARATOR).map(Number)
                   : []
-                const times = rawTimes ? rawTimes.split('--') : []
+                const times = rawTimes ? rawTimes.split('--').reverse() : []
 
                 nowResolved.forEach(layer => {
                   const idx = allRequestedIds.indexOf(String(layer.id))
@@ -181,11 +181,7 @@ class StatePersistorLayersService implements StatePersistorService {
                     if (opacities[idx] !== undefined)
                       layer.opacity = opacities[idx]
                     if (times[idx]) {
-                      const defaultTimes = times[idx].split('/')
-                      if (defaultTimes[0])
-                        layer.currentTimeMinValue = defaultTimes[0]
-                      if (defaultTimes[1])
-                        layer.currentTimeMaxValue = defaultTimes[1]
+                      this.restoreLayerTime(layer, times[idx])
                     }
                   }
                 })
@@ -231,7 +227,18 @@ class StatePersistorLayersService implements StatePersistorService {
   }
 
   restoreLayerTime(layer: Layer, time: string) {
-    const defaultTimes = time.split('/')
+    // Legacy permalinks may contain double-encoded characters (e.g. %253A instead of :).
+    // URLSearchParams.get() decodes once, leaving %3A; decode again to obtain a valid ISO date.
+    let decodedTime = time
+    try {
+      if (/%[0-9A-Fa-f]{2}/.test(decodedTime)) {
+        decodedTime = decodeURIComponent(decodedTime)
+      }
+    } catch {
+      // If decoding fails, fall back to the original string
+    }
+
+    const defaultTimes = decodedTime.split('/')
 
     // Use min and max default values to restore previous state
     // Guard against empty strings coming from a misaligned permalink (e.g. a layer

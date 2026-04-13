@@ -66,7 +66,7 @@ function activateDrawingTools() {
 async function sendReport() {
   if (!email.value || !description.value || !concernedLayer.value) {
     addNotification(
-      t('Please fill all required fields', { ns: 'client' }),
+      t('Please fill all required fields', { ns: 'app' }),
       AlertNotificationType.WARNING
     )
     return
@@ -94,7 +94,7 @@ async function sendReport() {
       addNotification(
         t('Feedback sent to <a href="mailto:{{email}}">{{email}}</a>', {
           email: supportEmail,
-          ns: 'client',
+          ns: 'app',
         }),
         AlertNotificationType.INFO
       )
@@ -109,7 +109,7 @@ async function sendReport() {
         'Feedback could not be sent to <a href="mailto:{{email}}">{{email}}</a>',
         {
           email: supportEmail,
-          ns: 'client',
+          ns: 'app',
         }
       ),
       AlertNotificationType.ERROR
@@ -144,19 +144,19 @@ const availableLayers = computed(() => {
   >
     <template v-slot:header>
       <h1>
-        {{ t('Feedback', { ns: 'client' }) }}
+        {{ t('Feedback', { ns: 'app' }) }}
       </h1>
     </template>
 
     <template v-slot:content>
       <div class="feedback-content text-white">
         <h3 class="text-lg font-bold mb-4">
-          {{ t('Report a map content problem:', { ns: 'client' }) }}
+          {{ t('Report a map content problem:', { ns: 'app' }) }}
         </h3>
         <form @submit.prevent="sendReport" class="flex flex-col gap-4">
           <div class="form-group">
             <label for="inputEmail" class="block mb-2 font-medium">
-              {{ t('Your email', { ns: 'client' }) }}
+              {{ t('Your email', { ns: 'app' }) }}
             </label>
             <input
               type="email"
@@ -164,14 +164,14 @@ const availableLayers = computed(() => {
               v-model="email"
               class="w-full px-3 py-2 lux-input"
               id="inputEmail"
-              :aria-label="t('Your email', { ns: 'client' })"
+              :aria-label="t('Your email', { ns: 'app' })"
               data-cy="feedbackEmail"
             />
           </div>
 
           <div class="form-group">
             <label for="dropdownLayerPicker" class="block mb-2 font-medium">
-              {{ t('Pick layer where problem occurs', { ns: 'client' }) }}
+              {{ t('Pick layer where problem occurs', { ns: 'app' }) }}
             </label>
             <div class="relative">
               <select
@@ -180,12 +180,12 @@ const availableLayers = computed(() => {
                 required
                 class="w-full px-3 py-2 lux-input appearance-none cursor-pointer"
                 :aria-label="
-                  t('Pick layer where problem occurs', { ns: 'client' })
+                  t('Pick layer where problem occurs', { ns: 'app' })
                 "
                 data-cy="feedbackLayerSelect"
               >
                 <option value="" disabled>
-                  {{ t('Please pick a layer', { ns: 'client' }) }}
+                  {{ t('Please pick a layer', { ns: 'app' }) }}
                 </option>
                 <option
                   v-for="layer in availableLayers"
@@ -206,7 +206,7 @@ const availableLayers = computed(() => {
             <label for="inputDescription" class="block mb-2 font-medium">
               {{
                 t('Describe the problem within the current map extent:', {
-                  ns: 'client',
+                  ns: 'app',
                 })
               }}
             </label>
@@ -219,7 +219,7 @@ const availableLayers = computed(() => {
               id="inputDescription"
               :aria-label="
                 t('Describe the problem within the current map extent:', {
-                  ns: 'client',
+                  ns: 'app',
                 })
               "
               data-cy="feedbackDescription"
@@ -237,7 +237,7 @@ const availableLayers = computed(() => {
           <!-- Loading state announcement for screen readers -->
           <div aria-live="assertive" aria-atomic="true" class="sr-only">
             <span v-if="isSubmitting">
-              {{ t('Sending...', { ns: 'client' }) }}
+              {{ t('Sending...', { ns: 'app' }) }}
             </span>
           </div>
 
@@ -252,7 +252,7 @@ const availableLayers = computed(() => {
                   t(
                     'Click to view the map link that will be sent to our support team',
                     {
-                      ns: 'client',
+                      ns: 'app',
                     }
                   )
                 }}
@@ -262,7 +262,7 @@ const availableLayers = computed(() => {
               {{
                 t(
                   'You can also use the Drawing Tools to annotate the map and send it to the support team.',
-                  { ns: 'client' }
+                  { ns: 'app' }
                 )
               }}
               <button
@@ -270,7 +270,7 @@ const availableLayers = computed(() => {
                 @click="activateDrawingTools"
                 class="ml-2 text-blue-400 hover:text-blue-300 underline bg-transparent border-0 p-0 cursor-pointer font-normal"
               >
-                {{ t('Open Drawing Tools', { ns: 'client' }) }}
+                {{ t('Open Drawing Tools', { ns: 'app' }) }}
               </button>
             </p>
           </div>
@@ -284,8 +284,8 @@ const availableLayers = computed(() => {
           >
             {{
               isSubmitting
-                ? t('Sending...', { ns: 'client' })
-                : t('Send feedback to support team', { ns: 'client' })
+                ? t('Sending...', { ns: 'app' })
+                : t('Send feedback to support team', { ns: 'app' })
             }}
           </button>
         </form>

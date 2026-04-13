@@ -42,11 +42,15 @@ export function getMetadataLinks(link: string | string[]): string[] {
     if (isApiFormat && rest.includes('|')) {
       const firstPipeIndex = rest.indexOf('|')
       const url = rest.slice(0, firstPipeIndex).trim()
-      const [serviceType = ''] = rest.slice(firstPipeIndex + 1).split('|')
+      const [serviceType = '', description = ''] = rest
+        .slice(firstPipeIndex + 1)
+        .split('|')
       const trimmedServiceType = serviceType.trim()
+      const trimmedDescription = description.trim()
 
       if (url && trimmedServiceType) {
-        pushUnique(`${labelPart.trim()}||${url}|${trimmedServiceType}`)
+        const suffix = trimmedDescription ? `|${trimmedDescription}` : ''
+        pushUnique(`${labelPart.trim()}||${url}|${trimmedServiceType}${suffix}`)
         return
       }
       return

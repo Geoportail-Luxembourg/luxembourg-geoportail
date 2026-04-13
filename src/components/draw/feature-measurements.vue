@@ -83,7 +83,7 @@ const featLength = computed(() => {
 const featArea = computed(() => {
   if (featureGeometry.value) {
     if (featureType.value === 'drawnPolygon') {
-      return getArea(featureGeometry.value as Polygon)
+      return getArea(featureGeometry.value as Polygon, mapProjection)
     } else if (featureType.value === 'drawnCircle') {
       return getCircleArea(featureGeometry.value as Circle, mapProjection)
     }

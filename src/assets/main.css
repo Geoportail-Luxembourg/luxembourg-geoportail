@@ -466,8 +466,9 @@
   }
 
   .lux-menu-popup-list {
-    @apply py-1 z-50 top-0 left-0 absolute text-[color:var(--color-default)] bg-white border-[color:var(--color-border-default)] border-[1px];
+    @apply py-1 z-50 top-0 left-0 fixed text-[color:var(--color-default)] bg-white border-[color:var(--color-border-default)] border-[1px];
     box-shadow: 0 6px 12px rgba(0, 0, 0, 0.175);
+    overflow-y: auto;
   }
 
   .lux-profile {
@@ -575,7 +576,9 @@
     @apply text-title-xl mt-[22px] mb-[11px];
   }
   .lux-feature-info {
-    @apply break-all bg-white bg-opacity-50 m-[5px] p-[10px];
+    @apply bg-white bg-opacity-50 m-[5px] p-[10px];
+    overflow-wrap: anywhere;
+    word-break: normal;
   }
   .lux-feature-info h4 {
     @apply my-[11px] text-[20px];

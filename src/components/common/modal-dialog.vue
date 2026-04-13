@@ -88,7 +88,7 @@ function close() {
             <slot name="footer">
               <div class="flex flex-row justify-end">
                 <button class="lux-btn" data-dismiss="modal" @click="close()">
-                  {{ t('Close', { ns: 'client' }) }}
+                  {{ t('Close', { ns: 'app' }) }}
                 </button>
               </div>
             </slot>

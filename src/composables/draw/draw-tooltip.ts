@@ -15,6 +15,7 @@ class DrawTooltip {
   private measureTooltipElement: HTMLElement | null = null
   private measureTooltipOverlay: Overlay | null = null
   private changeEventKey: EventsKey | null = null
+  private pendingUpdateFrame: number | null = null
 
   public add(map: OlMap, event: DrawEvent) {
     this.addForFeature(map, event.feature)
@@ -29,7 +30,7 @@ class DrawTooltip {
     this.changeEventKey = listen(
       geometry,
       'change',
-      () => this.updateTootip(geometry, proj),
+      () => this.scheduleUpdateTooltip(geometry, proj),
       this
     )
   }
@@ -40,6 +41,11 @@ class DrawTooltip {
     if (this.changeEventKey !== null) {
       unByKey(this.changeEventKey)
       this.changeEventKey = null
+    }
+
+    if (this.pendingUpdateFrame !== null) {
+      cancelAnimationFrame(this.pendingUpdateFrame)
+      this.pendingUpdateFrame = null
     }
   }
 
@@ -80,7 +86,7 @@ class DrawTooltip {
         const geom = geometry as Polygon
         const verts = geom.getCoordinates()[0].length
         if (verts > 2) coord = geom.getInteriorPoint().getCoordinates()
-        if (coord) text = formatArea(getArea(geom))
+        if (coord) text = formatArea(getArea(geom, proj))
       }
       return { text, coord }
     }
@@ -144,6 +150,19 @@ class DrawTooltip {
     }
   }
 
+  /**
+   * Throttle tooltip updates to at most one recalculation per animation frame.
+   * The geometry 'change' event can fire many times per frame during a drag
+   * (e.g. on every mousemove), but the DOM update only needs to happen once.
+   */
+  private scheduleUpdateTooltip(geometry: Geometry, proj: Projection) {
+    if (this.pendingUpdateFrame !== null) return
+    this.pendingUpdateFrame = requestAnimationFrame(() => {
+      this.pendingUpdateFrame = null
+      this.updateTootip(geometry, proj)
+    })
+  }
+
   private updateTootip(geometry: Geometry, proj: Projection) {
     let coord: Coordinate | undefined = undefined
     let output = ''
@@ -161,7 +180,7 @@ class DrawTooltip {
         coord = geom.getInteriorPoint().getCoordinates()
       }
       if (coord != null) {
-        output = formatArea(getArea(geom))
+        output = formatArea(getArea(geom, proj))
       }
     } else if (geometry.getType() === 'Circle') {
       const geom = geometry as Circle

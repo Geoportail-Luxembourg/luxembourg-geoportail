@@ -127,7 +127,7 @@ const isMymapsSelected = () => !!myMapId.value
         for="share-url-input"
         class="block text-white text-sm font-medium mb-2"
       >
-        {{ t('Short Url', { ns: 'client' }) }}
+        {{ t('Short Url', { ns: 'app' }) }}
       </label>
       <input
         v-if="!showLongUrl"
@@ -135,7 +135,7 @@ const isMymapsSelected = () => !!myMapId.value
         type="text"
         class="w-full px-3 py-2 lux-input cursor-pointer"
         :value="url"
-        :aria-label="t('Short Url', { ns: 'client' })"
+        :aria-label="t('Short Url', { ns: 'app' })"
         @click="selectInput"
         readonly
         data-cy="shareShortUrl"
@@ -146,7 +146,7 @@ const isMymapsSelected = () => !!myMapId.value
         type="text"
         class="w-full px-3 py-2 lux-input cursor-pointer"
         :value="longurl"
-        :aria-label="t('Long Url', { ns: 'client' })"
+        :aria-label="t('Long Url', { ns: 'app' })"
         @click="selectInput"
         readonly
         data-cy="shareLongUrl"
@@ -165,7 +165,7 @@ const isMymapsSelected = () => !!myMapId.value
         for="show-long-url-checkbox"
         class="font-bold block lux-text-default hover:cursor-pointer"
       >
-        {{ t('Show long url', { ns: 'client' }) }}
+        {{ t('Show long url', { ns: 'app' }) }}
       </label>
     </div>
 
@@ -181,7 +181,7 @@ const isMymapsSelected = () => !!myMapId.value
         for="only-mymaps-checkbox"
         class="font-bold block lux-text-default hover:cursor-pointer"
       >
-        {{ t('Share only Mymaps', { ns: 'client' }) }}
+        {{ t('Share only Mymaps', { ns: 'app' }) }}
       </label>
     </div>
   </div>

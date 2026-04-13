@@ -36,6 +36,7 @@ export default function useDrawSelect() {
           .filter(f => f.id === oldActiveId)
           .forEach(oldFeature => {
             oldFeature.selected = false
+            oldFeature.invalidateStyleCache()
             oldFeature.changed()
           })
       }
@@ -44,6 +45,7 @@ export default function useDrawSelect() {
         .filter(f => f.id === newActiveId)
         .forEach(newFeature => {
           newFeature.selected = true
+          newFeature.invalidateStyleCache()
           newFeature.changed()
         })
     }

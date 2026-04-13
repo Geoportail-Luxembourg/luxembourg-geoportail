@@ -263,7 +263,7 @@ watch(downloadingRepport, downloadingRepport => {
     <div class="flex flex-row">
       <div class="no-print grow-[2] flex flex-col justify-end content-end">
         <h3 id="short_url_title" class="text-3xl text-white">
-          {{ t('Short Url', { ns: 'client' }) }}
+          {{ t('Short Url', { ns: 'app' }) }}
         </h3>
         <input
           aria-labelledby="short_url_title"
@@ -280,7 +280,7 @@ watch(downloadingRepport, downloadingRepport => {
     <!-- Coordinates -->
     <div>
       <h3 class="mt-5 text-3xl text-white">
-        {{ t('Location Coordinates', { ns: 'client' }) }}
+        {{ t('Location Coordinates', { ns: 'app' }) }}
       </h3>
       <table>
         <tbody class="lux-info-table">

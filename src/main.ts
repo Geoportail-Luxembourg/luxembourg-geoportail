@@ -29,6 +29,7 @@ i18next
     lng: 'fr',
     debug: false,
     defaultNS: 'client',
+    fallbackNS: 'app',
     returnEmptyString: false,
     supportedLngs: ['de', 'en', 'fr', 'lb'],
     ns: ['app', 'client', 'legends', 'server', 'tooltips'],

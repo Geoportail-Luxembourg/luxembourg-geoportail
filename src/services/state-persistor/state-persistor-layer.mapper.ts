@@ -12,7 +12,9 @@ const STORAGE_TIME_SEPARATOR = '--'
 
 class StorageLayerMapper {
   layerTimesToStrings(layerTimesText: string | null) {
-    return layerTimesText ? layerTimesText.split(STORAGE_TIME_SEPARATOR) : []
+    return layerTimesText
+      ? layerTimesText.split(STORAGE_TIME_SEPARATOR).reverse()
+      : []
   }
 
   layerIdsToLayers(layerIdsText: string | null) {

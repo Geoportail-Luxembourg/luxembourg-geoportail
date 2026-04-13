@@ -20,8 +20,9 @@ import Map from 'ol/Map'
 import type Geometry from 'ol/geom/Geometry'
 import type SimpleGeometry from 'ol/geom/SimpleGeometry'
 
-import useMap from '@/composables/map/map.composable'
+import useMap, { PROJECTION_LUX } from '@/composables/map/map.composable'
 import { useRoutingStore } from '@/stores/routing.store'
+import { fetchProfileJson } from '@/services/api/api-profile.service'
 
 interface RouteDescription {
   description: string
@@ -139,7 +140,6 @@ export default function useRouting(
   let tooltipOverlay: Overlay | null = null
 
   // Feature collections
-  const modifyFeaturesCollection = new Collection<Feature<Geometry>>()
   let highlightOverlay: VectorLayer | null = null
   let source: VectorSource | null = null
   let routeLayer: VectorLayer<VectorSource> | null = null
@@ -183,12 +183,27 @@ export default function useRouting(
     // Initialize highlight overlay
     highlightOverlay = new VectorLayer({
       source: new VectorSource(),
-      style: new Style({
-        image: new Circle({
-          radius: 6,
-          fill: new Fill({ color: '#ff0000' }),
-        }),
-      }),
+      zIndex: 3000,
+      style: () => {
+        // Unicode chars from apart-geoportail font: Car=e902, Pedestrian=e904, Bike=e901
+        const mode = routingState.value.transportMode
+        const iconChar =
+          mode === 1 ? '\ue904' : mode === 2 ? '\ue901' : '\ue902'
+        return new Style({
+          image: new Circle({
+            radius: 14,
+            fill: new Fill({ color: 'rgba(255,255,255,0.95)' }),
+            stroke: new Stroke({ color: '#ff0000', width: 2 }),
+          }),
+          text: new Text({
+            text: iconChar,
+            font: '16px apart-geoportail',
+            fill: new Fill({ color: '#333' }),
+            offsetY: 1,
+          }),
+          zIndex: 3000,
+        })
+      },
     })
     map.addLayer(highlightOverlay)
 
@@ -258,7 +273,6 @@ export default function useRouting(
 
     // Select interaction (click)
     selectInteraction = new Select({
-      features: modifyFeaturesCollection,
       condition: click,
       filter: (feature: Feature) => {
         return (
@@ -282,9 +296,9 @@ export default function useRouting(
     selectInteractionPM.setActive(false)
     listen(selectInteractionPM, 'select', handleShowHideTooltip)
 
-    // Modify interaction
+    // Modify interaction — operates directly on the waypoint features
     modifyInteraction = new Modify({
-      features: modifyFeaturesCollection,
+      features: routingState.value.features,
     })
     map.addInteraction(modifyInteraction)
     modifyInteraction.setActive(true)
@@ -427,23 +441,27 @@ export default function useRouting(
   }
 
   /**
-   * Handle modify end event
+   * Handle modify end event — called after the user drags a waypoint on the map.
+   * Identifies the moved feature by matching it in the features collection,
+   * reverse-geocodes its new position, and recalculates the route.
    */
-  function handleModifyEndStepFeature() {
-    const lastIdx = routingState.value.features.getLength() - 1
-    const lastFeature = routingState.value.features.removeAt(lastIdx)
-    const lastLabel = routingState.value.routes[lastIdx]
+  function handleModifyEndStepFeature(event: any) {
+    // The event exposes the features that were modified
+    const modifiedFeatures: Feature[] = event?.features?.getArray?.() ?? []
+    if (modifiedFeatures.length === 0) return
 
-    const feature = modifyFeaturesCollection.getArray()[0]
-    if (!feature) return
-
+    const feature = modifiedFeatures[0]
     const geometry = feature.getGeometry()
     if (!geometry || !(geometry instanceof Point)) return
 
-    const clonedFeature = feature.clone()
+    // Find the index of this feature in the waypoints collection
+    const featureIdx = routingState.value.features.getArray().indexOf(feature)
+    if (featureIdx === -1) return
+
     const coords = geometry.getFirstCoordinate() as [number, number]
 
     onReverseGeocode(coords).then(resp => {
+      let label = coords.toString()
       if (resp['count'] > 0) {
         const address = resp['results'][0]
         const formattedAddress =
@@ -454,31 +472,23 @@ export default function useRouting(
           address['postal_code'] +
           ' ' +
           address['locality']
-        let label = formattedAddress
-
-        if (!(label.length > 0 && Math.round(address['distance']) <= 100)) {
-          label = coords.toString()
+        if (
+          formattedAddress.length > 0 &&
+          Math.round(address['distance']) <= 100
+        ) {
+          label = formattedAddress
         }
-
-        clonedFeature.set('label', label)
-        routingState.value.routes[lastIdx] = label
       }
+      feature.set('label', label)
+      routingState.value.routes[featureIdx] = label
+      onGetRoute(routingState.value)
     })
-
-    insertFeatureAt(lastIdx + 1, clonedFeature)
-
-    if (lastFeature !== undefined && lastFeature !== null) {
-      addRoute(lastLabel)
-      insertFeatureAt(lastIdx + 2, lastFeature)
-    }
-
-    onGetRoute(routingState.value)
   }
 
   /**
    * Handle route display
    */
-  function handleShowRoute() {
+  async function handleShowRoute() {
     const routeArray = routingState.value.routeFeatures.getArray()
     if (routeArray.length === 0) {
       handleRemoveRoute()
@@ -496,12 +506,55 @@ export default function useRouting(
       source.setAttributions(feature.get('attribution'))
     }
 
-    // Get profile data (if available)
-    if (profileData.value.length > 0) {
-      elevationGain.value =
-        profileData.value[profileData.value.length - 1]['elevationGain']
-      elevationLoss.value =
-        profileData.value[profileData.value.length - 1]['elevationLoss']
+    // Fetch elevation profile for the route geometry
+    profileData.value = []
+    const routeGeom = feature.getGeometry()
+    if (routeGeom) {
+      const GeoJSON = (await import('ol/format/GeoJSON')).default
+      const geomJson = new GeoJSON().writeGeometry(routeGeom, {
+        dataProjection: PROJECTION_LUX,
+        featureProjection: map.getView().getProjection(),
+      })
+      try {
+        const profileJson = await fetchProfileJson(geomJson)
+        // eslint-disable-next-line no-console
+        console.log('[Routing] Profile response:', profileJson)
+        // eslint-disable-next-line no-console
+        console.log(
+          '[Routing] Profile entries count:',
+          profileJson?.profile?.length
+        )
+        // eslint-disable-next-line no-console
+        console.log('[Routing] First entry sample:', profileJson?.profile?.[0])
+        let cumulativeElevation = 0
+        let elevationGainAcc = 0
+        let elevationLossAcc = 0
+        profileData.value = profileJson.profile.map((entry, i, arr) => {
+          if (i > 0) {
+            const diff =
+              (entry.values?.dhm ?? 0) - (arr[i - 1].values?.dhm ?? 0)
+            if (diff > 0) elevationGainAcc += diff
+            else elevationLossAcc += Math.abs(diff)
+          }
+          cumulativeElevation +=
+            i > 0 ? (entry.values?.dhm ?? 0) - (arr[i - 1].values?.dhm ?? 0) : 0
+          return {
+            ...entry,
+            cumulativeElevation,
+            elevationGain: elevationGainAcc,
+            elevationLoss: elevationLossAcc,
+          }
+        })
+        if (profileData.value.length > 0) {
+          elevationGain.value =
+            profileData.value[profileData.value.length - 1].elevationGain
+          elevationLoss.value =
+            profileData.value[profileData.value.length - 1].elevationLoss
+        }
+      } catch (e) {
+        // eslint-disable-next-line no-console
+        console.error('[Routing] Profile fetch failed:', e)
+      }
     }
 
     // Process route description
@@ -600,7 +653,6 @@ export default function useRouting(
   function clearRoutes() {
     // Use store's reset() to ensure all state is properly cleared
     routingStore.reset()
-    modifyFeaturesCollection.clear()
 
     if (source) {
       source.setAttributions(undefined)
@@ -627,7 +679,6 @@ export default function useRouting(
 
     routingState.value.routeFeatures.clear()
     routingState.value.stepFeatures.clear()
-    modifyFeaturesCollection.clear()
     routeDesc.value = []
 
     if (source) {
@@ -723,6 +774,40 @@ export default function useRouting(
   }
 
   /**
+   * Highlight a point on the route geometry at a given cumulative distance (meters)
+   * Used to sync the elevation profile hover with the map
+   */
+  function highlightProfilePoint(dist: number) {
+    const routeArray = routingState.value.routeFeatures.getArray()
+    if (routeArray.length === 0) return
+
+    const feature = routeArray[0]
+    const geom = feature.getGeometry()
+    if (!geom) return
+
+    // Clone and reproject to EPSG:2169 so getLength() matches the profile dist units
+    const mapProjection = map.getView().getProjection()
+    const geomLux = geom.clone().transform(mapProjection, PROJECTION_LUX) as any
+
+    const totalLength = geomLux.getLength?.() ?? 0
+    if (totalLength === 0) return
+
+    const fraction = Math.min(Math.max(dist / totalLength, 0), 1)
+    const coordLux = geomLux.getCoordinateAt(fraction)
+    if (!coordLux) return
+
+    // Re-project back to map projection for display
+    const coord = transform(coordLux, PROJECTION_LUX, mapProjection)
+
+    if (highlightOverlay && highlightOverlay.getSource()) {
+      highlightOverlay.getSource()!.clear()
+      highlightOverlay
+        .getSource()!
+        .addFeature(new Feature({ geometry: new Point(coord) }))
+    }
+  }
+
+  /**
    * Clear highlight
    */
   function clearHighlight() {
@@ -804,6 +889,7 @@ export default function useRouting(
     exchangeRoutes,
     center,
     highlightPosition,
+    highlightProfilePoint,
     clearHighlight,
     getIconDirectionClass,
     setRoutePoint,

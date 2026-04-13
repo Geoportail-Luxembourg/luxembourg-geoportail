@@ -63,6 +63,7 @@ export type Metadata = Partial<{
     | 'yearly'
   geocatalog_open_data_uuid: string
   return_clicked_point: string
+  layer_aliases: string
 }>
 
 export enum LayerTypeValue {

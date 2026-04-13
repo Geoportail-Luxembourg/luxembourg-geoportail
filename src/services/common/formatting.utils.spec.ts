@@ -88,9 +88,9 @@ describe('Formatting utils', () => {
   })
 
   describe('#formatLength', () => {
-    it('formats value as a distance by default with 2 digits', () => {
+    it('formats value as a distance by default with 0 digits', () => {
       const val = formatLength(42.5)
-      expect(val).toEqual('42.50 m')
+      expect(val).toEqual('43 m')
     })
 
     it('formats value as a distance with no digit', () => {
@@ -115,24 +115,19 @@ describe('Formatting utils', () => {
   })
 
   describe('#formatArea', () => {
-    it('formats value as an area by default with 2 digits', () => {
+    it('formats value as an area in m²', () => {
       const val = formatArea(12)
-      expect(val).toEqual('12.00 m²')
+      expect(val).toEqual('12 m²')
     })
 
-    it('formats value as an area by default with no digit', () => {
-      const val = formatArea(12.5, 0)
+    it('formats value as an area in m² (rounded)', () => {
+      const val = formatArea(12.5)
       expect(val).toEqual('13 m²')
     })
 
-    it('formats value as an area in m²', () => {
-      const val = formatArea(6, 0)
-      expect(val).toEqual('6 m²')
-    })
-
     it('formats value as an area in km²', () => {
-      const val = formatArea(6789456132.35, 5)
-      expect(val).toEqual('6789.45613 km²')
+      const val = formatArea(6789456132.35)
+      expect(val).toEqual('6789.46 km²')
     })
 
     it('returns empty string if given area is not a valid number', () => {

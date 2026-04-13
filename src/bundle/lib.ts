@@ -81,8 +81,9 @@ export default async function useLuxLib(options: LuxLibOptions) {
     lng: 'fr',
     debug: false,
     defaultNS: 'client',
+    fallbackNS: 'app',
     supportedLngs: ['de', 'en', 'fr', 'lb'],
-    ns: ['client', 'legends', 'server', 'tooltips'],
+    ns: ['app', 'client', 'legends', 'server', 'tooltips'],
     fallbackLng: 'fr',
     backend: {
       loadPath: `/static-ngeo/web-components/assets/locales/{{ns}}.{{lng}}.json`,

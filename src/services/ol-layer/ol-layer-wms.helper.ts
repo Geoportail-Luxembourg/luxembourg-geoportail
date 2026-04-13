@@ -16,7 +16,7 @@ class OlLayerWmsHelper {
       serverType: 'mapserver',
       params: {
         FORMAT: imageType,
-        LAYERS: layers,
+        LAYERS: String(layers ?? ''),
       },
       crossOrigin: 'anonymous', // !!!!! MANDATORY for detecting pixel with getData()
     })

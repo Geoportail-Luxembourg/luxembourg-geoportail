@@ -24,6 +24,14 @@
     "lint:prettier": "prettier --check . --ignore-path .prettierignore",
     "lint": "npm run lint:js && npm run lint:prettier",
     "format": "prettier --write --list-different . --ignore-path .prettierignore && npm run lint:js -- --fix",
+    "i18n:migrate:v3-to-app": "node tools/translations/sync-v3-to-app.cjs",
+    "i18n:migrate:v3-to-app:dry": "node tools/translations/sync-v3-to-app.cjs --dry-run",
+    "i18n:migrate:v3-to-app:prune-client": "node tools/translations/sync-v3-to-app.cjs --prune-client",
+    "i18n:migrate:v3-to-app:prune-client:dry": "node tools/translations/sync-v3-to-app.cjs --dry-run --prune-client",
+    "i18n:tx:pull": "tx pull -a -t",
+    "i18n:tx:transform:v3": "node tools/translations/transform-tx-v3-po-to-v4-json.cjs",
+    "i18n:tx:transform:v3:dry": "node tools/translations/transform-tx-v3-po-to-v4-json.cjs --dry-run",
+    "i18n:tx:pull:v3-to-v4": "npm run i18n:tx:pull && npm run i18n:tx:transform:v3",
     "prepare": "husky install"
   },
   "files": [

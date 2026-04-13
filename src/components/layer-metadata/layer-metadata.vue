@@ -49,12 +49,14 @@ type ApiLink = {
   label: string
   url: string
   serviceLabel: string
+  description?: string
 }
 
 type ParsedLink = {
   label: string
   url: string
   serviceType: string
+  description?: string
 }
 
 const parsedLinks = computed<ParsedLink[]>(() => {
@@ -69,7 +71,16 @@ const parsedLinks = computed<ParsedLink[]>(() => {
 
       const firstPipeIndex = rest.indexOf('|')
       const url = rest.slice(0, firstPipeIndex).trim()
-      const serviceType = rest.slice(firstPipeIndex + 1).trim()
+      const afterUrl = rest.slice(firstPipeIndex + 1)
+      const secondPipeIndex = afterUrl.indexOf('|')
+      const serviceType =
+        secondPipeIndex === -1
+          ? afterUrl.trim()
+          : afterUrl.slice(0, secondPipeIndex).trim()
+      const description =
+        secondPipeIndex === -1
+          ? undefined
+          : afterUrl.slice(secondPipeIndex + 1).trim() || undefined
 
       if (!url || !serviceType) {
         return undefined
@@ -79,9 +90,10 @@ const parsedLinks = computed<ParsedLink[]>(() => {
         label: labelPart.trim(),
         url,
         serviceType,
+        description,
       }
     })
-    .filter((link): link is ParsedLink => Boolean(link))
+    .filter((link): link is NonNullable<typeof link> => Boolean(link))
 })
 
 const apiLinks = computed<ApiLink[]>(() =>
@@ -95,6 +107,7 @@ const apiLinks = computed<ApiLink[]>(() =>
         : link.serviceType.includes('WMS')
           ? 'WMS'
           : link.serviceType,
+      description: link.description,
     }))
 )
 
@@ -214,6 +227,11 @@ function closeLayerMetadata() {
                   {{ link.label }}
                 </a>
                 <span v-else>{{ link.url }}</span>
+                <span
+                  v-if="link.description"
+                  class="block text-xs text-gray-500 mt-0.5"
+                  >{{ link.description }}</span
+                >
               </span>
             </div>
           </div>
@@ -237,6 +255,11 @@ function closeLayerMetadata() {
                 {{ link.label }}
               </a>
               <span v-else>{{ link.url }}</span>
+              <span
+                v-if="link.description"
+                class="block text-xs text-gray-500 mt-0.5"
+                >{{ link.description }}</span
+              >
             </span>
           </div>
         </div>
@@ -295,7 +318,7 @@ function closeLayerMetadata() {
               class="text-secondary hover:underline"
               target="_blank"
               :href="layerMetadata.metadataLink"
-              >{{ t('link') }}</a
+              >{{ t('lien vers le geocatalogue') }}</a
             >
           </span>
         </div>

@@ -20,7 +20,7 @@ const { t } = useTranslation()
         ><button
           data-cy="panelClose"
           @click="() => closeFn()"
-          :aria-label="t('Close', { ns: 'client' })"
+          :aria-label="t('Close', { ns: 'app' })"
           class="fa-sharp fa-solid fa-close"
         ></button
       ></span>

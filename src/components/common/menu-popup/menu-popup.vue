@@ -168,11 +168,21 @@ watch(isOpen, isOpen => {
   const opener = btnElement.value!
   const dropdown = ddElement.value!
   const rect = opener.getBoundingClientRect()
-  const top =
-    props.direction === 'down' ? rect.bottom : rect.top - dropdown.offsetHeight
+  const viewportHeight = window.innerHeight
+
+  let top: number
+  let maxHeight: number
+  if (props.direction === 'down') {
+    top = rect.bottom
+    maxHeight = viewportHeight - rect.bottom
+  } else {
+    maxHeight = rect.top
+    top = rect.top - Math.min(dropdown.scrollHeight, maxHeight)
+  }
 
   dropdown.style.top = `${top}px`
   dropdown.style.left = `${rect.left + rect.width - dropdown.offsetWidth}px`
+  dropdown.style.maxHeight = `${maxHeight}px`
 })
 </script>
 

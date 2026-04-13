@@ -26,6 +26,20 @@ export function getLayerWmtsUrl(layer: Layer, requestScheme = 'https') {
     ? 'app.geoportail.lu'
     : 'geoportail.lu'
 
+  // Use proxy for localhost development to bypass CORS
+  const isDevLocalhost =
+    import.meta.env.DEV &&
+    typeof window !== 'undefined' &&
+    (window.location.hostname === 'localhost' ||
+      window.location.hostname === '127.0.0.1')
+
+  if (isDevLocalhost) {
+    return (
+      `/wmts-proxy/mapproxy_4_v3/wmts/{Layer}${getLayerHasRetina(layer) ? '_hd' : ''}` +
+      `/{TileMatrixSet}/{TileMatrix}/{TileCol}/{TileRow}.${imageExt}`
+    )
+  }
+
   return (
     `${requestScheme === 'https' ? '//wmts{3-4}.' : '//wmts{1-2}.'}${domain}` +
     `/mapproxy_4_v3/wmts/{Layer}${getLayerHasRetina(layer) ? '_hd' : ''}` +

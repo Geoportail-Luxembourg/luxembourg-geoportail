@@ -54,7 +54,7 @@ function handleCenterToLocation() {
     addNotification(
       t(
         "La geolocalisation n'est disponible que dans la version sécurisée du Geoportail (https). Voulez-vous être automatiquement redirigé?",
-        { ns: 'client' }
+        { ns: 'app' }
       ),
       AlertNotificationType.WARNING
     )
@@ -120,7 +120,7 @@ function initGeoLocation() {
     clearFeatureOverlay()
     if (error.message && error.message.length > 0) {
       const msg =
-        t("Erreur lors de l'acquisition de la position :", { ns: 'client' }) +
+        t("Erreur lors de l'acquisition de la position :", { ns: 'app' }) +
         ' ' +
         error.message
       addNotification(msg, AlertNotificationType.ERROR)

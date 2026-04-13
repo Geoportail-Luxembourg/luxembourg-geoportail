@@ -65,6 +65,9 @@ export class DrawnFeature extends Feature {
    */
   _featureStyle: DrawnFeatureStyle
 
+  /** Cached result of getStyleFunction() — invalidated when style-relevant properties change. */
+  private _cachedStyleFunction: StyleFunction | null = null
+
   map = useMap().getOlMap() // FIXME: don't use useMap here
   profileData: ProfileData | undefined = undefined // Is used by linestring geom
 
@@ -183,7 +186,17 @@ export class DrawnFeature extends Feature {
 
   public set featureStyle(featureStyle: DrawnFeatureStyle) {
     this._featureStyle = featureStyle
+    this._cachedStyleFunction = null
     this.changed()
+  }
+
+  /**
+   * Invalidate the cached StyleFunction, forcing it to be rebuilt on the next render.
+   * Call this when properties that affect the style change outside of the featureStyle
+   * setter (e.g. `selected`, `label`, `display_order`).
+   */
+  public invalidateStyleCache() {
+    this._cachedStyleFunction = null
   }
 
   /**
@@ -367,8 +380,19 @@ export class DrawnFeature extends Feature {
   }
 
   getStyleFunction(): StyleFunction {
-    const styles: StyleStyle[] = []
+    if (this._cachedStyleFunction !== null) {
+      return this._cachedStyleFunction
+    }
+    this._cachedStyleFunction = this._buildStyleFunction()
+    return this._cachedStyleFunction
+  }
 
+  private _buildStyleFunction(): StyleFunction {
+    const styles: StyleStyle[] = []
+    // Cache the MultiPoint geometry to avoid allocating a new object on every render frame.
+    // The cache is invalidated whenever the source geometry revision changes.
+    let cachedVertexGeom: MultiPoint | null = null
+    let cachedVertexGeomRevision = -1
     const vertexStyle = new StyleStyle({
       image: new StyleRegularShape({
         radius: 6,
@@ -384,13 +408,20 @@ export class DrawnFeature extends Feature {
       geometry: function (feature) {
         const geom = feature.getGeometry()
 
-        let coordinates
         if (geom instanceof LineString) {
-          coordinates = geom.getCoordinates()
-          return new MultiPoint(coordinates)
+          const rev = geom.getRevision()
+          if (cachedVertexGeom === null || cachedVertexGeomRevision !== rev) {
+            cachedVertexGeom = new MultiPoint(geom.getCoordinates())
+            cachedVertexGeomRevision = rev
+          }
+          return cachedVertexGeom
         } else if (geom instanceof Polygon) {
-          coordinates = geom.getCoordinates()[0]
-          return new MultiPoint(coordinates)
+          const rev = geom.getRevision()
+          if (cachedVertexGeom === null || cachedVertexGeomRevision !== rev) {
+            cachedVertexGeom = new MultiPoint(geom.getCoordinates()[0])
+            cachedVertexGeomRevision = rev
+          }
+          return cachedVertexGeom
         } else {
           return geom
         }
