@@ -5,7 +5,7 @@ const fs = require('fs')
 const path = require('path')
 
 const DEFAULT_LANGS = ['fr', 'de', 'en', 'lb']
-const DEFAULT_NAMESPACES = ['client', 'server', 'legends', 'tooltips']
+const DEFAULT_NAMESPACES = ['server', 'legends', 'tooltips', 'layers']
 const ROOT = path.resolve(__dirname, '..', '..')
 const DEFAULT_INPUT_DIR = path.join(
   ROOT,
@@ -18,7 +18,7 @@ const DEFAULT_OUTPUT_DIR = path.join(ROOT, 'public', 'assets', 'locales')
 
 function printHelp() {
   console.log(
-    `\nUsage:\n  node tools/translations/transform-tx-v3-po-to-v4-json.cjs [options]\n\nOptions:\n  --langs=fr,de,en,lb                 Languages to process (default: fr,de,en,lb)\n  --namespaces=client,server,...      Namespaces to transform (default: client,server,legends,tooltips)\n  --input-dir=...                     Directory containing pulled .po files\n  --output-dir=...                    Directory containing v4 locale JSON files\n  --dry-run                           Compute changes without writing JSON files\n  --help                              Show this help\n\nExpected input files:\n  <input-dir>/<namespace>.<lang>.po\n\nOutput files:\n  <output-dir>/<namespace>.<lang>.json\n`
+    `\nUsage:\n  node tools/translations/transform-tx-v3-po-to-v4-json.cjs [options]\n\nOptions:\n  --langs=fr,de,en,lb                 Languages to process (default: fr,de,en,lb)\n  --namespaces=server,legends,...     Namespaces to transform (default: server,legends,tooltips,layers)\n  --input-dir=...                     Directory containing pulled .po files\n  --output-dir=...                    Directory containing v4 locale JSON files\n  --dry-run                           Compute changes without writing JSON files\n  --help                              Show this help\n\nExpected input files:\n  <input-dir>/<namespace>.<lang>.po\n\nOutput files:\n  <output-dir>/<namespace>.<lang>.json\n`
   )
 }
 

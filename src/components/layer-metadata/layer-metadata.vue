@@ -135,7 +135,7 @@ function closeLayerMetadata() {
     v-if="layerMetadata"
     :footer="false"
     :max-height="true"
-    :title="t(`${layerMetadata.title}`, { ns: 'client' })"
+    :title="t(`${layerMetadata.title}`, { ns: 'layers' })"
     @close="closeLayerMetadata"
   >
     <template v-slot:content>

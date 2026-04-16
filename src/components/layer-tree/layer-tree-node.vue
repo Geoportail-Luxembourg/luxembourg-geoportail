@@ -22,7 +22,7 @@ const isParent = !!props.node.children
 const isRoot = props.node.depth === 0
 const isMaxDepth = props.node.depth >= 10
 const label = computed(() =>
-  t(props.node.label ?? props.node.name, { ns: 'client' })
+  t(props.node.label ?? props.node.name, { ns: 'layers' })
 )
 
 function toggleLayer(node: LayerTreeNodeModel) {

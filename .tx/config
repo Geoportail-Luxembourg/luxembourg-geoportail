@@ -1,0 +1,42 @@
+[main]
+host = https://www.transifex.com
+
+[o:geoportail:p:geoportailv3-lu:r:geoportailv3-client]
+file_filter = tools/translations/transifex/v3-po/client.<lang>.po
+source_file = tools/translations/transifex/v3-po/client.pot
+source_lang = frp
+type        = PO
+
+[o:geoportail:p:geoportailv3-lu:r:geoportailv3-legends]
+file_filter = tools/translations/transifex/v3-po/legends.<lang>.po
+source_file = tools/translations/transifex/v3-po/legends.pot
+source_lang = frp
+type        = PO
+
+[o:geoportail:p:geoportailv3-lu:r:geoportailv3-server]
+file_filter = tools/translations/transifex/v3-po/server.<lang>.po
+source_file = tools/translations/transifex/v3-po/server.pot
+source_lang = frp
+type        = PO
+
+[o:geoportail:p:geoportailv3-lu:r:geoportailv3-tooltips]
+file_filter = tools/translations/transifex/v3-po/tooltips.<lang>.po
+source_file = tools/translations/transifex/v3-po/tooltips.pot
+source_lang = frp
+type        = PO
+
+[o:geoportail:p:geoportailv3-lu:r:geoportailv3-webcomponents]
+source_file = public/assets/locales/app.fr.json
+file_filter = public/assets/locales/app.<lang>.json
+source_lang = fr
+type = KEYVALUEJSON
+trans.en = public/assets/locales/app.en.json
+trans.fr = public/assets/locales/app.fr.json
+trans.de = public/assets/locales/app.de.json
+trans.lb = public/assets/locales/app.lb.json
+
+[o:geoportail:p:geoportailv3-lu:r:geoportailv4-layers]
+file_filter = tools/translations/transifex/v3-po/layers.<lang>.po
+source_file = tools/translations/transifex/v3-po/layers.pot
+source_lang = frp
+type = PO

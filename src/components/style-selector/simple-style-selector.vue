@@ -52,13 +52,13 @@ function onStylingSelected(item: SimpleStyle) {
     <div
       v-for="item in simpleStyles"
       :key="item.unlocalized_label"
-      :title="t(item.unlocalized_label, { ns: 'client' })"
+      :title="t(item.unlocalized_label, { ns: 'layers' })"
       :class="`${
         item.selected ? 'border-dotted' : 'border-hidden'
       } border-2 p-px`"
     >
       <span class="text-white"
-        >{{ t(item.unlocalized_label, { ns: 'client' }) }} :
+        >{{ t(item.unlocalized_label, { ns: 'layers' }) }} :
       </span>
       <button
         :title="

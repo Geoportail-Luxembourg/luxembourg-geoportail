@@ -192,7 +192,7 @@ const availableLayers = computed(() => {
                   :key="layer.id"
                   :value="layer.name"
                 >
-                  {{ t(layer.name, { ns: 'client' }) }}
+                  {{ t(layer.name, { ns: 'layers' }) }}
                 </option>
               </select>
               <span

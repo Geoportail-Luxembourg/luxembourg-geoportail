@@ -28,11 +28,11 @@ i18next
   .init({
     lng: 'fr',
     debug: false,
-    defaultNS: 'client',
+    defaultNS: 'layers',
     fallbackNS: 'app',
     returnEmptyString: false,
     supportedLngs: ['de', 'en', 'fr', 'lb'],
-    ns: ['app', 'client', 'legends', 'server', 'tooltips'],
+    ns: ['app', 'layers', 'legends', 'server', 'tooltips'],
     fallbackLng: 'en',
     backend: {
       loadPath: `${import.meta.env.BASE_URL}assets/locales/{{ns}}.{{lng}}.json`, // ! use assets instead of ./assets because of theme path in url

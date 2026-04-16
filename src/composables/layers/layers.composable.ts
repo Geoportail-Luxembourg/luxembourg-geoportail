@@ -260,10 +260,10 @@ export default function useLayers() {
           {
             count: excludedLayers.length,
             layersToRemove: excludedLayers
-              .map(_layer => i18next.t(_layer.name, { ns: 'client' }))
+              .map(_layer => i18next.t(_layer.name, { ns: 'layers' }))
               .join(', '),
-            layer: i18next.t(layer.name, { ns: 'client' }),
-            ns: 'client',
+            layer: i18next.t(layer.name, { ns: 'layers' }),
+            ns: 'layers',
           }
         ),
         AlertNotificationType.WARNING
@@ -292,8 +292,8 @@ export default function useLayers() {
           'Background has been deactivated because ' +
             'the layer {{layer}} cannot be displayed on top of it.',
           {
-            layer: i18next.t(layer.name, { ns: 'client' }),
-            ns: 'client',
+            layer: i18next.t(layer.name, { ns: 'layers' }),
+            ns: 'layers',
           }
         ),
         AlertNotificationType.WARNING
