@@ -28,7 +28,7 @@ i18next
   .init({
     lng: 'fr',
     debug: false,
-    defaultNS: 'layers',
+    defaultNS: 'app',
     fallbackNS: 'app',
     returnEmptyString: false,
     supportedLngs: ['de', 'en', 'fr', 'lb'],

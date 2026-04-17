@@ -80,7 +80,7 @@ export default async function useLuxLib(options: LuxLibOptions) {
   const i18nextConfig = options.i18nextConfig ?? {
     lng: 'fr',
     debug: false,
-    defaultNS: 'layers',
+    defaultNS: 'app',
     fallbackNS: 'app',
     supportedLngs: ['de', 'en', 'fr', 'lb'],
     ns: ['app', 'layers', 'legends', 'server', 'tooltips'],
