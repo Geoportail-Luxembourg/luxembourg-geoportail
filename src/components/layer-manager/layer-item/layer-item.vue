@@ -28,7 +28,7 @@ const emit = defineEmits<{
 const { t, onClickInfo } = useLayer(props.layer, <SetupContext>{ emit })
 const layersService = useLayers()
 const layerLabel = computed(() =>
-  t(layersService.getLayerCurrentLabel(props.layer), { ns: 'client' })
+  t(layersService.getLayerCurrentLabel(props.layer), { ns: 'layers' })
 )
 const showInfoButton = computed(() => !useOffline().isOffLine.value)
 

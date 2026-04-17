@@ -105,7 +105,7 @@ async function generateRepport() {
 </style>
 <template>
   <h1 class="lux-poi-title">
-    {{ t(layers.layerLabel) }}
+    {{ t(layers.layerLabel, { ns: 'layers' }) }}
   </h1>
   <div class="lux-feature-info">
     <div class="poi-feature">

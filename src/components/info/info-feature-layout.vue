@@ -27,7 +27,7 @@ const { t } = useTranslation()
 <template>
   <!-- Layer title -->
   <h1 class="lux-poi-title" data-cy="defaultTemplateTitle">
-    {{ t(layers.layerLabel) }}
+    {{ t(layers.layerLabel, { ns: 'layers' }) }}
   </h1>
 
   <!-- Slot content for feature to be replaced by template -->

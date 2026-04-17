@@ -12,7 +12,7 @@ const { t } = useTranslation()
 </script>
 <template>
   <h1 class="lux-poi-title">
-    {{ t(layers.layerLabel) }}
+    {{ t(layers.layerLabel, { ns: 'layers' }) }}
   </h1>
   <table>
     <thead>

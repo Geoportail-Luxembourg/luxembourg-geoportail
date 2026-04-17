@@ -80,10 +80,10 @@ export default async function useLuxLib(options: LuxLibOptions) {
   const i18nextConfig = options.i18nextConfig ?? {
     lng: 'fr',
     debug: false,
-    defaultNS: 'client',
+    defaultNS: 'app',
     fallbackNS: 'app',
     supportedLngs: ['de', 'en', 'fr', 'lb'],
-    ns: ['app', 'client', 'legends', 'server', 'tooltips'],
+    ns: ['app', 'layers', 'legends', 'server', 'tooltips'],
     fallbackLng: 'fr',
     backend: {
       loadPath: `/static-ngeo/web-components/assets/locales/{{ns}}.{{lng}}.json`,

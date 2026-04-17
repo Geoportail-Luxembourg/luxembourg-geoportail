@@ -62,7 +62,9 @@ function onToggleDropdownAuth(isOpen: boolean) {
             data-cy="selectedThemeIcon"
             @click="toggleThemeGrid"
           >
-            <span class="hidden lg:inline-block">{{ t(`${themeName}`) }}</span>
+            <span class="hidden lg:inline-block">{{
+              t(`${themeName}`, { ns: 'layers' })
+            }}</span>
           </button>
         </li>
         <!-- Search dropdown -->

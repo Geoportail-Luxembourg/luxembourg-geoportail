@@ -127,7 +127,7 @@ function processResultFulltextsearch(data: any, selectResult: Function) {
         const label =
           feature.properties.label +
           (feature.properties.layer_name
-            ? ` (${t(feature.properties.layer_name)})`
+            ? ` (${t(feature.properties.layer_name, { ns: 'layers' })})`
             : '')
         return {
           label: label,
@@ -149,7 +149,7 @@ function processResultFulltextsearch(data: any, selectResult: Function) {
         const label =
           feature.properties.label +
           (feature.properties.layer_name
-            ? ` (${t(feature.properties.layer_name)})`
+            ? ` (${t(feature.properties.layer_name, { ns: 'layers' })})`
             : '')
         return {
           label: label,
@@ -171,7 +171,7 @@ function processResultFeaturesearch(data: any, selectResult: Function) {
       const label =
         feature.properties.label +
         (feature.properties.layer_name
-          ? ` (${t(feature.properties.layer_name)})`
+          ? ` (${t(feature.properties.layer_name, { ns: 'layers' })})`
           : '')
       return {
         label: label,
@@ -208,7 +208,7 @@ function processResultLayersearch(data: any, selectResult: Function) {
     }) {
       const themeLinks = getThemeLinks(item.layer_id)
       return {
-        label: t(item.name) + themeLinks,
+        label: t(item.name, { ns: 'layers' }) + themeLinks,
         layer_id: item.layer_id,
         name: item.name,
         language: item.language,
@@ -433,7 +433,7 @@ function processResultBackgroundsearch(data: any, selectResult: Function) {
     groupKey: 'Background Layers',
     selectResult: selectResult,
     results: data.map((item: { name: string; id: number }) => ({
-      label: t(item.name),
+      label: t(item.name, { ns: 'layers' }),
       layer_id: item.id,
       name: item.name,
       showRoutingButton: false,
@@ -532,7 +532,9 @@ function getDataBackgroundSearch(newQuery: string, token: number) {
   }
 
   const data = bgLayers.filter(bgLayer => {
-    return t(bgLayer.name).toLowerCase().includes(newQuery.toLowerCase())
+    return t(bgLayer.name, { ns: 'layers' })
+      .toLowerCase()
+      .includes(newQuery.toLowerCase())
   })
   if (token !== handleDataSourcesToken) return
   processResultBackgroundsearch(data, selectResultBackgroundLayerSearch)
@@ -727,7 +729,7 @@ function getThemeLinks(layerId: number): string {
       themeName.value !== curThemeName
         ? `<br><a href="#" data-theme="${curThemeName}">(${t(
             'open in theme'
-          )} ${t(curThemeName)})</a>`
+          )} ${t(curThemeName, { ns: 'layers' })})</a>`
         : ''
     )
     .join('')

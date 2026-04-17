@@ -60,7 +60,9 @@ onActivated(() => layersLegendsStatus.clear())
         >
           <template #title>
             <h1 class="pb-5">
-              {{ t(layersService.getLayerCurrentLabel(layer)) }}
+              {{
+                t(layersService.getLayerCurrentLabel(layer), { ns: 'layers' })
+              }}
             </h1>
           </template>
         </legend-item>
@@ -82,7 +84,9 @@ onActivated(() => layersLegendsStatus.clear())
         >
           <template #title>
             <h1 class="pb-5">
-              {{ t(layersService.getLayerCurrentLabel(bgLayer)) }}
+              {{
+                t(layersService.getLayerCurrentLabel(bgLayer), { ns: 'layers' })
+              }}
             </h1>
           </template>
         </legend-item>

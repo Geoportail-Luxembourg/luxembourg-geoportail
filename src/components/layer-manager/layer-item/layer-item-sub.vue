@@ -15,7 +15,7 @@ const emit = defineEmits(['changeOpacity', 'clickToggleLayerComparator'])
 const { t } = useTranslation()
 const layersService = useLayers()
 const layerLabel = computed(() =>
-  t(layersService.getLayerCurrentLabel(props.layer), { ns: 'client' })
+  t(layersService.getLayerCurrentLabel(props.layer), { ns: 'layers' })
 )
 
 const opacity: ShallowRef<number | undefined> = shallowRef(

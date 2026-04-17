@@ -18,7 +18,9 @@ const props = defineProps<{
       :class="`bg-${theme.name}-primary hover:text-${theme.name}-primary`"
       @click="$emit('setTheme', theme.name)"
     >
-      <div class="text-2xl absolute top-5">{{ t(`${theme.name}`) }}</div>
+      <div class="text-2xl absolute top-5">
+        {{ t(`${theme.name}`, { ns: 'layers' }) }}
+      </div>
       <div
         class="text-6xl absolute bottom-1 after:font-icons"
         :class="`after:content-${theme.name}`"

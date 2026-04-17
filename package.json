@@ -28,10 +28,14 @@
     "i18n:migrate:v3-to-app:dry": "node tools/translations/sync-v3-to-app.cjs --dry-run",
     "i18n:migrate:v3-to-app:prune-client": "node tools/translations/sync-v3-to-app.cjs --prune-client",
     "i18n:migrate:v3-to-app:prune-client:dry": "node tools/translations/sync-v3-to-app.cjs --dry-run --prune-client",
+    "i18n:tx:bootstrap:v4-layers": "node tools/translations/bootstrap-v4-layers-from-client-po.cjs",
+    "i18n:tx:dedup:client": "node tools/translations/dedup-client-from-layers.cjs",
+    "i18n:tx:dedup:client:dry": "node tools/translations/dedup-client-from-layers.cjs --dry-run",
     "i18n:tx:pull": "tx pull -a -t",
     "i18n:tx:transform:v3": "node tools/translations/transform-tx-v3-po-to-v4-json.cjs",
     "i18n:tx:transform:v3:dry": "node tools/translations/transform-tx-v3-po-to-v4-json.cjs --dry-run",
     "i18n:tx:pull:v3-to-v4": "npm run i18n:tx:pull && npm run i18n:tx:transform:v3",
+    "fetch-translations": "tx pull -a -t && node tools/translations/transform-tx-v3-po-to-v4-json.cjs",
     "prepare": "husky install"
   },
   "files": [

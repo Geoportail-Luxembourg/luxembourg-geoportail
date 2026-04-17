@@ -101,7 +101,7 @@ onUnmounted(() => {
       v-if="sliderTopLayer"
     >
       <i class="fa fa-arrow-left mr-2"></i>
-      <span>{{ t(sliderTopLayer.name) }}</span>
+      <span>{{ t(sliderTopLayer.name, { ns: 'layers' }) }}</span>
     </span>
   </button>
 </template>
