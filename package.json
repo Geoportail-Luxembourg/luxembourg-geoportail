@@ -35,6 +35,7 @@
     "i18n:tx:transform:v3": "node tools/translations/transform-tx-v3-po-to-v4-json.cjs",
     "i18n:tx:transform:v3:dry": "node tools/translations/transform-tx-v3-po-to-v4-json.cjs --dry-run",
     "i18n:tx:pull:v3-to-v4": "npm run i18n:tx:pull && npm run i18n:tx:transform:v3",
+    "fetch-translations": "tx pull -a -t && node tools/translations/transform-tx-v3-po-to-v4-json.cjs",
     "prepare": "husky install"
   },
   "files": [

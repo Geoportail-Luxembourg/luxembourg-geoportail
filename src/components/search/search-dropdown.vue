@@ -127,7 +127,7 @@ function processResultFulltextsearch(data: any, selectResult: Function) {
         const label =
           feature.properties.label +
           (feature.properties.layer_name
-            ? ` (${t(feature.properties.layer_name)})`
+            ? ` (${t(feature.properties.layer_name, { ns: 'layers' })})`
             : '')
         return {
           label: label,
@@ -149,7 +149,7 @@ function processResultFulltextsearch(data: any, selectResult: Function) {
         const label =
           feature.properties.label +
           (feature.properties.layer_name
-            ? ` (${t(feature.properties.layer_name)})`
+            ? ` (${t(feature.properties.layer_name, { ns: 'layers' })})`
             : '')
         return {
           label: label,
@@ -171,7 +171,7 @@ function processResultFeaturesearch(data: any, selectResult: Function) {
       const label =
         feature.properties.label +
         (feature.properties.layer_name
-          ? ` (${t(feature.properties.layer_name)})`
+          ? ` (${t(feature.properties.layer_name, { ns: 'layers' })})`
           : '')
       return {
         label: label,

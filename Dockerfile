@@ -7,7 +7,18 @@ WORKDIR /app
 COPY package.json package-lock.json ./
 RUN npm ci
 
+# Install Transifex CLI
+RUN apk add --no-cache curl bash \
+  && curl -o- https://raw.githubusercontent.com/transifex/cli/master/install.sh | bash \
+  && mv /app/tx /usr/local/bin/tx
+
 COPY . .
+
+# Pull latest translations from Transifex and transform PO → JSON
+# TX_TOKEN must be provided as a build secret: --secret id=tx_token,env=TX_TOKEN
+RUN --mount=type=secret,id=tx_token \
+    TX_TOKEN=$(cat /run/secrets/tx_token) npm run fetch-translations
+
 RUN npm run build
 
 # Serve stage

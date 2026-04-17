@@ -65,7 +65,7 @@ function isAudioLink(attributeEntry: AttributeEntry) {
   <div class="flex flex-col">
     <div>
       <h2 class="lux-poi-title" data-cy="defaultTemplateTitle">
-        {{ t(layers.layerLabel) }}
+        {{ t(layers.layerLabel, { ns: 'layers' }) }}
       </h2>
       <div
         v-for="feature in layers.features"
