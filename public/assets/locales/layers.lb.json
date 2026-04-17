@@ -2813,5 +2813,8 @@
   "zones_UAS": "Geografesch UAS Zonen",
   "zones_UAS_0_50m": "Fluchhéischt vun 0 bis 50m",
   "zones_UAS_50_120m": "Fluchhéischt vun 50 bis 120m",
-  "zpin_group": "Naturschutzgebidder vun nationalem Intérêt"
+  "zpin_group": "Naturschutzgebidder vun nationalem Intérêt",
+  "route": "Stroossekaart",
+  "topo_bw": "Topografesch Kaart S/W",
+  "hybrid": "Hybrid Kaart"
 }

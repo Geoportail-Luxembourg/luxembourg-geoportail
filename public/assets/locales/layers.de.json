@@ -2813,5 +2813,8 @@
   "zones_UAS": "Geografische UAS-Zonen",
   "zones_UAS_0_50m": "Flughöhe von 0 bis 50m",
   "zones_UAS_50_120m": "Flughöhe von 50 bis 120m",
-  "zpin_group": "Naturschutzgebiete von nationalem Interesse"
+  "zpin_group": "Naturschutzgebiete von nationalem Interesse",
+  "route": "Straßenkarte",
+  "topo_bw": "Topographische Karte SW",
+  "hybrid": "Hybride Karte"
 }

@@ -2813,5 +2813,8 @@
   "zones_UAS": "UAS geographical zones",
   "zones_UAS_0_50m": "Flight height from 0 to 50m",
   "zones_UAS_50_120m": "Flight height from 50 to 120m",
-  "zpin_group": "Protected areas"
+  "zpin_group": "Protected areas",
+  "route": "Road map",
+  "topo_bw": "Topographic map B/W",
+  "hybrid": "Hybrid map"
 }

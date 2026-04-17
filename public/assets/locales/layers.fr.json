@@ -2813,5 +2813,8 @@
   "zones_UAS": "Zones géographiques UAS",
   "zones_UAS_0_50m": "Hauteur de vol de 0 à 50m",
   "zones_UAS_50_120m": "Hauteur de vol de 50 à 120m",
-  "zpin_group": "Zones protégées d’intérêt national (ZPIN)"
+  "zpin_group": "Zones protégées d’intérêt national (ZPIN)",
+  "route": "Carte routière",
+  "topo_bw": "Carte topographique N/B",
+  "hybrid": "Carte hybride"
 }
