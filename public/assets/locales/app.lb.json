@@ -500,7 +500,7 @@
   "Medium": "Medium",
   "Expert (style.json)": "Expert (style.json)",
   "Vous êtes en mode découpage.<br> Veuillez cliquer sur une ligne pour la couper en deux.": "Dir sidd am Schneidmodus<br>Klickt w.e.g. op eng Linn fir se an Zwee ze schneiden.",
-  "measure_continue_instruction_azimuth": "measure_continue_instruction_azimuth",
+
   "Erreur inattendue lors du chargement de votre carte.": "Onerwaartenen Fehler beim Lueden vun ärer Kaart",
   "Erreur inattendue lors de la mise à jour de votre carte.": "Onerwaartenen Fehler beim Updaten vun ärer Kaart",
   "Erreur inattendue lors de la sauvegarde de votre modification.": "Onerwaartenen Fehler beim Spaicheren vun ärer Ännerung",
@@ -509,5 +509,11 @@
   "Le géoportail national du Grand-Duché du Luxembourg": "Den offizielle Geoportal vu Lëtzebuerg",
   "www.geoportail.lu est un portail d'accès aux informations géolocalisées, données et services qui sont mis à disposition par les administrations publiques luxembourgeoises. Responsabilité: Malgré la grande attention qu’elles portent à la justesse des informations diffusées sur ce site, les autorités ne peuvent endosser aucune responsabilité quant à la fidélité, à l’exactitude, à l’actualité, à la fiabilité et à l’intégralité de ces informations. Information dépourvue de foi publique. \nDroits d'auteur: Administration du Cadastre et de la Topographie. http://g-o.lu/copyright": "www.geoportail.lu est un portail d'accès aux informations géolocalisées, données et services qui sont mis à disposition par les administrations publiques luxembourgeoises. Responsabilité: Malgré la grande attention qu’elles portent à la justesse des informations diffusées sur ce site, les autorités ne peuvent endosser aucune responsabilité quant à la fidélité, à l’exactitude, à l’actualité, à la fiabilité et à l’intégralité de ces informations. Information dépourvue de foi publique. \nDroits d'auteur: Administration du Cadastre et de la Topographie. http://g-o.lu/copyright",
   "Date d'impression:": "Printdatum:",
+  "measure_start_instruction": "Klickt fir mam Moossen vun enger Längt unzefänken",
+  "measure_start_instruction_area": "Klickt fir mam Moossen vun enger Fläch unzefänken",
+  "measure_start_instruction_azimuth": "Klickt fir mam Moossen vun engem Azimut unzefänken",
+  "measure_continue_instruction": "Klickt fir mam Zeechnen vun der Linn weiderzefueren <br> Duebelklick fir ofzeschléissen",
+  "measure_continue_instruction_area": "Klickt fir mam Zeechnen vum Polygon weiderzefueren <br> Duebelklick fir ofzeschléissen",
+  "measure_continue_instruction_azimuth": "Klickt fir mam Zeechnen vun der Linn weiderzefueren <br> Duebelklick fir ofzeschléissen",
   "Certaines couches sont protégées. Veuillez vous connecter avec un utilisateur disposant les droits de visualiser cette couche.": "Verschidden Layeren sinn geschützt. Mellt Iech w.e.g. mat engem Benotzer un, deen berechtegt ass dës Layeren ze gesinn."
 }

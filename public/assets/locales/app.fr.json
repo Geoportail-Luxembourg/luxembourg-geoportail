@@ -500,7 +500,7 @@
   "Medium": "Medium",
   "Expert (style.json)": "Expert (style.json)",
   "Vous êtes en mode découpage.<br> Veuillez cliquer sur une ligne pour la couper en deux.": "Vous êtes en mode découpage.<br> Veuillez cliquer sur une ligne pour la couper en deux.",
-  "measure_continue_instruction_azimuth": "measure_continue_instruction_azimuth",
+
   "Erreur inattendue lors du chargement de votre carte.": "Erreur inattendue lors du chargement de votre carte.",
   "Erreur inattendue lors de la mise à jour de votre carte.": "Erreur inattendue lors de la mise à jour de votre carte.",
   "Erreur inattendue lors de la sauvegarde de votre modification.": "Erreur inattendue lors de la sauvegarde de votre modification.",
@@ -509,5 +509,11 @@
   "Le géoportail national du Grand-Duché du Luxembourg": "Le géoportail national du Grand-Duché du Luxembourg",
   "www.geoportail.lu est un portail d'accès aux informations géolocalisées, données et services qui sont mis à disposition par les administrations publiques luxembourgeoises. Responsabilité: Malgré la grande attention qu’elles portent à la justesse des informations diffusées sur ce site, les autorités ne peuvent endosser aucune responsabilité quant à la fidélité, à l’exactitude, à l’actualité, à la fiabilité et à l’intégralité de ces informations. Information dépourvue de foi publique. \nDroits d'auteur: Administration du Cadastre et de la Topographie. http://g-o.lu/copyright": "www.geoportail.lu est un portail d'accès aux informations géolocalisées, données et services qui sont mis à disposition par les administrations publiques luxembourgeoises. Responsabilité: Malgré la grande attention qu’elles portent à la justesse des informations diffusées sur ce site, les autorités ne peuvent endosser aucune responsabilité quant à la fidélité, à l’exactitude, à l’actualité, à la fiabilité et à l’intégralité de ces informations. Information dépourvue de foi publique. \nDroits d'auteur: Administration du Cadastre et de la Topographie. http://g-o.lu/copyright",
   "Date d'impression:": "Date d'impression:",
+  "measure_start_instruction": "Cliquez pour commencer à mesurer une distance",
+  "measure_start_instruction_area": "Cliquez pour commencer à mesurer une aire",
+  "measure_start_instruction_azimuth": "Cliquez pour commencer à mesurer un azimut",
+  "measure_continue_instruction": "Cliquez pour continuer à tracer la ligne<br>Double cliquez pour finaliser",
+  "measure_continue_instruction_area": "Cliquez pour continuer à tracer le polygone<br>Double cliquez pour finaliser",
+  "measure_continue_instruction_azimuth": "Cliquez pour continuer à tracer la ligne<br>Double cliquez pour finaliser",
   "Certaines couches sont protégées. Veuillez vous connecter avec un utilisateur disposant les droits de visualiser cette couche.": "Certaines couches sont protégées. Veuillez vous connecter avec un utilisateur disposant les droits de visualiser cette couche."
 }

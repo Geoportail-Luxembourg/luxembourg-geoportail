@@ -500,7 +500,7 @@
   "Medium": "Medium",
   "Expert (style.json)": "Expert (style.json)",
   "Vous êtes en mode découpage.<br> Veuillez cliquer sur une ligne pour la couper en deux.": "Sie sind im Schneidmodus.<br>Klicken Sie auf eine Linie, um sie in Zwei zu teilen",
-  "measure_continue_instruction_azimuth": "measure_continue_instruction_azimuth",
+
   "Erreur inattendue lors du chargement de votre carte.": "Unerwarteter Fehler beim Laden Ihrer Karte",
   "Erreur inattendue lors de la mise à jour de votre carte.": "Unerwarteter Fehler bei dem Update Ihrer Karte",
   "Erreur inattendue lors de la sauvegarde de votre modification.": "Unerwarteter Fehler bei der Speicherung Ihrer Änderung",
@@ -509,5 +509,11 @@
   "Le géoportail national du Grand-Duché du Luxembourg": "Das öffentliche Geoportal des Grossherzogtums Luxemburg",
   "www.geoportail.lu est un portail d'accès aux informations géolocalisées, données et services qui sont mis à disposition par les administrations publiques luxembourgeoises. Responsabilité: Malgré la grande attention qu’elles portent à la justesse des informations diffusées sur ce site, les autorités ne peuvent endosser aucune responsabilité quant à la fidélité, à l’exactitude, à l’actualité, à la fiabilité et à l’intégralité de ces informations. Information dépourvue de foi publique. \nDroits d'auteur: Administration du Cadastre et de la Topographie. http://g-o.lu/copyright": "www.geoportail.lu est un portail d'accès aux informations géolocalisées, données et services qui sont mis à disposition par les administrations publiques luxembourgeoises. Responsabilité: Malgré la grande attention qu’elles portent à la justesse des informations diffusées sur ce site, les autorités ne peuvent endosser aucune responsabilité quant à la fidélité, à l’exactitude, à l’actualité, à la fiabilité et à l’intégralité de ces informations. Information dépourvue de foi publique. \nDroits d'auteur: Administration du Cadastre et de la Topographie. http://g-o.lu/copyright",
   "Date d'impression:": "Druckdatum:",
+  "measure_start_instruction": "Klicken Sie um mit dem Messen der Länge anzufangen",
+  "measure_start_instruction_area": "Klicken Sie um mit dem Messen der Fläche anzufangen",
+  "measure_start_instruction_azimuth": "Klicken Sie um mit dem Messen des Azimuts anzufangen",
+  "measure_continue_instruction": "Klicken Sie um mit dem Zeichnen der Linie fortzufahren <br> Doppelklick zum Abschließen",
+  "measure_continue_instruction_area": "Klicken Sie um mit dem Zeichnen des Polygons fortzufahren <br> Doppelklick zum Abschließen",
+  "measure_continue_instruction_azimuth": "Klicken Sie um mit dem Zeichnen der Linie fortzufahren <br> Doppelklick zum Abschließen",
   "Certaines couches sont protégées. Veuillez vous connecter avec un utilisateur disposant les droits de visualiser cette couche.": "Einige Layer sind geschützt. Bitte melden Sie sich mit einem Benutzer an, der berechtigt ist, diesen Layer einzusehen"
 }
