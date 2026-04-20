@@ -416,7 +416,9 @@ h2 {
                             "
                             aria-hidden="true"
                           ></i>
-                          <span>{{ t('MESURAGE_' + description) }}</span>
+                          <span>{{
+                            t('MESURAGE_' + description, { ns: 'layers' })
+                          }}</span>
                         </button>
 
                         <!-- Niveau 4: Documents (mode liens) -->
@@ -654,7 +656,9 @@ h2 {
                                 "
                                 aria-hidden="true"
                               ></i>
-                              <span>{{ t('MESURAGE_' + description) }}</span>
+                              <span>{{
+                                t('MESURAGE_' + description, { ns: 'layers' })
+                              }}</span>
                             </button>
 
                             <!-- Niveau 4: Documents (mode liens) -->

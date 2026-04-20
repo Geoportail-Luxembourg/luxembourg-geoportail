@@ -44,13 +44,8 @@ export const useThemeStore = defineStore(
 
     async function loadThemes() {
       themesLoading.value = true
-      // Build themes URL from VITE_V3_API_HOST or default to /themes
-      const base = (import.meta.env.VITE_V3_API_HOST as string) || ''
-      const baseNoSlash = base.replace(/\/$/, '')
       const cacheVersion = Date.now()
-      const themesUrl = baseNoSlash
-        ? `${baseNoSlash}/themes?interface=main&background=background&cache_version=${cacheVersion}`
-        : `/themes?interface=main&background=background&cache_version=${cacheVersion}`
+      const themesUrl = `/themes?interface=main&background=background&cache_version=${cacheVersion}`
 
       try {
         const resp = await fetch(themesUrl, {

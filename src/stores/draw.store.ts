@@ -33,7 +33,9 @@ export const useDrawStore = defineStore('draw', () => {
     return drawnFeatures.value.filter(f => !f.map_id) as DrawnFeature[]
   })
   const drawnFeaturesMyMaps = computed(() => {
-    return drawnFeatures.value.filter(f => f.map_id) as DrawnFeature[]
+    return drawnFeatures.value
+      .filter(f => f.map_id)
+      .sort((a, b) => a.display_order - b.display_order) as DrawnFeature[]
   })
   const editingFeature = computed(() =>
     editingFeatureId.value
@@ -253,7 +255,7 @@ export const useDrawStore = defineStore('draw', () => {
     drawnFeatures.value = drawnFeatures.value.map(f =>
       // Must use Object.assign function instead of spread operator so that
       // object type remains DrawnFeature and additional methods are not lost
-      Object.assign(f, { display_order: featuresId.indexOf(`f-${f.id}`) })
+      Object.assign(f, { display_order: featuresId.indexOf(String(f.id)) })
     )
 
     const myMapFeatures = drawnFeatures.value.filter(f => f.map_id)

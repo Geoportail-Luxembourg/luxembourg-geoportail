@@ -202,7 +202,9 @@ export function translateAndjoin(textArray: string[], prefix: string) {
 
   const { t } = useTranslation()
 
-  return textArray.map(elem => t(prefix + '_' + elem)).join(', ')
+  return textArray
+    .map(elem => t(prefix + '_' + elem, { ns: 'layers' }))
+    .join(', ')
 }
 
 /**
