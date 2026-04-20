@@ -10,6 +10,10 @@ import { getOlcsExtent } from './ol-layer.utils'
 class OlLayerWmsHelper {
   createOlLayer(layer: Layer): OlLayer /* Returns: ImageLayer<ImageWMS> */ {
     const { name, layers, imageType, url, id } = layer
+    const credentialsMode =
+      import.meta.env.VITE_CREDENTIALS_ORIGIN === 'include'
+        ? 'use-credentials'
+        : 'anonymous'
     const olSource = new ImageWMS({
       url: url || proxyUrlHelper.wmsProxyUrl,
       hidpi: isHiDpi(),
@@ -18,7 +22,7 @@ class OlLayerWmsHelper {
         FORMAT: imageType,
         LAYERS: String(layers ?? ''),
       },
-      crossOrigin: 'anonymous', // !!!!! MANDATORY for detecting pixel with getData()
+      crossOrigin: credentialsMode, // 'use-credentials' for proxy auth, 'anonymous' for public layers
     })
     /*
     These requests should be done with no-cors mode, if we want to keep the cookies for the authentication
