@@ -597,7 +597,7 @@ export default function useMeasure() {
         feature.set('isMeasurement', true)
       }
 
-      // Deactivate and remove the draw interaction so tool is disabled after finishing
+      // Remove the current draw interaction and immediately restart in the same mode
       try {
         interaction.setActive(false)
         map.removeInteraction(interaction as unknown as any)
@@ -619,6 +619,12 @@ export default function useMeasure() {
       drawInteraction.value = null
       currentMode.value = undefined
       isActive.value = false
+      // Restart the same measure mode so the user can draw another measurement immediately
+      try {
+        activate(mode)
+      } catch (e) {
+        logWarn('[measure] reactivating measure mode after drawend failed', e)
+      }
       // ...existing code...
     })
 
