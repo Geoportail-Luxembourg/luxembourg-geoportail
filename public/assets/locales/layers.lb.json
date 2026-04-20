@@ -1638,6 +1638,7 @@
   "Hide extent": "Ausdehnung verstoppen",
   "Hillshade": "Relief",
   "hopitaux": "Kliniken a Spideeler",
+  "hybrid": "Hybrid Kaart",
   "Hydrographie": "Hydrographie",
   "ilr_couverture": "Elektronesch Kommunikatiounsnetzer",
   "ilr_couverture_selon_technologie": "Festnetzofdeckung",
@@ -2394,6 +2395,7 @@
   "Roads primary": "Haaptstroossen",
   "Roads secondary": "Niewestroossen",
   "roads_labels": "Stroossennimm",
+  "route": "Stroossekaart",
   "sante_covid_altersheemer": "Structures d’hébergement pour personnes âgées et personnes handicapées",
   "sante_group": "Gesondheetswiesen",
   "sante_infrastructures_covid19": "Infrastrukturen COVID-19",
@@ -2578,6 +2580,7 @@
   "topo_50k_2019": "Topografesch Kaart 1:50.000",
   "topo_50k_BW_2019": "Topografesch Kaart 1:50.000 S/W",
   "topo_5k": "Topografesch Kaart 1:5000",
+  "topo_bw": "Topografesch Kaart S/W",
   "topo_bw_jpeg": "Topografesch Kaart S/W",
   "TOPO_CARTEHISTO_1950": "Topografesch Kaart 1:150k 1950",
   "TOPO_CARTEHISTO_1950_WMS": "TOPO_CARTEHISTO_1950_WMS",
@@ -2813,8 +2816,5 @@
   "zones_UAS": "Geografesch UAS Zonen",
   "zones_UAS_0_50m": "Fluchhéischt vun 0 bis 50m",
   "zones_UAS_50_120m": "Fluchhéischt vun 50 bis 120m",
-  "zpin_group": "Naturschutzgebidder vun nationalem Intérêt",
-  "route": "Stroossekaart",
-  "topo_bw": "Topografesch Kaart S/W",
-  "hybrid": "Hybrid Kaart"
+  "zpin_group": "Naturschutzgebidder vun nationalem Intérêt"
 }

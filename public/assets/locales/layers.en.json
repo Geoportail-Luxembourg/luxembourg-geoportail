@@ -1638,6 +1638,7 @@
   "Hide extent": "Hide extent",
   "Hillshade": "Relief",
   "hopitaux": "Hospitals",
+  "hybrid": "Hybrid map",
   "Hydrographie": "Hydrography",
   "ilr_couverture": "Electronic communications networks",
   "ilr_couverture_selon_technologie": "Fixed network coverage",
@@ -2394,6 +2395,7 @@
   "Roads primary": "Main roads",
   "Roads secondary": "Secondary roads",
   "roads_labels": "Road Names",
+  "route": "Road map",
   "sante_covid_altersheemer": "Structures d’hébergement pour personnes âgées et personnes handicapées",
   "sante_group": "Healthcare",
   "sante_infrastructures_covid19": "Infrastructures COVID-19",
@@ -2578,6 +2580,7 @@
   "topo_50k_2019": "Topographical Map 1:50.000",
   "topo_50k_BW_2019": "Topographical Map 1:50.000 B/W",
   "topo_5k": "Topographical Map 1:5000",
+  "topo_bw": "Topographic map B/W",
   "topo_bw_jpeg": "Topographic map B/W",
   "TOPO_CARTEHISTO_1950": "Topographical Map 1:150k 1950",
   "TOPO_CARTEHISTO_1950_WMS": "TOPO_CARTEHISTO_1950_WMS",
@@ -2813,8 +2816,5 @@
   "zones_UAS": "UAS geographical zones",
   "zones_UAS_0_50m": "Flight height from 0 to 50m",
   "zones_UAS_50_120m": "Flight height from 50 to 120m",
-  "zpin_group": "Protected areas",
-  "route": "Road map",
-  "topo_bw": "Topographic map B/W",
-  "hybrid": "Hybrid map"
+  "zpin_group": "Protected areas"
 }

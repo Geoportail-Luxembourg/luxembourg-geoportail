@@ -1638,6 +1638,7 @@
   "Hide extent": "Cacher l'étendue",
   "Hillshade": "Relief",
   "hopitaux": "Hôpitaux",
+  "hybrid": "Carte hybride",
   "Hydrographie": "Hydrographie",
   "ilr_couverture": "Réseaux de communications électroniques",
   "ilr_couverture_selon_technologie": "Couverture des réseaux fixes",
@@ -2394,6 +2395,7 @@
   "Roads primary": "Routes primaires",
   "Roads secondary": "Routes secondaires",
   "roads_labels": "Noms de rue",
+  "route": "Carte routière",
   "sante_covid_altersheemer": "Structures d’hébergement pour personnes âgées et personnes handicapées",
   "sante_group": "Soins de santé",
   "sante_infrastructures_covid19": "Infrastructures COVID-19",
@@ -2578,6 +2580,7 @@
   "topo_50k_2019": "Carte topographique 1:50.000 ",
   "topo_50k_BW_2019": "Carte topographique 1:50.000 N/B",
   "topo_5k": "Carte topographique 1:5000",
+  "topo_bw": "Carte topographique N/B",
   "topo_bw_jpeg": "Carte topographique N/B",
   "TOPO_CARTEHISTO_1950": "Carte topographique 1:150k 1950",
   "TOPO_CARTEHISTO_1950_WMS": "TOPO_CARTEHISTO_1950_WMS",
@@ -2813,8 +2816,5 @@
   "zones_UAS": "Zones géographiques UAS",
   "zones_UAS_0_50m": "Hauteur de vol de 0 à 50m",
   "zones_UAS_50_120m": "Hauteur de vol de 50 à 120m",
-  "zpin_group": "Zones protégées d’intérêt national (ZPIN)",
-  "route": "Carte routière",
-  "topo_bw": "Carte topographique N/B",
-  "hybrid": "Carte hybride"
+  "zpin_group": "Zones protégées d’intérêt national (ZPIN)"
 }
