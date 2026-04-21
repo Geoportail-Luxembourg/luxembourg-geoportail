@@ -619,12 +619,14 @@ export default function useMeasure() {
       drawInteraction.value = null
       currentMode.value = undefined
       isActive.value = false
-      // Restart the same measure mode so the user can draw another measurement immediately
-      try {
-        activate(mode)
-      } catch (e) {
-        logWarn('[measure] reactivating measure mode after drawend failed', e)
-      }
+      // Restart the same measure mode after the current event cycle completes
+      setTimeout(() => {
+        try {
+          activate(mode)
+        } catch (e) {
+          logWarn('[measure] reactivating measure mode after drawend failed', e)
+        }
+      }, 0)
       // ...existing code...
     })
 
