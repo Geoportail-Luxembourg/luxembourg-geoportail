@@ -48,7 +48,7 @@ function createServiceWorkerLogger(prefix: string) {
  * - Provide cache statistics & maintenance hooks used by the UI
  */
 
-const SW_VERSION = '7.0.4'
+const SW_VERSION = '7.0.5'
 const CACHE_VERSION = `lux-geoportail-v4-v${SW_VERSION}`
 
 const CACHE_NAMES = {
@@ -64,6 +64,12 @@ const ALL_CACHES = Object.values(CACHE_NAMES)
 const REG_SCOPE = self.registration?.scope ?? `${self.location.origin}/`
 const APP_BASE_URL = new URL('.', REG_SCOPE).href
 const APP_BASE_PATH = new URL(APP_BASE_URL).pathname
+
+// Paths that must NEVER be intercepted by the SW.
+// Only real server-side page navigations go here (not XHR/fetch API calls,
+// which are never in mode='navigate' and therefore never reach this check).
+// List derived from actual backend routes in the .env* files.
+const BYPASS_NAVIGATE_PATHS = ['/logout', '/login', '/admin']
 const ROOT_URL = `${self.location.origin}/`
 const ROOT_INDEX_URL = `${self.location.origin}/index.html`
 const ENTRY_URL = APP_BASE_URL
@@ -218,6 +224,17 @@ self.addEventListener('fetch', (event: FetchEvent) => {
   }
 
   if (request.mode === 'navigate') {
+    const pathname = new URL(request.url).pathname
+    const isBypassed = BYPASS_NAVIGATE_PATHS.some(
+      p =>
+        pathname === p ||
+        pathname.startsWith(p + '/') ||
+        pathname.startsWith(p + '?')
+    )
+    if (isBypassed) {
+      // Let these requests go straight to the network — never cache them.
+      return
+    }
     event.respondWith(handleNavigate(request))
     return
   }
