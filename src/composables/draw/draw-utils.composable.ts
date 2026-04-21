@@ -197,13 +197,21 @@ export default function useDrawUtils() {
   }
 
   async function continueLine(feature: DrawnFeature) {
+    // Track the original feature ID so onDrawEnd (type='update') can find it
+    drawStore.activeFeatureId = feature.id
+
     activateDrawLineContinue()
 
-    if (currentDrawInteraction.value) {
-      await nextTick() // mandatory! // FIXME: why?
+    await nextTick() // Wait for the drawStateActive watcher to set currentDrawInteraction
 
-      currentDrawInteraction.value?.setActive(true)
-      currentDrawInteraction.value?.extend(<Feature<LineString>>feature)
+    if (currentDrawInteraction.value) {
+      currentDrawInteraction.value.setActive(true)
+      // Pass a clone so OL's Draw overlay does not take ownership of the original feature.
+      // If we pass the original, OL adds it to its internal overlay source which causes it
+      // to disappear from the draw layer during drawing. The clone is disposable; at drawend
+      // the new geometry is copied back to the original (see onDrawEnd, type='update').
+      const clone = feature.clone() as Feature<LineString>
+      currentDrawInteraction.value.extend(clone)
     }
   }
 

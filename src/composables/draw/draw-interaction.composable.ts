@@ -32,6 +32,12 @@ export default function useDrawInteraction() {
       currentDrawnFeature = <DrawnFeature>(
         drawnFeatures.value.find(f => f.id === activeFeatureId.value)
       )
+      if (currentDrawnFeature) {
+        // event.feature is the clone we passed to extend().
+        // Copy its updated geometry back to the original feature.
+        currentDrawnFeature.setGeometry(event.feature.getGeometry()?.clone())
+        drawStore.updateDrawnFeature(currentDrawnFeature)
+      }
     }
 
     currentDrawnFeature.resetProfileData()
