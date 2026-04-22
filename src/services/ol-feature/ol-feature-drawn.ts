@@ -331,11 +331,7 @@ export class DrawnFeature extends Feature {
       linestyle,
       name: this.label,
       opacity: Number(this.featureStyle.opacity),
-      showOrientation:
-        this.featureStyle.showOrientation === true ||
-        this.featureStyle.showOrientation === 'true'
-          ? true
-          : false,
+      showOrientation: Boolean(this.featureStyle.showOrientation),
       shape: this.featureStyle.shape,
       size: Number(this.featureStyle.size),
       isCircle: this.featureType === 'drawnCircle',
