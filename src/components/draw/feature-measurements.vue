@@ -132,7 +132,11 @@ function onClickValidateRadius(radius: number) {
 
 <template>
   <div class="lux-drawing-item-measurements">
-    <!-- Migration mymaps thumbnail (Angular -> Vue) -->
+    <!-- Feature description -->
+    <p v-if="feature?.description" class="text-sm mb-1">
+      {{ feature.description }}
+    </p>
+
     <a
       v-if="feature?.get('thumbnail')"
       :href="feature.get('image')"
