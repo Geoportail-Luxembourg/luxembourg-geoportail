@@ -48,7 +48,7 @@ function createServiceWorkerLogger(prefix: string) {
  * - Provide cache statistics & maintenance hooks used by the UI
  */
 
-const SW_VERSION = '7.0.6'
+const SW_VERSION = '7.0.7'
 const CACHE_VERSION = `lux-geoportail-v4-v${SW_VERSION}`
 
 const CACHE_NAMES = {
@@ -134,10 +134,7 @@ const PRECACHE_APP_SHELL_URLS = Array.from(
   ])
 )
 
-const VT_HOSTS = [
-  'vectortiles.geoportail.lu',
-  'vectortiles-staging.geoportail.lu',
-]
+const VT_HOSTS = ['vectortiles.geoportail.lu']
 const DEFAULT_STYLES = ['roadmap', 'topomap', 'topomap_gray']
 const DEFAULT_FONT_FAMILIES = [
   'Noto Sans Regular',
