@@ -103,7 +103,7 @@
     "eslint-plugin-vue": "^9.33.0",
     "husky": "^8.0.2",
     "i18next": "^24.2.2",
-    "i18next-http-backend": "^3.0.2",
+    "i18next-http-backend": "^3.0.5",
     "i18next-parser": "^9.0.3",
     "i18next-vue": "^5.2.0",
     "jsdom": "^29.0.1",
