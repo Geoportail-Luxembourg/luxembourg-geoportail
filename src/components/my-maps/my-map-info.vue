@@ -206,7 +206,10 @@ function importFeatures() {
   </p>
 
   <!-- Warning message if layers list difers from MyMaps layers -->
-  <div v-if="myMapLayersChanged" class="lux-alert-warning p-4 mb-2">
+  <div
+    v-if="myMapLayersChanged && isEditable"
+    class="lux-alert-warning p-4 mb-2"
+  >
     <span class="font-bold">{{ t('Attention!') }}</span
     >&nbsp;<span
       v-html="
