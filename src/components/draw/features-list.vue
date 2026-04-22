@@ -4,6 +4,7 @@ import { storeToRefs } from 'pinia'
 
 import useSortable from '@/composables/sortable'
 import useDrawUtils from '@/composables/draw/draw-utils.composable'
+import useMyMaps from '@/composables/my-maps/my-maps.composable'
 import { useDrawStore } from '@/stores/draw.store'
 import {
   DrawnFeature,
@@ -21,6 +22,7 @@ const { features, idPrefix } = defineProps<{
 
 const drawStore = useDrawStore()
 const drawUtils = useDrawUtils()
+const myMaps = useMyMaps()
 const {
   activeFeatureId,
   editingFeatureId,
@@ -196,6 +198,7 @@ watch(sortableFeatures, elem => {
     >
       <FeatureItem
         :isDocked="featureEditionDocked"
+        :isDraggable="!feature.map_id || !!myMaps.isMyMapEditable.value"
         :isEditing="editingFeatureId === feature.id"
         :isOpen="activeFeatureId === feature.id"
         :feature="<DrawnFeature>feature"

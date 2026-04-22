@@ -16,6 +16,7 @@ import useMap from '@/composables/map/map.composable'
 import { useDrawStore } from '@/stores/draw.store'
 import { readFileContent } from '@/services/file.utils'
 import useDrawnFeatures from '@/composables/draw/drawn-features.composable'
+import useMyMaps from '@/composables/my-maps/my-maps.composable'
 
 const { t } = useTranslation()
 const emit = defineEmits<{
@@ -40,75 +41,87 @@ const { generateDrawnFeature } = useDrawnFeatures()
 const { myMapLayersChanged } = storeToRefs(useAppStore())
 const drawStore = useDrawStore()
 const { drawnFeaturesMyMaps, clipLineActive } = storeToRefs(drawStore)
+const myMapsHelper = useMyMaps()
+const isEditable = computed(() => !!myMapsHelper.isMyMapEditable.value)
 const fileInputRef = ref<HTMLInputElement | null>(null)
 const selectedFile = ref<File | null>(null)
-const menuOptions = computed(() => [
-  {
-    label: 'Créer une nouvelle carte',
-    action: () => emit('new'),
-  },
-  {
-    label: 'Ouvrir une carte existante',
-    action: () => emit('open'),
-  },
-  {
-    label: 'Créer une copie',
-    action: () => emit('copy', props.myMap),
-  },
-  {
-    label: 'Partager la carte',
-    action: () => emit('share', props.myMap),
-    separator: true,
-  },
-  {
-    label: 'Supprimer la carte',
-    action: () => emit('delete', props.myMap),
-  },
-  {
-    label: 'Supprimer tous les élements de la carte',
-    action: () => emit('clear', props.myMap),
-  },
-  {
-    label: 'Fusionner des lignes',
-    action: () => emit('draw:mergelines', props.myMap),
-  },
-  {
-    label: clipLineActive.value
-      ? 'Désactiver mode couper une ligne'
-      : 'Couper une ligne',
-    action: () => emit('draw:cutlines', props.myMap),
-    separator: true,
-  },
-  {
-    label: 'Fermer',
-    action: () => emit('close'),
-    separator: true,
-  },
-  {
-    label: 'Exporter un GPX',
-    action: () => download('gpx'),
-  },
-  {
-    label: 'Exporter un KML',
-    action: () => download('kml'),
-  },
-  {
-    label: 'Exporter un Shapefile',
-    action: () => download('shapefile'),
-  },
-  {
-    label: 'Exporter un GeoPackage',
-    action: () => download('gpkg'),
-  },
-  {
-    label: 'Exporter un GeoJSON',
-    action: () => download('geojson'),
-  },
-  {
-    label: 'Importer un GPX/KML/KMZ/GeoJSON',
-    action: () => importFeatures(),
-  },
-])
+const menuOptions = computed(() => {
+  const options = [
+    {
+      label: 'Créer une nouvelle carte',
+      action: () => emit('new'),
+    },
+    {
+      label: 'Ouvrir une carte existante',
+      action: () => emit('open'),
+    },
+    {
+      label: 'Créer une copie',
+      action: () => emit('copy', props.myMap),
+    },
+    {
+      label: 'Partager la carte',
+      action: () => emit('share', props.myMap),
+      separator: true,
+    },
+    ...(isEditable.value
+      ? [
+          {
+            label: 'Supprimer la carte',
+            action: () => emit('delete', props.myMap),
+          },
+          {
+            label: 'Supprimer tous les élements de la carte',
+            action: () => emit('clear', props.myMap),
+          },
+          {
+            label: 'Fusionner des lignes',
+            action: () => emit('draw:mergelines', props.myMap),
+          },
+          {
+            label: clipLineActive.value
+              ? 'Désactiver mode couper une ligne'
+              : 'Couper une ligne',
+            action: () => emit('draw:cutlines', props.myMap),
+          },
+        ]
+      : []),
+    {
+      label: 'Fermer',
+      action: () => emit('close'),
+      separator: true,
+    },
+    {
+      label: 'Exporter un GPX',
+      action: () => download('gpx'),
+    },
+    {
+      label: 'Exporter un KML',
+      action: () => download('kml'),
+    },
+    {
+      label: 'Exporter un Shapefile',
+      action: () => download('shapefile'),
+    },
+    {
+      label: 'Exporter un GeoPackage',
+      action: () => download('gpkg'),
+    },
+    {
+      label: 'Exporter un GeoJSON',
+      action: () => download('geojson'),
+    },
+    ...(isEditable.value
+      ? [
+          {
+            label: 'Importer un GPX/KML/KMZ/GeoJSON',
+            action: () => importFeatures(),
+          },
+        ]
+      : []),
+  ]
+  return options
+})
 
 watch(selectedFile, async file => {
   if (!file) return
@@ -150,14 +163,19 @@ function importFeatures() {
   <div class="flex items-center">
     <h2
       data-cy="mymap-title"
-      class="text-white font-bold grow max-w-full text-ellipsis overflow-hidden text-nowrap hover:cursor-pointer"
-      role="button"
+      class="text-white font-bold grow max-w-full text-ellipsis overflow-hidden text-nowrap"
+      :class="{ 'hover:cursor-pointer': isEditable }"
+      :role="isEditable ? 'button' : undefined"
       :title="myMap.title"
-      :aria-label="t('Éditer le titre de la carte') + ' : ' + myMap.title"
-      tabindex="0"
-      @click="emit('edit', myMap)"
-      @keydown.enter="emit('edit', myMap)"
-      @keydown.space.prevent="emit('edit', myMap)"
+      :aria-label="
+        isEditable
+          ? t('Éditer le titre de la carte') + ' : ' + myMap.title
+          : myMap.title
+      "
+      :tabindex="isEditable ? 0 : undefined"
+      @click="isEditable && emit('edit', myMap)"
+      @keydown.enter="isEditable && emit('edit', myMap)"
+      @keydown.space.prevent="isEditable && emit('edit', myMap)"
     >
       {{ myMap.title }}
     </h2>
@@ -172,13 +190,16 @@ function importFeatures() {
 
   <p
     data-cy="mymap-description"
-    class="text-white mb-2 hover:cursor-pointer"
-    role="button"
-    :aria-label="t('Éditer la description de la carte')"
-    tabindex="0"
-    @click="emit('edit', myMap)"
-    @keydown.enter="emit('edit', myMap)"
-    @keydown.space.prevent="emit('edit', myMap)"
+    class="text-white mb-2"
+    :class="{ 'hover:cursor-pointer': isEditable }"
+    :role="isEditable ? 'button' : undefined"
+    :aria-label="
+      isEditable ? t('Éditer la description de la carte') : undefined
+    "
+    :tabindex="isEditable ? 0 : undefined"
+    @click="isEditable && emit('edit', myMap)"
+    @keydown.enter="isEditable && emit('edit', myMap)"
+    @keydown.space.prevent="isEditable && emit('edit', myMap)"
   >
     <template v-if="myMap.description">{{ myMap.description }}</template>
     <span v-else class="italic">{{ t('Aucune description') }}</span>
