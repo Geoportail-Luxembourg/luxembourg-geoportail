@@ -139,8 +139,10 @@ export const useDrawStore = defineStore('draw', () => {
         )
       )
       const oldId = feature.id
-      feature.id = (<MyMapSaveFeatureJson>resp).id!
-      feature.fid = (<MyMapSaveFeatureJson>resp).id!
+      if (resp) {
+        feature.id = (<MyMapSaveFeatureJson>resp).id!
+        feature.fid = (<MyMapSaveFeatureJson>resp).id!
+      }
       // A newly drawn feature saved to MyMap is always editable by the current user
       feature.editable = true
 

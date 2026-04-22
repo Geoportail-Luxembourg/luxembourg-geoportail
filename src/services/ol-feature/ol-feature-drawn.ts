@@ -314,20 +314,30 @@ export class DrawnFeature extends Feature {
   }
 
   toProperties() {
+    const validLinestyles = ['plain', 'dashed', 'dotted']
+    const rawLinestyle = this.featureStyle.linestyle
+    const linestyle =
+      typeof rawLinestyle === 'string' && validLinestyles.includes(rawLinestyle)
+        ? rawLinestyle
+        : 'plain'
     return {
-      angle: this.featureStyle.angle,
+      angle: Number(this.featureStyle.angle),
       color: this.featureStyle.color,
       description: this.description,
-      display_order: this.display_order,
+      display_order: Number(this.display_order),
       fid: this.fid,
-      stroke: this.featureStyle.stroke,
+      stroke: Number(this.featureStyle.stroke),
       isLabel: this.featureType === 'drawnLabel',
-      linestyle: this.featureStyle.linestyle,
+      linestyle,
       name: this.label,
-      opacity: this.featureStyle.opacity,
-      showOrientation: this.featureStyle.showOrientation,
+      opacity: Number(this.featureStyle.opacity),
+      showOrientation:
+        this.featureStyle.showOrientation === true ||
+        this.featureStyle.showOrientation === 'true'
+          ? true
+          : false,
       shape: this.featureStyle.shape,
-      size: this.featureStyle.size,
+      size: Number(this.featureStyle.size),
       isCircle: this.featureType === 'drawnCircle',
       symbolId: this.featureStyle.symbolId,
       symboltype: this.featureStyle.symboltype,
@@ -339,27 +349,38 @@ export class DrawnFeature extends Feature {
     if (!properties) return
 
     this.description = properties.description ?? this.description
-    this.display_order = properties.display_order ?? this.display_order
+    this.display_order = Number(properties.display_order ?? this.display_order)
     this.label = properties.name ?? this.label
     this.map_id = properties.__map_id__ ?? this.map_id
 
     // Determine featureType from properties - check isCircle first, then isLabel
-    if (properties.isCircle === true) {
+    if (properties.isCircle === true || properties.isCircle === 'true') {
       this.featureType = 'drawnCircle'
-    } else if (properties.isLabel === true) {
+    } else if (properties.isLabel === true || properties.isLabel === 'true') {
       this.featureType = 'drawnLabel'
     }
 
+    const rawLinestyle = properties.linestyle ?? this.featureStyle.linestyle
+    const validLinestyles = ['plain', 'dashed', 'dotted']
+    const linestyle =
+      typeof rawLinestyle === 'string' && validLinestyles.includes(rawLinestyle)
+        ? rawLinestyle
+        : this.featureStyle.linestyle
+
+    const rawShowOrientation =
+      properties.showOrientation ?? this.featureStyle.showOrientation
+    const showOrientation =
+      rawShowOrientation === true || rawShowOrientation === 'true'
+
     this.featureStyle = {
-      angle: properties.angle ?? this.featureStyle.angle,
+      angle: Number(properties.angle ?? this.featureStyle.angle),
       color: properties.color ?? this.featureStyle.color,
-      stroke: properties.stroke ?? this.featureStyle.stroke,
-      linestyle: properties.linestyle ?? this.featureStyle.linestyle,
-      opacity: properties.opacity ?? this.featureStyle.opacity,
-      showOrientation:
-        properties.showOrientation ?? this.featureStyle.showOrientation,
+      stroke: Number(properties.stroke ?? this.featureStyle.stroke),
+      linestyle,
+      opacity: Number(properties.opacity ?? this.featureStyle.opacity),
+      showOrientation,
       shape: properties.shape ?? this.featureStyle.shape,
-      size: properties.size ?? this.featureStyle.size,
+      size: Number(properties.size ?? this.featureStyle.size),
       symbolId: properties.symbolId ?? this.featureStyle.symbolId,
       symboltype: properties.symboltype ?? this.featureStyle.symboltype,
       arrowcolor: properties.arrowcolor ?? this.featureStyle.arrowcolor,

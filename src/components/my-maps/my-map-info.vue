@@ -130,11 +130,13 @@ watch(selectedFile, async file => {
     const result = await readFileContent(file, map)
     const { features } = result
 
-    features.forEach(feature => {
+    for (const feature of features) {
       const drawFeature = generateDrawnFeature(feature)
-      drawStore.addDrawnFeatureToCollection(drawFeature)
+      // Explicitly set map_id to ensure the feature is saved to this MyMap
+      drawFeature.map_id = props.myMap.uuid
+      await drawStore.addDrawnFeatureToCollection(drawFeature)
       drawFeature.fit()
-    })
+    }
   } catch (error) {
     // eslint-disable-next-line no-console
     console.error('Error importing file:', error)
