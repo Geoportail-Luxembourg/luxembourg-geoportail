@@ -517,5 +517,8 @@
   "measure_continue_instruction": "Klickt fir mam Zeechnen vun der Linn weiderzefueren <br> Duebelklick fir ofzeschléissen",
   "measure_continue_instruction_area": "Klickt fir mam Zeechnen vum Polygon weiderzefueren <br> Duebelklick fir ofzeschléissen",
   "measure_continue_instruction_azimuth": "Klickt fir mam Zeechnen vun der Linn weiderzefueren <br> Duebelklick fir ofzeschléissen",
-  "Certaines couches sont protégées. Veuillez vous connecter avec un utilisateur disposant les droits de visualiser cette couche.": "Verschidden Layeren sinn geschützt. Mellt Iech w.e.g. mat engem Benotzer un, deen berechtegt ass dës Layeren ze gesinn."
+  "Certaines couches sont protégées. Veuillez vous connecter avec un utilisateur disposant les droits de visualiser cette couche.": "Verschidden Layeren sinn geschützt. Mellt Iech w.e.g. mat engem Benotzer un, deen berechtegt ass dës Layeren ze gesinn.",
+  "Plain": "duerchgezunn",
+  "Dashed": "gestréchelt",
+  "Dotted": "gepunktelt"
 }

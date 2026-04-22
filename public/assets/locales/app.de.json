@@ -517,5 +517,8 @@
   "measure_continue_instruction": "Klicken Sie um mit dem Zeichnen der Linie fortzufahren <br> Doppelklick zum Abschließen",
   "measure_continue_instruction_area": "Klicken Sie um mit dem Zeichnen des Polygons fortzufahren <br> Doppelklick zum Abschließen",
   "measure_continue_instruction_azimuth": "Klicken Sie um mit dem Zeichnen der Linie fortzufahren <br> Doppelklick zum Abschließen",
-  "Certaines couches sont protégées. Veuillez vous connecter avec un utilisateur disposant les droits de visualiser cette couche.": "Einige Layer sind geschützt. Bitte melden Sie sich mit einem Benutzer an, der berechtigt ist, diesen Layer einzusehen"
+  "Certaines couches sont protégées. Veuillez vous connecter avec un utilisateur disposant les droits de visualiser cette couche.": "Einige Layer sind geschützt. Bitte melden Sie sich mit einem Benutzer an, der berechtigt ist, diesen Layer einzusehen",
+  "Plain": "Durchgehend",
+  "Dashed": "Gestrichelt",
+  "Dotted": "Gepunktet"
 }

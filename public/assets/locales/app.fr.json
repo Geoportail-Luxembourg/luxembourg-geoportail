@@ -517,5 +517,8 @@
   "measure_continue_instruction": "Cliquez pour continuer à tracer la ligne<br>Double cliquez pour finaliser",
   "measure_continue_instruction_area": "Cliquez pour continuer à tracer le polygone<br>Double cliquez pour finaliser",
   "measure_continue_instruction_azimuth": "Cliquez pour continuer à tracer la ligne<br>Double cliquez pour finaliser",
-  "Certaines couches sont protégées. Veuillez vous connecter avec un utilisateur disposant les droits de visualiser cette couche.": "Certaines couches sont protégées. Veuillez vous connecter avec un utilisateur disposant les droits de visualiser cette couche."
+  "Certaines couches sont protégées. Veuillez vous connecter avec un utilisateur disposant les droits de visualiser cette couche.": "Certaines couches sont protégées. Veuillez vous connecter avec un utilisateur disposant les droits de visualiser cette couche.",
+  "Plain": "Continu",
+  "Dashed": "Traitillé",
+  "Dotted": "Pointillé"
 }
