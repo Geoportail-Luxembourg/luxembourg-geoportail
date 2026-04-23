@@ -77,7 +77,7 @@ async function updateInfo(location: Coordinate | undefined) {
     elevation.value =
       locationInfoInfos.value.elevation === null
         ? 'N/A'
-        : formatElevation(locationInfoInfos.value.elevation)
+        : formatElevation(locationInfoInfos.value.elevation, 2)
     address.value = locationInfoInfos.value.address
     isInBoxOfLidar.value = locationInfoInfos.value.isInBoxOfLidar
   }
