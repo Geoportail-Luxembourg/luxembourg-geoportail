@@ -75,6 +75,12 @@ const BYPASS_NAVIGATE_PATHS = [
   '/admin',
   '/geocode',
   '/mymaps',
+  '/legends',
+  '/httpsproxy',
+  '/ogcproxywms',
+  '/qr',
+  '/router',
+  '/getbuswidget',
 ]
 const ROOT_URL = `${self.location.origin}/`
 const ROOT_INDEX_URL = `${self.location.origin}/index.html`
@@ -745,6 +751,20 @@ function isAppShellResource(url: string) {
   try {
     const urlObj = new URL(url)
 
+    // Never treat backend API paths as cacheable app-shell resources,
+    // even when the hostname is in APP_SHELL_CDN_HOSTS.
+    const pathname = urlObj.pathname
+    if (
+      BYPASS_NAVIGATE_PATHS.some(
+        p =>
+          pathname === p ||
+          pathname.startsWith(p + '/') ||
+          pathname.startsWith(p + '?')
+      )
+    ) {
+      return null
+    }
+
     if (APP_SHELL_CDN_HOSTS.includes(urlObj.hostname)) {
       return CACHE_NAMES.APP_SHELL
     }
@@ -752,8 +772,6 @@ function isAppShellResource(url: string) {
     if (urlObj.origin !== self.location.origin) {
       return null
     }
-
-    const pathname = urlObj.pathname
 
     if (ENTRYPOINT_URLS.includes(urlObj.href)) {
       return CACHE_NAMES.APP_SHELL
