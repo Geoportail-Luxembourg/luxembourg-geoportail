@@ -133,7 +133,7 @@ class DrawTooltip {
 
     this.measureTooltipOverlay = new Overlay({
       element: this.measureTooltipElement,
-      offset: [0, -15],
+      offset: [0, 45],
       positioning: 'bottom-center',
       stopEvent: false,
     })
@@ -168,8 +168,7 @@ class DrawTooltip {
     let output = ''
     if (geometry.getType() === 'LineString') {
       const geom = geometry as LineString
-      // Position tooltip at the middle of the line instead of the last vertex
-      coord = geom.getCoordinateAt(0.5)
+      coord = geom.getLastCoordinate()
       if (coord != null) {
         output = formatLength(getLength(geom, proj))
       }

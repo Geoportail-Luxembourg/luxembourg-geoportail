@@ -4,6 +4,7 @@ import { storeToRefs } from 'pinia'
 
 import useSortable from '@/composables/sortable'
 import useDrawUtils from '@/composables/draw/draw-utils.composable'
+import useMyMaps from '@/composables/my-maps/my-maps.composable'
 import { useDrawStore } from '@/stores/draw.store'
 import {
   DrawnFeature,
@@ -21,6 +22,7 @@ const { features, idPrefix } = defineProps<{
 
 const drawStore = useDrawStore()
 const drawUtils = useDrawUtils()
+const myMaps = useMyMaps()
 const {
   activeFeatureId,
   editingFeatureId,
@@ -38,7 +40,20 @@ function onLiFocus(featureId: string | number) {
   focusedFeatureId.value = featureId
 }
 
+function isInteractiveInputTarget(target: EventTarget | null): boolean {
+  if (!(target instanceof HTMLElement)) return false
+
+  if (target.isContentEditable) return true
+
+  const interactiveSelector =
+    'input, textarea, select, button, [contenteditable="true"]'
+
+  return target.closest(interactiveSelector) !== null
+}
+
 function onListKeydown(e: KeyboardEvent) {
+  if (isInteractiveInputTarget(e.target)) return
+
   // Let Tab navigate naturally - don't intercept it
   if (e.key === 'Tab') return
   if (!['ArrowDown', 'ArrowUp', ' '].includes(e.key)) return
@@ -140,7 +155,10 @@ function onSubmitNewConcentricCircle(payload: {
 }
 
 function sortFunction(elements: HTMLCollection) {
-  const featureIds = [...elements].map(val => val.id)
+  const prefix = idPrefix ? `${idPrefix}-` : ''
+  const featureIds = [...elements].map(val =>
+    prefix ? val.id.slice(prefix.length) : val.id
+  )
   drawStore.reorderFeatures(featureIds)
 }
 
@@ -180,6 +198,7 @@ watch(sortableFeatures, elem => {
     >
       <FeatureItem
         :isDocked="featureEditionDocked"
+        :isDraggable="!feature.map_id || !!myMaps.isMyMapEditable.value"
         :isEditing="editingFeatureId === feature.id"
         :isOpen="activeFeatureId === feature.id"
         :feature="<DrawnFeature>feature"

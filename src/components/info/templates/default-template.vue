@@ -30,7 +30,7 @@ defineProps({
 defineEmits<{
   (e: 'export', payload: { feature: FeatureJSON; format: 'kml' | 'gpx' }): void
 }>()
-const { t } = useTranslation()
+const { t } = useTranslation('tooltips')
 
 function isNoSolarNorWaterLink(label: string, attributeEntry: AttributeEntry) {
   return (
@@ -94,7 +94,7 @@ function isAudioLink(attributeEntry: AttributeEntry) {
               "
             >
               <label v-if="!isLink(attributeEntry.value)"
-                >{{ t(attributeEntry.key) }} :
+                >{{ t(attributeEntry.key, { ns: 'tooltips' }) }} :
               </label>
               <span
                 v-if="!isLink(attributeEntry.value)"
@@ -104,7 +104,7 @@ function isAudioLink(attributeEntry: AttributeEntry) {
                 v-if="isNoSolarNorWaterLink(layers.layerLabel, attributeEntry)"
                 :href="attributeEntry.value"
                 target="_blank"
-                >{{ t(attributeEntry.key) }}</a
+                >{{ t(attributeEntry.key, { ns: 'tooltips' }) }}</a
               >
               <a
                 data-cy="defaultTemplateSolarLink"

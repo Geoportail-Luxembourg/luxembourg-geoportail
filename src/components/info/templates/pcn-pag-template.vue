@@ -10,7 +10,7 @@ defineProps<{
 }>()
 
 const DOWNLOAD_PAGREPORT_URL = import.meta.env.VITE_DOWNLOAD_PAGREPORT_URL
-const { t } = useTranslation()
+const { t } = useTranslation('tooltips')
 </script>
 
 <template>

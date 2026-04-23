@@ -260,6 +260,8 @@
   "Commander": "Order",
   "Télécharger": "Download",
   "An error occurred while downloading forage.": "An error occurred while downloading forage.",
+  "The virtual drilling report is being generated and will be sent to your email address within a few minutes.": "The virtual drilling report is being generated and will be sent to your email address within a few minutes.",
+  "An error occurred while requesting the virtual drilling report.": "An error occurred while requesting the virtual drilling report.",
   "Ouvrir streetView": "To Street View",
   "Suite à la modification des conditions d'utilisation de Google Street View, nous avons désactivé son intégration dans la carte et proposons désormais un lien direct vers le service de Google.": "Following the modification of Google Street View’s terms of use, its integration has been disabled on the map, and replaced with a direct link to Google’s service.",
   "Cliquez dans l'image pour agrandir": "Clic on the image to see a bigger version",
@@ -500,7 +502,7 @@
   "Medium": "Medium",
   "Expert (style.json)": "Expert (style.json)",
   "Vous êtes en mode découpage.<br> Veuillez cliquer sur une ligne pour la couper en deux.": "You are in cutting mode<br>Please clic on a line to cut it into two pieces",
-  "measure_continue_instruction_azimuth": "measure_continue_instruction_azimuth",
+
   "Erreur inattendue lors du chargement de votre carte.": "An unexpected error occured while loading your map",
   "Erreur inattendue lors de la mise à jour de votre carte.": "An unexpected error occured while updating your map",
   "Erreur inattendue lors de la sauvegarde de votre modification.": "An unexpected error occured while saving your modifcations",
@@ -509,5 +511,11 @@
   "Le géoportail national du Grand-Duché du Luxembourg": "The official geoportal for the Grand-Duchy of Luxembourg",
   "www.geoportail.lu est un portail d'accès aux informations géolocalisées, données et services qui sont mis à disposition par les administrations publiques luxembourgeoises. Responsabilité: Malgré la grande attention qu’elles portent à la justesse des informations diffusées sur ce site, les autorités ne peuvent endosser aucune responsabilité quant à la fidélité, à l’exactitude, à l’actualité, à la fiabilité et à l’intégralité de ces informations. Information dépourvue de foi publique. \nDroits d'auteur: Administration du Cadastre et de la Topographie. http://g-o.lu/copyright": "www.geoportail.lu est un portail d'accès aux informations géolocalisées, données et services qui sont mis à disposition par les administrations publiques luxembourgeoises. Responsabilité: Malgré la grande attention qu’elles portent à la justesse des informations diffusées sur ce site, les autorités ne peuvent endosser aucune responsabilité quant à la fidélité, à l’exactitude, à l’actualité, à la fiabilité et à l’intégralité de ces informations. Information dépourvue de foi publique. \nDroits d'auteur: Administration du Cadastre et de la Topographie. http://g-o.lu/copyright",
   "Date d'impression:": "Print date:",
+  "measure_start_instruction": "Click to start measuring a distance",
+  "measure_start_instruction_area": "Click to start measuring an area",
+  "measure_start_instruction_azimuth": "Click to start measuring an azimut",
+  "measure_continue_instruction": "Click to continue drawing the line<br>Double-click to finish",
+  "measure_continue_instruction_area": "Click to continue drawing the polygon<br>Double-click to finish",
+  "measure_continue_instruction_azimuth": "Click to continue drawing the line<br>Double-click to finish",
   "Certaines couches sont protégées. Veuillez vous connecter avec un utilisateur disposant les droits de visualiser cette couche.": "Some layers are protected. Please login with a user who has the rights to view this layer."
 }

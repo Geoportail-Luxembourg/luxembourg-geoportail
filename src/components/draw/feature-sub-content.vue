@@ -42,6 +42,8 @@ const isEditable = computed(() => {
 })
 let prevLabel = feature.label
 let prevDescription = feature.description
+let prevThumbnail: string = feature.get('thumbnail') ?? ''
+let prevImage: string = feature.get('image') ?? ''
 // keep deep copy of previous style to be able to revert style on cancel
 let prevStyle: DrawnFeatureStyle = { ...feature.featureStyle }
 
@@ -62,6 +64,8 @@ function onClickCancel() {
     feature.selected = true
     emit('resetStyle', prevStyle)
   } else if (currentEditCompKey.value === 'FeatureEditInfo') {
+    feature.set('thumbnail', prevThumbnail)
+    feature.set('image', prevImage)
     emit('resetInfo', prevLabel, prevDescription)
   }
   currentEditCompKey.value = undefined
@@ -73,6 +77,8 @@ function onClickValidate(payload: MouseEvent | FeatureConcentricCirclePayload) {
 
   prevLabel = feature.label
   prevDescription = feature.description
+  prevThumbnail = feature.get('thumbnail') ?? ''
+  prevImage = feature.get('image') ?? ''
   prevStyle = { ...feature.featureStyle }
 
   switch (currentComponent) {

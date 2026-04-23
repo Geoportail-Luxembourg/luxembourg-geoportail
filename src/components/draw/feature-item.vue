@@ -10,12 +10,14 @@ import FeatureSubWrapper from './feature-sub-wrapper.vue'
 const props = withDefaults(
   defineProps<{
     isDocked?: boolean
+    isDraggable?: boolean
     isEditing?: boolean
     isOpen?: boolean
     feature: DrawnFeature
   }>(),
   {
     isDocked: false,
+    isDraggable: true,
     isEditing: false,
     isOpen: false,
   }
@@ -80,6 +82,7 @@ function onSubmitNewConcentricCircle(
   >
     <!-- Dragging button -->
     <span
+      v-if="props.isDraggable"
       class="sortable-handle drag-handle fa fa-reorder ui-sortable-handle cursor-move"
     ></span>
     <!-- Type of feat. icon -->

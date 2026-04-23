@@ -35,52 +35,52 @@ function download(format: ExportFormat) {
   )
 }
 
-let drawingMenuOptions = <MenuPopupItemType[]>[
-  {
-    label: 'Exporter un GPX',
-    action: () => download('gpx'),
-  },
-  {
-    label: 'Exporter un KML',
-    action: () => download('kml'),
-  },
-  {
-    label: 'Exporter un Shapefile',
-    action: () => download('shapefile'),
-  },
-  {
-    label: 'Exporter un GeoPackage',
-    action: () => download('gpkg'),
-  },
-  {
-    label: 'Exporter un GeoJSON',
-    action: () => download('geojson'),
-  },
-]
-
-if (feature?.featureType === 'drawnLine' && isEditable.value) {
-  drawingMenuOptions = [
-    ...drawingMenuOptions,
+const drawingMenuOptions = computed(() => {
+  const options = <MenuPopupItemType[]>[
     {
-      label: 'Continuer la ligne',
-      action: () => emit('continueLine'),
+      label: 'Exporter un GPX',
+      action: () => download('gpx'),
     },
     {
-      label: 'Changer sens de la ligne',
-      action: () => lineChangeOrientation(feature),
+      label: 'Exporter un KML',
+      action: () => download('kml'),
+    },
+    {
+      label: 'Exporter un Shapefile',
+      action: () => download('shapefile'),
+    },
+    {
+      label: 'Exporter un GeoPackage',
+      action: () => download('gpkg'),
+    },
+    {
+      label: 'Exporter un GeoJSON',
+      action: () => download('geojson'),
     },
   ]
-}
 
-if (feature?.featureType === 'drawnCircle' && isEditable.value) {
-  drawingMenuOptions = [
-    ...drawingMenuOptions,
-    {
+  if (feature?.featureType === 'drawnLine' && isEditable.value) {
+    options.push(
+      {
+        label: 'Continuer la ligne',
+        action: () => emit('continueLine'),
+      },
+      {
+        label: 'Changer sens de la ligne',
+        action: () => lineChangeOrientation(feature),
+      }
+    )
+  }
+
+  if (feature?.featureType === 'drawnCircle' && isEditable.value) {
+    options.push({
       label: 'Créer cercle concentrique',
       action: () => emit('newConcentricCircle'),
-    },
-  ]
-}
+    })
+  }
+
+  return options
+})
 </script>
 
 <template>

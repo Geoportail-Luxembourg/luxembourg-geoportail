@@ -48,7 +48,7 @@ function createServiceWorkerLogger(prefix: string) {
  * - Provide cache statistics & maintenance hooks used by the UI
  */
 
-const SW_VERSION = '7.0.4'
+const SW_VERSION = '8.0.2'
 const CACHE_VERSION = `lux-geoportail-v4-v${SW_VERSION}`
 
 const CACHE_NAMES = {
@@ -64,6 +64,27 @@ const ALL_CACHES = Object.values(CACHE_NAMES)
 const REG_SCOPE = self.registration?.scope ?? `${self.location.origin}/`
 const APP_BASE_URL = new URL('.', REG_SCOPE).href
 const APP_BASE_PATH = new URL(APP_BASE_URL).pathname
+
+// Paths that must NEVER be intercepted by the SW.
+// Only real server-side page navigations go here (not XHR/fetch API calls,
+// which are never in mode='navigate' and therefore never reach this check).
+// List derived from actual backend routes in the .env* files.
+const BYPASS_NAVIGATE_PATHS = [
+  '/logout',
+  '/login',
+  '/admin',
+  '/geocode',
+  '/mymaps',
+  '/legends',
+  '/httpsproxy',
+  '/ogcproxywms',
+  '/qr',
+  '/router',
+  '/getbuswidget',
+]
+// Paths that should be served network-first, with cache fallback when offline.
+const NETWORK_FIRST_PATHS = ['/themes']
+
 const ROOT_URL = `${self.location.origin}/`
 const ROOT_INDEX_URL = `${self.location.origin}/index.html`
 const ENTRY_URL = APP_BASE_URL
@@ -128,10 +149,7 @@ const PRECACHE_APP_SHELL_URLS = Array.from(
   ])
 )
 
-const VT_HOSTS = [
-  'vectortiles.geoportail.lu',
-  'vectortiles-staging.geoportail.lu',
-]
+const VT_HOSTS = ['vectortiles.geoportail.lu']
 const DEFAULT_STYLES = ['roadmap', 'topomap', 'topomap_gray']
 const DEFAULT_FONT_FAMILIES = [
   'Noto Sans Regular',
@@ -218,7 +236,32 @@ self.addEventListener('fetch', (event: FetchEvent) => {
   }
 
   if (request.mode === 'navigate') {
+    const pathname = new URL(request.url).pathname
+    const isBypassed = BYPASS_NAVIGATE_PATHS.some(
+      p =>
+        pathname === p ||
+        pathname.startsWith(p + '/') ||
+        pathname.startsWith(p + '?')
+    )
+    if (isBypassed) {
+      // Let these requests go straight to the network — never cache them.
+      return
+    }
     event.respondWith(handleNavigate(request))
+    return
+  }
+
+  const reqPathname = new URL(request.url).pathname
+  if (
+    new URL(request.url).origin === self.location.origin &&
+    NETWORK_FIRST_PATHS.some(
+      p =>
+        reqPathname === p ||
+        reqPathname.startsWith(p + '/') ||
+        reqPathname.startsWith(p + '?')
+    )
+  ) {
+    event.respondWith(networkFirstStrategy(request, CACHE_NAMES.APP_SHELL))
     return
   }
 
@@ -725,6 +768,20 @@ function isAppShellResource(url: string) {
   try {
     const urlObj = new URL(url)
 
+    // Never treat backend API paths as cacheable app-shell resources,
+    // even when the hostname is in APP_SHELL_CDN_HOSTS.
+    const pathname = urlObj.pathname
+    if (
+      BYPASS_NAVIGATE_PATHS.some(
+        p =>
+          pathname === p ||
+          pathname.startsWith(p + '/') ||
+          pathname.startsWith(p + '?')
+      )
+    ) {
+      return null
+    }
+
     if (APP_SHELL_CDN_HOSTS.includes(urlObj.hostname)) {
       return CACHE_NAMES.APP_SHELL
     }
@@ -732,8 +789,6 @@ function isAppShellResource(url: string) {
     if (urlObj.origin !== self.location.origin) {
       return null
     }
-
-    const pathname = urlObj.pathname
 
     if (ENTRYPOINT_URLS.includes(urlObj.href)) {
       return CACHE_NAMES.APP_SHELL

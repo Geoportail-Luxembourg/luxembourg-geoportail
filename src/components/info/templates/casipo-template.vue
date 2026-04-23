@@ -28,7 +28,7 @@ const userMail = computed(() =>
 mail.value = userMail.value
 
 const isChecked: Ref<boolean> = ref(false)
-const { t } = useTranslation()
+const { t } = useTranslation('tooltips')
 const URL_CASIPO_PROD = import.meta.env.VITE_CASIPO_PROD_URL
 
 function joinAttributes(features: any, attr: string, sep: string) {

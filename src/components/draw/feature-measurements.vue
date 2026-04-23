@@ -132,6 +132,22 @@ function onClickValidateRadius(radius: number) {
 
 <template>
   <div class="lux-drawing-item-measurements">
+    <!-- Feature description -->
+    <p v-if="feature?.description" class="text-sm mb-1">
+      {{ feature.description }}
+    </p>
+
+    <a
+      v-if="feature?.get('thumbnail')"
+      :href="feature.get('image')"
+      target="_blank"
+    >
+      <img
+        class="mymaps-thumbnail"
+        :src="feature.get('thumbnail')"
+        alt="thumbnail"
+      />
+    </a>
     <!-- Feature length, for LineString, Circle, Polygon -->
     <div data-cy="featItemLength" v-if="featLength">
       <span>{{ t('Length:') }}&nbsp;</span>

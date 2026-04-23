@@ -87,6 +87,9 @@ export default function useMyMaps() {
       newFeatures.forEach(f => {
         f.editable = authenticated.value && map.is_editable
       })
+      // Remove any already-loaded features for this map before (re-)adding them,
+      // to avoid duplicates when loadMyMap is called more than once.
+      drawStore.removeMyMapsFeature(uuid)
       drawnFeatures.value = [...drawnFeatures.value, ...newFeatures]
 
       // Fit map to features extent after they are loaded (as in v3)

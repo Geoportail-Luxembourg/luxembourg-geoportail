@@ -12,6 +12,9 @@ export default function useNetwork() {
   const { t } = useTranslation()
   const wasOffline = ref(false)
   let previousFocusElement: HTMLElement | null = null
+  let connectivityProbeInterval: ReturnType<typeof setInterval> | undefined
+  let isConnectivityProbeRunning = false
+  const connectivityProbeIntervalMs = 10_000
   const { log: swLog } = createLogger('SW')
 
   // Set initial state IMMEDIATELY - critical for page reload while offline
@@ -106,6 +109,52 @@ export default function useNetwork() {
     }
   }
 
+  const runConnectivityProbe = async () => {
+    if (isConnectivityProbeRunning) {
+      return
+    }
+
+    isConnectivityProbeRunning = true
+
+    const probeUrl =
+      import.meta.env.VITE_PING_URL || `${import.meta.env.BASE_URL}favicon.ico`
+    const controller = new AbortController()
+    const timeoutId = setTimeout(() => controller.abort(), 5000)
+
+    try {
+      const resp = await fetch(probeUrl, {
+        method: 'HEAD',
+        cache: 'no-store',
+        signal: controller.signal,
+      })
+
+      if (!resp.ok) {
+        throw new Error(`HTTP ${resp.status}`)
+      }
+
+      swLog('[Network] Connectivity test: ONLINE')
+      if (appStore.isOffLine) {
+        swLog('[Network] Correcting state to online')
+        handleOnline()
+      }
+    } catch (error) {
+      swLog(
+        '[Network] Connectivity test: OFFLINE',
+        error instanceof Error ? error.message : String(error)
+      )
+      // Do NOT override navigator.onLine=true: a probe failure can be caused
+      // by the service worker, a slow network, or a transient error — not a
+      // real disconnection. Trust the browser's own connectivity signal.
+      if (!appStore.isOffLine && !navigator.onLine) {
+        swLog('[Network] Correcting state to offline')
+        handleOffline()
+      }
+    } finally {
+      clearTimeout(timeoutId)
+      isConnectivityProbeRunning = false
+    }
+  }
+
   const initialize = () => {
     // Set initial state immediately - critical for page load while offline
     swLog('[Network] Initialize - navigator.onLine:', navigator.onLine)
@@ -131,55 +180,32 @@ export default function useNetwork() {
     }
 
     // Double-check after a short delay - navigator.onLine can be unreliable immediately after page load
-    // Test actual connectivity by trying to fetch a resource
     setTimeout(async () => {
       swLog('[Network] Delayed check - navigator.onLine:', navigator.onLine)
-
-      // Try to make a real network request to detect actual connectivity.
-      // Prefer a configured ping endpoint (VITE_PING_URL) and fall back to
-      // favicon.ico which should exist in most deployments. Treat non-OK
-      // responses as offline for the purpose of this quick probe.
-      try {
-        const probeUrl =
-          import.meta.env.VITE_PING_URL ||
-          `${import.meta.env.BASE_URL}favicon.ico`
-        const controller = new AbortController()
-        const timeoutId = setTimeout(() => controller.abort(), 2000) // 2s timeout
-
-        const resp = await fetch(probeUrl, {
-          method: 'HEAD',
-          cache: 'no-store',
-          signal: controller.signal,
-        })
-        clearTimeout(timeoutId)
-
-        if (!resp.ok) {
-          throw new Error(`HTTP ${resp.status}`)
-        }
-
-        // Request succeeded - we're online
-        swLog('[Network] Connectivity test: ONLINE')
-        if (appStore.isOffLine) {
-          swLog('[Network] Correcting state to online')
-          handleOnline()
-        }
-      } catch (error) {
-        // Request failed - treat as offline for the probe
-        swLog(
-          '[Network] Connectivity test: OFFLINE',
-          error instanceof Error ? error.message : String(error)
-        )
-        if (!appStore.isOffLine) {
-          swLog('[Network] Correcting state to offline')
-          handleOffline()
-        }
+      // Only run the probe if the browser itself also suspects offline.
+      // This avoids false positives caused by a slow/intercepted probe request
+      // when navigator.onLine is already true.
+      if (!navigator.onLine) {
+        await runConnectivityProbe()
       }
     }, 100)
+
+    // Only run the periodic probe when we're already offline, to attempt recovery.
+    // When online, we rely on the native 'offline' browser event instead.
+    connectivityProbeInterval = setInterval(() => {
+      if (appStore.isOffLine) {
+        void runConnectivityProbe()
+      }
+    }, connectivityProbeIntervalMs)
   }
 
   const cleanup = () => {
     window.removeEventListener('online', handleOnline)
     window.removeEventListener('offline', handleOffline)
+    if (connectivityProbeInterval) {
+      clearInterval(connectivityProbeInterval)
+      connectivityProbeInterval = undefined
+    }
   }
 
   return {

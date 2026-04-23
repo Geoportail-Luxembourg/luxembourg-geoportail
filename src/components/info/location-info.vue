@@ -22,7 +22,6 @@ import {
   formatAddress,
   formatCoords,
 } from '@/services/common/formatting.utils'
-import { downloadUrl } from '@/services/utils'
 
 import { useAlertNotificationsStore } from '@/stores/alert-notifications.store'
 import { AlertNotificationType } from '@/stores/alert-notifications.store.model'
@@ -118,7 +117,7 @@ const forageUrl = computed(() =>
   clickCoordinateLuref.value
     ? `${import.meta.env.VITE_FORAGE_URL}?x=${
         clickCoordinateLuref.value[0]
-      }&y=${clickCoordinateLuref.value[1]}`
+      }&y=${clickCoordinateLuref.value[1]}&email=${encodeURIComponent(currentUser.value?.mail ?? '')}`
     : ''
 )
 const cyclomediaUrl = computed(() =>
@@ -237,10 +236,17 @@ function addRoutePoint() {
 async function downloadRapportForageVirtuel() {
   downloadingRepport.value = true
   try {
-    await downloadUrl(forageUrl.value, '')
+    const response = await fetch(forageUrl.value)
+    if (!response.ok) throw new Error(`HTTP ${response.status}`)
+    addNotification(
+      t(
+        'The virtual drilling report is being generated and will be sent to your email address within a few minutes.'
+      ),
+      AlertNotificationType.INFO
+    )
   } catch {
     addNotification(
-      t('An error occurred while downloading forage.'),
+      t('An error occurred while requesting the virtual drilling report.'),
       AlertNotificationType.ERROR
     )
   } finally {

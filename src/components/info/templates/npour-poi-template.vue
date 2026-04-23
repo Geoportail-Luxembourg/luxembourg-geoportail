@@ -15,8 +15,8 @@ defineProps<{
 defineEmits<{
   (e: 'export', payload: { feature: FeatureJSON; format: 'kml' | 'gpx' }): void
 }>()
-const { t } = useTranslation()
-const { i18next } = useTranslation()
+const { t } = useTranslation('tooltips')
+const { i18next } = useTranslation('tooltips')
 </script>
 <style scoped>
 h3,

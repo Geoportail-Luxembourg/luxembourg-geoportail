@@ -188,6 +188,12 @@ function writeJsonFile(filePath, data) {
   )
 }
 
+function writeWrappedJsonFile(filePath, lang, data) {
+  ensureDir(path.dirname(filePath))
+  const wrapped = { [lang]: sortObjectByKey(data) }
+  fs.writeFileSync(filePath, `${JSON.stringify(wrapped, null, 2)}\n`, 'utf8')
+}
+
 function transformNamespace(options, namespace, lang) {
   const poPath = path.join(options.inputDir, `${namespace}.${lang}.po`)
   const jsonPath = path.join(options.outputDir, `${namespace}.${lang}.json`)
@@ -205,17 +211,38 @@ function transformNamespace(options, namespace, lang) {
   const dictionary = parsePoFile(poContent)
   const entryCount = Object.keys(dictionary).length
 
+  const results = []
+
   if (!options.dryRun) {
     writeJsonFile(jsonPath, dictionary)
   }
 
-  return {
+  results.push({
     namespace,
     lang,
     skipped: false,
     entryCount,
     output: path.relative(ROOT, jsonPath),
+  })
+
+  if (namespace === 'layers') {
+    const wrappedJsonPath = path.join(
+      options.outputDir,
+      `${namespace}-${lang}.json`
+    )
+    if (!options.dryRun) {
+      writeWrappedJsonFile(wrappedJsonPath, lang, dictionary)
+    }
+    results.push({
+      namespace,
+      lang,
+      skipped: false,
+      entryCount,
+      output: path.relative(ROOT, wrappedJsonPath),
+    })
   }
+
+  return results
 }
 
 function run() {
@@ -234,7 +261,12 @@ function run() {
   const results = []
   for (const namespace of options.namespaces) {
     for (const lang of options.langs) {
-      results.push(transformNamespace(options, namespace, lang))
+      const result = transformNamespace(options, namespace, lang)
+      if (Array.isArray(result)) {
+        results.push(...result)
+      } else {
+        results.push(result)
+      }
     }
   }
 

@@ -8,7 +8,7 @@ defineProps<{
 defineEmits<{
   (e: 'export'): void
 }>()
-const { t } = useTranslation()
+const { t } = useTranslation('tooltips')
 </script>
 <template>
   <h1 class="lux-poi-title">

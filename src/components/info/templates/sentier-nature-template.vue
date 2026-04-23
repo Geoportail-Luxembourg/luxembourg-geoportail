@@ -18,7 +18,7 @@ defineEmits<{
 }>()
 
 const DOWNLOAD_RESOURCE_URL = import.meta.env.VITE_DOWNLOAD_RESOURCE_URL
-const { t } = useTranslation()
+const { t } = useTranslation('tooltips')
 
 function getDirectLink(feature: FeatureJSON) {
   return `${props.currentUrl}&fid=${props.layers.layer}_${feature.attributes.id_qr}`
