@@ -48,7 +48,7 @@ function createServiceWorkerLogger(prefix: string) {
  * - Provide cache statistics & maintenance hooks used by the UI
  */
 
-const SW_VERSION = '8.0.0'
+const SW_VERSION = '8.0.1'
 const CACHE_VERSION = `lux-geoportail-v4-v${SW_VERSION}`
 
 const CACHE_NAMES = {
