@@ -30,7 +30,7 @@ defineProps({
 defineEmits<{
   (e: 'export', payload: { feature: FeatureJSON; format: 'kml' | 'gpx' }): void
 }>()
-const { t } = useTranslation()
+const { t } = useTranslation('tooltips')
 
 function isNoSolarNorWaterLink(label: string, attributeEntry: AttributeEntry) {
   return (

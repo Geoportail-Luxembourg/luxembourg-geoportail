@@ -27,7 +27,7 @@ const userMail = computed(() =>
 )
 mail.value = userMail.value
 
-const { t } = useTranslation()
+const { t } = useTranslation('tooltips')
 const URL_FORAGE_VIRTUEL_PROD = import.meta.env.VITE_FORAGE_VIRTUEL_PROD_URL
 
 async function generateRepport() {

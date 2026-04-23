@@ -6,7 +6,7 @@ defineProps<{
   layers: FeatureInfoJSON
   currentUrl?: string
 }>()
-const { t } = useTranslation()
+const { t } = useTranslation('tooltips')
 </script>
 <template>
   <InfoFeatureLayout :layers="layers" :currentUrl="currentUrl">

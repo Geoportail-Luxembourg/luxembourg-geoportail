@@ -27,7 +27,7 @@ const userMail = computed(() =>
 )
 mail.value = userMail.value
 
-const { t } = useTranslation()
+const { t } = useTranslation('tooltips')
 const URL_PDS_PROD = import.meta.env.VITE_PDS_PROD_URL
 
 function joinAttributes(features: any, attr: string, sep: string) {

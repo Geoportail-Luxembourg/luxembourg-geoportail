@@ -48,7 +48,7 @@ function createServiceWorkerLogger(prefix: string) {
  * - Provide cache statistics & maintenance hooks used by the UI
  */
 
-const SW_VERSION = '8.0.1'
+const SW_VERSION = '8.0.2'
 const CACHE_VERSION = `lux-geoportail-v4-v${SW_VERSION}`
 
 const CACHE_NAMES = {
@@ -82,6 +82,9 @@ const BYPASS_NAVIGATE_PATHS = [
   '/router',
   '/getbuswidget',
 ]
+// Paths that should be served network-first, with cache fallback when offline.
+const NETWORK_FIRST_PATHS = ['/themes']
+
 const ROOT_URL = `${self.location.origin}/`
 const ROOT_INDEX_URL = `${self.location.origin}/index.html`
 const ENTRY_URL = APP_BASE_URL
@@ -245,6 +248,20 @@ self.addEventListener('fetch', (event: FetchEvent) => {
       return
     }
     event.respondWith(handleNavigate(request))
+    return
+  }
+
+  const reqPathname = new URL(request.url).pathname
+  if (
+    new URL(request.url).origin === self.location.origin &&
+    NETWORK_FIRST_PATHS.some(
+      p =>
+        reqPathname === p ||
+        reqPathname.startsWith(p + '/') ||
+        reqPathname.startsWith(p + '?')
+    )
+  ) {
+    event.respondWith(networkFirstStrategy(request, CACHE_NAMES.APP_SHELL))
     return
   }
 

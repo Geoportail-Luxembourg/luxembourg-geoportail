@@ -7,7 +7,7 @@ defineProps<{
   layers: FeatureInfoJSON
   currentUrl?: string
 }>()
-const { t } = useTranslation()
+const { t } = useTranslation('tooltips')
 const DOWNLOAD_SKETCH_URL = import.meta.env.VITE_DOWNLOAD_SKETCH_URL
 </script>
 

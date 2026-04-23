@@ -18,7 +18,7 @@ const props = defineProps<{
 
 const DOWNLOAD_MEASUREMENT_URL = import.meta.env.VITE_DOWNLOAD_MEASUREMENT_URL
 const THUMBNAIL_MEASUREMENT_URL = import.meta.env.VITE_THUMBNAIL_MEASUREMENT_URL
-const { t } = useTranslation()
+const { t } = useTranslation('tooltips')
 const selectedMeasurement: Ref<FeatureMeasurement | undefined> = ref()
 const viewMode = ref<'links' | 'thumbnails'>('links')
 

@@ -8,7 +8,7 @@ defineProps<{
   currentUrl?: string
 }>()
 
-const { t } = useTranslation()
+const { t } = useTranslation('tooltips')
 </script>
 
 <template>

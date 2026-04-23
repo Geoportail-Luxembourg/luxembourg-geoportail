@@ -13,7 +13,7 @@ defineProps<{
   layers: FeatureInfoJSON
   currentUrl?: string
 }>()
-const { t } = useTranslation()
+const { t } = useTranslation('tooltips')
 
 const getCookie_ = function (cname: string) {
   var name = cname + '='

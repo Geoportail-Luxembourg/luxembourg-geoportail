@@ -23,7 +23,7 @@ defineProps<{
 defineEmits<{
   (e: 'export', payload: { feature: FeatureJSON; format: 'kml' | 'gpx' }): void
 }>()
-const { t } = useTranslation()
+const { t } = useTranslation('tooltips')
 </script>
 <template>
   <InfoFeatureLayout :layers="layers" :currentUrl="currentUrl">
