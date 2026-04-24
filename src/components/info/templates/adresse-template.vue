@@ -10,9 +10,7 @@ defineProps<{
   <InfoFeatureLayout :layers="layers" :currentUrl="currentUrl">
     <template #feature-content="{ feature }">
       <h4>{{ feature.attributes.num_affaire }}</h4>
-      {{ feature.attributes.numero }}, {{ feature.attributes.rue }}<br />
-      L-{{ feature.attributes.code_postal }} {{ feature.attributes.localite
-      }}<br />
+      {{ feature.attributes.label.replace('\n', '<br />') | safe }}
     </template>
   </InfoFeatureLayout>
 </template>
