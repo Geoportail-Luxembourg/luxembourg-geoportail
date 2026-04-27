@@ -7,7 +7,7 @@ defineProps<{
   currentUrl?: string
 }>()
 
-const formatLabel = (label: string) => label.replace(/\n/g, '<br>')
+const formatLabel = (label: string) => label?.replace(/\n/g, '<br>') ?? ''
 </script>
 
 <template>
