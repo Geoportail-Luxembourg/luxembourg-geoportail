@@ -466,7 +466,7 @@ h2 {
                                     >({{
                                       (
                                         document.available_formats as unknown as string[]
-                                      )[0].toUpperCase()
+                                      )?.[0]?.toUpperCase() ?? ''
                                     }})</span
                                   >
                                 </span>
