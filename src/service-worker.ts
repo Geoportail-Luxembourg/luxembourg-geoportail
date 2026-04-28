@@ -48,7 +48,7 @@ function createServiceWorkerLogger(prefix: string) {
  * - Provide cache statistics & maintenance hooks used by the UI
  */
 
-const SW_VERSION = '8.0.2'
+const SW_VERSION = '8.0.3'
 const CACHE_VERSION = `lux-geoportail-v4-v${SW_VERSION}`
 
 const CACHE_NAMES = {
@@ -73,6 +73,10 @@ const BYPASS_NAVIGATE_PATHS = [
   '/logout',
   '/login',
   '/admin',
+  '/admin_static',
+  '/c2cgeoportal_admin_node_modules',
+  '/root_package_node_modules',
+  '/c2cgeoform_static',
   '/geocode',
   '/mymaps',
   '/legends',
