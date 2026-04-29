@@ -16,7 +16,7 @@ declare const self: ServiceWorkerGlobalScope
  * so backend routes are never intercepted when online.
  */
 
-const SW_VERSION = '9.0.0'
+const SW_VERSION = '9.0.1'
 const CACHE_VERSION = `lux-geoportail-v4-v${SW_VERSION}`
 
 const CACHE_NAMES = {
@@ -125,6 +125,14 @@ self.addEventListener('fetch', (event: FetchEvent) => {
     return
   }
 
+  // Themes config is critical for app startup. We cache it network-first,
+  // but with a canonical cache key (without cache_version query param)
+  // so offline reload can still find the latest fetched value.
+  if (isThemesRequest(request.url)) {
+    event.respondWith(networkFirstThemesStrategy(request))
+    return
+  }
+
   // Vector tile resources (vectortiles.geoportail.lu)
   const vtCache = getVectorTileCacheName(request.url)
   if (vtCache) {
@@ -133,12 +141,6 @@ self.addEventListener('fetch', (event: FetchEvent) => {
     } else {
       event.respondWith(cacheFirstStrategy(request, vtCache))
     }
-    return
-  }
-
-  // /themes: network-first with cache fallback (app cannot start without it)
-  if (new URL(request.url).pathname.startsWith('/themes')) {
-    event.respondWith(networkFirstStrategy(request, CACHE_NAMES.APP_SHELL))
     return
   }
 
@@ -164,6 +166,18 @@ self.addEventListener('message', (event: ExtendableMessageEvent) => {
           ports?.[0]?.postMessage({ success: !failed })
         }
       )
+    )
+    return
+  }
+
+  if (data.type === 'CLEAR_THEMES_CACHE') {
+    event.waitUntil(
+      clearThemesCache()
+        .then(success => ports?.[0]?.postMessage({ success }))
+        .catch(error => {
+          console.warn('[SW] Failed to clear themes cache', error)
+          ports?.[0]?.postMessage({ success: false, error: error.message })
+        })
     )
     return
   }
@@ -254,6 +268,27 @@ async function networkFirstStrategy(
   }
 }
 
+async function networkFirstThemesStrategy(request: Request): Promise<Response> {
+  const cache = await caches.open(CACHE_NAMES.APP_SHELL)
+  const cacheKey = createThemesCacheKey(request.url)
+
+  try {
+    const response = await fetch(request)
+    if (response.ok) {
+      await cache.put(cacheKey, response.clone())
+    }
+    return response
+  } catch {
+    const cached = await cache.match(cacheKey)
+    if (cached) {
+      return cached
+    }
+    throw new Error(
+      `[SW] Network failed and no cached themes for ${request.url}`
+    )
+  }
+}
+
 async function cacheFirstStrategy(
   request: Request,
   cacheName: CacheName
@@ -291,6 +326,41 @@ function isAppAsset(url: string): boolean {
       pathname
     )
   } catch {
+    return false
+  }
+}
+
+function isThemesRequest(url: string): boolean {
+  try {
+    const { origin, pathname } = new URL(url)
+    if (origin !== self.location.origin) return false
+    return pathname === '/themes' || pathname.endsWith('/themes')
+  } catch {
+    return false
+  }
+}
+
+function createThemesCacheKey(url: string): Request {
+  const normalizedUrl = new URL(url)
+  normalizedUrl.searchParams.delete('cache_version')
+  return new Request(normalizedUrl.href, {
+    credentials: 'same-origin',
+  })
+}
+
+async function clearThemesCache(): Promise<boolean> {
+  try {
+    const cache = await caches.open(CACHE_NAMES.APP_SHELL)
+    const requests = await cache.keys()
+
+    const deletions = requests
+      .filter(request => isThemesRequest(request.url))
+      .map(request => cache.delete(request))
+
+    await Promise.allSettled(deletions)
+    return true
+  } catch (error) {
+    console.warn('[SW] clearThemesCache failed', error)
     return false
   }
 }

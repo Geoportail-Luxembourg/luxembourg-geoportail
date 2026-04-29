@@ -172,6 +172,9 @@
         <button class="secondary" onclick="forceUpdate()">
           ⬆️ Force SW Update
         </button>
+        <button class="secondary" onclick="clearThemesOnly()">
+          🧹 Clear Themes Cache
+        </button>
         <button class="danger" onclick="clearAndReload()">
           🗑️ Clear All Caches & Reload
         </button>
@@ -407,6 +410,61 @@
           }
         } catch (err) {
           log('Update failed: ' + err.message, 'err')
+        }
+      }
+
+      async function clearThemesOnly() {
+        log('Clearing only /themes cache entries…')
+        topStatus.innerHTML = ''
+
+        try {
+          const registrations = await navigator.serviceWorker.getRegistrations()
+          const reg = registrations[0]
+
+          if (reg?.active) {
+            const response = await sendMessage(reg, {
+              type: 'CLEAR_THEMES_CACHE',
+            })
+            if (response?.success) {
+              log('Themes cache cleared via SW message', 'ok')
+            } else {
+              log(
+                'SW reported error while clearing themes cache: ' +
+                  (response?.error || 'unknown error'),
+                'err'
+              )
+            }
+          } else {
+            const names = await caches.keys()
+            for (const name of names) {
+              const cache = await caches.open(name)
+              const keys = await cache.keys()
+              const targets = keys.filter(request => {
+                try {
+                  const url = new URL(request.url)
+                  return (
+                    url.pathname === '/themes' ||
+                    url.pathname.endsWith('/themes')
+                  )
+                } catch {
+                  return false
+                }
+              })
+
+              for (const target of targets) {
+                await cache.delete(target)
+                log(`Deleted themes entry from ${name}: ${target.url}`, 'ok')
+              }
+            }
+          }
+
+          topStatus.innerHTML =
+            '<p style="color:#0a3622;font-weight:bold">✅ Themes cache cleared</p>'
+          await refreshAll()
+        } catch (err) {
+          log('Failed to clear themes cache: ' + err.message, 'err')
+          topStatus.innerHTML =
+            '<p style="color:#58151c;font-weight:bold">❌ Failed to clear themes cache</p>'
         }
       }
 
