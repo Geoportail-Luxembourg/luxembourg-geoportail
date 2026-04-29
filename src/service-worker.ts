@@ -16,7 +16,7 @@ declare const self: ServiceWorkerGlobalScope
  * so backend routes are never intercepted when online.
  */
 
-const SW_VERSION = '9.0.1'
+const SW_VERSION = '9.0.2'
 const CACHE_VERSION = `lux-geoportail-v4-v${SW_VERSION}`
 
 const CACHE_NAMES = {
