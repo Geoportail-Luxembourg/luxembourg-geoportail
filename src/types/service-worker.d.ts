@@ -5,7 +5,12 @@
  */
 
 interface ServiceWorkerMessage {
-  type: 'CLEAR_CACHE' | 'GET_CACHE_SIZE' | 'SKIP_WAITING'
+  type:
+    | 'CLEAR_CACHE'
+    | 'CLEAR_THEMES_CACHE'
+    | 'GET_CACHE_SIZE'
+    | 'SKIP_WAITING'
+    | 'GET_SW_META'
 }
 
 interface ServiceWorkerResponse {

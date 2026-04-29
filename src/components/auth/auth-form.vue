@@ -12,6 +12,7 @@ import { useUserManagerStore } from '@/stores/user-manager.store'
 import { User } from '@/stores/user-manager.store.model'
 import { useMatomo } from '@/composables/matomo/matomo.composable'
 import { MATOMO_CATEGORIES } from '@/composables/matomo/matomo.model'
+import useServiceWorker from '@/composables/offline/service-worker.composable'
 
 const MYACCOUNT_URL = import.meta.env.VITE_MYACCOUNT_URL
 const MYACCOUNT_RECOVER_URL = import.meta.env.VITE_MYACCOUNT_RECOVER_URL
@@ -28,6 +29,7 @@ const autoAuthenticated = ref(false) // Will be set to true if user is authentic
 const userName = ref('')
 const userPassword = ref('')
 const matomo = useMatomo()
+const { clearThemesCache } = useServiceWorker()
 
 watch(authenticated, authenticated => {
   if (!autoAuthenticated.value && authenticated) {
@@ -50,8 +52,9 @@ onMounted(() => {
 function logout() {
   authService
     .logout()
-    .then(() => {
+    .then(async () => {
       clearUser()
+      await clearThemesCache()
       // Reload themes to remove user-specific layers
       themeStore.loadThemes()
     })

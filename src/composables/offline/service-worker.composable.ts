@@ -163,6 +163,57 @@ export default function useServiceWorker() {
     }
   }
 
+  async function clearThemesCache(): Promise<boolean> {
+    if (!isSupported.value) {
+      swWarn('Service Worker not supported')
+      return false
+    }
+
+    try {
+      const reg = await getRegistration()
+      if (!reg || !reg.active) {
+        swWarn('No active Service Worker found')
+        return false
+      }
+
+      return new Promise<boolean>(resolve => {
+        const messageChannel = new MessageChannel()
+        const timeoutId = setTimeout(() => {
+          swError('Clear themes cache timeout')
+          try {
+            messageChannel.port1.close()
+          } catch {
+            /* ignore */
+          }
+          resolve(false)
+        }, 10000)
+
+        messageChannel.port1.onmessage = event => {
+          const { success } = event.data
+          clearTimeout(timeoutId)
+          if (success) {
+            swLog('Themes cache cleared successfully')
+          } else {
+            swError('Failed to clear themes cache:', event.data.error)
+          }
+          try {
+            messageChannel.port1.close()
+          } catch {
+            /* ignore */
+          }
+          resolve(success)
+        }
+
+        reg.active!.postMessage({ type: 'CLEAR_THEMES_CACHE' }, [
+          messageChannel.port2,
+        ])
+      })
+    } catch (error) {
+      swError('Failed to clear themes cache:', error)
+      return false
+    }
+  }
+
   /**
    * Unregister the Service Worker
    * Warning: This will stop all caching functionality
@@ -244,6 +295,7 @@ export default function useServiceWorker() {
     getRegistration,
     getCacheStats,
     clearCache,
+    clearThemesCache,
     unregisterServiceWorker,
     updateServiceWorker,
     isVTCachingActive,

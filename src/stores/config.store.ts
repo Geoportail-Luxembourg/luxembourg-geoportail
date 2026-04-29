@@ -44,7 +44,8 @@ export const useThemeStore = defineStore(
 
     async function loadThemes() {
       themesLoading.value = true
-      const themesUrl = `/themes?interface=main&background=background`
+      const cacheVersion = Date.now()
+      const themesUrl = `/themes?interface=main&background=background&cache_version=${cacheVersion}`
 
       try {
         const resp = await fetch(themesUrl, {
