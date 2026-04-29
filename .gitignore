@@ -27,3 +27,4 @@
 
 storybook-static
 custom-elements.json
+*.local
