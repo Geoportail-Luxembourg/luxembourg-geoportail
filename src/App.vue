@@ -38,7 +38,7 @@ import { useMatomo } from '@/composables/matomo/matomo.composable'
 import { useAppStore } from '@/stores/app.store'
 import { useThemeStore } from '@/stores/config.store'
 import { themeSelectorService } from '@/components/theme-selector/theme-selector.service'
-const { t } = useTranslation()
+const { t, i18next } = useTranslation()
 const appStore = useAppStore()
 const mvtStyleService = useMvtStyles()
 const map = useMap()
@@ -81,6 +81,17 @@ watch(
     if (themeName) {
       themeSelectorService.setCurrentThemeColors(themeName)
     }
+  },
+  { immediate: true }
+)
+
+// Update the page title dynamically with the current theme name in the current language
+watch(
+  [() => themeStore.themeName, () => i18next.language],
+  ([themeName]) => {
+    const translatedTheme = t(themeName, { ns: 'layers' })
+    const translatedApp = t('Géoportail Luxembourg', { ns: 'app' })
+    document.title = `${translatedTheme} - ${translatedApp}`
   },
   { immediate: true }
 )
