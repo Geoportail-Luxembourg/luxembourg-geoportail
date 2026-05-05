@@ -418,14 +418,16 @@ export class DrawRouteInteraction extends PointerInteraction {
       coordinates.splice(-2, 1)
     }
 
-    geometry.setCoordinates(coordinates)
-
-    if (coordinates.length >= 2) {
-      this.finishCoordinate_ = coordinates[coordinates.length - 2].slice()
-    } else {
-      this.finishCoordinate_ = null
+    // If we no longer have enough points to form a line (need at least a
+    // real point + the cursor-guide point), abort the whole sketch so that
+    // modifyDrawing_ doesn't crash trying to update a non-existent last coord.
+    if (coordinates.length < 2) {
+      this.abortDrawing_()
+      return
     }
 
+    geometry.setCoordinates(coordinates)
+    this.finishCoordinate_ = coordinates[coordinates.length - 2].slice()
     this.updateSketchFeatures_()
   }
 
