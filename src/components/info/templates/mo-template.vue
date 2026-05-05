@@ -15,48 +15,33 @@ defineProps<{
 }>()
 const { t } = useTranslation('tooltips')
 
-const getCookie_ = function (cname: string) {
-  var name = cname + '='
-  var ca = document.cookie.split(';')
-  for (var i = 0; i < ca.length; i++) {
-    var c = ca[i]
-    while (c.charAt(0) == ' ') {
-      c = c.substring(1)
-    }
-    if (c.indexOf(name) == 0) {
-      var value = c.substring(name.length, c.length)
-      if (value.indexOf('"') === 0) {
-        value = value.substring(1, value.length - 1)
-      }
-      return value
-    }
-  }
-  return ''
-}
-
 const orderAffaire = async function (numCommune: string, numMesurage: string) {
   const isIpv6 = location.search.includes('ipv6=true')
   const urlBase = isIpv6 ? SHOP_IPV6_URL : SHOP_URL
 
-  // TODO : Link with shop should be tested as soon as a solution is found for auth cookies
-  // Construct the URL with query parameters
   const url = `${urlBase}/Portail/commande/webservices/orderAffaireV3.jsp?numCommune=${encodeURIComponent(
     numCommune
-  )}&numMesurage=${encodeURIComponent(numMesurage)}&ticket=${encodeURIComponent(
-    getCookie_('appAuthtktCookieName')
-  )}`
+  )}&numMesurage=${encodeURIComponent(numMesurage)}&ticket=`
 
   try {
     const response = await fetch(url, {
       method: 'GET',
+      credentials: 'include',
       headers: {
         'Content-Type': 'application/json',
       },
     })
 
     if (response.ok) {
-      await response.json()
-      addNotification(t('Fichier GML commandé.'), AlertNotificationType.INFO)
+      const text = await response.text()
+      if (text.includes('ok')) {
+        addNotification(t('Fichier GML commandé.'), AlertNotificationType.INFO)
+      } else {
+        addNotification(
+          t('Erreur lors de la commande du fichier.'),
+          AlertNotificationType.ERROR
+        )
+      }
     } else {
       addNotification(
         t('Erreur lors de la commande du fichier.'),
