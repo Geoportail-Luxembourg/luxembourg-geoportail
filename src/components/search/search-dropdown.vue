@@ -20,6 +20,11 @@ import { useMetadataStore } from '@/stores/metadata.store'
 import { LayerId, Layer } from '@/stores/map.store.model'
 import { useMatomo } from '@/composables/matomo/matomo.composable'
 
+const FULLTEXTSEARCH_URL = import.meta.env.VITE_SEARCH_FULLTEXTSEARCH_URL
+const FEATURESEARCH_URL = import.meta.env.VITE_SEARCH_FEATURESEARCH_URL
+const LAYERSEARCH_URL = import.meta.env.VITE_SEARCH_LAYERSEARCH_URL
+const CMSSEARCH_URL = import.meta.env.VITE_SEARCH_CMSSEARCH_URL
+
 const { setMetadataLayer } = useMetadataStore()
 const { toggleRoutingOpen } = useAppStore()
 const matomo = useMatomo()
@@ -471,10 +476,7 @@ async function getDataFeatureSearch(newQuery: string, token: number) {
     params['extent'] = extent.join(',')
   }
 
-  const data = await getData(
-    import.meta.env.VITE_V3_API_HOST + 'featuresearch',
-    params
-  )
+  const data = await getData(FEATURESEARCH_URL, params)
   if (token !== handleDataSourcesToken) return
   processResultFeaturesearch(data, selectResultFeatureSearch)
 }
@@ -499,28 +501,19 @@ async function getDataFulltextSearch(newQuery: string, token: number) {
     params['extent'] = extent.join(',')
   }
 
-  const data = await getData(
-    import.meta.env.VITE_V3_API_HOST + 'fulltextsearch',
-    params
-  )
+  const data = await getData(FULLTEXTSEARCH_URL, params)
   if (token !== handleDataSourcesToken) return
   processResultFulltextsearch(data, selectResultFullTextSearch)
 }
 async function getDataLayerSearch(newQuery: string, token: number) {
   let params: { [key: string]: any } = { query: newQuery, limit: 8 }
-  const data = await getData(
-    import.meta.env.VITE_V3_API_HOST + 'layersearch',
-    params
-  )
+  const data = await getData(LAYERSEARCH_URL, params)
   if (token !== handleDataSourcesToken) return
   processResultLayersearch(data, selectResulLayerSearch)
 }
 async function getDataCmsSearch(newQuery: string, token: number) {
   let params: { [key: string]: any } = { query: newQuery, limit: 8 }
-  const data = await getData(
-    import.meta.env.VITE_V3_API_HOST + 'cmssearch',
-    params
-  )
+  const data = await getData(CMSSEARCH_URL, params)
   if (token !== handleDataSourcesToken) return
   processResultCmssearch(data, selectResultCmsSearch)
 }

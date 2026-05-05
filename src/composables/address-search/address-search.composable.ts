@@ -30,7 +30,7 @@ export default function useAddressSearch() {
       }
 
       const response = await fetchApi(
-        import.meta.env.VITE_V3_API_HOST + 'fulltextsearch',
+        import.meta.env.VITE_SEARCH_FULLTEXTSEARCH_URL,
         params,
         'GET'
       )
