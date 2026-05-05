@@ -10,7 +10,7 @@ import {
   FeatureJSON,
 } from '@/services/info/feature-info.model'
 import { MapBrowserEvent } from 'ol'
-import { ref, watchEffect } from 'vue'
+import { ref, watch, watchEffect } from 'vue'
 import { storeToRefs } from 'pinia'
 import { useAppStore } from '@/stores/app.store'
 import { screenSizeIsAtLeast } from '@/services/common/device.utils'
@@ -38,14 +38,14 @@ export default function useFeatureInfo() {
     useFeatureInfoStore()
   const { fid, isLoading } = storeToRefs(useFeatureInfoStore())
   const { toggleInfoOpen } = useAppStore()
-  const { layersOpen, myMapsOpen } = storeToRefs(useAppStore())
+  const { layersOpen, myMapsOpen, infoOpen } = storeToRefs(useAppStore())
   const { findById } = useThemes()
   const { drawStateActive, editStateActive, drawnFeatures } =
     storeToRefs(useDrawStore())
   const { locationInfoCoords, isStreetviewActive } = storeToRefs(
     useLocationInfoStore()
   )
-  const { maxZoom } = storeToRefs(useMapStore())
+  const { maxZoom, layers: mapLayers } = storeToRefs(useMapStore())
   const {
     measureActive,
     drawLidarActive,
@@ -90,6 +90,38 @@ export default function useFeatureInfo() {
         ;(async () => {
           await getFeatureInfoById(fid.value as string)
         })()
+      }
+    })
+
+    // Clear highlights when the info panel is closed
+    watch(infoOpen, isOpen => {
+      if (!isOpen) {
+        featureInfoLayerService.clearFeatures()
+        lastHighlightedFeatures.value = []
+        responses.value = []
+      }
+    })
+
+    // When a layer is removed, remove its highlighted features
+    watch(mapLayers, (newLayers, oldLayers) => {
+      if (oldLayers && newLayers.length < oldLayers.length) {
+        const presentLayerIds = new Set(newLayers.map(l => String(l.id)))
+        responses.value = responses.value.filter(r =>
+          presentLayerIds.has(String(r.layer))
+        )
+        lastHighlightedFeatures.value = responses.value.flatMap(r => r.features)
+        featureInfoLayerService.highlightFeatures(
+          lastHighlightedFeatures.value,
+          false,
+          maxZoom.value
+        )
+        if (lastHighlightedFeatures.value.length === 0) {
+          featureInfoLayerService.clearFeatures()
+        }
+        const content = responses.value.filter(
+          item => 'features' in item && item.features.length > 0
+        )
+        setFeatureInfoPanelContent(content)
       }
     })
   }
