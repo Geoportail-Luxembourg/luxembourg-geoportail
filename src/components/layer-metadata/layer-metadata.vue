@@ -254,7 +254,14 @@ function closeLayerMetadata() {
               >
                 {{ link.label }}
               </a>
-              <span v-else>{{ link.url }}</span>
+              <span v-else>
+                <a
+                  class="text-secondary hover:underline"
+                  target="_blank"
+                  :href="link.url"
+                  >{{ link.url }}</a
+                ></span
+              >
               <span
                 v-if="link.description"
                 class="block text-xs text-gray-500 mt-0.5"
