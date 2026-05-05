@@ -75,6 +75,8 @@
   "Exporter un GeoPackage": "Exporter un GeoPackage",
   "Exporter un GeoJSON": "Exporter un GeoJSON",
   "Continuer la ligne": "Continuer la ligne",
+  "Couper une ligne": "Couper une ligne",
+  "Désactiver mode couper une ligne": "Désactiver mode couper une ligne",
   "Créer cercle concentrique": "Créer cercle concentrique",
   "Feedback": "Feedback",
   "Full offline (only available on mobile)": "Hors ligne complète (disponible uniquement sur le mobile)",

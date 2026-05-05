@@ -75,6 +75,8 @@
   "Exporter un GeoPackage": "E GeoPackage exportéieren",
   "Exporter un GeoJSON": "E GeoJSON exportéieren",
   "Continuer la ligne": "Mat der Linn weiderfueren",
+  "Couper une ligne": "Eng Linn schneiden",
+  "Désactiver mode couper une ligne": "Schneidmodus ausmaan",
   "Créer cercle concentrique": "Konzentrésche Krees erstellen",
   "Feedback": "Feedback",
   "Full offline (only available on mobile)": "Vollen Offline Modus (funktionnéiert nëmmen an der App)",

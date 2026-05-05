@@ -75,6 +75,8 @@
   "Exporter un GeoPackage": "GeoPackage exportieren",
   "Exporter un GeoJSON": "GeoJSON exportieren",
   "Continuer la ligne": "Linie weiterzeichnen",
+  "Couper une ligne": "Eine Linie schneiden",
+  "Désactiver mode couper une ligne": "Schneidmodus deaktivieren",
   "Créer cercle concentrique": "Konzentrischen Kreis erstellen",
   "Feedback": "Feedback",
   "Full offline (only available on mobile)": "Voller Offline Modus (funktionniert nur in der App)",
