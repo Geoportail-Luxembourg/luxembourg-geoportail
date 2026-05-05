@@ -29,11 +29,7 @@ export default function useAddressSearch() {
         layer: 'Adresse,Parcelle,nom_de_rue,lieu_dit',
       }
 
-      const response = await fetchApi(
-        import.meta.env.VITE_V3_API_HOST + 'fulltextsearch',
-        params,
-        'GET'
-      )
+      const response = await fetchApi('/fulltextsearch', params, 'GET')
       const data = await response.json()
 
       const results: AddressSearchResult[] = []

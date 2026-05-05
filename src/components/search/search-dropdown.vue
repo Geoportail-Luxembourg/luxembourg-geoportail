@@ -471,10 +471,7 @@ async function getDataFeatureSearch(newQuery: string, token: number) {
     params['extent'] = extent.join(',')
   }
 
-  const data = await getData(
-    import.meta.env.VITE_V3_API_HOST + 'featuresearch',
-    params
-  )
+  const data = await getData('/featuresearch', params)
   if (token !== handleDataSourcesToken) return
   processResultFeaturesearch(data, selectResultFeatureSearch)
 }
@@ -499,28 +496,19 @@ async function getDataFulltextSearch(newQuery: string, token: number) {
     params['extent'] = extent.join(',')
   }
 
-  const data = await getData(
-    import.meta.env.VITE_V3_API_HOST + 'fulltextsearch',
-    params
-  )
+  const data = await getData('/fulltextsearch', params)
   if (token !== handleDataSourcesToken) return
   processResultFulltextsearch(data, selectResultFullTextSearch)
 }
 async function getDataLayerSearch(newQuery: string, token: number) {
   let params: { [key: string]: any } = { query: newQuery, limit: 8 }
-  const data = await getData(
-    import.meta.env.VITE_V3_API_HOST + 'layersearch',
-    params
-  )
+  const data = await getData('/layersearch', params)
   if (token !== handleDataSourcesToken) return
   processResultLayersearch(data, selectResulLayerSearch)
 }
 async function getDataCmsSearch(newQuery: string, token: number) {
   let params: { [key: string]: any } = { query: newQuery, limit: 8 }
-  const data = await getData(
-    import.meta.env.VITE_V3_API_HOST + 'cmssearch',
-    params
-  )
+  const data = await getData('/cmssearch', params)
   if (token !== handleDataSourcesToken) return
   processResultCmssearch(data, selectResultCmsSearch)
 }
