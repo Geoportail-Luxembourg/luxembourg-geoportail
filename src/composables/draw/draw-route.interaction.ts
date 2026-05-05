@@ -99,8 +99,10 @@ export class DrawRouteInteraction extends PointerInteraction {
   private finishAfterRoute_: boolean = false
 
   // Event handling state
-  private isDoubleClick_: boolean = false
-  private clickTimeout_: number | null = null
+  private downPx_: [number, number] | null = null
+  private shouldHandle_: boolean = false
+  private squaredClickTolerance_: number = 36 // 6px default
+  private snapTolerance_: number = 12
   private active_: boolean = true
 
   constructor(options: DrawRouteOptions = {}) {
@@ -416,14 +418,16 @@ export class DrawRouteInteraction extends PointerInteraction {
       coordinates.splice(-2, 1)
     }
 
-    geometry.setCoordinates(coordinates)
-
-    if (coordinates.length >= 2) {
-      this.finishCoordinate_ = coordinates[coordinates.length - 2].slice()
-    } else {
-      this.finishCoordinate_ = null
+    // If we no longer have enough points to form a line (need at least a
+    // real point + the cursor-guide point), abort the whole sketch so that
+    // modifyDrawing_ doesn't crash trying to update a non-existent last coord.
+    if (coordinates.length < 2) {
+      this.abortDrawing_()
+      return
     }
 
+    geometry.setCoordinates(coordinates)
+    this.finishCoordinate_ = coordinates[coordinates.length - 2].slice()
     this.updateSketchFeatures_()
   }
 
@@ -434,6 +438,15 @@ export class DrawRouteInteraction extends PointerInteraction {
     const sketchFeature = this.abortDrawing_()
     if (!sketchFeature) {
       return
+    }
+
+    // sketchCoords_ always has a trailing cursor-guide point that was never
+    // explicitly clicked. Remove it so the line ends at the last clicked point.
+    const geometry = sketchFeature.getGeometry() as LineString
+    const coords = geometry.getCoordinates()
+    if (coords.length > 1) {
+      coords.pop()
+      geometry.setCoordinates(coords)
     }
 
     // Dispatch drawend event
@@ -469,12 +482,6 @@ export class DrawRouteInteraction extends PointerInteraction {
   private abortDrawing_(): Feature | null {
     this.finishCoordinate_ = null
     const sketchFeature = this.sketchFeature_
-
-    // Clear any pending click timeout
-    if (this.clickTimeout_ !== null) {
-      window.clearTimeout(this.clickTimeout_)
-      this.clickTimeout_ = null
-    }
 
     // Remove pre-draw cursor point if still present
     if (this.cursorPoint_ && this.source_) {
@@ -521,6 +528,21 @@ export class DrawRouteInteraction extends PointerInteraction {
   }
 
   /**
+   * Check if the pointer is at the finish coordinate (used to detect double-click).
+   * Returns true when the second click of a double-click lands near the last placed point.
+   */
+  private atFinish_(pixel: [number, number]): boolean {
+    if (!this.finishCoordinate_) return false
+    const map = this.getMap()
+    if (!map) return false
+    const finishPixel = map.getPixelFromCoordinate(this.finishCoordinate_)
+    if (!finishPixel) return false
+    const dx = pixel[0] - finishPixel[0]
+    const dy = pixel[1] - finishPixel[1]
+    return Math.sqrt(dx * dx + dy * dy) <= this.snapTolerance_
+  }
+
+  /**
    * Handle pointer move
    */
   private handlePointerMove_(event: MapBrowserEvent<any>): boolean {
@@ -552,7 +574,10 @@ export class DrawRouteInteraction extends PointerInteraction {
 }
 
 /**
- * Handle all map browser events - intercept double-click to finish drawing
+ * Handle all map browser events.
+ * We intercept DBLCLICK to prevent OL's default map zoom and to stop propagation.
+ * Actual click-to-draw logic is handled in handleUpEvent_ (POINTERUP) which is
+ * more reliable than the synthetic singleclick event.
  */
 function handleEvent_(
   this: DrawRouteInteraction,
@@ -562,75 +587,86 @@ function handleEvent_(
 
   // Don't process events if interaction is not active
   if (!self.active_) {
-    return true // Let other interactions handle the event
+    return true
   }
 
-  // Handle double-click to finish drawing
+  // Intercept double-click: prevent OL default (map zoom) — the actual finish
+  // is triggered in handleUpEvent_ via atFinish_ when the second POINTERUP lands
+  // at the same position as the last placed point.
   if (event.type === MapBrowserEventType.DBLCLICK) {
-    self.isDoubleClick_ = true
-
-    // Clear any pending singleclick timeout
-    if (self.clickTimeout_ !== null) {
-      window.clearTimeout(self.clickTimeout_)
-      self.clickTimeout_ = null
-    }
-
-    self.finishDrawing()
-
-    // Reset flag after a short delay
-    setTimeout(() => {
-      self.isDoubleClick_ = false
-    }, 300)
-
-    return false // Stop event propagation
-  }
-
-  // Handle single click to add points
-  if (event.type === 'singleclick') {
-    // Ignore singleclick if it's part of a double-click
-    if (self.isDoubleClick_) {
-      return false
-    }
-
-    const coordinate = event.coordinate
-
-    if (!self.sketchFeature_) {
-      // Start new drawing
-      self.startDrawing_(coordinate)
-    } else {
-      // Add point to existing drawing
-      self.addToDrawing_(coordinate)
-    }
     return false
   }
 
-  // Handle pointer move for sketch update and pre-draw cursor point
-  if (event.type === 'pointermove') {
-    self.handlePointerMove_(event)
+  // Delegate to PointerInteraction.prototype.handleEvent which routes
+  // POINTERDOWN → handleDownEvent_, POINTERMOVE → handleMoveEvent_,
+  // POINTERUP → handleUpEvent_.
+  return PointerInteraction.prototype.handleEvent.call(self, event)
+}
+
+/**
+ * Handle pointer down: store the down pixel so we can check click tolerance on up.
+ */
+function handleDownEvent_(
+  this: DrawRouteInteraction,
+  event: MapBrowserEvent<any>
+): boolean {
+  const self = this as any
+  if (!self.active_) return false
+  self.downPx_ = event.pixel
+  self.shouldHandle_ = true
+  return true
+}
+
+/**
+ * Handle pointer up: this is the reliable place to add drawing points.
+ * Uses click-tolerance check to ignore drags, and atFinish_ to detect
+ * the second click of a double-click (which finishes the drawing).
+ */
+function handleUpEvent_(
+  this: DrawRouteInteraction,
+  event: MapBrowserEvent<any>
+): boolean {
+  const self = this as any
+
+  if (!self.shouldHandle_) return false
+  self.shouldHandle_ = false
+
+  // Reject if the pointer moved too far (it's a drag, not a click)
+  if (self.downPx_) {
+    const dx = self.downPx_[0] - event.pixel[0]
+    const dy = self.downPx_[1] - event.pixel[1]
+    if (dx * dx + dy * dy > self.squaredClickTolerance_) {
+      return false
+    }
   }
 
-  // Let the pointer interaction handle other events
-  return true
-}
+  if (!self.sketchFeature_) {
+    // First click: start drawing
+    self.startDrawing_(event.coordinate)
+  } else if (self.atFinish_(event.pixel)) {
+    // Second click of a double-click lands at the same position as the last
+    // placed point → finish drawing
+    if (self.isRequestingRoute_) {
+      self.finishAfterRoute_ = true
+    } else {
+      self.finishDrawing()
+    }
+  } else {
+    // Regular click: add a new waypoint
+    self.addToDrawing_(event.coordinate)
+  }
 
-/**
- * Handle down event
- */
-function handleDownEvent_(this: DrawRouteInteraction): boolean {
-  return true
-}
-
-/**
- * Handle up event
- */
-function handleUpEvent_(this: DrawRouteInteraction): boolean {
-  // All click handling is done in handleEvent_ via singleclick/dblclick
   return false
 }
 
 /**
- * Handle move event - no-op, handled in handleEvent_ to cover both pre-draw and in-draw moves
+ * Handle move event - updates sketch and pre-draw cursor point.
  */
-function handleMoveEvent_(this: DrawRouteInteraction): boolean {
+function handleMoveEvent_(
+  this: DrawRouteInteraction,
+  event: MapBrowserEvent<any>
+): boolean {
+  const self = this as any
+  self.handlePointerMove_(event)
   return true
 }

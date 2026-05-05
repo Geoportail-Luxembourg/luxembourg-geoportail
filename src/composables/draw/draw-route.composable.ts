@@ -122,10 +122,13 @@ export default function useDrawRoute() {
     map.addInteraction(drawRouteInteraction)
     isActive.value = true
 
-    // Listen DEL key to remove last drawn point
+    // Listen ESC key to finish drawing and DEL key to remove last drawn point
     if (!keyupListenerKey) {
       keyupListenerKey = listen(document, 'keyup', event => {
-        if ((event as KeyboardEvent).key === 'Backspace' && isActive.value) {
+        const key = (event as KeyboardEvent).key
+        if (key === 'Escape' && isActive.value) {
+          finishDrawing()
+        } else if (key === 'Backspace' && isActive.value) {
           removeLastPoint()
         }
       })
