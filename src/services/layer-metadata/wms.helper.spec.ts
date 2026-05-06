@@ -1,5 +1,6 @@
 import { remoteLayersService } from '@/services/remote-layers/remote-layers.service'
 import { REMOTE_SERVICE_TYPE } from '../remote-layers/remote-layers.model'
+import { proxyUrlHelper } from '@/services/proxyurl/proxyurl.helper'
 import { wmsHelper } from './wms.helper'
 
 const serviceInfoMock = {
@@ -20,7 +21,7 @@ const wmsEndpointMock = {
 }
 
 describe('WmsHelper', () => {
-  let spyWmsMetadata
+  let spyWmsMetadata: ReturnType<typeof vi.spyOn>
   beforeEach(() => {
     spyWmsMetadata = vi
       .spyOn(remoteLayersService, 'getWmsEndpoint')
@@ -37,6 +38,10 @@ describe('WmsHelper', () => {
 })
 
 describe('WmsHelper.extractLegendUrl', () => {
+  beforeEach(() => {
+    vi.spyOn(proxyUrlHelper, 'getProxyfiedUrl').mockImplementation(url => url)
+  })
+
   it('returns undefined when styles is undefined', () => {
     expect(wmsHelper.extractLegendUrl(undefined)).toBeUndefined()
   })
@@ -59,6 +64,9 @@ describe('WmsHelper.extractLegendUrl', () => {
     expect(wmsHelper.extractLegendUrl(styles)).toBe(
       'http://example.com/legend-default'
     )
+    expect(proxyUrlHelper.getProxyfiedUrl).toHaveBeenCalledWith(
+      'http://example.com/legend-default'
+    )
   })
 
   it('falls back to the first style with a legendUrl when no "default" style exists', () => {
@@ -67,6 +75,9 @@ describe('WmsHelper.extractLegendUrl', () => {
       { name: 'style2', legendUrl: 'http://example.com/legend-style2' },
     ]
     expect(wmsHelper.extractLegendUrl(styles)).toBe(
+      'http://example.com/legend-style1'
+    )
+    expect(proxyUrlHelper.getProxyfiedUrl).toHaveBeenCalledWith(
       'http://example.com/legend-style1'
     )
   })

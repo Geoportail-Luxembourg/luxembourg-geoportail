@@ -84,12 +84,18 @@ describe('LayerMetadataService', () => {
   let spyLocalMetadata
   let spyLegendHtml
   beforeEach(() => {
+    layerMetadataService.clearCache()
     spyLocalMetadata = vi
       .spyOn(layerMetadataService, 'getLocalMetadata')
       .mockReturnValue(metadataMock)
     spyLegendHtml = vi
       .spyOn(layerMetadataService, 'getLegendHtml')
       .mockReturnValue(legendMock)
+  })
+
+  afterEach(() => {
+    layerMetadataService.clearCache()
+    vi.restoreAllMocks()
   })
 
   describe('#getLayerMetadata with internal layer', () => {
