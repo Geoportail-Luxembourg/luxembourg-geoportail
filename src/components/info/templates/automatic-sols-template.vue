@@ -71,7 +71,7 @@ const { t } = useTranslation('tooltips')
                 (attributeEntry.key == 'f_LC_class_name_fr' ||
                   attributeEntry.key == 'f_LABEL_fr')
               "
-              >{{ t(attributeEntry.key) }} :
+              >{{ t('f_LC_class_name') }} :
             </label>
             <span
               v-if="
@@ -87,7 +87,7 @@ const { t } = useTranslation('tooltips')
                 (attributeEntry.key == 'f_LC_class_name_de' ||
                   attributeEntry.key == 'f_LABEL_de')
               "
-              >{{ t(attributeEntry.key) }} :
+              >{{ t('f_LC_class_name') }} :
             </label>
             <span
               v-if="
@@ -103,7 +103,7 @@ const { t } = useTranslation('tooltips')
                 (attributeEntry.key == 'f_LC_class_name' ||
                   attributeEntry.key == 'f_LABEL_eng')
               "
-              >{{ t(attributeEntry.key) }} :
+              >{{ t('f_LC_class_name') }} :
             </label>
             <span
               v-if="
