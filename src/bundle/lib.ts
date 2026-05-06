@@ -35,6 +35,7 @@ import useOfflineLayers from '@/composables/offline/offline-layers.composable'
 import useOffline from '@/composables/offline/offline.composable'
 import useThemes from '@/composables/themes/themes.composable'
 import formatMeasureDirective from '@/directives/format-measure.directive'
+import { installTooltipFallbackTranslations } from '@/services/translations/tooltip-fallback'
 import MapLibreLayer from '@/lib/ol-mapbox-layer'
 import { Mask as MaskLayer } from '@/lib/ol-mask-layer'
 import { layerMetadataService } from '@/services/layer-metadata/layer-metadata.service'
@@ -96,6 +97,7 @@ export default async function useLuxLib(options: LuxLibOptions) {
   // Wait for i18next to load translations before creating Vue app
   // This prevents race conditions where components try to render before translations are available
   await i18next.init(i18nextConfig)
+  installTooltipFallbackTranslations(i18next)
 
   const app = createApp(App)
 
