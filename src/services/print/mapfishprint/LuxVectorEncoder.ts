@@ -1,4 +1,8 @@
-import { MFPSymbolizer, MFPSymbolizerPoint } from '@geoblocks/mapfishprint'
+import {
+  MFPSymbolizer,
+  MFPSymbolizerPoint,
+  MFPSymbolizerText,
+} from '@geoblocks/mapfishprint'
 import { MFPVectorEncoder } from '@geoblocks/mapfishprint'
 import { GeoJSONFeature } from 'ol/format/GeoJSON'
 import { GeoJSON as olFormatGeoJSON } from 'ol/format'
@@ -7,6 +11,7 @@ import {
   Circle as olStyleCircle,
   Icon as olStyleIcon,
   RegularShape as olStyleRegularShape,
+  Text as olStyleText,
 } from 'ol/style'
 import { toDegrees } from 'ol/math'
 
@@ -135,6 +140,33 @@ export class LuxVectorEncoder extends MFPVectorEncoder {
     }
 
     return symbolizer
+  }
+
+  protected encodeVectorStyleText(
+    geojsonFeature: GeoJSONFeature,
+    symbolizers: MFPSymbolizer[],
+    textStyle: olStyleText
+  ) {
+    super.encodeVectorStyleText(geojsonFeature, symbolizers, textStyle)
+    const lastSymbolizer = symbolizers[symbolizers.length - 1] as
+      | MFPSymbolizerText
+      | undefined
+    if (lastSymbolizer && lastSymbolizer.type === 'text') {
+      const rotation = textStyle.getRotation() ?? 0
+      lastSymbolizer.labelRotation = toDegrees(isNaN(rotation) ? 0 : rotation)
+      // MapFish Print (GeoTools) does not handle numeric font weights like "400".
+      // Normalize to CSS keyword equivalents.
+      if (lastSymbolizer.fontWeight === '400') {
+        lastSymbolizer.fontWeight = 'normal'
+      } else if (lastSymbolizer.fontWeight === '700') {
+        lastSymbolizer.fontWeight = 'bold'
+      }
+      // v3 used "lm" (left-middle) alignment; override the lib default "cm"
+      lastSymbolizer.labelAlign = 'lm'
+      // Disable conflict resolution so labels are never hidden by MapFish Print
+      // @ts-ignore
+      lastSymbolizer.conflictResolution = false
+    }
   }
 
   protected encodeVectorStylePointStyleIcon(
