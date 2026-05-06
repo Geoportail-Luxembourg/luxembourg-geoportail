@@ -14,20 +14,24 @@ vi.mock('i18next', () => ({
 
 describe('Formatting utils', () => {
   describe('#formatDate', () => {
-    it('formats date by default in fr-FR', () => {
-      const date = formatDate('2016-06-08T00:00:00')
+    it('formats date without time in fr-FR when requested', () => {
+      const date = formatDate('2016-06-08T00:00:00', 'fr-FR', false)
       expect(date).toEqual('08/06/2016')
     })
-    it('formats date in en-EN', () => {
-      const date = formatDate('2016-06-08T00:00:00', 'en')
-      expect(date).toEqual('6/8/2016')
+    it('formats date without time in en-EN when requested', () => {
+      const date = formatDate('2016-06-08T00:00:00', 'en', false)
+      expect(date).toEqual('6/8/16')
+    })
+    it('formats date with time by default', () => {
+      const date = formatDate('2016-06-08T00:00:00')
+      expect(date).toContain('08/06/2016')
     })
   })
 
   describe('#formatMeasure', () => {
-    it('formats value as a length (m) by default with 2 digits', () => {
+    it('formats value as a length (m) by default with 0 digits', () => {
       const val = formatMeasure(42.5)
-      expect(val).toEqual('42.50 m')
+      expect(val).toEqual('43 m')
     })
 
     it('formats value as a length (given in m) n km', () => {

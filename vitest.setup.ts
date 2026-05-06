@@ -1,13 +1,19 @@
-import { vi } from 'vitest'
+import { afterEach, vi } from 'vitest'
 
 window.URL.createObjectURL = vi.fn()
-window.ResizeObserver =
-  window.ResizeObserver ||
-  vi.fn().mockImplementation(() => ({
-    disconnect: vi.fn(),
-    observe: vi.fn(),
-    unobserve: vi.fn(),
-  }))
+
+class ResizeObserverMock {
+  disconnect = vi.fn()
+  observe = vi.fn()
+  unobserve = vi.fn()
+}
+
+window.ResizeObserver = window.ResizeObserver || ResizeObserverMock
+globalThis.ResizeObserver = globalThis.ResizeObserver || ResizeObserverMock
+
+afterEach(() => {
+  vi.clearAllMocks()
+})
 
 vi.mock('i18next-vue', () => {
   return {

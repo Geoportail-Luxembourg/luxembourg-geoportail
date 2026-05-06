@@ -1,5 +1,5 @@
 import { nextTick } from 'vue'
-import { mount, shallowMount } from '@vue/test-utils'
+import { flushPromises, mount, shallowMount } from '@vue/test-utils'
 import { GlobalMountOptions } from '@vue/test-utils/dist/types'
 import { createTestingPinia } from '@pinia/testing'
 import { describe, it, expect, vi } from 'vitest'
@@ -14,7 +14,19 @@ import { useProfilePositionStore } from '@/stores/profile-position.store'
 import ElevationProfile from '../common/graph/elevation-profile.vue'
 
 const global: GlobalMountOptions | undefined = {
-  plugins: [formatMeasureDirective],
+  plugins: [
+    createTestingPinia({
+      createSpy: vi.fn,
+      stubActions: false,
+      initialState: {
+        'profile-position': {
+          x: 1,
+          y: 2,
+        },
+      },
+    }),
+    formatMeasureDirective,
+  ],
 }
 
 const mockedFeatureWithData = <DrawnFeature>(<unknown>{
@@ -50,6 +62,7 @@ vi.mock('@/composables/map/map.composable', () => ({
     }),
   }),
   PROJECTION_LUX: 'EPSG:2169',
+  PROJECTION_WEBMERCATOR: 'EPSG:3857',
 }))
 
 vi.mock('@/composables/map/profile-position.composable', () => ({
@@ -61,23 +74,13 @@ vi.mock('@/composables/map/profile-position.composable', () => ({
 }))
 
 describe('FeatureElevationProfile', () => {
-  createTestingPinia({
-    createSpy: vi.fn,
-    stubActions: false,
-    initialState: {
-      'profile-position': {
-        x: 1,
-        y: 2,
-      },
-    },
-  })
-
   it('Display elevation ,cumulation gain and loss according to profileData', async () => {
     const wrapper = shallowMount(FeatureElevationProfile, {
       props: { feature: mockedFeatureWithData },
       global,
     })
 
+    await flushPromises()
     await nextTick()
 
     expect(wrapper.text()).toContain('Δ+699')
@@ -96,6 +99,7 @@ describe('FeatureElevationProfile', () => {
 
   it('Does not display a close button if there is no listerner for "onClose"', () => {
     const wrapper = mount(FeatureElevationProfile, {
+      props: { feature: undefined },
       global,
     })
 
@@ -120,6 +124,7 @@ describe('FeatureElevationProfile', () => {
       global,
     })
 
+    await flushPromises()
     await nextTick()
     await wrapper.find('[data-cy="featItemProfileCSV"]').trigger('click')
 
@@ -133,6 +138,7 @@ describe('FeatureElevationProfile', () => {
       global,
     })
 
+    await flushPromises()
     await nextTick()
 
     const elevationProfile = wrapper.findComponent(ElevationProfile)
