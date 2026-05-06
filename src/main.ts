@@ -8,6 +8,7 @@ import { createPinia } from 'pinia'
 
 import formatMeasureDirective from '@/directives/format-measure.directive'
 import { initProjections } from '@/services/projection.utils'
+import { installTooltipFallbackTranslations } from '@/services/translations/tooltip-fallback'
 import { useThemeStore } from '@/stores/config.store'
 
 import App from './App.vue'
@@ -41,6 +42,8 @@ i18next
     keySeparator: false,
   })
   .then(() => {
+    installTooltipFallbackTranslations(i18next)
+
     // Mount Vue app only after i18next is fully initialized
     const app = createApp(App)
 
