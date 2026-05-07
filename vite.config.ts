@@ -91,7 +91,16 @@ export default defineConfig(async ({ command, mode }) => {
     base.build = { sourcemap: 'hidden' } // disable warning which says coverage enabled by Istanbul
     // Dynamically import ESM-only plugin
     const IstanbulPlugin = (await import('vite-plugin-istanbul')).default
-    base.plugins = [...(base.plugins || []), IstanbulPlugin()] // add Istanbul plugin for code instrumentation
+    base.plugins = [
+      ...(base.plugins || []),
+      IstanbulPlugin({
+        // Only instrument TypeScript/Vue source files. Plain .js files (e.g.
+        // src/lib/ol-mapbox-layer.js) can produce Istanbul entries with
+        // undefined source locations that crash istanbul-lib-coverage when
+        // merging coverage maps.
+        extension: ['.ts', '.tsx', '.vue'],
+      }),
+    ] // add Istanbul plugin for code instrumentation
   }
 
   if (command === 'build') {

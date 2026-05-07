@@ -26,13 +26,28 @@ class OlLayerVectorHelper {
       container: mapService.getOlMap().getTarget(),
       ...styleSource,
     }
-    const olLayer = new MapLibreLayer({
-      maplibreOptions: options,
-      label: name,
-      id,
-      queryable_id: id,
-      metadata,
-    })
+    let olLayer: OlLayer
+
+    try {
+      olLayer = new MapLibreLayer({
+        maplibreOptions: options,
+        label: name,
+        id,
+        queryable_id: id,
+        metadata,
+      })
+    } catch (error) {
+      // Mapbox GL may fail in CI/headless environments without WebGL support.
+      // Returning `undefined` lets the factory fall back to raster layer creation.
+      // eslint-disable-next-line no-console
+      console.warn('Failed to initialize vector layer, fallback to raster', {
+        layerId: id,
+        layerName: name,
+        error,
+      })
+      return
+    }
+
     const styleStore = useStyleStore()
     const styleService = useMvtStyles()
 
