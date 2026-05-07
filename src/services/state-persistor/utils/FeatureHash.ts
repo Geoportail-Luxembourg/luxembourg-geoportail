@@ -320,10 +320,9 @@ class FeatureHash extends TextFeature {
         if (encodedProperties.length !== 0) {
           encodedProperties.push("'")
         }
+        const sanitizedValue = value.toString().replace(/[()'*]/g, '_')
         const encoded =
-          key.replace(/[()'*]/g, '_') +
-          '*' +
-          value.toString().replace(/[()'*]/g, '_')
+          key.replace(/[()'*]/g, '_') + '*' + encodeURIComponent(sanitizedValue)
 
         encodedProperties.push(encoded)
       }

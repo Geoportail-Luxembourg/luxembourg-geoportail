@@ -1,4 +1,5 @@
 import Point from 'ol/geom/Point.js'
+import Feature from 'ol/Feature'
 
 import featureHash from './FeatureHash'
 
@@ -34,5 +35,18 @@ describe('read and decode features', () => {
     expect(
       labels.find(f => f.featureStyle.angle < 0)?.featureStyle.color
     ).to.equal('#1ded2a')
+  })
+
+  it('encodes image-like property values before writing', () => {
+    const feature = new Feature(new Point([0, 0])) as unknown as Feature & {
+      toProperties: () => Record<string, unknown>
+    }
+    feature.toProperties = () => ({
+      image: '/mymaps/images/test.png',
+    })
+
+    const encoded = featureHash.writeFeatures([feature])
+
+    expect(encoded).toContain('image*%2Fmymaps%2Fimages%2Ftest.png')
   })
 })

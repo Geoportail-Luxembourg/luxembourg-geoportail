@@ -320,6 +320,8 @@ export class DrawnFeature extends Feature {
       typeof rawLinestyle === 'string' && validLinestyles.includes(rawLinestyle)
         ? rawLinestyle
         : 'plain'
+    const image = this.get('image')
+    const thumbnail = this.get('thumbnail')
     return {
       angle: Number(this.featureStyle.angle),
       color: this.featureStyle.color,
@@ -337,6 +339,8 @@ export class DrawnFeature extends Feature {
       isCircle: this.featureType === 'drawnCircle',
       symbolId: this.featureStyle.symbolId,
       symboltype: this.featureStyle.symboltype,
+      image: image || undefined,
+      thumbnail: thumbnail || undefined,
       __map_id__: this.map_id,
     }
   }
@@ -348,6 +352,12 @@ export class DrawnFeature extends Feature {
     this.display_order = Number(properties.display_order ?? this.display_order)
     this.label = properties.name ?? this.label
     this.map_id = properties.__map_id__ ?? this.map_id
+    if (properties.image !== undefined) {
+      this.set('image', properties.image)
+    }
+    if (properties.thumbnail !== undefined) {
+      this.set('thumbnail', properties.thumbnail)
+    }
 
     // Determine featureType from properties - check isCircle first, then isLabel
     if (properties.isCircle === true || properties.isCircle === 'true') {
