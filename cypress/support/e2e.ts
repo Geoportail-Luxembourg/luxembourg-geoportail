@@ -19,3 +19,11 @@ import '@cypress/code-coverage/support'
 
 // Alternatively you can use CommonJS syntax:
 // require('./commands')
+
+// Prevent alert notification overlays from blocking map interactions during tests.
+Cypress.on('window:before:load', win => {
+  const style = win.document.createElement('style')
+  style.innerHTML =
+    '[data-cy="alertNotifications"]{pointer-events:none !important;}'
+  win.document.head.appendChild(style)
+})

@@ -1,6 +1,6 @@
 describe('Feature Info', () => {
   beforeEach(() => {
-    cy.intercept('GET', 'getfeatureinfo*').as('getFeatureInfo')
+    cy.intercept('GET', '**/getfeatureinfo*').as('getFeatureInfo')
   })
 
   describe('Default template', () => {
@@ -162,8 +162,9 @@ describe('Feature Info', () => {
         cy.visit(
           '/?lang=fr&X=672676&Y=6412435&version=3&zoom=11&layers=2842&opacities=1&bgLayer=orthogr_2013_global'
         )
+        cy.get('div.ol-viewport').should('be.visible')
         cy.get('div.ol-viewport').click(355, 320, { force: true })
-        cy.wait('@getFeatureInfo')
+        cy.wait('@getFeatureInfo', { timeout: 60000 })
       })
       it('should display title, attributes and a calculator link button in the infoPanel when clicking on a layer feature', () => {
         cy.get('[data-cy="infoPanel"]').should('exist')

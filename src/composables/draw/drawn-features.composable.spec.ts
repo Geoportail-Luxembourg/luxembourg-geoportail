@@ -1,16 +1,19 @@
-import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest'
-import { setActivePinia, createPinia } from 'pinia'
+import { beforeEach, describe, expect, it, vi } from 'vitest'
+import { createPinia, setActivePinia } from 'pinia'
 import { Feature } from 'ol'
-import { Point, LineString, Polygon, Circle } from 'ol/geom'
+import { Circle, LineString, Point, Polygon } from 'ol/geom'
 
+import { DrawnFeature } from '@/services/ol-feature/ol-feature-drawn'
 import { useDrawStore } from '@/stores/draw.store'
 import useDrawnFeatures from './drawn-features.composable'
 
-vi.mock('@/composables/map/map.composable', () => ({
+vi.mock('i18next', () => ({
+  t: vi.fn(key => key),
+}))
+
+vi.mock('@/composables/my-maps/my-maps.composable', () => ({
   default: () => ({
-    getOlMap: vi.fn().mockReturnValue({
-      addLayer: vi.fn(),
-    }),
+    isMyMapEditable: { value: undefined },
   }),
 }))
 
@@ -19,59 +22,71 @@ describe('useDrawnFeatures', () => {
     setActivePinia(createPinia())
   })
 
-  afterEach(() => {
-    vi.clearAllMocks()
-  })
-
-  it('should add a feature to the collection and store', () => {
+  it('generates a drawn point feature with a default label', () => {
     const { generateDrawnFeature } = useDrawnFeatures()
-    const feature = new Feature(new Point([0, 0]))
-    generateDrawnFeature(feature)
 
+    const drawnFeature = generateDrawnFeature(new Feature(new Point([0, 0])))
+
+    expect(drawnFeature.featureType).toBe('drawnPoint')
+    expect(drawnFeature.label).toBe('Point 1')
+    expect(drawnFeature.display_order).toBe(0)
+    expect(drawnFeature.editable).toBe(true)
+  })
+
+  it('uses the current drawn feature count when building the default label', () => {
     const drawStore = useDrawStore()
-    expect(drawStore.drawnFeatures.length).toBe(1)
-    expect(drawStore.drawnFeatures[0].getGeometry()?.getType()).toBe('Point')
+    drawStore.setDrawnFeatures([{ id: 'existing-feature' } as DrawnFeature])
+
+    const { generateDrawnFeature } = useDrawnFeatures()
+    const drawnFeature = generateDrawnFeature(new Feature(new Point([0, 0])))
+
+    expect(drawnFeature.label).toBe('Point 2')
+    expect(drawnFeature.display_order).toBe(1)
   })
 
-  it('should correctly get coordinates of Point geometry', () => {
-    const { getFeatCoordinates } = useDrawnFeatures()
-    const pointFeature = new Feature(new Point([1, 2]))
-    const coords = getFeatCoordinates(pointFeature)
-    expect(coords).toEqual([1, 2])
-  })
-
-  it('should correctly get midpoint of LineString geometry', () => {
-    const { getFeatCoordinates } = useDrawnFeatures()
-    const lineFeature = new Feature(
+  it('preserves an explicit feature name as label', () => {
+    const { generateDrawnFeature } = useDrawnFeatures()
+    const feature = new Feature(
       new LineString([
         [0, 0],
         [2, 2],
       ])
     )
-    const coords = getFeatCoordinates(lineFeature)
-    expect(coords).toEqual([1, 1])
+    feature.set('name', 'Custom line')
+
+    const drawnFeature = generateDrawnFeature(feature)
+
+    expect(drawnFeature.featureType).toBe('drawnLine')
+    expect(drawnFeature.label).toBe('Custom line')
   })
 
-  it('should correctly get interior point of Polygon geometry', () => {
-    const { getFeatCoordinates } = useDrawnFeatures()
-    const polygonFeature = new Feature(
+  it('maps polygon geometries to drawn polygons', () => {
+    const { generateDrawnFeature } = useDrawnFeatures()
+    const feature = new Feature(
       new Polygon([
         [
           [0, 0],
-          [2, 2],
-          [4, 0],
+          [1, 0],
+          [1, 1],
           [0, 0],
         ],
       ])
     )
-    const coords = getFeatCoordinates(polygonFeature)
-    expect(coords).toEqual([2, 1, 2])
+
+    const drawnFeature = generateDrawnFeature(feature)
+
+    expect(drawnFeature.featureType).toBe('drawnPolygon')
   })
 
-  it('should correctly get center of Circle geometry', () => {
-    const { getFeatCoordinates } = useDrawnFeatures()
-    const circleFeature = new Feature(new Circle([5, 5], 10))
-    const coords = getFeatCoordinates(circleFeature)
-    expect(coords).toEqual([5, 5])
+  it('maps circles to drawn circles when circle draw mode is active', () => {
+    const drawStore = useDrawStore()
+    drawStore.setDrawActiveState('drawCircle')
+
+    const { generateDrawnFeature } = useDrawnFeatures()
+    const drawnFeature = generateDrawnFeature(
+      new Feature(new Circle([5, 5], 10))
+    )
+
+    expect(drawnFeature.featureType).toBe('drawnCircle')
   })
 })

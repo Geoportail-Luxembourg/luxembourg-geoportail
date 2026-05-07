@@ -11,7 +11,7 @@ describe('Share URL Tool', () => {
   it('should display short URL by default', () => {
     cy.get('[data-cy="shareButton"]').click()
     cy.get('[data-cy="shareShortUrl"]').should('be.visible')
-    cy.get('[data-cy="shareShortUrl"]').should('have.value').and('not.be.empty')
+    cy.get('[data-cy="shareShortUrl"]').invoke('val').should('not.be.empty')
   })
 
   it('should toggle between short and long URL', () => {
@@ -25,6 +25,7 @@ describe('Share URL Tool', () => {
     cy.get('[data-cy="showLongUrlCheckbox"]').check()
 
     // Now showing long URL
+    cy.get('[data-cy="shareLongUrl"]').scrollIntoView()
     cy.get('[data-cy="shareLongUrl"]').should('be.visible')
     cy.get('[data-cy="shareShortUrl"]').should('not.exist')
 
@@ -67,13 +68,13 @@ describe('Share URL Tool', () => {
   it('should not interfere with side panels', () => {
     // Open layers panel
     cy.get('[data-cy="layersOpenClose"]').click()
-    cy.get('[data-cy="layersPanel"]').should('be.visible')
+    cy.get('[data-cy="layerPanel"]').should('be.visible')
 
     // Open share toolbar
     cy.get('[data-cy="shareButton"]').click()
     cy.get('[data-cy="sharePanel"]').should('be.visible')
 
     // Layers panel should still be visible (toolbar doesn't close side panels)
-    cy.get('[data-cy="layersPanel"]').should('be.visible')
+    cy.get('[data-cy="layerPanel"]').should('be.visible')
   })
 })
