@@ -1,6 +1,6 @@
 describe('Language selector', () => {
   beforeEach(() => {
-    cy.visit('/')
+    cy.visit('/?lang=fr')
   })
 
   it('renders the language selector properly', () => {

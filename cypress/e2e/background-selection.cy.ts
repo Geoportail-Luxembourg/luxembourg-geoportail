@@ -19,19 +19,21 @@ describe('Background selector', () => {
   })
 
   it('has the default background layer on the map', () => {
-    cy.window().then(window => {
-      const layers = (<AUTWindowOlMap>window).olMap
-        .getLayers()
-        .getArray()
-        .filter((l: any) => !noMapLayerRegex.exec(l.get('cyLayerType')))
-      expect(layers[0].get('id')).to.eq(556)
-    })
-
     cy.get('[data-cy="attributionControl"]')
       .should('be.visible')
       .contains(
         '© MapTiler © OpenStreetMap contributors for data outside of Luxembourg'
       )
+
+    cy.window().then(win => {
+      cy.wrap(null).should(() => {
+        const layers = (<AUTWindowOlMap>win).olMap
+          .getLayers()
+          .getArray()
+          .filter((l: any) => !noMapLayerRegex.exec(l.get('cyLayerType')))
+        expect(layers[0].get('id')).to.eq(556)
+      })
+    })
   })
 
   describe('When changing to black and white background layer', () => {
@@ -49,12 +51,14 @@ describe('Background selector', () => {
         .contains('Carte topographique N/B')
         .should('be.visible')
 
-      cy.window().then(window => {
-        const layers = (<AUTWindowOlMap>window).olMap
-          .getLayers()
-          .getArray()
-          .filter((l: any) => !noMapLayerRegex.exec(l.get('cyLayerType')))
-        expect(layers[0].get('id')).to.eq(502)
+      cy.window().then(win => {
+        cy.wrap(null).should(() => {
+          const layers = (<AUTWindowOlMap>win).olMap
+            .getLayers()
+            .getArray()
+            .filter((l: any) => !noMapLayerRegex.exec(l.get('cyLayerType')))
+          expect(layers[0].get('id')).to.eq(502)
+        })
       })
     })
 
