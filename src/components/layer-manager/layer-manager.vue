@@ -77,6 +77,10 @@ function changeTime(layer: Layer, dateStart?: string, dateEnd?: string) {
   mapStore.setLayerTime(layer.id as number, dateStart, dateEnd)
 }
 
+function clearLayers() {
+  mapStore.removeAllLayers()
+}
+
 function removeLayer(layer: Layer) {
   mapStore.removeLayers(layer.id)
 }
@@ -156,6 +160,22 @@ function toggleLayerComparator() {
         </layer-item>
       </li>
     </ul>
+
+    <div class="flex flex-row justify-end space-x-1 my-2">
+      <button
+        v-if="layers.length > 0"
+        data-cy="clearLayers"
+        class="group flex gap-1 items-center text-white opacity-75 hover:opacity-100"
+        @click="clearLayers"
+      >
+        <span
+          class="text-[.7rem] hidden group-hover:block after:font-icons lux-close-cross"
+        ></span>
+        <span class="group-hover:underline">{{
+          t('Clear all layers', { ns: 'app' })
+        }}</span>
+      </button>
+    </div>
 
     <layer-item-background
       :layer="bgLayer || BLANK_BACKGROUNDLAYER"
