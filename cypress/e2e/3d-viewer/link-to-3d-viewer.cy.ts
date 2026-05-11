@@ -18,9 +18,16 @@ describe('Link to 3D Viewer', () => {
         .should(
           'have.attr',
           'href',
-          'https://3d.geoportail.lu/?state=%5B%5B%5B6.000000496232584%2C49.69999815293053%2C350000%5D%2C%5B6.000000496232584%2C49.69999815293053%2C350000%5D%2C300%2C-90%2C-90%2C0%5D%2C%22cesium%22%2C%5B%22catalogConfig%22%2C%22LuxConfig%22%5D%2C%5B%5B%22basemap_2015_global%22%2C1%2C0%5D%2C%5B%22communes_labels%22%2C1%2C0%5D%2C%5B%22country%22%2C1%2C0%5D%2C%5B%22cantons%22%2C1%2C0%5D%5D%2C%5B%5D%2C0%5D'
+          'https://3d.geoportail.lu/?state=%5B%5B%5B6.000000496232584%2C49.69999815293053%2C350000%5D%2C%5B6.000000496232584%2C49.69999815293053%2C350000%5D%2C300%2C-90%2C-30%2C0%5D%2C%22cesium%22%2C%5B%22catalogConfig%22%2C%22LuxConfig%22%5D%2C%5B%5B%22basemap_2015_global%22%2C1%2C0%5D%2C%5B%22communes_labels%22%2C1%2C0%5D%2C%5B%22country%22%2C1%2C0%5D%2C%5B%22cantons%22%2C1%2C0%5D%5D%2C%5B%5D%2C0%5D'
         )
         .and('have.attr', 'target', 'lux3d')
+    })
+
+    it('The pitch in the 3D viewer URL reflects the value configured via VITE_LUX_VCS_PITCH', () => {
+      cy.get('[data-cy="3dViewerLink"] > a')
+        .invoke('attr', 'href')
+        .should('include', '%2C-30%2C')
+        .and('not.include', '%2C-45%2C')
     })
   })
 })

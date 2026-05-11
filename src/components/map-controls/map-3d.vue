@@ -12,6 +12,7 @@ import { useMapStore } from '@/stores/map.store'
 import { useMatomo } from '@/composables/matomo/matomo.composable'
 
 const LUX_VCS_URL = import.meta.env.VITE_LUX_VCS_URL
+const LUX_VCS_PITCH = import.meta.env.VITE_LUX_VCS_PITCH ?? -45
 const LUX_VCS_COORDINATES = [6.13, 49.61]
 const LUX_VCS_MODULES = ['catalogConfig', 'LuxConfig']
 const zoomToCesiumAltitude = {
@@ -61,7 +62,9 @@ const linkTo3dMap = computed(() => {
     lon,
     lat,
     altitude,
-  ].join(',')}],300,${heading},-90,0],"cesium",["${LUX_VCS_MODULES.join(
+  ].join(
+    ','
+  )}],300,${heading},${LUX_VCS_PITCH},0],"cesium",["${LUX_VCS_MODULES.join(
     '","'
   )}"],[${selectedLayers.join(',')}],[],0]`
 
