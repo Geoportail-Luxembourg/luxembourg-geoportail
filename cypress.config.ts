@@ -11,6 +11,16 @@ export default defineConfig({
       require('@cypress/code-coverage/task')(on, config)
       // include any other plugin code...
 
+      on('before:browser:launch', (browser, launchOptions) => {
+        if (browser.family === 'chromium') {
+          launchOptions.args.push('--disable-gpu')
+          launchOptions.args.push('--disable-software-rasterizer')
+          launchOptions.args.push('--use-gl=swiftshader')
+          launchOptions.args.push('--ignore-gpu-blacklist')
+        }
+        return launchOptions
+      })
+
       // It's IMPORTANT to return the config object
       // with any changed environment variables
       config.browsers = [
