@@ -58,11 +58,13 @@ function dispatchChangeOpacity() {
     class="lux-layer-manager-item-content"
     :class="isOpen ? 'h-6' : 'h-0'"
     :id="`layer-manager-item-content-${layer.id}`"
+    :aria-hidden="!isOpen"
     data-cy="myLayerSubContent"
   >
     <button
       class="w-5 fa-solid"
       role="switch"
+      :tabindex="!isOpen ? -1 : 0"
       :aria-checked="opacity === 0"
       :class="opacity === 0 ? 'fa-eye-slash' : 'fa-eye'"
       :title="
@@ -76,6 +78,7 @@ function dispatchChangeOpacity() {
     <input
       :id="`${layer.id}-steps-range`"
       type="range"
+      :tabindex="!isOpen ? -1 : 0"
       min="0"
       max="100"
       :value="opacity"
@@ -93,6 +96,7 @@ function dispatchChangeOpacity() {
       v-if="displayLayerComparatorOpen"
       data-cy="myLayerComparatorBtn"
       role="switch"
+      :tabindex="!isOpen ? -1 : 0"
       class="fa ml-auto text-sm cursor-pointer"
       :class="isLayerComparatorOpen ? 'fa-adjust' : 'fa-circle'"
       :aria-checked="isLayerComparatorOpen"

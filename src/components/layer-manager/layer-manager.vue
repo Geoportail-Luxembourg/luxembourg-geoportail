@@ -169,11 +169,10 @@ function toggleLayerComparator() {
         @click="clearLayers"
       >
         <span
+          aria-hidden="true"
           class="text-[.7rem] hidden group-hover:block after:font-icons lux-close-cross"
         ></span>
-        <span class="group-hover:underline">{{
-          t('Clear all layers', { ns: 'app' })
-        }}</span>
+        <span>{{ t('Clear all layers', { ns: 'app' }) }}</span>
       </button>
     </div>
 
