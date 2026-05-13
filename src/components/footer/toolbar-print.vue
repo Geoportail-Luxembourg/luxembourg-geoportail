@@ -127,7 +127,7 @@ onUnmounted(() => {
           class="font-bold block lux-text-default hover:cursor-pointer"
           :for="uuid"
         >
-          {{ t('Avec légende') }}
+          {{ t('Avec légende', { ns: 'app' }) }}
         </label>
       </div>
 
