@@ -177,9 +177,16 @@ export class LuxVectorEncoder extends MFPVectorEncoder {
     if (src === undefined) {
       return undefined
     }
+    const apiHost = import.meta.env.VITE_V3_API_HOST.endsWith('/')
+      ? import.meta.env.VITE_V3_API_HOST.slice(0, -1)
+      : import.meta.env.VITE_V3_API_HOST
+    const absoluteSrc =
+      src.startsWith('http://') || src.startsWith('https://')
+        ? src
+        : `${apiHost}${src.startsWith('/') ? '' : '/'}${src}`
     const symbolizer = {
       type: 'point',
-      externalGraphic: src,
+      externalGraphic: absoluteSrc,
     } as MFPSymbolizerPoint
     const opacity = imageStyle.getOpacity()
     if (opacity !== null) {
