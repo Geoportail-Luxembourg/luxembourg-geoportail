@@ -19,6 +19,24 @@ const props = defineProps<{
 const DOWNLOAD_MEASUREMENT_URL = import.meta.env.VITE_DOWNLOAD_MEASUREMENT_URL
 const THUMBNAIL_MEASUREMENT_URL = import.meta.env.VITE_THUMBNAIL_MEASUREMENT_URL
 const { t } = useTranslation('tooltips')
+
+function getDocumentFormats(document: FeatureMeasurement): string[] {
+  const raw = document.available_formats as unknown
+  if (Array.isArray(raw)) {
+    return raw.filter((f): f is string => typeof f === 'string' && f.length > 0)
+  }
+  if (typeof raw === 'string' && raw.length > 0) {
+    return [raw]
+  }
+  return []
+}
+
+function getDocumentDownloadUrl(document: FeatureMeasurement): string {
+  const base = `${DOWNLOAD_MEASUREMENT_URL}?document_id=${document.document_id}`
+  const primaryFormat = getDocumentFormats(document)[0]
+  if (!primaryFormat) return base
+  return `${base}&format=${encodeURIComponent(primaryFormat)}`
+}
 const selectedMeasurement: Ref<FeatureMeasurement | undefined> = ref()
 const viewMode = ref<'links' | 'thumbnails'>('links')
 
@@ -180,8 +198,7 @@ function generateFormatPlaceholder(formatLabel: string): string {
 }
 
 function getThumbnailUrl(document: FeatureMeasurement): string {
-  const formats: string[] =
-    (document.available_formats as unknown as string[]) ?? []
+  const formats = getDocumentFormats(document)
   const hasPdfOrTiff = formats.some(
     f => f.toLowerCase() === 'pdf' || f.toLowerCase() === 'tiff'
   )
@@ -192,8 +209,7 @@ function getThumbnailUrl(document: FeatureMeasurement): string {
 }
 
 function hasPdfOrTiffFormat(document: FeatureMeasurement): boolean {
-  const formats: string[] =
-    (document.available_formats as unknown as string[]) ?? []
+  const formats = getDocumentFormats(document)
   return formats.some(
     f => f.toLowerCase() === 'pdf' || f.toLowerCase() === 'tiff'
   )
@@ -464,9 +480,10 @@ h2 {
                                   }}
                                   <span
                                     >({{
-                                      (
-                                        document.available_formats as unknown as string[]
-                                      )?.[0]?.toUpperCase() ?? ''
+                                      getDocumentFormats(
+                                        document
+                                      )[0]?.toUpperCase() ??
+                                      t('Pas de preview disponible')
                                     }})</span
                                   >
                                 </span>
@@ -475,7 +492,7 @@ h2 {
                                   class="ml-2"
                                   target="_blank"
                                   rel="noopener noreferrer"
-                                  :href="`${DOWNLOAD_MEASUREMENT_URL}?document_id=${document.document_id}&format=${(document.available_formats as unknown as string[])[0]}`"
+                                  :href="getDocumentDownloadUrl(document)"
                                   :aria-label="
                                     t('Télécharger le mesurage du') +
                                     ' ' +
@@ -704,9 +721,9 @@ h2 {
                                       }}
                                       <span
                                         >({{
-                                          (
-                                            document.available_formats as unknown as string[]
-                                          )[0].toUpperCase()
+                                          getDocumentFormats(
+                                            document
+                                          )[0]?.toUpperCase() ?? ''
                                         }})</span
                                       >
                                     </span>
@@ -715,7 +732,7 @@ h2 {
                                       class="ml-2"
                                       target="_blank"
                                       rel="noopener noreferrer"
-                                      :href="`${DOWNLOAD_MEASUREMENT_URL}?document_id=${document.document_id}&format=${(document.available_formats as unknown as string[])[0]}`"
+                                      :href="getDocumentDownloadUrl(document)"
                                       :aria-label="
                                         t('Télécharger le mesurage du') +
                                         ' ' +

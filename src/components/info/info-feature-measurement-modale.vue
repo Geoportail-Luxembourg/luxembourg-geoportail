@@ -14,9 +14,24 @@ const DOWNLOAD_MEASUREMENT_URL = import.meta.env.VITE_DOWNLOAD_MEASUREMENT_URL
 
 const { t, i18next } = useTranslation()
 
-const formats = computed<string[]>(
-  () => (props.measurement.available_formats as unknown as string[]) ?? []
-)
+const formats = computed<string[]>(() => {
+  const rawFormats = props.measurement.available_formats as unknown
+
+  if (Array.isArray(rawFormats)) {
+    return rawFormats.filter(
+      (format): format is string =>
+        typeof format === 'string' && format.length > 0
+    )
+  }
+
+  if (typeof rawFormats === 'string' && rawFormats.length > 0) {
+    return [rawFormats]
+  }
+
+  return []
+})
+
+const primaryFormat = computed(() => formats.value[0])
 
 const hasPdfOrTiff = computed(() =>
   formats.value.some(
@@ -25,15 +40,27 @@ const hasPdfOrTiff = computed(() =>
 )
 
 const previewUrl = computed(() => {
-  if (!hasPdfOrTiff.value && formats.value.length > 0) {
+  if (!hasPdfOrTiff.value && primaryFormat.value) {
     // Format directement affichable dans le navigateur (ex: png, jpeg…)
     // On utilise le endpoint de téléchargement en passant le format explicitement
     return sanitizeUrl(
-      `${DOWNLOAD_MEASUREMENT_URL}?document_id=${props.measurement.document_id}&format=${formats.value[0]}`
+      `${DOWNLOAD_MEASUREMENT_URL}?document_id=${props.measurement.document_id}&format=${encodeURIComponent(primaryFormat.value)}`
     )
   }
   return sanitizeUrl(
     DOWNLOAD_PREVIEW_URL + '?document_id=' + props.measurement.document_id
+  )
+})
+
+const downloadUrl = computed(() => {
+  const baseUrl = `${DOWNLOAD_MEASUREMENT_URL}?document_id=${props.measurement.document_id}`
+
+  if (!primaryFormat.value) {
+    return sanitizeUrl(baseUrl)
+  }
+
+  return sanitizeUrl(
+    `${baseUrl}&format=${encodeURIComponent(primaryFormat.value)}`
   )
 })
 </script>
@@ -75,12 +102,7 @@ const previewUrl = computed(() => {
         >
           {{ t('Commander') }}
         </a>
-        <a
-          v-else
-          class="lux-btn ml-3"
-          target="_blank"
-          :href="`${DOWNLOAD_MEASUREMENT_URL}?document_id=${measurement.document_id}&format=${formats[0]}`"
-        >
+        <a v-else class="lux-btn ml-3" target="_blank" :href="downloadUrl">
           {{ t('Télécharger') }}
         </a>
       </div>
