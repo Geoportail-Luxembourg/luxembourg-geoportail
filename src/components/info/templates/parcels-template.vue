@@ -487,6 +487,7 @@ h2 {
                                     }})</span
                                   >
                                 </span>
+
                                 <a
                                   v-if="document.is_downloadable"
                                   class="ml-2"
@@ -723,7 +724,8 @@ h2 {
                                         >({{
                                           getDocumentFormats(
                                             document
-                                          )[0]?.toUpperCase() ?? ''
+                                          )[0]?.toUpperCase() ??
+                                          t('Pas de preview disponible')
                                         }})</span
                                       >
                                     </span>
