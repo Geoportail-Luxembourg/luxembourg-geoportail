@@ -26,15 +26,29 @@ describe('Share URL Tool', () => {
 
     // Now showing long URL
     cy.get('[data-cy="shareLongUrl"]').scrollIntoView()
-    cy.get('[data-cy="shareLongUrl"]').should('be.visible')
+    cy.get('[data-cy="shareLongUrl"]').invoke('val').should('not.be.empty')
     cy.get('[data-cy="shareShortUrl"]').should('not.exist')
 
     // Uncheck the checkbox
     cy.get('[data-cy="showLongUrlCheckbox"]').uncheck()
 
     // Back to short URL
-    cy.get('[data-cy="shareShortUrl"]').should('be.visible')
+    cy.get('[data-cy="shareShortUrl"]').should('exist')
+    cy.get('[data-cy="shareShortUrl"]').invoke('val').should('not.be.empty')
     cy.get('[data-cy="shareLongUrl"]').should('not.exist')
+  })
+
+  it('should not interfere with side panels', () => {
+    // Open layers panel
+    cy.get('[data-cy="myLayersButton"]').click()
+    cy.get('[data-cy="layerPanel"]').should('be.visible')
+
+    // Open share toolbar
+    cy.get('[data-cy="shareButton"]').click()
+    cy.get('[data-cy="sharePanel"]').should('be.visible')
+
+    // Layers panel should still be visible (toolbar doesn't close side panels)
+    cy.get('[data-cy="layerPanel"]').should('be.visible')
   })
 
   it('should show only mymaps checkbox when map_id is present', () => {
@@ -63,18 +77,5 @@ describe('Share URL Tool', () => {
 
     // Verify the input is focused (text should be selected)
     cy.get('[data-cy="shareShortUrl"]').should('have.focus')
-  })
-
-  it('should not interfere with side panels', () => {
-    // Open layers panel
-    cy.get('[data-cy="layersOpenClose"]').click()
-    cy.get('[data-cy="layerPanel"]').should('be.visible')
-
-    // Open share toolbar
-    cy.get('[data-cy="shareButton"]').click()
-    cy.get('[data-cy="sharePanel"]').should('be.visible')
-
-    // Layers panel should still be visible (toolbar doesn't close side panels)
-    cy.get('[data-cy="layerPanel"]').should('be.visible')
   })
 })

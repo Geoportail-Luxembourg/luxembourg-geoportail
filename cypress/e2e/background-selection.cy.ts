@@ -27,11 +27,16 @@ describe('Background selector', () => {
 
     cy.window().then(win => {
       cy.wrap(null).should(() => {
-        const layers = (<AUTWindowOlMap>win).olMap
+        const bgLayer = (<AUTWindowOlMap>win).olMap
           .getLayers()
           .getArray()
-          .filter((l: any) => !noMapLayerRegex.exec(l.get('cyLayerType')))
-        expect(layers[0].get('id')).to.eq(556)
+          .find(
+            (layer: any) =>
+              !noMapLayerRegex.exec(layer.get('cyLayerType')) &&
+              layer.getZIndex() === -200
+          )
+
+        expect(bgLayer?.get('id')).to.eq(556)
       })
     })
   })
@@ -53,11 +58,16 @@ describe('Background selector', () => {
 
       cy.window().then(win => {
         cy.wrap(null).should(() => {
-          const layers = (<AUTWindowOlMap>win).olMap
+          const bgLayer = (<AUTWindowOlMap>win).olMap
             .getLayers()
             .getArray()
-            .filter((l: any) => !noMapLayerRegex.exec(l.get('cyLayerType')))
-          expect(layers[0].get('id')).to.eq(502)
+            .find(
+              (layer: any) =>
+                !noMapLayerRegex.exec(layer.get('cyLayerType')) &&
+                layer.getZIndex() === -200
+            )
+
+          expect(bgLayer?.get('id')).to.eq(502)
         })
       })
     })

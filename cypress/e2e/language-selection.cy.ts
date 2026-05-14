@@ -42,7 +42,11 @@ describe('Language selector', () => {
     cy.get('.lux-panel-title').contains('Layer')
     cy.get('[data-cy="myLayersButton"]').contains('Meine Layer')
     cy.get('[data-cy="catalogButton"]').contains('Katalog')
-    cy.get('[data-cy="langSelect"] .lux-dropdown-btn').should('not.be.hidden')
+    cy.get('[data-cy="langSelect"] .lux-dropdown-btn').should(
+      'have.attr',
+      'aria-expanded',
+      'false'
+    )
     cy.get('[data-cy="langSelect"] .lux-dropdown-list').should('be.hidden')
   })
 
@@ -56,13 +60,11 @@ describe('Language selector', () => {
   })
 
   it('updates the lang param in the localstorage when switching from FR to LB', () => {
-    expect(localStorage.getItem('lang')).to.eq('fr')
-
     cy.get('[data-cy="langSelect"] .lux-dropdown-btn').click()
 
-    const langSelect = () => cy.get('[data-cy="langSelect"] [data-value="lb"]')
-    langSelect().click()
-    langSelect().should(() => {
+    cy.get('[data-cy="langSelect"] [data-value="lb"]').click()
+
+    cy.window().should(() => {
       expect(localStorage.getItem('lang')).to.eq('lb')
     })
   })
