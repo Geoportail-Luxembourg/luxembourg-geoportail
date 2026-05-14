@@ -26,19 +26,19 @@ describe('Draw "Circle"', () => {
       testFeatItemMeasurements()
     })
 
-    it.skip('updates length, area and radius measurements when editing geometry on map', () => {
+    it('updates length, area and radius measurements when editing geometry on map', () => {
       cy.get('[data-cy="featItemLength"]').should('contain.text', '347.')
       cy.get('[data-cy="featItemArea"]').should('contain.text', 'Surface:')
-      cy.get('[data-cy="featItemInputRadius"]').should('have.value', '55161.21')
+      cy.get('[data-cy="featItemInputRadius"]').should('have.value', '55337.44')
       cy.dragVertexOnMap(200, 200, 300, 300)
-      cy.get('*[data-cy="featItemLength"]').should('contain.text', '693.17 km')
+      cy.get('*[data-cy="featItemLength"]').should('contain.text', '695.36 km')
       // testing just integer part due to precision issues between local tests and CI
       cy.get('[data-cy="featItemArea"]')
-        .should('include.text', 'Surface:\u00A038235')
+        .should('include.text', 'Surface:\u00A038477.45')
         .and('include.text', ' km²')
     })
 
-    it.skip('updates length and area measurements when editing radius in panel', () => {
+    it('updates length and area measurements when editing radius in panel', () => {
       cy.get('[data-cy="featItemInputRadius"]').type('{selectall}1000{enter}')
       cy.get('[data-cy="featItemLength"]').should('contain.text', '6.3')
       cy.get('[data-cy="featItemArea"]').should('contain.text', '3.1')

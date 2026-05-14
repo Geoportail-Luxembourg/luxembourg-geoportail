@@ -16,7 +16,7 @@ describe('Draw panel', () => {
   })
 
   describe('When clicking the dropdown menu icon', () => {
-    it.skip('displays the dropdown menu content', () => {
+    it('displays the dropdown menu content', () => {
       cy.get('[data-cy="drawPanelMenuPopup"] > button').should('exist')
       cy.get('[data-cy="drawPanelMenuPopup"] > button').click()
 
@@ -29,7 +29,9 @@ describe('Draw panel', () => {
           texts.some((t: string) => t.indexOf('Effacer tous les dessins') >= 0)
         ).to.be.true
         expect(
-          texts.some((t: string) => t.indexOf('Copier dans ma carte') >= 0)
+          texts.some(
+            (t: string) => t.indexOf('Créer une nouvelle carte à partir') >= 0
+          )
         ).to.be.true
         expect(
           texts.some(

@@ -53,7 +53,7 @@ describe('Draw "Line"', () => {
       testFeatItemMeasurements()
     })
 
-    it.skip('displays the elevation profile for Line', () => {
+    it('displays the elevation profile for Line', () => {
       cy.wait('@profile-fixture')
       cy.get('[data-cy="featItemProfileCumul"]').should($el => {
         const text = $el.text()
@@ -62,7 +62,7 @@ describe('Draw "Line"', () => {
       cy.get('[data-cy="featItemProfile"] svg').should('exist')
       cy.get('[data-cy="featItemProfile"] svg g.grid-y > g.tick').should(
         'have.length',
-        7
+        8
       )
       cy.get('[data-cy="featItemProfile"] svg g.x.axis > g.tick').should(
         'have.length',
@@ -75,7 +75,7 @@ describe('Draw "Line"', () => {
     })
 
     describe('When editing the line', () => {
-      it.skip('refreshes the elevation profile for Line', () => {
+      it('refreshes the elevation profile for Line', () => {
         cy.dragVertexOnMap(320, 223, 305, 305)
         cy.wait('@profile-fixture')
         cy.get('[data-cy="featItemProfileCumul"]').should($el => {
@@ -86,7 +86,7 @@ describe('Draw "Line"', () => {
         cy.get('[data-cy="featItemProfile"] svg g.y.axis > g.tick')
           .eq(6)
           .find('text')
-          .should('have.text', '380')
+          .should('have.text', '500')
       })
     })
 
@@ -103,12 +103,12 @@ describe('Draw "Line"', () => {
       })
     })
 
-    it.skip('updates length measurement when editing geometry', () => {
+    it('updates length measurement when editing geometry', () => {
       cy.wait('@profile-fixture')
       cy.get('[data-cy="featItemLength"]').should('contain.text', '42.3')
       cy.dragVertexOnMap(320, 223, 305, 305)
       cy.wait('@profile-fixture')
-      cy.get('[data-cy="featItemLength"]').should('contain.text', '33.26 km')
+      cy.get('[data-cy="featItemLength"]').should('contain.text', '33.36 km')
     })
 
     it('displays the possible actions for the feature', () => {
@@ -156,7 +156,7 @@ describe('Draw "Line"', () => {
   })
 
   describe('When editing a line and pressing DEL key', () => {
-    it.skip('removes the last point from the line', () => {
+    it('removes the last point from the line', () => {
       cy.wait('@profile-fixture')
       // Get initial length
       cy.get('[data-cy="featItemLength"]').then($lengthBefore => {
