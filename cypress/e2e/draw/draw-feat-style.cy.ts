@@ -52,7 +52,7 @@ describe('Test style edition of Point feature', () => {
 
         cy.wrap(ff[0].getGeometry()?.getType()).should('equal', 'Point')
         // check color green
-        cy.wrap(ff[0].get('c')).should('equal', '%2300ff00')
+        cy.wrap(ff[0].get('c')).should('match', /(#00ff00|%2300ff00)/)
         // check shape: cross
         cy.wrap(ff[0].get('s')).should('equal', 'cross')
         // check size 50

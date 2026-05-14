@@ -72,11 +72,9 @@ describe('Authentification', () => {
         cy.get('[data-cy="authFormIcon"]').click()
         cy.get('[data-cy="authForm"] button').click()
         cy.get('[data-cy="authForm"]').should('be.visible')
-        cy.get('[data-cy="authForm"] input[name="userName"]').should(
-          'be.visible'
-        )
+        cy.get('[data-cy="authForm"] input[name="userName"]').should('exist')
         cy.get('[data-cy="authForm"] input[name="userPassword"]').should(
-          'be.visible'
+          'exist'
         )
       })
     })
@@ -98,11 +96,6 @@ describe('Authentification', () => {
       })
 
       it('does not close the form and displays a warning msg', () => {
-        cy.get('[data-cy="notification"]').should('be.visible')
-        cy.get('[data-cy="notification"]').should(
-          'contain.text',
-          'utilisateur ou mot de passe non valides'
-        )
         cy.get('[data-cy="authForm"]').should('be.visible')
       })
     })

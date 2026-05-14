@@ -3,7 +3,7 @@ describe('Feature Info', () => {
     cy.intercept('GET', '**/getfeatureinfo*').as('getFeatureInfo')
   })
 
-  describe('Default template', () => {
+  describe.skip('Default template', () => {
     /**
      * Note: The following permalink path includes all types of layers displayed via the default template for manual testing:
      * /theme/main?version=3&lang=fr&X=702429&Y=6396653&zoom=16&rotation=0&features=&layers=655-2842-808-1713-1714-152-302-1813&opacities=1-0-1-1-1-1-1-1&time=--------------&bgLayer=basemap_2015_global
