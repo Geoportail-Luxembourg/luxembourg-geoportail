@@ -34,7 +34,7 @@ describe('Draw "Circle"', () => {
       cy.get('*[data-cy="featItemLength"]').should('contain.text', '695.36 km')
       // testing just integer part due to precision issues between local tests and CI
       cy.get('[data-cy="featItemArea"]')
-        .should('include.text', 'Surface:\u00A038477.45')
+        .should('include.text', 'Surface:\u00A038477')
         .and('include.text', ' km²')
     })
 
