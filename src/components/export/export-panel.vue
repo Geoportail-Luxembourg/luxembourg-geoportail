@@ -1,14 +1,25 @@
 <script setup lang="ts">
+import { ref, onMounted } from 'vue'
+import { storeToRefs } from 'pinia'
 import { useTranslation } from 'i18next-vue'
 import ExportPanelItem from './export-panel-item.vue'
-import ExportPanelLidarLink from './export-panel-lidar-link.vue'
-import ExportPanelObliqueLink from './export-panel-oblique-link.vue'
+import useMap from '@/composables/map/map.composable'
+import useExportUrl from '@/composables/export-url/export-url.composable'
+import type { ExportLink } from '@/composables/export-url/export-url.model'
+import { useLocationInfoStore } from '@/stores/location-info.store'
 
 const { t } = useTranslation()
+const map = useMap().getOlMap()
+const exportLinks = ref<ExportLink[]>([])
+const { resolvedHrefs, resolveAllHrefs } = useExportUrl(exportLinks, map)
+const { locationInfoCoords } = storeToRefs(useLocationInfoStore())
 
-const printUrl = import.meta.env.VITE_3DPRINT_URL
-const act2bimUrl = import.meta.env.VITE_ACT2BIM_URL
-const minecraftUrl = import.meta.env.VITE_MINECRAFT_URL
+onMounted(async () => {
+  const res = await fetch('/config.json')
+  const config = await res.json()
+  exportLinks.value = config.exportLinks ?? []
+  await resolveAllHrefs()
+})
 </script>
 
 <template>
@@ -17,39 +28,25 @@ const minecraftUrl = import.meta.env.VITE_MINECRAFT_URL
       class="absolute bottom-full right-0 top-auto z-20 flex flex-col text-white box-content border border-gray-400 bg-primary md:w-60 overflow-hidden shadow-lg"
     >
       <ul class="divide-y divide-gray-400/50">
-        <li>
+        <li v-for="link in exportLinks" :key="link.labelKey">
           <ExportPanelItem
-            :href="printUrl"
-            :label="t('3D Print', { ns: 'app' })"
-            :description="t('3D Print desc', { ns: 'app' })"
+            :href="resolvedHrefs[link.labelKey]"
+            :label="t(link.labelKey, { ns: 'app' })"
+            :description="t(link.labelKey + ' desc', { ns: 'app' })"
+            :target="link.target"
           >
-            <i class="fa-solid fa-cube w-5 text-lg shrink-0 text-center"></i>
-          </ExportPanelItem>
-        </li>
-        <li>
-          <ExportPanelLidarLink />
-        </li>
-        <li>
-          <ExportPanelObliqueLink />
-        </li>
-        <li>
-          <ExportPanelItem
-            :href="act2bimUrl"
-            :label="t('ACT2BIM', { ns: 'app' })"
-            :description="t('ACT2BIM desc', { ns: 'app' })"
-          >
-            <i
-              class="fa-solid fa-building w-5 text-lg shrink-0 text-center"
-            ></i>
-          </ExportPanelItem>
-        </li>
-        <li>
-          <ExportPanelItem
-            :href="minecraftUrl"
-            :label="t('Minecraft', { ns: 'app' })"
-            :description="t('Minecraft desc', { ns: 'app' })"
-          >
-            <i class="fa-solid fa-gamepad w-5 text-lg shrink-0 text-center"></i>
+            <span class="relative">
+              <i
+                :class="`fa-solid ${link.icon} w-5 text-lg shrink-0 text-center`"
+              ></i>
+              <span
+                v-if="link.useLocationInfoCoords && locationInfoCoords"
+                :title="
+                  t('Using selected location info coordinates', { ns: 'app' })
+                "
+                class="absolute -bottom-0.5 -left-0.5 block size-2.5 rounded-full bg-yellow-400 -translate-x-1/2 ring-2 ring-orange-500"
+              ></span>
+            </span>
           </ExportPanelItem>
         </li>
       </ul>
