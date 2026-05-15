@@ -1,0 +1,22 @@
+name: Trigger GitLab pipeline
+
+on:
+  push:
+    branches:
+      - main
+      - integration
+  workflow_dispatch:
+
+jobs:
+  trigger:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Trigger GitLab pipeline
+        run: |
+          curl --fail --request POST \
+            --form token="${{ secrets.GITLAB_TRIGGER_TOKEN }}" \
+            --form ref="${{ github.ref_name }}" \
+            --form "variables[GITHUB_REPOSITORY]=${{ github.repository }}" \
+            --form "variables[GITHUB_SHA]=${{ github.sha }}" \
+            --form "variables[GITHUB_REF]=${{ github.ref }}" \
+            "${{ secrets.GITLAB_WEBHOOK_URL }}"
