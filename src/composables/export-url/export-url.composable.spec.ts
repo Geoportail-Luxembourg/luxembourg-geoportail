@@ -12,7 +12,7 @@ import { useMapStore } from '@/stores/map.store'
 import { useLocationInfoStore } from '@/stores/location-info.store'
 import type { Layer } from '@/stores/map.store.model'
 
-const { resolveUrl } = useExportUrl()
+let resolveUrl: Awaited<ReturnType<typeof useExportUrl>>['resolveUrl']
 
 vi.mock('ol/proj', () => ({
   transform: vi.fn((coord: number[], _from: unknown, to: unknown) => {
@@ -146,6 +146,7 @@ describe('resolveUrl', () => {
         initialState: { map: { layers: [layerMock1, layerMock2] } },
       })
     )
+    resolveUrl = useExportUrl().resolveUrl
   })
 
   it('uses locationInfoCoords when useLocationInfoCoords is true and coords are set', async () => {
