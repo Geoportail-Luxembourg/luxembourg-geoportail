@@ -16,6 +16,7 @@ export const DEFAULT_FEEDBACKANF_OPENED = false
 export const DEFAULT_FEEDBACKAGE_OPENED = false
 export const DEFAULT_FEEDBACKCRUES_OPENED = false
 export const DEFAULT_LIDAR_OPENED = false
+export const DEFAULT_EXPORT_OPENED = false
 export const DEFAULT_SHARE_OPENED = false
 export const DEFAULT_ROUTING_OPENED = false
 
@@ -35,6 +36,7 @@ export const useAppStore = defineStore(
     const myMapLayersChanged = ref(false)
     const myMapsOpen = ref(DEFAULT_MYMAPS_OPENED)
     const infoOpen = ref(DEFAULT_INFO_OPENED)
+    const exportOpen = ref(DEFAULT_EXPORT_OPENED)
     const shareOpen = ref(DEFAULT_SHARE_OPENED)
     const lidarOpen = ref(DEFAULT_LIDAR_OPENED) // Lidar panel open state
     const feedbackOpen = ref(DEFAULT_FEEDBACK_OPENED)
@@ -137,6 +139,10 @@ export const useAppStore = defineStore(
       infoOpen.value = open ?? !infoOpen.value
     }
 
+    function toggleExportOpen(open?: boolean) {
+      exportOpen.value = open ?? !exportOpen.value
+    }
+
     function toggleShareOpen(open?: boolean) {
       shareOpen.value = open ?? !shareOpen.value
 
@@ -193,6 +199,7 @@ export const useAppStore = defineStore(
       myMapLayersChanged,
       myMapsOpen,
       infoOpen,
+      exportOpen,
       shareOpen,
       lidarOpen,
       feedbackOpen,
@@ -223,6 +230,7 @@ export const useAppStore = defineStore(
       togglePrintToolbarOpen,
       toggleMyMapsOpen,
       toggleInfoOpen,
+      toggleExportOpen,
       toggleShareOpen,
       toggleLidarOpen,
       toggleThemeGrid,
