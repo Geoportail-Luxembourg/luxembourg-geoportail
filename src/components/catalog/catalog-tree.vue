@@ -6,6 +6,7 @@ import {
   watchEffect,
   watch,
   nextTick,
+  useTemplateRef,
 } from 'vue'
 import { storeToRefs } from 'pinia'
 
@@ -24,6 +25,7 @@ const mapStore = useMapStore()
 const themeStore = useThemeStore()
 const appStore = useAppStore()
 const layers = useLayers()
+const catalogRoot = useTemplateRef<HTMLElement>('catalogRoot')
 const layerTree: ShallowRef<LayerTreeNodeModel | undefined> = shallowRef()
 const layerTree3d: ShallowRef<LayerTreeNodeModel | undefined> = shallowRef()
 const showDefaultCatalog = computed(
@@ -75,7 +77,9 @@ watch(layerToLocateInCatalog, id => {
           layerTree.value
         ).node
         nextTick(() => {
-          const el = document.querySelector(`[data-info="layerRow-${id}"]`)
+          const el = catalogRoot.value?.querySelector<HTMLElement>(
+            `[data-info="layerRow-${id}"]`
+          )
           if (!el) return
           el.scrollIntoView({ behavior: 'smooth', block: 'center' })
           el.classList.add('lux-layer-highlight')
@@ -116,7 +120,7 @@ function toggleLayer(node: LayerTreeNodeModel, is3d: boolean) {
 </script>
 
 <template>
-  <div>
+  <div ref="catalogRoot">
     <!-- 3D layers catalog, only displayed when 3D is active -->
     <div class="mb-7" v-if="layerTree3d && mapStore.is3dActive">
       <layer-tree-node
