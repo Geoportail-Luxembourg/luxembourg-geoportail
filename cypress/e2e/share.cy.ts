@@ -10,7 +10,8 @@ describe('Share URL Tool', () => {
 
   it('should display short URL by default', () => {
     cy.get('[data-cy="shareButton"]').click()
-    cy.get('[data-cy="shareShortUrl"]').should('be.visible')
+    cy.get('[data-cy="sharePanel"]').should('be.visible')
+    cy.get('[data-cy="shareShortUrl"]').should('exist')
     cy.get('[data-cy="shareShortUrl"]').invoke('val').should('not.be.empty')
   })
 
