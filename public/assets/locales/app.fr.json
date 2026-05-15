@@ -764,5 +764,6 @@
   "You have no existing Maps, please create a New Map": "Vous n'avez pas de carte existante. Veuillez créer une carte",
   "Your email": "Votre email",
   "yyyy": "yyyy",
-  "Localise in catalog {{layerName}}": "Afficher la couche dans le catalogue"
+  "Localise in catalog {{layerName}}": "Afficher la couche dans le catalogue",
+  "Using selected location info coordinates": "Utilise les coordonnées de la position sélectionnée"
 }

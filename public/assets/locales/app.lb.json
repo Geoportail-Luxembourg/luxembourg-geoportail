@@ -764,5 +764,6 @@
   "You have no existing Maps, please create a New Map": "Dir hudd keng Kaarten, erstellt w.e.g eng nei Kaart",
   "Your email": "Är Emailadress:",
   "yyyy": "yyyy",
-  "Localise in catalog {{layerName}}": "De Layer am Katalog uweisen"
+  "Localise in catalog {{layerName}}": "De Layer am Katalog uweisen",
+  "Using selected location info coordinates": "Benotzt déi ausgewielten Koordinaten vun der Positioun"
 }

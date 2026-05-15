@@ -761,5 +761,6 @@
   "You have no existing Maps, please create a New Map": "You have no existing maps, please create a new map",
   "Your email": "Your email:",
   "yyyy": "yyyy",
-  "Localise in catalog {{layerName}}": "Show the layer in the catalog"
+  "Localise in catalog {{layerName}}": "Show the layer in the catalog",
+  "Using selected location info coordinates": "Using selected location info coordinates"
 }
