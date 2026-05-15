@@ -19,7 +19,8 @@ COPY . .
 RUN --mount=type=secret,id=tx_token \
     TX_TOKEN=$(cat /run/secrets/tx_token) npm run fetch-translations
 
-RUN npm run build
+ARG BUILD_MODE=production
+RUN npm run build -- --mode ${BUILD_MODE}
 
 # Serve stage
 FROM nginx:1.27.2-alpine
