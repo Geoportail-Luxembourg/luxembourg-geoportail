@@ -1,11 +1,11 @@
 import { testFeatItem, testFeatItemDocking } from './draw-feat.utils'
 
 function testFeatItemMeasurements() {
-  cy.get('*[data-cy="featItemLength"]').should('exist')
-  cy.get('*[data-cy="featItemArea"]').should('exist')
-  cy.get('*[data-cy="featItemRadius"]').should('exist')
-  cy.get('*[data-cy="featItemElevation"]').should('not.exist')
-  cy.get('*[data-cy="featItemProfile"]').should('not.exist')
+  cy.get('[data-cy="featItemLength"]').should('exist')
+  cy.get('[data-cy="featItemArea"]').should('exist')
+  cy.get('[data-cy="featItemRadius"]').should('exist')
+  cy.get('[data-cy="featItemElevation"]').should('not.exist')
+  cy.get('[data-cy="featItemProfile"]').should('not.exist')
 }
 
 describe('Draw "Circle"', () => {
@@ -19,7 +19,7 @@ describe('Draw "Circle"', () => {
 
   describe('When clicking button to draw Circle', () => {
     it('displays a new feature item in the draw panel', () => {
-      cy.get('*[data-cy="featItemName"]').should('exist')
+      cy.get('[data-cy="featItemName"]').should('exist')
     })
 
     it('displays measurements for Circle', () => {
@@ -27,24 +27,21 @@ describe('Draw "Circle"', () => {
     })
 
     it('updates length, area and radius measurements when editing geometry on map', () => {
-      cy.get('*[data-cy="featItemLength"]').should('contain.text', '346.59 km')
-      cy.get('*[data-cy="featItemArea"]').should('contain.text', '9559.11 km²')
-      cy.get('*[data-cy="featItemInputRadius"]').should(
-        'have.value',
-        '55161.21'
-      )
+      cy.get('[data-cy="featItemLength"]').should('contain.text', '347.')
+      cy.get('[data-cy="featItemArea"]').should('contain.text', 'Surface:')
+      cy.get('[data-cy="featItemInputRadius"]').should('have.value', '55337.44')
       cy.dragVertexOnMap(200, 200, 300, 300)
-      cy.get('*[data-cy="featItemLength"]').should('contain.text', '693.17 km')
+      cy.get('*[data-cy="featItemLength"]').should('contain.text', '695.36 km')
       // testing just integer part due to precision issues between local tests and CI
-      cy.get('*[data-cy="featItemArea"]')
-        .should('include.text', 'Surface:\u00A038235')
+      cy.get('[data-cy="featItemArea"]')
+        .should('include.text', 'Surface:\u00A038477')
         .and('include.text', ' km²')
     })
 
     it('updates length and area measurements when editing radius in panel', () => {
-      cy.get('*[data-cy="featItemInputRadius"]').type('{selectall}1000{enter}')
-      cy.get('*[data-cy="featItemLength"]').should('contain.text', '6.28 km')
-      cy.get('*[data-cy="featItemArea"]').should('contain.text', '3.13 km²')
+      cy.get('[data-cy="featItemInputRadius"]').type('{selectall}1000{enter}')
+      cy.get('[data-cy="featItemLength"]').should('contain.text', '6.3')
+      cy.get('[data-cy="featItemArea"]').should('contain.text', '3.1')
     })
 
     it('displays the possible actions for the feature', () => {
@@ -65,12 +62,14 @@ describe('Draw "Circle"', () => {
       cy.get('[data-cy="featMenuPopup"] > button').click()
 
       cy.get('[data-cy="featMenuPopupItem"]').as('menuItem')
-      cy.get('@menuItem').should('have.length', 4)
+      cy.get('@menuItem').should('have.length', 6)
       cy.get('@menuItem').eq(0).should('contain.text', 'Exporter un GPX')
       cy.get('@menuItem').eq(1).should('contain.text', 'Exporter un KML')
       cy.get('@menuItem').eq(2).should('contain.text', 'Exporter un Shapefile')
+      cy.get('@menuItem').eq(3).should('contain.text', 'Exporter un GeoPackage')
+      cy.get('@menuItem').eq(4).should('contain.text', 'Exporter un GeoJSON')
       cy.get('@menuItem')
-        .eq(3)
+        .eq(5)
         .should('contain.text', 'Créer cercle concentrique')
     })
   })

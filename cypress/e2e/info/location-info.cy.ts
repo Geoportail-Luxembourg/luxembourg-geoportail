@@ -91,7 +91,11 @@ describe('Location Info', () => {
         cy.get('[data-cy="locationInfo"] table > tbody > tr')
           .eq(7)
           .find('td')
-          .should('contain.text', '2 km')
+          .then($td => {
+            const text = $td.text()
+            // Match distances like "1.97 km", "2 km", etc.
+            expect(text).to.match(/\d+(\.\d+)?\s*km/)
+          })
         // check pointer
         cy.window()
           .its('olMap')

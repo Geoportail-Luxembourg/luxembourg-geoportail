@@ -43,10 +43,12 @@ describe('Draw "Label"', () => {
       cy.get('[data-cy="featMenuPopup"] > button').click()
 
       cy.get('[data-cy="featMenuPopupItem"]').as('menuItem')
-      cy.get('@menuItem').should('have.length', 3)
+      cy.get('@menuItem').should('have.length', 5)
       cy.get('@menuItem').eq(0).should('contain.text', 'Exporter un GPX')
       cy.get('@menuItem').eq(1).should('contain.text', 'Exporter un KML')
       cy.get('@menuItem').eq(2).should('contain.text', 'Exporter un Shapefile')
+      cy.get('@menuItem').eq(3).should('contain.text', 'Exporter un GeoPackage')
+      cy.get('@menuItem').eq(4).should('contain.text', 'Exporter un GeoJSON')
     })
   })
 })

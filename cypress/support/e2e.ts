@@ -23,3 +23,11 @@ Cypress.on('uncaught:exception', err => {
     return false
   }
 })
+
+// Prevent alert notification overlays from blocking map interactions during tests.
+Cypress.on('window:before:load', win => {
+  const style = win.document.createElement('style')
+  style.innerHTML =
+    '[data-cy="alertNotifications"]{pointer-events:none !important;}'
+  win.document.head.appendChild(style)
+})

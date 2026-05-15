@@ -48,6 +48,27 @@ describe('Draw "Point"', () => {
       statusCode: 500,
       body: {},
     })
+    cy.intercept('GET', /\/symbols\?symboltype=public/, {
+      statusCode: 200,
+      body: {
+        success: true,
+        count: 2,
+        results: [
+          {
+            id: 101,
+            name: 'public symbol 1',
+            url: '/symbol/101',
+            symboltype: 'public',
+          },
+          {
+            id: 102,
+            name: 'public symbol 2',
+            url: '/symbol/102',
+            symboltype: 'public',
+          },
+        ],
+      },
+    }).as('getPublicSymbols')
 
     cy.visit('/')
     cy.get('button[data-cy="drawButton"]').click()
@@ -100,10 +121,12 @@ describe('Draw "Point"', () => {
       cy.get('[data-cy="featMenuPopup"] > button').click()
 
       cy.get('[data-cy="featMenuPopupItem"]').as('menuItem')
-      cy.get('@menuItem').should('have.length', 3)
+      cy.get('@menuItem').should('have.length', 5)
       cy.get('@menuItem').eq(0).should('contain.text', 'Exporter un GPX')
       cy.get('@menuItem').eq(1).should('contain.text', 'Exporter un KML')
       cy.get('@menuItem').eq(2).should('contain.text', 'Exporter un Shapefile')
+      cy.get('@menuItem').eq(3).should('contain.text', 'Exporter un GeoPackage')
+      cy.get('@menuItem').eq(4).should('contain.text', 'Exporter un GeoJSON')
     })
   })
 
@@ -130,6 +153,7 @@ describe('Draw "Point"', () => {
       describe('When browsing public symbols', () => {
         beforeEach(() => {
           cy.get('[data-cy="featStyleSymbolTab"]').eq(1).click()
+          cy.wait('@getPublicSymbols')
         })
 
         describe('When choosing a symbol', () => {

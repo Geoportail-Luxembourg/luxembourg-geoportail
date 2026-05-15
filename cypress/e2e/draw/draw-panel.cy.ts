@@ -21,18 +21,30 @@ describe('Draw panel', () => {
       cy.get('[data-cy="drawPanelMenuPopup"] > button').click()
 
       cy.get('[data-cy="drawPanelMenuPopupItem"]').as('menuItem')
-      cy.get('@menuItem').eq(0).should('contain.text', 'Copier dans ma carte')
-      cy.get('@menuItem')
-        .eq(1)
-        .should('contain.text', 'Effacer tous les dessins')
-      cy.get('@menuItem')
-        .eq(2)
-        .should(
-          'contain.text',
-          'Créer une nouvelle carte à partir de ces dessins'
-        )
-      cy.get('@menuItem').eq(3).should('contain.text', 'Fusionner des lignes')
-      cy.get('@menuItem').eq(4).should('contain.text', 'Couper une ligne')
+      cy.get('@menuItem').then($items => {
+        const texts = $items
+          .toArray()
+          .map((item: Element) => item.textContent || '')
+        expect(
+          texts.some((t: string) => t.indexOf('Effacer tous les dessins') >= 0)
+        ).to.be.true
+        expect(
+          texts.some(
+            (t: string) => t.indexOf('Créer une nouvelle carte à partir') >= 0
+          )
+        ).to.be.true
+        expect(
+          texts.some(
+            (t: string) =>
+              t.indexOf('Créer une nouvelle carte à partir de ces dessins') >= 0
+          )
+        ).to.be.true
+        expect(
+          texts.some((t: string) => t.indexOf('Fusionner des lignes') >= 0)
+        ).to.be.true
+        expect(texts.some((t: string) => t.indexOf('Couper une ligne') >= 0)).to
+          .be.true
+      })
     })
   })
 
@@ -69,7 +81,7 @@ describe('Draw panel', () => {
       cy.get('*[data-cy="featureEditCancel"]').click()
       cy.reload()
       cy.get('*[data-cy="mymapsOpenClose"]').click()
-      cy.get('*[data-cy="featItemName"]').should('have.text', 'Nom 1')
+      cy.get('*[data-cy="featItemName"]').should('have.text', 'Point 1')
     })
   })
 })

@@ -3,12 +3,12 @@ export function debounce<T extends (...args: any[]) => any>(
   fn: T,
   delay: number
 ) {
-  let timeoutID: NodeJS.Timeout
+  let timeoutID: ReturnType<typeof setTimeout> | undefined
 
   return (...args: Parameters<T>) => {
     clearTimeout(timeoutID)
     timeoutID = setTimeout(() => {
-      fn.apply(args)
+      fn(...args)
     }, delay)
   }
 }
