@@ -48,6 +48,27 @@ describe('Draw "Point"', () => {
       statusCode: 500,
       body: {},
     })
+    cy.intercept('GET', /\/symbols\?symboltype=public/, {
+      statusCode: 200,
+      body: {
+        success: true,
+        count: 2,
+        results: [
+          {
+            id: 101,
+            name: 'public symbol 1',
+            url: '/symbol/101',
+            symboltype: 'public',
+          },
+          {
+            id: 102,
+            name: 'public symbol 2',
+            url: '/symbol/102',
+            symboltype: 'public',
+          },
+        ],
+      },
+    }).as('getPublicSymbols')
 
     cy.visit('/')
     cy.get('button[data-cy="drawButton"]').click()
@@ -132,6 +153,7 @@ describe('Draw "Point"', () => {
       describe('When browsing public symbols', () => {
         beforeEach(() => {
           cy.get('[data-cy="featStyleSymbolTab"]').eq(1).click()
+          cy.wait('@getPublicSymbols')
         })
 
         describe('When choosing a symbol', () => {

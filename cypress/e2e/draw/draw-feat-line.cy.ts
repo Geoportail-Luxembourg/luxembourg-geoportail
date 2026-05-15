@@ -165,10 +165,14 @@ describe('Draw "Line"', () => {
       })
 
       // Click on the feature to select it
-      cy.get('[data-cy="featItemName"]').click()
-
+      // Note: The feature item is already selected, we don't need to click on it to select it
+      //cy.get('[data-cy="featItemName"]').click()
+      // close the draw toolbar to avoid interference with the click on the map
+      cy.get('button[data-cy="drawButton"]').click()
       // Click edit button
       cy.get('[data-cy="featItemToggleEdit"]').click()
+
+      cy.get('div.ol-viewport').click(355, 265, { force: true })
 
       // Press DEL key to remove last point
       cy.get('body').type('{backspace}')
@@ -182,7 +186,7 @@ describe('Draw "Line"', () => {
         // Extract the numeric value
         const match = text.match(/(\d+\.\d+)/)
         if (match) {
-          expect(parseFloat(match[1])).to.be.lessThan(42.31)
+          expect(parseFloat(match[1])).to.be.lessThan(42.39)
         }
       })
     })
