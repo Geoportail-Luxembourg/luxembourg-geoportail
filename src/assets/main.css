@@ -305,6 +305,30 @@
     }
   }
 
+  @keyframes lux-layer-highlight {
+    0% {
+      background-color: transparent;
+      box-shadow: 0 0 0px 0px transparent;
+    }
+    40% {
+      background-color: transparent;
+      box-shadow: 0 0 0px 0px transparent;
+    }
+    60% {
+      background-color: theme('colors.yellow.200');
+      box-shadow: 0 0 10px 4px theme('colors.yellow.300');
+    }
+    100% {
+      background-color: transparent;
+      box-shadow: 0 0 0px 0px transparent;
+    }
+  }
+
+  .lux-layer-highlight {
+    animation: lux-layer-highlight 1s ease-out forwards;
+    border-radius: 4px;
+  }
+
   .lux-slider-line {
     @apply absolute h-full w-[4px] left-[50%] bg-primary ml-[-2px] cursor-ew-resize block top-0;
   }
