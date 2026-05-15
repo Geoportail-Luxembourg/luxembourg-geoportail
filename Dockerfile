@@ -4,6 +4,15 @@
 FROM node:22.13.0-alpine3.21 AS builder
 WORKDIR /app
 
+ARG http_proxy
+ARG https_proxy
+ARG HTTP_PROXY
+ARG HTTPS_PROXY
+ENV http_proxy=${http_proxy} \
+  https_proxy=${https_proxy} \
+  HTTP_PROXY=${HTTP_PROXY} \
+  HTTPS_PROXY=${HTTPS_PROXY}
+
 COPY package.json package-lock.json ./
 RUN npm ci
 
