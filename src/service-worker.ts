@@ -16,7 +16,7 @@ declare const self: ServiceWorkerGlobalScope
  * so backend routes are never intercepted when online.
  */
 
-const SW_VERSION = '9.0.2'
+const SW_VERSION = '9.0.3'
 const CACHE_VERSION = `lux-geoportail-v4-v${SW_VERSION}`
 
 const CACHE_NAMES = {
@@ -144,7 +144,13 @@ self.addEventListener('fetch', (event: FetchEvent) => {
     return
   }
 
-  // Same-origin app assets: JS, CSS, fonts, images, locales → stale-while-revalidate
+  // Translation files: network-first with no-store to avoid stale browser cache
+  if (isTranslationRequest(request.url)) {
+    event.respondWith(networkFirstNoStore(request, CACHE_NAMES.APP_SHELL))
+    return
+  }
+
+  // Same-origin app assets: JS, CSS, fonts, images → stale-while-revalidate
   if (isAppAsset(request.url)) {
     event.respondWith(staleWhileRevalidate(request, CACHE_NAMES.APP_SHELL))
   }
@@ -268,6 +274,25 @@ async function networkFirstStrategy(
   }
 }
 
+async function networkFirstNoStore(
+  request: Request,
+  cacheName: CacheName
+): Promise<Response> {
+  const cache = await caches.open(cacheName)
+  try {
+    const freshRequest = new Request(request, {
+      cache: 'no-store',
+    })
+    const response = await fetch(freshRequest)
+    if (response.ok) await cache.put(request, response.clone())
+    return response
+  } catch {
+    const cached = await cache.match(request)
+    if (cached) return cached
+    throw new Error('Network error and no cache available')
+  }
+}
+
 async function networkFirstThemesStrategy(request: Request): Promise<Response> {
   const cache = await caches.open(CACHE_NAMES.APP_SHELL)
   const cacheKey = createThemesCacheKey(request.url)
@@ -318,13 +343,20 @@ function isAppAsset(url: string): boolean {
     const { origin, pathname } = new URL(url)
     if (origin !== self.location.origin) return false
 
-    // Translation files
-    if (pathname.startsWith('/assets/locales/')) return true
-
     // Static assets by extension
     return /\.(js|css|woff2?|ttf|otf|eot|svg|png|jpg|jpeg|gif|webp|ico)$/.test(
       pathname
     )
+  } catch {
+    return false
+  }
+}
+
+function isTranslationRequest(url: string): boolean {
+  try {
+    const { origin, pathname } = new URL(url)
+    if (origin !== self.location.origin) return false
+    return pathname.startsWith('/assets/locales/')
   } catch {
     return false
   }
