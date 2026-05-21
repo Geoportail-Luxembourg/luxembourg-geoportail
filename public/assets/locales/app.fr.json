@@ -201,8 +201,18 @@
   "Distance: ": "Distance : ",
   "Dotted": "Pointillé",
   "Download GPX": "Download GPX",
+  "3D Print": "Impression 3D",
+  "3D Print desc": "Générer un modèle imprimable en 3D",
+  "ACT2BIM": "ACT2BIM",
+  "ACT2BIM desc": "Convertir des plans cadastraux en BIM",
   "Download style": "Télécharger le style",
   "Downloading tiles…": "Downloading tiles…",
+  "Lidar": "Lidar",
+  "Lidar desc": "Explorer les nuages de points LIDAR",
+  "Minecraft": "Minecraft",
+  "Minecraft desc": "Explorer le Luxembourg dans Minecraft",
+  "Vue Oblique": "Vue Oblique",
+  "Vue Oblique desc": "Parcourir les images aériennes obliques",
   "Draw a lidar profile": "Dessiner un profil lidar",
   "Draw a line on the map to dislay the corresponding LIDAR profile. Double clic to confirm.": "Draw a line on the map to dislay the corresponding LIDAR profile. Double clic to confirm.",
   "Draw a line on the map to display an elevation profile.": "Tracez une ligne sur la carte pour afficher le profil d'élévation",
@@ -753,5 +763,6 @@
   "You can also use the Drawing Tools to annotate the map and send it to the support team.": "You can also use the Drawing Tools to annotate the map and send it to the support team.",
   "You have no existing Maps, please create a New Map": "Vous n'avez pas de carte existante. Veuillez créer une carte",
   "Your email": "Votre email",
-  "yyyy": "yyyy"
+  "yyyy": "yyyy",
+  "Using selected location info coordinates": "Utilise les coordonnées de la position sélectionnée"
 }
