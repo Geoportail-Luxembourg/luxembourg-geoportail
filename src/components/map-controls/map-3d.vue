@@ -58,13 +58,9 @@ const linkTo3dMap = computed(() => {
     ? JSON.stringify([bgLayer.value.name, 1, 0])
     : null
   if (selectedBgLayer) selectedLayers.unshift(selectedBgLayer)
-  const state = `[[[${[lon, lat, altitude].join(',')}],[${[
-    lon,
-    lat,
-    altitude,
-  ].join(
+  const state = `[[[],[${[lon, lat, 300].join(
     ','
-  )}],300,${heading},${LUX_VCS_PITCH},0],"cesium",["${LUX_VCS_MODULES.join(
+  )}],${altitude},${heading},${LUX_VCS_PITCH},0],"cesium",["${LUX_VCS_MODULES.join(
     '","'
   )}"],[${selectedLayers.join(',')}],[],0]`
 
