@@ -24,6 +24,7 @@ const emit = defineEmits<{
   (e: 'clickRemove', layer: Layer): void
   (e: 'changeOpacity', layer: Layer, opacity: number): void
   (e: 'changeTime', dateStart?: string, dateEnd?: string): void
+  (e: 'localiseInCatalog', layer: Layer): void
 }>()
 const { t, onClickInfo } = useLayer(props.layer, <SetupContext>{ emit })
 const layersService = useLayers()
@@ -106,6 +107,7 @@ function changeTime(dateStart?: string, dateEnd?: string) {
       @changeOpacity="
         (layer: Layer, value: number) => $emit('changeOpacity', layer, value)
       "
+      @localiseInCatalog="(l: Layer) => $emit('localiseInCatalog', l)"
     ></layer-item-sub>
 
     <!-- Layer time: slider OR datepicker widgets -->

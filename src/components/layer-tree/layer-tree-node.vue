@@ -84,7 +84,11 @@ function toggleParent(node: LayerTreeNodeModel) {
       ></layer-tree-node>
     </div>
   </div>
-  <div v-else class="flex text-tertiary pr-2">
+  <div
+    v-else
+    class="flex text-tertiary pr-2"
+    :data-info="`layerRow-${node.id}`"
+  >
     <button
       :data-cy="`layerMetadata-${node.id}`"
       :aria-label="t('Layer information: {name}', { name: label, ns: 'app' })"

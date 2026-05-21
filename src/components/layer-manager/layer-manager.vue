@@ -129,6 +129,7 @@ function toggleLayerComparator() {
           @changeTime="
             (dateStart, dateEnd) => changeTime(layer, dateStart, dateEnd)
           "
+          @localiseInCatalog="l => appStore.locateLayerInCatalog(l.id)"
         >
         </layer-item>
       </li>
@@ -156,6 +157,7 @@ function toggleLayerComparator() {
           @changeTime="
             (dateStart, dateEnd) => changeTime(layer, dateStart, dateEnd)
           "
+          @localiseInCatalog="l => appStore.locateLayerInCatalog(l.id)"
         >
         </layer-item>
       </li>

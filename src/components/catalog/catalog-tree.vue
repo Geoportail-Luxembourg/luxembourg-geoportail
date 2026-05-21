@@ -1,11 +1,21 @@
 <script setup lang="ts">
-import { computed, ShallowRef, shallowRef, watchEffect } from 'vue'
+import {
+  computed,
+  ShallowRef,
+  shallowRef,
+  watchEffect,
+  watch,
+  nextTick,
+  useTemplateRef,
+} from 'vue'
 import { storeToRefs } from 'pinia'
 
 import useLayers from '@/composables/layers/layers.composable'
+import useThemes from '@/composables/themes/themes.composable'
 import { ThemeNodeModel } from '@/composables/themes/themes.model'
 import { useThemeStore } from '@/stores/config.store'
 import { useMapStore } from '@/stores/map.store'
+import { useAppStore } from '@/stores/app.store'
 import LayerTreeNode from '@/components/layer-tree/layer-tree-node.vue'
 import { themesToLayerTree } from '@/components/layer-tree/layer-tree.mapper'
 import type { LayerTreeNodeModel } from '@/components/layer-tree/layer-tree.model'
@@ -13,7 +23,9 @@ import { layerTreeService } from '@/components/layer-tree/layer-tree.service'
 
 const mapStore = useMapStore()
 const themeStore = useThemeStore()
+const appStore = useAppStore()
 const layers = useLayers()
+const catalogRoot = useTemplateRef<HTMLElement>('catalogRoot')
 const layerTree: ShallowRef<LayerTreeNodeModel | undefined> = shallowRef()
 const layerTree3d: ShallowRef<LayerTreeNodeModel | undefined> = shallowRef()
 const showDefaultCatalog = computed(
@@ -21,6 +33,7 @@ const showDefaultCatalog = computed(
 )
 
 const { layerTrees_3d } = storeToRefs(themeStore)
+const { layerToLocateInCatalog } = storeToRefs(appStore)
 
 watchEffect(updateLayerTree)
 
@@ -51,6 +64,47 @@ watchEffect(() => {
   }
 })
 
+watch(layerToLocateInCatalog, id => {
+  if (id === undefined || id === null) return
+  appStore.layerToLocateInCatalog = undefined
+
+  const tryExpand = () => {
+    if (layerTree.value) {
+      const { found } = layerTreeService.expandToLayer(id, layerTree.value)
+      if (found) {
+        layerTree.value = layerTreeService.expandToLayer(
+          id,
+          layerTree.value
+        ).node
+        nextTick(() => {
+          const el = catalogRoot.value?.querySelector<HTMLElement>(
+            `[data-info="layerRow-${id}"]`
+          )
+          if (!el) return
+          el.scrollIntoView({ behavior: 'smooth', block: 'center' })
+          el.classList.add('lux-layer-highlight')
+          setTimeout(() => el.classList.remove('lux-layer-highlight'), 1000)
+        })
+        return true
+      }
+    }
+    return false
+  }
+
+  if (tryExpand()) return
+
+  // Layer not in current theme → switch to first theme that contains it
+  const themeNames = useThemes().findThemeNamesByLayerId(id)
+  if (!themeNames.length) return
+  themeStore.setTheme(themeNames[0])
+
+  // Wait for layerTree to be rebuilt after theme switch, then expand
+  const stop = watch(layerTree, () => {
+    stop()
+    tryExpand()
+  })
+})
+
 function toggleParent(node: LayerTreeNodeModel, is3d: boolean) {
   const rootTree = is3d ? layerTree3d : layerTree
   rootTree.value = layerTreeService.toggleNode(
@@ -66,7 +120,7 @@ function toggleLayer(node: LayerTreeNodeModel, is3d: boolean) {
 </script>
 
 <template>
-  <div>
+  <div ref="catalogRoot">
     <!-- 3D layers catalog, only displayed when 3D is active -->
     <div class="mb-7" v-if="layerTree3d && mapStore.is3dActive">
       <layer-tree-node

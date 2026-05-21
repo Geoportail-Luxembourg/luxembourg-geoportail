@@ -91,6 +91,111 @@ describe('Catalogue', () => {
     })
   })
 
+  describe('When user localises a layer in the catalog', () => {
+    beforeEach(() => {
+      // Add layer 269 from the catalog
+      cy.get('[data-cy="catalogButton"]').click()
+      cy.get('[data-cy="parentLayerLabel-242"]').find('button').first().click()
+      cy.get('[data-cy="parentLayerLabel-309"]').click()
+      cy.get('[data-cy="layerLabel-269"]').click()
+      // Switch to My Layers
+      cy.get('[data-cy="myLayersButton"]').click()
+    })
+
+    it('opens the catalog tab and expands to the layer', () => {
+      // Expand the layer sub-panel
+      cy.get('[data-cy="myLayerItemLabel-269"]').click()
+      cy.get('#layer-manager-item-content-269')
+        .find('[data-cy="myLayerLocaliseInCatalog"]')
+        .click()
+
+      // Catalog panel should now be visible
+      cy.get('[data-cy="catalog"]').should('be.visible')
+
+      // The layer row should be visible (tree expanded to it)
+      cy.get('[data-cy="layerLabel-269"]').should('be.visible')
+    })
+
+    it('closes my layers and scrolls the catalog to the layer row', () => {
+      cy.get('[data-cy="myLayerItemLabel-269"]').click()
+      cy.get('#layer-manager-item-content-269')
+        .find('[data-cy="myLayerLocaliseInCatalog"]')
+        .click()
+
+      // My layers tab should be closed, catalog visible
+      cy.get('[data-cy="myLayers"]').should('not.be.visible')
+      cy.get('[data-cy="catalog"]').should('be.visible')
+
+      // The layer row element should exist in the DOM and be visible
+      cy.get('[data-info="layerRow-269"]').should('be.visible')
+    })
+
+    it('applies the highlight class on the located layer row', () => {
+      cy.get('[data-cy="myLayerItemLabel-269"]').click()
+      cy.get('#layer-manager-item-content-269')
+        .find('[data-cy="myLayerLocaliseInCatalog"]')
+        .click()
+
+      // Immediately after click the highlight class should be present
+      cy.get('[data-info="layerRow-269"]').should(
+        'have.class',
+        'lux-layer-highlight'
+      )
+      // After 1s the class should be removed
+      cy.get('[data-info="layerRow-269"]', { timeout: 3000 }).should(
+        'not.have.class',
+        'lux-layer-highlight'
+      )
+    })
+  })
+
+  describe('When user localises a layer that belongs to a different theme', () => {
+    beforeEach(() => {
+      // Add layer 189 (tour_mullerthal_trail) from the tourisme theme via the catalog
+      cy.get('[data-cy="catalogButton"]').click()
+      cy.get('[data-cy="themeSelectorButton"]').click()
+      cy.get('[data-cy="themeSelectorButton"]')
+        .parent()
+        .find('Button')
+        .contains('Tourisme')
+        .click()
+      // Expand to layer 189 and add it
+      cy.get('[data-cy="parentLayerLabel-2005"]').find('button').first().click()
+      cy.get('[data-cy="parentLayerLabel-2006"]').click()
+      cy.get('[data-cy="layerLabel-189"]').click()
+      // Switch back to main theme
+      cy.get('[data-cy="themeSelectorButton"]').click()
+      cy.get('[data-cy="themeGrid"]').find('button').first().click()
+      // Go to My Layers
+      cy.get('[data-cy="myLayersButton"]').click()
+    })
+
+    it('switches to the theme containing the layer and expands to it', () => {
+      cy.get('[data-cy="myLayerItemLabel-189"]').click()
+      cy.get('#layer-manager-item-content-189')
+        .find('[data-cy="myLayerLocaliseInCatalog"]')
+        .click()
+
+      // Catalog panel should be visible
+      cy.get('[data-cy="catalog"]').should('be.visible')
+
+      // The layer row should be visible — meaning the tourisme theme was opened
+      cy.get('[data-info="layerRow-189"]').should('be.visible')
+    })
+
+    it('highlights the located layer row in the new theme', () => {
+      cy.get('[data-cy="myLayerItemLabel-189"]').click()
+      cy.get('#layer-manager-item-content-189')
+        .find('[data-cy="myLayerLocaliseInCatalog"]')
+        .click()
+
+      cy.get('[data-info="layerRow-189"]').should(
+        'have.class',
+        'lux-layer-highlight'
+      )
+    })
+  })
+
   describe('When user navigates in the catalog, switch to the layer manager and go back to the catalog', () => {
     it('keeps the catalog accordions previously opened, opened', () => {
       cy.get('[data-cy="catalogButton"]').click()
