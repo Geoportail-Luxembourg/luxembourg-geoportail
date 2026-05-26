@@ -7,12 +7,6 @@ import { Coordinate } from 'ol/coordinate'
 import { MapBrowserEvent } from 'ol'
 import { Feature } from 'ol'
 import { Point } from 'ol/geom'
-import VectorLayer from 'ol/layer/Vector'
-import VectorSource from 'ol/source/Vector'
-import StyleStyle from 'ol/style/Style'
-import StyleCircle from 'ol/style/Circle'
-import StyleFill from 'ol/style/Fill'
-import StyleStroke from 'ol/style/Stroke'
 import { useAppStore } from '@/stores/app.store'
 import { useLocationInfoStore } from '@/stores/location-info.store'
 import { useFeatureInfoStore } from '@/stores/feature-info.store'
@@ -22,9 +16,7 @@ import { useElevationProfileStore } from '@/stores/elevation-profile.store'
 import { isInActiveMode } from './info.utils'
 import { useMatomo } from '@/composables/matomo/matomo.composable'
 import { MATOMO_CATEGORIES } from '@/composables/matomo/matomo.model'
-
-export const DEFAULT_INFO_ZINDEX = 1501
-export const INFO_FEATURE_LAYER_TYPE = 'infoFeatureLayer'
+import { olLayerFactoryService } from '@/services/ol-layer/ol-layer-factory.service'
 
 export default function useLocationInfo() {
   const map = useMap().getOlMap()
@@ -47,14 +39,7 @@ export default function useLocationInfo() {
     justFinishedDrawing: justFinishedDrawingElevation,
   } = storeToRefs(useElevationProfileStore())
 
-  const infoFeatureLayer = new VectorLayer({
-    source: new VectorSource({
-      features: [] as Feature[],
-    }),
-    zIndex: DEFAULT_INFO_ZINDEX,
-  })
-  infoFeatureLayer.set('cyLayerType', INFO_FEATURE_LAYER_TYPE)
-  setInfoStyle(infoFeatureLayer)
+  const infoFeatureLayer = olLayerFactoryService.createOlLayerLocationInfo()
   map.addLayer(infoFeatureLayer)
 
   watch(infoOpen, open => {
@@ -66,11 +51,13 @@ export default function useLocationInfo() {
   watch(
     [locationInfoCoords, hidePointer],
     ([location, doHide]) => {
-      infoFeatureLayer.getSource()?.clear()
+      const source = infoFeatureLayer.getSource()!
+      source.clear()
+
       if (location && !doHide) {
         infoOpen.value = true
         const feature = new Feature(new Point(location))
-        infoFeatureLayer.getSource()?.addFeature(feature)
+        source.addFeature(feature)
       }
     },
     { immediate: true }
@@ -172,26 +159,4 @@ export default function useLocationInfo() {
       }
     }
   })
-
-  function setInfoStyle(layer: VectorLayer<VectorSource>) {
-    const defaultFill = new StyleFill({
-      color: [255, 255, 0, 0.6],
-    })
-    const circleStroke = new StyleStroke({
-      color: [255, 155, 55, 1],
-      width: 3,
-    })
-
-    const pointStyle = new StyleCircle({
-      radius: 10,
-      fill: defaultFill,
-      stroke: circleStroke,
-    })
-
-    layer.setStyle([
-      new StyleStyle({
-        image: pointStyle,
-      }),
-    ])
-  }
 }

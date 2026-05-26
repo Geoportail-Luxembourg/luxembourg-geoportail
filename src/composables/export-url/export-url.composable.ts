@@ -1,7 +1,7 @@
-import { ref, watch } from 'vue'
+import { onMounted, onUnmounted, ref, watch } from 'vue'
+import type { Ref } from 'vue'
 import { storeToRefs } from 'pinia'
 import { transform, transformExtent } from 'ol/proj'
-import type { Ref } from 'vue'
 import type OlMap from 'ol/Map'
 import {
   PROJECTION_LUX,
@@ -10,7 +10,11 @@ import {
 import { getElevation } from '@/components/draw/feature-measurements-helper'
 import { useMapStore } from '@/stores/map.store'
 import { useLocationInfoStore } from '@/stores/location-info.store'
-import type { ExportLink, ObliqueConfig } from './export-url.model'
+import { buildObliqueState } from '@/services/vcs.utils'
+import { Layer } from '@/stores/map.store.model'
+import type { BaseParams, ExportLink } from './export-url.model'
+import { TargetExportLayer } from '@/services/ol-layer/ol-layer-target-export.helper'
+import { olLayerFactoryService } from '@/services/ol-layer/ol-layer-factory.service'
 
 export function interpolateUrl(
   url: string,
@@ -22,29 +26,37 @@ export function interpolateUrl(
   )
 }
 
-export function buildObliqueState(
-  lon: number,
-  lat: number,
-  cfg: ObliqueConfig
-): string {
-  const state = [
-    [
-      [lon, lat, cfg.cameraAltitude],
-      [lon, lat, cfg.targetHeight],
-      cfg.distance,
-      cfg.heading,
-      cfg.pitch,
-      cfg.roll,
-    ],
-    cfg.label,
-    cfg.modules,
-    [],
-    [],
-    cfg.plugins,
-    cfg.collection,
-    [],
-  ]
-  return JSON.stringify(state)
+async function computeParams(
+  center: number[],
+  map: OlMap,
+  layers: Layer[]
+): Promise<BaseParams> {
+  const proj = map.getView().getProjection()
+  const luref = transform(center, proj, PROJECTION_LUX)
+  const wgs84 = transform(center, proj, PROJECTION_WGS84)
+  const [lon, lat] = wgs84
+  const zoom = map.getView().getZoom() ?? 0
+  const size = map.getSize()
+  const bboxWgs84 = size
+    ? transformExtent(
+        map.getView().calculateExtent(size),
+        proj,
+        PROJECTION_WGS84
+      )
+    : [0, 0, 0, 0]
+  const layerIds = layers.map(l => l.id).join(',')
+  const elevation = await getElevation(center)
+
+  return {
+    LUREF_X: Math.round(luref[0]),
+    LUREF_Y: Math.round(luref[1]),
+    ZOOM: Math.round(zoom),
+    LON: lon,
+    LAT: lat,
+    BBOX: bboxWgs84.join(','),
+    LAYER_IDS: layerIds,
+    ELEVATION: elevation ?? 300,
+  }
 }
 
 /**
@@ -65,73 +77,96 @@ export function buildObliqueState(
  * it is used instead of the map center for computing `LUREF_X/Y`, `LON`, `LAT` and `ELEVATION`.
  *
  * @param links - Reactive list of export links to resolve. When provided alongside `map`,
- *   `resolvedHrefs` is kept up to date automatically when `locationInfoCoords` changes.
+ *   `resolvedHrefs` is kept up to date automatically when `locationInfoCoords` changes or the map moves.
  * @param map - The OpenLayers map instance used to compute view-based parameters.
  */
 export default function useExportUrl(links?: Ref<ExportLink[]>, map?: OlMap) {
   const mapStore = useMapStore()
+  const { layers, x, y, zoom } = storeToRefs(mapStore)
   const { locationInfoCoords } = storeToRefs(useLocationInfoStore())
   const resolvedHrefs = ref<Record<string, string>>({})
 
-  async function resolveAllHrefs() {
-    if (!links || !map) return
-    const entries = await Promise.all(
-      links.value.map(
-        async link => [link.labelKey, await resolveUrl(link, map)] as const
-      )
-    )
-    resolvedHrefs.value = Object.fromEntries(entries)
+  // Cached params — recomputed at most once per event (moveend / locationInfoCoords change)
+  let mapParamsCache: BaseParams | null = null
+  let locationParamsCache: BaseParams | null = null
+  let targetExportLayer: TargetExportLayer | null = null
+
+  watch([x, y], ([newX, newY]) => targetExportLayer?.positionTarget(newX, newY))
+
+  onMounted(() => {
+    targetExportLayer = olLayerFactoryService.createOlLayerTargetExport()
+    targetExportLayer.positionTarget(x.value, y.value)
+    map?.addLayer(targetExportLayer)
+  })
+
+  onUnmounted(() => {
+    if (targetExportLayer) {
+      map?.removeLayer(targetExportLayer)
+      targetExportLayer = null
+    }
+  })
+
+  async function refreshCache(olMap: OlMap) {
+    const mapCenter = olMap.getView().getCenter()
+    if (!mapCenter) {
+      mapParamsCache = null
+      locationParamsCache = null
+      return
+    }
+    const locationCoords = locationInfoCoords.value
+    const hasLocationInfoLinks =
+      links?.value.some(l => l.useLocationInfoCoords) ?? false
+    const [mapParams, locationParams] = await Promise.all([
+      computeParams(mapCenter, olMap, layers.value),
+      hasLocationInfoLinks && locationCoords
+        ? computeParams(locationCoords, olMap, layers.value)
+        : Promise.resolve(null),
+    ])
+    mapParamsCache = mapParams
+    locationParamsCache = locationParams
   }
 
-  watch(locationInfoCoords, resolveAllHrefs)
-
-  async function resolveUrl(link: ExportLink, map: OlMap): Promise<string> {
+  function resolveUrlFromCache(link: ExportLink): string {
     if (!link.url) return ''
-
-    const mapCenter = map.getView().getCenter()
-    const { locationInfoCoords } = storeToRefs(useLocationInfoStore())
-    const center =
-      link.useLocationInfoCoords && locationInfoCoords.value
-        ? locationInfoCoords.value
-        : mapCenter
-    if (!center) return link.url
-
-    const proj = map.getView().getProjection()
-    const luref = transform(center, proj, PROJECTION_LUX)
-    const wgs84 = transform(center, proj, PROJECTION_WGS84)
-    const [lon, lat] = wgs84
-
-    const zoom = map.getView().getZoom() ?? 0
-    const size = map.getSize()
-    const bboxWgs84 = size
-      ? transformExtent(
-          map.getView().calculateExtent(size),
-          proj,
-          PROJECTION_WGS84
-        )
-      : [0, 0, 0, 0]
-
-    const { layers } = storeToRefs(mapStore)
-    const layerIds = layers.value.map(l => l.id).join(',')
-
-    const elevation = await getElevation(center)
-
+    const base =
+      link.useLocationInfoCoords && locationParamsCache
+        ? locationParamsCache
+        : mapParamsCache
+    if (!base) return link.url
     const params: Record<string, number | string> = {
-      LUREF_X: Math.round(luref[0]),
-      LUREF_Y: Math.round(luref[1]),
-      ZOOM: Math.round(zoom),
-      LON: lon,
-      LAT: lat,
-      BBOX: bboxWgs84.join(','),
-      LAYER_IDS: layerIds,
-      ELEVATION: elevation ?? 300, // default to 300m if elevation is unavailable
+      ...base,
       ...(link.obliqueConfig
-        ? { VCS_STATE: buildObliqueState(lon, lat, link.obliqueConfig) }
+        ? {
+            VCS_STATE: buildObliqueState(
+              base.LON,
+              base.LAT,
+              link.obliqueConfig
+            ),
+          }
         : {}),
     }
 
     return interpolateUrl(link.url, params)
   }
+
+  async function resolveUrl(link: ExportLink, olMap: OlMap): Promise<string> {
+    await refreshCache(olMap)
+    return resolveUrlFromCache(link)
+  }
+
+  async function resolveAllHrefs() {
+    if (!links || !map) {
+      return
+    }
+
+    await refreshCache(map)
+
+    resolvedHrefs.value = Object.fromEntries(
+      links.value.map(link => [link.labelKey, resolveUrlFromCache(link)])
+    )
+  }
+
+  watch([locationInfoCoords, layers, x, y, zoom], resolveAllHrefs)
 
   return {
     interpolateUrl,

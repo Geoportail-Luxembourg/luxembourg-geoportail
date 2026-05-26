@@ -22,8 +22,8 @@ describe('Export Panel', () => {
       cy.get('[data-cy="exportPanel"]').should('be.visible')
     })
 
-    it('displays the same number of links as in config.json', () => {
-      cy.request('/config.json').then(response => {
+    it('displays the same number of links as in config-export-url.json', () => {
+      cy.request('/config-export-url.json').then(response => {
         const expectedCount = (response.body.exportLinks ?? []).length
         cy.get('[data-cy="exportPanel"]')
           .find('li')
@@ -52,7 +52,7 @@ describe('Export Panel', () => {
     it('does not show bullet indicator when no location info is selected', () => {
       cy.get('[data-cy="exportButton"]').click()
       cy.get('[data-cy="exportPanel"]').should('be.visible')
-      cy.request('/config.json').then(response => {
+      cy.request('/config-export-url.json').then(response => {
         const linksWithCoords = (response.body.exportLinks ?? []).filter(
           (l: { useLocationInfoCoords?: boolean }) => l.useLocationInfoCoords
         )
@@ -65,7 +65,7 @@ describe('Export Panel', () => {
     })
 
     it('shows bullet indicator on links with useLocationInfoCoords after a right-click on the map', () => {
-      cy.request('/config.json').then(response => {
+      cy.request('/config-export-url.json').then(response => {
         const linksWithCoords = (response.body.exportLinks ?? []).filter(
           (l: { useLocationInfoCoords?: boolean }) => l.useLocationInfoCoords
         )

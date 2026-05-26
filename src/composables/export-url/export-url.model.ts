@@ -1,14 +1,14 @@
-export interface ObliqueConfig {
-  cameraAltitude: number
-  targetHeight: number
-  distance: number
-  heading: number
-  pitch: number
-  roll: number
-  label: string
-  modules: string[]
-  plugins: [string, Record<string, unknown>][]
-  collection: string
+import { ObliqueConfig } from '@/services/vcs.utils'
+
+export interface BaseParams {
+  LUREF_X: number
+  LUREF_Y: number
+  ZOOM: number
+  LON: number
+  LAT: number
+  BBOX: string
+  LAYER_IDS: string
+  ELEVATION: number
 }
 
 export interface ExportLink {

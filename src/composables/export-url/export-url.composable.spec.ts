@@ -3,11 +3,9 @@ import { setActivePinia } from 'pinia'
 import { createTestingPinia } from '@pinia/testing'
 import type OlMap from 'ol/Map'
 
-import useExportUrl, {
-  interpolateUrl,
-  buildObliqueState,
-} from './export-url.composable'
-import type { ExportLink, ObliqueConfig } from './export-url.model'
+import useExportUrl, { interpolateUrl } from './export-url.composable'
+import { buildObliqueState, ObliqueConfig } from '@/services/vcs.utils'
+import type { ExportLink } from './export-url.model'
 import { useMapStore } from '@/stores/map.store'
 import { useLocationInfoStore } from '@/stores/location-info.store'
 import type { Layer } from '@/stores/map.store.model'

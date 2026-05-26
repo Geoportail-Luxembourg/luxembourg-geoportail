@@ -15,7 +15,7 @@ const { resolvedHrefs, resolveAllHrefs } = useExportUrl(exportLinks, map)
 const { locationInfoCoords } = storeToRefs(useLocationInfoStore())
 
 onMounted(async () => {
-  const res = await fetch('/config.json')
+  const res = await fetch('/config-export-url.json')
   const config = await res.json()
   exportLinks.value = config.exportLinks ?? []
   await resolveAllHrefs()
@@ -30,7 +30,7 @@ onMounted(async () => {
       <ul class="divide-y divide-gray-400/50">
         <li v-for="link in exportLinks" :key="link.labelKey">
           <ExportPanelItem
-            :href="resolvedHrefs[link.labelKey]"
+            :href="resolvedHrefs[link.labelKey] || ''"
             :label="t(link.labelKey, { ns: 'app' })"
             :description="t(link.labelKey + ' desc', { ns: 'app' })"
             :target="link.target"
