@@ -16,7 +16,7 @@
       "icon": "fa-street-view",
       "useLocationInfoCoords": true,
       "target": "_geoportal_ext_obliques",
-      "url": "https://3d.geoportail.lu?state={VCS_STATE}",
+      "url": "https://3d.geoportail.lu?state={VCS_OBLIQUE_STATE}",
       "obliqueConfig": {
         "cameraAltitude": 692,
         "targetHeight": 292,
@@ -25,22 +25,6 @@
         "pitch": -90,
         "roll": 0,
         "label": "Oblique Map",
-        "modules": [
-          "LuxConfig",
-          "8bbdc4b3-691e-466e-9e91-2b0d57a9a53e",
-          "c627c247-8017-483a-a32e-1ff0ad5f0536",
-          "0fa7c853-d866-486c-8c2d-3470f401d44c",
-          "1f9cb759-c3dc-44ba-9253-7299701499a3",
-          "f7791a73-5132-4282-b3c4-1adb1abce06a",
-          "catalogConfig"
-        ],
-        "plugins": [
-          ["@geoportallux/lux-3dviewer-themesync", { "prop": "*" }],
-          [
-            "@geoportallux/lux-3dviewer-plugin-back-to-2d-portal",
-            { "prop": "*" }
-          ]
-        ],
         "collection": "ACT2023_ImagesObliques_all"
       }
     },

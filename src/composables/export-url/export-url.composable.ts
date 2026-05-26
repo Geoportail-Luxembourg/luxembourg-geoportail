@@ -137,7 +137,7 @@ export default function useExportUrl(links?: Ref<ExportLink[]>, map?: OlMap) {
       ...base,
       ...(link.obliqueConfig
         ? {
-            VCS_STATE: buildObliqueState(
+            VCS_OBLIQUE_STATE: buildObliqueState(
               base.LON,
               base.LAT,
               link.obliqueConfig
