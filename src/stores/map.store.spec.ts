@@ -234,6 +234,18 @@ describe('Map Store', () => {
       expect(mapStore.layers.length).toBe(2)
       expect(mapStore.bgLayer).toStrictEqual(null)
     })
+
+    it('does not remove the layer being reselected', () => {
+      const mapStore = useMapStore()
+      mapStore.addLayers(layer3)
+
+      useLayers().toggleLayer(3, true, false)
+
+      expect(mapStore.layers.length).toBe(1)
+      expect(mapStore.layers[0]).toStrictEqual(layer3)
+      expect(notificationsStore.addNotification).toHaveBeenCalledTimes(0)
+    })
+
     it('bg exclusion', () => {
       // TODO: this is not testing mapstore
       // TODO: move in a new test file for layers.composable
