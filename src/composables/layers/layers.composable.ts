@@ -230,11 +230,13 @@ export default function useLayers() {
     }
 
     const mapStore = useMapStore()
-    const excludedLayers = mapStore.layers.filter(_layer =>
-      hasIntersect(
-        layer?.metadata?.exclusion as string,
-        _layer?.metadata?.exclusion as string
-      )
+    const excludedLayers = mapStore.layers.filter(
+      _layer =>
+        _layer.id !== layer.id &&
+        hasIntersect(
+          layer?.metadata?.exclusion as string,
+          _layer?.metadata?.exclusion as string
+        )
     )
 
     if (excludedLayers.length > 0) {
