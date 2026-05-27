@@ -4,7 +4,12 @@ import { createTestingPinia } from '@pinia/testing'
 import type OlMap from 'ol/Map'
 
 import useExportUrl, { interpolateUrl } from './export-url.composable'
-import { buildObliqueState, ObliqueConfig } from '@/services/vcs.utils'
+import {
+  buildObliqueState,
+  LUX_VCS_MODULES,
+  LUX_VCS_PLUGINS,
+} from '@/services/vcs.utils'
+import type { ObliqueConfig } from '@/services/vcs.utils'
 import type { ExportLink } from './export-url.model'
 import { useMapStore } from '@/stores/map.store'
 import { useLocationInfoStore } from '@/stores/location-info.store'
@@ -130,8 +135,18 @@ describe('buildObliqueState', () => {
   it('includes label, modules, plugins and collection at expected indices', () => {
     const result = JSON.parse(buildObliqueState(6.13, 49.61, obliqueConfig))
     expect(result[1]).toBe(obliqueConfig.label)
-    expect(result[2]).toEqual(obliqueConfig.modules)
-    expect(result[5]).toEqual(obliqueConfig.plugins)
+    expect(result[2]).toEqual(
+      expect.arrayContaining([...obliqueConfig.modules, ...LUX_VCS_MODULES])
+    )
+    expect(result[2].length).toBe(
+      new Set([...obliqueConfig.modules, ...LUX_VCS_MODULES]).size
+    )
+    expect(result[5].map((p: unknown[]) => p[0])).toEqual(
+      expect.arrayContaining([
+        ...obliqueConfig.plugins.map(p => p[0]),
+        ...LUX_VCS_PLUGINS.map(p => p[0]),
+      ])
+    )
     expect(result[6]).toBe(obliqueConfig.collection)
   })
 })
@@ -270,11 +285,11 @@ describe('resolveUrl', () => {
     expect(result).toContain(encodeURIComponent('layer_a,42'))
   })
 
-  it('replaces {VCS_STATE} with encoded JSON state', async () => {
+  it('replaces {VCS_OBLIQUE_STATE} with encoded JSON state', async () => {
     const link: ExportLink = {
       labelKey: 'Vue Oblique',
       icon: 'fa-street-view',
-      url: 'https://3d.geoportail.lu?state={VCS_STATE}',
+      url: 'https://3d.geoportail.lu?state={VCS_OBLIQUE_STATE}',
       obliqueConfig,
     }
     const result = await resolveUrl(link, makeMockMap())
