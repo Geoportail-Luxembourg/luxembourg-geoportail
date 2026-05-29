@@ -15,7 +15,7 @@ const { locationInfoCoords } = storeToRefs(useLocationInfoStore())
 <template>
   <div data-cy="exportPanel">
     <div
-      class="absolute bottom-full right-0 top-auto z-20 flex flex-col text-white box-content border border-gray-400 bg-primary md:w-60 overflow-hidden shadow-lg"
+      class="absolute left-full bottom-0 sm:left-auto sm:bottom-full sm:right-0 z-20 flex flex-col text-white box-content border border-gray-400 bg-primary w-60 overflow-hidden shadow-lg"
     >
       <ul class="divide-y divide-gray-400/50">
         <li v-for="link in links" :key="link.labelKey">
