@@ -37,6 +37,13 @@
       "labelKey": "Minecraft",
       "icon": "fa-gamepad",
       "url": "https://minecraft.geoportail.lu"
+    },
+    {
+      "labelKey": "Lien vers Cyclomédia",
+      "icon": "fa-globe",
+      "url": "http://streetsmart.cyclomedia.com/streetsmart?q={LUREF_X};{LUREF_Y}",
+      "userType": ["etat", "commune"],
+      "userRoles": ["MinTour"]
     }
   ]
 }

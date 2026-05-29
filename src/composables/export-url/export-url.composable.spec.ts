@@ -1,4 +1,6 @@
-import { describe, it, expect, beforeEach, vi } from 'vitest'
+import { describe, it, expect, beforeEach, afterEach, vi } from 'vitest'
+import { defineComponent, nextTick } from 'vue'
+import { mount, flushPromises } from '@vue/test-utils'
 import { setActivePinia } from 'pinia'
 import { createTestingPinia } from '@pinia/testing'
 import type OlMap from 'ol/Map'
@@ -13,6 +15,7 @@ import type { ObliqueConfig } from '@/services/vcs.utils'
 import type { ExportLink } from './export-url.model'
 import { useMapStore } from '@/stores/map.store'
 import { useLocationInfoStore } from '@/stores/location-info.store'
+import { useUserManagerStore } from '@/stores/user-manager.store'
 import type { Layer } from '@/stores/map.store.model'
 
 let resolveUrl: Awaited<ReturnType<typeof useExportUrl>>['resolveUrl']
@@ -34,6 +37,14 @@ vi.mock('@/composables/map/map.composable', () => ({
 
 vi.mock('@/components/draw/feature-measurements-helper', () => ({
   getElevation: vi.fn(() => Promise.resolve(332)),
+}))
+
+vi.mock('@/services/ol-layer/ol-layer-factory.service', () => ({
+  olLayerFactoryService: {
+    createOlLayerTargetExport: vi.fn(() => ({
+      positionTarget: vi.fn(),
+    })),
+  },
 }))
 
 function makeMockMap(overrides?: {
@@ -156,7 +167,10 @@ describe('resolveUrl', () => {
     setActivePinia(
       createTestingPinia({
         createSpy: vi.fn,
-        initialState: { map: { layers: [layerMock1, layerMock2] } },
+        initialState: {
+          map: { layers: [layerMock1, layerMock2] },
+          'user-manager': { currentUser: undefined },
+        },
       })
     )
     resolveUrl = useExportUrl().resolveUrl
@@ -313,5 +327,176 @@ describe('resolveUrl', () => {
     }
     const result = await resolveUrl(link, makeMockMap({ size: null }))
     expect(result).toContain('bbox=')
+  })
+})
+
+// ---------------------------------------------------------------------------
+// links — filtering by userType / userRoles
+// ---------------------------------------------------------------------------
+
+function mountExportUrl(pinia: ReturnType<typeof createTestingPinia>) {
+  let composable!: ReturnType<typeof useExportUrl>
+  const TestComponent = defineComponent({
+    setup() {
+      composable = useExportUrl()
+      return {}
+    },
+    template: '<div></div>',
+  })
+  const wrapper = mount(TestComponent, { global: { plugins: [pinia] } })
+  return {
+    get composable() {
+      return composable
+    },
+    unmount: () => wrapper.unmount(),
+  }
+}
+
+describe('links', () => {
+  const linkOpen: ExportLink = { labelKey: 'OpenLink', icon: 'fa-globe' }
+  const linkForEtat: ExportLink = {
+    labelKey: 'EtatLink',
+    icon: 'fa-lock',
+    userType: ['etat'],
+  }
+  const linkForRole: ExportLink = {
+    labelKey: 'RoleLink',
+    icon: 'fa-lock',
+    userRoles: ['MinTour'],
+  }
+  const linkForBoth: ExportLink = {
+    labelKey: 'BothLink',
+    icon: 'fa-lock',
+    userType: ['commune'],
+    userRoles: ['MinTour'],
+  }
+
+  function setupWithLinks(links: ExportLink[], currentUser?: unknown) {
+    vi.stubGlobal(
+      'fetch',
+      vi.fn().mockResolvedValue({
+        json: () => Promise.resolve({ exportLinks: links }),
+      })
+    )
+    const pinia = createTestingPinia({
+      createSpy: vi.fn,
+      initialState: {
+        map: { layers: [] },
+        'user-manager': { currentUser },
+      },
+    })
+    return mountExportUrl(pinia)
+  }
+
+  afterEach(() => {
+    vi.unstubAllGlobals()
+  })
+
+  it('includes all links without restrictions regardless of auth state', async () => {
+    const { composable, unmount } = setupWithLinks([linkOpen])
+    await flushPromises()
+    expect(composable.links.value.map(l => l.labelKey)).toContain('OpenLink')
+    unmount()
+  })
+
+  it('hides restricted links when user is not logged in', async () => {
+    const { composable, unmount } = setupWithLinks(
+      [linkOpen, linkForEtat],
+      undefined
+    )
+    await flushPromises()
+    const keys = composable.links.value.map(l => l.labelKey)
+    expect(keys).toContain('OpenLink')
+    expect(keys).not.toContain('EtatLink')
+    unmount()
+  })
+
+  it('shows link when userType matches', async () => {
+    const { composable, unmount } = setupWithLinks([linkOpen, linkForEtat], {
+      login: 'user1',
+      typeUtilisateur: 'etat',
+      role: '',
+    })
+    await flushPromises()
+    expect(composable.links.value.map(l => l.labelKey)).toContain('EtatLink')
+    unmount()
+  })
+
+  it('hides link when userType does not match', async () => {
+    const { composable, unmount } = setupWithLinks([linkForEtat], {
+      login: 'user1',
+      typeUtilisateur: 'commune',
+      role: '',
+    })
+    await flushPromises()
+    expect(composable.links.value.map(l => l.labelKey)).not.toContain(
+      'EtatLink'
+    )
+    unmount()
+  })
+
+  it('shows link when userRoles matches', async () => {
+    const { composable, unmount } = setupWithLinks([linkForRole], {
+      login: 'user1',
+      typeUtilisateur: 'other',
+      role: 'MinTour',
+    })
+    await flushPromises()
+    expect(composable.links.value.map(l => l.labelKey)).toContain('RoleLink')
+    unmount()
+  })
+
+  it('hides link when userRoles does not match', async () => {
+    const { composable, unmount } = setupWithLinks([linkForRole], {
+      login: 'user1',
+      typeUtilisateur: 'other',
+      role: 'OtherRole',
+    })
+    await flushPromises()
+    expect(composable.links.value.map(l => l.labelKey)).not.toContain(
+      'RoleLink'
+    )
+    unmount()
+  })
+
+  it('shows link when either userType or userRoles matches', async () => {
+    const { composable, unmount } = setupWithLinks([linkForBoth], {
+      login: 'user1',
+      typeUtilisateur: 'commune',
+      role: 'OtherRole',
+    })
+    await flushPromises()
+    expect(composable.links.value.map(l => l.labelKey)).toContain('BothLink')
+    unmount()
+  })
+
+  it('updates links reactively when currentUser changes', async () => {
+    vi.stubGlobal(
+      'fetch',
+      vi.fn().mockResolvedValue({
+        json: () => Promise.resolve({ exportLinks: [linkOpen, linkForEtat] }),
+      })
+    )
+    const pinia = createTestingPinia({
+      createSpy: vi.fn,
+      initialState: {
+        map: { layers: [] },
+        'user-manager': { currentUser: undefined },
+      },
+    })
+    const { composable, unmount } = mountExportUrl(pinia)
+    await flushPromises()
+    expect(composable.links.value.map(l => l.labelKey)).not.toContain(
+      'EtatLink'
+    )
+
+    const userStore = useUserManagerStore()
+    userStore.$patch({
+      currentUser: { login: 'u', typeUtilisateur: 'etat', role: '' },
+    })
+    await nextTick()
+
+    expect(composable.links.value.map(l => l.labelKey)).toContain('EtatLink')
+    unmount()
   })
 })

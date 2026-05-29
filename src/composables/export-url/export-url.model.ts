@@ -18,4 +18,6 @@ export interface ExportLink {
   target?: string
   useLocationInfoCoords?: boolean
   obliqueConfig?: ObliqueConfig
+  userType?: string[]
+  userRoles?: string[]
 }

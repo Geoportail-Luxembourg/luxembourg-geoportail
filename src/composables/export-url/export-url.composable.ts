@@ -1,5 +1,4 @@
 import { onMounted, onUnmounted, ref, watch } from 'vue'
-import type { Ref } from 'vue'
 import { storeToRefs } from 'pinia'
 import { transform, transformExtent } from 'ol/proj'
 import type OlMap from 'ol/Map'
@@ -10,6 +9,7 @@ import {
 import { getElevation } from '@/components/draw/feature-measurements-helper'
 import { useMapStore } from '@/stores/map.store'
 import { useLocationInfoStore } from '@/stores/location-info.store'
+import { useUserManagerStore } from '@/stores/user-manager.store'
 import { buildObliqueState } from '@/services/vcs.utils'
 import { Layer } from '@/stores/map.store.model'
 import type { BaseParams, ExportLink } from './export-url.model'
@@ -80,11 +80,14 @@ async function computeParams(
  *   `resolvedHrefs` is kept up to date automatically when `locationInfoCoords` changes or the map moves.
  * @param map - The OpenLayers map instance used to compute view-based parameters.
  */
-export default function useExportUrl(links?: Ref<ExportLink[]>, map?: OlMap) {
+export default function useExportUrl(map?: OlMap) {
   const mapStore = useMapStore()
   const { layers, x, y, zoom } = storeToRefs(mapStore)
   const { locationInfoCoords } = storeToRefs(useLocationInfoStore())
+  const { currentUser } = storeToRefs(useUserManagerStore())
   const resolvedHrefs = ref<Record<string, string>>({})
+  const links = ref<ExportLink[]>([])
+  const allLinks = ref<ExportLink[]>([])
 
   // Cached params — recomputed at most once per event (moveend / locationInfoCoords change)
   let mapParamsCache: BaseParams | null = null
@@ -93,10 +96,16 @@ export default function useExportUrl(links?: Ref<ExportLink[]>, map?: OlMap) {
 
   watch([x, y], ([newX, newY]) => targetExportLayer?.positionTarget(newX, newY))
 
-  onMounted(() => {
+  onMounted(async () => {
+    const res = await fetch('/config-export-url.json')
+    const config = await res.json()
+    allLinks.value = config.exportLinks ?? []
+
     targetExportLayer = olLayerFactoryService.createOlLayerTargetExport()
     targetExportLayer.positionTarget(x.value, y.value)
     map?.addLayer(targetExportLayer)
+
+    await resolveAllHrefs()
   })
 
   onUnmounted(() => {
@@ -149,13 +158,25 @@ export default function useExportUrl(links?: Ref<ExportLink[]>, map?: OlMap) {
     return interpolateUrl(link.url, params)
   }
 
+  function filterLinks(allLinks: ExportLink[]): ExportLink[] {
+    const userType = currentUser.value?.typeUtilisateur
+    const userRole = currentUser.value?.role
+    return allLinks.filter(link => {
+      const hasRestriction = !!(link.userType?.length || link.userRoles?.length)
+      if (!hasRestriction) return true
+      const okType = !!(userType && link.userType?.includes(userType))
+      const okRole = !!(userRole && link.userRoles?.includes(userRole))
+      return okType || okRole
+    })
+  }
+
   async function resolveUrl(link: ExportLink, olMap: OlMap): Promise<string> {
     await refreshCache(olMap)
     return resolveUrlFromCache(link)
   }
 
   async function resolveAllHrefs() {
-    if (!links || !map) {
+    if (!map) {
       return
     }
 
@@ -167,6 +188,10 @@ export default function useExportUrl(links?: Ref<ExportLink[]>, map?: OlMap) {
   }
 
   watch([locationInfoCoords, layers, x, y, zoom], resolveAllHrefs)
+  watch([allLinks, currentUser], ([newLinks]) => {
+    links.value = filterLinks(newLinks)
+    resolveAllHrefs()
+  })
 
   return {
     interpolateUrl,
@@ -174,5 +199,6 @@ export default function useExportUrl(links?: Ref<ExportLink[]>, map?: OlMap) {
     resolveUrl,
     resolvedHrefs,
     resolveAllHrefs,
+    links,
   }
 }
