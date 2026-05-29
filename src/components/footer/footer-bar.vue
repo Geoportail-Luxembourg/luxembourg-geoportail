@@ -143,6 +143,24 @@ watch(lidarOpen, isOpen => {
         false
   }
 })
+watch(exportOpen, isOpen => {
+  if (isOpen) {
+    layersOpen.value =
+      legendsOpen.value =
+      themeGridOpen.value =
+      printToolbarOpen.value =
+      drawToolbarOpen.value =
+      measureToolbarOpen.value =
+      elevationProfileToolbarOpen.value =
+      shareOpen.value =
+      styleEditorOpen.value =
+      myMapsOpen.value =
+      infoOpen.value =
+      routingPanelOpen.value =
+        false
+  }
+})
+
 const featureInfoStore = useFeatureInfoStore()
 const { displayStarOnMobile } = storeToRefs(featureInfoStore)
 const { setDisplayStarOnMobile } = featureInfoStore
