@@ -132,4 +132,37 @@ describe('Export Panel', () => {
         .should('have.attr', 'href', 'https://minecraft.geoportail.lu')
     })
   })
+
+  describe('Restricted links visibility', () => {
+    it('does not show Cyclomédia link when user is not logged in', () => {
+      cy.get('[data-cy="exportButton"]').click()
+      cy.get('[data-cy="exportPanel"]').should('be.visible')
+      cy.get('[data-cy="exportPanel"]').should('not.contain.text', 'Cyclomédia')
+    })
+
+    it('shows Cyclomédia link after login with an etat user', () => {
+      cy.intercept('POST', '/login', {
+        statusCode: 200,
+        body: {
+          login: 'tester_etat',
+          role: 'etat',
+          role_id: 0,
+          mymaps_role: 999,
+          mail: 'user@etat.com',
+          sn: 'aaa',
+          typeUtilisateur: 'etat',
+          is_admin: false,
+        },
+      })
+
+      cy.get('header [data-cy="authFormIcon"]').click()
+      cy.get('[data-cy="authForm"] input[name="userName"]').type('tester_etat')
+      cy.get('[data-cy="authForm"] input[name="userPassword"]').type('password')
+      cy.get('[data-cy="authForm"] input[type="submit"]').click()
+
+      cy.get('[data-cy="exportButton"]').click()
+      cy.get('[data-cy="exportPanel"]').should('be.visible')
+      cy.get('[data-cy="exportPanel"]').should('contain.text', 'Cyclomédia')
+    })
+  })
 })
