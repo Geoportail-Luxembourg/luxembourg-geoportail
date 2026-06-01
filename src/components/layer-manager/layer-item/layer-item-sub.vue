@@ -105,7 +105,7 @@ function dispatchChangeOpacity() {
         data-cy="myLayerLocaliseInCatalog"
         role="button"
         :tabindex="!isOpen ? -1 : 0"
-        class="fa-solid fa-crosshairs ml-auto text-sm cursor-pointer"
+        class="lux-icon locate ml-auto text-base font-bold cursor-pointer"
         :aria-label="
           t('Localise in catalog {{layerName}}', {
             ns: 'app',
