@@ -25,6 +25,7 @@ const mapStore = useMapStore()
 const themeStore = useThemeStore()
 const appStore = useAppStore()
 const layers = useLayers()
+const themes = useThemes()
 const catalogRoot = useTemplateRef<HTMLElement>('catalogRoot')
 const layerTree: ShallowRef<LayerTreeNodeModel | undefined> = shallowRef()
 const layerTree3d: ShallowRef<LayerTreeNodeModel | undefined> = shallowRef()
@@ -98,7 +99,7 @@ watch(layerToLocateInCatalog, id => {
   if (tryExpand()) return
 
   // Layer not in current theme → switch to first theme that contains it
-  const themeNames = useThemes().findThemeNamesByLayerId(id)
+  const themeNames = themes.findThemeNamesByLayerId(id)
   if (!themeNames.length) return
   themeStore.setTheme(themeNames[0])
 
