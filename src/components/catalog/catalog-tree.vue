@@ -70,12 +70,12 @@ watch(layerToLocateInCatalog, id => {
 
   const tryExpand = () => {
     if (layerTree.value) {
-      const { found } = layerTreeService.expandToLayer(id, layerTree.value)
+      const { found, node } = layerTreeService.expandToLayer(
+        id,
+        layerTree.value
+      )
       if (found) {
-        layerTree.value = layerTreeService.expandToLayer(
-          id,
-          layerTree.value
-        ).node
+        layerTree.value = node
         nextTick(() => {
           const el = catalogRoot.value?.querySelector<HTMLElement>(
             `[data-info="layerRow-${id}"]`
