@@ -83,7 +83,11 @@ watch(layerToLocateInCatalog, id => {
           if (!el) return
           el.scrollIntoView({ behavior: 'smooth', block: 'center' })
           el.classList.add('lux-layer-highlight')
-          setTimeout(() => el.classList.remove('lux-layer-highlight'), 1000)
+          el.addEventListener(
+            'animationend',
+            () => el.classList.remove('lux-layer-highlight'),
+            { once: true }
+          )
         })
         return true
       }
