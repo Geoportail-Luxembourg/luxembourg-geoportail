@@ -66,7 +66,7 @@ watchEffect(() => {
 
 watch(layerToLocateInCatalog, id => {
   if (id === undefined || id === null) return
-  appStore.layerToLocateInCatalog = undefined
+  appStore.clearLayerToLocateInCatalog()
 
   const tryExpand = () => {
     if (layerTree.value) {

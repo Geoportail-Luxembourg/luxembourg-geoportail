@@ -175,6 +175,10 @@ export const useAppStore = defineStore(
       layerToLocateInCatalog.value = id
     }
 
+    function clearLayerToLocateInCatalog() {
+      layerToLocateInCatalog.value = undefined
+    }
+
     return {
       authFormOpened,
       embedded,
@@ -227,6 +231,7 @@ export const useAppStore = defineStore(
       toggleFeedbackOpen,
       toggleRoutingOpen,
       locateLayerInCatalog,
+      clearLayerToLocateInCatalog,
     }
   },
   {}
