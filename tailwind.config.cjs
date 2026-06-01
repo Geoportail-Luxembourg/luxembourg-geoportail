@@ -55,9 +55,9 @@ function getMode() {
 
 module.exports = {
   corePlugins: {
-    // Activate Tailwind preflight only in dev mode (= standalone v4)
-    // for lib lux to be integreated in v3, preflight is replaced by lib.css (some css classes have been removed, eg. h1, h2, 3h3 styling)
-    preflight: getMode() === 'dev',
+    // Activate Tailwind preflight for standalone mode (dev, staging, production)
+    // Disable only for lib mode where preflight is replaced by lib.css (some css classes have been removed, eg. h1, h2, 3h3 styling)
+    preflight: getMode() !== 'lib',
   },
   content: ['index.html', './src/**/*.{html,js,ts,vue}'],
   theme: {
