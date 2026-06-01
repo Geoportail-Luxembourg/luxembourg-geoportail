@@ -2,6 +2,7 @@ import { Ref, ref } from 'vue'
 import { acceptHMRUpdate, defineStore } from 'pinia'
 import { StyleSection } from '@/composables/mvt-styles/mvt-styles.model'
 import { MyMap } from './app.store.model'
+import type { LayerId } from './map.store.model'
 
 export const DEFAULT_LANG = 'fr'
 export const DEFAULT_LAYER_PANEL_OPENED = true
@@ -50,6 +51,7 @@ export const useAppStore = defineStore(
     const printToolbarOpen = ref(false)
     const isOffLine = ref(false)
     const isApp = ref(false) // Is the app displayed for Android or Ios?
+    const layerToLocateInCatalog: Ref<LayerId | undefined> = ref(undefined)
 
     const routingPanelOpen = ref(DEFAULT_ROUTING_OPENED)
     function setIsApp(value: boolean) {
@@ -166,6 +168,17 @@ export const useAppStore = defineStore(
       routingPanelOpen.value = open ?? !routingPanelOpen.value
     }
 
+    function locateLayerInCatalog(id: LayerId) {
+      layersOpen.value = true
+      myLayersTabOpen.value = false
+      themeGridOpen.value = false
+      layerToLocateInCatalog.value = id
+    }
+
+    function clearLayerToLocateInCatalog() {
+      layerToLocateInCatalog.value = undefined
+    }
+
     return {
       authFormOpened,
       embedded,
@@ -192,6 +205,7 @@ export const useAppStore = defineStore(
       drawToolbarOpen,
       measureToolbarOpen,
       routingPanelOpen,
+      layerToLocateInCatalog,
       elevationProfileToolbarOpen,
       isOffLine,
       isApp,
@@ -216,6 +230,8 @@ export const useAppStore = defineStore(
       toggleElevationProfileToolbarOpen,
       toggleFeedbackOpen,
       toggleRoutingOpen,
+      locateLayerInCatalog,
+      clearLayerToLocateInCatalog,
     }
   },
   {}

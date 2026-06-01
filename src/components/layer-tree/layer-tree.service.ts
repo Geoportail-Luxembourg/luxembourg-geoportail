@@ -25,6 +25,31 @@ export class LayerTreeService {
     }
   }
 
+  /**
+   * Expands all ancestor nodes of `targetId` so the layer is visible in the tree.
+   * Returns `{ node, found }` where `found` indicates whether the target was located.
+   */
+  expandToLayer(
+    targetId: LayerId,
+    node: LayerTreeNodeModel
+  ): { node: LayerTreeNodeModel; found: boolean } {
+    if (!node.children) {
+      return { node, found: node.id === targetId }
+    }
+    const results = node.children.map(child =>
+      this.expandToLayer(targetId, child)
+    )
+    const found = results.some(r => r.found)
+    return {
+      node: {
+        ...node,
+        expanded: found ? true : node.expanded,
+        children: results.map(r => r.node),
+      },
+      found,
+    }
+  }
+
   updateLayers(
     node: LayerTreeNodeModel,
     layers: Layer[] | undefined

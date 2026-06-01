@@ -750,5 +750,6 @@
   "You can also use the Drawing Tools to annotate the map and send it to the support team.": "You can also use the Drawing Tools to annotate the map and send it to the support team.",
   "You have no existing Maps, please create a New Map": "You have no existing maps, please create a new map",
   "Your email": "Your email:",
-  "yyyy": "yyyy"
+  "yyyy": "yyyy",
+  "Localise in catalog {{layerName}}": "Show the layer in the catalog"
 }

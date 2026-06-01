@@ -130,6 +130,10 @@
     content: '\E902';
   }
 
+  .lux-icon.locate::before {
+    content: '\E041';
+  }
+
   .lux-btn,
   a.lux-btn {
     @apply cursor-pointer bg-white border text-primary py-[6px] px-[12px] hover:bg-primary hover:text-white leading-snug focus:bg-[#e6e6e6] focus:border-[#8c8c8c] focus:[color:var(--color-primary)] focus:lux-outlined;
@@ -303,6 +307,30 @@
     100% {
       transform: rotate(360deg);
     }
+  }
+
+  @keyframes lux-layer-highlight {
+    0% {
+      background-color: transparent;
+      box-shadow: 0 0 0px 0px transparent;
+    }
+    40% {
+      background-color: transparent;
+      box-shadow: 0 0 0px 0px transparent;
+    }
+    60% {
+      background-color: theme('colors.yellow.200');
+      box-shadow: 0 0 10px 4px theme('colors.yellow.300');
+    }
+    100% {
+      background-color: transparent;
+      box-shadow: 0 0 0px 0px transparent;
+    }
+  }
+
+  .lux-layer-highlight {
+    animation: lux-layer-highlight 1s ease-out forwards;
+    border-radius: 4px;
   }
 
   .lux-slider-line {

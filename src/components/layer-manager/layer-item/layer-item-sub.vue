@@ -11,7 +11,11 @@ const props = defineProps<{
   isLayerComparatorOpen: boolean
   displayLayerComparatorOpen: boolean
 }>()
-const emit = defineEmits(['changeOpacity', 'clickToggleLayerComparator'])
+const emit = defineEmits([
+  'changeOpacity',
+  'clickToggleLayerComparator',
+  'localiseInCatalog',
+])
 const { t } = useTranslation()
 const layersService = useLayers()
 const layerLabel = computed(() =>
@@ -46,6 +50,10 @@ function onChangeOpacity(event: Event) {
 
 function onToggleLayerComparator() {
   emit('clickToggleLayerComparator', props.layer)
+}
+
+function onLocaliseInCatalog() {
+  emit('localiseInCatalog', props.layer)
 }
 
 function dispatchChangeOpacity() {
@@ -92,21 +100,42 @@ function dispatchChangeOpacity() {
         })
       "
     />
-    <button
-      v-if="displayLayerComparatorOpen"
-      data-cy="myLayerComparatorBtn"
-      role="switch"
-      :tabindex="!isOpen ? -1 : 0"
-      class="fa ml-auto text-sm cursor-pointer"
-      :class="isLayerComparatorOpen ? 'fa-adjust' : 'fa-circle'"
-      :aria-checked="isLayerComparatorOpen"
-      :aria-label="
-        t('Toggle layer comparator for {{ layerName }}', {
-          ns: 'app',
-          layerName: layerLabel,
-        })
-      "
-      @click="onToggleLayerComparator"
-    ></button>
+    <div class="flex justify-end items-center gap-x-2 ml-auto">
+      <button
+        data-cy="myLayerLocaliseInCatalog"
+        role="button"
+        :tabindex="!isOpen ? -1 : 0"
+        class="lux-icon locate ml-auto text-base font-bold cursor-pointer"
+        :aria-label="
+          t('Localise in catalog {{layerName}}', {
+            ns: 'app',
+            layerName: layerLabel,
+          })
+        "
+        :title="
+          t('Localise in catalog {{layerName}}', {
+            ns: 'app',
+            layerName: layerLabel,
+          })
+        "
+        @click="onLocaliseInCatalog"
+      ></button>
+      <button
+        v-if="displayLayerComparatorOpen"
+        data-cy="myLayerComparatorBtn"
+        role="switch"
+        :tabindex="!isOpen ? -1 : 0"
+        class="fa ml-auto text-sm cursor-pointer"
+        :class="isLayerComparatorOpen ? 'fa-adjust' : 'fa-circle'"
+        :aria-checked="isLayerComparatorOpen"
+        :aria-label="
+          t('Toggle layer comparator for {{ layerName }}', {
+            ns: 'app',
+            layerName: layerLabel,
+          })
+        "
+        @click="onToggleLayerComparator"
+      ></button>
+    </div>
   </div>
 </template>
