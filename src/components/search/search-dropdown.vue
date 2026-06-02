@@ -19,6 +19,7 @@ import useMap from '@/composables/map/map.composable'
 import { useMetadataStore } from '@/stores/metadata.store'
 import { LayerId, Layer } from '@/stores/map.store.model'
 import { useMatomo } from '@/composables/matomo/matomo.composable'
+import useFeatureInfo from '@/composables/info/feature-info.composable'
 
 const FULLTEXTSEARCH_URL = import.meta.env.VITE_SEARCH_FULLTEXTSEARCH_URL
 const FEATURESEARCH_URL = import.meta.env.VITE_SEARCH_FEATURESEARCH_URL
@@ -112,6 +113,29 @@ function addLayerFromSearch(layer_name: string) {
       layersService.toggleLayer(layerToAdd.id, true, false, false)
     }
   })
+}
+
+function computeFeatureCenterWGS84(entry: any): [number, number] | null {
+  try {
+    const raw = entry?.toJSON ? entry.toJSON() : entry
+    if (Array.isArray(raw?.bbox) && raw.bbox.length >= 4) {
+      const [minX, minY, maxX, maxY] = raw.bbox
+      return [(minX + maxX) / 2, (minY + maxY) / 2]
+    }
+    const geom = raw?.geometry
+    if (geom?.type === 'Point' && Array.isArray(geom.coordinates)) {
+      return [geom.coordinates[0], geom.coordinates[1]]
+    }
+    const coords = geom?.coordinates?.[0]
+    if (Array.isArray(coords) && coords.length > 0) {
+      const sumX = coords.reduce((s: number, c: number[]) => s + c[0], 0)
+      const sumY = coords.reduce((s: number, c: number[]) => s + c[1], 0)
+      return [sumX / coords.length, sumY / coords.length]
+    }
+  } catch {
+    // ignore
+  }
+  return null
 }
 
 function processResultFulltextsearch(data: any, selectResult: Function) {
@@ -354,34 +378,60 @@ function selectResultFeatureSearch(result: {
   )
 }
 
-function selectResultFullTextSearch(result: {
+async function selectResultFullTextSearch(result: {
   label: string
   layer_name: string
   entry: object
 }) {
-  trackSearchCategory(result.layer_name || 'Addresses')
-  searchQuery.value = result.label
-  addLayerFromSearch(result.layer_name)
-  switch (result.layer_name) {
-    case 'Parcelle':
+  try {
+    trackSearchCategory(result.layer_name || 'Addresses')
+    searchQuery.value = result.label
+    addLayerFromSearch(result.layer_name)
+    await nextTick()
+
+    const center = computeFeatureCenterWGS84(result.entry)
+    const layerNameList = layerLookup[result.layer_name] || []
+
+    if (center && layerNameList.length > 0) {
+      const { findByName } = useThemes()
+      const layerIds = layerNameList
+        .map(name => findByName(name))
+        .filter(l => l !== undefined)
+        .map(l => l!.id)
+
+      if (layerIds.length > 0) {
+        const featureInfo = useFeatureInfo()
+        const found = await featureInfo.getFeatureInfoAtCoordinate(
+          center,
+          layerIds
+        )
+        if (!found) {
+          olLayerSearchService.highlightFeatures(
+            [result.entry],
+            true,
+            maxZoom.value
+          )
+        }
+      } else {
+        olLayerSearchService.highlightFeatures(
+          [result.entry],
+          true,
+          maxZoom.value
+        )
+      }
+    } else {
       olLayerSearchService.highlightFeatures(
         [result.entry],
         true,
         maxZoom.value
       )
-      break
-    case 'Adresse':
-      olLayerSearchService.highlightFeatures(
-        [result.entry],
-        true,
-        maxZoom.value
-      )
-      break
-    default:
-      olLayerSearchService.clearFeatures()
-      olLayerSearchService.fitFeatures([result.entry], maxZoom.value)
+    }
+
+    closeDropdown()
+  } catch (e) {
+    olLayerSearchService.highlightFeatures([result.entry], true, maxZoom.value)
+    closeDropdown()
   }
-  closeDropdown()
 }
 function selectResultBackgroundLayerSearch(result: {
   label: string
