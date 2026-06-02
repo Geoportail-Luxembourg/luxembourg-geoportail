@@ -115,6 +115,16 @@ function addLayerFromSearch(layer_name: string) {
   })
 }
 
+function makePointEntry(entry: any, center: [number, number]): object {
+  const raw = entry?.toJSON ? entry.toJSON() : entry
+  return {
+    type: 'Feature',
+    geometry: { type: 'Point', coordinates: center },
+    properties: raw?.properties ?? {},
+    bbox: raw?.bbox,
+  }
+}
+
 function computeFeatureCenterWGS84(entry: any): [number, number] | null {
   try {
     const raw = entry?.toJSON ? entry.toJSON() : entry
@@ -383,6 +393,15 @@ async function selectResultFullTextSearch(result: {
   layer_name: string
   entry: object
 }) {
+  const highlightEntry = (entry: object) => {
+    const center = computeFeatureCenterWGS84(entry)
+    const displayEntry =
+      result.layer_name === 'Localité' && center
+        ? makePointEntry(entry, center)
+        : entry
+    olLayerSearchService.highlightFeatures([displayEntry], true, maxZoom.value)
+  }
+
   try {
     trackSearchCategory(result.layer_name || 'Addresses')
     searchQuery.value = result.label
@@ -406,30 +425,18 @@ async function selectResultFullTextSearch(result: {
           layerIds
         )
         if (!found) {
-          olLayerSearchService.highlightFeatures(
-            [result.entry],
-            true,
-            maxZoom.value
-          )
+          highlightEntry(result.entry)
         }
       } else {
-        olLayerSearchService.highlightFeatures(
-          [result.entry],
-          true,
-          maxZoom.value
-        )
+        highlightEntry(result.entry)
       }
     } else {
-      olLayerSearchService.highlightFeatures(
-        [result.entry],
-        true,
-        maxZoom.value
-      )
+      highlightEntry(result.entry)
     }
 
     closeDropdown()
   } catch (e) {
-    olLayerSearchService.highlightFeatures([result.entry], true, maxZoom.value)
+    highlightEntry(result.entry)
     closeDropdown()
   }
 }
