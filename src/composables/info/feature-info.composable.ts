@@ -28,6 +28,7 @@ import { useLidarStore } from '@/stores/lidar.store'
 import { useElevationProfileStore } from '@/stores/elevation-profile.store'
 import { getFeatureInfoJson } from '@/services/api/api-feature-info.service'
 import { OLLAYER_PROP_METADATA } from '@/services/ol-layer/ol-layer.model'
+import { olLayerSearchService } from '@/services/ol-layer/ol-layer-search.service'
 import { isParcelLayerIdent } from '@/composables/layers/layers.composable'
 import ImageLayer from 'ol/layer/Image'
 import { ImageWMS } from 'ol/source'
@@ -154,6 +155,8 @@ export default function useFeatureInfo() {
       }
 
       timeoutId.value = window.setTimeout(() => {
+        if (isLoading.value) return
+
         let found = false
         if (
           (layersOpen.value || myMapsOpen.value) &&
@@ -292,11 +295,13 @@ export default function useFeatureInfo() {
     layersList: (string | number)[],
     layerLabel: { [key: string]: string },
     shiftKey: boolean,
-    fit: boolean
+    fit: boolean,
+    fixedBuffers?: { big: number; small: number },
+    keepHighlightOnEmpty = false
   ): Promise<boolean> {
     const resolution = map.getView().getResolution() || 1
-    const bigBuffer = 20 * resolution
-    const smallBuffer = 1 * resolution
+    const bigBuffer = fixedBuffers ? fixedBuffers.big : 20 * resolution
+    const smallBuffer = fixedBuffers ? fixedBuffers.small : 1 * resolution
 
     const big_box = [
       [pointLux[0] - bigBuffer, pointLux[1] + bigBuffer],
@@ -331,17 +336,27 @@ export default function useFeatureInfo() {
         showInfo(shiftKey, data, layerLabel, true, fit)
         return true
       } else {
-        lastHighlightedFeatures.value = []
-        featureInfoLayerService.highlightFeatures(
-          lastHighlightedFeatures.value,
-          false,
-          maxZoom.value
-        )
-        done()
+        if (!keepHighlightOnEmpty) {
+          lastHighlightedFeatures.value = []
+          featureInfoLayerService.highlightFeatures(
+            lastHighlightedFeatures.value,
+            false,
+            maxZoom.value
+          )
+          done()
+        } else {
+          setLoading(false)
+          map.getViewport().style.cursor = ''
+        }
         return false
       }
     } catch (error) {
-      done()
+      if (!keepHighlightOnEmpty) {
+        done()
+      } else {
+        setLoading(false)
+        map.getViewport().style.cursor = ''
+      }
       return false
     }
   }
@@ -428,6 +443,9 @@ export default function useFeatureInfo() {
       maxZoom.value
     )
 
+    // If GFI returned results, remove temporary search highlight layer
+    olLayerSearchService.clearFeatures()
+
     setFeatureInfoPanelContent(content)
   }
 
@@ -498,9 +516,16 @@ export default function useFeatureInfo() {
       map.getView().getProjection(),
       PROJECTION_LUX
     )
-    const pixel =
-      (map.getPixelFromCoordinate(coordMap) as [number, number]) ??
-      ([0, 0] as [number, number])
+    const rawPixel = map.getPixelFromCoordinate(coordMap)
+    const size = map.getSize() || [0, 0]
+    const pixel: [number, number] =
+      rawPixel &&
+      rawPixel[0] >= 0 &&
+      rawPixel[0] <= size[0] &&
+      rawPixel[1] >= 0 &&
+      rawPixel[1] <= size[1]
+        ? (rawPixel as [number, number])
+        : [size[0] / 2, size[1] / 2]
 
     return fetchAndShowFeatureInfo(
       coordLux,
@@ -508,6 +533,8 @@ export default function useFeatureInfo() {
       resolvedIds,
       layerLabel,
       false,
+      true,
+      { big: 10, small: 1 },
       true
     )
   }

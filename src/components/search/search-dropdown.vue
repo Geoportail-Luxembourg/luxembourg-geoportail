@@ -393,10 +393,11 @@ async function selectResultFullTextSearch(result: {
   layer_name: string
   entry: object
 }) {
+  const pointHighlightLayerNames = ['Localité', 'Commune']
   const highlightEntry = (entry: object) => {
     const center = computeFeatureCenterWGS84(entry)
     const displayEntry =
-      result.layer_name === 'Localité' && center
+      pointHighlightLayerNames.includes(result.layer_name) && center
         ? makePointEntry(entry, center)
         : entry
     olLayerSearchService.highlightFeatures([displayEntry], true, maxZoom.value)
@@ -411,6 +412,9 @@ async function selectResultFullTextSearch(result: {
     const center = computeFeatureCenterWGS84(result.entry)
     const layerNameList = layerLookup[result.layer_name] || []
 
+    // Show highlight immediately as fallback
+    highlightEntry(result.entry)
+
     if (center && layerNameList.length > 0) {
       const { findByName } = useThemes()
       const layerIds = layerNameList
@@ -419,19 +423,9 @@ async function selectResultFullTextSearch(result: {
         .map(l => l!.id)
 
       if (layerIds.length > 0) {
-        const featureInfo = useFeatureInfo()
-        const found = await featureInfo.getFeatureInfoAtCoordinate(
-          center,
-          layerIds
-        )
-        if (!found) {
-          highlightEntry(result.entry)
-        }
-      } else {
-        highlightEntry(result.entry)
+        // Fire GFI in background — only updates if results found
+        useFeatureInfo().getFeatureInfoAtCoordinate(center, layerIds)
       }
-    } else {
-      highlightEntry(result.entry)
     }
 
     closeDropdown()
