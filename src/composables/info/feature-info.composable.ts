@@ -1,6 +1,7 @@
 import useMap, {
   PROJECTION_LUX,
   PROJECTION_WEBMERCATOR,
+  PROJECTION_WGS84,
 } from '@/composables/map/map.composable'
 import { listen } from 'ol/events'
 import { featureInfoLayerService } from '@/services/info/feature-info-layer.service'
@@ -27,6 +28,7 @@ import { useLidarStore } from '@/stores/lidar.store'
 import { useElevationProfileStore } from '@/stores/elevation-profile.store'
 import { getFeatureInfoJson } from '@/services/api/api-feature-info.service'
 import { OLLAYER_PROP_METADATA } from '@/services/ol-layer/ol-layer.model'
+import { olLayerSearchService } from '@/services/ol-layer/ol-layer-search.service'
 import { isParcelLayerIdent } from '@/composables/layers/layers.composable'
 import ImageLayer from 'ol/layer/Image'
 import { ImageWMS } from 'ol/source'
@@ -153,6 +155,8 @@ export default function useFeatureInfo() {
       }
 
       timeoutId.value = window.setTimeout(() => {
+        if (isLoading.value) return
+
         let found = false
         if (
           (layersOpen.value || myMapsOpen.value) &&
@@ -269,53 +273,70 @@ export default function useFeatureInfo() {
     }
 
     if (layersList.length > 0) {
-      const resolution = map.getView().getResolution()
-      let bigBuffer = 0
-      let smallBuffer = 0
-      if (resolution) {
-        bigBuffer = 20 * resolution
-        smallBuffer = 1 * resolution
-      }
-
       const point = transform(
         evt.coordinate,
         map.getView().getProjection(),
         PROJECTION_LUX
       )
-      const big_box = [
-        [point[0] - bigBuffer, point[1] + bigBuffer],
-        [point[0] + bigBuffer, point[1] - bigBuffer],
-      ]
-      const small_box = [
-        [point[0] - smallBuffer, point[1] + smallBuffer],
-        [point[0] + smallBuffer, point[1] - smallBuffer],
-      ]
+      await fetchAndShowFeatureInfo(
+        point,
+        evt.pixel as [number, number],
+        layersList,
+        layerLabel,
+        evt.originalEvent.shiftKey,
+        false
+      )
+    }
+  }
 
-      setLoading(true)
-      map.getViewport().style.cursor = 'wait'
+  async function fetchAndShowFeatureInfo(
+    pointLux: number[],
+    pixel: [number, number],
+    layersList: (string | number)[],
+    layerLabel: { [key: string]: string },
+    shiftKey: boolean,
+    fit: boolean,
+    fixedBuffers?: { big: number; small: number },
+    keepHighlightOnEmpty = false
+  ): Promise<boolean> {
+    const resolution = map.getView().getResolution() || 1
+    const bigBuffer = fixedBuffers ? fixedBuffers.big : 20 * resolution
+    const smallBuffer = fixedBuffers ? fixedBuffers.small : 1 * resolution
 
-      const size = map.getSize() || [0, 0]
-      const extent = map.getView().calculateExtent(size)
-      const bbox = extent.join(',')
-      const params = {
-        layers: layersList.join(),
-        box1: big_box.join(),
-        box2: small_box.join(),
-        srs: PROJECTION_WEBMERCATOR,
-        zoom: map.getView().getZoom(),
-        .../*(!map.get('ol3dm').is3dEnabled() &&*/ {
-          BBOX: bbox,
-          WIDTH: size[0],
-          HEIGHT: size[1],
-          X: evt.pixel[0],
-          Y: evt.pixel[1],
-        },
-      }
-      try {
-        const data = await getFeatureInfoJson(params)
-        if (data.length > 0) {
-          showInfo(evt.originalEvent.shiftKey, data, layerLabel, true, false)
-        } else {
+    const big_box = [
+      [pointLux[0] - bigBuffer, pointLux[1] + bigBuffer],
+      [pointLux[0] + bigBuffer, pointLux[1] - bigBuffer],
+    ]
+    const small_box = [
+      [pointLux[0] - smallBuffer, pointLux[1] + smallBuffer],
+      [pointLux[0] + smallBuffer, pointLux[1] - smallBuffer],
+    ]
+
+    setLoading(true)
+    map.getViewport().style.cursor = 'wait'
+
+    const size = map.getSize() || [0, 0]
+    const extent = map.getView().calculateExtent(size)
+    const params = {
+      layers: layersList.join(),
+      box1: big_box.join(),
+      box2: small_box.join(),
+      srs: PROJECTION_WEBMERCATOR,
+      zoom: map.getView().getZoom(),
+      BBOX: extent.join(','),
+      WIDTH: size[0],
+      HEIGHT: size[1],
+      X: Math.round(pixel[0]),
+      Y: Math.round(pixel[1]),
+    }
+
+    try {
+      const data = await getFeatureInfoJson(params)
+      if (data.length > 0) {
+        showInfo(shiftKey, data, layerLabel, true, fit)
+        return true
+      } else {
+        if (!keepHighlightOnEmpty) {
           lastHighlightedFeatures.value = []
           featureInfoLayerService.highlightFeatures(
             lastHighlightedFeatures.value,
@@ -323,10 +344,20 @@ export default function useFeatureInfo() {
             maxZoom.value
           )
           done()
+        } else {
+          setLoading(false)
+          map.getViewport().style.cursor = ''
         }
-      } catch (error) {
-        done()
+        return false
       }
+    } catch (error) {
+      if (!keepHighlightOnEmpty) {
+        done()
+      } else {
+        setLoading(false)
+        map.getViewport().style.cursor = ''
+      }
+      return false
     }
   }
 
@@ -412,6 +443,9 @@ export default function useFeatureInfo() {
       maxZoom.value
     )
 
+    // If GFI returned results, remove temporary search highlight layer
+    olLayerSearchService.clearFeatures()
+
     setFeatureInfoPanelContent(content)
   }
 
@@ -452,5 +486,58 @@ export default function useFeatureInfo() {
     return selected.length > 0
   }
 
-  return { init }
+  async function getFeatureInfoAtCoordinate(
+    coordWGS84: [number, number],
+    layerIds: (string | number)[]
+  ): Promise<boolean> {
+    if (layerIds.length === 0) return false
+
+    const allOlLayers = map.getLayers().getArray()
+    const layerLabel: { [key: string]: string } = {}
+    const resolvedIds: (string | number)[] = []
+
+    for (const id of layerIds) {
+      const olLayer = allOlLayers.find(l => l.get('queryable_id') == id)
+      if (olLayer) {
+        resolvedIds.push(id)
+        layerLabel[id] = olLayer.get('label') || String(id)
+      }
+    }
+
+    if (resolvedIds.length === 0) return false
+
+    const coordMap = transform(
+      coordWGS84,
+      PROJECTION_WGS84,
+      map.getView().getProjection()
+    )
+    const coordLux = transform(
+      coordMap,
+      map.getView().getProjection(),
+      PROJECTION_LUX
+    )
+    const rawPixel = map.getPixelFromCoordinate(coordMap)
+    const size = map.getSize() || [0, 0]
+    const pixel: [number, number] =
+      rawPixel &&
+      rawPixel[0] >= 0 &&
+      rawPixel[0] <= size[0] &&
+      rawPixel[1] >= 0 &&
+      rawPixel[1] <= size[1]
+        ? (rawPixel as [number, number])
+        : [size[0] / 2, size[1] / 2]
+
+    return fetchAndShowFeatureInfo(
+      coordLux,
+      pixel,
+      resolvedIds,
+      layerLabel,
+      false,
+      true,
+      { big: 10, small: 1 },
+      true
+    )
+  }
+
+  return { init, getFeatureInfoAtCoordinate }
 }

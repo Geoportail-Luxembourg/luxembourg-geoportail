@@ -16,6 +16,8 @@ const props = defineProps<{
   currentUrl?: string
 }>()
 
+defineEmits<{ (e: 'export', payload: unknown): void }>()
+
 const DOWNLOAD_MEASUREMENT_URL = import.meta.env.VITE_DOWNLOAD_MEASUREMENT_URL
 const THUMBNAIL_MEASUREMENT_URL = import.meta.env.VITE_THUMBNAIL_MEASUREMENT_URL
 const { t } = useTranslation('tooltips')
