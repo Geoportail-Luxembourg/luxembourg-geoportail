@@ -1,3 +1,4 @@
+import i18next from 'i18next'
 import { ThemeNodeModel } from '@/composables/themes/themes.model'
 import { LayerMetadataModel } from './layer-metadata.model'
 import {
@@ -145,10 +146,36 @@ export class LayerMetadataService {
             throw new Error('Server responded with error code')
           }
           const legendString = await response.text()
-          return legendString ? stringToHtml(legendString) : undefined
+          const legendHtml = legendString
+            ? stringToHtml(legendString)
+            : undefined
+          if (legendHtml) {
+            this.translateLegendContent(legendHtml)
+          }
+          return legendHtml
         })
         .catch(() => undefined)
     }
+  }
+
+  private translateLegendContent(element: DocumentFragment | HTMLElement) {
+    // Find all elements with translate attribute and translate their text content
+    const translatableElements = element.querySelectorAll('[translate]')
+    translatableElements.forEach(el => {
+      const textContent = el.textContent
+      if (textContent) {
+        const candidateKeys = [
+          textContent,
+          textContent.trim(),
+          textContent.replace(/\s+/g, ' ').trim(),
+        ]
+        const translationKey =
+          candidateKeys.find(key => i18next.exists(key, { ns: 'legends' })) ||
+          textContent
+
+        el.textContent = i18next.t(translationKey, { ns: 'legends' })
+      }
+    })
   }
 
   /**
