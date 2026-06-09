@@ -109,7 +109,7 @@ function isAudioLink(attributeEntry: AttributeEntry) {
               <a
                 data-cy="defaultTemplateSolarLink"
                 v-if="isSolarLink(layers.layerLabel, attributeEntry)"
-                :href="attributeEntry.value"
+                href="https://solar.klima-agence.lu/"
                 target="_blank"
               >
                 <button class="lux-solarkataster-button">
