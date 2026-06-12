@@ -763,6 +763,9 @@
   "yyyy": "yyyy",
   "Localise in catalog {{layerName}}": "Show the layer in the catalog",
   "Using selected location info coordinates": "Using selected location info coordinates",
+  "Les différentes applications externes sont maintenant disponibles dans le menu 'Aller vers'": "The different external applications are now available in the 'Go to' menu",
+  "Lien vers Cyclomédia desc": "Open Cyclomedia",
+  "Ouvrir streetView desc": "Open Street View",
   "Close go to panel": "Close 'Go to' panel",
   "Open go to panel": "Open 'Go to' panel",
   "Go to": "Go to"

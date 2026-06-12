@@ -12,10 +12,7 @@ import { Point } from 'ol/geom'
 import useMap from '@/composables/map/map.composable'
 import useLocationInfo from '@/composables/info/location-info.composable'
 import { queryInfos, INFO_PROJECTIONS } from '@/services/info/location-info'
-import {
-  PROJECTION_LUX,
-  PROJECTION_WGS84,
-} from '@/composables/map/map.composable'
+import { PROJECTION_WGS84 } from '@/composables/map/map.composable'
 import {
   formatElevation,
   formatLength,
@@ -95,12 +92,7 @@ const setPrintableRef = (el: Element | ComponentPublicInstance | null) => {
 }
 
 const isRapportForageVirtuelAvailable = computed(() => userRole.value === 'ACT')
-const isCyclomediaAvailable = computed(
-  () =>
-    userType.value === 'etat' ||
-    userType.value === 'commune' ||
-    userRole.value === 'MinTour'
-)
+
 const forageUrl = computed(() =>
   clickCoordinateLuref.value
     ? `${import.meta.env.VITE_FORAGE_URL}?x=${
@@ -108,23 +100,6 @@ const forageUrl = computed(() =>
       }&y=${clickCoordinateLuref.value[1]}&email=${encodeURIComponent(currentUser.value?.mail ?? '')}`
     : ''
 )
-const cyclomediaUrl = computed(() =>
-  clickCoordinateLuref.value
-    ? `${import.meta.env.VITE_CYCLOMEDIA_URL}?q=${
-        clickCoordinateLuref.value[0]
-      };${clickCoordinateLuref.value[1]}`
-    : ''
-)
-const streetViewUrl = computed(function () {
-  const coordinate = clickCoordinateLuref.value
-    ? transform(clickCoordinateLuref.value, PROJECTION_LUX, PROJECTION_WGS84)
-    : undefined
-  return clickCoordinateLuref.value
-    ? `${import.meta.env.VITE_STREETVIEW_URL}api=1&map_action=pano&viewpoint=${
-        (coordinate ?? [0, 0])[1]
-      },${(coordinate ?? [0, 0])[0]}&heading=0&pitch=0&fov=90`
-    : ''
-})
 
 function addRoutePoint() {
   if (!locationInfoCoords.value) {
@@ -246,37 +221,22 @@ watch(downloadingRepport, downloadingRepport => {
       >
         {{ t('Rapport forage virtuel') }}
       </button>
-      <a
-        v-if="isCyclomediaAvailable"
-        class="lux-btn whitespace-nowrap"
-        :href="cyclomediaUrl"
-        target="_geoportal_ext_cyclomedia"
-      >
-        {{ t('Lien vers Cyclomédia') }}
-      </a>
       <button class="lux-btn mt-1" @click="addRoutePoint()">
         <span class="create-itinerary-text">
           {{ t('Ajouter étape à mon itinéraire') }}
         </span>
       </button>
     </div>
-    <div class="lux-panel-content relative grow pr-4 bg-primary overflow-auto">
-      <span class="text-white">
-        {{
-          t(
-            "Suite à la modification des conditions d'utilisation de Google Street View, nous avons désactivé son intégration dans la carte et proposons désormais un lien direct vers le service de Google."
-          )
-        }}
-      </span>
-      <div class="flex justify-center flex-col items-center">
-        <a
-          class="lux-btn whitespace-nowrap"
-          :href="streetViewUrl"
-          target="_streetview_ext"
-        >
-          {{ t('Ouvrir streetView') }}
-        </a>
-      </div>
-    </div>
+  </div>
+  <div class="lux-panel-content relative grow pr-4 bg-primary overflow-auto">
+    <span class="text-white">
+      <i class="fa-solid fa-triangle-exclamation"></i>
+      {{
+        t(
+          "Les différentes applications externes sont maintenant disponibles dans le menu 'Aller vers'",
+          { ns: 'app' }
+        )
+      }}
+    </span>
   </div>
 </template>

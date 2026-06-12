@@ -766,6 +766,9 @@
   "yyyy": "yyyy",
   "Localise in catalog {{layerName}}": "Afficher la couche dans le catalogue",
   "Using selected location info coordinates": "Utilise les coordonnées de la position sélectionnée",
+  "Les différentes applications externes sont maintenant disponibles dans le menu 'Aller vers'": "Les différentes applications externes sont maintenant disponibles dans le menu 'Aller vers'",
+  "Lien vers Cyclomédia desc": "Ouvrir Cyclomédia",
+  "Ouvrir streetView desc": "Ouvrir Street View",
   "Close go to panel": "Fermer le panneau 'Aller vers'",
   "Open go to panel": "Ouvrir le panneau 'Aller vers'",
   "Go to": "Aller vers"

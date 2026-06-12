@@ -766,6 +766,9 @@
   "yyyy": "yyyy",
   "Localise in catalog {{layerName}}": "De Layer am Katalog uweisen",
   "Using selected location info coordinates": "Benotzt déi ausgewielten Koordinaten vun der Positioun",
+  "Les différentes applications externes sont maintenant disponibles dans le menu 'Aller vers'": "Déi verschidden extern Applikatioune sinn elo am Menü 'Géi op' verfügbar",
+  "Lien vers Cyclomédia desc": "Cyclomedia opmaachen",
+  "Ouvrir streetView desc": "Street View opmaachen",
   "Close go to panel": "De Panel 'Géi op' zoumaachen",
   "Open go to panel": "De Panel 'Géi op' opmaachen",
   "Go to": "Géi op"
