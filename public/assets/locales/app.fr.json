@@ -765,5 +765,8 @@
   "Your email": "Votre email",
   "yyyy": "yyyy",
   "Localise in catalog {{layerName}}": "Afficher la couche dans le catalogue",
-  "Using selected location info coordinates": "Utilise les coordonnées de la position sélectionnée"
+  "Using selected location info coordinates": "Utilise les coordonnées de la position sélectionnée",
+  "Close go to panel": "Fermer le panneau 'Aller vers'",
+  "Open go to panel": "Ouvrir le panneau 'Aller vers'",
+  "Go to": "Aller vers"
 }
