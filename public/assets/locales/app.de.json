@@ -765,5 +765,8 @@
   "Your email": "Ihre Emailadresse:",
   "yyyy": "yyyy",
   "Localise in catalog {{layerName}}": "Layer im Katalog anzeigen",
-  "Using selected location info coordinates": "Verwendet die ausgewählten Standortkoordinaten"
+  "Using selected location info coordinates": "Verwendet die ausgewählten Standortkoordinaten",
+  "Close go to panel": "Schließen Sie das 'Gehe zu'-Panel",
+  "Open go to panel": "Öffnen Sie das 'Gehe zu'-Panel",
+  "Go to": "Gehe zu"
 }

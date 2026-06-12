@@ -765,5 +765,8 @@
   "Your email": "Är Emailadress:",
   "yyyy": "yyyy",
   "Localise in catalog {{layerName}}": "De Layer am Katalog uweisen",
-  "Using selected location info coordinates": "Benotzt déi ausgewielten Koordinaten vun der Positioun"
+  "Using selected location info coordinates": "Benotzt déi ausgewielten Koordinaten vun der Positioun",
+  "Close go to panel": "De Panel 'Géi op' zoumaachen",
+  "Open go to panel": "De Panel 'Géi op' opmaachen",
+  "Go to": "Géi op"
 }

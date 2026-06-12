@@ -351,15 +351,16 @@ function onClickRoutingIcon() {
       >
       </button-icon>
 
-      <!-- Export -->
+      <!-- Go to -->
       <button-icon
         v-if="!isOffLine"
-        :label="t('Exporter', { ns: 'app' })"
+        :label="t('Go to', { ns: 'app' })"
         :aria-label="
-          exportOpen ? t('Close export panel') : t('Open export panel')
+          exportOpen ? t('Close go to panel') : t('Open go to panel')
         "
         :active="exportOpen"
         icon="export"
+        icon-class="footer-export-icon"
         @click="() => toggleExportOpen()"
         data-cy="exportButton"
       >

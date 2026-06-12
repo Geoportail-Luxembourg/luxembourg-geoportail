@@ -762,5 +762,8 @@
   "Your email": "Your email:",
   "yyyy": "yyyy",
   "Localise in catalog {{layerName}}": "Show the layer in the catalog",
-  "Using selected location info coordinates": "Using selected location info coordinates"
+  "Using selected location info coordinates": "Using selected location info coordinates",
+  "Close go to panel": "Close 'Go to' panel",
+  "Open go to panel": "Open 'Go to' panel",
+  "Go to": "Go to"
 }
