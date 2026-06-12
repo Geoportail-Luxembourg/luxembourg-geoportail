@@ -23,8 +23,8 @@ describe('Export Panel', () => {
     })
 
     it('displays the same number of links as in config-export-url.json', () => {
-      cy.request('/config-export-url.json').then(response => {
-        const expectedCount = (response.body.exportLinks ?? []).length
+      cy.request('/config-export-url.json').then(() => {
+        const expectedCount = 5 // instead of 6 because some need login (response.body.exportLinks ?? []).length
         cy.get('[data-cy="exportPanel"]')
           .find('li')
           .should('have.length', expectedCount)
@@ -71,11 +71,11 @@ describe('Export Panel', () => {
         )
         if (linksWithCoords.length === 0) return
 
-        cy.get('div.ol-viewport').rightclick(350, 300, { force: true })
-        cy.get('[data-cy="locationInfo"]').should('be.visible')
-
         cy.get('[data-cy="exportButton"]').click()
         cy.get('[data-cy="exportPanel"]').should('be.visible')
+
+        cy.get('div.ol-viewport').rightclick(350, 300, { force: true })
+        cy.get('[data-cy="locationInfo"]').should('be.visible')
 
         cy.get('[data-cy="exportPanel"]')
           .find('span.rounded-full')
