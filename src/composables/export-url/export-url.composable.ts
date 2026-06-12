@@ -94,7 +94,14 @@ export default function useExportUrl(map?: OlMap) {
   let locationParamsCache: BaseParams | null = null
   let targetExportLayer: TargetExportLayer | null = null
 
-  watch([x, y], ([newX, newY]) => targetExportLayer?.positionTarget(newX, newY))
+  watch([x, y, locationInfoCoords], ([newX, newY, locationCoords]) => {
+    // Hide target if locationInfoCoords exists (featureinfo has priority)
+    if (locationCoords) {
+      targetExportLayer?.positionTarget(null, null)
+    } else {
+      targetExportLayer?.positionTarget(newX, newY)
+    }
+  })
 
   onMounted(async () => {
     const res = await fetch('/config-export-url.json')
@@ -102,7 +109,10 @@ export default function useExportUrl(map?: OlMap) {
     allLinks.value = config.exportLinks ?? []
 
     targetExportLayer = olLayerFactoryService.createOlLayerTargetExport()
-    targetExportLayer.positionTarget(x.value, y.value)
+    // Only show target if no locationInfoCoords exists
+    if (!locationInfoCoords.value) {
+      targetExportLayer.positionTarget(x.value, y.value)
+    }
     map?.addLayer(targetExportLayer)
 
     await resolveAllHrefs()

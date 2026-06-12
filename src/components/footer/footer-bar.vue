@@ -145,6 +145,7 @@ watch(lidarOpen, isOpen => {
 })
 watch(exportOpen, isOpen => {
   if (isOpen) {
+    // NB. dont close infoOpen to preserve featureinfo (locationInfoCoords) when opening export panel from featureinfo
     layersOpen.value =
       legendsOpen.value =
       themeGridOpen.value =
@@ -155,7 +156,6 @@ watch(exportOpen, isOpen => {
       shareOpen.value =
       styleEditorOpen.value =
       myMapsOpen.value =
-      infoOpen.value =
       routingPanelOpen.value =
         false
   }
