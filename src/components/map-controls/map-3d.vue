@@ -10,24 +10,12 @@ import { toLonLat } from 'ol/proj'
 import useControl from '@/composables/control/control.composable'
 import { useMapStore } from '@/stores/map.store'
 import { useMatomo } from '@/composables/matomo/matomo.composable'
-
-const LUX_VCS_URL = import.meta.env.VITE_LUX_VCS_URL
-const LUX_VCS_PITCH = import.meta.env.VITE_LUX_VCS_PITCH ?? -45
-const LUX_VCS_COORDINATES = [6.13, 49.61]
-const LUX_VCS_MODULES = ['catalogConfig', 'LuxConfig']
-const zoomToCesiumAltitude = {
-  9: 350000,
-  10: 180000,
-  11: 100000,
-  12: 40000,
-  13: 25000,
-  14: 9000,
-  15: 6000,
-  16: 3500,
-  17: 1900,
-  18: 900,
-  19: 600,
-}
+import {
+  LUX_VCS_COORDINATES,
+  LUX_VCS_URL,
+  zoomToCesiumAltitude,
+  build3dState,
+} from '@/services/vcs.utils'
 
 const mapStore = useMapStore()
 const { t } = useTranslation()
@@ -58,11 +46,19 @@ const linkTo3dMap = computed(() => {
     ? JSON.stringify([bgLayer.value.name, 1, 0])
     : null
   if (selectedBgLayer) selectedLayers.unshift(selectedBgLayer)
-  const state = `[[[],[${[lon, lat, 300].join(
-    ','
-  )}],${altitude},${heading},${LUX_VCS_PITCH},0],"cesium",["${LUX_VCS_MODULES.join(
-    '","'
-  )}"],[${selectedLayers.join(',')}],[],0]`
+  const state = build3dState(
+    lon,
+    lat,
+    altitude,
+    undefined,
+    heading,
+    undefined,
+    [],
+    selectedLayers,
+    [],
+    'cesium',
+    300
+  )
 
   return `${LUX_VCS_URL}?state=${encodeURIComponent(state)}`
 })

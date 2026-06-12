@@ -101,18 +101,6 @@ const isCyclomediaAvailable = computed(
     userType.value === 'commune' ||
     userRole.value === 'MinTour'
 )
-
-const isImagesObliquesAvailable = computed(() => true)
-
-const lidarUrl = computed(() =>
-  clickCoordinateLuref.value
-    ? `${import.meta.env.VITE_LIDAR_URL}?COORD_X=${
-        clickCoordinateLuref.value[0]
-      }&COORD_Y=${clickCoordinateLuref.value[1]}&COORD_Z=${parseInt(
-        elevation.value || '0'
-      )}`
-    : ''
-)
 const forageUrl = computed(() =>
   clickCoordinateLuref.value
     ? `${import.meta.env.VITE_FORAGE_URL}?x=${
@@ -127,72 +115,6 @@ const cyclomediaUrl = computed(() =>
       };${clickCoordinateLuref.value[1]}`
     : ''
 )
-const imagesObliquesUrl = computed(() => {
-  const clickCoordinate4326_ = clickCoordinateLuref.value
-    ? transform(clickCoordinateLuref.value, PROJECTION_LUX, PROJECTION_WGS84)
-    : undefined
-  if (clickCoordinate4326_ === undefined) {
-    return undefined
-  }
-  const lon = clickCoordinate4326_[0]
-  const lat = clickCoordinate4326_[1]
-
-  // Fixed parameters for oblique viewer
-  const elevation = 692 // Camera altitude
-  const targetHeight = 292 // Target height
-  const distance = 400 // Distance from target
-  const heading = 0 // North orientation
-  const pitch = -90 // Looking straight down
-  const roll = 0 // No roll
-
-  // Modules (UUIDs for oblique viewer plugins)
-  const modules = [
-    'LuxConfig',
-    '8bbdc4b3-691e-466e-9e91-2b0d57a9a53e',
-    'c627c247-8017-483a-a32e-1ff0ad5f0536',
-    '0fa7c853-d866-486c-8c2d-3470f401d44c',
-    '1f9cb759-c3dc-44ba-9253-7299701499a3',
-    'f7791a73-5132-4282-b3c4-1adb1abce06a',
-    'catalogConfig',
-  ]
-
-  // Layers (empty for oblique viewer)
-  const layers: string[] = []
-
-  // Plugins configuration
-  const plugins = [
-    ['@geoportallux/lux-3dviewer-themesync', { prop: '*' }],
-    ['@geoportallux/lux-3dviewer-plugin-back-to-2d-portal', { prop: '*' }],
-  ]
-
-  // Oblique imagery dataset
-  const obliqueDataset = 'ACT2023_ImagesObliques_all'
-
-  // Build VCS state
-  const state = [
-    [
-      [lon, lat, elevation],
-      [lon, lat, targetHeight],
-      distance,
-      heading,
-      pitch,
-      roll,
-    ],
-    'Oblique Map',
-    modules,
-    layers,
-    [],
-    plugins,
-    obliqueDataset,
-    [],
-  ]
-
-  // Encode state and build URL
-  return (
-    `${import.meta.env.VITE_OBLIQUE_URL}?state=` +
-    encodeURIComponent(JSON.stringify(state))
-  )
-})
 const streetViewUrl = computed(function () {
   const coordinate = clickCoordinateLuref.value
     ? transform(clickCoordinateLuref.value, PROJECTION_LUX, PROJECTION_WGS84)
@@ -267,7 +189,7 @@ watch(downloadingRepport, downloadingRepport => {
   <div :ref="setPrintableRef">
     <!-- Url and QR code image -->
     <div class="flex flex-row">
-      <div class="no-print grow-[2] flex flex-col justify-end content-end">
+      <div class="no-print grow-[2] flex flex-col justify-end content-end pr-2">
         <h3 id="short_url_title" class="text-3xl text-white">
           {{ t('Short Url', { ns: 'app' }) }}
         </h3>
@@ -311,26 +233,19 @@ watch(downloadingRepport, downloadingRepport => {
     </div>
   </div>
 
-  <!-- Forage, obliques, lidar buttons -->
-  <div>
-    <hr />
-    <button
-      v-if="isRapportForageVirtuelAvailable"
-      :disabled="downloadingRepport"
-      class="lux-btn mt-1"
-      @click="downloadRapportForageVirtuel()"
+  <!-- Forage button, itinerary -->
+  <div class="pt-2">
+    <div
+      class="flex flex-wrap mt-1 gap-x-1 justify-center border-t border-b mr-2 my-2 pt-4 pb-5 border-white/40"
     >
-      {{ t('Rapport forage virtuel') }}
-    </button>
-    <div class="flex flex-wrap mt-1 gap-x-1">
-      <a
-        v-if="isInBoxOfLidar"
-        class="lux-btn whitespace-nowrap"
-        :href="lidarUrl"
-        target="_geoportal_ext_lidar"
+      <button
+        v-if="isRapportForageVirtuelAvailable"
+        :disabled="downloadingRepport"
+        class="lux-btn mt-1"
+        @click="downloadRapportForageVirtuel()"
       >
-        {{ t('Lien vers la démo lidar') }}
-      </a>
+        {{ t('Rapport forage virtuel') }}
+      </button>
       <a
         v-if="isCyclomediaAvailable"
         class="lux-btn whitespace-nowrap"
@@ -339,24 +254,13 @@ watch(downloadingRepport, downloadingRepport => {
       >
         {{ t('Lien vers Cyclomédia') }}
       </a>
-      <a
-        v-if="isImagesObliquesAvailable"
-        class="lux-btn whitespace-nowrap"
-        :href="imagesObliquesUrl"
-        target="_geoportal_ext_obliques"
-      >
-        {{ t('Images obliques') }}
-      </a>
-    </div>
-    <div>
       <button class="lux-btn mt-1" @click="addRoutePoint()">
         <span class="create-itinerary-text">
           {{ t('Ajouter étape à mon itinéraire') }}
         </span>
       </button>
     </div>
-    <div class="lux-panel-content relative grow p-2.5 bg-primary overflow-auto">
-      <hr />
+    <div class="lux-panel-content relative grow pr-4 bg-primary overflow-auto">
       <span class="text-white">
         {{
           t(

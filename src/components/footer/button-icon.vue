@@ -15,7 +15,7 @@ const props = defineProps<{
     :aria-pressed="props.active !== undefined ? props.active : undefined"
   >
     <span
-      class="block text-[1.7rem] sm:text-[2rem] -mt-1.5 -mb-3 after:font-icons"
+      class="block text-[1.7rem] sm:text-[2rem] -mt-1.5 -mb-3 after:font-icons after:w-8 after:max-h-4 after:inline-block"
       :class="props.active ? 'lux-close-cross' : `after:content-${props.icon}`"
       aria-hidden="true"
     ></span>

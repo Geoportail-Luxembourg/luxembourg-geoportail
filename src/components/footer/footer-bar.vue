@@ -13,6 +13,7 @@ import ToolbarMeasure from './toolbar-measure.vue'
 import ToolbarElevationProfile from './toolbar-elevation-profile.vue'
 import ToolbarPrint from './toolbar-print.vue'
 import SharePanel from '@/components/share/share-panel.vue'
+import ExportPanel from '@/components/export/export-panel.vue'
 
 const { t, i18next } = useTranslation()
 const appStore = useAppStore()
@@ -25,6 +26,7 @@ const {
   toggleMyMapsOpen,
   toggleLegendsOpen,
   toggleInfoOpen,
+  toggleExportOpen,
   toggleShareOpen,
   toggleFeedbackOpen,
   toggleRoutingOpen,
@@ -39,6 +41,7 @@ const {
   myMapLayersChanged,
   myMapsOpen,
   infoOpen,
+  exportOpen,
   shareOpen,
   lidarOpen,
   themeGridOpen,
@@ -69,6 +72,7 @@ watch(drawToolbarOpen, isOpen => {
     measureToolbarOpen.value = false
     elevationProfileToolbarOpen.value = false
     printToolbarOpen.value = false
+    exportOpen.value = false
     shareOpen.value = false
     lidarOpen.value = false
     routingPanelOpen.value = false
@@ -82,6 +86,7 @@ watch(measureToolbarOpen, isOpen => {
     drawToolbarOpen.value = false
     elevationProfileToolbarOpen.value = false
     printToolbarOpen.value = false
+    exportOpen.value = false
     shareOpen.value = false
     lidarOpen.value = false
     routingPanelOpen.value = false
@@ -92,6 +97,7 @@ watch(elevationProfileToolbarOpen, isOpen => {
     drawToolbarOpen.value = false
     measureToolbarOpen.value = false
     printToolbarOpen.value = false
+    exportOpen.value = false
     shareOpen.value = false
     lidarOpen.value = false
     routingPanelOpen.value = false
@@ -102,6 +108,7 @@ watch(printToolbarOpen, isOpen => {
     drawToolbarOpen.value = false
     measureToolbarOpen.value = false
     elevationProfileToolbarOpen.value = false
+    exportOpen.value = false
     shareOpen.value = false
     lidarOpen.value = false
     routingPanelOpen.value = false
@@ -115,6 +122,7 @@ watch(shareOpen, isOpen => {
     printToolbarOpen.value = false
     lidarOpen.value = false
     routingPanelOpen.value = false
+    exportOpen.value = false
   }
 })
 watch(lidarOpen, isOpen => {
@@ -126,6 +134,7 @@ watch(lidarOpen, isOpen => {
       drawToolbarOpen.value =
       measureToolbarOpen.value =
       elevationProfileToolbarOpen.value =
+      exportOpen.value =
       shareOpen.value =
       styleEditorOpen.value =
       myMapsOpen.value =
@@ -134,6 +143,24 @@ watch(lidarOpen, isOpen => {
         false
   }
 })
+watch(exportOpen, isOpen => {
+  if (isOpen) {
+    // NB. dont close infoOpen to preserve featureinfo (locationInfoCoords) when opening export panel from featureinfo
+    layersOpen.value =
+      legendsOpen.value =
+      themeGridOpen.value =
+      printToolbarOpen.value =
+      drawToolbarOpen.value =
+      measureToolbarOpen.value =
+      elevationProfileToolbarOpen.value =
+      shareOpen.value =
+      styleEditorOpen.value =
+      myMapsOpen.value =
+      routingPanelOpen.value =
+        false
+  }
+})
+
 const featureInfoStore = useFeatureInfoStore()
 const { displayStarOnMobile } = storeToRefs(featureInfoStore)
 const { setDisplayStarOnMobile } = featureInfoStore
@@ -253,11 +280,12 @@ function onClickRoutingIcon() {
     <!-- center buttons -->
     <div
       class="relative flex flex-col w-12 sm:flex-row justify-start text-primary divide-y sm:divide-y-0 sm:divide-x divide-gray-400 divide-solid box-content border-y sm:border-y-0 border-x border-gray-400"
-      :class="isOffLine ? 'sm:w-16' : 'sm:w-64'"
+      :class="isOffLine ? 'sm:w-16' : 'sm:w-80'"
     >
       <!-- Drawing tools -->
       <toolbar-draw v-if="drawToolbarOpen" />
       <toolbar-print v-if="printToolbarOpen" />
+      <export-panel v-if="exportOpen" />
       <share-panel v-if="shareOpen" />
       <toolbar-elevation-profile v-if="elevationProfileToolbarOpen" />
       <button-icon
@@ -320,6 +348,20 @@ function onClickRoutingIcon() {
         icon="share"
         @click="() => toggleShareOpen()"
         data-cy="shareButton"
+      >
+      </button-icon>
+
+      <!-- Export -->
+      <button-icon
+        v-if="!isOffLine"
+        :label="t('Exporter', { ns: 'app' })"
+        :aria-label="
+          exportOpen ? t('Close export panel') : t('Open export panel')
+        "
+        :active="exportOpen"
+        icon="export"
+        @click="() => toggleExportOpen()"
+        data-cy="exportButton"
       >
       </button-icon>
     </div>

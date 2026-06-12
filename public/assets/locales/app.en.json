@@ -199,8 +199,18 @@
   "Distance approximative": "Approximative distance",
   "Distance: ": "Distance: ",
   "Download GPX": "Download GPX",
+  "3D Print": "3D Print",
+  "3D Print desc": "Generate a 3D printable model",
+  "ACT2BIM": "ACT2BIM",
+  "ACT2BIM desc": "Convert cadastral plans to BIM",
   "Download style": "Download style",
   "Downloading tiles…": "Downloading tiles…",
+  "Lidar": "Lidar",
+  "Lidar desc": "Explore terrain point cloud data",
+  "Minecraft": "Minecraft",
+  "Minecraft desc": "Explore Luxembourg in Minecraft",
+  "Vue Oblique": "Oblique View",
+  "Vue Oblique desc": "Browse oblique aerial imagery",
   "Draw a lidar profile": "Draw a lidar profile",
   "Draw a line on the map to dislay the corresponding LIDAR profile. Double clic to confirm.": "Draw a line on the map to display the corresponding LIDAR profile. Double clic to confirm.",
   "Draw a line on the map to display an elevation profile.": "Draw a line on the map to display an elevation profile.",
@@ -752,5 +762,6 @@
   "You have no existing Maps, please create a New Map": "You have no existing maps, please create a new map",
   "Your email": "Your email:",
   "yyyy": "yyyy",
-  "Localise in catalog {{layerName}}": "Show the layer in the catalog"
+  "Localise in catalog {{layerName}}": "Show the layer in the catalog",
+  "Using selected location info coordinates": "Using selected location info coordinates"
 }

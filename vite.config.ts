@@ -36,6 +36,7 @@ export default defineConfig(async ({ command, mode }) => {
     },
     test: {
       globals: true,
+      environment: 'jsdom',
       setupFiles: 'vitest.setup.ts',
     },
     server: {

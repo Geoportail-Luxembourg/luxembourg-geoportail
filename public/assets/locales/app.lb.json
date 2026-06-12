@@ -201,8 +201,18 @@
   "Distance: ": "Distanz",
   "Dotted": "gepunktelt",
   "Download GPX": "Download GPX",
+  "3D Print": "3D-Drock",
+  "3D Print desc": "En 3D-drockbare Modell erstellen",
+  "ACT2BIM": "ACT2BIM",
+  "ACT2BIM desc": "Katasterpläng a BIM ëmwandelen",
   "Download style": "Stil eroflueden",
   "Downloading tiles…": "Downloading tiles…",
+  "Lidar": "Lidar",
+  "Lidar desc": "Terrain-Punktwolkedate entdecken",
+  "Minecraft": "Minecraft",
+  "Minecraft desc": "Lëtzebuerg a Minecraft entdecken",
+  "Vue Oblique": "Schrieger Loftbild",
+  "Vue Oblique desc": "Schrieger Loftbiller duerchsichen",
   "Draw a lidar profile": "LIDAR Profil zeechnen",
   "Draw a line on the map to dislay the corresponding LIDAR profile. Double clic to confirm.": "Zeechent eng Linn op der Kaart, fir den entspriechenden LIDAR Profil unzeweisen. Konfirméiert matt engem Duebelklick",
   "Draw a line on the map to display an elevation profile.": "Zeechent eng Linn op der Kaart fir den Héichtenprofil unzeweisen",
@@ -755,5 +765,6 @@
   "You have no existing Maps, please create a New Map": "Dir hudd keng Kaarten, erstellt w.e.g eng nei Kaart",
   "Your email": "Är Emailadress:",
   "yyyy": "yyyy",
-  "Localise in catalog {{layerName}}": "De Layer am Katalog uweisen"
+  "Localise in catalog {{layerName}}": "De Layer am Katalog uweisen",
+  "Using selected location info coordinates": "Benotzt déi ausgewielten Koordinaten vun der Positioun"
 }
