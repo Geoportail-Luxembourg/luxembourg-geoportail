@@ -5,7 +5,6 @@ import {
   LUX_VCS_MODULES,
   LUX_VCS_PLUGINS,
   LUX_VCS_PITCH,
-  LUX_VCS_DISTANCE,
 } from './vcs.utils'
 import type { ObliqueConfig } from './vcs.utils'
 
@@ -31,27 +30,14 @@ describe('build3dState', () => {
     expect(() => JSON.parse(build3dState(LON, LAT, ALTITUDE))).not.toThrow()
   })
 
-  it('sets camera and target position to the same coordinate by default', () => {
+  it('sets camera position as empty array and target to [lon, lat, 300]', () => {
     const result = JSON.parse(build3dState(LON, LAT, ALTITUDE))
-    expect(result[0][0]).toEqual([LON, LAT, ALTITUDE])
-    expect(result[0][1]).toEqual([LON, LAT, ALTITUDE])
-  })
-
-  it('uses targetAltitude for target position when provided', () => {
-    const result = JSON.parse(
-      build3dState(LON, LAT, ALTITUDE, 300, 0, -45, [], [], [], '3D Map', 100)
-    )
-    expect(result[0][0]).toEqual([LON, LAT, ALTITUDE])
-    expect(result[0][1]).toEqual([LON, LAT, 100])
-  })
-
-  it('uses default distance from LUX_VCS_DISTANCE', () => {
-    const result = JSON.parse(build3dState(LON, LAT, ALTITUDE))
-    expect(result[0][2]).toBe(LUX_VCS_DISTANCE)
+    expect(result[0][0]).toEqual([])
+    expect(result[0][1]).toEqual([LON, LAT, 300])
   })
 
   it('uses provided distance', () => {
-    const result = JSON.parse(build3dState(LON, LAT, ALTITUDE, 999))
+    const result = JSON.parse(build3dState(LON, LAT, 999))
     expect(result[0][2]).toBe(999)
   })
 
@@ -61,7 +47,7 @@ describe('build3dState', () => {
   })
 
   it('uses provided heading', () => {
-    const result = JSON.parse(build3dState(LON, LAT, ALTITUDE, 300, 90))
+    const result = JSON.parse(build3dState(LON, LAT, ALTITUDE, 90))
     expect(result[0][3]).toBe(90)
   })
 
@@ -71,7 +57,7 @@ describe('build3dState', () => {
   })
 
   it('uses provided pitch', () => {
-    const result = JSON.parse(build3dState(LON, LAT, ALTITUDE, 300, 0, -30))
+    const result = JSON.parse(build3dState(LON, LAT, ALTITUDE, 0, -30))
     expect(result[0][4]).toBe(-30)
   })
 
@@ -86,14 +72,12 @@ describe('build3dState', () => {
         LON,
         LAT,
         ALTITUDE,
-        300,
         0,
-        -45,
+        LUX_VCS_PITCH,
         [],
         [],
         [],
         '3D Map',
-        null,
         15
       )
     )
@@ -109,7 +93,10 @@ describe('build3dState', () => {
 
   it('merges provided modules with LUX_VCS_MODULES without duplicates', () => {
     const result = JSON.parse(
-      build3dState(LON, LAT, ALTITUDE, 300, 0, -45, ['LuxConfig', 'MyModule'])
+      build3dState(LON, LAT, ALTITUDE, 0, LUX_VCS_PITCH, [
+        'LuxConfig',
+        'MyModule',
+      ])
     )
     expect(result[2].filter((m: string) => m === 'LuxConfig')).toHaveLength(1)
     expect(result[2]).toContain('MyModule')
@@ -117,7 +104,7 @@ describe('build3dState', () => {
 
   it('sets label at index 1', () => {
     const result = JSON.parse(
-      build3dState(LON, LAT, ALTITUDE, 300, 0, -45, [], [], [], 'MyLabel')
+      build3dState(LON, LAT, ALTITUDE, 0, LUX_VCS_PITCH, [], [], [], 'MyLabel')
     )
     expect(result[1]).toBe('MyLabel')
   })
@@ -128,7 +115,7 @@ describe('build3dState', () => {
       ['LayerB', 1, 0],
     ]
     const result = JSON.parse(
-      build3dState(LON, LAT, ALTITUDE, 300, 0, -45, [], layers)
+      build3dState(LON, LAT, ALTITUDE, 0, LUX_VCS_PITCH, [], layers)
     )
     expect(result[3]).toEqual(layers)
   })
@@ -147,7 +134,7 @@ describe('build3dState', () => {
       { x: 1 },
     ]
     const result = JSON.parse(
-      build3dState(LON, LAT, ALTITUDE, 300, 0, -45, [], [], [extraPlugin])
+      build3dState(LON, LAT, ALTITUDE, 0, LUX_VCS_PITCH, [], [], [extraPlugin])
     )
     const pluginNames = result[5].map((p: unknown[]) => p[0])
     expect(pluginNames).toContain('@my/plugin')
@@ -164,14 +151,12 @@ describe('build3dState', () => {
         LON,
         LAT,
         ALTITUDE,
-        300,
         0,
-        -45,
+        LUX_VCS_PITCH,
         [],
         [],
         [],
         '3D Map',
-        null,
         0,
         'myCollection'
       )
