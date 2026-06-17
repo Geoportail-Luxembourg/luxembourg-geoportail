@@ -3,6 +3,8 @@ import { printService, BASE_URL } from './print.service'
 import { createTestingPinia } from '@pinia/testing'
 import { LuxEncoder } from './mapfishprint/LuxEncoder'
 import { PRINT_FORMAT } from './print.model'
+import Layer from 'ol/layer/Layer'
+import LayerGroup from 'ol/layer/Group'
 
 global.fetch = vi.fn()
 
@@ -129,5 +131,145 @@ describe('PrintService', () => {
 
     const legends = await printService.getLegends([mockLayer as any], 'en')
     expect(legends).toEqual([{ name: 'Test Legend' }])
+  })
+
+  it('should not include hidden or transparent layers for print', () => {
+    const visibleLayer = new Layer({ visible: true, opacity: 1 })
+    const hiddenLayer = new Layer({ visible: false, opacity: 1 })
+    const transparentLayer = new Layer({ visible: true, opacity: 0 })
+    const childOfHiddenGroup = new Layer({ visible: true, opacity: 1 })
+    const hiddenGroup = new LayerGroup({
+      visible: false,
+      layers: [childOfHiddenGroup],
+    })
+    const childOfTransparentGroup = new Layer({ visible: true, opacity: 1 })
+    const transparentGroup = new LayerGroup({
+      visible: true,
+      opacity: 0,
+      layers: [childOfTransparentGroup],
+    })
+
+    const rootGroup = new LayerGroup({
+      visible: true,
+      layers: [
+        visibleLayer,
+        hiddenLayer,
+        transparentLayer,
+        hiddenGroup,
+        transparentGroup,
+      ],
+    })
+
+    const map = {
+      getLayerGroup: () => rootGroup,
+    } as any
+
+    const layers = printService.getLayersForPrint(map)
+    expect(layers).toEqual([visibleLayer])
+  })
+
+  it('should filter out transparent layers in encoder customizer', async () => {
+    const encodeMapMock = vi
+      .fn()
+      .mockResolvedValue({ layers: [] }) as MockedFunction<
+      typeof LuxEncoder.prototype.encodeMap
+    >
+    vi.mocked(LuxEncoder.prototype).encodeMap = encodeMapMock
+
+    const map = {
+      getView: () => ({
+        getCenter: () => [0, 0],
+        getProjection: () => 'EPSG:3857',
+        getResolution: () => 1,
+      }),
+      getLayerGroup: () =>
+        new LayerGroup({
+          visible: true,
+          layers: [],
+        }),
+    } as any
+
+    await printService.getSpec(
+      {
+        format: PRINT_FORMAT.PDF,
+        layout: 'A4 portrait',
+        scale: 25000,
+        lang: 'en',
+        resolution: 96,
+        title: 'Test Print',
+        appTitle: 'Geoportal',
+        scaleTitle: 'Scale',
+        disclaimer: '',
+        dateText: '2026-06-17',
+        legend: true,
+        framestate: null,
+        queryResults: '',
+      },
+      map
+    )
+
+    const customizer = encodeMapMock.mock.calls[0][0].customizer
+
+    expect(
+      customizer.layerFilter({
+        layer: { get: () => undefined },
+        visible: true,
+        minResolution: 0,
+        maxResolution: Infinity,
+        opacity: 0,
+      } as any)
+    ).toBe(false)
+    expect(
+      customizer.layerFilter({
+        layer: { get: () => undefined },
+        visible: true,
+        minResolution: 0,
+        maxResolution: Infinity,
+        opacity: 1,
+      } as any)
+    ).toBe(true)
+  })
+
+  it('should not fail when short link generation fails', async () => {
+    vi.mocked(LuxEncoder.prototype).encodeMap = vi
+      .fn()
+      .mockResolvedValue({ layers: [] })
+    vi.spyOn(printService, 'getShortLink').mockRejectedValue(
+      new Error('short url failed')
+    )
+
+    const map = {
+      getView: () => ({
+        getCenter: () => [0, 0],
+        getProjection: () => 'EPSG:3857',
+        getResolution: () => 1,
+      }),
+      getLayerGroup: () =>
+        new LayerGroup({
+          visible: true,
+          layers: [],
+        }),
+    } as any
+
+    const spec = (await printService.getSpec(
+      {
+        format: PRINT_FORMAT.PDF,
+        layout: 'A4 portrait',
+        scale: 25000,
+        lang: 'en',
+        resolution: 96,
+        title: 'Test Print',
+        appTitle: 'Geoportal',
+        scaleTitle: 'Scale',
+        disclaimer: '',
+        dateText: '2026-06-17',
+        legend: true,
+        framestate: null,
+        queryResults: '',
+      },
+      map
+    )) as any
+
+    expect(spec.attributes.url).toBeTypeOf('string')
   })
 })

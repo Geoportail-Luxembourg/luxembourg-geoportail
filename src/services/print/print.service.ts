@@ -165,7 +165,16 @@ export class PrintService {
   async getSpec(options: PrintOptions, map: Map): Promise<object> {
     const encoder = new LuxEncoder(BASE_URL)
     const customizer = new BaseCustomizer()
-    const shortUrl = await this.getShortLink()
+    const defaultLayerFilter = customizer.layerFilter.bind(customizer)
+    customizer.layerFilter = layerState =>
+      defaultLayerFilter(layerState) &&
+      layerState.opacity > 0 &&
+      layerState.layer.get(OLLAYER_PROP_ID) !== LAYER_POSITION_ID
+
+    const shortUrl = await this.getShortLink().catch(
+      () => BASE_URL + urlPathStorage.getRelativeUrl()
+    )
+    const layersForPrint = this.getLayersForPrint(map)
 
     const adjustedScale = adjustScale(map, options.scale)
 
@@ -177,10 +186,7 @@ export class PrintService {
       customizer,
     })
     mapSpec.layers = mapSpec.layers.filter(layer => layer !== null)
-    const legend = await this.getLegends(
-      map.getLayers().getArray() as BaseLayer[],
-      options.lang
-    )
+    const legend = await this.getLegends(layersForPrint, options.lang)
     const dataOwners: string[] = []
     recursiveGetLayerAttributions(
       map.getLayerGroup(),
@@ -219,10 +225,8 @@ export class PrintService {
    * @returns The filtered layers
    */
   getLayersForPrint(map: Map) {
-    const layers = map
-      .getLayers()
-      .getArray()
-      .filter(l => l.get(OLLAYER_PROP_ID) !== LAYER_POSITION_ID)
+    const layers: BaseLayer[] = []
+    recursiveGetLayersForPrint(map.getLayerGroup(), layers)
     return <BaseLayer[]>layers
   }
 
@@ -318,13 +322,25 @@ export class PrintService {
 function recursiveGetLayerAttributions(
   layer: BaseLayer | LayerGroup,
   dataOwners: string[],
-  framestate: FrameState
+  framestate: FrameState,
+  parentVisible = true
 ) {
+  const isVisible =
+    parentVisible && layer.getVisible() && layer.getOpacity() > 0
+  if (!isVisible || layer.get(OLLAYER_PROP_ID) === LAYER_POSITION_ID) {
+    return
+  }
+
   if (layer instanceof LayerGroup) {
     ;(layer as LayerGroup)
       .getLayers()
       .forEach(l =>
-        recursiveGetLayerAttributions(l as BaseLayer, dataOwners, framestate)
+        recursiveGetLayerAttributions(
+          l as BaseLayer,
+          dataOwners,
+          framestate,
+          isVisible
+        )
       )
   } else {
     const attributions = layer.getSource()?.getAttributions()
@@ -340,6 +356,31 @@ function recursiveGetLayerAttributions(
     }
 
     dataOwners.push(...htmls)
+  }
+}
+
+function recursiveGetLayersForPrint(
+  layer: BaseLayer | LayerGroup,
+  layers: BaseLayer[],
+  parentVisible = true
+) {
+  const isVisible =
+    parentVisible && layer.getVisible() && layer.getOpacity() > 0
+  if (!isVisible) {
+    return
+  }
+
+  if (layer instanceof LayerGroup) {
+    ;(layer as LayerGroup)
+      .getLayers()
+      .forEach(l =>
+        recursiveGetLayersForPrint(l as BaseLayer, layers, isVisible)
+      )
+    return
+  }
+
+  if (layer.get(OLLAYER_PROP_ID) !== LAYER_POSITION_ID) {
+    layers.push(layer)
   }
 }
 
