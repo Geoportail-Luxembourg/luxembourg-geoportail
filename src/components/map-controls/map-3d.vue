@@ -50,14 +50,12 @@ const linkTo3dMap = computed(() => {
     lon,
     lat,
     altitude,
-    undefined,
     heading,
     undefined,
-    [],
+    undefined,
     selectedLayers,
-    [],
-    'cesium',
-    300
+    undefined,
+    'cesium'
   )
 
   return `${LUX_VCS_URL}?state=${encodeURIComponent(state)}`
