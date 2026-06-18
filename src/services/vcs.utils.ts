@@ -1,3 +1,4 @@
+export const LUX_VCS_ALTITUDE = import.meta.env.VITE_LUX_VCS_ALTITUDE ?? 300
 export const LUX_VCS_URL = import.meta.env.VITE_LUX_VCS_URL
 export const LUX_VCS_PITCH = import.meta.env.VITE_LUX_VCS_PITCH ?? -45
 export const LUX_VCS_COORDINATES = [6.13, 49.61]
@@ -43,7 +44,6 @@ export interface ObliqueConfig {
 
 /**
  * Generate a 3D state string for the given parameters for VCS 3D and oblique.
- * Altitude is always 300 for VCS.
  * Exemple: https://3d.geoportail.lu/?state=[[[5.982461093967874,49.73802869488359,692],[5.982461093967874,49.73802869488359,292],400,0,-90,0],"Oblique Map",["LuxConfig","8bbdc4b3-691e-466e-9e91-2b0d57a9a53e","c627c247-8017-483a-a32e-1ff0ad5f0536","0fa7c853-d866-486c-8c2d-3470f401d44c","1f9cb759-c3dc-44ba-9253-7299701499a3","f7791a73-5132-4282-b3c4-1adb1abce06a","catalogConfig"],[],[],[["@geoportallux/lux-3dviewer-themesync",{"prop":"*"}],["@geoportallux/lux-3dviewer-plugin-back-to-2d-portal",{"prop":"*"}]],"ACT2023_ImagesObliques_all",[]]
  */
 export function buildObliqueState(
@@ -60,7 +60,7 @@ export function buildObliqueState(
       cfg.pitch,
       cfg.roll,
     ],
-    'Oblique Map',
+    cfg.label,
     [...new Set([...(cfg.modules || []), ...LUX_VCS_MODULES])],
     [], // Layers (empty for oblique viewer)
     [],
@@ -106,7 +106,7 @@ export function build3dState(
   const state: unknown[] = [
     [
       [],
-      [lon, lat, 300], // Note: altitude is always 300 for lux
+      [lon, lat, LUX_VCS_ALTITUDE], // Note: altitude is always 300 for lux
       distance,
       heading,
       pitch ?? LUX_VCS_PITCH,

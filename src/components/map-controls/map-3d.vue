@@ -15,6 +15,7 @@ import {
   LUX_VCS_URL,
   zoomToCesiumAltitude,
   build3dState,
+  LUX_VCS_PITCH,
 } from '@/services/vcs.utils'
 
 const mapStore = useMapStore()
@@ -51,7 +52,7 @@ const linkTo3dMap = computed(() => {
     lat,
     altitude,
     heading,
-    undefined,
+    LUX_VCS_PITCH,
     undefined,
     selectedLayers,
     undefined,
