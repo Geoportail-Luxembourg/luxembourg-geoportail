@@ -1,6 +1,8 @@
 export const LUX_VCS_ALTITUDE = import.meta.env.VITE_LUX_VCS_ALTITUDE ?? 300
 export const LUX_VCS_URL = import.meta.env.VITE_LUX_VCS_URL
-export const LUX_VCS_PITCH = import.meta.env.VITE_LUX_VCS_PITCH ?? -45
+export const LUX_VCS_PITCH = import.meta.env.VITE_LUX_VCS_PITCH
+  ? Number(import.meta.env.VITE_LUX_VCS_PITCH)
+  : -45
 export const LUX_VCS_COORDINATES = [6.13, 49.61]
 export const LUX_VCS_MODULES = [
   'LuxConfig',
@@ -109,7 +111,7 @@ export function build3dState(
       [lon, lat, LUX_VCS_ALTITUDE], // Note: altitude is always 300 for lux
       distance,
       heading,
-      String(pitch ?? LUX_VCS_PITCH),
+      pitch ?? LUX_VCS_PITCH,
       roll,
     ],
     label,
