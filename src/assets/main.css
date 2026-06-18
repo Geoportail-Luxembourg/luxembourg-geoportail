@@ -620,9 +620,24 @@
   .lux-feature-info-export {
     @apply lux-btn m-2;
   }
-
-  .lux-solarkataster-button {
+  .lux-solarkataster-button-old {
     @apply bg-solarkataster w-[200px] h-[100px] bg-[length:196px_96px] bg-no-repeat;
+  }
+  .lux-solarkataster-button {
+    background-color: #1c2d4b;
+    color: #fff;
+    font-family: Arial, sans-serif;
+    font-weight: 700;
+    border: none;
+    border-radius: 9999px;
+    width: 100%;
+    padding: 14px 28px;
+    line-height: 1.2;
+    cursor: pointer;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
   }
 }
 
