@@ -53,12 +53,12 @@ describe('build3dState', () => {
 
   it('uses default pitch from LUX_VCS_PITCH', () => {
     const result = JSON.parse(build3dState(LON, LAT, ALTITUDE))
-    expect(result[0][4]).toBe(LUX_VCS_PITCH)
+    expect(result[0][4]).toBe(String(LUX_VCS_PITCH))
   })
 
   it('uses provided pitch', () => {
     const result = JSON.parse(build3dState(LON, LAT, ALTITUDE, 0, -30))
-    expect(result[0][4]).toBe(-30)
+    expect(result[0][4]).toBe('-30')
   })
 
   it('uses roll 0 by default', () => {

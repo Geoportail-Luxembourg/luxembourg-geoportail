@@ -109,7 +109,7 @@ export function build3dState(
       [lon, lat, LUX_VCS_ALTITUDE], // Note: altitude is always 300 for lux
       distance,
       heading,
-      pitch ?? LUX_VCS_PITCH,
+      String(pitch ?? LUX_VCS_PITCH),
       roll,
     ],
     label,
