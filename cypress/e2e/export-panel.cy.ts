@@ -86,6 +86,9 @@ describe('Export Panel', () => {
 
   describe('Generated URLs', () => {
     beforeEach(() => {
+      // Wait for locationInfo element to exist in DOM, ensuring location-info.vue is
+      // mounted and OL map event listeners are set up before right-clicking
+      cy.get('[data-cy="locationInfo"]').should('be.hidden')
       // Right-click on the map to set location info coords
       cy.get('div.ol-viewport').rightclick(350, 300, { force: true })
       cy.get('[data-cy="locationInfo"]').should('be.visible')

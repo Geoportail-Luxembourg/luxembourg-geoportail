@@ -26,8 +26,8 @@ describe('Link to 3D Viewer', () => {
     it('The pitch in the 3D viewer URL reflects the value configured via VITE_LUX_VCS_PITCH', () => {
       cy.get('[data-cy="3dViewerLink"] > a')
         .invoke('attr', 'href')
-        .should('include', '%2C-30%2C')
-        .and('not.include', '%2C-45%2C')
+        .should('include', '%22-30%22')
+        .and('not.include', '%22-45%22')
     })
   })
 })
