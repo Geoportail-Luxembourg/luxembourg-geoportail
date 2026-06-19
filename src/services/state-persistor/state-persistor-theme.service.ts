@@ -51,29 +51,34 @@ class StatePersistorThemeService {
       // Also, if the theme is not found in the available themes (e.g. it is a
       // private theme accessible only after login), open the auth form so the
       // user can authenticate and get access to it.
+      // After login, when loadThemes() is called again, setThemeZooms must be
+      // called again to update the zoom constraints for the newly accessible theme.
       const checkThemes = (themes: typeof themeStore.themes) => {
         if (!themes) return false
 
         const themeData = themes.find(t => t.name === theme)
         if (themeData) {
           useThemes().setThemeZooms(themeData.name)
+          return true
         } else {
           // Theme not found in available themes → user must log in
           useAppStore().toggleAuthFormOpen(true)
+          return false
         }
-        return true
       }
 
       // Themes may already be loaded (e.g. HMR), handle immediately if so
-      if (!checkThemes(themeStore.themes)) {
-        // Otherwise wait for themes to load
-        const stopWatch = watch(
-          () => themeStore.themes,
-          themes => {
-            if (checkThemes(themes)) stopWatch()
-          }
-        )
-      }
+      checkThemes(themeStore.themes)
+
+      // Watch for themes reload (e.g. after login) to update zoom constraints
+      // Keep the watcher active to handle cases where a private theme becomes
+      // accessible after authentication
+      watch(
+        () => themeStore.themes,
+        themes => {
+          checkThemes(themes)
+        }
+      )
     }
   }
 }
