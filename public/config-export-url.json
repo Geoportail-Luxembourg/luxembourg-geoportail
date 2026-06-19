@@ -33,13 +33,13 @@
       "useLocationInfoCoords": true,
       "labelKey": "ACT2BIM",
       "icon": "fa-building",
-      "url": "https://act2bim.geoportail.lu"
+      "url": "https://act2bim.geoportail.lu/commande?easting={LUREF_X}&northing={LUREF_Y}"
     },
     {
       "useLocationInfoCoords": true,
       "labelKey": "Minecraft",
       "icon": "fa-gamepad",
-      "url": "https://minecraft.geoportail.lu"
+      "url": "https://minecraft.geoportail.lu?easting={LUREF_X}&northing={LUREF_Y}"
     },
     {
       "useLocationInfoCoords": true,
