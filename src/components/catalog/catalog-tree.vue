@@ -19,7 +19,10 @@ import { useAppStore } from '@/stores/app.store'
 import LayerTreeNode from '@/components/layer-tree/layer-tree-node.vue'
 import { themesToLayerTree } from '@/components/layer-tree/layer-tree.mapper'
 import type { LayerTreeNodeModel } from '@/components/layer-tree/layer-tree.model'
-import { layerTreeService } from '@/components/layer-tree/layer-tree.service'
+import {
+  layerTreeService,
+  EXCLUDED_PARENT_LAYER_IDS,
+} from '@/components/layer-tree/layer-tree.service'
 
 const mapStore = useMapStore()
 const themeStore = useThemeStore()
@@ -78,9 +81,21 @@ watch(layerToLocateInCatalog, id => {
       if (found) {
         layerTree.value = node
         nextTick(() => {
-          const el = catalogRoot.value?.querySelector<HTMLElement>(
+          // A same layer id can appear multiple times in the tree (e.g. shared across themes)
+          const els = catalogRoot.value?.querySelectorAll<HTMLElement>(
             `[data-info="layerRow-${id}"]`
           )
+          const elsArray = els ? Array.from(els) : []
+          const el =
+            // Prefer an occurrence that is NOT nested inside an excluded parent node
+            elsArray.find(
+              el =>
+                !EXCLUDED_PARENT_LAYER_IDS.some(parentId =>
+                  el.closest(`[data-cy="subLayerLabel-${parentId}"]`)
+                )
+            ) ??
+            // Fallback: if the layer only exists under an excluded parent, use it anyway
+            elsArray[0]
           if (!el) return
           el.scrollIntoView({ behavior: 'smooth', block: 'center' })
           el.classList.add('lux-layer-highlight')

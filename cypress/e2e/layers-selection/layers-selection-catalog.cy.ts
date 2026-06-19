@@ -149,6 +149,52 @@ describe('Catalogue', () => {
     })
   })
 
+  describe('When user localises a layer that has duplicates in excluded parents', () => {
+    const excludedParentSelector =
+      '[data-cy="subLayerLabel-2841"], [data-cy="subLayerLabel-2846"]'
+
+    const localiseLayerInCatalog = (layerId: number) => {
+      cy.get(`[data-cy="myLayerItemLabel-${layerId}"]`).click()
+      cy.get(`#layer-manager-item-content-${layerId}`)
+        .find('[data-cy="myLayerLocaliseInCatalog"]')
+        .click()
+    }
+
+    it('prefers the non-excluded occurrence for layer 147', () => {
+      cy.get('[data-cy="catalogButton"]').click()
+      cy.get('[data-cy="layerLabel-147"]').first().click()
+      cy.get('[data-cy="myLayersButton"]').click()
+
+      localiseLayerInCatalog(147)
+
+      // Verify the second occurrence is visible and NOT under an excluded parent
+      cy.get('[data-info="layerRow-147"]')
+        .eq(1)
+        .should('be.visible')
+        .then($el => {
+          expect($el.closest(excludedParentSelector).length).to.eq(0)
+        })
+    })
+
+    it('falls back to excluded occurrence for layer 698 when needed', () => {
+      cy.get('[data-cy="catalogButton"]').click()
+      cy.get('[data-cy="layerLabel-698"]').first().click()
+      cy.get('[data-cy="myLayersButton"]').click()
+
+      localiseLayerInCatalog(698)
+
+      // Layer 698 only exists under excluded parents, so verify the first (only) occurrence is visible and IS under an excluded parent
+      cy.get('[data-info="layerRow-698"]')
+        .eq(0)
+        .should('be.visible')
+        .then($el => {
+          expect($el.closest(excludedParentSelector).length).to.be.greaterThan(
+            0
+          )
+        })
+    })
+  })
+
   describe('When user localises a layer that belongs to a different theme', () => {
     beforeEach(() => {
       // Add layer 189 (tour_mullerthal_trail) from the tourisme theme via the catalog
