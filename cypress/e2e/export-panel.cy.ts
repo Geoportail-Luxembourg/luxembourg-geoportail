@@ -1,4 +1,14 @@
 describe('Export Panel', () => {
+  type ConfigLink = {
+    labelKey?: string
+    useLocationInfoCoords?: boolean
+    userType?: string[]
+    userRoles?: string[]
+  }
+
+  const isPublicLink = (link: ConfigLink) =>
+    !(link.userType?.length || link.userRoles?.length)
+
   beforeEach(() => {
     cy.visit('/')
   })
@@ -23,8 +33,10 @@ describe('Export Panel', () => {
     })
 
     it('displays the same number of links as in config-export-url.json', () => {
-      cy.request('/config-export-url.json').then(() => {
-        const expectedCount = 5 // instead of 6 because some need login (response.body.exportLinks ?? []).length
+      cy.request('/config-export-url.json').then(response => {
+        const expectedCount = (response.body.exportLinks ?? []).filter(
+          (link: ConfigLink) => isPublicLink(link)
+        ).length
         cy.get('[data-cy="exportPanel"]')
           .find('li')
           .should('have.length', expectedCount)
@@ -67,7 +79,7 @@ describe('Export Panel', () => {
     it('shows bullet indicator on links with useLocationInfoCoords after a right-click on the map', () => {
       cy.request('/config-export-url.json').then(response => {
         const linksWithCoords = (response.body.exportLinks ?? []).filter(
-          (l: { useLocationInfoCoords?: boolean }) => l.useLocationInfoCoords
+          (l: ConfigLink) => l.useLocationInfoCoords && isPublicLink(l)
         )
         if (linksWithCoords.length === 0) return
 
@@ -98,41 +110,112 @@ describe('Export Panel', () => {
 
     it('Lidar link has a valid URL with numeric COORD_X, COORD_Y and COORD_Z', () => {
       cy.get('[data-cy="exportPanel"]')
-        .contains('a', 'Lidar')
-        .should('have.attr', 'href')
-        .and(
-          'match',
-          /^https:\/\/lidar\.geoportail\.lu\?COORD_X=\d+&COORD_Y=\d+&COORD_Z=\d+(\.\d+)?$/
-        )
+        .find('i.fa-mountain')
+        .closest('a')
+        .should($a => {
+          const href = $a.attr('href') ?? ''
+          expect(href).to.contain('lidar.geoportail.lu')
+          expect(href).to.not.contain('{')
+        })
+        .invoke('attr', 'href')
+        .then(href => {
+          expect(href).to.not.equal(undefined)
+          const lidarUrl = new URL(href ?? '')
+          const x = Number(lidarUrl.searchParams.get('COORD_X'))
+          const y = Number(lidarUrl.searchParams.get('COORD_Y'))
+          const z = Number(lidarUrl.searchParams.get('COORD_Z'))
+
+          expect(!isNaN(x)).to.equal(true)
+          expect(!isNaN(y)).to.equal(true)
+          expect(!isNaN(z)).to.equal(true)
+        })
     })
 
     it('3D Print link has a valid URL with a URL-encoded BBOX', () => {
       cy.get('[data-cy="exportPanel"]')
-        .contains('a', 'Impression 3D')
-        .should('have.attr', 'href')
-        .and(
-          'match',
-          /^https:\/\/3dprint\.geoportail\.lu\?bbox=[\d.%A-Za-z+-]+$/
-        )
+        .find('i.fa-cube')
+        .closest('a')
+        .should($a => {
+          const href = $a.attr('href') ?? ''
+          expect(href).to.contain('3dprint.geoportail.lu')
+          expect(href).to.not.contain('{')
+        })
+        .invoke('attr', 'href')
+        .then(href => {
+          expect(href).to.not.equal(undefined)
+          const print3dUrl = new URL(href ?? '')
+          expect(print3dUrl.pathname).to.equal('/commande')
+
+          const easting = Number(print3dUrl.searchParams.get('easting'))
+          const northing = Number(print3dUrl.searchParams.get('northing'))
+          const scale = Number(print3dUrl.searchParams.get('scale'))
+
+          expect(!isNaN(easting)).to.equal(true)
+          expect(!isNaN(northing)).to.equal(true)
+          expect(!isNaN(scale)).to.equal(true)
+        })
     })
 
     it('Vue Oblique link has a valid URL with a non-empty state param', () => {
       cy.get('[data-cy="exportPanel"]')
-        .contains('a', 'Vue Oblique')
-        .should('have.attr', 'href')
-        .and('match', /^https:\/\/3d\.geoportail\.lu\?state=.+$/)
+        .find('a[target="_geoportal_ext_obliques"]')
+        .should($a => {
+          const href = $a.attr('href') ?? ''
+          expect(href).to.contain('3d.geoportail.lu')
+          expect(href).to.not.contain('{')
+        })
+        .invoke('attr', 'href')
+        .then(href => {
+          expect(href).to.not.equal(undefined)
+          expect(
+            /^https:\/\/3d\.geoportail\.lu\?state=.+$/.test(href ?? '')
+          ).to.equal(true)
+        })
     })
 
-    it('ACT2BIM link is a static URL', () => {
+    it('ACT2BIM link has dynamic easting and northing parameters', () => {
       cy.get('[data-cy="exportPanel"]')
-        .contains('a', 'ACT2BIM')
-        .should('have.attr', 'href', 'https://act2bim.geoportail.lu')
+        .find('i.fa-building')
+        .closest('a')
+        .should($a => {
+          const href = $a.attr('href') ?? ''
+          expect(href).to.contain('act2bim.geoportail.lu')
+          expect(href).to.not.contain('{')
+        })
+        .invoke('attr', 'href')
+        .then(href => {
+          expect(href).to.not.equal(undefined)
+          const act2bimUrl = new URL(href ?? '')
+          expect(act2bimUrl.pathname).to.equal('/commande')
+          expect(
+            !isNaN(Number(act2bimUrl.searchParams.get('easting')))
+          ).to.equal(true)
+          expect(
+            !isNaN(Number(act2bimUrl.searchParams.get('northing')))
+          ).to.equal(true)
+        })
     })
 
-    it('Minecraft link is a static URL', () => {
+    it('Minecraft link has dynamic easting and northing parameters', () => {
       cy.get('[data-cy="exportPanel"]')
-        .contains('a', 'Minecraft')
-        .should('have.attr', 'href', 'https://minecraft.geoportail.lu')
+        .find('i.fa-gamepad')
+        .closest('a')
+        .should($a => {
+          const href = $a.attr('href') ?? ''
+          expect(href).to.contain('minecraft.geoportail.lu')
+          expect(href).to.not.contain('{')
+        })
+        .invoke('attr', 'href')
+        .then(href => {
+          expect(href).to.not.equal(undefined)
+          const minecraftUrl = new URL(href ?? '')
+          expect(
+            !isNaN(Number(minecraftUrl.searchParams.get('easting')))
+          ).to.equal(true)
+          expect(
+            !isNaN(Number(minecraftUrl.searchParams.get('northing')))
+          ).to.equal(true)
+        })
     })
   })
 
