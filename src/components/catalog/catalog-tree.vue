@@ -90,7 +90,7 @@ watch(layerToLocateInCatalog, id => {
             // Prefer an occurrence that is NOT nested inside an excluded parent node
             elsArray.find(
               el =>
-                !EXCLUDED_PARENT_LAYER_IDS.some(parentId =>
+                !EXCLUDED_PARENT_LAYER_IDS.some((parentId: number) =>
                   el.closest(`[data-cy="subLayerLabel-${parentId}"]`)
                 )
             ) ??
