@@ -4,7 +4,9 @@ import type {
   LayerTreeToggleProperty,
 } from './layer-tree.model'
 
-export const EXCLUDED_PARENT_LAYER_IDS = [2841, 2846]
+export const EXCLUDED_PARENT_LAYER_IDS = JSON.parse(
+  import.meta.env.VITE_EXCLUDED_PARENT_LAYER_IDS || '[]'
+)
 
 export class LayerTreeService {
   toggleNode(
