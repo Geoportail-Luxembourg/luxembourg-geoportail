@@ -16,6 +16,8 @@ import {
 } from './template-utilities'
 import i18next from 'i18next'
 import ProfileFeatureInfo from '@/components/info/profile-feature-info.vue'
+import { useUserManagerStore } from '@/stores/user-manager.store'
+import { storeToRefs } from 'pinia'
 
 defineProps({
   layers: {
@@ -31,6 +33,14 @@ defineEmits<{
   (e: 'export', payload: { feature: FeatureJSON; format: 'kml' | 'gpx' }): void
 }>()
 const { t } = useTranslation('tooltips')
+const userManagerStore = useUserManagerStore()
+const { currentUser } = storeToRefs(userManagerStore)
+const ALLOWED_SOLAR_ECONOMIC_ROLE_IDS = (
+  import.meta.env.VITE_SOLAR_ECONOMIC_ALLOWED_ROLE_IDS || ''
+)
+  .split(',')
+  .map((roleId: string) => Number.parseInt(roleId.trim(), 10))
+  .filter((roleId: number) => !Number.isNaN(roleId))
 
 function isNoSolarNorWaterLink(label: string, attributeEntry: AttributeEntry) {
   return (
@@ -59,6 +69,13 @@ function isWaterLink(label: string, attributeEntry: AttributeEntry) {
 
 function isAudioLink(attributeEntry: AttributeEntry) {
   return isLink(attributeEntry.value) && attributeEntry.key === 'f_AudioURL'
+}
+
+function canAccessSolarEconomicCalculator() {
+  return (
+    !!currentUser.value &&
+    ALLOWED_SOLAR_ECONOMIC_ROLE_IDS.includes(currentUser.value.roleId)
+  )
 }
 </script>
 <template>
@@ -109,10 +126,23 @@ function isAudioLink(attributeEntry: AttributeEntry) {
               <a
                 data-cy="defaultTemplateSolarLink"
                 v-if="isSolarLink(layers.layerLabel, attributeEntry)"
-                :href="attributeEntry.value"
+                :href="`https://solar.klima-agence.lu/?lng=${i18next.language !== 'lb' ? i18next.language : 'de'}`"
                 target="_blank"
               >
                 <button class="lux-solarkataster-button">
+                  <span>{{ t('Simulateur solaire') }}</span>
+                </button></a
+              >
+              <a
+                data-cy="defaultTemplateSolarLink"
+                v-if="
+                  isSolarLink(layers.layerLabel, attributeEntry) &&
+                  canAccessSolarEconomicCalculator()
+                "
+                :href="attributeEntry.value"
+                target="_blank"
+              >
+                <button class="lux-solarkataster-button-old">
                   <span>{{
                     t("Lien direct vers le calculateur d'efficacité économique")
                   }}</span>
