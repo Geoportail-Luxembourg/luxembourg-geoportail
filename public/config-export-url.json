@@ -3,7 +3,8 @@
     {
       "labelKey": "3D Print",
       "icon": "fa-cube",
-      "url": "https://3dprint.geoportail.lu?bbox={BBOX}"
+      "useLocationInfoCoords": true,
+      "url": "https://3dprint.geoportail.lu/commande?easting={LUREF_X}&northing={LUREF_Y}&scale=2500"
     },
     {
       "labelKey": "Lidar",
@@ -29,21 +30,30 @@
       }
     },
     {
+      "useLocationInfoCoords": true,
       "labelKey": "ACT2BIM",
       "icon": "fa-building",
-      "url": "https://act2bim.geoportail.lu"
+      "url": "https://act2bim.geoportail.lu/commande?easting={LUREF_X}&northing={LUREF_Y}"
     },
     {
+      "useLocationInfoCoords": true,
       "labelKey": "Minecraft",
       "icon": "fa-gamepad",
-      "url": "https://minecraft.geoportail.lu"
+      "url": "https://minecraft.geoportail.lu?easting={LUREF_X}&northing={LUREF_Y}"
     },
     {
+      "useLocationInfoCoords": true,
       "labelKey": "Lien vers Cyclomédia",
       "icon": "fa-globe",
       "url": "http://streetsmart.cyclomedia.com/streetsmart?q={LUREF_X};{LUREF_Y}",
       "userType": ["etat", "commune"],
-      "userRoles": ["MinTour"]
+      "userRoles": ["MinTour", "ACT"]
+    },
+    {
+      "useLocationInfoCoords": true,
+      "labelKey": "Ouvrir streetView",
+      "icon": "fa-street-view",
+      "url": "https://www.google.com/maps/@?api=1&map_action=pano&viewpoint={LAT},{LON}&heading=0&pitch=0&fov=90"
     }
   ]
 }
