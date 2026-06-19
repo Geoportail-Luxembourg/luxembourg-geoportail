@@ -1,9 +1,7 @@
-import { describe, it, expect, beforeEach, afterEach, vi } from 'vitest'
+import { describe, it, expect, afterEach, vi } from 'vitest'
 import { defineComponent, nextTick } from 'vue'
 import { mount, flushPromises } from '@vue/test-utils'
-import { setActivePinia } from 'pinia'
 import { createTestingPinia } from '@pinia/testing'
-import type OlMap from 'ol/Map'
 
 import useExportUrl, { interpolateUrl } from './export-url.composable'
 import {
@@ -13,12 +11,7 @@ import {
 } from '@/services/vcs.utils'
 import type { ObliqueConfig } from '@/services/vcs.utils'
 import type { ExportLink } from './export-url.model'
-import { useMapStore } from '@/stores/map.store'
-import { useLocationInfoStore } from '@/stores/location-info.store'
 import { useUserManagerStore } from '@/stores/user-manager.store'
-import type { Layer } from '@/stores/map.store.model'
-
-let resolveUrl: Awaited<ReturnType<typeof useExportUrl>>['resolveUrl']
 
 vi.mock('ol/proj', () => ({
   transform: vi.fn((coord: number[], _from: unknown, to: unknown) => {
@@ -46,30 +39,6 @@ vi.mock('@/services/ol-layer/ol-layer-factory.service', () => ({
     })),
   },
 }))
-
-function makeMockMap(overrides?: {
-  center?: number[] | null
-  zoom?: number
-  size?: number[] | null
-}): OlMap {
-  const center =
-    overrides?.center !== undefined ? overrides.center : [681000, 6400000]
-  const zoom = overrides?.zoom ?? 15
-  const size = overrides?.size !== undefined ? overrides.size : [800, 600]
-
-  return {
-    getView: () => ({
-      getCenter: () => center,
-      getProjection: () => 'EPSG:3857',
-      getZoom: () => zoom,
-      calculateExtent: () => [670000, 6390000, 692000, 6410000],
-    }),
-    getSize: () => size,
-  } as unknown as OlMap
-}
-
-const layerMock1 = { id: 'layer_a', name: 'Layer A' } as Layer
-const layerMock2 = { id: 42, name: 'Layer B' } as Layer
 
 const obliqueConfig: ObliqueConfig = {
   cameraAltitude: 692,
@@ -159,174 +128,6 @@ describe('buildObliqueState', () => {
       ])
     )
     expect(result[6]).toBe(obliqueConfig.collection)
-  })
-})
-
-describe('resolveUrl', () => {
-  beforeEach(() => {
-    setActivePinia(
-      createTestingPinia({
-        createSpy: vi.fn,
-        initialState: {
-          map: { layers: [layerMock1, layerMock2] },
-          'user-manager': { currentUser: undefined },
-        },
-      })
-    )
-    resolveUrl = useExportUrl().resolveUrl
-  })
-
-  it('uses locationInfoCoords when useLocationInfoCoords is true and coords are set', async () => {
-    const locationInfoStore = useLocationInfoStore()
-    locationInfoStore.locationInfoCoords = [700000, 6420000]
-    const link: ExportLink = {
-      labelKey: 'Lidar',
-      icon: 'fa-mountain',
-      useLocationInfoCoords: true,
-      url: 'https://lidar.geoportail.lu?COORD_X={LUREF_X}&COORD_Y={LUREF_Y}',
-    }
-    const result = await resolveUrl(link, makeMockMap())
-    expect(result).toContain('COORD_X=75432')
-    expect(result).toContain('COORD_Y=75891')
-  })
-
-  it('falls back to map center when useLocationInfoCoords is true but no location info coords', async () => {
-    const locationInfoStore = useLocationInfoStore()
-    locationInfoStore.locationInfoCoords = undefined
-    const link: ExportLink = {
-      labelKey: 'Lidar',
-      icon: 'fa-mountain',
-      useLocationInfoCoords: true,
-      url: 'https://lidar.geoportail.lu?COORD_X={LUREF_X}&COORD_Y={LUREF_Y}',
-    }
-    const result = await resolveUrl(link, makeMockMap())
-    expect(result).toContain('COORD_X=75432')
-    expect(result).toContain('COORD_Y=75891')
-  })
-
-  it('uses map center when useLocationInfoCoords is false', async () => {
-    const locationInfoStore = useLocationInfoStore()
-    locationInfoStore.locationInfoCoords = [700000, 6420000]
-    const link: ExportLink = {
-      labelKey: 'Test',
-      icon: 'fa-test',
-      useLocationInfoCoords: false,
-      url: 'https://example.com?x={LUREF_X}',
-    }
-    const result = await resolveUrl(link, makeMockMap())
-    expect(result).toContain('x=75432')
-  })
-
-  it('returns empty string when link has no url', async () => {
-    const link: ExportLink = { labelKey: 'Test', icon: 'fa-test' }
-    expect(await resolveUrl(link, makeMockMap())).toBe('')
-  })
-
-  it('returns url as-is when map has no center', async () => {
-    const link: ExportLink = {
-      labelKey: 'Test',
-      icon: 'fa-test',
-      url: 'https://example.com?x={LUREF_X}',
-    }
-    expect(await resolveUrl(link, makeMockMap({ center: null }))).toBe(
-      'https://example.com?x={LUREF_X}'
-    )
-  })
-
-  it('replaces {LUREF_X} and {LUREF_Y}', async () => {
-    const link: ExportLink = {
-      labelKey: 'Lidar',
-      icon: 'fa-mountain',
-      url: 'https://lidar.geoportail.lu?COORD_X={LUREF_X}&COORD_Y={LUREF_Y}&COORD_Z={ELEVATION}',
-    }
-    const result = await resolveUrl(link, makeMockMap())
-    expect(result).toContain('COORD_X=75432')
-    expect(result).toContain('COORD_Y=75891')
-  })
-
-  it('replaces {ELEVATION} with terrain altitude', async () => {
-    const link: ExportLink = {
-      labelKey: 'Lidar',
-      icon: 'fa-mountain',
-      url: 'https://lidar.geoportail.lu?COORD_Z={ELEVATION}',
-    }
-    const result = await resolveUrl(link, makeMockMap())
-    expect(result).toContain('COORD_Z=332')
-  })
-
-  it('replaces {LON} and {LAT}', async () => {
-    const link: ExportLink = {
-      labelKey: 'Test',
-      icon: 'fa-test',
-      url: 'https://example.com?lon={LON}&lat={LAT}',
-    }
-    const result = await resolveUrl(link, makeMockMap())
-    expect(result).toContain('lon=6.13')
-    expect(result).toContain('lat=49.61')
-  })
-
-  it('replaces {ZOOM}', async () => {
-    const link: ExportLink = {
-      labelKey: 'Test',
-      icon: 'fa-test',
-      url: 'https://example.com?zoom={ZOOM}',
-    }
-    const result = await resolveUrl(link, makeMockMap({ zoom: 14.7 }))
-    expect(result).toContain('zoom=15')
-  })
-
-  it('replaces {BBOX} with encoded extent', async () => {
-    const link: ExportLink = {
-      labelKey: 'Test',
-      icon: 'fa-test',
-      url: 'https://example.com?bbox={BBOX}',
-    }
-    const result = await resolveUrl(link, makeMockMap())
-    expect(result).toContain('bbox=')
-    expect(result).not.toContain(',')
-  })
-
-  it('replaces {LAYER_IDS} with encoded layer ids', async () => {
-    const link: ExportLink = {
-      labelKey: 'Test',
-      icon: 'fa-test',
-      url: 'https://example.com?layers={LAYER_IDS}',
-    }
-    const mapStore = useMapStore()
-    mapStore.layers = [layerMock1, layerMock2] as typeof mapStore.layers
-    const result = await resolveUrl(link, makeMockMap())
-    expect(result).toContain('layers=')
-    expect(result).toContain(encodeURIComponent('layer_a,42'))
-  })
-
-  it('replaces {VCS_OBLIQUE_STATE} with encoded JSON state', async () => {
-    const link: ExportLink = {
-      labelKey: 'Vue Oblique',
-      icon: 'fa-street-view',
-      url: 'https://3d.geoportail.lu?state={VCS_OBLIQUE_STATE}',
-      obliqueConfig,
-    }
-    const result = await resolveUrl(link, makeMockMap())
-    expect(result).toContain('state=')
-    const encoded = result.split('state=')[1]
-    const decoded = JSON.parse(decodeURIComponent(encoded))
-    expect(decoded[6]).toBe(obliqueConfig.collection)
-  })
-
-  it('returns static url unchanged when no tokens are present', async () => {
-    const url = 'https://3dprint.geoportail.lu'
-    const link: ExportLink = { labelKey: '3D Print', icon: 'fa-cube', url }
-    expect(await resolveUrl(link, makeMockMap())).toBe(url)
-  })
-
-  it('returns url as-is when map size is null', async () => {
-    const link: ExportLink = {
-      labelKey: 'Test',
-      icon: 'fa-test',
-      url: 'https://example.com?bbox={BBOX}',
-    }
-    const result = await resolveUrl(link, makeMockMap({ size: null }))
-    expect(result).toContain('bbox=')
   })
 })
 

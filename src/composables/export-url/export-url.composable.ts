@@ -102,6 +102,11 @@ export default function useExportUrl(map?: OlMap) {
       targetExportLayer?.positionTarget(newX, newY)
     }
   })
+  watch([locationInfoCoords, layers, x, y, zoom], resolveAllHrefs)
+  watch([allLinks, currentUser], ([newLinks]) => {
+    links.value = filterLinks(newLinks)
+    resolveAllHrefs()
+  })
 
   onMounted(async () => {
     const res = await fetch('/config-export-url.json')
@@ -180,11 +185,6 @@ export default function useExportUrl(map?: OlMap) {
     })
   }
 
-  async function resolveUrl(link: ExportLink, olMap: OlMap): Promise<string> {
-    await refreshCache(olMap)
-    return resolveUrlFromCache(link)
-  }
-
   async function resolveAllHrefs() {
     if (!map) {
       return
@@ -197,16 +197,9 @@ export default function useExportUrl(map?: OlMap) {
     )
   }
 
-  watch([locationInfoCoords, layers, x, y, zoom], resolveAllHrefs)
-  watch([allLinks, currentUser], ([newLinks]) => {
-    links.value = filterLinks(newLinks)
-    resolveAllHrefs()
-  })
-
   return {
     interpolateUrl,
     buildObliqueState,
-    resolveUrl,
     resolvedHrefs,
     resolveAllHrefs,
     links,
