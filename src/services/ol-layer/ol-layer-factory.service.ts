@@ -1,3 +1,5 @@
+import VectorLayer from 'ol/layer/Vector'
+import VectorSource from 'ol/source/Vector'
 import useLayers from '@/composables/layers/layers.composable'
 import { VectorSourceDict } from '@/composables/mvt-styles/mvt-styles.model'
 import { OfflineLayerTypeValue } from '@/composables/offline/offline.model'
@@ -20,6 +22,10 @@ import olLayerVectorHelper from './ol-layer-vector.helper'
 import { olLayerOfflineFactoryService } from './ol-layer-offline-factory'
 import olLayerFeaturePositionHelper from './ol-layer-feature-position.helper'
 import olLayerInteractionDrawHelper from './ol-layer-interaction-draw.helper'
+import olLayerLocationInfoHelper from './ol-layer-location-info.helper'
+import olLayerTargetExportHelper, {
+  TargetExportLayer,
+} from './ol-layer-target-export.helper'
 
 export class OlLayerFactoryService {
   createOlLayer(
@@ -74,6 +80,14 @@ export class OlLayerFactoryService {
     olLayer.set(OLLAYER_PROP_LABEL, layer.name)
 
     return olLayer
+  }
+
+  createOlLayerLocationInfo(): Extract<OlLayer, VectorLayer<VectorSource>> {
+    return olLayerLocationInfoHelper.createOlLayer()
+  }
+
+  createOlLayerTargetExport(): TargetExportLayer {
+    return olLayerTargetExportHelper.createOlLayer()
   }
 
   setOlProps(layer: Layer, olLayer: OlLayer) {

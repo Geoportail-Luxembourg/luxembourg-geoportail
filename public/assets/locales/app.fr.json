@@ -755,5 +755,22 @@
   "You have no existing Maps, please create a New Map": "Vous n'avez pas de carte existante. Veuillez créer une carte",
   "Your email": "Votre email",
   "yyyy": "yyyy",
-  "Localise in catalog {{layerName}}": "Afficher la couche dans le catalogue"
+  "Localise in catalog {{layerName}}": "Afficher la couche dans le catalogue",
+  "Using selected location info coordinates": "Utilise les coordonnées de la position sélectionnée",
+  "Les différentes applications externes sont maintenant disponibles dans le menu 'Aller vers'": "Les différentes applications externes sont maintenant disponibles dans le menu « Aller vers »",
+  "3D Print": "Impression 3D",
+  "3D Print desc": "Générer un modèle imprimable en 3D",
+  "ACT2BIM": "ACT2BIM",
+  "ACT2BIM desc": "Exporter le modèle 3D en formats BIM",
+  "Lidar": "LiDAR",
+  "Lidar desc": "Explorer les nuages de points",
+  "Minecraft": "Minecraft",
+  "Minecraft desc": "Exporter le modèle 3D vers Minecraft",
+  "Vue Oblique": "Vue Oblique",
+  "Vue Oblique desc": "Parcourir les images aériennes obliques",
+  "Lien vers Cyclomédia desc": "Ouvrir Cyclomédia",
+  "Ouvrir streetView desc": "Ouvrir Street View",
+  "Close go to panel": "Fermer le panneau 'Aller vers'",
+  "Open go to panel": "Ouvrir le panneau 'Aller vers'",
+  "Go to": "Aller vers"
 }

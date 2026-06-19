@@ -755,5 +755,22 @@
   "You have no existing Maps, please create a New Map": "Sie besitzen keine Karten, bitte erstellen Sie eine Karte",
   "Your email": "Ihre Emailadresse:",
   "yyyy": "yyyy",
-  "Localise in catalog {{layerName}}": "Layer im Katalog anzeigen"
+  "Localise in catalog {{layerName}}": "Layer im Katalog anzeigen",
+  "Using selected location info coordinates": "Verwendet die ausgewählten Standortkoordinaten",
+  "Les différentes applications externes sont maintenant disponibles dans le menu 'Aller vers'": "Die verschiedenen externen Anwendungen sind jetzt im Menü « Gehe zu »  verfügbar",
+  "3D Print": "3D Druck",
+  "3D Print desc": "Ein 3D-druckbares Modell erstellen",
+  "ACT2BIM": "ACT2BIM",
+  "ACT2BIM desc": "3D Modell in BIM Formate konvertieren",
+  "Lidar": "LiDAR",
+  "Lidar desc": "Punktwolken erkunden",
+  "Minecraft": "Minecraft",
+  "Minecraft desc": "3D Modell für Minecraft konvertieren",
+  "Vue Oblique": "Schrägansicht",
+  "Vue Oblique desc": "Schräge Luftbilder erkunden",
+  "Lien vers Cyclomédia desc": "Cyclomedia öffnen",
+  "Ouvrir streetView desc": "Street View öffnen",
+  "Close go to panel": "Schließen Sie das 'Gehe zu'-Panel",
+  "Open go to panel": "Öffnen Sie das 'Gehe zu'-Panel",
+  "Go to": "Gehe zu"
 }

@@ -752,5 +752,22 @@
   "You have no existing Maps, please create a New Map": "You have no existing maps, please create a new map",
   "Your email": "Your email:",
   "yyyy": "yyyy",
-  "Localise in catalog {{layerName}}": "Show the layer in the catalog"
+  "Localise in catalog {{layerName}}": "Show the layer in the catalog",
+  "Using selected location info coordinates": "Using selected location info coordinates",
+  "Les différentes applications externes sont maintenant disponibles dans le menu 'Aller vers'": "The different external applications are now available in the « Go to » menu",
+  "3D Print": "3D Print",
+  "3D Print desc": "Generate a 3D printable model",
+  "ACT2BIM": "ACT2BIM",
+  "ACT2BIM desc": "Export 3D Model into BIM formats",
+  "Lidar": "LiDAR",
+  "Lidar desc": "Explore point cloud data",
+  "Minecraft": "Minecraft",
+  "Minecraft desc": "Export 3D Model to Minecraft",
+  "Vue Oblique": "Oblique View",
+  "Vue Oblique desc": "Browse oblique aerial imagery",
+  "Lien vers Cyclomédia desc": "Open Cyclomedia",
+  "Ouvrir streetView desc": "Open Street View",
+  "Close go to panel": "Close 'Go to' panel",
+  "Open go to panel": "Open 'Go to' panel",
+  "Go to": "Go to"
 }
