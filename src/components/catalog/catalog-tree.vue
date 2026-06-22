@@ -73,17 +73,12 @@ watch(layerToLocateInCatalog, id => {
   if (id === undefined || id === null) return
   appStore.clearLayerToLocateInCatalog()
 
-  const hasAllowedLayerInTree = (tree: LayerTreeNodeModel) =>
+  const getLayerPresence = (tree: LayerTreeNodeModel) =>
     layerTreeService.getLayerPresence(id, tree, EXCLUDED_PARENT_LAYER_IDS)
-      .hasAllowed
 
   const tryExpand = (allowExcludedFallback = false) => {
     if (layerTree.value) {
-      const layerPresence = layerTreeService.getLayerPresence(
-        id,
-        layerTree.value,
-        EXCLUDED_PARENT_LAYER_IDS
-      )
+      const layerPresence = getLayerPresence(layerTree.value)
       if (!layerPresence.hasAny) return false
       if (!allowExcludedFallback && !layerPresence.hasAllowed) return false
 
@@ -124,36 +119,48 @@ watch(layerToLocateInCatalog, id => {
     return false
   }
 
-  const getPreferredThemeName = (themeNames: string[]) => {
-    for (const themeName of themeNames) {
-      const themeNode = themes.findByName(themeName)
-      if (themeNode && hasAllowedLayerInTree(themesToLayerTree(themeNode))) {
-        return themeName
-      }
+  const switchThemeAndExpand = (
+    targetThemeName: string,
+    allowExcludedFallback = false
+  ) => {
+    if (targetThemeName === themeName.value) {
+      tryExpand(allowExcludedFallback)
+      return
     }
-    return themeNames[0]
+
+    themeStore.setTheme(targetThemeName)
+    const stop = watch(layerTree, () => {
+      stop()
+      tryExpand(allowExcludedFallback)
+    })
   }
 
   if (tryExpand()) return
 
-  // Layer not in current theme → switch to first theme that contains it
+  const currentLayerPresence = layerTree.value
+    ? getLayerPresence(layerTree.value)
+    : undefined
+
   const themeNames = themes.findThemeNamesByLayerId(id)
-  if (!themeNames.length) return
+  const preferredThemeName = themeNames.find(themeName => {
+    const themeNode = themes.findByName(themeName)
+    return themeNode
+      ? getLayerPresence(themesToLayerTree(themeNode)).hasAllowed
+      : false
+  })
 
-  const preferredThemeName = getPreferredThemeName(themeNames)
+  if (preferredThemeName) {
+    switchThemeAndExpand(preferredThemeName)
+    return
+  }
 
-  if (preferredThemeName === themeName.value) {
+  if (currentLayerPresence?.hasAny) {
     tryExpand(true)
     return
   }
 
-  themeStore.setTheme(preferredThemeName)
-
-  // Wait for layerTree to be rebuilt after theme switch, then expand
-  const stop = watch(layerTree, () => {
-    stop()
-    tryExpand(true)
-  })
+  if (!themeNames.length) return
+  switchThemeAndExpand(themeNames[0], true)
 })
 
 function toggleParent(node: LayerTreeNodeModel, is3d: boolean) {

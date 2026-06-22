@@ -176,21 +176,20 @@ describe('Catalogue', () => {
         })
     })
 
-    it('falls back to excluded occurrence for layer 698 when needed', () => {
+    it('prefers a non-excluded occurrence from another theme for layer 698', () => {
       cy.get('[data-cy="catalogButton"]').click()
       cy.get('[data-cy="layerLabel-698"]').first().click()
       cy.get('[data-cy="myLayersButton"]').click()
 
       localiseLayerInCatalog(698)
 
-      // Layer 698 only exists under excluded parents, so verify the first (only) occurrence is visible and IS under an excluded parent
+      // Layer 698 exists in another theme outside excluded parents, so it should switch there
+      cy.get('[data-cy="parentLayerLabel-694"]').should('be.visible')
       cy.get('[data-info="layerRow-698"]')
         .eq(0)
         .should('be.visible')
         .then($el => {
-          expect($el.closest(excludedParentSelector).length).to.be.greaterThan(
-            0
-          )
+          expect($el.closest(excludedParentSelector).length).to.eq(0)
         })
     })
   })
