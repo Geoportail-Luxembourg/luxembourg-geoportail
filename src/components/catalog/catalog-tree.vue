@@ -38,6 +38,7 @@ const showDefaultCatalog = computed(
 
 const { layerTrees_3d } = storeToRefs(themeStore)
 const { layerToLocateInCatalog } = storeToRefs(appStore)
+const { themeName } = storeToRefs(themeStore)
 
 watchEffect(updateLayerTree)
 
@@ -72,8 +73,20 @@ watch(layerToLocateInCatalog, id => {
   if (id === undefined || id === null) return
   appStore.clearLayerToLocateInCatalog()
 
-  const tryExpand = () => {
+  const hasAllowedLayerInTree = (tree: LayerTreeNodeModel) =>
+    layerTreeService.getLayerPresence(id, tree, EXCLUDED_PARENT_LAYER_IDS)
+      .hasAllowed
+
+  const tryExpand = (allowExcludedFallback = false) => {
     if (layerTree.value) {
+      const layerPresence = layerTreeService.getLayerPresence(
+        id,
+        layerTree.value,
+        EXCLUDED_PARENT_LAYER_IDS
+      )
+      if (!layerPresence.hasAny) return false
+      if (!allowExcludedFallback && !layerPresence.hasAllowed) return false
+
       const { found, node } = layerTreeService.expandToLayer(
         id,
         layerTree.value
@@ -94,8 +107,8 @@ watch(layerToLocateInCatalog, id => {
                   el.closest(`[data-cy="subLayerLabel-${parentId}"]`)
                 )
             ) ??
-            // Fallback: if the layer only exists under an excluded parent, use it anyway
-            elsArray[0]
+            // Fallback only when explicitly allowed
+            (allowExcludedFallback ? elsArray[0] : undefined)
           if (!el) return
           el.scrollIntoView({ behavior: 'smooth', block: 'center' })
           el.classList.add('lux-layer-highlight')
@@ -111,17 +124,35 @@ watch(layerToLocateInCatalog, id => {
     return false
   }
 
+  const getPreferredThemeName = (themeNames: string[]) => {
+    for (const themeName of themeNames) {
+      const themeNode = themes.findByName(themeName)
+      if (themeNode && hasAllowedLayerInTree(themesToLayerTree(themeNode))) {
+        return themeName
+      }
+    }
+    return themeNames[0]
+  }
+
   if (tryExpand()) return
 
   // Layer not in current theme → switch to first theme that contains it
   const themeNames = themes.findThemeNamesByLayerId(id)
   if (!themeNames.length) return
-  themeStore.setTheme(themeNames[0])
+
+  const preferredThemeName = getPreferredThemeName(themeNames)
+
+  if (preferredThemeName === themeName.value) {
+    tryExpand(true)
+    return
+  }
+
+  themeStore.setTheme(preferredThemeName)
 
   // Wait for layerTree to be rebuilt after theme switch, then expand
   const stop = watch(layerTree, () => {
     stop()
-    tryExpand()
+    tryExpand(true)
   })
 })
 

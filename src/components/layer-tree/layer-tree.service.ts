@@ -9,6 +9,43 @@ export const EXCLUDED_PARENT_LAYER_IDS = JSON.parse(
 )
 
 export class LayerTreeService {
+  getLayerPresence(
+    targetId: LayerId,
+    node: LayerTreeNodeModel,
+    excludedParentLayerIds: number[],
+    hasExcludedAncestor = false
+  ): { hasAny: boolean; hasAllowed: boolean } {
+    const isExcludedAncestor =
+      hasExcludedAncestor || excludedParentLayerIds.includes(+node.id)
+
+    if (node.id === targetId) {
+      return {
+        hasAny: true,
+        hasAllowed: !isExcludedAncestor,
+      }
+    }
+
+    if (!node.children) {
+      return { hasAny: false, hasAllowed: false }
+    }
+
+    return node.children.reduce<{ hasAny: boolean; hasAllowed: boolean }>(
+      (acc, child) => {
+        const childPresence = this.getLayerPresence(
+          targetId,
+          child,
+          excludedParentLayerIds,
+          isExcludedAncestor
+        )
+        return {
+          hasAny: acc.hasAny || childPresence.hasAny,
+          hasAllowed: acc.hasAllowed || childPresence.hasAllowed,
+        }
+      },
+      { hasAny: false, hasAllowed: false }
+    )
+  }
+
   toggleNode(
     id: LayerId,
     node: LayerTreeNodeModel,
