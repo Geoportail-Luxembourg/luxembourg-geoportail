@@ -42,10 +42,8 @@ const linkTo3dMap = computed(() => {
   const [lon, lat] = getLonLatFromXY(x.value, y.value)
   const altitude = getAltFromZoom(zoom.value ?? 12)
   const heading = getHeadingFromRotation(rotation.value ?? 0)
-  const selectedLayers = layers.value.map(l => JSON.stringify([l.name, 1, 0]))
-  const selectedBgLayer = bgLayer.value
-    ? JSON.stringify([bgLayer.value.name, 1, 0])
-    : null
+  const selectedLayers = layers.value.map(l => [l.name, 1, 0])
+  const selectedBgLayer = bgLayer.value ? [bgLayer.value.name, 1, 0] : null
   if (selectedBgLayer) selectedLayers.unshift(selectedBgLayer)
   const state = build3dState(
     lon,
@@ -53,9 +51,7 @@ const linkTo3dMap = computed(() => {
     altitude,
     heading,
     LUX_VCS_PITCH,
-    undefined,
     selectedLayers,
-    undefined,
     'cesium'
   )
 

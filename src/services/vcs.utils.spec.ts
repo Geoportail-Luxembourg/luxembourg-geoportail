@@ -3,7 +3,6 @@ import {
   build3dState,
   buildObliqueState,
   LUX_VCS_MODULES,
-  LUX_VCS_PLUGINS,
   LUX_VCS_PITCH,
 } from './vcs.utils'
 import type { ObliqueConfig } from './vcs.utils'
@@ -20,8 +19,6 @@ const obliqueConfig: ObliqueConfig = {
   pitch: -60,
   roll: 10,
   label: 'Oblique Map',
-  modules: ['MyModule'],
-  plugins: [['@my/plugin', { prop: 'val' }]],
   collection: 'ACT2023_ImagesObliques_all',
 }
 
@@ -68,43 +65,19 @@ describe('build3dState', () => {
 
   it('uses provided roll', () => {
     const result = JSON.parse(
-      build3dState(
-        LON,
-        LAT,
-        ALTITUDE,
-        0,
-        LUX_VCS_PITCH,
-        [],
-        [],
-        [],
-        '3D Map',
-        15
-      )
+      build3dState(LON, LAT, ALTITUDE, 0, LUX_VCS_PITCH, [], '3D Map', 15)
     )
     expect(result[0][5]).toBe(15)
   })
 
-  it('always includes LUX_VCS_MODULES', () => {
+  it('sets LUX_VCS_MODULES at index 2', () => {
     const result = JSON.parse(build3dState(LON, LAT, ALTITUDE))
-    for (const m of LUX_VCS_MODULES) {
-      expect(result[2]).toContain(m)
-    }
-  })
-
-  it('merges provided modules with LUX_VCS_MODULES without duplicates', () => {
-    const result = JSON.parse(
-      build3dState(LON, LAT, ALTITUDE, 0, LUX_VCS_PITCH, [
-        'LuxConfig',
-        'MyModule',
-      ])
-    )
-    expect(result[2].filter((m: string) => m === 'LuxConfig')).toHaveLength(1)
-    expect(result[2]).toContain('MyModule')
+    expect(result[2]).toEqual(LUX_VCS_MODULES)
   })
 
   it('sets label at index 1', () => {
     const result = JSON.parse(
-      build3dState(LON, LAT, ALTITUDE, 0, LUX_VCS_PITCH, [], [], [], 'MyLabel')
+      build3dState(LON, LAT, ALTITUDE, 0, LUX_VCS_PITCH, [], 'MyLabel')
     )
     expect(result[1]).toBe('MyLabel')
   })
@@ -115,29 +88,14 @@ describe('build3dState', () => {
       ['LayerB', 1, 0],
     ]
     const result = JSON.parse(
-      build3dState(LON, LAT, ALTITUDE, 0, LUX_VCS_PITCH, [], layers)
+      build3dState(LON, LAT, ALTITUDE, 0, LUX_VCS_PITCH, layers)
     )
     expect(result[3]).toEqual(layers)
   })
 
-  it('always includes LUX_VCS_PLUGINS', () => {
+  it('sets 0 at index 5 (formerly plugins)', () => {
     const result = JSON.parse(build3dState(LON, LAT, ALTITUDE))
-    const pluginNames = result[5].map((p: unknown[]) => p[0])
-    for (const [name] of LUX_VCS_PLUGINS) {
-      expect(pluginNames).toContain(name)
-    }
-  })
-
-  it('merges provided plugins with LUX_VCS_PLUGINS', () => {
-    const extraPlugin: [string, Record<string, unknown>] = [
-      '@my/plugin',
-      { x: 1 },
-    ]
-    const result = JSON.parse(
-      build3dState(LON, LAT, ALTITUDE, 0, LUX_VCS_PITCH, [], [], [extraPlugin])
-    )
-    const pluginNames = result[5].map((p: unknown[]) => p[0])
-    expect(pluginNames).toContain('@my/plugin')
+    expect(result[5]).toBe(0)
   })
 
   it('ends with 0 when no collection provided', () => {
@@ -153,8 +111,6 @@ describe('build3dState', () => {
         ALTITUDE,
         0,
         LUX_VCS_PITCH,
-        [],
-        [],
         [],
         '3D Map',
         0,
@@ -208,14 +164,14 @@ describe('buildObliqueState', () => {
     expect(result[1]).toBe(obliqueConfig.label)
   })
 
-  it('merges cfg.modules with LUX_VCS_MODULES without duplicates', () => {
-    const cfg = { ...obliqueConfig, modules: ['LuxConfig', 'CustomModule'] }
-    const result = JSON.parse(buildObliqueState(LON, LAT, cfg))
-    expect(result[2].filter((m: string) => m === 'LuxConfig')).toHaveLength(1)
-    expect(result[2]).toContain('CustomModule')
-    for (const m of LUX_VCS_MODULES) {
-      expect(result[2]).toContain(m)
-    }
+  it('sets LUX_VCS_MODULES at index 2', () => {
+    const result = JSON.parse(buildObliqueState(LON, LAT, obliqueConfig))
+    expect(result[2]).toEqual(LUX_VCS_MODULES)
+  })
+
+  it('sets 0 at index 5 (formerly plugins)', () => {
+    const result = JSON.parse(buildObliqueState(LON, LAT, obliqueConfig))
+    expect(result[5]).toBe(0)
   })
 
   it('includes collection', () => {
@@ -227,14 +183,5 @@ describe('buildObliqueState', () => {
     const result = JSON.parse(buildObliqueState(LON, LAT, obliqueConfig))
     expect(result.at(-1)).toEqual([])
     expect(result.at(-2)).toBe(obliqueConfig.collection)
-  })
-
-  it('includes cfg.plugins merged with LUX_VCS_PLUGINS', () => {
-    const result = JSON.parse(buildObliqueState(LON, LAT, obliqueConfig))
-    const pluginNames = result[5].map((p: unknown[]) => p[0])
-    expect(pluginNames).toContain('@my/plugin')
-    for (const [name] of LUX_VCS_PLUGINS) {
-      expect(pluginNames).toContain(name)
-    }
   })
 })
