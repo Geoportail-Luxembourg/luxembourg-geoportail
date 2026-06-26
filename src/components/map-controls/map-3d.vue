@@ -51,9 +51,7 @@ const linkTo3dMap = computed(() => {
     altitude,
     heading,
     LUX_VCS_PITCH,
-    undefined,
     selectedLayers,
-    undefined,
     'cesium'
   )
 

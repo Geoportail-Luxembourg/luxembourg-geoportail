@@ -4,11 +4,7 @@ import { mount, flushPromises } from '@vue/test-utils'
 import { createTestingPinia } from '@pinia/testing'
 
 import useExportUrl, { interpolateUrl } from './export-url.composable'
-import {
-  buildObliqueState,
-  LUX_VCS_MODULES,
-  LUX_VCS_PLUGINS,
-} from '@/services/vcs.utils'
+import { buildObliqueState, LUX_VCS_MODULES } from '@/services/vcs.utils'
 import type { ObliqueConfig } from '@/services/vcs.utils'
 import type { ExportLink } from './export-url.model'
 import { useUserManagerStore } from '@/stores/user-manager.store'
@@ -48,8 +44,6 @@ const obliqueConfig: ObliqueConfig = {
   pitch: -90,
   roll: 0,
   label: 'Oblique Map',
-  modules: ['LuxConfig', 'catalogConfig'],
-  plugins: [['@geoportallux/lux-3dviewer-themesync', { prop: '*' }]],
   collection: 'ACT2023_ImagesObliques_all',
 }
 
@@ -112,21 +106,11 @@ describe('buildObliqueState', () => {
     expect(roll).toBe(obliqueConfig.roll)
   })
 
-  it('includes label, modules, plugins and collection at expected indices', () => {
+  it('includes label, modules and collection at expected indices', () => {
     const result = JSON.parse(buildObliqueState(6.13, 49.61, obliqueConfig))
     expect(result[1]).toBe(obliqueConfig.label)
-    expect(result[2]).toEqual(
-      expect.arrayContaining([...obliqueConfig.modules, ...LUX_VCS_MODULES])
-    )
-    expect(result[2].length).toBe(
-      new Set([...obliqueConfig.modules, ...LUX_VCS_MODULES]).size
-    )
-    expect(result[5].map((p: unknown[]) => p[0])).toEqual(
-      expect.arrayContaining([
-        ...obliqueConfig.plugins.map(p => p[0]),
-        ...LUX_VCS_PLUGINS.map(p => p[0]),
-      ])
-    )
+    expect(result[2]).toEqual(LUX_VCS_MODULES)
+    expect(result[5]).toBe(0)
     expect(result[6]).toBe(obliqueConfig.collection)
   })
 })
