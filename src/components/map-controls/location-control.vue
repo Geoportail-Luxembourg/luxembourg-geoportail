@@ -40,6 +40,7 @@ const isTracking = ref(false)
 const matomo = useMatomo()
 
 let geolocation: Geolocation | null = null
+let centerOnFirstPosition = false
 let positionFeature: Feature<Point> | null = null
 let accuracyFeature: Feature | null = null
 let featureOverlay: VectorLayer<VectorSource> | null = null
@@ -67,7 +68,7 @@ function handleCenterToLocation() {
 
   if (!geolocation?.getTracking()) {
     initFeatureOverlay()
-    map?.getView().setZoom(17)
+    centerOnFirstPosition = true
     geolocation?.setTracking(true)
     // Track usage of geolocation: user activated the locate feature
     try {
@@ -77,6 +78,7 @@ function handleCenterToLocation() {
     }
   } else {
     clearFeatureOverlay()
+    centerOnFirstPosition = false
     geolocation?.setTracking(false)
   }
 }
@@ -103,7 +105,12 @@ function initGeoLocation() {
     const position = geolocation?.getPosition()
     if (position && positionFeature) {
       positionFeature.setGeometry(new Point(position))
-      map?.getView().setCenter(position)
+      const view = map?.getView()
+      view?.setCenter(position)
+      if (centerOnFirstPosition) {
+        view?.setZoom(17)
+        centerOnFirstPosition = false
+      }
     }
   })
 
@@ -117,6 +124,7 @@ function initGeoLocation() {
 
   // Listen to errors
   geolocation.on('error', (error: any) => {
+    centerOnFirstPosition = false
     clearFeatureOverlay()
     if (error.message && error.message.length > 0) {
       const msg =
@@ -199,6 +207,7 @@ onMounted(() => {
 onUnmounted(() => {
   // Clean up
   if (geolocation) {
+    centerOnFirstPosition = false
     geolocation.setTracking(false)
   }
   if (featureOverlay && map) {
