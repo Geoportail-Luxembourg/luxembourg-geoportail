@@ -1,0 +1,263 @@
+/* ====================================
+   Template Styles - lib-tpl
+   Extracted from component templates
+   ==================================== */
+
+.lux-tpl-poi-title {
+  font-size: 40px;
+  line-height: 40px;
+  margin-top: 22px;
+  margin-bottom: 11px;
+}
+
+.lux-tpl-solarkataster-button-old {
+  background-image: url('/src/assets/images/featureinfo/solarkataster_1.png');
+  width: 200px;
+  height: 100px;
+  background-size: 196px 96px;
+  background-repeat: no-repeat;
+}
+
+.lux-tpl-solarkataster-button {
+  background-color: #1c2d4b;
+  color: #fff;
+  font-family: Arial, sans-serif;
+  font-weight: 700;
+  border: none;
+  border-radius: 9999px;
+  width: 100%;
+  padding: 14px 28px;
+  line-height: 1.2;
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+}
+
+.lux-tpl-feature-info {
+  background-color: rgba(255, 255, 255, 0.5);
+  margin: 5px;
+  padding: 10px;
+  overflow-wrap: anywhere;
+  word-break: normal;
+}
+
+.lux-tpl-feature-info h4 {
+  margin-top: 11px;
+  margin-bottom: 11px;
+  font-size: 20px;
+}
+
+.lux-tpl-feature-info label {
+  font-weight: 700;
+  margin-bottom: 5px;
+}
+
+.lux-tpl-feature-info a:not(.lux-btn) {
+  color: #000;
+  text-decoration: underline;
+}
+
+.lux-tpl-iframe-offset {
+  margin-left: -0.875rem;
+}
+
+.lux-tpl-flex {
+  display: flex;
+}
+
+.lux-tpl-flex-col {
+  flex-direction: column;
+}
+
+.lux-tpl-w-1-3 {
+  width: 33.333333%;
+}
+
+.lux-tpl-w-2-3 {
+  width: 66.666667%;
+}
+
+/* Urplang Template Styles */
+.lux-tpl-urplang-title {
+  color: white;
+  font-size: 30px;
+}
+
+/* Parcels Template Styles */
+.lux-tpl-parcels-mode-toggle {
+  display: flex;
+  border-radius: 0.25rem;
+  overflow: hidden;
+  font-size: 0.875rem;
+  margin-top: 0.25rem;
+}
+
+.lux-tpl-parcels-mode-btn {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding-left: 0.75rem;
+  padding-right: 0.75rem;
+  padding-top: 0.25rem;
+  padding-bottom: 0.25rem;
+  transition:
+    background-color 0.3s,
+    color 0.3s;
+}
+
+.lux-tpl-parcels-mode-btn-right {
+  border-left: 1px solid #d1d5db;
+}
+
+.lux-tpl-parcels-header {
+  width: 100%;
+  text-align: left;
+  cursor: pointer;
+  padding-top: 0;
+  padding-bottom: 0;
+  padding-left: 0.5rem;
+  padding-right: 0.5rem;
+  border-radius: 0.25rem;
+  transition: background-color 0.2s;
+}
+
+.lux-tpl-parcels-header:hover {
+  background-color: #f3f4f6;
+}
+
+.lux-tpl-parcels-link {
+  cursor: pointer;
+  color: #2563eb;
+  transition: text-decoration 0.2s;
+}
+
+.lux-tpl-parcels-link:hover {
+  text-decoration: underline;
+}
+
+.lux-tpl-parcels-thumbnails {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+  padding-left: 1rem;
+  margin-top: 0.25rem;
+}
+
+.lux-tpl-parcels-thumbnail-item {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.lux-tpl-parcels-thumbnail-btn {
+  border: 1px solid #d1d5db;
+  border-radius: 0.25rem;
+  overflow: hidden;
+  transition: border-color 0.2s;
+}
+
+.lux-tpl-parcels-thumbnail-btn:hover {
+  border-color: #3b82f6;
+}
+
+.lux-tpl-parcels-thumbnail-btn:focus {
+  outline: none;
+  ring: 2px;
+  ring-color: #60a5fa;
+}
+
+.lux-tpl-parcels-no-preview {
+  display: flex;
+  align-items: center;
+}
+
+/* Casipo Template Styles */
+.lux-tpl-casipo-checkbox {
+  margin-bottom: 15px;
+}
+
+.lux-tpl-casipo-checkbox input[type='checkbox'] {
+  vertical-align: middle;
+  margin-right: 5px;
+}
+
+.lux-tpl-casipo-form-container {
+  margin-left: 20px;
+}
+
+.lux-tpl-casipo-form-container label {
+  display: inline;
+}
+
+.lux-tpl-casipo-mail {
+  margin-bottom: 10px;
+}
+
+/* Forage Virtuel Template Styles */
+.lux-tpl-forage-virtuel-form-container {
+  margin-left: 20px;
+}
+
+.lux-tpl-forage-virtuel-form-container label {
+  display: inline;
+}
+
+.lux-tpl-forage-virtuel-mail {
+  margin-bottom: 10px;
+}
+
+/* NPOUR POI Template Styles */
+.lux-tpl-npour-poi-h3 {
+  font-size: 28px;
+}
+
+/* PAG Template Styles */
+.lux-tpl-pag-checkbox {
+  margin-bottom: 15px;
+}
+
+.lux-tpl-pag-checkbox input[type='checkbox'] {
+  vertical-align: middle;
+  margin-right: 5px;
+}
+
+.lux-tpl-pag-form-container {
+  margin-left: 20px;
+}
+
+.lux-tpl-pag-form-container label {
+  display: inline;
+}
+
+.lux-tpl-pag-mail {
+  margin-bottom: 10px;
+}
+
+/* Parcels Template Styles */
+.lux-tpl-parcels-template-h2 {
+  font-size: 40px;
+  line-height: 1;
+  padding: 12px 0 12px 12px;
+  margin: 0;
+  text-transform: uppercase;
+  color: #fff;
+}
+
+/* PDS Template Styles */
+.lux-tpl-pds-form-container {
+  margin-left: 20px;
+}
+
+.lux-tpl-pds-form-container label {
+  display: inline;
+}
+
+.lux-tpl-pds-mail {
+  margin-bottom: 10px;
+}
+
+/* ====================================
+   End of Template Styles
+   ==================================== */

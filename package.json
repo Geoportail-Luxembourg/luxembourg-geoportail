@@ -10,13 +10,14 @@
     "build-only": "vite build",
     "build:lib:prod": "npx vite build --mode prod --config vite-dist.config.ts --minify=esbuild --debug && npx babel bundle/lux.dist.mjs --out-file bundle/lux.dist.js",
     "build:lib:dev": "npx vite build --mode staging --config vite-dist.config.ts --minify=false --base=/dev/main.html/ --debug && BABEL_ENV=dev npx babel bundle/lux.dist.mjs --out-file bundle/lux.dist.js",
+    "build:lib-tpl": "npx vite build --config vite.config.lib-tpl.ts",
     "preview": "vite preview",
     "test": "npm run test:unit",
     "test:unit": "dotenv -e .env.e2e -- vitest --environment jsdom --root .",
     "test:unit:ci": "dotenv -e .env.e2e -- vitest run --environment jsdom --coverage",
     "test:e2e": "INSTRUMENT_COVERAGE=true dotenv -e .env.e2e -- start-server-and-test preview :4173 'cypress open --e2e'",
     "test:e2e:ci": "INSTRUMENT_COVERAGE=true dotenv -e .env.e2e -- start-server-and-test 'VITE_USE_PROXYURL=false vite dev --port 4173' http://localhost:4173 'cypress run --browser my-chromium --e2e --expose coverage=false'",
-    "test:e2e:dev": "INSTRUMENT_COVERAGE=true dotenv -e .env.e2e -- start-server-and-test 'vite dev --port 4173' http://localhost:4173 'cypress open --e2e'",
+    "test:e2e:dev": "INSTRUMENT_COVERAGE=true dotenv -e .env.e2e -- start-server-and-test 'vite dev --port 4173 --mode e2e' http://localhost:4173 'cypress open --e2e'",
     "coverage-report": "nyc report",
     "type-check:dev": "npm run type-check -- --watch",
     "type-check": "vue-tsc --noEmit -p tsconfig.vitest.json --composite false",
@@ -84,7 +85,7 @@
     "@types/google.maps": "^3.58.1",
     "@types/jsdom": "^20.0.1",
     "@types/luxon": "^3.3.1",
-    "@types/node": "^22.12.0",
+    "@types/node": "^22.20.0",
     "@types/proj4": "^2.5.2",
     "@types/sortablejs": "^1.15.2",
     "@types/uuid": "^10.0.0",
@@ -95,7 +96,7 @@
     "@vue/test-utils": "^2.2.4",
     "@vue/tsconfig": "^0.1.3",
     "core-js": "^3.37.1",
-    "cypress": "^15.14.2",
+    "cypress": "^15.17.0",
     "cypress-real-events": "^1.14.0",
     "dotenv-cli": "^7.4.4",
     "eslint": "^8.57.1",
@@ -116,6 +117,7 @@
     "start-server-and-test": "^2.1.3",
     "typescript": "~5.4",
     "vite": "^7.3.0",
+    "vite-plugin-dts": "^5.0.2",
     "vite-plugin-istanbul": "^7.2.1",
     "vitest": "^4.1.5",
     "vue-tsc": "^3.2.6"
@@ -125,5 +127,8 @@
       "eslint --fix",
       "prettier --write"
     ]
+  },
+  "exports": {
+    ".": "./dist-lux-tpl/lux-tpl.js"
   }
 }

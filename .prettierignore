@@ -24,6 +24,7 @@
 /src/bundle/runtime-dom/
 /_site/
 /dist/
+/dist-lux-tpl/
 /out-tsc/
 .parcel-cache
 .env
