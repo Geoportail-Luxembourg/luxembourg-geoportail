@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { useTranslation } from 'i18next-vue'
+import { useLuxTranslation } from '../../i18n'
 import { Ref, ref, computed } from 'vue'
 import { FeatureInfoJSON, FeatureJSON } from '../../models'
 import { useLuxTplContext } from '../../context'
@@ -18,7 +18,7 @@ const mail: Ref<string> = ref('')
 const userMail = computed(() => user.value?.mail || '')
 mail.value = userMail.value
 
-const { t } = useTranslation('tooltips')
+const { t } = useLuxTranslation('tooltips')
 const URL_FORAGE_VIRTUEL_PROD = config.forageVirtuelUrl
 
 async function generateRepport() {

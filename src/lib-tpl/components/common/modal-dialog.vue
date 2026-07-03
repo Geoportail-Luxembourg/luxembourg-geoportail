@@ -1,7 +1,7 @@
 <script setup lang="ts">
-import { useTranslation } from 'i18next-vue'
+import { useLuxTranslation } from '../../i18n'
 import { ShallowRef, shallowRef, onMounted, ref } from 'vue'
-const { t } = useTranslation()
+const { t } = useLuxTranslation()
 const titleId = `modal-title-${Math.random().toString(36).slice(2)}`
 defineProps({
   footer: {

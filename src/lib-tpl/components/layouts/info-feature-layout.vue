@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import '../../templates-styles.css'
 import { FeatureInfoJSON, FeatureJSON } from '../../models'
-import { useTranslation } from 'i18next-vue'
+import { useLuxTranslation } from '../../i18n'
 import { hasValidFID } from '../templates/template-utilities'
 
 withDefaults(
@@ -19,7 +19,7 @@ defineEmits<{
   (e: 'export', payload: { feature: FeatureJSON; format: 'kml' | 'gpx' }): void
 }>()
 
-const { t } = useTranslation()
+const { t } = useLuxTranslation()
 </script>
 
 <template>

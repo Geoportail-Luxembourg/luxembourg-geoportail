@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { FeatureInfoJSON } from '../../models'
-import { useTranslation } from 'i18next-vue'
+import { useLuxTranslation } from '../../i18n'
 defineProps<{
   layers: FeatureInfoJSON
   currentUrl?: string
@@ -8,7 +8,7 @@ defineProps<{
 defineEmits<{
   (e: 'export'): void
 }>()
-const { t } = useTranslation('tooltips')
+const { t } = useLuxTranslation('tooltips')
 </script>
 <template>
   <h1 class="lux-tpl-poi-title">

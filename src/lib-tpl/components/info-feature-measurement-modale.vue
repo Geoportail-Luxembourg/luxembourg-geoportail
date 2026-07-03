@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { computed } from 'vue'
-import { useTranslation } from 'i18next-vue'
+import { useLuxTranslation } from '../i18n'
 import { sanitizeUrl } from '@braintree/sanitize-url'
 import ModalDialog from './common/modal-dialog.vue'
 import { FeatureMeasurement } from '../models'
@@ -14,7 +14,7 @@ const { config } = useLuxTplContext()
 const DOWNLOAD_PREVIEW_URL = config.downloadPreviewUrl ?? ''
 const DOWNLOAD_MEASUREMENT_URL = config.downloadMeasurementUrl ?? ''
 
-const { t, i18next } = useTranslation()
+const { t, i18next } = useLuxTranslation()
 
 const formats = computed<string[]>(() => {
   const rawFormats = props.measurement.available_formats as unknown

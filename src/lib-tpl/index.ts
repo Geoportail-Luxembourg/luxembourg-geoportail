@@ -18,6 +18,10 @@ export type {
   LuxTplNotifyType,
 } from './context'
 
+// i18n — lib-owned translation surface (replaces the i18next-vue dependency).
+export { LUX_TPL_I18N, createLuxTplI18n, useLuxTranslation } from './i18n'
+export type { LuxTplI18n } from './i18n'
+
 // Export des types pour utilisation publique
 export type {
   FeatureJSON,

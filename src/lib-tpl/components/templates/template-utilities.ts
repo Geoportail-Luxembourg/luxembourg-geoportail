@@ -1,4 +1,4 @@
-import { useTranslation } from 'i18next-vue'
+import { useLuxTranslation } from '../../i18n'
 import { AttributeEntry, Attributes, FeatureJSON } from '../../models'
 import { sanitizeUrl } from '@braintree/sanitize-url'
 
@@ -155,7 +155,7 @@ export function getTrustedUrlByLang(
   urlEn: string | null | undefined,
   urlLb: string | null | undefined
 ): string {
-  const { i18next } = useTranslation()
+  const { i18next } = useLuxTranslation()
   switch (i18next.language) {
     case 'de':
       return sanitizeUrl(urlDe ?? urlFr)
@@ -194,7 +194,7 @@ export function translateAndjoin(textArray: string[], prefix: string) {
     return ''
   }
 
-  const { t } = useTranslation()
+  const { t } = useLuxTranslation()
 
   return textArray
     .map(elem => t(prefix + '_' + elem, { ns: 'layers' }))

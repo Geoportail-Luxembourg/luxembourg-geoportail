@@ -1,5 +1,8 @@
 import { computed, type Component } from 'vue'
 import { storeToRefs } from 'pinia'
+import i18next from 'i18next'
+import { createLuxTplI18n } from '@/lib-tpl'
+import type { LuxTplI18n } from '@/lib-tpl'
 import type { LuxTplContext, LuxTplNotifyType } from '@/lib-tpl/context'
 import { useUserManagerStore } from '@/stores/user-manager.store'
 import { useAlertNotificationsStore } from '@/stores/alert-notifications.store'
@@ -10,6 +13,21 @@ const NOTIFY_TYPE_MAP: Record<LuxTplNotifyType, AlertNotificationType> = {
   info: AlertNotificationType.INFO,
   warning: AlertNotificationType.WARNING,
   error: AlertNotificationType.ERROR,
+}
+
+let luxTplI18nInstance: LuxTplI18n | undefined
+
+/**
+ * Return the (memoised) reactive i18n surface for the templates, backed by the
+ * app's global i18next singleton. Memoised because {@link createLuxTplI18n}
+ * registers i18next event listeners and must run once, not on every mount of
+ * the feature-info panel.
+ */
+export function getLuxTplI18n(): LuxTplI18n {
+  if (!luxTplI18nInstance) {
+    luxTplI18nInstance = createLuxTplI18n(i18next)
+  }
+  return luxTplI18nInstance
 }
 
 function parseRoleIds(raw: string | undefined): number[] {

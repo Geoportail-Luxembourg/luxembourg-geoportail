@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { FeatureInfoJSON, FeatureJSON } from '../../models'
 import InfoFeatureLayout from '../layouts/info-feature-layout.vue'
-import { useTranslation } from 'i18next-vue'
+import { useLuxTranslation } from '../../i18n'
 import { hasProperty } from './template-utilities'
 
 defineProps<{
@@ -11,8 +11,8 @@ defineProps<{
 defineEmits<{
   (e: 'export', payload: { feature: FeatureJSON; format: 'kml' | 'gpx' }): void
 }>()
-const { t } = useTranslation('tooltips')
-const { i18next } = useTranslation('tooltips')
+const { t } = useLuxTranslation('tooltips')
+const { i18next } = useLuxTranslation('tooltips')
 </script>
 <template>
   <InfoFeatureLayout :layers="layers" :currentUrl="currentUrl">

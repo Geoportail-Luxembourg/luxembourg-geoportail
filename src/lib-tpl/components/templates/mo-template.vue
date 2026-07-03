@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { useTranslation } from 'i18next-vue'
+import { useLuxTranslation } from '../../i18n'
 import { FeatureInfoJSON } from '../../models'
 import InfoFeatureLayout from '../layouts/info-feature-layout.vue'
 import { useLuxTplContext } from '../../context'
@@ -12,7 +12,7 @@ defineProps<{
   layers: FeatureInfoJSON
   currentUrl?: string
 }>()
-const { t } = useTranslation('tooltips')
+const { t } = useLuxTranslation('tooltips')
 
 const orderAffaire = async function (numCommune: string, numMesurage: string) {
   const isIpv6 = location.search.includes('ipv6=true')

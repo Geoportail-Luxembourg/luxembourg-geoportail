@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { useTranslation } from 'i18next-vue'
+import { useLuxTranslation } from '../../i18n'
 import { Ref, ref, computed } from 'vue'
 import { FeatureInfoJSON, FeatureJSON } from '../../models'
 import { useLuxTplContext } from '../../context'
@@ -19,7 +19,7 @@ const userMail = computed(() => user.value?.mail || '')
 mail.value = userMail.value
 
 const isChecked: Ref<boolean> = ref(false)
-const { t } = useTranslation('tooltips')
+const { t } = useLuxTranslation('tooltips')
 const URL_PAG_PROD = config.pagUrl
 
 function joinAttributes(features: any, attr: string, sep: string) {

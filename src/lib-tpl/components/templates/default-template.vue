@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { AttributeEntry, FeatureInfoJSON, FeatureJSON } from '../../models'
-import { useTranslation } from 'i18next-vue'
+import { useLuxTranslation } from '../../i18n'
 import {
   hasAttributes,
   isEmptyString,
@@ -26,7 +26,7 @@ defineProps({
 defineEmits<{
   (e: 'export', payload: { feature: FeatureJSON; format: 'kml' | 'gpx' }): void
 }>()
-const { t } = useTranslation('tooltips')
+const { t } = useLuxTranslation('tooltips')
 const { config, user, profileComponent } = useLuxTplContext()
 
 function isNoSolarNorWaterLink(label: string, attributeEntry: AttributeEntry) {

@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { ref, Ref, computed, watch } from 'vue'
 import i18next from 'i18next'
-import { useTranslation } from 'i18next-vue'
+import { useLuxTranslation } from '../../i18n'
 import { FeatureInfoJSON, FeatureMeasurement } from '../../models'
 import { formatDate, translateAndjoin } from './template-utilities'
 import InfoFeatureLayout from '../layouts/info-feature-layout.vue'
@@ -19,7 +19,7 @@ const { config, isThemeAvailable: isThemeAvailableCtx } = useLuxTplContext()
 const isThemeAvailable = (name: string) => isThemeAvailableCtx?.(name) ?? false
 const DOWNLOAD_MEASUREMENT_URL = config.downloadMeasurementUrl ?? ''
 const THUMBNAIL_MEASUREMENT_URL = config.thumbnailMeasurementUrl ?? ''
-const { t } = useTranslation('tooltips')
+const { t } = useLuxTranslation('tooltips')
 
 function getDocumentFormats(document: FeatureMeasurement): string[] {
   const raw = document.available_formats as unknown

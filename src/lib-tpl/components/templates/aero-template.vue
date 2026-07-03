@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { useTranslation } from 'i18next-vue'
+import { useLuxTranslation } from '../../i18n'
 import { FeatureInfoJSON } from '../../models'
 import InfoFeatureLayout from '../layouts/info-feature-layout.vue'
 
@@ -7,7 +7,7 @@ defineProps<{
   layers: FeatureInfoJSON
   currentUrl?: string
 }>()
-const { t } = useTranslation('tooltips')
+const { t } = useLuxTranslation('tooltips')
 </script>
 <template>
   <InfoFeatureLayout :layers="layers" :currentUrl="currentUrl">

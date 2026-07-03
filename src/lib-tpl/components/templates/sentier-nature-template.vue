@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { useTranslation } from 'i18next-vue'
+import { useLuxTranslation } from '../../i18n'
 import { FeatureInfoJSON, FeatureJSON } from '../../models'
 import { hasAttributes } from './template-utilities'
 import InfoFeatureLayout from '../layouts/info-feature-layout.vue'
@@ -16,7 +16,7 @@ defineEmits<{
 
 const { config, profileComponent } = useLuxTplContext()
 const DOWNLOAD_RESOURCE_URL = config.downloadResourceUrl
-const { t } = useTranslation('tooltips')
+const { t } = useLuxTranslation('tooltips')
 
 function getDirectLink(feature: FeatureJSON) {
   return `${props.currentUrl}&fid=${props.layers.layer}_${feature.attributes.id_qr}`

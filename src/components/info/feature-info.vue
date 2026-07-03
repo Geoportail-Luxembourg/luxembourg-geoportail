@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { ComponentPublicInstance } from 'vue'
+import { ComponentPublicInstance, provide } from 'vue'
 import { storeToRefs } from 'pinia'
 import { usePrintStore } from '@/stores/print.store'
 import { Feature } from 'ol'
@@ -15,8 +15,10 @@ import {
   FeatExport,
 } from '@/services/export-feature/export-feature.service'
 import useMap, { PROJECTION_LUX } from '@/composables/map/map.composable'
-import { provideLuxTplContext } from '@/lib-tpl'
-import useLuxTplContext from '@/composables/info/lux-tpl-context.composable'
+import { provideLuxTplContext, LUX_TPL_I18N } from '@/lib-tpl'
+import useLuxTplContext, {
+  getLuxTplI18n,
+} from '@/composables/info/lux-tpl-context.composable'
 import ProfileFeatureInfo from '@/components/info/profile-feature-info.vue'
 import AdresseTemplate from '../../lib-tpl/components/templates/adresse-template.vue'
 import AeroTemplate from '../../lib-tpl/components/templates/aero-template.vue'
@@ -70,8 +72,9 @@ const currentUrl = window.location.href
 const map = useMap().getOlMap()
 
 // Provide the dependency-injection context the lib-tpl templates rely on,
-// wiring it to the geoportail stores/environment.
+// wiring it to the geoportail stores/environment and i18next.
 provideLuxTplContext(useLuxTplContext(ProfileFeatureInfo))
+provide(LUX_TPL_I18N, getLuxTplI18n())
 
 // For print, save ref to element to access content in print composable
 const { featureInfoPrintableRef } = storeToRefs(usePrintStore())

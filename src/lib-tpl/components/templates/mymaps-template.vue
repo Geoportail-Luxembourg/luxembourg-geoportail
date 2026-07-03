@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { useTranslation } from 'i18next-vue'
+import { useLuxTranslation } from '../../i18n'
 import { FeatureInfoJSON, FeatureJSON } from '../../models'
 import InfoFeatureLayout from '../layouts/info-feature-layout.vue'
 import { getMymapsPath, getQRUrlForMyMaps } from './template-utilities'
@@ -11,7 +11,7 @@ defineProps<{
 defineEmits<{
   (e: 'export', payload: { feature: FeatureJSON; format: 'kml' | 'gpx' }): void
 }>()
-const { t } = useTranslation('tooltips')
+const { t } = useLuxTranslation('tooltips')
 const { config, profileComponent } = useLuxTplContext()
 </script>
 
