@@ -5,6 +5,19 @@ import InfoFeatureLayout from './components/layouts/info-feature-layout.vue'
 
 export { InfoFeatureLayout }
 
+// Injection context — the single host dependency surface used by the templates.
+export {
+  LUX_TPL_CONTEXT,
+  provideLuxTplContext,
+  useLuxTplContext,
+} from './context'
+export type {
+  LuxTplContext,
+  LuxTplConfig,
+  LuxTplUser,
+  LuxTplNotifyType,
+} from './context'
+
 // Export des types pour utilisation publique
 export type {
   FeatureJSON,

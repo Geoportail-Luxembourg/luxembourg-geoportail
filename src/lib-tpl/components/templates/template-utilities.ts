@@ -1,9 +1,5 @@
 import { useTranslation } from 'i18next-vue'
-import {
-  AttributeEntry,
-  Attributes,
-  FeatureJSON,
-} from '@/services/info/feature-info.model'
+import { AttributeEntry, Attributes, FeatureJSON } from '../../models'
 import { sanitizeUrl } from '@braintree/sanitize-url'
 import { useThemeStore } from '@/stores/config.store'
 import { storeToRefs } from 'pinia'

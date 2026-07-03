@@ -11,9 +11,7 @@ import {
   sortedAttributeEntries,
 } from './template-utilities'
 import i18next from 'i18next'
-import ProfileFeatureInfo from '@/components/info/profile-feature-info.vue'
-import { useUserManagerStore } from '@/stores/user-manager.store'
-import { storeToRefs } from 'pinia'
+import { useLuxTplContext } from '../../context'
 
 defineProps({
   layers: {
@@ -29,14 +27,7 @@ defineEmits<{
   (e: 'export', payload: { feature: FeatureJSON; format: 'kml' | 'gpx' }): void
 }>()
 const { t } = useTranslation('tooltips')
-const userManagerStore = useUserManagerStore()
-const { currentUser } = storeToRefs(userManagerStore)
-const ALLOWED_SOLAR_ECONOMIC_ROLE_IDS = (
-  import.meta.env.VITE_SOLAR_ECONOMIC_ALLOWED_ROLE_IDS || ''
-)
-  .split(',')
-  .map((roleId: string) => Number.parseInt(roleId.trim(), 10))
-  .filter((roleId: number) => !Number.isNaN(roleId))
+const { config, user, profileComponent } = useLuxTplContext()
 
 function isNoSolarNorWaterLink(label: string, attributeEntry: AttributeEntry) {
   return (
@@ -68,9 +59,10 @@ function isAudioLink(attributeEntry: AttributeEntry) {
 }
 
 function canAccessSolarEconomicCalculator() {
+  const roleId = user.value?.roleId
   return (
-    !!currentUser.value &&
-    ALLOWED_SOLAR_ECONOMIC_ROLE_IDS.includes(currentUser.value.roleId)
+    roleId !== undefined &&
+    (config.solarEconomicAllowedRoleIds ?? []).includes(roleId)
   )
 }
 </script>
@@ -159,10 +151,14 @@ function canAccessSolarEconomicCalculator() {
             </div>
           </div>
         </div>
-        <div v-if="layers.has_profile">
-          <ProfileFeatureInfo
+        <div v-if="layers.has_profile && profileComponent">
+          <component
+            :is="profileComponent"
             :feature="feature"
-            @export="payload => $emit('export', payload)"
+            @export="
+              (payload: { feature: FeatureJSON; format: 'kml' | 'gpx' }) =>
+                $emit('export', payload)
+            "
           />
         </div>
         <div v-if="!hasAttributes(feature)" class="no-print">

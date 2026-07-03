@@ -15,6 +15,9 @@ import {
   FeatExport,
 } from '@/services/export-feature/export-feature.service'
 import useMap, { PROJECTION_LUX } from '@/composables/map/map.composable'
+import { provideLuxTplContext } from '@/lib-tpl'
+import useLuxTplContext from '@/composables/info/lux-tpl-context.composable'
+import ProfileFeatureInfo from '@/components/info/profile-feature-info.vue'
 import AdresseTemplate from '../../lib-tpl/components/templates/adresse-template.vue'
 import AeroTemplate from '../../lib-tpl/components/templates/aero-template.vue'
 import AffairesTemplate from '../../lib-tpl/components/templates/affaires-template.vue'
@@ -65,6 +68,10 @@ defineProps({
 })
 const currentUrl = window.location.href
 const map = useMap().getOlMap()
+
+// Provide the dependency-injection context the lib-tpl templates rely on,
+// wiring it to the geoportail stores/environment.
+provideLuxTplContext(useLuxTplContext(ProfileFeatureInfo))
 
 // For print, save ref to element to access content in print composable
 const { featureInfoPrintableRef } = storeToRefs(usePrintStore())

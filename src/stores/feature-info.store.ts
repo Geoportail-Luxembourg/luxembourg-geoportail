@@ -1,4 +1,4 @@
-import { FeatureInfoJSON } from '../../models'
+import { FeatureInfoJSON } from '@/lib-tpl/models'
 import { acceptHMRUpdate, defineStore } from 'pinia'
 import { shallowRef, ShallowRef } from 'vue'
 
