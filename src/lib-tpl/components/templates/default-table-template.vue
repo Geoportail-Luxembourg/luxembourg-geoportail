@@ -8,9 +8,9 @@ import {
   isLink,
   showAttributesByLang,
   sortedAttributeEntries,
-} from './template-utilities.js'
+} from './template-utilities'
 import i18next from 'i18next'
-import ProfileFeatureInfo from '@/components/info/profile-feature-info.vue'
+import { useLuxTplContext } from '../../context'
 defineProps<{
   layers: FeatureInfoJSON
   currentUrl?: string
@@ -19,6 +19,7 @@ defineEmits<{
   (e: 'export', payload: { feature: FeatureJSON; format: 'kml' | 'gpx' }): void
 }>()
 const { t } = useTranslation('tooltips')
+const { profileComponent } = useLuxTplContext()
 </script>
 <template>
   <InfoFeatureLayout :layers="layers" :currentUrl="currentUrl">
@@ -62,10 +63,14 @@ const { t } = useTranslation('tooltips')
             </div>
           </span>
         </div>
-        <div v-if="layers.has_profile">
-          <ProfileFeatureInfo
+        <div v-if="layers.has_profile && profileComponent">
+          <component
+            :is="profileComponent"
             :feature="feature"
-            @export="payload => $emit('export', payload)"
+            @export="
+              (payload: { feature: FeatureJSON; format: 'kml' | 'gpx' }) =>
+                $emit('export', payload)
+            "
           />
         </div>
       </template>

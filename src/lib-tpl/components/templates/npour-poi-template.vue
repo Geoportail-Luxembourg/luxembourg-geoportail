@@ -2,8 +2,8 @@
 import { FeatureInfoJSON, FeatureJSON } from '../../models'
 import InfoFeatureLayout from '../layouts/info-feature-layout.vue'
 import { useTranslation } from 'i18next-vue'
-import { hasProperty } from './template-utilities.js'
-import ProfileFeatureInfo from '@/components/info/profile-feature-info.vue'
+import { hasProperty } from './template-utilities'
+import { useLuxTplContext } from '../../context'
 
 defineProps<{
   layers: FeatureInfoJSON
@@ -14,6 +14,7 @@ defineEmits<{
 }>()
 const { t } = useTranslation('tooltips')
 const { i18next } = useTranslation('tooltips')
+const { profileComponent } = useLuxTplContext()
 </script>
 <template>
   <InfoFeatureLayout :layers="layers" :currentUrl="currentUrl">
@@ -147,9 +148,14 @@ const { i18next } = useTranslation('tooltips')
         <span>{{ feature.attributes['longueur sentier'] }}</span>
       </div>
 
-      <ProfileFeatureInfo
+      <component
+        :is="profileComponent"
+        v-if="profileComponent"
         :feature="feature"
-        @export="payload => $emit('export', payload)"
+        @export="
+          (payload: { feature: FeatureJSON; format: 'kml' | 'gpx' }) =>
+            $emit('export', payload)
+        "
       />
     </template>
   </InfoFeatureLayout>

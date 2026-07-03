@@ -3,10 +3,10 @@ import { ref, Ref, computed, watch } from 'vue'
 import i18next from 'i18next'
 import { useTranslation } from 'i18next-vue'
 import { FeatureInfoJSON, FeatureMeasurement } from '../../models'
-import { formatDate } from '@/services/common/formatting.utils'
-import { isThemeAvailable, translateAndjoin } from './template-utilities'
+import { formatDate, translateAndjoin } from './template-utilities'
 import InfoFeatureLayout from '../layouts/info-feature-layout.vue'
-import InfoFeatureMeasurementModale from '@/components/info/info-feature-measurement-modale.vue'
+import InfoFeatureMeasurementModale from '../info-feature-measurement-modale.vue'
+import { useLuxTplContext } from '../../context'
 
 const props = defineProps<{
   layers: FeatureInfoJSON
@@ -15,8 +15,10 @@ const props = defineProps<{
 
 defineEmits<{ (e: 'export', payload: unknown): void }>()
 
-const DOWNLOAD_MEASUREMENT_URL = import.meta.env.VITE_DOWNLOAD_MEASUREMENT_URL
-const THUMBNAIL_MEASUREMENT_URL = import.meta.env.VITE_THUMBNAIL_MEASUREMENT_URL
+const { config, isThemeAvailable: isThemeAvailableCtx } = useLuxTplContext()
+const isThemeAvailable = (name: string) => isThemeAvailableCtx?.(name) ?? false
+const DOWNLOAD_MEASUREMENT_URL = config.downloadMeasurementUrl ?? ''
+const THUMBNAIL_MEASUREMENT_URL = config.thumbnailMeasurementUrl ?? ''
 const { t } = useTranslation('tooltips')
 
 function getDocumentFormats(document: FeatureMeasurement): string[] {

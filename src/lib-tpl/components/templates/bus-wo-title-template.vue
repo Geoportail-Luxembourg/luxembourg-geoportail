@@ -1,12 +1,14 @@
 <script setup lang="ts">
 import { FeatureInfoJSON } from '../../models'
 import InfoFeatureLayout from '../layouts/info-feature-layout.vue'
-import { getTrustedUrlByLang } from './template-utilities.js'
+import { getTrustedUrlByLang } from './template-utilities'
+import { useLuxTplContext } from '../../context'
 defineProps<{
   layers: FeatureInfoJSON
   currentUrl?: string
 }>()
-const BUS_WIDGET_URL = import.meta.env.VITE_BUS_WIDGET_URL
+const { config } = useLuxTplContext()
+const BUS_WIDGET_URL = config.busWidgetUrl
 </script>
 <template>
   <InfoFeatureLayout :layers="layers" :currentUrl="currentUrl">

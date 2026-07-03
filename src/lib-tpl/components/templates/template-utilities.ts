@@ -1,8 +1,6 @@
 import { useTranslation } from 'i18next-vue'
 import { AttributeEntry, Attributes, FeatureJSON } from '../../models'
 import { sanitizeUrl } from '@braintree/sanitize-url'
-import { useThemeStore } from '@/stores/config.store'
-import { storeToRefs } from 'pinia'
 
 export function sortedAttributeEntries(
   attributes: Attributes,
@@ -204,10 +202,58 @@ export function translateAndjoin(textArray: string[], prefix: string) {
 }
 
 /**
- * Return true if the theme is available in app themes
- * @param themeName The theme to find in theme list, eg. 'go'
+ * Format a date string for display.
+ * @param dateString ISO date string
+ * @param language BCP-47 locale (default 'fr-FR')
+ * @param includeTime Whether to append the time
  */
-export function isThemeAvailable(themeName: string) {
-  const { themes } = storeToRefs(useThemeStore())
-  return themes.value?.some(t => t.name === themeName)
+export function formatDate(
+  dateString: string,
+  language: string = 'fr-FR',
+  includeTime = true
+) {
+  if (!dateString) {
+    return ''
+  }
+
+  return new Intl.DateTimeFormat(language, {
+    dateStyle: 'short',
+    ...(includeTime ? { timeStyle: 'short' } : {}),
+  }).format(new Date(dateString))
+}
+
+/**
+ * Resolve a mymaps resource path against the legacy v3 API host.
+ * @param resource The resource path or data URI
+ * @param v3ApiHost The v3 API host base URL (from the host config)
+ */
+export function getMymapsPath(
+  resource: string,
+  v3ApiHost = ''
+): string | undefined {
+  if (resource) {
+    if (resource.startsWith('data:image')) {
+      return resource
+    }
+    if (resource.startsWith('/') && v3ApiHost.endsWith('/')) {
+      resource = '.' + resource
+    }
+    return `${v3ApiHost}${resource}`
+  }
+  return undefined
+}
+
+/**
+ * Build the QR-code image URL for a mymaps map id.
+ * @param mapId The mymaps map id
+ * @param qrUrl The QR service base URL (from the host config)
+ */
+export function getQRUrlForMyMaps(
+  mapId: string | undefined,
+  qrUrl = ''
+): string | undefined {
+  // legacy: getQrCodeForMymapsUrl
+  return mapId !== undefined
+    ? `${qrUrl}?url=${qrUrl}?map_id=${mapId}`
+    : undefined
 }

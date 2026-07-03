@@ -2,12 +2,11 @@
 import { useTranslation } from 'i18next-vue'
 import { FeatureInfoJSON } from '../../models'
 import InfoFeatureLayout from '../layouts/info-feature-layout.vue'
-import { useAlertNotificationsStore } from '@/stores/alert-notifications.store'
-import { AlertNotificationType } from '@/stores/alert-notifications.store.model'
+import { useLuxTplContext } from '../../context'
 
-const { addNotification } = useAlertNotificationsStore()
-const SHOP_URL = import.meta.env.VITE_SHOP_URL
-const SHOP_IPV6_URL = import.meta.env.VITE_SHOP_IPV6_URL
+const { config, notify } = useLuxTplContext()
+const SHOP_URL = config.shopUrl
+const SHOP_IPV6_URL = config.shopIpv6Url
 
 defineProps<{
   layers: FeatureInfoJSON
@@ -35,24 +34,15 @@ const orderAffaire = async function (numCommune: string, numMesurage: string) {
     if (response.ok) {
       const text = await response.text()
       if (text.includes('ok')) {
-        addNotification(t('Fichier GML commandé.'), AlertNotificationType.INFO)
+        notify(t('Fichier GML commandé.'), 'info')
       } else {
-        addNotification(
-          t('Erreur lors de la commande du fichier.'),
-          AlertNotificationType.ERROR
-        )
+        notify(t('Erreur lors de la commande du fichier.'), 'error')
       }
     } else {
-      addNotification(
-        t('Erreur lors de la commande du fichier.'),
-        AlertNotificationType.ERROR
-      )
+      notify(t('Erreur lors de la commande du fichier.'), 'error')
     }
   } catch (error) {
-    addNotification(
-      t('Erreur lors de la commande du fichier.'),
-      AlertNotificationType.ERROR
-    )
+    notify(t('Erreur lors de la commande du fichier.'), 'error')
   }
 }
 </script>

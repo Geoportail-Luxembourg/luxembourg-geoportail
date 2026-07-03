@@ -1,14 +1,18 @@
 <script setup lang="ts">
 import { useTranslation } from 'i18next-vue'
-import { FeatureInfoJSON } from '../../models'
+import { FeatureInfoJSON, FeatureJSON } from '../../models'
 import InfoFeatureLayout from '../layouts/info-feature-layout.vue'
-import ProfileFeatureInfo from '@/components/info/profile-feature-info.vue'
-import { getMymapsPath, getQRUrlForMyMaps } from '@/services/url.utils'
+import { getMymapsPath, getQRUrlForMyMaps } from './template-utilities'
+import { useLuxTplContext } from '../../context'
 defineProps<{
   layers: FeatureInfoJSON
   currentUrl?: string
 }>()
+defineEmits<{
+  (e: 'export', payload: { feature: FeatureJSON; format: 'kml' | 'gpx' }): void
+}>()
 const { t } = useTranslation('tooltips')
+const { config, profileComponent } = useLuxTplContext()
 </script>
 
 <template>
@@ -19,7 +23,9 @@ const { t } = useTranslation('tooltips')
         v-if="
           feature.attributes.image && feature.attributes.image.trim() !== ''
         "
-        :href="getMymapsPath(feature.attributes.image as string)"
+        :href="
+          getMymapsPath(feature.attributes.image as string, config.v3ApiHost)
+        "
         target="_blank"
       >
         <img
@@ -27,7 +33,12 @@ const { t } = useTranslation('tooltips')
             feature.attributes.thumbnail &&
             feature.attributes.thumbnail.trim() !== ''
           "
-          :src="getMymapsPath(feature.attributes.thumbnail as string)" /></a
+          :src="
+            getMymapsPath(
+              feature.attributes.thumbnail as string,
+              config.v3ApiHost
+            )
+          " /></a
       ><br />
       <span v-if="feature.attributes.sentier"
         ><span>{{ t('sentier') }}</span> : {{ feature.attributes.sentier }}<br
@@ -44,12 +55,19 @@ const { t } = useTranslation('tooltips')
         {{ feature.attributes.length }} Km<br
       /></span>
 
-      <ProfileFeatureInfo
+      <component
+        :is="profileComponent"
+        v-if="profileComponent"
         :feature="feature"
-        @export="payload => $emit('export', payload)"
+        @export="
+          (payload: { feature: FeatureJSON; format: 'kml' | 'gpx' }) =>
+            $emit('export', payload)
+        "
       />
       <img
-        :src="getQRUrlForMyMaps(feature.attributes.map_id as string)"
+        :src="
+          getQRUrlForMyMaps(feature.attributes.map_id as string, config.qrUrl)
+        "
       /><br />
       <a
         class="fid-link no-print"

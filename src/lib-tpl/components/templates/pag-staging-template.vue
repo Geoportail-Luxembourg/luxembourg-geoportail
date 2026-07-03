@@ -2,11 +2,7 @@
 import { useTranslation } from 'i18next-vue'
 import { Ref, ref, computed } from 'vue'
 import { FeatureInfoJSON, FeatureJSON } from '../../models'
-import { useAlertNotificationsStore } from '@/stores/alert-notifications.store'
-import { AlertNotificationType } from '@/stores/alert-notifications.store.model'
-import { useUserManagerStore } from '@/stores/user-manager.store'
-import { storeToRefs } from 'pinia'
-const { authenticated, currentUser } = storeToRefs(useUserManagerStore())
+import { useLuxTplContext } from '../../context'
 
 const props = defineProps<{
   layers: FeatureInfoJSON
@@ -17,16 +13,14 @@ defineEmits<{
 }>()
 const layers = props.layers
 
-const { addNotification } = useAlertNotificationsStore()
+const { config, user, notify } = useLuxTplContext()
 const mail: Ref<string> = ref('')
-const userMail = computed(() =>
-  authenticated.value ? currentUser.value?.mail || '' : ''
-)
+const userMail = computed(() => user.value?.mail || '')
 mail.value = userMail.value
 
 const isChecked: Ref<boolean> = ref(false)
 const { t } = useTranslation('tooltips')
-const URL_PAG_PROD = import.meta.env.VITE_PAG_PROD_URL
+const URL_PAG_PROD = config.pagUrl
 
 function joinAttributes(features: any, attr: string, sep: string) {
   return features
@@ -38,17 +32,11 @@ function joinAttributes(features: any, attr: string, sep: string) {
 
 async function generateRepport() {
   if (!mail.value && !/^\S+@\S+\.\S+$/.test(mail.value)) {
-    addNotification(
-      t('Veuillez saisir une adresse email valide'),
-      AlertNotificationType.WARNING
-    )
+    notify(t('Veuillez saisir une adresse email valide'), 'warning')
     return
   }
   if (!isChecked.value) {
-    addNotification(
-      t('Veuillez accepter les termes du rapport'),
-      AlertNotificationType.WARNING
-    )
+    notify(t('Veuillez accepter les termes du rapport'), 'warning')
     return
   }
 
@@ -70,7 +58,7 @@ async function generateRepport() {
       body: payload,
     }
   )
-  addNotification(
+  notify(
     t(
       "Votre rapport est en train d'être généré. Un email vous sera envoyé à l'adresse {{email}} dès qu'il sera disponible",
       {
@@ -78,7 +66,7 @@ async function generateRepport() {
         ns: 'app',
       }
     ),
-    AlertNotificationType.INFO
+    'info'
   )
 }
 </script>

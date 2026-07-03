@@ -3,13 +3,15 @@ import { useTranslation } from 'i18next-vue'
 import { FeatureInfoJSON } from '../../models'
 import InfoFeatureLayout from '../layouts/info-feature-layout.vue'
 import { joinAttributes } from './template-utilities'
+import { useLuxTplContext } from '../../context'
 
 defineProps<{
   layers: FeatureInfoJSON
   currentUrl?: string
 }>()
 
-const DOWNLOAD_PAGREPORT_URL = import.meta.env.VITE_DOWNLOAD_PAGREPORT_URL
+const { config } = useLuxTplContext()
+const DOWNLOAD_PAGREPORT_URL = config.downloadPagReportUrl
 const { t } = useTranslation('tooltips')
 </script>
 

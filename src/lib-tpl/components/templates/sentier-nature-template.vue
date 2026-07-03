@@ -1,9 +1,9 @@
 <script setup lang="ts">
 import { useTranslation } from 'i18next-vue'
 import { FeatureInfoJSON, FeatureJSON } from '../../models'
-import ProfileFeatureInfo from '@/components/info/profile-feature-info.vue'
 import { hasAttributes } from './template-utilities'
 import InfoFeatureLayout from '../layouts/info-feature-layout.vue'
+import { useLuxTplContext } from '../../context'
 
 const props = defineProps<{
   layers: FeatureInfoJSON
@@ -14,7 +14,8 @@ defineEmits<{
   (e: 'export', payload: { feature: FeatureJSON; format: 'kml' | 'gpx' }): void
 }>()
 
-const DOWNLOAD_RESOURCE_URL = import.meta.env.VITE_DOWNLOAD_RESOURCE_URL
+const { config, profileComponent } = useLuxTplContext()
+const DOWNLOAD_RESOURCE_URL = config.downloadResourceUrl
 const { t } = useTranslation('tooltips')
 
 function getDirectLink(feature: FeatureJSON) {
@@ -50,9 +51,14 @@ function getDirectLink(feature: FeatureJSON) {
           </div>
         </div>
 
-        <ProfileFeatureInfo
+        <component
+          :is="profileComponent"
+          v-if="profileComponent"
           :feature="feature"
-          @export="payload => $emit('export', payload)"
+          @export="
+            (payload: { feature: FeatureJSON; format: 'kml' | 'gpx' }) =>
+              $emit('export', payload)
+          "
         />
       </template>
 

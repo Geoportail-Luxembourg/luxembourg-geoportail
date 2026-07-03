@@ -8,10 +8,9 @@ import {
   isLink,
   showAttributesByLang,
   sortedAttributeEntries,
-} from './template-utilities.js'
+} from './template-utilities'
 import i18next from 'i18next'
-import ProfileFeatureInfo from '@/components/info/profile-feature-info.vue'
-const DOWNLOAD_PDF_URL = import.meta.env.VITE_DOWNLOAD_PDF_URL
+import { useLuxTplContext } from '../../context'
 
 defineProps<{
   layers: FeatureInfoJSON
@@ -21,6 +20,8 @@ defineEmits<{
   (e: 'export', payload: { feature: FeatureJSON; format: 'kml' | 'gpx' }): void
 }>()
 const { t } = useTranslation('tooltips')
+const { config, profileComponent } = useLuxTplContext()
+const DOWNLOAD_PDF_URL = config.downloadPdfUrl
 </script>
 <template>
   <InfoFeatureLayout :layers="layers" :currentUrl="currentUrl">
@@ -79,10 +80,14 @@ const { t } = useTranslation('tooltips')
           </span>
         </div>
 
-        <div v-if="layers.has_profile">
-          <ProfileFeatureInfo
+        <div v-if="layers.has_profile && profileComponent">
+          <component
+            :is="profileComponent"
             :feature="feature"
-            @export="payload => $emit('export', payload)"
+            @export="
+              (payload: { feature: FeatureJSON; format: 'kml' | 'gpx' }) =>
+                $emit('export', payload)
+            "
           />
         </div>
       </template>
