@@ -53,6 +53,8 @@ export default function useMeasure() {
   // to avoid leaks if the composable is used across multiple mount/unmount cycles.
   // Stores the active keyup remover so deactivate() can clean it up without reset()
   let activeKeyupRemover: (() => void) | null = null
+  // Incremented on each activate/deactivate to invalidate stale async callbacks
+  let activationSession = 0
 
   const AZIMUTH_PREVIEW_STYLE = new Style({
     stroke: new Stroke({ color: '#ff8c00', width: 2, lineDash: [6, 6] }),
@@ -119,6 +121,13 @@ export default function useMeasure() {
 
   function activate(mode: Mode) {
     if (!map) return
+    // If another measure mode is currently active, stop it first.
+    // This prevents stale interactions (e.g. azimuth/Circle) from handling
+    // the first click after switching to another tool.
+    if (drawInteraction.value) {
+      deactivate()
+    }
+    const session = ++activationSession
     // ensure a single measure layer exists on the map
     // Try to reuse cached reference first, otherwise search the map for a
     // previously created 'interactionMeasureLayer' to avoid adding duplicates
@@ -622,6 +631,7 @@ export default function useMeasure() {
       // Restart the same measure mode after the current event cycle completes
       setTimeout(() => {
         try {
+          if (session !== activationSession) return
           activate(mode)
         } catch (e) {
           logWarn('[measure] reactivating measure mode after drawend failed', e)
@@ -658,6 +668,8 @@ export default function useMeasure() {
   }
 
   function deactivate() {
+    // Invalidate pending async callbacks (e.g. drawend auto-reactivation)
+    activationSession++
     // ...existing code...
     if (!map) return
     if (!isActive.value) {
