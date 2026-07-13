@@ -46,7 +46,7 @@ describe('Background selector', () => {
       cy.get('[data-cy="selectedBg"]').find('button').click()
       cy.get('[data-cy="available-bgs"]')
         .find('button')
-        .filter('[title*="topo_bw"]')
+        .filter('[title*="Carte topographique N/B"]')
         .click()
     })
 
@@ -81,7 +81,7 @@ describe('Background selector', () => {
     })
   })
 
-  describe('When changing to "Orthophoto 2013" background layer', () => {
+  describe('When changing to "ortho" background layer', () => {
     beforeEach(() => {
       cy.get('[data-cy="selectedBg"]').find('button').click()
       cy.get('[data-cy="available-bgs"]')
