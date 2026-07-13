@@ -45,15 +45,14 @@ describe('Background selector', () => {
     beforeEach(() => {
       cy.get('[data-cy="selectedBg"]').find('button').click()
       cy.get('[data-cy="available-bgs"]')
-        .find('button')
-        .filter('[title*="Carte topographique N/B"]')
+        .find('button.lux-bg-sel-topo_bw')
         .click()
     })
 
     it('updates the layer manager and the map when selecting a background layer', () => {
       cy.get('.lux-layer-manager-item')
         .last()
-        .contains('Carte topographique N/B')
+        .contains('topomap_gray')
         .should('be.visible')
 
       cy.window().then(win => {
@@ -85,8 +84,7 @@ describe('Background selector', () => {
     beforeEach(() => {
       cy.get('[data-cy="selectedBg"]').find('button').click()
       cy.get('[data-cy="available-bgs"]')
-        .find('button')
-        .filter('[title*="Orthophoto 2013"]')
+        .find('button.lux-bg-sel-ortho')
         .click()
     })
 
