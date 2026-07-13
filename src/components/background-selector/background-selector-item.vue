@@ -13,12 +13,18 @@ const props = defineProps({
     type: String,
     default: '',
   },
+  bgLabelKey: {
+    type: String,
+    default: '',
+  },
 })
 
 const buttonTitle = computed(() => {
   const localizedTitle = t(props.bgTitle, { ns: 'layers' })
   const hasTitle = props.bgTitle.length > 0
-  const localizedLayerName = t(props.bgName, { ns: 'layers' })
+  const localizedLayerName = t(props.bgLabelKey || props.bgName, {
+    ns: 'layers',
+  })
   return `${localizedTitle}${hasTitle ? ' - ' : ''}${localizedLayerName}`
 })
 
