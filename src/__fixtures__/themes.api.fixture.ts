@@ -35707,7 +35707,7 @@ export const themesApiFixture = (): ConfigModel => ({
         },
         {
             "id": 530,
-            "name": "orthogr_2013_global",
+            "name": "ortho",
             "metadata": {
                 "exclusion": "[21, 22]",
                 "hasRetina": false,
