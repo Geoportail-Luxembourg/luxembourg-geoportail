@@ -52,7 +52,7 @@ describe('Background selector', () => {
     it('updates the layer manager and the map when selecting a background layer', () => {
       cy.get('.lux-layer-manager-item')
         .last()
-        .contains('topomap_gray')
+        .contains('Carte topographique N/B')
         .should('be.visible')
 
       cy.window().then(win => {
