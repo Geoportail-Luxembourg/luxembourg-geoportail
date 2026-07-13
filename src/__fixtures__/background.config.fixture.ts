@@ -31,12 +31,12 @@ export const bgConfigFixture = () => ({
     },
     {
       icon_id: 'ortho', // id for icon
-      label_key: 'orthogr_2013_global',
+      label_key: 'ortho',
       id: 530,
     },
     {
       icon_id: 'hybrid', // id for icon
-      label_key: 'streets_jpeg',
+      label_key: 'ortho_hybrid',
       id: 501,
     },
     {
