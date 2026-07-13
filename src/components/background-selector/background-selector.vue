@@ -37,6 +37,10 @@ const activeLayerId = computed(
 const activeLayerName = computed(
   () => bgLayers.value?.find(layer => layer.id === activeLayerId.value)?.name
 )
+const activeLayerLabelKey = computed(
+  () =>
+    bgLayers.value?.find(layer => layer.id === activeLayerId.value)?.labelKey
+)
 
 watch(
   () => themeStore.bgLayers,
@@ -49,6 +53,7 @@ watch(
         bgLayersContext.find((l: ThemeNodeModel) => bgl.id === l.id),
         {
           name: bgl.icon_id,
+          labelKey: bgl.label_key ?? bgl.icon_id,
         }
       )
     )
@@ -111,6 +116,7 @@ function toggleSelector() {
         :aria-expanded="isOpen"
         bg-title="Select BG layer"
         :bg-name="activeLayerName"
+        :bg-label-key="activeLayerLabelKey"
         @click="toggleSelector"
       >
       </background-selector-item>
@@ -131,6 +137,7 @@ function toggleSelector() {
       >
         <background-selector-item
           :bg-name="layer.name"
+          :bg-label-key="layer.labelKey"
           @click="setBackgroundLayer(layer)"
         >
         </background-selector-item>

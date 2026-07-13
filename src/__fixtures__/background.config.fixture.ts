@@ -3,6 +3,7 @@ export const bgConfigFixture = () => ({
     {
       // basemap_2015_global
       icon_id: 'route',
+      label_key: 'basemap_2015_global',
       vector_id: 'roadmap',
       simple_style_class: 'road',
       medium_style_class: 'road',
@@ -13,6 +14,7 @@ export const bgConfigFixture = () => ({
     {
       // topo_bw_jpeg
       icon_id: 'topo',
+      label_key: 'topo',
       vector_id: 'topomap',
       medium_style_class: 'topo',
       expert_style_class: 'maputnik',
@@ -21,6 +23,7 @@ export const bgConfigFixture = () => ({
     {
       // topogr_global
       icon_id: 'topo_bw',
+      label_key: 'topomap_gray',
       vector_id: 'topomap_gray',
       medium_style_class: 'topo',
       expert_style_class: 'maputnik',
@@ -28,14 +31,17 @@ export const bgConfigFixture = () => ({
     },
     {
       icon_id: 'ortho', // id for icon
+      label_key: 'orthogr_2013_global',
       id: 530,
     },
     {
       icon_id: 'hybrid', // id for icon
+      label_key: 'streets_jpeg',
       id: 501,
     },
     {
       icon_id: 'blank',
+      label_key: 'blank',
       id: 0,
     },
   ],
