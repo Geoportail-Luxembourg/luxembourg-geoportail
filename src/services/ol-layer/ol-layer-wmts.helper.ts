@@ -24,14 +24,14 @@ import {
 
 class OlLayerWmtsHelper {
   createOlLayer(layer: Layer): OlLayer /* Returns: TileLayer<WmtsSource> */ {
-    const { name, imageType, id } = layer
+    const { name, layer: layerName, imageType, id } = layer
     const hasRetina = getLayerHasRetina(layer)
     const projection = getProjection(PROJECTION_WEBMERCATOR)!
     const extent = projection!.getExtent()
     const olSource = new WmtsSource({
       url: getLayerWmtsUrl(layer),
       tilePixelRatio: hasRetina ? 2 : 1,
-      layer: name,
+      layer: layerName || name,
       matrixSet: `GLOBAL_WEBMERCATOR_4_V3${hasRetina ? '_HD' : ''}`,
       format: imageType,
       requestEncoding: 'REST',

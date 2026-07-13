@@ -13,6 +13,7 @@ export type LayerId = number | string
 export interface Layer {
   id: LayerId
   name: string
+  layer?: string
   layers: string
   url?: string
   type: LayerType
