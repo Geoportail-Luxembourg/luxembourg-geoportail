@@ -10,7 +10,7 @@ import { Layer } from '@/stores/map.store.model'
 import { useStyleStore } from '@/stores/style.store'
 import { useMatomo } from '@/composables/matomo/matomo.composable'
 
-const COLOR_EDITABLE_LAYERS = ['basemap_2015_global']
+const COLOR_EDITABLE_LAYERS = ['roadmap']
 
 const styleStore = useStyleStore()
 const { bgStyle } = storeToRefs(styleStore)

@@ -117,7 +117,7 @@ describe('Legends', () => {
       cy.get('[data-cy="selectedBg"]').find('button').click()
       cy.get('[data-cy="available-bgs"]')
         .find('button')
-        .filter('[title*="Carte Topographique"]')
+        .filter('[title*="Carte topographique"]')
         .click()
 
       cy.get('[data-cy="legendsPanel"]').should(
