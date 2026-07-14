@@ -27,11 +27,7 @@ export const SP_KEY_Y = 'Y'
 export const SP_KEY_CROSSHAIR = 'crosshair'
 export const SP_KEY_SERIAL = 'serial'
 export const SP_KEY_SERIAL_LAYERS = 'serialLayer'
-export const SP_KEYS_STYLE = [
-  'basemap_2015_global',
-  'topogr_global',
-  'topo_bw_jpeg',
-]
+export const SP_KEYS_STYLE = ['roadmap', 'topomap', 'topomap_gray']
 export const SP_KEY_LAYERCOMPARATOR = 'lc'
 export const SP_KEY_LAYERCOMPARATOR_SLIDERRATIO = 'sliderRatio'
 

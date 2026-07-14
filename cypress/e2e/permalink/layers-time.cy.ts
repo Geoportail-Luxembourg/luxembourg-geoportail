@@ -3,7 +3,7 @@ describe('Permalink/State persistor - Layers', () => {
     describe('When layer times param have values', () => {
       it.skip('updates the layer items in the layer manager with the dates', () => {
         cy.visit(
-          '/?version=3&lang=fr&X=667917&Y=6394482&zoom=8&bgLayer=basemap_2015_global&serial=&layers=9999991861-999999-9999991859&opacities=1-1-1&time=2016-08-01T00%253A00%253A00Z--2014-08-31T12%253A43%253A47Z%252F2020-07-04T00%253A00%253A00Z--2016-10-04T12%253A43%253A47Z'
+          '/?version=3&lang=fr&X=667917&Y=6394482&zoom=8&bgLayer=roadmap&serial=&layers=9999991861-999999-9999991859&opacities=1-1-1&time=2016-08-01T00%253A00%253A00Z--2014-08-31T12%253A43%253A47Z%252F2020-07-04T00%253A00%253A00Z--2016-10-04T12%253A43%253A47Z'
         )
         cy.get('[data-cy="myLayersButton"]').click()
         cy.get('[data-cy="myLayers"] input.lux-time-datepicker')

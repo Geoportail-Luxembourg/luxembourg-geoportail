@@ -6,7 +6,7 @@ describe('Version 2 in url - Background layer', () => {
       )
       cy.get('[data-cy="myLayersButton"]').click()
       cy.get('.lux-layer-manager-item').last().contains('Carte routière')
-      cy.url().should('contains', 'bgLayer=basemap_2015_global')
+      cy.url().should('contains', 'bgLayer=roadmap')
     })
   })
 
@@ -17,7 +17,7 @@ describe('Version 2 in url - Background layer', () => {
       )
       cy.get('[data-cy="myLayersButton"]').click()
       cy.get('.lux-layer-manager-item').last().contains('Carte topographique')
-      cy.url().should('contains', 'bgLayer=topogr_global')
+      cy.url().should('contains', 'bgLayer=topomap')
     })
   })
 
@@ -27,8 +27,10 @@ describe('Version 2 in url - Background layer', () => {
         '/?bgLayer=pixelmaps-gray&bgOpacity=22&zoom=11&X=74204.10937&Y=77809.20313&layers=communes_labels,cantons_labels,districts_labels&layers_indices=5,6,7&layers_opacity=1,0.5,0.25&layers_visibility=false,true,true'
       )
       cy.get('[data-cy="myLayersButton"]').click()
-      cy.get('.lux-layer-manager-item').last().contains('Carte topographique')
-      cy.url().should('contains', 'bgLayer=topo_bw_jpeg')
+      cy.get('.lux-layer-manager-item')
+        .last()
+        .contains('Carte topographique N/B')
+      cy.url().should('contains', 'bgLayer=topomap_gray')
     })
   })
 
@@ -39,7 +41,7 @@ describe('Version 2 in url - Background layer', () => {
       )
       cy.get('[data-cy="myLayersButton"]').click()
       cy.get('.lux-layer-manager-item').last().contains('Carte hybride')
-      cy.url().should('contains', 'bgLayer=streets_jpeg')
+      cy.url().should('contains', 'bgLayer=ortho_hybrid')
     })
   })
 

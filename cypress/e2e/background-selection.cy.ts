@@ -45,8 +45,7 @@ describe('Background selector', () => {
     beforeEach(() => {
       cy.get('[data-cy="selectedBg"]').find('button').click()
       cy.get('[data-cy="available-bgs"]')
-        .find('button')
-        .filter('[title*="topo_bw"]')
+        .find('button.lux-bg-sel-topo_bw')
         .click()
     })
 
@@ -81,12 +80,11 @@ describe('Background selector', () => {
     })
   })
 
-  describe('When changing to "Orthophoto 2013" background layer', () => {
+  describe('When changing to "ortho" background layer', () => {
     beforeEach(() => {
       cy.get('[data-cy="selectedBg"]').find('button').click()
       cy.get('[data-cy="available-bgs"]')
-        .find('button')
-        .filter('[title*="Orthophoto 2013"]')
+        .find('button.lux-bg-sel-ortho')
         .click()
     })
 
@@ -119,7 +117,7 @@ describe('Background selector', () => {
         cy.visit(
           '/theme/main?version=3&lang=fr&layers=&opacities=&bgLayer=blank'
         )
-        cy.url().should('contain', 'bgLayer=basemap_2015_global')
+        cy.url().should('contain', 'bgLayer=roadmap')
       })
     })
 

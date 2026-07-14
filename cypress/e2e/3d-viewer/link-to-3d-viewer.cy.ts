@@ -18,7 +18,7 @@ describe('Link to 3D Viewer', () => {
         .should(
           'have.attr',
           'href',
-          'https://3d.geoportail.lu/?state=%5B%5B%5B%5D%2C%5B6.000000496232584%2C49.69999815293053%2C300%5D%2C350000%2C-90%2C-30%2C0%5D%2C%22cesium%22%2C%5B%22LuxConfig%22%2C%22catalogConfig%22%5D%2C%5B%5B%22basemap_2015_global%22%2C1%2C0%5D%2C%5B%22communes_labels%22%2C1%2C0%5D%2C%5B%22country%22%2C1%2C0%5D%2C%5B%22cantons%22%2C1%2C0%5D%5D%2C%5B%5D%2C0%2C0%5D'
+          'https://3d.geoportail.lu/?state=%5B%5B%5B%5D%2C%5B6.000000496232584%2C49.69999815293053%2C300%5D%2C350000%2C-90%2C-30%2C0%5D%2C%22cesium%22%2C%5B%22LuxConfig%22%2C%22catalogConfig%22%5D%2C%5B%5B%22roadmap%22%2C1%2C0%5D%2C%5B%22communes_labels%22%2C1%2C0%5D%2C%5B%22country%22%2C1%2C0%5D%2C%5B%22cantons%22%2C1%2C0%5D%5D%2C%5B%5D%2C0%2C0%5D'
         )
         .and('have.attr', 'target', 'lux3d')
     })
