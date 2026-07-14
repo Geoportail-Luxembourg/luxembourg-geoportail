@@ -35656,12 +35656,13 @@ export const themesApiFixture = (): ConfigModel => ({
     "background_layers": [
         {
             "id": 556,
-            "name": "basemap_2015_global",
+            "name": "roadmap",
             "metadata": {
                 "attribution": "&copy; <a href='https://www.maptiler.com/copyright/'>MapTiler</a> &copy; <a href=\"https://openstreetmap.org/copyright\">OpenStreetMap</a> contributors for data outside of Luxembourg",
                 "exclusion": "[31, 32]",
                 "legend_name": "act:roadmap_vt",
-                "metadata_id": "a1fea2a0-e0a0-4e5f-a61d-9b3c3a9426bd"
+                "metadata_id": "a1fea2a0-e0a0-4e5f-a61d-9b3c3a9426bd",
+                "layer_aliases": "[basemap_2015_global, basemap_global, basemap]"
             },
             "dimensions": {},
             "type": "WMTS",
@@ -35673,11 +35674,12 @@ export const themesApiFixture = (): ConfigModel => ({
         },
         {
             "id": 502,
-            "name": "topo_bw_jpeg",
+            "name": "topomap_gray",
             "metadata": {
                 "attribution": "&copy; <a href='https://www.maptiler.com/copyright/'>MapTiler</a> &copy; <a href=\"https://openstreetmap.org/copyright\">OpenStreetMap</a> contributors for data outside of Luxembourg",
                 "exclusion": "[35, 45]",
                 "legend_name": "act_topovt_bw",
+                "layer_aliases": "topo_bw_jpeg",
                 "metadata_id": "b786acc2-b87e-4c7a-aff7-52778357243b"
             },
             "dimensions": {},
@@ -35690,11 +35692,12 @@ export const themesApiFixture = (): ConfigModel => ({
         },
         {
             "id": 529,
-            "name": "topogr_global",
+            "name": "topomap",
             "metadata": {
                 "attribution": "&copy; <a href='https://www.maptiler.com/copyright/'>MapTiler</a> &copy; <a href=\"https://openstreetmap.org/copyright\">OpenStreetMap</a> contributors for data outside of Luxembourg",
                 "exclusion": "[36, 46]",
                 "legend_name": "act_topovt",
+                "layer_aliases": "topogr_global",
                 "metadata_id": "b786acc2-b87e-4c7a-aff7-52778357243b"
             },
             "dimensions": {},
@@ -35711,6 +35714,7 @@ export const themesApiFixture = (): ConfigModel => ({
             "metadata": {
                 "exclusion": "[21, 22]",
                 "hasRetina": false,
+                "layer_aliases": "orthogr_2013_global",
                 "metadata_id": "554cb3f9-a6e7-4e0e-8d62-0853dfd33c32"
             },
             "dimensions": {},
@@ -35723,10 +35727,11 @@ export const themesApiFixture = (): ConfigModel => ({
         },
         {
             "id": 501,
-            "name": "streets_jpeg",
+            "name": "ortho_hybrid",
             "metadata": {
                 "exclusion": "[11, 12]",
                 "hasRetina": false,
+                "layer_aliases": "streets_jpeg",
                 "metadata_id": "c427b194-53ba-418d-9b4a-226a8cbfd568"
             },
             "dimensions": {},
