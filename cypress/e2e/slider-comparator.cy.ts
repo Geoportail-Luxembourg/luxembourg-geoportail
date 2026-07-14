@@ -15,7 +15,7 @@ function toggleSliderBtn() {
 describe('Permalink/State persistor - Layer comparator (lc & sliderRatio)', () => {
   beforeEach(() => {
     cy.visit(
-      '/?version=3&lang=fr&X=667917&Y=6394482&zoom=8&layers=269-302-346&opacities=1-1-1&bgLayer=basemap_2015_global'
+      '/?version=3&lang=fr&X=667917&Y=6394482&zoom=8&layers=269-302-346&opacities=1-1-1&bgLayer=roadmap'
     )
     cy.get('[data-cy="myLayersButton"]').click()
   })

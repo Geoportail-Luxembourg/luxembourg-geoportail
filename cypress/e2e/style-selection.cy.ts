@@ -11,7 +11,7 @@ describe('Style selector', () => {
   })
 
   it('has no style value in localStorage', () => {
-    expect(localStorage.getItem('basemap_2015_global')).to.be.null
+    expect(localStorage.getItem('roadmap')).to.be.null
   })
 
   describe('Style panel', () => {
@@ -55,7 +55,7 @@ describe('Style selector', () => {
     it('sets style to 4th style of list', () => {
       cy.get('@simplePanel').find('button[title*="Kids"]').first().click()
       cy.window().then(win => {
-        const style = win.localStorage.getItem('basemap_2015_global')
+        const style = win.localStorage.getItem('roadmap')
         expect(style).to.not.be.null
         const parsedStyle = JSON.parse(style as string)
         expect(parsedStyle.medium[0].color).to.eq('#f9c50d')
@@ -97,7 +97,7 @@ describe('Style selector', () => {
         .first()
         .click()
       cy.window().then(win => {
-        const style = win.localStorage.getItem('basemap_2015_global')
+        const style = win.localStorage.getItem('roadmap')
         expect(style).to.not.be.null
         const parsedStyle = JSON.parse(style as string)
         const roadsPrimary = parsedStyle.medium.find(

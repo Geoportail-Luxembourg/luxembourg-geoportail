@@ -117,7 +117,7 @@ describe('Background selector', () => {
         cy.visit(
           '/theme/main?version=3&lang=fr&layers=&opacities=&bgLayer=blank'
         )
-        cy.url().should('contain', 'bgLayer=basemap_2015_global')
+        cy.url().should('contain', 'bgLayer=roadmap')
       })
     })
 
