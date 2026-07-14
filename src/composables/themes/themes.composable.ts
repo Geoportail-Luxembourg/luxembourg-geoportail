@@ -6,6 +6,20 @@ import { storeToRefs } from 'pinia'
 import { DEFAULT_VIEW_ZOOM_MAX } from '@/composables/map/map.model'
 
 export default function useThemes() {
+  function normalizeLayerName(value: string) {
+    return value.trim().toLowerCase()
+  }
+
+  function getLayerAliases(aliases: string | undefined) {
+    return (
+      aliases
+        ?.replace(/[[\]"']/g, '')
+        .split(',')
+        .map(alias => alias.trim())
+        .filter(Boolean) || []
+    )
+  }
+
   /**
    * Find a layer by its id in all the themes
    * @param id
@@ -98,17 +112,16 @@ export default function useThemes() {
 
   function findBgLayerByName(name: string) {
     const { bgLayers } = useThemeStore()
+    const normalizedName = normalizeLayerName(name)
 
     return (
       bgLayers.find(l => l.name === name) ??
       bgLayers.find(l => {
-        const aliases = l.metadata?.layer_aliases
-        if (!aliases) return false
-        return aliases
-          .replace(/[[\]]/g, '')
-          .split(',')
-          .map(a => a.trim())
-          .includes(name)
+        const aliases = getLayerAliases(l.metadata?.layer_aliases)
+        if (!aliases.length) return false
+        return aliases.some(
+          alias => normalizeLayerName(alias) === normalizedName
+        )
       })
     )
   }
