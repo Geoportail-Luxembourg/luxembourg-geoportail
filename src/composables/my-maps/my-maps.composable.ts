@@ -232,11 +232,11 @@ export default function useMyMaps() {
     if (!watchersDefined) {
       // Populate MyMap object whenever MyMap uuid changes
       watch(
-        myMapId,
-        async (uuid, oldValue) => {
-          if (uuid && uuid !== oldValue && useMap().getOlMap()) {
+        [myMapId, () => themeStore.bgLayers.length],
+        ([uuid, bgLayersCount], [oldUuid]) => {
+          if (uuid && uuid !== oldUuid && useMap().getOlMap()) {
             loadMyMap(uuid)
-          } else if (!uuid && oldValue) {
+          } else if (!uuid && oldUuid) {
             // When closing MyMap, make all MyMap features become URL features
             drawnFeaturesMyMaps.value.forEach(f => {
               f.map_id = undefined
@@ -244,6 +244,10 @@ export default function useMyMaps() {
               f.changed()
             })
             myMap.value = undefined
+          }
+
+          if (uuid && bgLayersCount > 0 && myMap.value) {
+            resetFromMyMap()
           }
         },
         { immediate: true }
