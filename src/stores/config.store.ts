@@ -1,6 +1,6 @@
 import { acceptHMRUpdate, defineStore } from 'pinia'
 import { computed, ref, shallowRef, ShallowRef } from 'vue'
-
+import { isHiDpi } from '@/services/utils'
 import { ConfigModel } from '@/composables/themes/themes.model'
 
 const DEFAULT_CURRENT_THEME = 'main'
@@ -45,7 +45,7 @@ export const useThemeStore = defineStore(
     async function loadThemes() {
       themesLoading.value = true
       const cacheVersion = Date.now()
-      const themesUrl = `/themes?interface=main&background=background&cache_version=${cacheVersion}`
+      const themesUrl = `/themes?interface=main&background=background&cache_version=${cacheVersion}&hidpi=${isHiDpi()}`
 
       try {
         const resp = await fetch(themesUrl, {
