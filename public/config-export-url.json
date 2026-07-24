@@ -54,6 +54,12 @@
       "labelKey": "Ouvrir streetView",
       "icon": "fa-street-view",
       "url": "https://www.google.com/maps/@?api=1&map_action=pano&viewpoint={LAT},{LON}&heading=0&pitch=0&fov=90"
+    },
+    {
+      "useLocationInfoCoords": true,
+      "labelKey": "Generic export",
+      "icon": "fa-street-view",
+      "url": "https://fmeflow-staging.geoportail.lu/fmeserver/apps/Geoportal-Exporter?dynamicParameterData={DYNAMIC_PARAMETER_DATA}"
     }
   ]
 }
