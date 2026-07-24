@@ -3,7 +3,11 @@ import { defineComponent, nextTick } from 'vue'
 import { mount, flushPromises } from '@vue/test-utils'
 import { createTestingPinia } from '@pinia/testing'
 
-import useExportUrl, { interpolateUrl } from './export-url.composable'
+import useExportUrl, {
+  buildBboxGeoJson,
+  buildDynamicParameterData,
+  interpolateUrl,
+} from './export-url.composable'
 import { buildObliqueState, LUX_VCS_MODULES } from '@/services/vcs.utils'
 import type { ObliqueConfig } from '@/services/vcs.utils'
 import type { ExportLink } from './export-url.model'
@@ -76,6 +80,53 @@ describe('interpolateUrl', () => {
   it('returns url unchanged when params is empty', () => {
     const url = 'https://example.com?foo=bar'
     expect(interpolateUrl(url, {})).toBe(url)
+  })
+
+  it('encodes dynamic exporter payload', () => {
+    const dynamicData = buildDynamicParameterData(
+      '302 153',
+      buildBboxGeoJson([6.0, 49.5, 6.3, 49.7])
+    )
+    const result = interpolateUrl(
+      'https://example.com?dynamicParameterData={DYNAMIC_PARAMETER_DATA}',
+      {
+        DYNAMIC_PARAMETER_DATA: dynamicData,
+      }
+    )
+    expect(result).toContain(
+      'dynamicParameterData=%5B%7B%22name%22%3A%22layers%22'
+    )
+    expect(result).toContain('%22defaultValue%22%3A%22302%20153%22')
+    expect(result).toContain('%22name%22%3A%22GEOJSON%22')
+  })
+})
+
+describe('buildBboxGeoJson', () => {
+  it('builds a valid GeoJSON polygon from bbox', () => {
+    const geoJson = JSON.parse(buildBboxGeoJson([6.0, 49.5, 6.3, 49.7]))
+    expect(geoJson.type).toBe('FeatureCollection')
+    expect(geoJson.features).toHaveLength(1)
+    expect(geoJson.features[0].geometry.type).toBe('Polygon')
+    expect(geoJson.features[0].geometry.coordinates[0]).toEqual([
+      [6.0, 49.5],
+      [6.3, 49.5],
+      [6.3, 49.7],
+      [6.0, 49.7],
+      [6.0, 49.5],
+    ])
+  })
+})
+
+describe('buildDynamicParameterData', () => {
+  it('builds exporter payload with layers and geojson', () => {
+    const bboxGeoJson = buildBboxGeoJson([6.0, 49.5, 6.3, 49.7])
+    const payload = JSON.parse(
+      buildDynamicParameterData('302 153', bboxGeoJson)
+    )
+    expect(payload).toEqual([
+      { name: 'layers', defaultValue: '302 153' },
+      { name: 'GEOJSON', defaultValue: bboxGeoJson },
+    ])
   })
 })
 

@@ -26,6 +26,47 @@ export function interpolateUrl(
   )
 }
 
+export function buildBboxGeoJson(bbox: number[]): string {
+  const [minLon, minLat, maxLon, maxLat] = bbox
+  return JSON.stringify({
+    type: 'FeatureCollection',
+    features: [
+      {
+        type: 'Feature',
+        properties: {},
+        geometry: {
+          type: 'Polygon',
+          coordinates: [
+            [
+              [minLon, minLat],
+              [maxLon, minLat],
+              [maxLon, maxLat],
+              [minLon, maxLat],
+              [minLon, minLat],
+            ],
+          ],
+        },
+      },
+    ],
+  })
+}
+
+export function buildDynamicParameterData(
+  layerIds: string,
+  bboxGeoJson: string
+): string {
+  return JSON.stringify([
+    {
+      name: 'layers',
+      defaultValue: layerIds,
+    },
+    {
+      name: 'GEOJSON',
+      defaultValue: bboxGeoJson,
+    },
+  ])
+}
+
 async function computeParams(
   center: number[],
   map: OlMap,
@@ -45,7 +86,9 @@ async function computeParams(
       )
     : [0, 0, 0, 0]
   const layerIds = layers.map(l => l.id).join(',')
+  const layerIdsSpaces = layers.map(l => l.id).join(' ')
   const elevation = await getElevation(center)
+  const bboxGeoJson = buildBboxGeoJson(bboxWgs84)
 
   return {
     LUREF_X: Math.round(luref[0]),
@@ -55,7 +98,13 @@ async function computeParams(
     LAT: lat,
     BBOX: bboxWgs84.join(','),
     LAYER_IDS: layerIds,
+    LAYER_IDS_SPACES: layerIdsSpaces,
     ELEVATION: elevation ?? 300,
+    BBOX_GEOJSON: bboxGeoJson,
+    DYNAMIC_PARAMETER_DATA: buildDynamicParameterData(
+      layerIdsSpaces,
+      bboxGeoJson
+    ),
   }
 }
 
@@ -70,8 +119,12 @@ async function computeParams(
  * - `{ZOOM}` — Current map zoom level, rounded to the nearest integer
  * - `{BBOX}` — Bounding box of the current view in WGS84, as `minLon,minLat,maxLon,maxLat` (URL-encoded)
  * - `{LAYER_IDS}` — Comma-separated list of active layer IDs (URL-encoded)
+ * - `{LAYER_IDS_SPACES}` — Space-separated list of active layer IDs (URL-encoded)
  * - `{ELEVATION}` — Terrain altitude in meters at the resolved coordinate (from the elevation service)
- * - `{VCS_STATE}` — JSON state for the oblique viewer, built from `ExportLink.obliqueConfig`
+ * - `{BBOX_GEOJSON}` — Current WGS84 BBOX as a GeoJSON `FeatureCollection` (URL-encoded)
+ * - `{DYNAMIC_PARAMETER_DATA}` — JSON array payload for exporter endpoints:
+ *   `[{"name":"layers","defaultValue":"..."},{"name":"GEOJSON","defaultValue":"..."}]` (URL-encoded)
+ * - `{VCS_OBLIQUE_STATE}` — JSON state for the oblique viewer, built from `ExportLink.obliqueConfig`
  *
  * When `ExportLink.useLocationInfoCoords` is `true` and a location-info coordinate is selected,
  * it is used instead of the map center for computing `LUREF_X/Y`, `LON`, `LAT` and `ELEVATION`.

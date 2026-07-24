@@ -8,7 +8,10 @@ export interface BaseParams {
   LAT: number
   BBOX: string
   LAYER_IDS: string
+  LAYER_IDS_SPACES: string
   ELEVATION: number
+  BBOX_GEOJSON: string
+  DYNAMIC_PARAMETER_DATA: string
 }
 
 export interface ExportLink {
