@@ -59,7 +59,8 @@
       "useLocationInfoCoords": true,
       "labelKey": "Generic export",
       "icon": "fa-file-export",
-      "url": "https://fmeflow-staging.geoportail.lu/fmeserver/apps/Geoportal-Exporter?dynamicParameterData={DYNAMIC_PARAMETER_DATA}"
+      "url": "https://fmeflow-staging.geoportail.lu/fmeserver/apps/Geoportal-Exporter?dynamicParameterData={DYNAMIC_PARAMETER_DATA}",
+      "userRoles": ["ACT"]
     }
   ]
 }
