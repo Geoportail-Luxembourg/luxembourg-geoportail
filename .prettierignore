@@ -32,5 +32,8 @@
 # fixtures
 /src/__fixtures__/
 
+# documentation (standalone tools)
+/public/doc/
+
 storybook-static
 custom-elements.json
