@@ -60,11 +60,12 @@ swLog(
 
 // Important, keep order!
 statePersistorMyMapService.bootstrap()
+// Restore background first so layer restorations can respect bg exclusions
+statePersistorBgLayerService.bootstrap()
 statePersistorLayersService.bootstrap()
 statePersistorThemeService.bootstrap()
 statePersistorAppService.bootstrap()
 statePersistorStyleService.bootstrap()
-statePersistorBgLayerService.bootstrap()
 mvtStyleService.initBackgroundsConfigs()
 statePersistorFeatureInfoService.bootstrap()
 
