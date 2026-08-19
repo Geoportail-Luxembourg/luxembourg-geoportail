@@ -1,13 +1,5 @@
 <script setup lang="ts">
-import {
-  computed,
-  ShallowRef,
-  shallowRef,
-  watchEffect,
-  watch,
-  nextTick,
-  useTemplateRef,
-} from 'vue'
+import { computed, watchEffect, watch, nextTick, useTemplateRef } from 'vue'
 import { storeToRefs } from 'pinia'
 
 import useLayers from '@/composables/layers/layers.composable'
@@ -16,6 +8,7 @@ import { ThemeNodeModel } from '@/composables/themes/themes.model'
 import { useThemeStore } from '@/stores/config.store'
 import { useMapStore } from '@/stores/map.store'
 import { useAppStore } from '@/stores/app.store'
+import { useLayerTreeStore } from '@/stores/layer-tree.store'
 import LayerTreeNode from '@/components/layer-tree/layer-tree-node.vue'
 import { themesToLayerTree } from '@/components/layer-tree/layer-tree.mapper'
 import type { LayerTreeNodeModel } from '@/components/layer-tree/layer-tree.model'
@@ -27,11 +20,10 @@ import {
 const mapStore = useMapStore()
 const themeStore = useThemeStore()
 const appStore = useAppStore()
+const layerTreeStore = useLayerTreeStore()
 const layers = useLayers()
 const themes = useThemes()
 const catalogRoot = useTemplateRef<HTMLElement>('catalogRoot')
-const layerTree: ShallowRef<LayerTreeNodeModel | undefined> = shallowRef()
-const layerTree3d: ShallowRef<LayerTreeNodeModel | undefined> = shallowRef()
 const showDefaultCatalog = computed(
   () => !mapStore.is3dActive || (mapStore.is3dActive && !mapStore.is3dMesh)
 )
@@ -39,33 +31,51 @@ const showDefaultCatalog = computed(
 const { layerTrees_3d } = storeToRefs(themeStore)
 const { layerToLocateInCatalog } = storeToRefs(appStore)
 const { themeName } = storeToRefs(themeStore)
+const { layerTree, layerTree3d } = storeToRefs(layerTreeStore)
+
+let lastCapturedThemeId: number | undefined
+let lastCaptured3dTreeId: number | undefined
 
 watchEffect(updateLayerTree)
 
 function updateLayerTree() {
   if (themeStore.theme && mapStore.layers) {
-    const treeModel =
-      layerTree.value &&
-      (layerTree.value.id as unknown as number) === themeStore.theme?.id
-        ? layerTree.value
-        : themesToLayerTree(themeStore.theme as ThemeNodeModel)
+    const themeId = themeStore.theme.id
+    const isNewTheme = themeId !== lastCapturedThemeId
 
-    layerTree.value = layerTreeService.updateLayers(
+    const treeModel = isNewTheme
+      ? themesToLayerTree(themeStore.theme as ThemeNodeModel)
+      : layerTree.value
+
+    if (isNewTheme) {
+      layerTreeStore.captureServerDefaults(treeModel!)
+      lastCapturedThemeId = themeId
+    }
+
+    const updated = layerTreeService.updateLayers(
       treeModel as LayerTreeNodeModel,
       mapStore.layers
     )
+    layerTreeStore.setLayerTree(layerTreeStore.applyOverrides(updated))
   }
 }
 
 watchEffect(() => {
   if (layerTrees_3d.value) {
-    const treeModel = layerTree3d.value
-      ? layerTree3d.value
-      : themesToLayerTree(layerTrees_3d.value)
-    layerTree3d.value = layerTreeService.updateLayers(
-      treeModel,
-      mapStore.layers3d
-    )
+    const treeId = layerTrees_3d.value.id
+    const isNewTree = treeId !== lastCaptured3dTreeId
+
+    const treeModel = isNewTree
+      ? themesToLayerTree(layerTrees_3d.value)
+      : layerTree3d.value
+
+    if (isNewTree) {
+      layerTreeStore.captureServerDefaults(treeModel)
+      lastCaptured3dTreeId = treeId
+    }
+
+    const updated = layerTreeService.updateLayers(treeModel, mapStore.layers3d)
+    layerTreeStore.setLayerTree3d(layerTreeStore.applyOverrides(updated))
   }
 })
 
@@ -87,7 +97,7 @@ watch(layerToLocateInCatalog, id => {
         layerTree.value
       )
       if (found) {
-        layerTree.value = node
+        layerTreeStore.setLayerTree(node)
         nextTick(() => {
           // A same layer id can appear multiple times in the tree (e.g. shared across themes)
           const els = catalogRoot.value?.querySelectorAll<HTMLElement>(
@@ -164,12 +174,7 @@ watch(layerToLocateInCatalog, id => {
 })
 
 function toggleParent(node: LayerTreeNodeModel, is3d: boolean) {
-  const rootTree = is3d ? layerTree3d : layerTree
-  rootTree.value = layerTreeService.toggleNode(
-    node.id,
-    rootTree.value as LayerTreeNodeModel,
-    'expanded'
-  )
+  layerTreeStore.toggleParentNode(node.id, is3d)
 }
 
 function toggleLayer(node: LayerTreeNodeModel, is3d: boolean) {
