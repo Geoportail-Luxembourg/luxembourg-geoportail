@@ -15,6 +15,7 @@ import { remoteLayersService } from '@/services/remote-layers/remote-layers.serv
 
 import {
   SP_KEY_LAYERS,
+  SP_KEY_BGLAYER,
   SP_KEY_TIME_SELECTIONS,
   SP_KEY_OPACITIES,
   SP_KEY_V2_BGLAYEROPACITY,
@@ -93,7 +94,40 @@ class StatePersistorLayersService implements StatePersistorService {
       storageHelper.removeItem(SP_KEY_V2_LAYERSVISIBILITY)
     }
 
-    const layersToAdd = (layers?.filter(layer => layer) as Layer[]) || []
+    let layersToAdd = (layers?.filter(layer => layer) as Layer[]) || []
+
+    // If a bgLayer is present in the permalink/storage, remove it from the
+    // normal layers list to avoid showing it both as background and as a
+    // regular overlay layer. The background is restored separately by the
+    // StatePersistorBgLayerService (bootstrap order in App.vue matters).
+    try {
+      const bgLayerName = storageHelper.getValue<string | null>(SP_KEY_BGLAYER)
+      const bgLayer = storageLayerMapper.bgLayerNameToBgLayer(bgLayerName)
+      if (bgLayer && bgLayer.id !== undefined) {
+        layersToAdd = layersToAdd.filter(l => l.id !== bgLayer.id)
+      }
+    } catch (e) {
+      // best-effort: ignore storage parsing errors
+    }
+
+    // Apply exclusion rules against the already-restored background (if any)
+    // before adding the layers so that incompatible backgrounds are
+    // deactivated the same way as when toggling layers interactively.
+    if (layersToAdd.length > 0) {
+      try {
+        const layersComposable = useLayers()
+        layersToAdd.forEach(layer => {
+          try {
+            layersComposable.handleExclusionLayers(layer)
+          } catch (e) {
+            // ignore per-layer errors
+          }
+        })
+      } catch (e) {
+        // ignore if composable can't be created
+      }
+    }
+
     mapStore.addLayers(...layersToAdd)
 
     // Track initial layers in Matomo (restored from URL/storage)
