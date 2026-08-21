@@ -41,21 +41,13 @@ watchEffect(updateLayerTree)
 function updateLayerTree() {
   if (themeStore.theme && mapStore.layers) {
     const themeId = themeStore.theme.id
-    const isNewTheme = themeId !== lastCapturedThemeId
+    if (themeId === lastCapturedThemeId) return
 
-    const treeModel = isNewTheme
-      ? themesToLayerTree(themeStore.theme as ThemeNodeModel)
-      : layerTree.value
+    const treeModel = themesToLayerTree(themeStore.theme as ThemeNodeModel)
+    layerTreeStore.captureServerDefaults(treeModel)
+    lastCapturedThemeId = themeId
 
-    if (isNewTheme) {
-      layerTreeStore.captureServerDefaults(treeModel!)
-      lastCapturedThemeId = themeId
-    }
-
-    const updated = layerTreeService.updateLayers(
-      treeModel as LayerTreeNodeModel,
-      mapStore.layers
-    )
+    const updated = layerTreeService.updateLayers(treeModel, mapStore.layers)
     layerTreeStore.setLayerTree(layerTreeStore.applyOverrides(updated))
   }
 }
@@ -63,18 +55,11 @@ function updateLayerTree() {
 watchEffect(() => {
   if (layerTrees_3d.value) {
     const treeId = layerTrees_3d.value.id
-    const isNewTree = treeId !== lastCaptured3dTreeId
+    if (treeId === lastCaptured3dTreeId) return
 
-    const treeModel = isNewTree
-      ? themesToLayerTree(layerTrees_3d.value)
-      : layerTree3d.value
-
-    if (isNewTree && treeModel) {
-      layerTreeStore.captureServerDefaults(treeModel)
-      lastCaptured3dTreeId = treeId
-    }
-
-    if (!treeModel) return
+    const treeModel = themesToLayerTree(layerTrees_3d.value)
+    layerTreeStore.captureServerDefaults(treeModel)
+    lastCaptured3dTreeId = treeId
 
     const updated = layerTreeService.updateLayers(treeModel, mapStore.layers3d)
     layerTreeStore.setLayerTree3d(layerTreeStore.applyOverrides(updated))
