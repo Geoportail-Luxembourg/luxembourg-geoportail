@@ -69,10 +69,12 @@ watchEffect(() => {
       ? themesToLayerTree(layerTrees_3d.value)
       : layerTree3d.value
 
-    if (isNewTree) {
+    if (isNewTree && treeModel) {
       layerTreeStore.captureServerDefaults(treeModel)
       lastCaptured3dTreeId = treeId
     }
+
+    if (!treeModel) return
 
     const updated = layerTreeService.updateLayers(treeModel, mapStore.layers3d)
     layerTreeStore.setLayerTree3d(layerTreeStore.applyOverrides(updated))

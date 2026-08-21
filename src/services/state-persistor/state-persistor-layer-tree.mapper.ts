@@ -3,7 +3,10 @@ export class StorageLayerTreeMapper {
    * Encode overrides to compact format: "~456,123,789"
    * IDs with ~ prefix are collapsed, others are expanded.
    */
-  expandedOverridesToStorage(overrides: Record<string, boolean>): string {
+  expandedOverridesToStorage(
+    overrides: Record<string, boolean> | undefined | null
+  ): string {
+    if (!overrides) return ''
     const parts: string[] = []
     for (const [id, expanded] of Object.entries(overrides)) {
       parts.push(expanded ? id : `~${id}`)
