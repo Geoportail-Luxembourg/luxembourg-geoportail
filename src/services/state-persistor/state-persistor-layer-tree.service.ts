@@ -7,7 +7,7 @@ import { storageHelper } from './storage/storage.helper'
 import { storageLayerTreeMapper } from './state-persistor-layer-tree.mapper'
 import type { LayerTreeNodeModel } from '@/components/layer-tree/layer-tree.model'
 
-function computeOverrides(
+export function computeOverrides(
   tree: LayerTreeNodeModel,
   serverDefaults: Map<string | number, boolean>
 ): Record<string, boolean> {
