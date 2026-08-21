@@ -50,11 +50,15 @@ class StatePersistorLayerTreeService {
           const overrides3d = computeOverrides(store.layerTree3d, defaults)
           Object.assign(overrides, overrides3d)
         }
-        storageHelper.setValue(
-          SP_KEY_EXPANDED_NODES,
-          overrides,
-          storageLayerTreeMapper.expandedOverridesToStorage
-        )
+        if (Object.keys(overrides).length > 0) {
+          storageHelper.setValue(
+            SP_KEY_EXPANDED_NODES,
+            overrides,
+            storageLayerTreeMapper.expandedOverridesToStorage
+          )
+        } else {
+          storageHelper.removeItem(SP_KEY_EXPANDED_NODES)
+        }
       },
       { deep: true, immediate: true }
     )
