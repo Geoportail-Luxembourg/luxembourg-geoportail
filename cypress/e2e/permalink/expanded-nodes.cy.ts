@@ -30,13 +30,13 @@ describe('Permalink/State persistor - Expanded nodes', () => {
   })
 
   describe('Collapse an expanded node', () => {
-    it('adds ~ prefixed node ID to expandedNodes in the URL', () => {
+    it('adds - prefixed node ID to expandedNodes in the URL', () => {
       // 2841 is expanded by default — collapse it
       cy.get('[data-cy="parentLayerLabel-2841"]').find('button').click()
       cy.get('[data-cy="parentLayerLabel-2841"]')
         .find('button')
         .should('have.attr', 'aria-expanded', 'false')
-      cy.url().should('contain', 'expandedNodes=%7E2841')
+      cy.url().should('contain', 'expandedNodes=-2841')
     })
   })
 
@@ -44,7 +44,7 @@ describe('Permalink/State persistor - Expanded nodes', () => {
     it('removes the override from the URL when re-expanded to match default', () => {
       // Collapse 2841 (expanded by default)
       cy.get('[data-cy="parentLayerLabel-2841"]').find('button').click()
-      cy.url().should('contain', 'expandedNodes=%7E2841')
+      cy.url().should('contain', 'expandedNodes=-2841')
       // Re-expand 2841 (back to default)
       cy.get('[data-cy="parentLayerLabel-2841"]').find('button').click()
       cy.url().should('not.contain', 'expandedNodes')

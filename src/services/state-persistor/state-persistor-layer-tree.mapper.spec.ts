@@ -13,19 +13,19 @@ describe('StorageLayerTreeMapper', () => {
       ).toBe('123')
     })
 
-    it('encodes a single collapsed entry with ~ prefix', () => {
+    it('encodes a single collapsed entry with - prefix', () => {
       expect(
         storageLayerTreeMapper.expandedOverridesToStorage({ '456': false })
-      ).toBe('~456')
+      ).toBe('-456')
     })
 
-    it('encodes mixed entries with ~ for collapsed', () => {
+    it('encodes mixed entries with - for collapsed', () => {
       const result = storageLayerTreeMapper.expandedOverridesToStorage({
         '123': true,
         '456': false,
         '789': true,
       })
-      expect(result).toContain('~456')
+      expect(result).toContain('-456')
       expect(result).toContain('123')
       expect(result).toContain('789')
       expect(result.split(',')).toHaveLength(3)
@@ -50,7 +50,7 @@ describe('StorageLayerTreeMapper', () => {
     })
 
     it('decodes a single collapsed entry', () => {
-      expect(storageLayerTreeMapper.storageToExpandedOverrides('~456')).toEqual(
+      expect(storageLayerTreeMapper.storageToExpandedOverrides('-456')).toEqual(
         {
           '456': false,
         }
@@ -59,7 +59,7 @@ describe('StorageLayerTreeMapper', () => {
 
     it('decodes mixed entries', () => {
       expect(
-        storageLayerTreeMapper.storageToExpandedOverrides('~456,123,789')
+        storageLayerTreeMapper.storageToExpandedOverrides('-456,123,789')
       ).toEqual({
         '456': false,
         '123': true,
@@ -69,7 +69,7 @@ describe('StorageLayerTreeMapper', () => {
 
     it('handles leading and trailing commas gracefully', () => {
       expect(
-        storageLayerTreeMapper.storageToExpandedOverrides(',~456,123,')
+        storageLayerTreeMapper.storageToExpandedOverrides(',-456,123,')
       ).toEqual({
         '456': false,
         '123': true,

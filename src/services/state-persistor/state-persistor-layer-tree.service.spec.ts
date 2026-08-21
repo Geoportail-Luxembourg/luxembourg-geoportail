@@ -114,7 +114,7 @@ describe('statePersistorLayerTreeService', () => {
 
   describe('#restore', () => {
     it('loads overrides from storage into the store', () => {
-      fakeStorage['expandedNodes'] = '~456,123'
+      fakeStorage['expandedNodes'] = '-456,123'
 
       statePersistorLayerTreeService.restore()
 
