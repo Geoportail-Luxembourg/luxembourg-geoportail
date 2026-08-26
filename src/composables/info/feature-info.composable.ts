@@ -534,7 +534,7 @@ export default function useFeatureInfo() {
       layerLabel,
       false,
       true,
-      { big: 10, small: 1 },
+      undefined,
       true
     )
   }

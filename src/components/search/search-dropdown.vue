@@ -20,6 +20,12 @@ import { useMetadataStore } from '@/stores/metadata.store'
 import { LayerId, Layer } from '@/stores/map.store.model'
 import { useMatomo } from '@/composables/matomo/matomo.composable'
 import useFeatureInfo from '@/composables/info/feature-info.composable'
+import GeoJSON from 'ol/format/GeoJSON'
+import Polygon from 'ol/geom/Polygon'
+import MultiPolygon from 'ol/geom/MultiPolygon'
+import Point from 'ol/geom/Point'
+import LineString from 'ol/geom/LineString'
+import MultiLineString from 'ol/geom/MultiLineString'
 
 const FULLTEXTSEARCH_URL = import.meta.env.VITE_SEARCH_FULLTEXTSEARCH_URL
 const FEATURESEARCH_URL = import.meta.env.VITE_SEARCH_FEATURESEARCH_URL
@@ -125,27 +131,70 @@ function makePointEntry(entry: any, center: [number, number]): object {
   }
 }
 
-function computeFeatureCenterWGS84(entry: any): [number, number] | null {
+function findAPointOnFeature(entry: any): [number, number] | null {
   try {
     const raw = entry?.toJSON ? entry.toJSON() : entry
-    if (Array.isArray(raw?.bbox) && raw.bbox.length >= 4) {
-      const [minX, minY, maxX, maxY] = raw.bbox
-      return [(minX + maxX) / 2, (minY + maxY) / 2]
-    }
     const geom = raw?.geometry
-    if (geom?.type === 'Point' && Array.isArray(geom.coordinates)) {
-      return [geom.coordinates[0], geom.coordinates[1]]
+
+    if (!geom) {
+      // Fallback bbox
+      if (Array.isArray(raw?.bbox) && raw.bbox.length >= 4) {
+        const [minX, minY, maxX, maxY] = raw.bbox
+        return [(minX + maxX) / 2, (minY + maxY) / 2]
+      }
     }
-    const coords = geom?.coordinates?.[0]
-    if (Array.isArray(coords) && coords.length > 0) {
-      const sumX = coords.reduce((s: number, c: number[]) => s + c[0], 0)
-      const sumY = coords.reduce((s: number, c: number[]) => s + c[1], 0)
-      return [sumX / coords.length, sumY / coords.length]
+
+    const olGeom = new GeoJSON().readGeometry(geom)
+
+    if (olGeom.getType() === 'Point') {
+      const point = olGeom as Point
+      const coords = point.getCoordinates()
+      return [coords[0], coords[1]]
     }
+
+    if (olGeom instanceof Polygon) {
+      const polygon = olGeom as Polygon
+      const coords = polygon.getInteriorPoint().getCoordinates()
+      return [coords[0], coords[1]]
+    }
+
+    if (olGeom instanceof MultiPolygon) {
+      const multipolygon = olGeom as MultiPolygon
+      const coords = multipolygon
+        .getInteriorPoints()
+        .getPoint(0)
+        .getCoordinates()
+      return [coords[0], coords[1]]
+    }
+
+    if (olGeom instanceof LineString) {
+      const line = olGeom as LineString
+      const coords = line.getCoordinateAt(0.5) // Get midpoint
+      return [coords[0], coords[1]]
+    }
+    if (olGeom instanceof MultiLineString) {
+      const lines = olGeom.getLineStrings()
+      let longest: LineString | null = null
+      let maxLength = 0
+
+      for (const line of lines) {
+        const length = line.getLength()
+
+        if (length > maxLength) {
+          maxLength = length
+          longest = line
+        }
+      }
+      if (longest) {
+        const coords = longest.getCoordinateAt(0.5) // Get midpoint of the longest line
+        return [coords[0], coords[1]]
+      }
+    }
+    const extent = olGeom.getExtent()
+    return [(extent[0] + extent[2]) / 2, (extent[1] + extent[3]) / 2]
   } catch {
-    // ignore
+    return null
   }
-  return null
 }
 
 function processResultFulltextsearch(data: any, selectResult: Function) {
@@ -395,7 +444,7 @@ async function selectResultFullTextSearch(result: {
 }) {
   const pointHighlightLayerNames = ['Localité', 'Commune']
   const highlightEntry = (entry: object) => {
-    const center = computeFeatureCenterWGS84(entry)
+    const center = findAPointOnFeature(entry)
     const displayEntry =
       pointHighlightLayerNames.includes(result.layer_name) && center
         ? makePointEntry(entry, center)
@@ -409,7 +458,7 @@ async function selectResultFullTextSearch(result: {
     addLayerFromSearch(result.layer_name)
     await nextTick()
 
-    const center = computeFeatureCenterWGS84(result.entry)
+    const center = findAPointOnFeature(result.entry)
     const layerNameList = layerLookup[result.layer_name] || []
 
     // Show highlight immediately as fallback
