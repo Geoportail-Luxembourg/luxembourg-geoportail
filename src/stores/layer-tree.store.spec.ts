@@ -54,81 +54,56 @@ describe('layer-tree store', () => {
     })
   })
 
-  describe('#toggleParentNode', () => {
-    it('does nothing when 2D tree is undefined', () => {
+  describe('#setExpanded', () => {
+    it('adds override when expanded differs from server default', () => {
       const store = useLayerTreeStore()
-      store.toggleParentNode(1, false)
-      expect(store.layerTree).toBeUndefined()
-      expect(store.expandedNodesOverrides).toEqual({})
-    })
+      store.captureServerDefaults(makeTree()) // node 2: expanded=false
 
-    it('does nothing when 3D tree is undefined', () => {
-      const store = useLayerTreeStore()
-      store.toggleParentNode(1, true)
-      expect(store.layerTree3d).toBeUndefined()
-      expect(store.expandedNodesOverrides).toEqual({})
-    })
-
-    it('toggles expanded state on 2D tree', () => {
-      const store = useLayerTreeStore()
-      store.captureServerDefaults(makeTree())
-      store.setLayerTree(makeTree())
-
-      store.toggleParentNode(2, false)
-
-      const node2 = findNodeById(store.layerTree!, 2)
-      expect(node2?.expanded).toBe(true)
-    })
-
-    it('toggles expanded state on 3D tree', () => {
-      const store = useLayerTreeStore()
-      const tree = makeNode(1, true, [makeNode(2, false)])
-      store.captureServerDefaults(tree)
-      store.setLayerTree3d(tree)
-
-      store.toggleParentNode(2, true)
-
-      const node2 = findNodeById(store.layerTree3d!, 2)
-      expect(node2?.expanded).toBe(true)
-    })
-
-    it('adds override when toggled state differs from server default', () => {
-      const store = useLayerTreeStore()
-      const tree = makeTree() // node 2: expanded=false (server default)
-      store.captureServerDefaults(tree)
-      store.setLayerTree(tree)
-
-      store.toggleParentNode(2, false) // toggles to true, differs from default false
+      store.setExpanded(2, true)
 
       expect(store.expandedNodesOverrides['2']).toBe(true)
     })
 
-    it('removes override when toggled state matches server default', () => {
+    it('removes override when expanded matches server default', () => {
       const store = useLayerTreeStore()
-      const tree = makeTree() // node 2: expanded=false (server default)
-      store.captureServerDefaults(tree)
-      store.setLayerTree(tree)
+      store.captureServerDefaults(makeTree()) // node 2: expanded=false
 
-      store.toggleParentNode(2, false) // toggles to true, override added
+      store.setExpanded(2, true) // override added
       expect(store.expandedNodesOverrides['2']).toBe(true)
 
-      store.toggleParentNode(2, false) // toggles back to false, matches default
+      store.setExpanded(2, false) // matches default, override removed
       expect(store.expandedNodesOverrides['2']).toBeUndefined()
     })
 
-    it('selects 2D tree when is3d is false', () => {
+    it('defaults to false when node not in serverDefaults', () => {
       const store = useLayerTreeStore()
-      const tree2d = makeNode(1, true, [makeNode(2, false)])
-      const tree3d = makeNode(10, true, [makeNode(20, false)])
-      store.captureServerDefaults(tree2d)
-      store.captureServerDefaults(tree3d)
-      store.setLayerTree(tree2d)
-      store.setLayerTree3d(tree3d)
 
-      store.toggleParentNode(2, false)
+      store.setExpanded(999, true)
 
-      expect(findNodeById(store.layerTree!, 2)?.expanded).toBe(true)
-      expect(findNodeById(store.layerTree3d!, 20)?.expanded).toBe(false)
+      expect(store.expandedNodesOverrides['999']).toBe(true)
+    })
+
+    it('removes override when setting back to default (false for unknown node)', () => {
+      const store = useLayerTreeStore()
+
+      store.setExpanded(999, true)
+      expect(store.expandedNodesOverrides['999']).toBe(true)
+
+      store.setExpanded(999, false)
+      expect(store.expandedNodesOverrides['999']).toBeUndefined()
+    })
+
+    it('handles multiple nodes independently', () => {
+      const store = useLayerTreeStore()
+      store.captureServerDefaults(makeTree())
+
+      store.setExpanded(2, true)
+      store.setExpanded(3, false)
+
+      expect(store.expandedNodesOverrides).toEqual({
+        '2': true,
+        '3': false,
+      })
     })
   })
 
