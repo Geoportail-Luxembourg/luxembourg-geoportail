@@ -106,6 +106,9 @@ describe('statePersistorLayerTreeService', () => {
         return mapper ? mapper(raw) : raw
       }
     )
+    vi.spyOn(storageHelper, 'removeItem').mockImplementation((key: string) => {
+      delete fakeStorage[key]
+    })
   })
 
   afterEach(() => {
@@ -134,36 +137,35 @@ describe('statePersistorLayerTreeService', () => {
   })
 
   describe('#persist', () => {
-    it('writes overrides to storage when tree changes', async () => {
+    it('writes overrides to storage when expandedNodesOverrides changes', async () => {
       const store = useLayerTreeStore()
       store.captureServerDefaults(makeNode(1, true, [makeNode(2, false)]))
 
-      statePersistorLayerTreeService.persist()
+      statePersistorLayerTreeService.bootstrap()
 
-      store.setLayerTree(makeNode(1, true, [makeNode(2, true)]))
+      store.setExpanded(2, true)
       await nextTick()
 
       expect(fakeStorage['expandedNodes']).toBe('2')
     })
 
-    it('merges 2D and 3D overrides', async () => {
+    it('removes storage entry when overrides become empty', async () => {
       const store = useLayerTreeStore()
       store.captureServerDefaults(makeNode(1, true, [makeNode(2, false)]))
-      store.captureServerDefaults(makeNode(10, true, [makeNode(20, false)]))
 
-      statePersistorLayerTreeService.persist()
+      statePersistorLayerTreeService.bootstrap()
 
-      store.setLayerTree(makeNode(1, true, [makeNode(2, true)]))
-      store.setLayerTree3d(makeNode(10, true, [makeNode(20, true)]))
+      store.setExpanded(2, true)
       await nextTick()
+      expect(fakeStorage['expandedNodes']).toBe('2')
 
-      const written = fakeStorage['expandedNodes']
-      expect(written).toContain('2')
-      expect(written).toContain('20')
+      store.setExpanded(2, false) // matches default, override removed
+      await nextTick()
+      expect(fakeStorage['expandedNodes']).toBeUndefined()
     })
 
-    it('does not write when tree is undefined', async () => {
-      statePersistorLayerTreeService.persist()
+    it('does not write when overrides are empty on bootstrap', async () => {
+      statePersistorLayerTreeService.bootstrap()
 
       await nextTick()
 
