@@ -1,9 +1,12 @@
 import { computed, type Component } from 'vue'
 import { storeToRefs } from 'pinia'
 import i18next from 'i18next'
-import { createLuxTplI18n } from '@/lib-tpl'
-import type { LuxTplI18n } from '@/lib-tpl'
-import type { LuxTplContext, LuxTplNotifyType } from '@/lib-tpl/context'
+import { createLuxTplI18n } from '@geoportallux/feature-info-templates'
+import type {
+  LuxTplI18n,
+  LuxTplContext,
+  LuxTplNotifyType,
+} from '@geoportallux/feature-info-templates'
 import { useUserManagerStore } from '@/stores/user-manager.store'
 import { useAlertNotificationsStore } from '@/stores/alert-notifications.store'
 import { AlertNotificationType } from '@/stores/alert-notifications.store.model'

@@ -60,7 +60,13 @@ module.exports = {
     // Disable only for lib mode where preflight is replaced by lib.css (some css classes have been removed, eg. h1, h2, 3h3 styling)
     preflight: getMode() !== 'lib',
   },
-  content: ['index.html', './src/**/*.{html,js,ts,vue}'],
+  content: [
+    'index.html',
+    './src/**/*.{html,js,ts,vue}',
+    // The templates package is consumed as source (see the alias in
+    // vite.config.ts), so its utilities must be scanned here too.
+    './packages/feature-info-templates/src/**/*.{html,js,ts,vue}',
+  ],
   theme: {
     container: {
       center: true,
@@ -129,8 +135,6 @@ module.exports = {
           "url('/src/assets/images/backgroundselector/orthophoto_sm_retina.png')",
         hybrid_sm_hi:
           "url('/src/assets/images/backgroundselector/hybrid_sm_retina.png')",
-        solarkataster:
-          "url('/src/assets/images/featureinfo/solarkataster_1.png')",
       },
       content: {
         main: '"\\e02d"',

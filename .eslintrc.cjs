@@ -15,6 +15,39 @@ module.exports = {
       files: ['cypress/e2e/**/*.{cy,spec}.{js,ts,jsx,tsx}'],
       extends: ['plugin:cypress/recommended'],
     },
+    {
+      // The templates package must stay self-contained: it is published and
+      // consumed by the 3D viewer, which has none of the app's internals.
+      // Everything it needs arrives through props or the injected context
+      // (see packages/feature-info-templates/src/context.ts).
+      files: ['packages/feature-info-templates/**/*.{js,ts,vue}'],
+      rules: {
+        'no-restricted-imports': [
+          'error',
+          {
+            patterns: [
+              {
+                group: ['@/*', '**/src/components/*', '**/src/stores/*'],
+                message:
+                  'The feature-info-templates package may not import from the app. Add what you need to LuxTplContext instead.',
+              },
+            ],
+            paths: [
+              {
+                name: 'pinia',
+                message:
+                  'The templates package is store-agnostic; take the value through LuxTplContext.',
+              },
+              {
+                name: 'i18next-vue',
+                message:
+                  'Use the lib-owned useLuxTranslation() composable (src/i18n.ts).',
+              },
+            ],
+          },
+        ],
+      },
+    },
   ],
   plugins: ['no-only-tests'],
   rules: {

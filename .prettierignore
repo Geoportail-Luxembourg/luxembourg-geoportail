@@ -25,6 +25,7 @@
 /_site/
 /dist/
 /dist-lux-tpl/
+/packages/*/dist/
 /out-tsc/
 .parcel-cache
 .env

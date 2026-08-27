@@ -32,6 +32,16 @@ export default defineConfig(async ({ command, mode }) => {
     resolve: {
       alias: {
         '@': fileURLToPath(new URL('./src', import.meta.url)),
+        // Consume the templates package as SOURCE, not as its built bundle:
+        // the app's own Tailwind pass (see tailwind.config.cjs `content`)
+        // compiles the utilities used by the templates, so importing the
+        // package's shipped stylesheet would emit them twice.
+        '@geoportallux/feature-info-templates': fileURLToPath(
+          new URL(
+            './packages/feature-info-templates/src/index.ts',
+            import.meta.url
+          )
+        ),
       },
     },
     test: {

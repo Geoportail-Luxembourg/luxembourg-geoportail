@@ -172,6 +172,80 @@ CI publishes the package (GitHub Packages or npm) on tag; semver with a document
 `git filter-repo` on `packages/feature-info-templates` if a forcing function appears
 (different owning team, third consumer, divergent release cadence).
 
+---
+
+## Status (updated 2026-08-27)
+
+| Phase                              | State                                                                            |
+| ---------------------------------- | -------------------------------------------------------------------------------- |
+| 0 — Regression safety net          | **Not done.** `cypress/e2e/info/feature-info.cy.ts:6` is still `describe.skip`.   |
+| 1 — Workspace package + boundary    | **Done.**                                                                        |
+| 2 — Public API                      | **Done.**                                                                        |
+| 3 — Decoupling work items           | **Done** (2026-07-03). Zero `@/` imports, zero `import.meta.env` in the package.  |
+| 4 — CSS, assets, fonts              | **Partly done** — 4.1–4.4 done, 4.5 (icon fonts) open.                            |
+| 5 — Geoportail consumes the package | **Done**, via a source alias rather than the built bundle (see below).            |
+| 6 — Publish                         | Not started.                                                                     |
+
+### What Phase 1 actually looks like
+
+`packages/feature-info-templates/`, an npm workspace declared in the root
+`package.json`. The `@` → `./src` alias is gone from the package's Vite config
+**and** its tsconfig has no `paths`, so a stray `@/...` import fails
+`npm run type-check`, which `npm run build` runs first — verified by
+reintroducing one deliberately (build exits 2). Rollup additionally throws on
+`UNRESOLVED_IMPORT`, because Vite's lib mode would otherwise externalise an
+unresolved app import silently. ESLint `no-restricted-imports` flags the same
+thing in the editor, and CI builds the package before anything else
+(`.github/workflows/lint-build-test.yml`). The root `exports` hack is reverted.
+
+### Deviations from the plan worth knowing
+
+- **Two entries, not one.** `src/index.ts` is the public API and carries no
+  `@tailwind` directives; `src/lib-entry.ts` adds them and is what the package
+  build compiles. This is what lets the app consume package *sources* through
+  its own Tailwind pass without emitting the utility layer twice — verified:
+  the app bundle contains exactly one Tailwind variables layer and none of the
+  package's `.lux-tpl-root`-scoped utilities.
+- **Theme tokens are fallbacks, not defaults** (Phase 4.4). Shipping
+  `--color-primary: …` on `.lux-tpl-root` would have *beaten* the host's
+  inherited `:root` value — a direct declaration wins over inheritance
+  regardless of specificity. They are expressed as `var(--color-primary,
+  #2980b9)` in the package's Tailwind config instead.
+- **`.lux-btn` moved into the package.** Not in the plan's inventory: the
+  templates use `.lux-btn`/`.lux-btn-grey` 18 times and both were defined in the
+  app's `src/assets/main.css`. The package now ships its own copy, hand-scoped
+  under `.lux-tpl-root` because the `important` selector strategy scopes only
+  utilities, not the components layer.
+- **The Phase 4.2 "known gaps" were smaller than feared.** `hd`/`hd_md` screens,
+  the `solarkataster` `backgroundImage` and the icon-font `content` map are all
+  unused by the templates; only `shadow-modal` was needed, and the lib config
+  already had it.
+- **~50 type-only imports were written as value imports.** They produced 111
+  `vite-plugin-dts` errors and ~50 Rollup warnings on the pre-existing lib
+  build, i.e. the shipped `.d.ts` was incomplete. Converted to `import type`
+  across 45 files; the package now builds with zero errors and zero warnings.
+- **Phase 5 consumes sources, not the bundle.** `feature-info.vue` dropped its
+  41 deep imports for the shared dispatcher and the app imports
+  `@geoportallux/feature-info-templates` by name, but the name is aliased to
+  `src/index.ts` in `vite.config.ts` / `vite-dist.config.ts` / `tsconfig.app.json`.
+  The published bundle is what the 3D viewer will consume.
+
+### Verified after the change
+
+`npm run build:templates` (isolated) ✓ · `npm run lint` ✓ · `vite build` ✓ ·
+`npm run test:unit:ci` 68 files / 371 tests ✓ · `npm run type-check` 673 errors
+vs **694 at the previous commit**, none of them in `packages/` and no file
+regressed. Those errors are pre-existing and environmental: `node_modules/ol`
+(10.7.0) ships 1 `.d.ts` for 370 `.js` files and declares no `types` field, so
+almost every `ol` import raises TS7016. Unrelated to this work.
+
+### Next
+
+Phase 0 (un-skip the e2e suite — needs a v3 host and a CORS-disabled browser),
+Phase 4.5 (replace the ~8 Font Awesome glyphs with inline SVG), Phase 6
+(publish), then the Plan B prototype: render `bus-template` inside a VC Map
+window to validate the context end-to-end.
+
 ## Open decisions
 
 - Publish target: npm public vs GitHub Packages.

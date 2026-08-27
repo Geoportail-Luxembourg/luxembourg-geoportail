@@ -1,6 +1,9 @@
 {
   "name": "luxembourg-geoportail",
   "version": "0.0.0-dev",
+  "workspaces": [
+    "packages/*"
+  ],
   "private": true,
   "scripts": {
     "tag": "git tag $(git rev-parse --abbrev-ref HEAD)_DEV_$(git rev-parse --short HEAD)",
@@ -10,7 +13,7 @@
     "build-only": "vite build",
     "build:lib:prod": "npx vite build --mode prod --config vite-dist.config.ts --minify=esbuild --debug && npx babel bundle/lux.dist.mjs --out-file bundle/lux.dist.js",
     "build:lib:dev": "npx vite build --mode staging --config vite-dist.config.ts --minify=false --base=/dev/main.html/ --debug && BABEL_ENV=dev npx babel bundle/lux.dist.mjs --out-file bundle/lux.dist.js",
-    "build:lib-tpl": "npx vite build --config vite.config.lib-tpl.ts",
+    "build:templates": "npm run build -w @geoportallux/feature-info-templates",
     "preview": "vite preview",
     "test": "npm run test:unit",
     "test:unit": "dotenv -e .env.e2e -- vitest --environment jsdom --root .",
@@ -38,7 +41,8 @@
     "i18n:tx:pull:v3-to-v4": "npm run i18n:tx:pull && npm run i18n:tx:transform:v3",
     "i18n:tx:push-app": "tx push -r geoportailv3-lu.geoportailv3-webcomponents -s -t -f",
     "fetch-translations": "tx pull -a -t && node tools/translations/transform-tx-v3-po-to-v4-json.cjs",
-    "prepare": "husky install"
+    "prepare": "husky install",
+    "type-check:templates": "npm run type-check -w @geoportallux/feature-info-templates"
   },
   "files": [
     "*",
@@ -48,6 +52,7 @@
     "@braintree/sanitize-url": "^7.1.0",
     "@camptocamp/ogc-client": "^1.2.0",
     "@geoblocks/mapfishprint": "0.2.20",
+    "@geoportallux/feature-info-templates": "*",
     "d3-array": "^3.2.4",
     "d3-axis": "^3.0.0",
     "d3-scale": "^4.0.2",
@@ -127,8 +132,5 @@
       "eslint --fix",
       "prettier --write"
     ]
-  },
-  "exports": {
-    ".": "./dist-lux-tpl/lux-tpl.js"
   }
 }

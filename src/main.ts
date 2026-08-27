@@ -8,7 +8,7 @@ import { createPinia } from 'pinia'
 
 import formatMeasureDirective from '@/directives/format-measure.directive'
 import { initProjections } from '@/services/projection.utils'
-import { installTooltipFallbackTranslations } from '@/services/translations/tooltip-fallback'
+import { installTooltipFallbackTranslations } from '@geoportallux/feature-info-templates'
 import { useThemeStore } from '@/stores/config.store'
 
 import App from './App.vue'
