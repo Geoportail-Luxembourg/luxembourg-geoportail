@@ -25,29 +25,10 @@ export const useLayerTreeStore = defineStore('layer-tree', () => {
     }
   }
 
-  function applyOverrides(tree: LayerTreeNodeModel): LayerTreeNodeModel {
-    const overrides = expandedNodesOverrides.value
-
-    const apply = (node: LayerTreeNodeModel): LayerTreeNodeModel => {
-      const override = overrides[String(node.id)]
-      const newNode = { ...node }
-      if (override !== undefined) {
-        newNode.expanded = override
-      }
-      if (newNode.children) {
-        newNode.children = newNode.children.map(apply)
-      }
-      return newNode
-    }
-
-    return apply(tree)
-  }
-
   return {
     expandedNodesOverrides,
     serverDefaults,
     setExpanded,
     captureServerDefaults,
-    applyOverrides,
   }
 })

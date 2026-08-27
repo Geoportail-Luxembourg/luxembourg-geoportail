@@ -108,3 +108,65 @@ describe('layerTreeService.expandToLayer', () => {
     expect(parentB.expanded).toBe(true)
   })
 })
+
+describe('layerTreeService.applyOverrides', () => {
+  function findNodeById(
+    tree: LayerTreeNodeModel,
+    id: number
+  ): LayerTreeNodeModel | undefined {
+    if (tree.id === id) return tree
+    for (const child of tree.children ?? []) {
+      const found = findNodeById(child, id)
+      if (found) return found
+    }
+    return undefined
+  }
+
+  it('applies override to matching node', () => {
+    const tree = makeTree()
+    const overrides = { '1': true }
+
+    const result = layerTreeService.applyOverrides(tree, overrides)
+
+    expect(findNodeById(result, 1)?.expanded).toBe(true)
+  })
+
+  it('does not change nodes without overrides', () => {
+    const tree = makeTree()
+    const overrides = {}
+
+    const result = layerTreeService.applyOverrides(tree, overrides)
+
+    expect(findNodeById(result, 0)?.expanded).toBe(false)
+    expect(findNodeById(result, 1)?.expanded).toBe(false)
+  })
+
+  it('applies overrides recursively to children', () => {
+    const tree = makeTree()
+    const overrides = { '10': true }
+
+    const result = layerTreeService.applyOverrides(tree, overrides)
+
+    expect(findNodeById(result, 10)?.expanded).toBe(true)
+  })
+
+  it('does not mutate the input tree', () => {
+    const tree = makeTree()
+    const overrides = { '1': true }
+
+    layerTreeService.applyOverrides(tree, overrides)
+
+    expect(findNodeById(tree, 1)?.expanded).toBe(false)
+  })
+
+  it('returns copy of tree when no overrides exist', () => {
+    const tree = makeTree()
+    const overrides = {}
+
+    const result = layerTreeService.applyOverrides(tree, overrides)
+
+    expect(result).not.toBe(tree)
+    expect(findNodeById(result, 0)?.expanded).toBe(false)
+    expect(findNodeById(result, 1)?.expanded).toBe(false)
+  })
+})
