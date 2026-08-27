@@ -1,10 +1,7 @@
 import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest'
 import { nextTick } from 'vue'
 import { createPinia, setActivePinia } from 'pinia'
-import {
-  computeOverrides,
-  statePersistorLayerTreeService,
-} from './state-persistor-layer-tree.service'
+import { statePersistorLayerTreeService } from './state-persistor-layer-tree.service'
 import { useLayerTreeStore } from '@/stores/layer-tree.store'
 import { storageHelper } from './storage/storage.helper'
 import type { LayerTreeNodeModel } from '@/components/layer-tree/layer-tree.model'
@@ -23,71 +20,6 @@ function makeNode(
     children,
   }
 }
-
-describe('computeOverrides', () => {
-  it('records node when expanded differs from default', () => {
-    const tree = makeNode(1, true)
-    const defaults = new Map([[1, false]])
-
-    expect(computeOverrides(tree, defaults)).toEqual({ '1': true })
-  })
-
-  it('does not record node when expanded matches default', () => {
-    const tree = makeNode(1, true)
-    const defaults = new Map([[1, true]])
-
-    expect(computeOverrides(tree, defaults)).toEqual({})
-  })
-
-  it('defaults to false when node not in map', () => {
-    const tree = makeNode(1, true)
-    const defaults = new Map<string | number, boolean>()
-
-    expect(computeOverrides(tree, defaults)).toEqual({ '1': true })
-  })
-
-  it('walks deeply nested children', () => {
-    const tree = makeNode(1, true, [
-      makeNode(2, false, [makeNode(3, true)]),
-      makeNode(4, true),
-    ])
-    const defaults = new Map([
-      [1, true],
-      [2, false],
-      [3, false],
-      [4, false],
-    ])
-
-    const result = computeOverrides(tree, defaults)
-
-    expect(result).toEqual({ '3': true, '4': true })
-  })
-
-  it('returns empty object for leaf matching default', () => {
-    const tree = makeNode(1, false)
-    const defaults = new Map([[1, false]])
-
-    expect(computeOverrides(tree, defaults)).toEqual({})
-  })
-
-  it('handles multiple overrides across tree', () => {
-    const tree = makeNode(1, true, [
-      makeNode(2, true),
-      makeNode(3, false),
-      makeNode(4, true),
-    ])
-    const defaults = new Map([
-      [1, true],
-      [2, false],
-      [3, true],
-      [4, false],
-    ])
-
-    const result = computeOverrides(tree, defaults)
-
-    expect(result).toEqual({ '2': true, '3': false, '4': true })
-  })
-})
 
 describe('statePersistorLayerTreeService', () => {
   let fakeStorage: Record<string, string>
