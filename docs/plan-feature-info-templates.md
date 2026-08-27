@@ -178,7 +178,7 @@ CI publishes the package (GitHub Packages or npm) on tag; semver with a document
 
 | Phase                              | State                                                                            |
 | ---------------------------------- | -------------------------------------------------------------------------------- |
-| 0 — Regression safety net          | **Not done.** `cypress/e2e/info/feature-info.cy.ts:6` is still `describe.skip`.   |
+| 0 — Regression safety net          | **Done.** `cypress/e2e/info/feature-info.cy.ts` un-skipped and stubbed; 8/8 green. |
 | 1 — Workspace package + boundary    | **Done.**                                                                        |
 | 2 — Public API                      | **Done.**                                                                        |
 | 3 — Decoupling work items           | **Done** (2026-07-03). Zero `@/` imports, zero `import.meta.env` in the package.  |
@@ -239,12 +239,44 @@ regressed. Those errors are pre-existing and environmental: `node_modules/ol`
 (10.7.0) ships 1 `.d.ts` for 370 `.js` files and declares no `types` field, so
 almost every `ol` import raises TS7016. Unrelated to this work.
 
+### Phase 0 — how the suite was stabilized
+
+The suite needs neither a local v3 nor a CORS-disabling browser: `.env.e2e`
+points at public hosts and `cypress.config.ts` already sets
+`chromeWebSecurity: false`. Un-skipped as-is it ran 2/7 — the same 2/7 as at the
+previous commit, so the refactor had broken nothing; the tests had simply rotted
+against live data (attribute counts, elevation deltas, a role-gated button).
+
+`getfeatureinfo` and `profile.json` are now stubbed from real captured responses
+in `cypress/fixtures/featureinfo/`, and every assertion is pinned to that fixture
+data — e.g. the profile's `Δ+31 m Δ-75 m Δ-44 m` is the cumulative +30.9/-74.9,
+net -44.1 over the fixture's 39 sampled points. Layer titles stay deterministic
+without stubbing because they come from the themes fixture plus
+`public/assets/locales/layers.fr.json`, both in-repo.
+
+Two substantive changes beyond re-pinning:
+
+- The solar test asserted the economic-calculator button, which is gated on the
+  user's `roleId` being in `solarEconomicAllowedRoleIds`. E2E runs anonymously,
+  so it can never render. Split into two tests: the public "Simulateur solaire"
+  link renders, and the economic one is absent for an anonymous user.
+- The suite's "No request ever occurred" flakiness was real, not incidental: the
+  app issues no query at all until a visible queryable layer is on the map
+  (`feature-info.composable.ts`, `layersList.length > 0`), and the permalink's
+  layers land after the map does. `clickMapForFeatureInfo()` now gates on that
+  same predicate via `window.olMap`. 8/8 green across 5 consecutive runs.
+
+Unrelated: `export-panel.cy.ts` and `draw/draw-feat-point.cy.ts` are flaky at
+this commit *and* at the previous one (5 failures in 6 spec-runs at baseline,
+2 in 4 here) — both hinge on the live elevation service. Not touched.
+
 ### Next
 
-Phase 0 (un-skip the e2e suite — needs a v3 host and a CORS-disabled browser),
 Phase 4.5 (replace the ~8 Font Awesome glyphs with inline SVG), Phase 6
 (publish), then the Plan B prototype: render `bus-template` inside a VC Map
-window to validate the context end-to-end.
+window to validate the context end-to-end. The plan's optional extra — covering
+casipo, pag, parcels and mymaps — is now cheap: capture a response for each and
+add a describe block.
 
 ## Open decisions
 
