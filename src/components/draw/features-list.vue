@@ -143,6 +143,19 @@ function ontoggleEditFeature(featureId: string | number, isEditing: boolean) {
   }
 }
 
+function onToggleFeatureVisibility(featureId: string | number) {
+  const feature = drawnFeatures.value.find(f => f.id === featureId) as
+    | DrawnFeature
+    | undefined
+  if (feature) {
+    feature.featureStyle = {
+      ...feature.featureStyle,
+      isVisible: !feature.featureStyle.isVisible,
+    }
+    drawStore.updateDrawnFeature(feature)
+  }
+}
+
 function onSubmitNewConcentricCircle(payload: {
   baseFeature: DrawnFeature
   radius: number
@@ -205,6 +218,7 @@ watch(sortableFeatures, elem => {
         @toggleFeatureSub="onToggleFeatureSub"
         @toggleEditFeature="ontoggleEditFeature"
         @toggleDock="() => (featureEditionDocked = !featureEditionDocked)"
+        @toggleFeatureVisibility="onToggleFeatureVisibility"
         @closePopup="() => (featureEditionDocked = false)"
         @clickDelete="
           (featureId: DrawnFeatureId) => drawStore.removeFeature(featureId)

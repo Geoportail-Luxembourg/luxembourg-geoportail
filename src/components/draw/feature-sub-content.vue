@@ -26,6 +26,7 @@ const emit = defineEmits([
   'continueLine',
   'toggleEditFeature',
   'toggleDock',
+  'toggleFeatureVisibility',
   'clickDelete',
   'resetInfo',
   'resetStyle',
@@ -169,6 +170,26 @@ function onClickValidate(payload: MouseEvent | FeatureConcentricCirclePayload) {
             "
           >
             <i class="fa fa-paint-brush"></i>
+          </button>
+
+          <!-- Toggle feature visibility -->
+          <button
+            v-if="isEditable"
+            data-cy="featItemActionVisibility"
+            class="hover:text-tertiary"
+            @click="
+              () => {
+                emit('toggleFeatureVisibility')
+              }
+            "
+          >
+            <i
+              class="fa"
+              :class="{
+                'fa-eye': feature.featureStyle.isVisible,
+                'fa-eye-slash': !feature.featureStyle.isVisible,
+              }"
+            ></i>
           </button>
 
           <!-- Remove feature from the map -->
