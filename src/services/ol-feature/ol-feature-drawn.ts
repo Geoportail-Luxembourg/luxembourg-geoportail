@@ -492,6 +492,10 @@ export class DrawnFeature extends Feature {
         feature = this
       }
 
+      if (feature.featureStyle.isVisible === false) {
+        return []
+      }
+
       // Clear the styles array
       styles.length = 0
 
