@@ -114,6 +114,7 @@ arrives through props or the injected context.
 | 7   | `useThemeStore` in `isThemeAvailable`                                                          | template-utilities (consumer: parcels)                                                                                           | `ctx.isThemeAvailable`                                                                                                                      |
 | 8   | model import normalization                                                                     | casipo, template-utilities                                                                                                       | `../../models`                                                                                                                              |
 | 9   | `.js`-extension import inconsistency                                                           | bus, npour-poi                                                                                                                   | normalize                                                                                                                                   |
+| 10  | `v-dompurify-html` directive, registered app-wide by the geoportail's `main.ts`                | default, default-table ±no-prefix, default-attachment ±no-prefix, automatic-sols (6)                                             | lib-owned directive or component; see "Work item 10" under Status                                                                          |
 
 20 templates + `info-feature-layout.vue` are already clean.
 
@@ -181,7 +182,7 @@ CI publishes the package (GitHub Packages or npm) on tag; semver with a document
 | 0 — Regression safety net          | **Done.** `cypress/e2e/info/feature-info.cy.ts` un-skipped and stubbed; 17/17 green, incl. the coupled templates. |
 | 1 — Workspace package + boundary    | **Done.**                                                                        |
 | 2 — Public API                      | **Done.**                                                                        |
-| 3 — Decoupling work items           | **Done** (2026-07-03). Zero `@/` imports, zero `import.meta.env` in the package.  |
+| 3 — Decoupling work items           | **Done** (2026-07-03) for items 1-9. Item 10 (`v-dompurify-html`) found 2026-08-28 and still open — see below. |
 | 4 — CSS, assets, fonts              | **Done**, 4.5 included — icons are inline SVG, no icon font needed.               |
 | 5 — Geoportail consumes the package | **Done**, via a source alias rather than the built bundle (see below).            |
 | 6 — Publish                         | Not started.                                                                     |
@@ -309,11 +310,59 @@ captured responses. They exercise the context wiring the extraction introduced:
 
 17/17 green across three consecutive runs.
 
+### Work item 10 — the `v-dompurify-html` directive (open, blocks publish)
+
+Found on 2026-08-28 by the Plan B prototype, running the real templates inside a
+VC Map window. The package has a **second host dependency besides the injected
+context**: six templates render attribute *values* through `v-dompurify-html`,
+a global directive the geoportail installs app-wide in `src/main.ts` via
+`vue-dompurify-html`. The package neither declares it, ships it, nor documents
+it, so in the geoportail it silently works and anywhere else the affected
+templates render their labels with every value blank — no error, no warning
+beyond Vue's dev-only "Failed to resolve directive".
+
+Affected: `default-template.vue` (1 use), `default-table-template.vue` (1),
+`default-table-no-prefix-template.vue` (1), `default-attachment-template.vue`
+(1), `default-attachment-no-prefix-template.vue` (1), `automatic-sols-template.vue`
+(4). `default-template.vue` is the backend's fallback for every unknown
+`template` filename, so this hits the common path.
+
+This contradicts the Phase 1 rule as stated ("everything else arrives through
+props or the injected context") and it cannot be fixed by a consumer cleanly: a
+directive used inside child components cannot be registered locally on a
+wrapper, so every host must reach into the shared Vue app and register a global.
+The 3D plugin does exactly that today, as a stopgap
+(`LuxFeatureInfoWindow.vue`).
+
+Options, in preference order:
+
+1. **Lib-owned directive.** Take `vue-dompurify-html` (or `dompurify` directly)
+   as a package dependency and export the directive, registered locally in each
+   template that uses it via `<script setup>`'s `vXxx` convention. Fully
+   self-contained, no host action, no global. Adds ~20 kB (`dompurify`), which
+   VC Map already ships anyway.
+2. **A `LuxTplHtml` component** wrapping the sanitize + `v-html`, replacing the
+   directive at the 9 call sites. Same self-containment, no directive semantics
+   to preserve.
+3. **Declare it.** Keep the directive, add `vue-dompurify-html` to
+   `peerDependencies` and document the registration in the README. Cheapest, but
+   leaves every host with a global registration and the same silent-failure mode
+   for anyone who misses it.
+
+Whichever is chosen, the smoke spec from Phase 0 should mount the affected
+templates with a value containing markup and assert it renders — that is the
+guard this gap slipped past.
+
 ### Next
 
-Phase 6 (publish) — not started, and deliberately left alone. Then the Plan B
-prototype: render `bus-template` inside a VC Map window to validate the context
-end-to-end.
+Work item 10, then Phase 6 (publish) — the two are coupled: publishing with an
+undeclared host requirement is what makes the failure silent for the next
+consumer.
+
+The Plan B prototype is done (see `plan-3dviewer-featureinfo-plugin.md`): the
+templates render inside a VC Map window with the lib-owned i18n composable, the
+injected context, real backend data and no child-app mount, which validates the
+context design end-to-end — and surfaced work item 10.
 
 ## Open decisions
 
