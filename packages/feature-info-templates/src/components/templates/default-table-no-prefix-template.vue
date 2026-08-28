@@ -46,21 +46,18 @@ const { profileComponent } = useLuxTplContext()
               )
             "
           >
-            <div v-if="!isLink(attributeEntry.value)" class="lux-tpl-flex">
-              <label class="lux-tpl-w-1-3">{{ t(attributeEntry.key) }}</label>
+            <div v-if="!isLink(attributeEntry.value)" class="flex">
+              <label class="w-1/3">{{ t(attributeEntry.key) }}</label>
               <span
-                class="lux-tpl-w-2-3"
+                class="w-2/3"
                 v-dompurify-html="attributeEntry.value"
               ></span>
             </div>
-            <div v-if="isLink(attributeEntry.value)" class="lux-tpl-flex">
-              <label class="lux-tpl-w-1-3"></label>
-              <a
-                class="lux-tpl-w-2-3"
-                :href="attributeEntry.value"
-                target="_blank"
-                >{{ t(attributeEntry.key) }}</a
-              >
+            <div v-if="isLink(attributeEntry.value)" class="flex">
+              <label class="w-1/3"></label>
+              <a class="w-2/3" :href="attributeEntry.value" target="_blank">{{
+                t(attributeEntry.key)
+              }}</a>
             </div>
           </span>
         </div>

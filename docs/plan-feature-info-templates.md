@@ -178,11 +178,11 @@ CI publishes the package (GitHub Packages or npm) on tag; semver with a document
 
 | Phase                              | State                                                                            |
 | ---------------------------------- | -------------------------------------------------------------------------------- |
-| 0 — Regression safety net          | **Done.** `cypress/e2e/info/feature-info.cy.ts` un-skipped and stubbed; 8/8 green. |
+| 0 — Regression safety net          | **Done.** `cypress/e2e/info/feature-info.cy.ts` un-skipped and stubbed; 17/17 green, incl. the coupled templates. |
 | 1 — Workspace package + boundary    | **Done.**                                                                        |
 | 2 — Public API                      | **Done.**                                                                        |
 | 3 — Decoupling work items           | **Done** (2026-07-03). Zero `@/` imports, zero `import.meta.env` in the package.  |
-| 4 — CSS, assets, fonts              | **Partly done** — 4.1–4.4 done, 4.5 (icon fonts) open.                            |
+| 4 — CSS, assets, fonts              | **Done**, 4.5 included — icons are inline SVG, no icon font needed.               |
 | 5 — Geoportail consumes the package | **Done**, via a source alias rather than the built bundle (see below).            |
 | 6 — Publish                         | Not started.                                                                     |
 
@@ -270,13 +270,50 @@ Unrelated: `export-panel.cy.ts` and `draw/draw-feat-point.cy.ts` are flaky at
 this commit *and* at the previous one (5 failures in 6 spec-runs at baseline,
 2 in 4 here) — both hinge on the live elevation service. Not touched.
 
+### Phase 4.5 — icons
+
+The eight glyphs (`caret-up/down`, `download`, `grid`, `list`, `phone`, `fax`,
+`at`) are now inline SVG behind a `LuxTplIcon` component, sized at `1em` and
+filled with `currentColor` so they behave like the `<i class="fa …">` elements
+they replaced. `LuxTplIcon` and `LUX_TPL_ICON_PATHS` are exported.
+
+Resolves the "inline-SVG vs trimmed-sheet" open decision in favour of inline
+SVG. They are **hand-drawn, not lifted from an icon set**: Font Awesome Free's
+icons are CC BY 4.0, which would push an attribution obligation onto every
+downstream consumer of this package. Each was rendered and visually checked at
+64px and at 1em before being committed.
+
+While converting the two templates that used them, a botched utility→CSS
+extraction from the July session surfaced: `lux-tpl-flex` had been concatenated
+with the class following it, producing `lux-tpl-flexrounded`,
+`lux-tpl-flexflex-col`, `lux-tpl-flexflex-wrap` and `lux-tpl-flexitems-center` —
+selectors matching nothing, so the parcels measurement toggle had lost its
+`display:flex`. Fixed, and per phase 4.2 the five remaining extracted utilities
+(`lux-tpl-flex`, `-flex-col`, `-w-1-3`, `-w-2-3`, `-iframe-offset`) went back to
+being Tailwind utilities in the markup. Nine extracted-but-unreferenced
+`.lux-tpl-parcels-*` rules were dropped as dead weight.
+
+### Optional extra — the most-coupled templates
+
+`casipo`, `pag`, `parcels` and `mymaps` now have e2e coverage, from real
+captured responses. They exercise the context wiring the extraction introduced:
+
+- casipo/pag: the email field prefilled from `ctx.user` (empty when anonymous),
+  and clicking "order" with no email routing a warning through `ctx.notify` to
+  the app's alert-notifications store.
+- casipo: the button label resolves only via the tooltip-namespace fallback
+  hydration that moved into the package, so it guards that too.
+- parcels: the cadastral number from the fixture, plus an assertion that icons
+  render as `svg.lux-tpl-icon` and that no `i.fa` remains — the phase 4.5 guard.
+- mymaps: `has_profile` driving the host-injected `ctx.profileComponent`.
+
+17/17 green across three consecutive runs.
+
 ### Next
 
-Phase 4.5 (replace the ~8 Font Awesome glyphs with inline SVG), Phase 6
-(publish), then the Plan B prototype: render `bus-template` inside a VC Map
-window to validate the context end-to-end. The plan's optional extra — covering
-casipo, pag, parcels and mymaps — is now cheap: capture a response for each and
-add a describe block.
+Phase 6 (publish) — not started, and deliberately left alone. Then the Plan B
+prototype: render `bus-template` inside a VC Map window to validate the context
+end-to-end.
 
 ## Open decisions
 

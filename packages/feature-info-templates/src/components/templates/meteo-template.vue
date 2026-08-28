@@ -14,7 +14,7 @@ defineProps<{
       </h3>
       <iframe
         title="meteo widget"
-        class="lux-tpl-iframe-offset"
+        class="-ml-3.5"
         height="150"
         width="300"
         frameborder="0"

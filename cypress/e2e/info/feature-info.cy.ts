@@ -275,4 +275,138 @@ describe('Feature Info', () => {
       })
     })
   })
+
+  /**
+   * The templates the extraction touched most (plan phase 3): each one used to
+   * reach into an app store or `import.meta.env` directly and now takes what it
+   * needs from `LuxTplContext`. These cover that wiring end to end.
+   */
+  describe('Templates with the heaviest host coupling', () => {
+    describe('casipo', () => {
+      // Was: useUserManagerStore (email prefill) + useAlertNotificationsStore.
+      // Now: ctx.user and ctx.notify.
+      beforeEach(() => {
+        stubFeatureInfo('casipo-parcelles')
+        cy.visit(
+          '/?lang=fr&X=672676&Y=6412435&version=3&zoom=11&layers=1362&opacities=1&bgLayer=orthogr_2013_global'
+        )
+        clickMapForFeatureInfo(450, 350)
+      })
+      it('renders the report order form', () => {
+        cy.get('.lux-tpl-poi-title')
+          .first()
+          .should('contain.text', 'Cadastre des sites potentiellement pollués')
+        cy.get('.lux-tpl-casipo-mail input').should('exist')
+        cy.get('.lux-tpl-casipo-checkbox input[type="checkbox"]').should(
+          'exist'
+        )
+        // 'Commander rapport' has no `tooltips` entry — it resolves only
+        // because installTooltipFallbackTranslations() hydrates the namespace
+        // from `app`, which moved into the package with the templates.
+        cy.get('.lux-tpl-casipo-form-container')
+          .parent()
+          .find('button')
+          .should('contain.text', 'Commander le rapport')
+      })
+      it('prefills no email for an anonymous user', () => {
+        // ctx.user is null when nobody is signed in, so the field stays empty.
+        cy.get('.lux-tpl-casipo-mail input').should('have.value', '')
+      })
+      it('notifies through the host when the email is missing', () => {
+        // Exercises ctx.notify -> the app's alert-notifications store.
+        cy.get('[data-cy="notification"]').should('not.exist')
+        cy.get('.lux-tpl-casipo-form-container').parent().find('button').click()
+        cy.get('[data-cy="notification"]')
+          .should('exist')
+          .and('contain.text', 'Veuillez saisir une adresse email valide')
+      })
+    })
+
+    describe('pag', () => {
+      beforeEach(() => {
+        stubFeatureInfo('pag-zones')
+        cy.visit(
+          '/?lang=fr&X=672676&Y=6412435&version=3&zoom=11&layers=698&opacities=1&bgLayer=orthogr_2013_global'
+        )
+        clickMapForFeatureInfo(450, 350)
+      })
+      it('renders the report order form', () => {
+        cy.get('.lux-tpl-poi-title')
+          .first()
+          .should('contain.text', "Plan d'aménagement général")
+        cy.get('.lux-tpl-pag-mail input').should('exist').and('have.value', '')
+        cy.get('.lux-tpl-pag-checkbox input[type="checkbox"]').should('exist')
+      })
+      it('notifies through the host when the email is missing', () => {
+        cy.get('.lux-tpl-pag-form-container').parent().find('button').click()
+        cy.get('[data-cy="notification"]')
+          .should('exist')
+          .and('contain.text', 'Veuillez saisir une adresse email valide')
+      })
+    })
+
+    describe('parcels', () => {
+      // Was: InfoFeatureMeasurementModale + formatDate/url helpers + a
+      // useThemeStore lookup. Now: a lib-owned modal, lib-owned helpers and
+      // ctx.isThemeAvailable.
+      beforeEach(() => {
+        stubFeatureInfo('parcels-cadastre')
+        cy.visit(
+          '/?lang=fr&X=672676&Y=6412435&version=3&zoom=11&layers=1376&opacities=1&bgLayer=orthogr_2013_global'
+        )
+        clickMapForFeatureInfo(450, 350)
+      })
+      it('renders the cadastral parcel with its number', () => {
+        cy.get('[data-cy="defaultTemplateTitle"]')
+          .first()
+          .should('contain.text', 'Parcelles cadastrales')
+        // PF.mainNumber / PF.additionalNumber from the fixture.
+        cy.get('.lux-tpl-parcels-template-h2')
+          .first()
+          .should('contain.text', '569/6548')
+      })
+      it('renders icons as inline SVG, needing no icon font from the host', () => {
+        // Phase 4.5: these were <i class="fa fa-list"> / "fa-th-large", served
+        // from the app's Font Awesome sheet — which a third-party host has no
+        // reason to ship. They are now self-contained SVG.
+        cy.get('svg.lux-tpl-icon').should('have.length.greaterThan', 0)
+        // `cy.contains(selector, text)` yields the button itself; the bare
+        // `.contains(text)` form would yield the inner <span>.
+        cy.contains('button', 'Liens').find('svg.lux-tpl-icon').should('exist')
+        cy.contains('button', 'Aperçus')
+          .find('svg.lux-tpl-icon')
+          .should('exist')
+        cy.get('i.fa').should('not.exist')
+      })
+    })
+
+    describe('mymaps', () => {
+      // Was: getMymapsPath/getQRUrlForMyMaps from the app's url.utils plus
+      // VITE_V3_API_HOST. Now: lib-owned helpers reading ctx.config.v3ApiHost.
+      beforeEach(() => {
+        stubFeatureInfo('mymaps-pistes-velo')
+        // The block carries has_profile, so a profile is requested too; its
+        // payload is irrelevant to what this test asserts, but stubbing it
+        // keeps the test off the network.
+        cy.intercept(
+          { method: 'POST', pathname: '/profile.json' },
+          { fixture: 'featureinfo/profile-pistes-cyclables.profile.json' }
+        ).as('profile')
+        cy.visit(
+          '/?lang=fr&X=672676&Y=6412435&version=3&zoom=11&layers=512&opacities=1&bgLayer=orthogr_2013_global'
+        )
+        clickMapForFeatureInfo(450, 350)
+      })
+      it('renders the mymaps feature with its layer title', () => {
+        cy.get('[data-cy="defaultTemplateTitle"]')
+          .first()
+          .should('contain.text', "Réseau d'itinéraires cyclables régionaux")
+        cy.get('[data-cy="defaultTemplateAttributes"]').should('exist')
+      })
+      it('renders the elevation profile injected by the host', () => {
+        // has_profile: true -> the template renders ctx.profileComponent.
+        cy.get('[data-cy="featItemProfile"]').should('exist')
+      })
+    })
+  })
 })

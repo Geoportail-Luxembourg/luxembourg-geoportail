@@ -8,6 +8,7 @@ import { formatDate, translateAndjoin } from './template-utilities'
 import InfoFeatureLayout from '../layouts/info-feature-layout.vue'
 import InfoFeatureMeasurementModale from '../info-feature-measurement-modale.vue'
 import { useLuxTplContext } from '../../context'
+import LuxTplIcon from '../common/lux-tpl-icon.vue'
 
 const props = defineProps<{
   layers: FeatureInfoJSON
@@ -314,12 +315,12 @@ function closePreviewMesurage() {
         <div class="mt-1 mb-1">
           <span>{{ t('Lien vers les mesurages') }}</span> :
           <div
-            class="lux-tpl-flexrounded overflow-hidden text-sm mt-1"
+            class="flex rounded overflow-hidden text-sm mt-1"
             role="group"
             :aria-label="t('Mode d\'affichage des mesurages')"
           >
             <button
-              class="lux-tpl-flexflex-col items-center px-3 py-1 transition-colors"
+              class="flex flex-col items-center px-3 py-1 transition-colors"
               :class="
                 viewMode === 'links'
                   ? 'bg-primary text-white'
@@ -329,11 +330,11 @@ function closePreviewMesurage() {
               :aria-label="t('Afficher les liens')"
               @click="viewMode = 'links'"
             >
-              <i class="fa fa-list" aria-hidden="true"></i>
+              <LuxTplIcon name="list" />
               <span class="text-xs mt-0.5">{{ t('Liens') }}</span>
             </button>
             <button
-              class="lux-tpl-flexflex-col items-center px-3 py-1 transition-colors border-l border-gray-300"
+              class="flex flex-col items-center px-3 py-1 transition-colors border-l border-gray-300"
               :class="
                 viewMode === 'thumbnails'
                   ? 'bg-primary text-white'
@@ -343,7 +344,7 @@ function closePreviewMesurage() {
               :aria-label="t('Afficher les aperçus')"
               @click="viewMode = 'thumbnails'"
             >
-              <i class="fa fa-th-large" aria-hidden="true"></i>
+              <LuxTplIcon name="grid" />
               <span class="text-xs mt-0.5">{{ t('Aperçus') }}</span>
             </button>
           </div>
@@ -362,15 +363,14 @@ function closePreviewMesurage() {
                 :aria-expanded="isMeasurementNumberExpanded(measurementNumber)"
                 @click="toggleMeasurementNumber(measurementNumber)"
               >
-                <i
-                  class="fa fa-sharp fa-solid mr-2 text-sm"
-                  :class="
+                <LuxTplIcon
+                  class="mr-2 text-sm"
+                  :name="
                     isMeasurementNumberExpanded(measurementNumber)
-                      ? 'fa-caret-up'
-                      : 'fa-caret-down'
+                      ? 'caret-up'
+                      : 'caret-down'
                   "
-                  aria-hidden="true"
-                ></i>
+                />
                 <span>{{ t('No') }} {{ measurementNumber }}</span>
               </button>
 
@@ -411,19 +411,18 @@ function closePreviewMesurage() {
                             )
                           "
                         >
-                          <i
-                            class="fa fa-sharp fa-solid mr-2 text-sm"
-                            :class="
+                          <LuxTplIcon
+                            class="mr-2 text-sm"
+                            :name="
                               isDocumentTypeExpanded(
                                 measurementNumber,
                                 audience,
                                 description
                               )
-                                ? 'fa-caret-up'
-                                : 'fa-caret-down'
+                                ? 'caret-up'
+                                : 'caret-down'
                             "
-                            aria-hidden="true"
-                          ></i>
+                          />
                           <span>{{
                             t('MESURAGE_' + description, { ns: 'layers' })
                           }}</span>
@@ -496,11 +495,8 @@ function closePreviewMesurage() {
                                     )
                                   "
                                 >
-                                  <i
-                                    class="fa fa-download"
-                                    aria-hidden="true"
-                                  ></i
-                                ></a>
+                                  <LuxTplIcon name="download"
+                                /></a>
                               </template>
                               <template v-else>
                                 <span class="text-gray-500">{{
@@ -521,7 +517,7 @@ function closePreviewMesurage() {
                               description
                             )
                           "
-                          class="lux-tpl-flexflex-wrap gap-2 pl-4 mt-1"
+                          class="flex flex-wrap gap-2 pl-4 mt-1"
                         >
                           <template
                             v-for="document in documents"
@@ -529,7 +525,7 @@ function closePreviewMesurage() {
                           >
                             <div
                               v-if="document.document_id"
-                              class="lux-tpl-flexflex-col items-center"
+                              class="flex flex-col items-center"
                             >
                               <!-- PDF/TIFF : ouvrir la modale -->
                               <button
@@ -589,7 +585,7 @@ function closePreviewMesurage() {
                                 )
                               }}</span>
                             </div>
-                            <div v-else class="lux-tpl-flexitems-center">
+                            <div v-else class="flex items-center">
                               <span class="text-gray-500 text-sm">{{
                                 t('Mesurage non disponible')
                               }}</span>
@@ -610,15 +606,14 @@ function closePreviewMesurage() {
                         "
                         @click="toggleAudience(measurementNumber, audience)"
                       >
-                        <i
-                          class="fa fa-sharp fa-solid mr-2 text-sm"
-                          :class="
+                        <LuxTplIcon
+                          class="mr-2 text-sm"
+                          :name="
                             isAudienceExpanded(measurementNumber, audience)
-                              ? 'fa-caret-up'
-                              : 'fa-caret-down'
+                              ? 'caret-up'
+                              : 'caret-down'
                           "
-                          aria-hidden="true"
-                        ></i>
+                        />
                         <span>{{
                           t(`target_audience_${audience}`, audience)
                         }}</span>
@@ -653,19 +648,18 @@ function closePreviewMesurage() {
                                 )
                               "
                             >
-                              <i
-                                class="fa fa-sharp fa-solid mr-2 text-sm"
-                                :class="
+                              <LuxTplIcon
+                                class="mr-2 text-sm"
+                                :name="
                                   isDocumentTypeExpanded(
                                     measurementNumber,
                                     audience,
                                     description
                                   )
-                                    ? 'fa-caret-up'
-                                    : 'fa-caret-down'
+                                    ? 'caret-up'
+                                    : 'caret-down'
                                 "
-                                aria-hidden="true"
-                              ></i>
+                              />
                               <span>{{
                                 t('MESURAGE_' + description, { ns: 'layers' })
                               }}</span>
@@ -737,11 +731,8 @@ function closePreviewMesurage() {
                                         )
                                       "
                                     >
-                                      <i
-                                        class="fa fa-download"
-                                        aria-hidden="true"
-                                      ></i
-                                    ></a>
+                                      <LuxTplIcon name="download"
+                                    /></a>
                                   </template>
                                   <template v-else>
                                     <span class="text-gray-500">{{
@@ -762,7 +753,7 @@ function closePreviewMesurage() {
                                   description
                                 )
                               "
-                              class="lux-tpl-flexflex-wrap gap-2 pl-4 mt-1"
+                              class="flex flex-wrap gap-2 pl-4 mt-1"
                             >
                               <template
                                 v-for="document in documents"
@@ -770,7 +761,7 @@ function closePreviewMesurage() {
                               >
                                 <div
                                   v-if="document.document_id"
-                                  class="lux-tpl-flexflex-col items-center"
+                                  class="flex flex-col items-center"
                                 >
                                   <!-- PDF/TIFF : ouvrir la modale -->
                                   <button
@@ -830,7 +821,7 @@ function closePreviewMesurage() {
                                     )
                                   }}</span>
                                 </div>
-                                <div v-else class="lux-tpl-flexitems-center">
+                                <div v-else class="flex items-center">
                                   <span class="text-gray-500 text-sm">{{
                                     t('Mesurage non disponible')
                                   }}</span>

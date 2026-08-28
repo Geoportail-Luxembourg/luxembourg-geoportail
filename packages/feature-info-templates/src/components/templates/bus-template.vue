@@ -15,7 +15,7 @@ const BUS_WIDGET_URL = config.busWidgetUrl
     <template #feature-content="{ feature }">
       <h3>{{ feature.attributes.name }}</h3>
       <iframe
-        class="lux-tpl-iframe-offset"
+        class="-ml-3.5"
         title="bus widget"
         height="300"
         width="500"

@@ -67,7 +67,7 @@ function canAccessSolarEconomicCalculator() {
 }
 </script>
 <template>
-  <div class="lux-tpl-flex lux-tpl-flex-col">
+  <div class="flex flex-col">
     <div>
       <h2 class="lux-tpl-poi-title" data-cy="defaultTemplateTitle">
         {{ t(layers.layerLabel, { ns: 'layers' }) }}

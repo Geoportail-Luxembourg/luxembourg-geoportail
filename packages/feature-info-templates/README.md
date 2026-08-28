@@ -101,9 +101,21 @@ as the fallback. Override any of them on `.lux-tpl-root` (or above it):
 
 Fonts are **not** shipped (licensing). The templates ask for
 `DINNextLTPro-Condensed` and fall back to `Arial`; a host that has the licensed
-face declares the `@font-face` itself. Icon glyphs currently come from a Font
-Awesome subset the host provides — see the open Phase 4.5 item in
-`docs/plan-feature-info-templates.md`.
+face declares the `@font-face` itself.
+
+Icons need nothing from the host: they are inline SVG, drawn at the current font
+size in the current text colour. `LuxTplIcon` and the `LUX_TPL_ICON_PATHS` map
+are exported if you want the same glyphs elsewhere:
+
+```vue
+<LuxTplIcon name="download" :title="t('Télécharger')" />
+```
+
+Available names: `caret-up`, `caret-down`, `download`, `grid`, `list`, `phone`,
+`fax`, `at`. They are hand-drawn rather than taken from an icon set, so nothing
+here carries Font Awesome's CC BY attribution requirement. Pass `title` for an
+icon that carries meaning on its own; omit it for a decorative one beside a text
+label and it is hidden from assistive technology.
 
 ## Consuming from this repo
 

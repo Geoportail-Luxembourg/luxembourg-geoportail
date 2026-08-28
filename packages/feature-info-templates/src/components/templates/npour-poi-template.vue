@@ -4,6 +4,7 @@ import InfoFeatureLayout from '../layouts/info-feature-layout.vue'
 import { useLuxTranslation } from '../../i18n'
 import { hasProperty } from './template-utilities'
 import { useLuxTplContext } from '../../context'
+import LuxTplIcon from '../common/lux-tpl-icon.vue'
 
 defineProps<{
   layers: FeatureInfoJSON
@@ -95,15 +96,15 @@ const { profileComponent } = useLuxTplContext()
         >{{ feature.attributes.zip }} {{ feature.attributes.town }}</span
       >
       <span v-if="hasProperty('phone', feature, 1)"
-        ><i class="fa fa-phone" aria-hidden="true"></i>
+        ><LuxTplIcon name="phone" />
         <span>{{ feature.attributes.phone }}</span></span
       >
       <span v-if="hasProperty('fax', feature, 1)"
-        ><i class="fa fa-fax" aria-hidden="true"></i>
+        ><LuxTplIcon name="fax" />
         <span>{{ feature.attributes.fax }}</span></span
       >
       <span v-if="hasProperty('email', feature, 1)"
-        ><i class="fa fa-at" aria-hidden="true"></i>
+        ><LuxTplIcon name="at" />
         <span>{{ feature.attributes.email }}</span></span
       >
 

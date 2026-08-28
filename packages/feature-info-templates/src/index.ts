@@ -16,6 +16,11 @@ import LuxTplRoot from './components/layouts/lux-tpl-root.vue'
 
 export { InfoFeatureLayout, LuxTplRoot }
 
+// --- Icons — inline SVG, no icon font required by the host --------------------
+export { default as LuxTplIcon } from './components/common/lux-tpl-icon.vue'
+export { LUX_TPL_ICON_PATHS } from './components/common/icons'
+export type { LuxTplIconName } from './components/common/icons'
+
 // --- Templates + dispatcher --------------------------------------------------
 // Exports every template component by name, plus `luxTplTemplates` and
 // `getTemplateComponent` — the selection logic both hosts share.

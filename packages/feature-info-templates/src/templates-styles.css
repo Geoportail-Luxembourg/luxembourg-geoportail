@@ -59,26 +59,6 @@
   text-decoration: underline;
 }
 
-.lux-tpl-iframe-offset {
-  margin-left: -0.875rem;
-}
-
-.lux-tpl-flex {
-  display: flex;
-}
-
-.lux-tpl-flex-col {
-  flex-direction: column;
-}
-
-.lux-tpl-w-1-3 {
-  width: 33.333333%;
-}
-
-.lux-tpl-w-2-3 {
-  width: 66.666667%;
-}
-
 /* Urplang Template Styles */
 .lux-tpl-urplang-title {
   color: white;
@@ -86,92 +66,6 @@
 }
 
 /* Parcels Template Styles */
-.lux-tpl-parcels-mode-toggle {
-  display: flex;
-  border-radius: 0.25rem;
-  overflow: hidden;
-  font-size: 0.875rem;
-  margin-top: 0.25rem;
-}
-
-.lux-tpl-parcels-mode-btn {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  padding-left: 0.75rem;
-  padding-right: 0.75rem;
-  padding-top: 0.25rem;
-  padding-bottom: 0.25rem;
-  transition:
-    background-color 0.3s,
-    color 0.3s;
-}
-
-.lux-tpl-parcels-mode-btn-right {
-  border-left: 1px solid #d1d5db;
-}
-
-.lux-tpl-parcels-header {
-  width: 100%;
-  text-align: left;
-  cursor: pointer;
-  padding-top: 0;
-  padding-bottom: 0;
-  padding-left: 0.5rem;
-  padding-right: 0.5rem;
-  border-radius: 0.25rem;
-  transition: background-color 0.2s;
-}
-
-.lux-tpl-parcels-header:hover {
-  background-color: #f3f4f6;
-}
-
-.lux-tpl-parcels-link {
-  cursor: pointer;
-  color: #2563eb;
-  transition: text-decoration 0.2s;
-}
-
-.lux-tpl-parcels-link:hover {
-  text-decoration: underline;
-}
-
-.lux-tpl-parcels-thumbnails {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 0.5rem;
-  padding-left: 1rem;
-  margin-top: 0.25rem;
-}
-
-.lux-tpl-parcels-thumbnail-item {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-}
-
-.lux-tpl-parcels-thumbnail-btn {
-  border: 1px solid #d1d5db;
-  border-radius: 0.25rem;
-  overflow: hidden;
-  transition: border-color 0.2s;
-}
-
-.lux-tpl-parcels-thumbnail-btn:hover {
-  border-color: #3b82f6;
-}
-
-.lux-tpl-parcels-thumbnail-btn:focus {
-  outline: none;
-  ring: 2px;
-  ring-color: #60a5fa;
-}
-
-.lux-tpl-parcels-no-preview {
-  display: flex;
-  align-items: center;
-}
 
 /* Casipo Template Styles */
 .lux-tpl-casipo-checkbox {
