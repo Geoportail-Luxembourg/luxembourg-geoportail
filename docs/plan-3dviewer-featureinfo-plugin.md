@@ -11,13 +11,129 @@ cadence tracks the geoportail backend, orthogonal to theme syncing. The org's pr
 (`3dviewer-plugin-auth`) is plugin-per-concern with loose coupling via
 `app.plugins.getByKey` and string contracts.
 
-**Architecture in one line:** _custom persistent interaction as trigger, registered
-feature-info view class as renderer._ VC Map's built-in flow is per-feature
-(`featureInfoInteraction.js:31-54` only acts on `event.feature`; features on WMS layers
-only exist via per-layer `WMSFeatureProvider` requests parsed with OL formats,
-`wmsFeatureProvider.ts:119`), so it cannot express "query all visible layers at a
-position, including empty-space clicks with ±buffers". The registry, however, is the
-right place for the rendering/lifecycle half.
+**Architecture in one line:** _a feature provider is the trigger, a registered
+feature-info view class is the renderer._ Both halves are VC Map extension points; the
+plugin supplies a custom class to each and writes no interaction of its own.
+
+> **This section was rewritten on 2026-08-29.** The original plan claimed VC Map's
+> built-in flow "cannot express query all visible layers at a position, including
+> empty-space clicks" and therefore specified a custom persistent interaction as the
+> trigger. That claim is wrong, and the first implementation followed it. See
+> "Correcting the original architecture" below.
+
+---
+
+## Correcting the original architecture
+
+### What the original plan got wrong
+
+The justification for a custom persistent interaction was that the built-in flow is
+per-feature and cannot handle a click into empty space. It can. `FeatureProviderInteraction`
+(`interaction/featureProviderInteraction.js`) does exactly this, and only this:
+
+```js
+async pipe(event) {
+  if (!event.feature) {                     // ← precisely the empty-space case
+    const layersWithProvider = [...event.map.layerCollection]
+      .filter((l) => l.featureProvider instanceof AbstractFeatureProvider && l.active && …)
+      .reverse();
+    …
+    const f = await featureProvider.getFeaturesByCoordinate(event.position, resolution, l);
+```
+
+`AbstractFeatureProvider`'s own doc comment describes the lux WMS case verbatim: *"An
+abstract class providing features for Layers which cannot provide features directly, but
+can provide features for a given location, e.g. WmsLayer with a getFeatureInfo
+configuration."* Custom providers are a first-class, config-addressable extension point —
+`featureProviderClassRegistry` (`classRegistry.js`) resolves `featureProvider: { type: … }`
+on any layer config through `getProviderForOption()`.
+
+The original plan never mentions `AbstractFeatureProvider`, `featureProviderClassRegistry`
+or `FeatureProviderInteraction`, so it never weighed the framework's designated seam for
+"turn a map position into features". That is the gap.
+
+The renderer half was right and is implemented as specified: `LuxTemplateFeatureInfoView
+extends AbstractFeatureInfoView`, registered in `app.featureInfoClassRegistry` during
+`initialize()`.
+
+### What is still true
+
+- **Providers are attached per layer, and the interaction calls each one separately.** A
+  provider on every lux layer means one HTTP request per visible layer; the geoportail
+  endpoint takes a comma-joined `layers` list and answers all of them in one call. The
+  aggregation cannot come from attaching providers to the lux layers themselves.
+- **The libs' querying logic does not cover this endpoint.** `WMSFeatureProvider` builds a
+  standard OGC request via `wmsSource.getFeatureInfoUrl(coords, res, projection, {
+  INFO_FORMAT })` and parses it with ol formats. `/getfeatureinfo` is not OGC: it takes
+  `layers`, `box1`, `box2`, `srs`, `zoom`, a synthetic `BBOX`/`WIDTH`/`HEIGHT`/`X`/`Y`, or a
+  `fid`, and answers with a custom JSON array of per-layer entries each naming a template.
+  Only the *plumbing* around the request is reusable — and that plumbing is the point.
+- **Worth knowing:** with `responseType: 'text/html'` and no `textHTMLEvaluator`,
+  `WMSFeatureProvider.getFeaturesByCoordinate()` returns a synthetic placeholder feature
+  **without making any request at all** — the URL is built later by
+  `IframeWmsFeatureInfoView`. So themesync's current WMS layers cost nothing per click, but
+  they do put a feature on the event, which is what the plugin's ownership rule has to
+  reckon with.
+
+### The three candidate designs
+
+| | Trigger | Requests per click | Notes |
+| --- | --- | --- | --- |
+| **A. Custom persistent interaction** (implemented) | own interaction at chain index 4 | 1 | Works with themesync's flag on *or* off. Needs an anchor-layer trick, a feature-ownership rule and mutable state on the view instance. |
+| **B. One aggregating provider on a plugin-owned layer** | built-in `FeatureProviderInteraction` | 1 | Idiomatic. Deletes the interaction, the ownership rule and the anchor trick. Requires themesync's flag on. |
+| **C. A provider per lux layer** | built-in | N | Rejected: defeats the single aggregated call, which is the whole point. |
+
+### Design B in detail
+
+`LuxAggregatedFeatureProvider extends AbstractFeatureProvider`, registered in
+`featureProviderClassRegistry`, attached to a single plugin-owned, always-active,
+non-rendering layer. `getFeaturesByCoordinate(coordinate, resolution, layer)` runs the one
+aggregated query and returns a **single** feature carrying the `FeatureInfoJSON[]`, tagged
+with `featureInfoViewSymbol` so `getFeatureInfoViewForFeature()` routes it to the lux view
+before any per-layer resolution happens.
+
+What that deletes, relative to A:
+
+- the custom interaction and its registration/teardown;
+- the toolbox gating code — replaced by an early `return []` in `getFeaturesByCoordinate`
+  when `toolboxManager.get('featureInfo').action.active` is false (see the caveat below);
+- `isForeignFeature()` — a picked feature means `FeatureProviderInteraction` never runs, so
+  3D tileset clicks fall through to their balloon by construction;
+- the anchor layer and `view.content = …` — `getProviderFeature()` already stamps
+  `vcsLayerName` and `isProvidedFeature`, and the payload travels on the feature, which is
+  what `AbstractFeatureInfoView.getProperties({ feature }, layer)` is shaped for.
+
+What it gains: `selectFeature()`'s `isProvidedFeature` branch clones the feature onto the
+internal scratch layer and highlights it there — so returning real geometries gets phase 7
+highlighting largely for free, instead of the never-activated anchor layer.
+
+**Two caveats, both real:**
+
+1. **Nothing gates `FeatureProviderInteraction`.** It is constructed with `setActive()` in
+   the `EventHandler` constructor and no code in core or ui ever calls
+   `featureProviderInteraction.setActive(…)` — `createFeatureInfoSession()` only touches
+   `featureInteraction`. So a provider is asked on *every* click, tool on or off. Harmless
+   for `WMSFeatureProvider` (no request, see above) but not for an aggregating provider that
+   hits the backend. The early `return []` above closes this, and must not be forgotten.
+2. **It requires themesync's `useLuxFeatureInfoTemplates` flag to be on.** With the flag
+   off, every lux WMS layer still carries its own `WMSFeatureProvider`, each returning a
+   placeholder feature. Ours would be one of many, `FeatureProviderInteraction` would wrap
+   them in a synthetic cluster feature and VC Map would open its cluster *list* window
+   rather than the lux panel. Design A tolerates the flag being off; design B does not.
+   That matters for developing against an unmodified deployment (`vcmplugin preview --vcm`),
+   which is the plugin's dev workflow.
+
+### Recommendation
+
+**Design B**, with the gating `return []` treated as part of the contract and the flag
+coupling accepted and documented. It replaces three pieces of bespoke machinery with the
+seam the framework provides for this exact problem, and it puts the response on the feature
+where the view class expects it.
+
+Design A is what currently ships and is verified end to end, so this is a refactor with a
+behavioural cost (dev against a flag-off deployment), not a bug fix. Sequence it as its own
+phase, after the flag lands in a deployed themesync — otherwise the plugin becomes
+untestable against staging in the interim.
 
 ---
 
@@ -94,37 +210,29 @@ position: { width: 400 } }, name)`.
 - `profileComponent`: unset (no elevation profile in 3D v1); `isThemeAvailable`: `() => false`.
 - `export` emit: implement KML/GPX via `ol/format` (already in the dependency tree via core).
 
-## Phase 5 — Interaction & lifecycle (trigger + registry renderer)
+## Phase 5 — Trigger & lifecycle
 
-- **Trigger:** persistent interaction at default index 3
-  (`eventHandler.addPersistentInteraction`, `eventHandler.ts:249-266`) — runs after
-  `CoordinateAtPixel`/`FeatureAtPixel`/`FeatureProvider` and before the exclusive
-  `FeatureInfoInteraction`, receiving both `position` and any picked `feature`.
-- `pipe(event)` policy (v1): if `event.feature` is a Cesium3DTile feature → pass through
-  (the existing `featureInfo3d` balloon keeps working); otherwise run the lux aggregated
-  query and `stopPropagation = true` on hit.
-- Gate on the standard **featureInfo toolbox toggle** (button id `featureInfo`,
-  `featureInfo.js:305-311`): only pipe while active. This inherits VC Map's tool
-  semantics — when draw/measure take the exclusive slot, the toggle deactivates and lux
-  queries stop too.
-- **Renderer:** register `LuxTemplateFeatureInfoView` in `app.featureInfoClassRegistry`
-  and define an instance in config. `getWindowComponentOptions(app,
-{ feature, position, windowPosition }, layer)` receives the click **position**
-  (`featureInfo.js:83-85`) — enough for its component to carry the aggregated result. The
-  interaction calls `app.featureInfo.selectFeature(feature, position, windowPosition,
-luxView)` — the explicit-view parameter bypasses per-layer resolution — buying the
-  built-in lifecycle for free: window position caching by className, selection/highlight
-  clearing, toolbox session semantics, cluster handling.
-- Empty-space clicks (no `event.feature` at all): `selectFeature` needs a feature —
-  either open the window via `windowManager` directly in that case, or synthesize a point
-  feature at the click. Decide during implementation.
-- Ordering: registration happens in the plugin's `initialize()`; plugins parse before a
-  module's `featureInfo` items (`vcsUiApp.js:643-654`) and initialize serially in config
-  order — **list this plugin before themesync** in the plugins array and document the
-  constraint in both READMEs.
-- Bonus (Phase 7): the registered view is reusable per-feature for 3D tilesets
-  (replacing `BalloonFeatureInfoView` with lux-template rendering) — pure registry usage,
-  no interaction changes.
+**As implemented (design A, shipping today).** A persistent interaction at the default index
+(`eventHandler.addPersistentInteraction`) — after `CoordinateAtPixel`/`FeatureAtPixel`/
+`EnsurePosition`/`FeatureProvider` and before the exclusive `FeatureInfoInteraction` — gated
+on the `featureInfo` toolbox toggle. It owns a feature-ownership rule: a picked feature is
+foreign only if it is a Cesium3DTile feature, carries `featureInfoViewSymbol`, or sits on a
+layer the aggregated query does not cover. Results are anchored on a throwaway point in a
+never-activated, non-pickable `VectorLayer`, because `selectFeature()` requires a feature
+belonging to a layer of this app.
+
+**Target (design B).** Replace the interaction with `LuxAggregatedFeatureProvider` on a
+plugin-owned layer, per "Design B in detail" above. Keep the renderer half unchanged:
+`LuxTemplateFeatureInfoView` stays registered in `app.featureInfoClassRegistry` and gets
+selected through `featureInfoViewSymbol` instead of the explicit `selectFeature(…, view)`
+parameter.
+
+Common to both: registration happens in `initialize()`; plugins parse before a module's
+`featureInfo` items and initialize serially in config order, so **list this plugin before
+themesync** in the plugins array and document the constraint in both READMEs.
+
+Bonus (Phase 7): the registered view is reusable per-feature for 3D tilesets (replacing
+`BalloonFeatureInfoView` with lux-template rendering) — pure registry usage.
 
 ## Phase 6 — Themesync changes (small, backward-compatible)
 
@@ -152,17 +260,35 @@ luxView)` — the explicit-view parameter bypasses per-layer resolution — buyi
 
 ## Open decisions
 
-- Empty-space clicks: query anyway (geoportail parity — recommended) vs only on
-  feature/globe hit.
-- `shiftKey` accumulate/toggle semantics: port or drop in v1 (recommend drop).
-- Locale source: deployed geoportail assets (recommended) vs bundling locales into the
-  templates package.
+Settled during implementation:
+
+- Empty-space clicks: **query anyway** (geoportail parity), behind `queryEmptySpace`.
+- `shiftKey` accumulate/toggle: **dropped**, for free via `ModificationKeyType.NONE`.
+- Locale source: **the deployed geoportail assets**, via `luxLocalesUrl`.
+
+Open:
+
+- Migrate to design B, and when — it is gated on a deployed themesync with
+  `useLuxFeatureInfoTemplates` on, or dev against staging regresses.
+- Whether design B should return the real geometries (phase 7 highlighting for free through
+  the scratch layer) or keep a single envelope feature carrying the response.
 
 ## Risks
 
-- CORS on `/getfeatureinfo` and `/assets/locales` from the 3D origin — test in week 1;
-  themesync's `TrustedServers`/proxy pattern is the fallback.
-- `zoom` param semantics from camera height — validate against backend behavior.
-- Vuetify style bleed _into_ the templates — mitigated by scoped utilities +
-  `.lux-tpl-root` token defaults; child-app + shadow-root mount is the documented
-  escalation.
+Retired:
+
+- ~~CORS on `/getfeatureinfo` and `/assets/locales`~~ — verified: both echo
+  `https://3d.geoportail.lu` with `Access-Control-Allow-Credentials: true`. No proxy or
+  `TrustedServers` needed. From `localhost` they answer `*` + credentials instead, which
+  browsers reject, so local development needs a CORS-bypassing browser extension.
+- ~~Child-app mount for i18n~~ — templates mount directly in the VC Map component tree.
+
+Still open:
+
+- `zoom` param semantics from camera height — the backend accepts the derived value, but
+  nothing confirms it is interpreted as the 2D portal intends.
+- Vuetify style bleed _into_ the templates — never observed, but only `default.html` and
+  `parcels.html` have been exercised in 3D.
+- The templates need a `v-dompurify-html` directive the package neither ships nor declares;
+  the plugin registers it on the shared Vue app as a stopgap. See work item 10 in
+  `plan-feature-info-templates.md`.
