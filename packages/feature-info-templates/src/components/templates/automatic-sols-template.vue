@@ -10,6 +10,7 @@ import {
 import i18next from 'i18next'
 import InfoFeatureLayout from '../layouts/info-feature-layout.vue'
 import { useLuxTplContext } from '../../context'
+import { vLuxHtml } from '../../sanitize-html'
 
 defineProps<{
   layers: FeatureInfoJSON
@@ -47,7 +48,7 @@ const { profileComponent } = useLuxTplContext()
             </label>
             <span
               v-if="!isLink(attributeEntry.value)"
-              v-dompurify-html="attributeEntry.value"
+              v-lux-html="attributeEntry.value"
             ></span>
             <a
               v-if="isLink(attributeEntry.value)"
@@ -77,7 +78,7 @@ const { profileComponent } = useLuxTplContext()
                 (attributeEntry.key == 'f_LC_class_name_fr' ||
                   attributeEntry.key == 'f_LABEL_fr')
               "
-              v-dompurify-html="attributeEntry.value"
+              v-lux-html="attributeEntry.value"
             ></span>
             <label
               v-if="
@@ -93,7 +94,7 @@ const { profileComponent } = useLuxTplContext()
                 (attributeEntry.key == 'f_LC_class_name_de' ||
                   attributeEntry.key == 'f_LABEL_de')
               "
-              v-dompurify-html="attributeEntry.value"
+              v-lux-html="attributeEntry.value"
             ></span>
             <label
               v-if="
@@ -109,7 +110,7 @@ const { profileComponent } = useLuxTplContext()
                 (attributeEntry.key == 'f_LC_class_name' ||
                   attributeEntry.key == 'f_LABEL_eng')
               "
-              v-dompurify-html="attributeEntry.value"
+              v-lux-html="attributeEntry.value"
             ></span>
           </span>
         </div>

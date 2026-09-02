@@ -16,6 +16,9 @@ import LuxTplRoot from './components/layouts/lux-tpl-root.vue'
 
 export { InfoFeatureLayout, LuxTplRoot }
 
+// --- Sanitized HTML — lib-owned, no host directive registration required -----
+export { vLuxHtml } from './sanitize-html'
+
 // --- Icons — inline SVG, no icon font required by the host --------------------
 export { default as LuxTplIcon } from './components/common/lux-tpl-icon.vue'
 export { LUX_TPL_ICON_PATHS } from './components/common/icons'

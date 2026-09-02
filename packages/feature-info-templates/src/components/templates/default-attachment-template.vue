@@ -11,6 +11,7 @@ import {
 } from './template-utilities'
 import i18next from 'i18next'
 import { useLuxTplContext } from '../../context'
+import { vLuxHtml } from '../../sanitize-html'
 
 defineProps<{
   layers: FeatureInfoJSON
@@ -50,7 +51,7 @@ const DOWNLOAD_PDF_URL = config.downloadPdfUrl
           >
             <div v-if="!isLink(attributeEntry.value)">
               <label>{{ t(attributeEntry.key) }} : </label>
-              <span v-dompurify-html="attributeEntry.value"></span>
+              <span v-lux-html="attributeEntry.value"></span>
             </div>
             <div v-if="isLink(attributeEntry.value)">
               <label></label>

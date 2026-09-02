@@ -12,6 +12,7 @@ import {
 } from './template-utilities'
 import i18next from 'i18next'
 import { useLuxTplContext } from '../../context'
+import { vLuxHtml } from '../../sanitize-html'
 
 defineProps({
   layers: {
@@ -103,7 +104,7 @@ function canAccessSolarEconomicCalculator() {
               </label>
               <span
                 v-if="!isLink(attributeEntry.value)"
-                v-dompurify-html="attributeEntry.value"
+                v-lux-html="attributeEntry.value"
               ></span>
               <a
                 v-if="isNoSolarNorWaterLink(layers.layerLabel, attributeEntry)"

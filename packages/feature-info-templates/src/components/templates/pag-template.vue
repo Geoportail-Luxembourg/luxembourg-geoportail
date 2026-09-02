@@ -91,6 +91,9 @@ async function generateRepport() {
         </div>
         <div class="lux-tpl-pag-checkbox">
           <input type="checkbox" v-model="isChecked" id="terms" />
+          <!-- eslint-disable vue/no-v-html -- developer-authored translated
+               string carrying target="_blank"; DOMPurify's default ALLOWED_ATTR
+               would strip it and navigate the SPA away. -->
           <label
             for="terms"
             v-html="
@@ -99,6 +102,7 @@ async function generateRepport() {
               )
             "
           ></label>
+          <!-- eslint-enable vue/no-v-html -->
         </div>
       </div>
       <button class="lux-btn-grey" @click="generateRepport()" target="_blank">

@@ -28,10 +28,11 @@
   },
   "peerDependencies": {
     "i18next": ">=23",
-    "vue": "^3.2.45"
+    "vue": "^3.4.36"
   },
   "dependencies": {
-    "@braintree/sanitize-url": "^7.1.0"
+    "@braintree/sanitize-url": "^7.1.0",
+    "vue-dompurify-html": "^5.3.0"
   },
   "devDependencies": {
     "@vitejs/plugin-vue": "^6.0.0",

@@ -4,7 +4,8 @@ The GetFeatureInfo templates of the Luxembourg geoportal, packaged so both the
 2D app and the VC Map 3D viewer render feature info identically.
 
 The package is **self-contained**: nothing under `src/` imports from outside the
-package. Everything host-specific — URLs, the logged-in user, notifications, the
+package, and it registers no globals on the host app and requires none.
+Everything host-specific — URLs, the logged-in user, notifications, the
 elevation-profile component, theme availability — arrives through one injected
 context. `npm run build` fails if that rule is broken, and ESLint flags it in
 the editor.
@@ -15,7 +16,7 @@ the editor.
 npm i @geoportallux/feature-info-templates
 ```
 
-Peers: `vue` ^3.2, `i18next` >=23.
+Peers: `vue` ^3.4.36, `i18next` >=23.
 
 ## Use
 
@@ -98,6 +99,30 @@ as the fallback. Override any of them on `.lux-tpl-root` (or above it):
 | `--color-tertiary`    | `#1f5d87` | tertiary accents               |
 | `--color-quaternary`  | `#20638f` | button hover                   |
 | `--color-gray`        | `#ccc`    | button borders                 |
+
+### Sanitized HTML
+
+Server-supplied HTML in attribute values is sanitized by the package itself, via
+DOMPurify. There is nothing to register on the host: each template imports the
+`vLuxHtml` directive and uses it locally as `v-lux-html`. It is exported if you
+render your own markup around the templates and want the same policy:
+
+```vue
+import { vLuxHtml } from '@geoportallux/feature-info-templates'
+...
+<span v-lux-html="value"></span>
+```
+
+Two things worth knowing. DOMPurify runs with its default configuration, so
+`target` is **not** in `ALLOWED_ATTR` — a `target="_blank"` inside a
+server-supplied value is dropped. And the directive is deliberately *not* named
+`v-dompurify-html`: that was a global the geoportail happened to install, so a
+template that forgot it still worked in that one app and rendered blank
+everywhere else. `v-lux-html` fails the same way in every host, and
+`sanitized-html.spec.ts` mounts the affected templates with nothing registered
+to keep it that way.
+
+## Fonts and icons
 
 Fonts are **not** shipped (licensing). The templates ask for
 `DINNextLTPro-Condensed` and fall back to `Arial`; a host that has the licensed

@@ -11,6 +11,7 @@ import {
 } from './template-utilities'
 import i18next from 'i18next'
 import { useLuxTplContext } from '../../context'
+import { vLuxHtml } from '../../sanitize-html'
 defineProps<{
   layers: FeatureInfoJSON
   currentUrl?: string
@@ -48,10 +49,7 @@ const { profileComponent } = useLuxTplContext()
           >
             <div v-if="!isLink(attributeEntry.value)" class="flex">
               <label class="w-1/3">{{ t(attributeEntry.key) }}</label>
-              <span
-                class="w-2/3"
-                v-dompurify-html="attributeEntry.value"
-              ></span>
+              <span class="w-2/3" v-lux-html="attributeEntry.value"></span>
             </div>
             <div v-if="isLink(attributeEntry.value)" class="flex">
               <label class="w-1/3"></label>

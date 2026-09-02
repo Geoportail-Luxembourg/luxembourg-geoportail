@@ -22,6 +22,10 @@ module.exports = {
       // (see packages/feature-info-templates/src/context.ts).
       files: ['packages/feature-info-templates/**/*.{js,ts,vue}'],
       rules: {
+        // The package owns its HTML sanitizing (src/sanitize-html.ts): use
+        // `v-lux-html`, never a raw `v-html`. Not enabled by vue3-essential,
+        // so it has to be named explicitly.
+        'vue/no-v-html': 'error',
         'no-restricted-imports': [
           'error',
           {

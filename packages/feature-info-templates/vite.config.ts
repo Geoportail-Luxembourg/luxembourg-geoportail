@@ -52,7 +52,11 @@ export default defineConfig({
         defaultHandler(warning)
       },
       // Everything the host owns. i18next is a peer so both sides share one
-      // instance; sanitize-url is a real dependency and stays bundled.
+      // instance; sanitize-url and vue-dompurify-html are real dependencies and
+      // stay bundled. dompurify is deliberately NOT external: it is absent from
+      // VC Map's shared-externals map, so a plugin could never reuse the host's
+      // copy anyway — externalising would only add a specifier the plugin's own
+      // build has to resolve and bundle regardless.
       external: ['vue', 'i18next'],
       output: {
         globals: {

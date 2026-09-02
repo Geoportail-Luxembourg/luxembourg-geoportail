@@ -182,7 +182,7 @@ CI publishes the package (GitHub Packages or npm) on tag; semver with a document
 | 0 — Regression safety net          | **Done.** `cypress/e2e/info/feature-info.cy.ts` un-skipped and stubbed; 17/17 green, incl. the coupled templates. |
 | 1 — Workspace package + boundary    | **Done.**                                                                        |
 | 2 — Public API                      | **Done.**                                                                        |
-| 3 — Decoupling work items           | **Done** (2026-07-03) for items 1-9. Item 10 (`v-dompurify-html`) found 2026-08-28 and still open — see below. |
+| 3 — Decoupling work items           | **Done.** Items 1-9 on 2026-07-03; item 10 (`v-dompurify-html`) found 2026-08-28, resolved below.              |
 | 4 — CSS, assets, fonts              | **Done**, 4.5 included — icons are inline SVG, no icon font needed.               |
 | 5 — Geoportail consumes the package | **Done**, via a source alias rather than the built bundle (see below).            |
 | 6 — Publish                         | Not started.                                                                     |
@@ -310,7 +310,7 @@ captured responses. They exercise the context wiring the extraction introduced:
 
 17/17 green across three consecutive runs.
 
-### Work item 10 — the `v-dompurify-html` directive (open, blocks publish)
+### Work item 10 — the `v-dompurify-html` directive (done)
 
 Found on 2026-08-28 by the Plan B prototype, running the real templates inside a
 VC Map window. The package has a **second host dependency besides the injected
@@ -349,15 +349,54 @@ Options, in preference order:
    leaves every host with a global registration and the same silent-failure mode
    for anyone who misses it.
 
-Whichever is chosen, the smoke spec from Phase 0 should mount the affected
-templates with a value containing markup and assert it renders — that is the
-guard this gap slipped past.
+**Chosen: option 1**, implemented with `vue-dompurify-html`'s
+`buildVueDompurifyHTMLDirective()` — one sanitization stack across the app and
+the package (one version to bump for a DOMPurify CVE) and behaviour identical to
+the already-validated Plan B prototype. It is a regular `dependency`, bundled
+into `dist/lux-tpl.js` (~115 kB → ~140 kB): `dompurify` is absent from VC Map's
+shared-externals map, so a plugin could never reuse the host's copy, and the
+geoportail consumes package sources so its bundler dedupes anyway. The package's
+declared Vue peer moved `^3.2.45` → `^3.4.36`, which is what the wrapper
+requires and is honest — nothing below that was ever tested.
+
+Exported as `vLuxHtml`, used as **`v-lux-html`**, imported locally by each
+template. The rename matters: keeping `v-dompurify-html` would have left the
+trap armed, since a new template that forgot the import would still resolve
+against the geoportail's global and pass every check in this repo. `v-lux-html`
+has no global anywhere, so it fails identically in every host.
+
+Also fixed at the same time: `adresse-template.vue:17` rendered
+`feature.attributes.label` — a backend value — through a raw, unsanitized
+`v-html`. It now uses the directive; DOMPurify preserves `<br>`, so nothing
+changes visually.
+
+Three raw `v-html` sites remain, deliberately: `casipo-template.vue`,
+`pag-template.vue` and `pag-staging-template.vue` render a developer-authored
+translated string carrying `<a target="_blank">`, and DOMPurify's default
+`ALLOWED_ATTR` excludes `target` (verified empirically against dompurify 3.4.2),
+so sanitizing them would navigate the SPA away. Each carries an
+`eslint-disable vue/no-v-html` block stating why; the rule itself is now
+`error` for the package, so new ones are blocked.
+
+Note this also means `target` is **already** stripped on all 9 attribute-value
+sites in production today, since both hosts register the directive with no
+config. Keeping the defaults is what makes this change behaviour-neutral; adding
+`ADD_ATTR: ['target']` is a one-word change if that turns out to be wrong.
+
+The guard is `packages/feature-info-templates/src/components/templates/sanitized-html.spec.ts`:
+it mounts all seven affected templates with **no directive registered**, which is
+what every non-geoportail host provides, and asserts markup renders, dangerous
+markup is stripped, and no "Failed to resolve directive" warning is emitted. It
+was written first and failed 19/20 before the fix. E2E could not have caught
+this — it runs against the app, which registers the global.
 
 ### Next
 
-Work item 10, then Phase 6 (publish) — the two are coupled: publishing with an
-undeclared host requirement is what makes the failure silent for the next
-consumer.
+Phase 6 (publish) — no longer blocked, now that the package declares and ships
+everything it needs. The follow-on in the plugin repo is to drop the stopgap in
+`LuxFeatureInfoWindow.vue` and its `vue-dompurify-html` dependency; rebuild the
+package and re-install there *before* removing it, or the templates render blank
+in between.
 
 The Plan B prototype is done (see `plan-3dviewer-featureinfo-plugin.md`): the
 templates render inside a VC Map window with the lib-owned i18n composable, the
