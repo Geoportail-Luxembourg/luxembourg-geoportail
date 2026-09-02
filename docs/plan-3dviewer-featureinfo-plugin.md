@@ -15,11 +15,11 @@ cadence tracks the geoportail backend, orthogonal to theme syncing. The org's pr
 feature-info view class is the renderer._ Both halves are VC Map extension points; the
 plugin supplies a custom class to each and writes no interaction of its own.
 
-> **This section was rewritten on 2026-08-29.** The original plan claimed VC Map's
-> built-in flow "cannot express query all visible layers at a position, including
+> **Revised 2026-09-02, and this is now what is implemented.** The original plan claimed
+> VC Map's built-in flow "cannot express query all visible layers at a position, including
 > empty-space clicks" and therefore specified a custom persistent interaction as the
-> trigger. That claim is wrong, and the first implementation followed it. See
-> "Correcting the original architecture" below.
+> trigger. That claim is wrong, and the first implementation followed it before being
+> refactored onto the provider. See "Correcting the original architecture" below.
 
 ---
 
@@ -68,90 +68,157 @@ extends AbstractFeatureInfoView`, registered in `app.featureInfoClassRegistry` d
   `layers`, `box1`, `box2`, `srs`, `zoom`, a synthetic `BBOX`/`WIDTH`/`HEIGHT`/`X`/`Y`, or a
   `fid`, and answers with a custom JSON array of per-layer entries each naming a template.
   Only the *plumbing* around the request is reusable — and that plumbing is the point.
-- **Worth knowing:** with `responseType: 'text/html'` and no `textHTMLEvaluator`,
-  `WMSFeatureProvider.getFeaturesByCoordinate()` returns a synthetic placeholder feature
-  **without making any request at all** — the URL is built later by
-  `IframeWmsFeatureInfoView`. So themesync's current WMS layers cost nothing per click, but
-  they do put a feature on the event, which is what the plugin's ownership rule has to
-  reckon with.
+- **With `responseType: 'text/html'` and no `textHTMLEvaluator`,
+  `WMSFeatureProvider.getFeaturesByCoordinate()` fabricates a placeholder feature without
+  making any request at all** — the URL is built later by `IframeWmsFeatureInfoView`. So
+  themesync's current WMS layers cost nothing per click, but they do put a feature on the
+  event. That single fact drove the ownership rule in the first implementation and the
+  layer claiming in the current one.
 
 ### The three candidate designs
 
-| | Trigger | Requests per click | Notes |
+| | Trigger | Requests per click | Status |
 | --- | --- | --- | --- |
-| **A. Custom persistent interaction** (implemented) | own interaction at chain index 4 | 1 | Works with themesync's flag on *or* off. Needs an anchor-layer trick, a feature-ownership rule and mutable state on the view instance. |
-| **B. One aggregating provider on a plugin-owned layer** | built-in `FeatureProviderInteraction` | 1 | Idiomatic. Deletes the interaction, the ownership rule and the anchor trick. Requires themesync's flag on. |
-| **C. A provider per lux layer** | built-in | N | Rejected: defeats the single aggregated call, which is the whole point. |
+| **A. Custom persistent interaction** | own interaction at the default chain index | 1 | Superseded. Worked, but needed an anchor-layer trick, a feature-ownership rule and mutable state on the view instance. |
+| **B. One aggregating provider on a plugin-owned layer** | built-in `FeatureProviderInteraction` | 1 | **Implemented.** |
+| **C. A standard `WMSFeatureProvider` per lux layer** | built-in | N | Explored in depth, rejected — see below. |
 
-### Design B in detail
+### Why candidate C was rejected
 
-`LuxAggregatedFeatureProvider extends AbstractFeatureProvider`, registered in
-`featureProviderClassRegistry`, attached to a single plugin-owned, always-active,
-non-rendering layer. `getFeaturesByCoordinate(coordinate, resolution, layer)` runs the one
-aggregated query and returns a **single** feature carrying the `FeatureInfoJSON[]`, tagged
-with `featureInfoViewSymbol` so `getFeatureInfoViewForFeature()` routes it to the lux view
-before any per-layer resolution happens.
+C is the minimal-custom-code ideal: no query code at all, just themesync writing
+`featureInfo: { responseType: 'application/json' }` on each lux layer. N requests instead
+of one was acceptable. It still does not work, and the reasons are worth recording because
+they are expensive to re-derive.
 
-What that deletes, relative to A:
+What *does* work, measured against the live service:
 
-- the custom interaction and its registration/teardown;
-- the toolbox gating code — replaced by an early `return []` in `getFeaturesByCoordinate`
-  when `toolboxManager.get('featureInfo').action.active` is false (see the caveat below);
-- `isForeignFeature()` — a picked feature means `FeatureProviderInteraction` never runs, so
-  3D tileset clicks fall through to their balloon by construction;
-- the anchor layer and `view.content = …` — `getProviderFeature()` already stamps
-  `vcsLayerName` and `isProvidedFeature`, and the payload travels on the feature, which is
-  what `AbstractFeatureInfoView.getProperties({ feature }, layer)` is shaped for.
+- `wms.geoportail.lu/public_map_layers/service` advertises `application/json` for
+  GetFeatureInfo, and **its response is lux-enriched, not stock**. Features carry `fid` in
+  the composite `<layerId>_<featureId>` form with the backend's layer remap already applied
+  (layer 262 → `359_075F00503002288`), plus `id`, a populated `alias`, and `properties`
+  identical to the aggregated endpoint's `attributes` — including the nested `PF` object and
+  the `measurements[]` array. Geometry comes back in EPSG:2169 regardless of the `SRS`
+  parameter. 709 of 732 unique queryable lux layers are advertised queryable by that
+  service.
 
-What it gains: `selectFeature()`'s `isProvidedFeature` branch clones the feature onto the
-internal scratch layer and highlights it there — so returning real geometries gets phase 7
-highlighting largely for free, instead of the never-activated anchor layer.
+What kills it:
 
-**Two caveats, both real:**
+- **`template` has no OGC equivalent.** It lives only in the backend table
+  `lux_getfeature_definition` (alongside `query`, `additional_info_function`, `role`,
+  `attributes_to_remove`) and is absent from the themes API. `getTemplateComponent()` falls
+  back to the default template for unknown names, so a missing `template` does not fail —
+  it silently renders all 41 templates as `default.html`, losing parcels, PAG, casipo, bus,
+  solar and 34 others. `has_profile` (irrelevant here, no `profileComponent`) and `ordered`
+  (cosmetic) are the other two envelope fields with no equivalent.
+- **Hit tolerance diverges.** The aggregated endpoint uses a ±10 m `box1` filtered by a
+  ±1 m `box2`; WMS GetFeatureInfo queries a single pixel at the map's current resolution,
+  which in a 3D camera view degenerates to a sub-metre search. Measured at one identical
+  point: layer 152 returned 1 feature from the aggregated endpoint and 0 from WMS.
+- Three layers carry `ogc_query_layers` metadata naming a different `QUERY_LAYERS` value;
+  querying layer 1813 by its own id returns `internal error`.
 
-1. **Nothing gates `FeatureProviderInteraction`.** It is constructed with `setActive()` in
-   the `EventHandler` constructor and no code in core or ui ever calls
+Worth knowing: the backend's own `_ogc_getfeatureinfo()` **is** candidate C — same
+`VERSION=1.1.1`, `INFO_FORMAT=application/json`, `FEATURE_COUNT=50` — used for exactly the
+layers whose `lux_getfeature_definition.engine` selects the OGC path, with `template` still
+coming from the table. C becomes viable the day `template` is published as themes metadata
+(the themes API serialises `Metadata` rows generically, so that is a data change, not a
+code change). Until then the custom aggregated request stays.
+
+### The implemented design
+
+`LuxAggregatedFeatureProvider extends AbstractFeatureProvider`, attached to a single
+plugin-owned, active, non-rendering `VectorLayer`. `getFeaturesByCoordinate(coordinate,
+resolution, layer)` runs the one aggregated query and returns **exactly one** envelope
+feature — a point at the click carrying the whole `FeatureInfoJSON[]` under a module
+symbol, tagged with `featureInfoViewSymbol` so `getFeatureInfoViewForFeature()` routes it
+to the lux view before any per-layer resolution happens. One feature is also what preserves
+the 2D portal's stacked panel: two or more and `FeatureProviderInteraction` wraps them in a
+synthetic cluster feature and VC Map opens its cluster *list* window instead.
+
+What it deleted, relative to A: the interaction and its registration/teardown; the toolbox
+gating code; `isForeignFeature()` — a picked feature means `FeatureProviderInteraction`
+never runs, so 3D tileset clicks reach their balloon by construction; the anchor layer and
+the `view.content = …` mutation, because `getProviderFeature()` already stamps
+`vcsLayerName` and `isProvidedFeature` and the payload travels on the feature, which is what
+`AbstractFeatureInfoView.getProperties({ feature }, layer)` is shaped for. Also the
+`queryEmptySpace` option, which became meaningless (the provider only ever runs on clicks
+that picked nothing), and the KML/GPX export helper, which was unreachable dead code.
+
+Net effect on the plugin: **−83 lines**, and the two most intricate pieces — the
+interaction and the ownership rule — are gone. The saving is modest because the gate and
+the layer claiming below cost about as much as the interaction they replace; what improved
+is *which* code is left.
+
+**Three things that are contract, not polish:**
+
+1. **The provider gates itself on the `featureInfo` toolbox toggle.**
+   `FeatureProviderInteraction` is constructed with `setActive()` in the `EventHandler`
+   constructor and no code in core or ui ever calls
    `featureProviderInteraction.setActive(…)` — `createFeatureInfoSession()` only touches
-   `featureInteraction`. So a provider is asked on *every* click, tool on or off. Harmless
-   for `WMSFeatureProvider` (no request, see above) but not for an aggregating provider that
-   hits the backend. The early `return []` above closes this, and must not be forgotten.
-2. **It requires themesync's `useLuxFeatureInfoTemplates` flag to be on.** With the flag
-   off, every lux WMS layer still carries its own `WMSFeatureProvider`, each returning a
-   placeholder feature. Ours would be one of many, `FeatureProviderInteraction` would wrap
-   them in a synthetic cluster feature and VC Map would open its cluster *list* window
-   rather than the lux panel. Design A tolerates the flag being off; design B does not.
-   That matters for developing against an unmodified deployment (`vcmplugin preview --vcm`),
-   which is the plugin's dev workflow.
+   `featureInteraction`. So providers are asked on *every* click, tool on or off. Harmless
+   for `WMSFeatureProvider` (no request, see above) but not for one that hits the backend.
+2. **The plugin clears the feature providers themesync leaves on lux layers.** Otherwise
+   each `text/html` placeholder joins the envelope feature, the result becomes a cluster,
+   and empty-space clicks stop clearing the selection. This is also what removes design B's
+   original dependency on themesync's `useLuxFeatureInfoTemplates` flag — the plugin now
+   works with it on or off, which keeps `vcmplugin preview --vcm` against an unmodified
+   deployment usable as the dev workflow. The provider only exists once a layer has been
+   activated (`WMSLayer` builds it in `initialize()`), so this needs a `stateChanged`
+   listener, not a one-off sweep.
+3. **The envelope feature gets an empty `Style`.** `selectFeature()` clones a provided
+   feature onto its internal scratch layer and forces `olcs_allowPicking: true`; without an
+   empty style that clone would render a marker and swallow the next click at the same spot.
 
-### Recommendation
+One deviation from the plan as written: the provider is **not** registered in
+`featureProviderClassRegistry`. It needs the app, the plugin config and the view instance at
+construction, none of which can come from JSON, so a registry entry would advertise a type
+no config could instantiate.
 
-**Design B**, with the gating `return []` treated as part of the contract and the flag
-coupling accepted and documented. It replaces three pieces of bespoke machinery with the
-seam the framework provides for this exact problem, and it puts the response on the feature
-where the view class expects it.
+### Verified
 
-Design A is what currently ships and is verified end to end, so this is a refactor with a
-behavioural cost (dev against a flag-off deployment), not a bug fix. Sequence it as its own
-phase, after the flag lands in a deployed themesync — otherwise the plugin becomes
-untestable against staging in the interim.
+Driven over CDP against `https://3d-staging.geoportail.lu` with themesync 1.5.2 and no
+config change:
+
+| check | result |
+| --- | --- |
+| one active queryable layer | one request (`302`), stacked panel, no `featureInfo2d` iframe |
+| four active queryable layers | **one** request (`147,698,262,302`), **one** window, no cluster list |
+| click where no layer has data | panel closes |
+| feature info tool toggled off | **zero** requests |
+| attribute values | render, not just labels |
 
 ---
 
 ## Phase 1 — Scaffold
 
-Clone the `3dviewer-plugin-auth` structure: `@vcmap/plugin-cli` 4.x
-(`vcmplugin build/serve`), peerDeps `@vcmap/core ^6.2.2`, `@vcmap/ui ^6.2.1`,
-`vue ~3.4.38`, `vuetify ~3.7.14`, `mapVersion ^6.1`; dependency
-`@geoportallux/feature-info-templates`; vitest + `vcsPluginInterface.spec.ts`.
+**Done.** Cloned the `3dviewer-plugin-auth` structure: `@vcmap/plugin-cli` 4.x
+(`vcmplugin build/preview`), peerDeps `@vcmap/core ^6.3.9`, `@vcmap/ui ^6.3.11`,
+`vue ~3.4.38`, `vuetify ~3.7.14`, `mapVersion ^6.3`; vitest +
+`vcsPluginInterface.spec.ts`.
 
 ```ts
 type PluginConfig = {
-  luxGetInfoUrl: string // e.g. https://map.geoportail.lu/getfeatureinfo
-  luxLocalesUrl: string // e.g. https://map.geoportail.lu/assets/locales
+  luxGetInfoUrl: string // https://map.geoportail.lu/getfeatureinfo
+  luxLocalesUrl: string // https://map.geoportail.lu/assets/locales
   templatesConfig: LuxTplConfig // the ~16 URLs + solarEconomicAllowedRoleIds
   credentials?: RequestCredentials
+  bigBuffer: number // box1, metres in EPSG:2169 — 10
+  smallBuffer: number // box2 — 1
 }
 ```
+
+Defaults live in `src/defaultOptions.ts`, **not** in an imported `config.json`: the dev
+server reserves `/config*` for module configs, so `import '../config.json'` 404s and the
+whole plugin fails to load in dev while working fine in the build, which inlines it. A
+deployed VC Map reads a plugin's config from the app config only, never from its shipped
+`config.json`.
+
+Extra dependencies beyond the plan: `i18next` + `i18next-http-backend` (the templates
+package leaves the backend plugin to the host), `@vcsuite/logger`, and
+`vue-dompurify-html` for the directive gap in Phase 3.
+`@geoportallux/feature-info-templates` is consumed through a `file:` dependency on the
+sibling checkout with `install-links=true` in `.npmrc`, because it is not published yet —
+a symlink whose realpath is outside the project root trips Vite's dev-server `fs.allow`.
 
 ## Phase 2 — Query service (verified request contract)
 
@@ -172,11 +239,20 @@ type PluginConfig = {
   `features.length > 0`, parcel annotation. Support the `{fid}` query shape for later
   deep-links.
 
+**Done**, in `luxQueryService.ts`, and it is the one part that stays custom — see "Why
+candidate C was rejected". Two things the plan did not anticipate: eligible layers fall
+back to `allowPicking` on 2D layers when `properties.luxQueryable` is absent, so the plugin
+also works against a themesync older than 1.6; and `zoom` is derived from
+`map.getCurrentResolution(position)` rather than from camera height directly, which works
+in both map types. `buildFidParams()` exists but nothing calls it — the `fid` deep link is
+Phase 7.
+
 ## Phase 3 — Window + rendering (wrapper component, no child app)
 
-- `app.windowManager.add({ id: 'lux-feature-info', component: LuxFeatureInfoWindow,
-slot: WindowSlot.DYNAMIC_RIGHT, state: { headerTitle: 'luxFeatureInfo.title' },
-position: { width: 400 } }, name)`.
+- ~~`app.windowManager.add(…)`~~ — **not** how it ended up: the window is opened by
+  `featureInfo.selectFeature()` from the options `LuxTemplateFeatureInfoView`'s
+  `getWindowComponentOptions()` returns, which is what buys the built-in
+  window/selection/toolbox lifecycle. The plugin never touches the window manager.
 - `LuxFeatureInfoWindow` is a **plain wrapper component**: in `setup()` it
   `provide(LUX_TPL_CONTEXT, …)` and `provide(LUX_TPL_I18N, createLuxTplI18n(i18next))`,
   adds class `lux-tpl-root` on its root div, imports the package CSS, and renders the
@@ -189,12 +265,19 @@ position: { width: 400 } }, name)`.
   mount directly in the VCS component tree. The child-app mount (createApp in onMounted)
   remains the documented escalation path — it is also the prerequisite for shadow-DOM CSS
   isolation if Vuetify style bleed-in ever demands it.
-- i18next instance: plugin initializes the global i18next singleton via the package's
-  `createLuxTplI18next(luxLocalesUrl + '/{{ns}}.{{lng}}.json')` (exact geoportail init
-  flags + tooltip-fallback hydration). Language sync: watch `app.vueI18n.locale` →
-  `i18next.changeLanguage()`. Locales load from the deployed geoportail's static
-  `assets/locales/{ns}.{lng}.json` (build-time Transifex artifacts) — **verify CORS on
-  that path in week 1**.
+- i18next instance: **a dedicated instance, not the singleton** —
+  `i18next.createInstance().use(HttpBackend)` passed to
+  `createLuxTplI18next(instance, loadPath)`. The plugin shares its Vue app with VC Map and
+  every other plugin, and the templates read their instance through the injected
+  `LUX_TPL_I18N`, so a global buys nothing. Language sync is `app.localeChanged`, not a
+  watcher on `app.vueI18n.locale`. The load is wrapped in try/catch: VC Map does not await
+  `initialize()`, so a rejection would surface as an unhandled rejection and cost the
+  provider registration. CORS on the locale path is verified — see Risks.
+- **Undocumented host requirement found in implementation:** six templates, `default`
+  among them, render attribute *values* through a `v-dompurify-html` directive that the
+  package neither ships nor declares (the geoportail registers it app-wide in `main.ts`).
+  `LuxFeatureInfoWindow.vue` registers it on the shared Vue app as a stopgap. Tracked as
+  work item 10 in `plan-feature-info-templates.md`.
 
 ## Phase 4 — Context wiring
 
@@ -208,31 +291,32 @@ position: { width: 400 } }, name)`.
   (While there: fix the `typeUtisilisateur` typo and `mymaps_role: string` → `number` in
   the auth plugin's `UserInfo` — the raw API shape matches the geoportail's `UserApi`.)
 - `profileComponent`: unset (no elevation profile in 3D v1); `isThemeAvailable`: `() => false`.
-- `export` emit: implement KML/GPX via `ol/format` (already in the dependency tree via core).
+- ~~`export` emit: implement KML/GPX via `ol/format`~~ — **dropped.** It was implemented,
+  then deleted as dead code: the templates only ever forward `export` from
+  `profileComponent`, and that is unset, so no template can emit it. It comes back with the
+  3D profile component, not before.
+
+**Done**, in `luxTplRuntime.ts`. The auth-plugin `UserInfo` fixes are done too.
 
 ## Phase 5 — Trigger & lifecycle
 
-**As implemented (design A, shipping today).** A persistent interaction at the default index
-(`eventHandler.addPersistentInteraction`) — after `CoordinateAtPixel`/`FeatureAtPixel`/
-`EnsurePosition`/`FeatureProvider` and before the exclusive `FeatureInfoInteraction` — gated
-on the `featureInfo` toolbox toggle. It owns a feature-ownership rule: a picked feature is
-foreign only if it is a Cesium3DTile feature, carries `featureInfoViewSymbol`, or sits on a
-layer the aggregated query does not cover. Results are anchored on a throwaway point in a
-never-activated, non-pickable `VectorLayer`, because `selectFeature()` requires a feature
-belonging to a layer of this app.
+**Done.** `LuxAggregatedFeatureProvider` on a plugin-owned, active, non-rendering
+`VectorLayer` is the trigger; `LuxTemplateFeatureInfoView`, registered in
+`app.featureInfoClassRegistry` during `initialize()`, is the renderer, selected through
+`featureInfoViewSymbol` on the envelope feature rather than through the explicit
+`selectFeature(…, view)` parameter. Details, caveats and the verification record are under
+"The implemented design" above. The plugin also claims the lux layers by clearing their
+per-layer feature providers.
 
-**Target (design B).** Replace the interaction with `LuxAggregatedFeatureProvider` on a
-plugin-owned layer, per "Design B in detail" above. Keep the renderer half unchanged:
-`LuxTemplateFeatureInfoView` stays registered in `app.featureInfoClassRegistry` and gets
-selected through `featureInfoViewSymbol` instead of the explicit `selectFeature(…, view)`
-parameter.
-
-Common to both: registration happens in `initialize()`; plugins parse before a module's
-`featureInfo` items and initialize serially in config order, so **list this plugin before
-themesync** in the plugins array and document the constraint in both READMEs.
+Registration happens in `initialize()`; plugins parse before a module's `featureInfo` items
+and initialize serially in config order, so **list this plugin before themesync** in the
+plugins array — documented in both READMEs.
 
 Bonus (Phase 7): the registered view is reusable per-feature for 3D tilesets (replacing
-`BalloonFeatureInfoView` with lux-template rendering) — pure registry usage.
+`BalloonFeatureInfoView` with lux-template rendering) — pure registry usage. Note this is
+now structural rather than incidental: `FeatureProviderInteraction` never runs once a
+feature was picked, so a 3D building click cannot reach the aggregated query without a
+different mechanism.
 
 ## Phase 6 — Themesync changes (small, backward-compatible)
 
@@ -249,14 +333,37 @@ Bonus (Phase 7): the registered view is reusable per-feature for 3D tilesets (re
    3dviewer repo (deployed as `plugins/@geoportallux/lux-3dviewer-featureinfo/index.js`,
    next to themesync / back-to-2d / create-link / auth), **before** themesync.
 
+Status: 1 and 2 are implemented in themesync (version bumped to 1.6.0). 3 is **not** done
+and should not be until both packages are published — `config/lux.config.json` installs
+plugins from npm, so pointing it at an unpublished plugin while turning the flag on would
+leave the WMS layers referencing a view that does not exist. The exact config block is in
+the plugin's README.
+
+The flag is no longer load-bearing for the plugin: it claims the lux layers itself, so it
+works with the flag on or off. What the flag still buys is dropping themesync's per-layer
+`featureInfo: { responseType }` config in the first place, which is tidier than having the
+plugin clear the providers afterwards.
+
 ## Phase 7 — Enhancements (independently shippable)
 
-- Highlight clicked features via a plugin-owned `VectorLayer` (geometries arrive in
-  EPSG:2169; style ≈ geoportail's yellow/orange highlight).
+None of these are implemented.
+
+- Highlight clicked features (geometries arrive in EPSG:2169; style ≈ geoportail's
+  yellow/orange highlight). Cheaper than the plan assumed: `selectFeature()` already clones
+  a provided feature onto its internal scratch layer and highlights it, so putting the real
+  geometries on the envelope feature — instead of the click point with an empty style — gets
+  most of this for free. The constraint is that it must stay **one** feature, or the result
+  becomes a cluster list.
 - Route 3D-building clicks (BUILDINGID) through the lux query / lux templates, replacing
-  the balloon.
-- `fid` deep-links shared with the 2D permalink format.
+  the balloon. Now needs a different mechanism: `FeatureProviderInteraction` never runs once
+  a feature was picked, so the provider cannot see those clicks at all.
+- `fid` deep-links shared with the 2D permalink format. `buildFidParams()` is in place;
+  the URL handling is not. Note the templates build their "direct link" from `currentUrl`,
+  which the window component sets to the 3D viewer's `window.location.href` — a URL with no
+  query string and no `fid` handling, so that link is currently broken. Passing a configured
+  2D-portal base URL instead would fix it with a config string.
 - Elevation profile in 3D (needs a Cesium-side profile component — explicitly out of v1).
+  This also unblocks the KML/GPX export, which the templates only emit from that component.
 
 ## Open decisions
 
@@ -266,12 +373,23 @@ Settled during implementation:
 - `shiftKey` accumulate/toggle: **dropped**, for free via `ModificationKeyType.NONE`.
 - Locale source: **the deployed geoportail assets**, via `luxLocalesUrl`.
 
+Also settled:
+
+- Trigger: **the feature provider** (design B). The flag coupling that made it look costly
+  was removed by claiming the lux layers, so it works with
+  `useLuxFeatureInfoTemplates` on or off.
+- Per-layer standard WMS requests (design C): **rejected**, see above. Revisit if
+  `template` is ever published as themes metadata.
+
 Open:
 
-- Migrate to design B, and when — it is gated on a deployed themesync with
-  `useLuxFeatureInfoTemplates` on, or dev against staging regresses.
-- Whether design B should return the real geometries (phase 7 highlighting for free through
-  the scratch layer) or keep a single envelope feature carrying the response.
+- Whether the provider should return the real geometries instead of a single envelope
+  feature. It would get phase 7 highlighting almost for free through `selectFeature()`'s
+  `isProvidedFeature` scratch-layer branch — but more than one feature turns the result
+  into VC Map's cluster list, so it needs the response's geometries merged onto one feature
+  rather than returned as many.
+- Publishing `template`/`ordered` (and `is_ogc_queryable`, `ogc_query_layers`) as a single
+  JSON themes-metadata field, which would unlock design C and delete the query service.
 
 ## Risks
 
@@ -282,6 +400,19 @@ Retired:
   `TrustedServers` needed. From `localhost` they answer `*` + credentials instead, which
   browsers reject, so local development needs a CORS-bypassing browser extension.
 - ~~Child-app mount for i18n~~ — templates mount directly in the VC Map component tree.
+- ~~The trigger has to be a custom interaction~~ — see above; it is a feature provider.
+
+Introduced by the provider design, and mitigated in it:
+
+- `FeatureProviderInteraction` is never gated, so a provider is asked on every click →
+  the provider gates itself on the toolbox toggle.
+- A provided feature's highlight clone is pickable → the envelope feature carries an empty
+  `Style`.
+- themesync's `text/html` providers fabricate placeholder features → the plugin clears the
+  providers on lux layers.
+- A `WMSLayer` rebuilds its provider in `reload()`/`setLayers()` without firing
+  `stateChanged`, so a themesync reload can resurrect one. Not handled; it disappears once
+  `useLuxFeatureInfoTemplates` is on.
 
 Still open:
 
