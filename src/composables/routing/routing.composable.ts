@@ -233,7 +233,7 @@ export default function useRouting(
       style: new Style({
         image: new Circle({
           radius: 6,
-          fill: new Fill({ color: '#2980b9' }),
+          fill: new Fill({ color: '#287DB2' }),
           stroke: new Stroke({ color: '#ffffff', width: 2 }),
         }),
       }),
@@ -254,12 +254,12 @@ export default function useRouting(
           image: new Circle({
             radius: 10,
             fill: new Fill({ color: '#ffffff' }),
-            stroke: new Stroke({ color: '#2980b9', width: 3 }),
+            stroke: new Stroke({ color: '#287DB2', width: 3 }),
           }),
           text: new Text({
             text: String(label),
             font: 'bold 12px sans-serif',
-            fill: new Fill({ color: '#2980b9' }),
+            fill: new Fill({ color: '#287DB2' }),
             stroke: new Stroke({ color: '#ffffff', width: 2 }),
           }),
           zIndex: 2100,
