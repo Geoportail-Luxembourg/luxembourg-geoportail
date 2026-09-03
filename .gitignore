@@ -21,8 +21,7 @@
 # build
 /_site/
 /dist/
-/dist-lux-tpl/
-/packages/*/dist/
+# /packages/*/dist/
 /bundle
 /out-tsc/
 .parcel-cache
