@@ -4,6 +4,7 @@ import { useLayerTreeStore } from '@/stores/layer-tree.store'
 
 import { SP_KEY_EXPANDED_NODES } from './state-persistor.model'
 import { storageHelper } from './storage/storage.helper'
+import { urlStorage } from './storage/url-storage'
 import { storageLayerTreeMapper } from './state-persistor-layer-tree.mapper'
 
 class StatePersistorLayerTreeService {
@@ -42,10 +43,21 @@ class StatePersistorLayerTreeService {
 
   restore() {
     const store = useLayerTreeStore()
-    const overrides = storageHelper.getValue<Record<string, boolean>>(
+
+    // Read from localStorage (primary storage for normal persistence)
+    const localOverrides = storageHelper.getValue<Record<string, boolean>>(
       SP_KEY_EXPANDED_NODES,
       storageLayerTreeMapper.storageToExpandedOverrides
     )
+
+    // Also check URL for shared links (expandedNodes may be in the permalink)
+    const urlValue = urlStorage.getItem(SP_KEY_EXPANDED_NODES)
+    const urlOverrides =
+      storageLayerTreeMapper.storageToExpandedOverrides(urlValue)
+
+    // URL overrides take priority when present (shared link scenario)
+    const overrides =
+      Object.keys(urlOverrides).length > 0 ? urlOverrides : localOverrides
 
     if (Object.keys(overrides).length > 0) {
       store.expandedNodesOverrides = overrides
