@@ -179,6 +179,7 @@ function onClickValidate(payload: MouseEvent | FeatureConcentricCirclePayload) {
             class="hover:text-tertiary"
             @click="
               () => {
+                if (isEditingFeature) emit('toggleEditFeature')
                 emit('toggleFeatureVisibility')
               }
             "
