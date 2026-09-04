@@ -181,6 +181,7 @@ function toggleLayerComparator() {
           :isOpen="isLayerOpenId === layer.id"
           :isLayerComparatorOpen="sliderActive"
           :displayLayerComparatorOpen="index === 0"
+          :isDrawingLayer="isLocalDrawLayer(layer) || isMyMapDrawLayer(layer)"
           @clickRemove="removeLayer"
           @clickToggle="toggleAccordionItem"
           @clickToggleLayerComparator="toggleLayerComparator"
