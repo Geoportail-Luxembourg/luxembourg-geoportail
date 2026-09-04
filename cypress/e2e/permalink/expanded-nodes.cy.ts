@@ -38,37 +38,6 @@ describe('Permalink/State persistor - Expanded nodes', () => {
     })
   })
 
-  describe('Override cleanup', () => {
-    it('removes the override from localStorage when re-expanded to match default', () => {
-      // Collapse 2841 (expanded by default)
-      cy.get('[data-cy="parentLayerLabel-2841"]').find('button').click()
-      cy.window().then(win => {
-        expect(win.localStorage.getItem('expandedNodes')).to.contain('-2841')
-      })
-      // Re-expand 2841 (back to default) — override should be removed
-      cy.get('[data-cy="parentLayerLabel-2841"]').find('button').click()
-      cy.window().then(win => {
-        const val = win.localStorage.getItem('expandedNodes')
-        expect(val === null || !val.includes('2841')).to.be.true
-      })
-    })
-  })
-
-  describe('localStorage persistence', () => {
-    it('restores expanded state after page reload', () => {
-      // Expand 2846 (collapsed by default)
-      cy.get('[data-cy="parentLayerLabel-2846"]').find('button').click()
-      cy.get('[data-cy="parentLayerLabel-2846"]')
-        .find('button')
-        .should('have.attr', 'aria-expanded', 'true')
-      // Reload — override persists from localStorage
-      cy.reload()
-      cy.get('[data-cy="parentLayerLabel-2846"]')
-        .find('button')
-        .should('have.attr', 'aria-expanded', 'true')
-    })
-  })
-
   describe('URL permalink restore', () => {
     it('restores expanded state from expandedNodes URL param', () => {
       // 2846 is collapsed by default — URL overrides it to expanded
@@ -76,6 +45,14 @@ describe('Permalink/State persistor - Expanded nodes', () => {
       cy.get('[data-cy="parentLayerLabel-2846"]')
         .find('button')
         .should('have.attr', 'aria-expanded', 'true')
+    })
+
+    it('restores collapsed state from prefixed expandedNodes URL param', () => {
+      // 2841 is expanded by default — URL overrides it to collapsed
+      cy.visit('/theme/main?expandedNodes=-2841')
+      cy.get('[data-cy="parentLayerLabel-2841"]')
+        .find('button')
+        .should('have.attr', 'aria-expanded', 'false')
     })
   })
 })

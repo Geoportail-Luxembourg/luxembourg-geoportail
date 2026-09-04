@@ -1,25 +1,8 @@
 import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest'
-import { nextTick } from 'vue'
 import { createPinia, setActivePinia } from 'pinia'
 import { statePersistorLayerTreeService } from './state-persistor-layer-tree.service'
 import { useLayerTreeStore } from '@/stores/layer-tree.store'
 import { storageHelper } from './storage/storage.helper'
-import type { LayerTreeNodeModel } from '@/components/layer-tree/layer-tree.model'
-
-function makeNode(
-  id: number,
-  expanded = false,
-  children?: LayerTreeNodeModel[]
-): LayerTreeNodeModel {
-  return {
-    id,
-    name: `node-${id}`,
-    checked: false,
-    expanded,
-    depth: 0,
-    children,
-  }
-}
 
 describe('statePersistorLayerTreeService', () => {
   let fakeStorage: Record<string, string>
@@ -27,20 +10,12 @@ describe('statePersistorLayerTreeService', () => {
   beforeEach(() => {
     setActivePinia(createPinia())
     fakeStorage = {}
-    vi.spyOn(storageHelper, 'setValue').mockImplementation(
-      (key: string, value: unknown, mapper?: (v: unknown) => string) => {
-        fakeStorage[key] = mapper ? mapper(value) : String(value)
-      }
-    )
     vi.spyOn(storageHelper, 'getValue').mockImplementation(
       (key: string, mapper?: (v: string | null) => unknown) => {
         const raw = fakeStorage[key] ?? null
         return mapper ? mapper(raw) : raw
       }
     )
-    vi.spyOn(storageHelper, 'removeItem').mockImplementation((key: string) => {
-      delete fakeStorage[key]
-    })
   })
 
   afterEach(() => {
@@ -66,42 +41,18 @@ describe('statePersistorLayerTreeService', () => {
       const store = useLayerTreeStore()
       expect(store.expandedNodesOverrides).toEqual({})
     })
-  })
 
-  describe('#persist', () => {
-    it('writes overrides to storage when expandedNodesOverrides changes', async () => {
+    it('restores overrides from a shared link URL', () => {
+      // Simulate a shared link with expandedNodes param
+      fakeStorage['expandedNodes'] = '2846,-2841'
+
+      statePersistorLayerTreeService.restore()
+
       const store = useLayerTreeStore()
-      store.captureServerDefaults(makeNode(1, true, [makeNode(2, false)]))
-
-      statePersistorLayerTreeService.bootstrap()
-
-      store.setExpanded(2, true)
-      await nextTick()
-
-      expect(fakeStorage['expandedNodes']).toBe('2')
-    })
-
-    it('removes storage entry when overrides become empty', async () => {
-      const store = useLayerTreeStore()
-      store.captureServerDefaults(makeNode(1, true, [makeNode(2, false)]))
-
-      statePersistorLayerTreeService.bootstrap()
-
-      store.setExpanded(2, true)
-      await nextTick()
-      expect(fakeStorage['expandedNodes']).toBe('2')
-
-      store.setExpanded(2, false) // matches default, override removed
-      await nextTick()
-      expect(fakeStorage['expandedNodes']).toBeUndefined()
-    })
-
-    it('does not write when overrides are empty on bootstrap', async () => {
-      statePersistorLayerTreeService.bootstrap()
-
-      await nextTick()
-
-      expect(fakeStorage['expandedNodes']).toBeUndefined()
+      expect(store.expandedNodesOverrides).toEqual({
+        '2846': true,
+        '2841': false,
+      })
     })
   })
 })

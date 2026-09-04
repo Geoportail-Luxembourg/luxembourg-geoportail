@@ -2,7 +2,6 @@ import {
   ParamKeys,
   SP_AVAILABLE_STORAGES,
   SP_KEY_APPLOGIN,
-  SP_KEY_EXPANDED_NODES,
   SP_KEY_IPV6,
   SP_KEY_LOCALFORAGE,
   SP_KEY_THEME,
@@ -41,9 +40,6 @@ export abstract class RulesReadHelper extends StatePersistorRulesHelper {
       return SP_AVAILABLE_STORAGES.permalink
     }
     if (key === SP_KEY_LAYERS_OPEN) {
-      return SP_AVAILABLE_STORAGES.localStorage
-    }
-    if (key === SP_KEY_EXPANDED_NODES) {
       return SP_AVAILABLE_STORAGES.localStorage
     }
     return undefined

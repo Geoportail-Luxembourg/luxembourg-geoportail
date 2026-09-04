@@ -3,7 +3,6 @@ import {
   SP_AVAILABLE_STORAGES,
   SP_KEY_THEME,
   SP_KEY_LAYERS_OPEN,
-  SP_KEY_EXPANDED_NODES,
   SP_KEY_VERSION,
   SP_KEY_SERIAL,
   SP_KEYS_STYLE,
@@ -24,9 +23,6 @@ export abstract class RulesWriteHelper extends StatePersistorRulesHelper {
       return SP_AVAILABLE_STORAGES.permalink
     }
     if (key === SP_KEY_LAYERS_OPEN) {
-      return SP_AVAILABLE_STORAGES.localStorage
-    }
-    if (key === SP_KEY_EXPANDED_NODES) {
       return SP_AVAILABLE_STORAGES.localStorage
     }
     if (SP_KEYS_STYLE.includes(key)) {
