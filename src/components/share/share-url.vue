@@ -119,7 +119,6 @@ watch(onlyMymaps, () => {
   }
 })
 
-// Watch shareExpandedNodes changes
 watch(shareExpandedNodes, () => {
   if (shareOpen.value) {
     updateUrl()
