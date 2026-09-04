@@ -7,6 +7,7 @@ import { useAppStore } from '@/stores/app.store'
 import { useLayerTreeStore } from '@/stores/layer-tree.store'
 import { urlStorage } from '@/services/state-persistor/storage/url-storage'
 import { storageLayerTreeMapper } from '@/services/state-persistor/state-persistor-layer-tree.mapper'
+import { SP_KEY_EXPANDED_NODES } from '@/services/state-persistor/state-persistor.model'
 
 const { t } = useTranslation()
 const appStore = useAppStore()
@@ -41,7 +42,7 @@ function getFinalUrl(baseUrl: string): string {
     const encoded = storageLayerTreeMapper.expandedNodesToStorage(
       layerTreeStore.expandedNodes
     )
-    urlObj.searchParams.set('expandedNodes', encoded)
+    urlObj.searchParams.set(SP_KEY_EXPANDED_NODES, encoded)
     return urlObj.toString()
   }
 
