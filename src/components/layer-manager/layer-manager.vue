@@ -2,6 +2,7 @@
 import {
   computed,
   onMounted,
+  ref,
   ShallowRef,
   shallowRef,
   useTemplateRef,
@@ -12,11 +13,18 @@ import { useTranslation } from 'i18next-vue'
 import { useAppStore } from '@/stores/app.store'
 import { useMapStore } from '@/stores/map.store'
 import { useMetadataStore } from '@/stores/metadata.store'
+import { useDrawStore } from '@/stores/draw.store'
 import type { Layer, LayerId } from '@/stores/map.store.model'
 import useSortable from '@/composables/sortable'
 import { BLANK_BACKGROUNDLAYER } from '@/composables/background-layer/background-layer.model'
 import useMvtStyles from '@/composables/mvt-styles/mvt-styles.composable'
 import { useSliderComparatorStore } from '@/stores/slider-comparator.store'
+import useMyMaps from '@/composables/my-maps/my-maps.composable'
+import {
+  LOCAL_DRAW_LAYER_ID,
+  MYMAP_DRAW_LAYER_PREFIX,
+} from '@/composables/draw/draw-layer-sync.composable'
+import ModalConfirmDeleteAll from '@/components/draw/modal-confirm-delete-all.vue'
 
 import LayerItemBackground from './layer-item/layer-item-background.vue'
 import LayerItem from './layer-item/layer-item.vue'
@@ -26,8 +34,10 @@ const { t } = useTranslation()
 const { setMetadataLayer } = useMetadataStore()
 const mapStore = useMapStore()
 const appStore = useAppStore()
+const drawStore = useDrawStore()
 const styles = useMvtStyles()
 const sliderStore = useSliderComparatorStore()
+const myMaps = useMyMaps()
 const { bgLayer } = storeToRefs(mapStore)
 const { sliderActive } = storeToRefs(sliderStore)
 const { isOffLine } = storeToRefs(appStore)
@@ -43,6 +53,7 @@ const bgLayerIsEditable = computed(() =>
   styles.isLayerStyleEditable(bgLayer.value)
 )
 const showAddLayerButton = computed(() => !isOffLine.value)
+const showConfirmDeleteDraw = ref(false)
 
 const emit = defineEmits(['displayCatalog'])
 
@@ -81,8 +92,29 @@ function clearLayers() {
   mapStore.removeAllLayers()
 }
 
+function isLocalDrawLayer(layer: Layer): boolean {
+  return layer.id === LOCAL_DRAW_LAYER_ID
+}
+
+function isMyMapDrawLayer(layer: Layer): boolean {
+  return (
+    typeof layer.id === 'string' && layer.id.startsWith(MYMAP_DRAW_LAYER_PREFIX)
+  )
+}
+
 function removeLayer(layer: Layer) {
-  mapStore.removeLayers(layer.id)
+  if (isLocalDrawLayer(layer)) {
+    showConfirmDeleteDraw.value = true
+  } else if (isMyMapDrawLayer(layer)) {
+    myMaps.closeMyMap()
+  } else {
+    mapStore.removeLayers(layer.id)
+  }
+}
+
+function onConfirmDeleteDraw() {
+  showConfirmDeleteDraw.value = false
+  drawStore.removeAllFeatures()
 }
 
 function toggleAccordionItem(layer: Layer) {
@@ -210,5 +242,11 @@ function toggleLayerComparator() {
     <div class="lux-preload">
       <i class="fa-solid fa-trash-can"></i>
     </div>
+
+    <ModalConfirmDeleteAll
+      v-if="showConfirmDeleteDraw"
+      @cancel="showConfirmDeleteDraw = false"
+      @confirm="onConfirmDeleteDraw"
+    />
   </div>
 </template>
