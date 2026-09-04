@@ -2,25 +2,25 @@ import { describe, it, expect } from 'vitest'
 import { storageLayerTreeMapper } from './state-persistor-layer-tree.mapper'
 
 describe('StorageLayerTreeMapper', () => {
-  describe('#expandedOverridesToStorage', () => {
+  describe('#expandedNodesToStorage', () => {
     it('returns empty string for empty object', () => {
-      expect(storageLayerTreeMapper.expandedOverridesToStorage({})).toBe('')
+      expect(storageLayerTreeMapper.expandedNodesToStorage({})).toBe('')
     })
 
     it('encodes a single expanded entry as bare ID', () => {
       expect(
-        storageLayerTreeMapper.expandedOverridesToStorage({ '123': true })
+        storageLayerTreeMapper.expandedNodesToStorage({ '123': true })
       ).toBe('123')
     })
 
     it('encodes a single collapsed entry with - prefix', () => {
       expect(
-        storageLayerTreeMapper.expandedOverridesToStorage({ '456': false })
+        storageLayerTreeMapper.expandedNodesToStorage({ '456': false })
       ).toBe('-456')
     })
 
     it('encodes mixed entries with - for collapsed', () => {
-      const result = storageLayerTreeMapper.expandedOverridesToStorage({
+      const result = storageLayerTreeMapper.expandedNodesToStorage({
         '123': true,
         '456': false,
         '789': true,
@@ -32,34 +32,30 @@ describe('StorageLayerTreeMapper', () => {
     })
   })
 
-  describe('#storageToExpandedOverrides', () => {
+  describe('#storageToExpandedNodes', () => {
     it('returns empty object for null', () => {
-      expect(storageLayerTreeMapper.storageToExpandedOverrides(null)).toEqual(
-        {}
-      )
+      expect(storageLayerTreeMapper.storageToExpandedNodes(null)).toEqual({})
     })
 
     it('returns empty object for empty string', () => {
-      expect(storageLayerTreeMapper.storageToExpandedOverrides('')).toEqual({})
+      expect(storageLayerTreeMapper.storageToExpandedNodes('')).toEqual({})
     })
 
     it('decodes a single expanded entry', () => {
-      expect(storageLayerTreeMapper.storageToExpandedOverrides('123')).toEqual({
+      expect(storageLayerTreeMapper.storageToExpandedNodes('123')).toEqual({
         '123': true,
       })
     })
 
     it('decodes a single collapsed entry', () => {
-      expect(storageLayerTreeMapper.storageToExpandedOverrides('-456')).toEqual(
-        {
-          '456': false,
-        }
-      )
+      expect(storageLayerTreeMapper.storageToExpandedNodes('-456')).toEqual({
+        '456': false,
+      })
     })
 
     it('decodes mixed entries', () => {
       expect(
-        storageLayerTreeMapper.storageToExpandedOverrides('-456,123,789')
+        storageLayerTreeMapper.storageToExpandedNodes('-456,123,789')
       ).toEqual({
         '456': false,
         '123': true,
@@ -69,7 +65,7 @@ describe('StorageLayerTreeMapper', () => {
 
     it('handles leading and trailing commas gracefully', () => {
       expect(
-        storageLayerTreeMapper.storageToExpandedOverrides(',-456,123,')
+        storageLayerTreeMapper.storageToExpandedNodes(',-456,123,')
       ).toEqual({
         '456': false,
         '123': true,
@@ -80,9 +76,8 @@ describe('StorageLayerTreeMapper', () => {
   describe('round-trip', () => {
     it('encode then decode returns original object', () => {
       const original = { '123': true, '456': false, '789': true }
-      const encoded =
-        storageLayerTreeMapper.expandedOverridesToStorage(original)
-      const decoded = storageLayerTreeMapper.storageToExpandedOverrides(encoded)
+      const encoded = storageLayerTreeMapper.expandedNodesToStorage(original)
+      const decoded = storageLayerTreeMapper.storageToExpandedNodes(encoded)
       expect(decoded).toEqual(original)
     })
   })

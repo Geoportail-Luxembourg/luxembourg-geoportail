@@ -19,8 +19,8 @@ const showLongUrl = ref(false)
 const onlyMymaps = ref(false)
 const shareExpandedNodes = ref(false)
 
-const hasOverrides = computed(
-  () => Object.keys(layerTreeStore.expandedNodesOverrides).length > 0
+const hasExpandedNodes = computed(
+  () => Object.keys(layerTreeStore.expandedNodes).length > 0
 )
 
 let urlWatchInterval: ReturnType<typeof setInterval> | null = null
@@ -36,10 +36,10 @@ function getFinalUrl(baseUrl: string): string {
     return urlObj.toString()
   }
 
-  if (shareExpandedNodes.value && hasOverrides.value) {
+  if (shareExpandedNodes.value && hasExpandedNodes.value) {
     const urlObj = new URL(finalUrl)
-    const encoded = storageLayerTreeMapper.expandedOverridesToStorage(
-      layerTreeStore.expandedNodesOverrides
+    const encoded = storageLayerTreeMapper.expandedNodesToStorage(
+      layerTreeStore.expandedNodes
     )
     urlObj.searchParams.set('expandedNodes', encoded)
     return urlObj.toString()
@@ -195,7 +195,7 @@ const isMymapsSelected = () => !!myMapId.value
       </label>
     </div>
 
-    <div v-if="hasOverrides" class="flex gap-1 items-center">
+    <div v-if="hasExpandedNodes" class="flex gap-1 items-center">
       <input
         id="share-expanded-nodes-checkbox"
         type="checkbox"

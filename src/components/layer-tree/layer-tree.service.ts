@@ -110,15 +110,15 @@ export class LayerTreeService {
     }
   }
 
-  applyOverrides(
+  applyExpandedNodes(
     tree: LayerTreeNodeModel,
-    overrides: Record<string, boolean>
+    expandedNodes: Record<string, boolean>
   ): LayerTreeNodeModel {
     const apply = (node: LayerTreeNodeModel): LayerTreeNodeModel => {
-      const override = overrides[String(node.id)]
+      const nodeState = expandedNodes[String(node.id)]
       const newNode = { ...node }
-      if (override !== undefined) {
-        newNode.expanded = override
+      if (nodeState !== undefined) {
+        newNode.expanded = nodeState
       }
       if (newNode.children) {
         newNode.children = newNode.children.map(apply)

@@ -62,9 +62,9 @@ function updateLayerTree() {
       treeModel as LayerTreeNodeModel,
       mapStore.layers
     )
-    layerTree.value = layerTreeService.applyOverrides(
+    layerTree.value = layerTreeService.applyExpandedNodes(
       newTree,
-      layerTreeStore.expandedNodesOverrides
+      layerTreeStore.expandedNodes
     )
   }
 }
@@ -75,9 +75,9 @@ watchEffect(() => {
       ? layerTree3d.value
       : themesToLayerTree(layerTrees_3d.value)
     const newTree = layerTreeService.updateLayers(treeModel, mapStore.layers3d)
-    layerTree3d.value = layerTreeService.applyOverrides(
+    layerTree3d.value = layerTreeService.applyExpandedNodes(
       newTree,
-      layerTreeStore.expandedNodesOverrides
+      layerTreeStore.expandedNodes
     )
   }
 })

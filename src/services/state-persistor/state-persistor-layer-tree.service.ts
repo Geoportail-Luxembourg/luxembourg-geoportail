@@ -11,13 +11,13 @@ class StatePersistorLayerTreeService {
 
   restore() {
     const store = useLayerTreeStore()
-    const overrides = storageHelper.getValue<Record<string, boolean>>(
+    const expandedNodes = storageHelper.getValue<Record<string, boolean>>(
       SP_KEY_EXPANDED_NODES,
-      storageLayerTreeMapper.storageToExpandedOverrides
+      storageLayerTreeMapper.storageToExpandedNodes
     )
 
-    if (Object.keys(overrides).length > 0) {
-      store.expandedNodesOverrides = overrides
+    if (Object.keys(expandedNodes).length > 0) {
+      store.expandedNodes = expandedNodes
     }
   }
 }

@@ -1,36 +1,36 @@
 export class StorageLayerTreeMapper {
   /**
-   * Encode overrides to compact format: "-456,123,789"
+   * Encode expanded nodes to compact format: "-456,123,789"
    * IDs with - prefix are collapsed, others are expanded.
    */
-  expandedOverridesToStorage(
-    overrides: Record<string, boolean> | undefined | null
+  expandedNodesToStorage(
+    expandedNodes: Record<string, boolean> | undefined | null
   ): string {
-    if (!overrides) return ''
+    if (!expandedNodes) return ''
     const parts: string[] = []
-    for (const [id, expanded] of Object.entries(overrides)) {
+    for (const [id, expanded] of Object.entries(expandedNodes)) {
       parts.push(expanded ? id : `-${id}`)
     }
     return parts.join(',')
   }
 
   /**
-   * Decode compact format back to overrides object.
+   * Decode compact format back to expanded nodes object.
    * "-456" = collapsed, "123" = expanded.
    */
-  storageToExpandedOverrides(value: string | null): Record<string, boolean> {
+  storageToExpandedNodes(value: string | null): Record<string, boolean> {
     if (!value) return {}
 
-    const overrides: Record<string, boolean> = {}
+    const expandedNodes: Record<string, boolean> = {}
     for (const token of value.split(',')) {
       if (!token) continue
       if (token.startsWith('-')) {
-        overrides[token.slice(1)] = false
+        expandedNodes[token.slice(1)] = false
       } else {
-        overrides[token] = true
+        expandedNodes[token] = true
       }
     }
-    return overrides
+    return expandedNodes
   }
 }
 

@@ -23,33 +23,33 @@ describe('statePersistorLayerTreeService', () => {
   })
 
   describe('#restore', () => {
-    it('loads overrides from storage into the store', () => {
+    it('loads expanded nodes from storage into the store', () => {
       fakeStorage['expandedNodes'] = '-456,123'
 
       statePersistorLayerTreeService.restore()
 
       const store = useLayerTreeStore()
-      expect(store.expandedNodesOverrides).toEqual({
+      expect(store.expandedNodes).toEqual({
         '456': false,
         '123': true,
       })
     })
 
-    it('does not modify overrides when storage is empty', () => {
+    it('does not modify expanded nodes when storage is empty', () => {
       statePersistorLayerTreeService.restore()
 
       const store = useLayerTreeStore()
-      expect(store.expandedNodesOverrides).toEqual({})
+      expect(store.expandedNodes).toEqual({})
     })
 
-    it('restores overrides from a shared link URL', () => {
+    it('restores expanded nodes from a shared link URL', () => {
       // Simulate a shared link with expandedNodes param
       fakeStorage['expandedNodes'] = '2846,-2841'
 
       statePersistorLayerTreeService.restore()
 
       const store = useLayerTreeStore()
-      expect(store.expandedNodesOverrides).toEqual({
+      expect(store.expandedNodes).toEqual({
         '2846': true,
         '2841': false,
       })

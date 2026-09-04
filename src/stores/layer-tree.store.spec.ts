@@ -55,24 +55,24 @@ describe('layer-tree store', () => {
   })
 
   describe('#setExpanded', () => {
-    it('adds override when expanded differs from server default', () => {
+    it('adds entry when expanded differs from server default', () => {
       const store = useLayerTreeStore()
       store.captureServerDefaults(makeTree()) // node 2: expanded=false
 
       store.setExpanded(2, true)
 
-      expect(store.expandedNodesOverrides['2']).toBe(true)
+      expect(store.expandedNodes['2']).toBe(true)
     })
 
-    it('removes override when expanded matches server default', () => {
+    it('removes entry when expanded matches server default', () => {
       const store = useLayerTreeStore()
       store.captureServerDefaults(makeTree()) // node 2: expanded=false
 
-      store.setExpanded(2, true) // override added
-      expect(store.expandedNodesOverrides['2']).toBe(true)
+      store.setExpanded(2, true) // entry added
+      expect(store.expandedNodes['2']).toBe(true)
 
-      store.setExpanded(2, false) // matches default, override removed
-      expect(store.expandedNodesOverrides['2']).toBeUndefined()
+      store.setExpanded(2, false) // matches default, entry removed
+      expect(store.expandedNodes['2']).toBeUndefined()
     })
 
     it('defaults to false when node not in serverDefaults', () => {
@@ -80,17 +80,17 @@ describe('layer-tree store', () => {
 
       store.setExpanded(999, true)
 
-      expect(store.expandedNodesOverrides['999']).toBe(true)
+      expect(store.expandedNodes['999']).toBe(true)
     })
 
-    it('removes override when setting back to default (false for unknown node)', () => {
+    it('removes entry when setting back to default (false for unknown node)', () => {
       const store = useLayerTreeStore()
 
       store.setExpanded(999, true)
-      expect(store.expandedNodesOverrides['999']).toBe(true)
+      expect(store.expandedNodes['999']).toBe(true)
 
       store.setExpanded(999, false)
-      expect(store.expandedNodesOverrides['999']).toBeUndefined()
+      expect(store.expandedNodes['999']).toBeUndefined()
     })
 
     it('handles multiple nodes independently', () => {
@@ -100,7 +100,7 @@ describe('layer-tree store', () => {
       store.setExpanded(2, true)
       store.setExpanded(3, false)
 
-      expect(store.expandedNodesOverrides).toEqual({
+      expect(store.expandedNodes).toEqual({
         '2': true,
         '3': false,
       })

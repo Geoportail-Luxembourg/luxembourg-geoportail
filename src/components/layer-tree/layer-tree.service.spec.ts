@@ -109,7 +109,7 @@ describe('layerTreeService.expandToLayer', () => {
   })
 })
 
-describe('layerTreeService.applyOverrides', () => {
+describe('layerTreeService.applyExpandedNodes', () => {
   function findNodeById(
     tree: LayerTreeNodeModel,
     id: number
@@ -122,48 +122,48 @@ describe('layerTreeService.applyOverrides', () => {
     return undefined
   }
 
-  it('applies override to matching node', () => {
+  it('applies expanded state to matching node', () => {
     const tree = makeTree()
-    const overrides = { '1': true }
+    const expandedNodes = { '1': true }
 
-    const result = layerTreeService.applyOverrides(tree, overrides)
+    const result = layerTreeService.applyExpandedNodes(tree, expandedNodes)
 
     expect(findNodeById(result, 1)?.expanded).toBe(true)
   })
 
-  it('does not change nodes without overrides', () => {
+  it('does not change nodes without expanded state entries', () => {
     const tree = makeTree()
-    const overrides = {}
+    const expandedNodes = {}
 
-    const result = layerTreeService.applyOverrides(tree, overrides)
+    const result = layerTreeService.applyExpandedNodes(tree, expandedNodes)
 
     expect(findNodeById(result, 0)?.expanded).toBe(false)
     expect(findNodeById(result, 1)?.expanded).toBe(false)
   })
 
-  it('applies overrides recursively to children', () => {
+  it('applies expanded state recursively to children', () => {
     const tree = makeTree()
-    const overrides = { '10': true }
+    const expandedNodes = { '10': true }
 
-    const result = layerTreeService.applyOverrides(tree, overrides)
+    const result = layerTreeService.applyExpandedNodes(tree, expandedNodes)
 
     expect(findNodeById(result, 10)?.expanded).toBe(true)
   })
 
   it('does not mutate the input tree', () => {
     const tree = makeTree()
-    const overrides = { '1': true }
+    const expandedNodes = { '1': true }
 
-    layerTreeService.applyOverrides(tree, overrides)
+    layerTreeService.applyExpandedNodes(tree, expandedNodes)
 
     expect(findNodeById(tree, 1)?.expanded).toBe(false)
   })
 
-  it('returns copy of tree when no overrides exist', () => {
+  it('returns copy of tree when no entries exist', () => {
     const tree = makeTree()
-    const overrides = {}
+    const expandedNodes = {}
 
-    const result = layerTreeService.applyOverrides(tree, overrides)
+    const result = layerTreeService.applyExpandedNodes(tree, expandedNodes)
 
     expect(result).not.toBe(tree)
     expect(findNodeById(result, 0)?.expanded).toBe(false)
