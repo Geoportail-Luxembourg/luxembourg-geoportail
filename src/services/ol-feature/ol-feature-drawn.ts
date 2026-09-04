@@ -333,6 +333,7 @@ export class DrawnFeature extends Feature {
       linestyle,
       name: this.label,
       opacity: Number(this.featureStyle.opacity),
+      isVisible: Boolean(this.featureStyle.isVisible),
       showOrientation: Boolean(this.featureStyle.showOrientation),
       shape: this.featureStyle.shape,
       size: Number(this.featureStyle.size),
@@ -384,6 +385,7 @@ export class DrawnFeature extends Feature {
       stroke: Number(properties.stroke ?? this.featureStyle.stroke),
       linestyle,
       opacity: Number(properties.opacity ?? this.featureStyle.opacity),
+      isVisible: Boolean(properties.isVisible ?? this.featureStyle.isVisible),
       showOrientation,
       shape: properties.shape ?? this.featureStyle.shape,
       size: Number(properties.size ?? this.featureStyle.size),
@@ -488,6 +490,10 @@ export class DrawnFeature extends Feature {
       if (resolution === undefined) {
         resolution = feature
         feature = this
+      }
+
+      if (feature.featureStyle.isVisible === false) {
+        return []
       }
 
       // Clear the styles array

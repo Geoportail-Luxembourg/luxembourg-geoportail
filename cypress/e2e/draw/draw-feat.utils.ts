@@ -8,6 +8,7 @@ export function testFeatItem() {
   cy.get('*[data-cy="featItemActionSearch"]').should('exist')
   cy.get('*[data-cy="featItemActionEdit"]').should('exist')
   cy.get('*[data-cy="featItemActionStyle"]').should('exist')
+  cy.get('*[data-cy="featItemActionVisibility"]').should('exist')
   cy.get('*[data-cy="featItemActionDelete"]').should('exist')
 }
 

@@ -32,6 +32,7 @@ const emit = defineEmits([
   'toggleFeatureSub',
   'toggleEditFeature',
   'toggleDock',
+  'toggleFeatureVisibility',
   'submitFeature',
   'submitNewConcentricCircle',
 ])
@@ -44,6 +45,10 @@ function onToggleFeatureSub() {
 
 function onToggleEditFeature() {
   emit('toggleEditFeature', localFeature.id, !props.isEditing)
+}
+
+function onToggleFeatureVisibility() {
+  emit('toggleFeatureVisibility', localFeature.id)
 }
 
 function onClickDelete() {
@@ -119,6 +124,7 @@ function onSubmitNewConcentricCircle(
         :isEditingFeature="isEditing"
         @toggleEditFeature="onToggleEditFeature"
         @toggleDock="() => emit('toggleDock')"
+        @toggleFeatureVisibility="onToggleFeatureVisibility"
         @clickDelete="onClickDelete"
         @continueLine="() => emit('continueLine')"
         @resetInfo="onResetInfo"

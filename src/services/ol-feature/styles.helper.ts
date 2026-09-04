@@ -8,6 +8,7 @@ export function getDefaultDrawnFeatureStyle() {
     stroke: 1.25,
     linestyle: 'plain',
     opacity: 0.2,
+    isVisible: true,
     showOrientation: false,
     shape: 'circle',
     symbolId: undefined,
