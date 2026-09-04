@@ -2,11 +2,16 @@ import { watch } from 'vue'
 import { storeToRefs } from 'pinia'
 import Draw from 'ol/interaction/Draw'
 import VectorSource from 'ol/source/Vector'
-import OlMap from 'ol/Map'
+import VectorLayer from 'ol/layer/Vector'
 
 import { useDrawStore } from '@/stores/draw.store'
 import { DrawnFeature } from '@/services/ol-feature/ol-feature-drawn'
 import { olLayerFactoryService } from '@/services/ol-layer/ol-layer-factory.service'
+import { Layer } from '@/stores/map.store.model'
+import {
+  LOCAL_DRAW_LAYER_ID,
+  MYMAP_DRAW_LAYER_PREFIX,
+} from './draw-layer-sync.composable'
 import useDrawInteraction from './draw-interaction.composable'
 
 type DrawInteractions = {
@@ -17,10 +22,34 @@ type DrawInteractions = {
   drawPolygon: Draw
 }
 
+const drawSubLayers = new Map<string, VectorLayer>()
+
+function getGroupKeyId(feature: DrawnFeature): string {
+  return feature.map_id
+    ? `${MYMAP_DRAW_LAYER_PREFIX}${feature.map_id}`
+    : LOCAL_DRAW_LAYER_ID
+}
+
+function ensureSubLayer(groupId: string): VectorLayer {
+  let subLayer = drawSubLayers.get(groupId)
+  if (!subLayer) {
+    const layerSpec: Layer = {
+      id: groupId,
+      name: '',
+      layers: '',
+      type: 'DRAW',
+      imageType: '',
+      opacity: 1,
+    }
+    subLayer = olLayerFactoryService.createOlLayer(layerSpec) as VectorLayer
+    drawSubLayers.set(groupId, subLayer)
+  }
+  return subLayer
+}
+
 /**
  * This composable is mainly used to initialize the drawing functionality.
  * It sets watchers draw states and interactions, thus it should only be called once in the whole app.
- * @returns addDrawLayer()
  */
 export default function useDraw() {
   const drawStore = useDrawStore()
@@ -32,7 +61,6 @@ export default function useDraw() {
     editingFeatureId,
   } = storeToRefs(drawStore)
   const { createDrawInteraction } = useDrawInteraction()
-  const drawLayer = olLayerFactoryService.createOlLayerInteractionDraw()
   const drawInteractions = {
     drawPoint: createDrawInteraction({ type: 'Point' }),
     drawLabel: createDrawInteraction({ type: 'Point' }),
@@ -95,48 +123,69 @@ export default function useDraw() {
     )
   })
 
-  /**
-   * Add draw layer after map init to allow restoring draw features (not in v3 for now)
-   * TODO: remove v4_standalone condition or move calls outside of it, once v4 draw or feature info is used in v3
-   * @param map
-   */
-  function addDrawLayer(map: OlMap) {
-    map.addLayer(drawLayer)
-  }
-
   function addFeaturesToSource(
     features: DrawnFeature[],
     excludeFeatureId?: string | number
   ) {
-    const source = <VectorSource>drawLayer.getSource()
+    // Group features by their group key
+    const groupedFeatures = new Map<string, DrawnFeature[]>()
+    for (const f of features) {
+      const groupId = getGroupKeyId(f)
+      if (!groupedFeatures.has(groupId)) {
+        groupedFeatures.set(groupId, [])
+      }
+      groupedFeatures.get(groupId)!.push(f)
+    }
 
     // Filter out the feature being edited (it's in editSource)
-    const featuresToAdd = excludeFeatureId
-      ? features.filter(f => f.id !== excludeFeatureId)
-      : features
+    const filteredGroupedFeatures = new Map<string, DrawnFeature[]>()
+    for (const [groupId, groupFeatures] of groupedFeatures) {
+      filteredGroupedFeatures.set(
+        groupId,
+        excludeFeatureId
+          ? groupFeatures.filter(f => f.id !== excludeFeatureId)
+          : groupFeatures
+      )
+    }
 
-    // Get current features in source
-    const currentFeatures = source?.getFeatures() || []
+    // Sync features to each sub-layer
+    for (const [groupId, groupFeatures] of filteredGroupedFeatures) {
+      if (groupFeatures.length === 0) continue
 
-    // Remove features that shouldn't be there
-    currentFeatures.forEach(f => {
-      const drawnF = f as DrawnFeature
-      if (!featuresToAdd.find(feat => feat.id === drawnF.id)) {
-        source?.removeFeature(f)
+      const subLayer = ensureSubLayer(groupId)
+      const source = subLayer.getSource() as VectorSource
+      const currentFeatures = source?.getFeatures() || []
+
+      // Remove features that shouldn't be there
+      currentFeatures.forEach(f => {
+        const drawnF = f as DrawnFeature
+        if (!groupFeatures.find(feat => feat.id === drawnF.id)) {
+          source?.removeFeature(f)
+        }
+      })
+
+      // Add features that should be there but aren't
+      groupFeatures.forEach(f => {
+        if (!currentFeatures.find(feat => (feat as DrawnFeature).id === f.id)) {
+          f.changed()
+          source?.addFeature(f)
+        }
+      })
+    }
+
+    // Clear sub-layers that no longer have any features in the group
+    for (const [groupId, subLayer] of drawSubLayers) {
+      if (
+        !filteredGroupedFeatures.has(groupId) ||
+        filteredGroupedFeatures.get(groupId)!.length === 0
+      ) {
+        const source = subLayer.getSource() as VectorSource
+        source?.clear()
       }
-    })
-
-    // Add features that should be there but aren't
-    featuresToAdd.forEach(f => {
-      if (!currentFeatures.find(feat => (feat as DrawnFeature).id === f.id)) {
-        f.changed() // Trigger re-render
-        source?.addFeature(f)
-      }
-    })
+    }
   }
 
   return {
-    addDrawLayer,
     drawInteractions,
   }
 }

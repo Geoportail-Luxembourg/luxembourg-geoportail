@@ -10,6 +10,7 @@ const props = defineProps<{
   isOpen: boolean
   isLayerComparatorOpen: boolean
   displayLayerComparatorOpen: boolean
+  isDrawingLayer: boolean
 }>()
 const emit = defineEmits([
   'changeOpacity',
@@ -102,6 +103,7 @@ function dispatchChangeOpacity() {
     />
     <div class="flex justify-end items-center gap-x-2 ml-auto">
       <button
+        v-if="!isDrawingLayer"
         data-cy="myLayerLocaliseInCatalog"
         role="button"
         :tabindex="!isOpen ? -1 : 0"
