@@ -73,7 +73,7 @@ async function updateUrl() {
       url.value = mymapsShortUrl.short_url
     } else {
       // For normal mode, use the urlStorage service
-      const shortUrlResponse = await urlStorage.getShortUrl(undefined)
+      const shortUrlResponse = await urlStorage.getShortUrl(undefined, finalUrl)
       url.value = shortUrlResponse.short_url
     }
   } catch (error) {
@@ -196,7 +196,10 @@ const isMymapsSelected = () => !!myMapId.value
       </label>
     </div>
 
-    <div v-if="hasExpandedNodes" class="flex gap-1 items-center">
+    <div
+      v-if="hasExpandedNodes && !isMymapsSelected()"
+      class="flex gap-1 items-center"
+    >
       <input
         id="share-expanded-nodes-checkbox"
         type="checkbox"
