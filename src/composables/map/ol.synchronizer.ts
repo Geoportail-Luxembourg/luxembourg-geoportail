@@ -74,7 +74,59 @@ export class OlSynchronizer {
         })
 
         if (newContext.layers) {
-          openLayers.reorderLayers(map, newContext.layers)
+          openLayers.reorderLayers(map, mapStore.allLayers)
+        }
+      }
+    )
+
+    watch(
+      () => mapStore.drawLayers,
+      (newLayers, oldLayers) => {
+        const oldContext = {
+          layers: oldLayers,
+        }
+        const newContext = {
+          layers: newLayers,
+        }
+        const removedLayers = mapService.getRemovedLayers(
+          newContext,
+          oldContext
+        )
+
+        const addedLayerComparisons = mapService.getAddedLayers(
+          newContext,
+          oldContext
+        )
+
+        const mutatedLayerComparisons = mapService.getMutatedLayers(
+          newContext,
+          oldContext
+        )
+
+        removedLayers.forEach(layer => openLayers.removeLayer(map, layer.id))
+
+        addedLayerComparisons.forEach(cmp => {
+          openLayers.addLayer(map, cmp.layer)
+        })
+
+        mutatedLayerComparisons.forEach(layer => {
+          const mutationType = mapService.getMutationType(
+            layer.id,
+            newContext,
+            oldContext
+          )
+
+          if (mutationType === MutationTypeValue.ON_LAYER_TYPE) {
+            openLayers.removeLayer(map, layer.id)
+            openLayers.addLayer(map, layer)
+          } else {
+            openLayers.setLayerOpacity(map, layer.id, layer.opacity as number)
+          }
+        })
+
+        // Reorder all layers (catalog + draw) based on their combined position
+        if (newContext.layers) {
+          openLayers.reorderLayers(map, mapStore.allLayers)
         }
       }
     )

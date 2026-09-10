@@ -45,7 +45,7 @@ const { setRemoteLayersOpen } = appStore
 
 const sortableLayers = useTemplateRef('sortableLayers')
 const sortableLayers3d = useTemplateRef('sortableLayers3d')
-const layers = computed(() => [...mapStore.layers].reverse())
+const layers = computed(() => [...mapStore.allLayers].reverse())
 const layers3d = computed(() => [...mapStore.layers3d].reverse())
 const isLayerOpenId: ShallowRef<LayerId | undefined> = shallowRef()
 const dragHandleClassName = 'drag-handle'
@@ -73,7 +73,26 @@ function sortMethod(elements: HTMLCollection, is3d?: boolean) {
       return isNaN(numericId) ? id : numericId
     })
     .reverse()
-  mapStore.reorderLayers(layersIds, is3d)
+
+  // Update combined order
+  mapStore.reorderAllLayers(layersIds)
+
+  // Separate catalog and draw layers for reordering
+  const catalogLayerIds = layersIds.filter(id => {
+    const layer = mapStore.layers.find(l => l.id === id)
+    return !!layer
+  })
+  const drawLayerIds = layersIds.filter(id => {
+    const layer = mapStore.drawLayers.find(l => l.id === id)
+    return !!layer
+  })
+
+  if (catalogLayerIds.length > 0) {
+    mapStore.reorderLayers(catalogLayerIds, is3d)
+  }
+  if (drawLayerIds.length > 0) {
+    mapStore.reorderDrawLayers(drawLayerIds)
+  }
 }
 
 function sort3dMethod(elements: HTMLCollection) {
@@ -81,7 +100,11 @@ function sort3dMethod(elements: HTMLCollection) {
 }
 
 function changeOpacityLayer(layer: Layer, opacity: number) {
-  mapStore.setLayerOpacity(layer.id as number, opacity / 100) // TODO: replace "as number"
+  if (isLocalDrawLayer(layer) || isMyMapDrawLayer(layer)) {
+    mapStore.setDrawLayerOpacity(layer.id, opacity / 100)
+  } else {
+    mapStore.setLayerOpacity(layer.id as number, opacity / 100) // TODO: replace "as number"
+  }
 }
 
 function changeTime(layer: Layer, dateStart?: string, dateEnd?: string) {
@@ -90,6 +113,7 @@ function changeTime(layer: Layer, dateStart?: string, dateEnd?: string) {
 
 function clearLayers() {
   mapStore.removeAllLayers()
+  mapStore.removeAllDrawLayers()
 }
 
 function isLocalDrawLayer(layer: Layer): boolean {
@@ -153,6 +177,7 @@ function toggleLayerComparator() {
           :isOpen="isLayerOpenId === layer.id"
           :isLayerComparatorOpen="sliderActive"
           :displayLayerComparatorOpen="index === 0"
+          :isDrawingLayer="false"
           @clickRemove="removeLayer"
           @clickToggle="toggleAccordionItem"
           @clickToggleLayerComparator="toggleLayerComparator"
