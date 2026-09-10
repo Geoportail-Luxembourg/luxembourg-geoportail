@@ -91,9 +91,9 @@ function sort3dMethod(elements: HTMLCollection) {
 
 function changeOpacityLayer(layer: Layer, opacity: number) {
   if (isLocalDrawLayer(layer) || isMyMapDrawLayer(layer)) {
-    mapStore.setDrawLayerOpacity(layer.id, opacity / 100)
+    mapStore.draw.setOpacity(layer.id, opacity / 100)
   } else {
-    mapStore.setCatalogLayerOpacity(layer.id, opacity / 100)
+    mapStore.catalog.setOpacity(layer.id, opacity / 100)
   }
 }
 
@@ -102,8 +102,8 @@ function changeTime(layer: Layer, dateStart?: string, dateEnd?: string) {
 }
 
 function clearLayers() {
-  mapStore.removeAllCatalogLayers()
-  mapStore.removeAllDrawLayers()
+  mapStore.catalog.removeAll()
+  mapStore.draw.removeAll()
 }
 
 function isLocalDrawLayer(layer: Layer): boolean {
@@ -122,7 +122,7 @@ function removeLayer(layer: Layer) {
   } else if (isMyMapDrawLayer(layer)) {
     myMaps.closeMyMap()
   } else {
-    mapStore.removeCatalogLayers(layer.id)
+    mapStore.catalog.remove(layer.id)
   }
 }
 

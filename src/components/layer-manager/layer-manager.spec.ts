@@ -35,6 +35,7 @@ const bgLayerMock = {
 describe('LayerManager', () => {
   const pinia = createTestingPinia({
     createSpy: vi.fn,
+    stubActions: false,
     initialState: {
       map: {
         layers: [layerMock1, layerMock2],
@@ -93,21 +94,23 @@ describe('LayerManager', () => {
         )
       })
 
-      it('#removeLayer', async () => {
+      it('#removeLayer removes catalog layer', async () => {
+        mapStore.catalog.add(layerMock1)
+        const initialLength = mapStore.layers.length
         await wrapper.vm.removeLayer(layerMock1)
         await wrapper.vm.$nextTick()
-        expect(mapStore.removeCatalogLayers).toHaveBeenCalledTimes(1)
+        expect(mapStore.layers.length).toBe(initialLength - 1)
+        expect(mapStore.catalog.has(layerMock1.id)).toBe(false)
       })
 
-      it('#changeOpacityLayer', async () => {
+      it('#changeOpacityLayer updates layer opacity', async () => {
+        mapStore.catalog.add(layerMock1)
         await wrapper.vm.changeOpacityLayer(layerMock1, 20)
-        expect(mapStore.setCatalogLayerOpacity).toHaveBeenLastCalledWith(
-          layerMock1.id,
-          20 / 100
-        )
+        const layer = mapStore.layers.find(l => l.id === layerMock1.id)
+        expect(layer?.opacity).toBe(20 / 100)
       })
 
-      it('#sortMethod', async () => {
+      it('#sortMethod updates layerOrder', async () => {
         const layerCollection = document.createElement('div')
         const layer1 = document.createElement('div')
         const layer2 = document.createElement('div')
@@ -117,8 +120,7 @@ describe('LayerManager', () => {
         layerCollection.appendChild(layer2)
 
         await wrapper.vm.sortMethod(layerCollection.children)
-        expect(mapStore.reorderAllLayers).toHaveBeenCalledTimes(1)
-        expect(mapStore.reorderAllLayers).toHaveBeenCalledWith([2, 1])
+        expect(mapStore.layerOrder).toEqual([2, 1])
       })
 
       it('#sortMethod with remote WMS layer', async () => {
@@ -132,7 +134,7 @@ describe('LayerManager', () => {
         layerCollection.appendChild(wmsLayer)
 
         await wrapper.vm.sortMethod(layerCollection.children)
-        expect(mapStore.reorderAllLayers).toHaveBeenCalledWith([
+        expect(mapStore.layerOrder).toEqual([
           'WMS||https://ows.terrestris.de/osm%2Dgray/service||OSM%2DWMS',
           1,
         ])

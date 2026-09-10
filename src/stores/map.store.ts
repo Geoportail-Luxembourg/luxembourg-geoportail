@@ -50,7 +50,7 @@ export const useMapStore = defineStore('map', () => {
   }
 
   // Shared layer operations
-  const catalogOps = useLayerOperations(layers, {
+  const catalog = useLayerOperations(layers, {
     afterAdd: newLayers => newLayers.forEach(l => addToLayerOrder(l.id)),
     afterRemove: ids => {
       layers3d.value = layers3d.value.filter(l => !ids.includes(l.id))
@@ -58,70 +58,12 @@ export const useMapStore = defineStore('map', () => {
     },
   })
 
-  const drawOps = useLayerOperations(drawLayers, {
+  const draw = useLayerOperations(drawLayers, {
     afterAdd: newLayers => newLayers.forEach(l => addToLayerOrder(l.id)),
     afterRemove: ids => {
       ids.forEach(id => removeFromLayerOrder(id))
     },
   })
-
-  // Top-level wrappers for Pinia action compatibility (testable via createTestingPinia)
-  function addCatalogLayers(...newLayers: Layer[]) {
-    catalogOps.add(...newLayers)
-  }
-
-  function removeCatalogLayers(...ids: LayerId[]) {
-    catalogOps.remove(...ids)
-  }
-
-  function removeAllCatalogLayers() {
-    catalogOps.removeAll()
-  }
-
-  function setCatalogLayerOpacity(id: LayerId, opacity: number) {
-    catalogOps.setOpacity(id, opacity)
-  }
-
-  function hasCatalogLayer(id: LayerId): boolean {
-    return catalogOps.has(id)
-  }
-
-  function addDrawLayers(...newLayers: Layer[]) {
-    drawOps.add(...newLayers)
-  }
-
-  function removeDrawLayers(...ids: LayerId[]) {
-    drawOps.remove(...ids)
-  }
-
-  function removeAllDrawLayers() {
-    drawOps.removeAll()
-  }
-
-  function setDrawLayerOpacity(id: LayerId, opacity: number) {
-    drawOps.setOpacity(id, opacity)
-  }
-
-  function hasDrawLayer(id: LayerId): boolean {
-    return drawOps.has(id)
-  }
-
-  // Convenience accessors that delegate to the operations
-  const catalog = {
-    add: catalogOps.add,
-    remove: catalogOps.remove,
-    removeAll: catalogOps.removeAll,
-    setOpacity: catalogOps.setOpacity,
-    has: catalogOps.has,
-  }
-
-  const draw = {
-    add: drawOps.add,
-    remove: drawOps.remove,
-    removeAll: drawOps.removeAll,
-    setOpacity: drawOps.setOpacity,
-    has: drawOps.has,
-  }
 
   function add3dLayers(...newLayers: Layer[]) {
     layers3d.value = [...new Set([...layers3d.value, ...newLayers])]
@@ -194,16 +136,6 @@ export const useMapStore = defineStore('map', () => {
     rotation,
     catalog,
     draw,
-    addCatalogLayers,
-    removeCatalogLayers,
-    removeAllCatalogLayers,
-    setCatalogLayerOpacity,
-    hasCatalogLayer,
-    addDrawLayers,
-    removeDrawLayers,
-    removeAllDrawLayers,
-    setDrawLayerOpacity,
-    hasDrawLayer,
     add3dLayers,
     reorderAllLayers,
     reorder3dLayers,
