@@ -15,7 +15,7 @@ const { t } = useTranslation()
 const appStore = useAppStore()
 const { setLayersOpen } = appStore
 const { myLayersTabOpen } = storeToRefs(appStore)
-const { layers } = storeToRefs(useMapStore())
+const { allLayers } = storeToRefs(useMapStore())
 const { themesLoading } = storeToRefs(useThemeStore())
 const showCatalogButton = computed(() => !useOffline().isOffLine.value)
 const showMyLayersTab = computed(
@@ -53,7 +53,7 @@ function onDisplayCatalog() {
         :aria-expanded="showMyLayersTab"
       >
         {{ t('my_layers', { ns: 'app' }) }}
-        <span v-if="layers.length">({{ layers.length }})</span>
+        <span v-if="allLayers.length">({{ allLayers.length }})</span>
       </button>
       <button
         v-if="showCatalogButton"
