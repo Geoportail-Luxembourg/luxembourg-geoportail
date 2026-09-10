@@ -29,24 +29,20 @@ let lastCheckedUrl = ''
 
 // Helper function to get the final URL (with MyMaps-only or expandedNodes transformation)
 function getFinalUrl(baseUrl: string): string {
-  let finalUrl = baseUrl
+  const urlObj = new URL(baseUrl)
 
   if (onlyMymaps.value && myMapId.value) {
-    const urlObj = new URL(finalUrl)
     urlObj.search = `?map_id=${myMapId.value}`
-    return urlObj.toString()
   }
 
   if (shareExpandedNodes.value && hasExpandedNodes.value) {
-    const urlObj = new URL(finalUrl)
     const encoded = storageLayerTreeMapper.expandedNodesToStorage(
       layerTreeStore.expandedNodes
     )
     urlObj.searchParams.set(SP_KEY_EXPANDED_NODES, encoded)
-    return urlObj.toString()
   }
 
-  return finalUrl
+  return urlObj.toString()
 }
 
 async function updateUrl() {
@@ -57,25 +53,8 @@ async function updateUrl() {
   lastCheckedUrl = finalUrl // Update the last checked URL
 
   try {
-    if (onlyMymaps.value && myMapId.value) {
-      // For MyMaps-only mode, call the shortener directly with the filtered URL
-      const data = new URLSearchParams()
-      data.set('url', finalUrl)
-
-      const response = await fetch(import.meta.env.VITE_SHORT_URL, {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/x-www-form-urlencoded',
-        },
-        body: data.toString(),
-      })
-      const mymapsShortUrl = await response.json()
-      url.value = mymapsShortUrl.short_url
-    } else {
-      // For normal mode, use the urlStorage service
-      const shortUrlResponse = await urlStorage.getShortUrl(undefined, finalUrl)
-      url.value = shortUrlResponse.short_url
-    }
+    const shortUrlResponse = await urlStorage.getShortUrl(undefined, finalUrl)
+    url.value = shortUrlResponse.short_url
   } catch (error) {
     // Fallback to long URL on error
     url.value = finalUrl
@@ -196,10 +175,7 @@ const isMymapsSelected = () => !!myMapId.value
       </label>
     </div>
 
-    <div
-      v-if="hasExpandedNodes && !isMymapsSelected()"
-      class="flex gap-1 items-center"
-    >
+    <div v-if="hasExpandedNodes" class="flex gap-1 items-center">
       <input
         id="share-expanded-nodes-checkbox"
         type="checkbox"
