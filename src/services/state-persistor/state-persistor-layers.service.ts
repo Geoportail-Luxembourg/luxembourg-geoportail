@@ -15,6 +15,7 @@ import { remoteLayersService } from '@/services/remote-layers/remote-layers.serv
 
 import {
   SP_KEY_LAYERS,
+  SP_KEY_LAYERORDER,
   SP_KEY_BGLAYER,
   SP_KEY_TIME_SELECTIONS,
   SP_KEY_OPACITIES,
@@ -45,7 +46,7 @@ class StatePersistorLayersService implements StatePersistorService {
 
   persist() {
     const mapStore = useMapStore()
-    const { layers } = storeToRefs(mapStore)
+    const { layers, layerOrder } = storeToRefs(mapStore)
 
     watch(
       layers,
@@ -69,6 +70,18 @@ class StatePersistorLayersService implements StatePersistorService {
             storageLayerMapper.layersToLayerTimes
           )
         }
+      },
+      { immediate: true }
+    )
+
+    watch(
+      layerOrder,
+      value => {
+        storageHelper.setValue(
+          SP_KEY_LAYERORDER,
+          value,
+          storageLayerMapper.layerOrderToStorage
+        )
       },
       { immediate: true }
     )
@@ -129,6 +142,15 @@ class StatePersistorLayersService implements StatePersistorService {
     }
 
     mapStore.catalog.add(...layersToAdd)
+
+    // Restore custom layer order if saved
+    const savedLayerOrder = storageHelper.getValue(
+      SP_KEY_LAYERORDER,
+      storageLayerMapper.storageToLayerOrder
+    )
+    if (savedLayerOrder.length > 0) {
+      mapStore.reorderAllLayers(savedLayerOrder)
+    }
 
     // Track initial layers in Matomo (restored from URL/storage)
     const matomo = useMatomo()

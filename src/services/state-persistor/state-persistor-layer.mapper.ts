@@ -83,6 +83,22 @@ class StorageLayerMapper {
     )
   }
 
+  layerOrderToStorage(ids: (number | string)[] | null): string {
+    return (
+      ids?.map(id => String(id).replace(/-/g, '%2D')).join(STORAGE_SEPARATOR) ||
+      ''
+    )
+  }
+
+  storageToLayerOrder(text: string | null): (number | string)[] {
+    if (!text) return []
+    return text.split(STORAGE_SEPARATOR).map(raw => {
+      const decoded = raw.split('%2D').join('-')
+      const num = Number(decoded)
+      return isNaN(num) ? decoded : num
+    })
+  }
+
   layersToLayerOpacities(layers: Layer[] | null): string {
     return (
       layers
