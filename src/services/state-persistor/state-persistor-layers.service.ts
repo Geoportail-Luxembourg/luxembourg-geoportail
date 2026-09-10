@@ -128,7 +128,7 @@ class StatePersistorLayersService implements StatePersistorService {
       }
     }
 
-    mapStore.addLayers(...layersToAdd)
+    mapStore.catalog.add(...layersToAdd)
 
     // Track initial layers in Matomo (restored from URL/storage)
     const matomo = useMatomo()
@@ -220,7 +220,7 @@ class StatePersistorLayersService implements StatePersistorService {
                   }
                 })
 
-                mapStore.addLayers(...nowResolved)
+                mapStore.catalog.add(...nowResolved)
                 const matomo = useMatomo()
                 nowResolved.forEach(l => matomo.trackLayerAdd(l.name))
               }

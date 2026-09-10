@@ -34,18 +34,17 @@ export default function useDrawLayerSync() {
   const { drawnFeaturesExceptMyMaps, drawnFeaturesMyMaps } =
     storeToRefs(drawStore)
   const { myMap } = storeToRefs(appStore)
-  const { drawLayers } = storeToRefs(mapStore)
 
   function hasLayer(layerId: string): boolean {
-    return drawLayers.value.some(l => l.id === layerId)
+    return mapStore.draw.has(layerId)
   }
 
   function addDrawLayer(layer: Layer) {
-    mapStore.addDrawLayers(layer)
+    mapStore.draw.add(layer)
   }
 
   function removeDrawLayer(layerId: string) {
-    mapStore.removeDrawLayers(layerId)
+    mapStore.draw.remove(layerId)
   }
 
   // Sync local drawings layer
@@ -89,7 +88,7 @@ export default function useDrawLayerSync() {
       }
 
       // Remove layers for groups that no longer have features
-      const myMapLayerIds = drawLayers.value
+      const myMapLayerIds = mapStore.drawLayers
         .filter(
           l =>
             typeof l.id === 'string' && l.id.startsWith(MYMAP_DRAW_LAYER_PREFIX)
@@ -111,7 +110,7 @@ export default function useDrawLayerSync() {
     if (newMyMap?.uuid) {
       const layerId = getMyMapLayerId(newMyMap.uuid)
       if (hasLayer(layerId)) {
-        mapStore.removeDrawLayers(layerId)
+        mapStore.draw.remove(layerId)
         addDrawLayer(createDrawLayer(layerId, newMyMap.title))
       }
     }

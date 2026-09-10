@@ -62,7 +62,7 @@ onMounted(() => {
   useSortable(<HTMLElement>sortableLayers3d.value, { onSort: sort3dMethod })
 })
 
-function sortMethod(elements: HTMLCollection, is3d?: boolean) {
+function sortMethod(elements: HTMLCollection) {
   // Keep layer IDs as strings since remote WMS layers use string IDs (e.g., "WMS||url||name")
   // Internal layers use numeric IDs which are stored as string attributes in the DOM
   const layersIds = [...elements]
@@ -74,36 +74,26 @@ function sortMethod(elements: HTMLCollection, is3d?: boolean) {
     })
     .reverse()
 
-  // Update combined order
   mapStore.reorderAllLayers(layersIds)
-
-  // Separate catalog and draw layers for reordering
-  const catalogLayerIds = layersIds.filter(id => {
-    const layer = mapStore.layers.find(l => l.id === id)
-    return !!layer
-  })
-  const drawLayerIds = layersIds.filter(id => {
-    const layer = mapStore.drawLayers.find(l => l.id === id)
-    return !!layer
-  })
-
-  if (catalogLayerIds.length > 0) {
-    mapStore.reorderLayers(catalogLayerIds, is3d)
-  }
-  if (drawLayerIds.length > 0) {
-    mapStore.reorderDrawLayers(drawLayerIds)
-  }
 }
 
 function sort3dMethod(elements: HTMLCollection) {
-  sortMethod(elements, true)
+  const layersIds = [...elements]
+    .map(val => {
+      const id = val.id
+      const numericId = Number(id)
+      return isNaN(numericId) ? id : numericId
+    })
+    .reverse()
+
+  mapStore.reorder3dLayers(layersIds)
 }
 
 function changeOpacityLayer(layer: Layer, opacity: number) {
   if (isLocalDrawLayer(layer) || isMyMapDrawLayer(layer)) {
     mapStore.setDrawLayerOpacity(layer.id, opacity / 100)
   } else {
-    mapStore.setLayerOpacity(layer.id as number, opacity / 100) // TODO: replace "as number"
+    mapStore.setCatalogLayerOpacity(layer.id, opacity / 100)
   }
 }
 
@@ -112,7 +102,7 @@ function changeTime(layer: Layer, dateStart?: string, dateEnd?: string) {
 }
 
 function clearLayers() {
-  mapStore.removeAllLayers()
+  mapStore.removeAllCatalogLayers()
   mapStore.removeAllDrawLayers()
 }
 
@@ -132,7 +122,7 @@ function removeLayer(layer: Layer) {
   } else if (isMyMapDrawLayer(layer)) {
     myMaps.closeMyMap()
   } else {
-    mapStore.removeLayers(layer.id)
+    mapStore.removeCatalogLayers(layer.id)
   }
 }
 

@@ -35,7 +35,7 @@ export function remoteLayersToLayerTreeMapper(
     children: children
       ?.sort(sortLayerTreeNoChildrenFirst)
       .map(child => remoteLayersToLayerTreeMapper(child, urlWms, depth + 1)),
-    checked: mapStore.hasLayer(id),
+    checked: mapStore.catalog.has(id),
     expanded: false,
   }
 }

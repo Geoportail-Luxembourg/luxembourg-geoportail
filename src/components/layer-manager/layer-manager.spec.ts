@@ -83,7 +83,7 @@ describe('LayerManager', () => {
     describe('actions', () => {
       it('#toggleAccordionItem', async () => {
         await wrapper.vm.toggleAccordionItem(layerMock1)
-        await wrapper.vm.$nextTick() // "Wait for the DOM to update before continuing the test"
+        await wrapper.vm.$nextTick()
 
         expect(wrapper.findAllComponents(LayerItem)[0].props('isOpen')).toBe(
           false
@@ -95,13 +95,13 @@ describe('LayerManager', () => {
 
       it('#removeLayer', async () => {
         await wrapper.vm.removeLayer(layerMock1)
-        await wrapper.vm.$nextTick() // "Wait for the DOM to update before continuing the test"
-        expect(mapStore.removeLayers).toHaveBeenCalledTimes(1)
+        await wrapper.vm.$nextTick()
+        expect(mapStore.removeCatalogLayers).toHaveBeenCalledTimes(1)
       })
 
       it('#changeOpacityLayer', async () => {
         await wrapper.vm.changeOpacityLayer(layerMock1, 20)
-        expect(mapStore.setLayerOpacity).toHaveBeenLastCalledWith(
+        expect(mapStore.setCatalogLayerOpacity).toHaveBeenLastCalledWith(
           layerMock1.id,
           20 / 100
         )
@@ -117,8 +117,8 @@ describe('LayerManager', () => {
         layerCollection.appendChild(layer2)
 
         await wrapper.vm.sortMethod(layerCollection.children)
-        expect(mapStore.reorderLayers).toHaveBeenCalledTimes(1)
-        expect(mapStore.reorderLayers).toHaveBeenCalledWith([2, 1], undefined)
+        expect(mapStore.reorderAllLayers).toHaveBeenCalledTimes(1)
+        expect(mapStore.reorderAllLayers).toHaveBeenCalledWith([2, 1])
       })
 
       it('#sortMethod with remote WMS layer', async () => {
@@ -132,10 +132,10 @@ describe('LayerManager', () => {
         layerCollection.appendChild(wmsLayer)
 
         await wrapper.vm.sortMethod(layerCollection.children)
-        expect(mapStore.reorderLayers).toHaveBeenCalledWith(
-          ['WMS||https://ows.terrestris.de/osm%2Dgray/service||OSM%2DWMS', 1],
-          undefined
-        )
+        expect(mapStore.reorderAllLayers).toHaveBeenCalledWith([
+          'WMS||https://ows.terrestris.de/osm%2Dgray/service||OSM%2DWMS',
+          1,
+        ])
       })
     })
   })

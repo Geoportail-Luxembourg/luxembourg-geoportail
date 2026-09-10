@@ -2,6 +2,7 @@ import { defineStore, acceptHMRUpdate } from 'pinia'
 import { computed, ref, Ref, ShallowRef, shallowRef } from 'vue'
 
 import useLayers from '@/composables/layers/layers.composable'
+import { useLayerOperations } from '@/composables/layers/layers-operations.composable'
 import { dateToISOString } from '@/services/time.utils'
 import { LayerId, Layer, MapContext } from './map.store.model'
 
@@ -36,6 +37,9 @@ export const useMapStore = defineStore('map', () => {
     const allLayersMap = new Map<LayerId, Layer>()
     layers.value.forEach(l => allLayersMap.set(l.id, l))
     drawLayers.value.forEach(l => allLayersMap.set(l.id, l))
+    if (layerOrder.value.length === 0) {
+      return [...layers.value, ...drawLayers.value]
+    }
     return layerOrder.value
       .map(id => allLayersMap.get(id))
       .filter((l): l is Layer => !!l)
@@ -45,93 +49,94 @@ export const useMapStore = defineStore('map', () => {
     bgLayer.value = layer
   }
 
-  function addLayers(...newLayers: Layer[]) {
-    layers.value = [...new Set([...layers.value, ...newLayers])]
-    newLayers.forEach(l => addToLayerOrder(l.id))
+  // Shared layer operations
+  const catalogOps = useLayerOperations(layers, {
+    afterAdd: newLayers => newLayers.forEach(l => addToLayerOrder(l.id)),
+    afterRemove: ids => {
+      layers3d.value = layers3d.value.filter(l => !ids.includes(l.id))
+      ids.forEach(id => removeFromLayerOrder(id))
+    },
+  })
+
+  const drawOps = useLayerOperations(drawLayers, {
+    afterAdd: newLayers => newLayers.forEach(l => addToLayerOrder(l.id)),
+    afterRemove: ids => {
+      ids.forEach(id => removeFromLayerOrder(id))
+    },
+  })
+
+  // Top-level wrappers for Pinia action compatibility (testable via createTestingPinia)
+  function addCatalogLayers(...newLayers: Layer[]) {
+    catalogOps.add(...newLayers)
+  }
+
+  function removeCatalogLayers(...ids: LayerId[]) {
+    catalogOps.remove(...ids)
+  }
+
+  function removeAllCatalogLayers() {
+    catalogOps.removeAll()
+  }
+
+  function setCatalogLayerOpacity(id: LayerId, opacity: number) {
+    catalogOps.setOpacity(id, opacity)
+  }
+
+  function hasCatalogLayer(id: LayerId): boolean {
+    return catalogOps.has(id)
   }
 
   function addDrawLayers(...newLayers: Layer[]) {
-    drawLayers.value = [...new Set([...drawLayers.value, ...newLayers])]
-    newLayers.forEach(l => addToLayerOrder(l.id))
+    drawOps.add(...newLayers)
+  }
+
+  function removeDrawLayers(...ids: LayerId[]) {
+    drawOps.remove(...ids)
+  }
+
+  function removeAllDrawLayers() {
+    drawOps.removeAll()
+  }
+
+  function setDrawLayerOpacity(id: LayerId, opacity: number) {
+    drawOps.setOpacity(id, opacity)
+  }
+
+  function hasDrawLayer(id: LayerId): boolean {
+    return drawOps.has(id)
+  }
+
+  // Convenience accessors that delegate to the operations
+  const catalog = {
+    add: catalogOps.add,
+    remove: catalogOps.remove,
+    removeAll: catalogOps.removeAll,
+    setOpacity: catalogOps.setOpacity,
+    has: catalogOps.has,
+  }
+
+  const draw = {
+    add: drawOps.add,
+    remove: drawOps.remove,
+    removeAll: drawOps.removeAll,
+    setOpacity: drawOps.setOpacity,
+    has: drawOps.has,
   }
 
   function add3dLayers(...newLayers: Layer[]) {
     layers3d.value = [...new Set([...layers3d.value, ...newLayers])]
   }
 
-  function removeLayers(...layerIds: LayerId[]) {
-    layers.value = layers.value.filter(
-      layer => layerIds.indexOf(layer.id) === -1
-    )
-    layers3d.value = layers3d.value.filter(
-      layer => layerIds.indexOf(layer.id) === -1
-    )
-    layerIds.forEach(id => removeFromLayerOrder(id))
-  }
-
-  function removeDrawLayers(...layerIds: LayerId[]) {
-    drawLayers.value = drawLayers.value.filter(
-      layer => layerIds.indexOf(layer.id) === -1
-    )
-    layerIds.forEach(id => removeFromLayerOrder(id))
-  }
-
-  function removeAllLayers() {
-    layers.value = []
-  }
-
-  function removeAllDrawLayers() {
-    drawLayers.value = []
-  }
-
-  function hasLayer(layerId: LayerId) {
-    return !!layers.value?.find(layer => layer.id === layerId)
-  }
-
-  function hasDrawLayer(layerId: LayerId) {
-    return !!drawLayers.value?.find(layer => layer.id === layerId)
-  }
-
-  function reorderLayers(layersId: LayerId[], is3d = false) {
-    // TODO: When 3D feat. done, improve mapStores, use composable/inheritance to avoid
-    // duplicate functionnality like add/removing/reordering layers/3d layers
-    const layersRef = is3d ? layers3d : layers
-
-    layersRef.value = [
-      ...(layersRef.value?.sort(
-        (a, b) => layersId.indexOf(a.id) - layersId.indexOf(b.id)
-      ) || []),
-    ]
-  }
-
-  function reorderDrawLayers(layersId: LayerId[]) {
-    drawLayers.value = [
-      ...(drawLayers.value?.sort(
-        (a, b) => layersId.indexOf(a.id) - layersId.indexOf(b.id)
-      ) || []),
-    ]
-  }
-
   function reorderAllLayers(order: LayerId[]) {
     layerOrder.value = order
   }
 
-  function setLayerOpacity(layerId: LayerId, opacity: number) {
-    layers.value = layers.value.map(elt => {
-      if (elt.id === layerId) {
-        return { ...elt, opacity: opacity, previousOpacity: elt.opacity }
-      }
-      return elt
-    })
-  }
-
-  function setDrawLayerOpacity(layerId: LayerId, opacity: number) {
-    drawLayers.value = drawLayers.value.map(elt => {
-      if (elt.id === layerId) {
-        return { ...elt, opacity: opacity, previousOpacity: elt.opacity }
-      }
-      return elt
-    })
+  function reorder3dLayers(layersId: LayerId[]) {
+    layers3d.value = [
+      ...(layers3d.value?.sort(
+        (a, b) => layersId.indexOf(a.id) - layersId.indexOf(b.id)
+      ) || []),
+    ]
   }
 
   function setLayerTime(
@@ -187,24 +192,25 @@ export const useMapStore = defineStore('map', () => {
     y,
     zoom,
     rotation,
-    addLayers,
+    catalog,
+    draw,
+    addCatalogLayers,
+    removeCatalogLayers,
+    removeAllCatalogLayers,
+    setCatalogLayerOpacity,
+    hasCatalogLayer,
     addDrawLayers,
-    add3dLayers,
-    removeLayers,
     removeDrawLayers,
-    removeAllLayers,
     removeAllDrawLayers,
-    reorderLayers,
-    reorderDrawLayers,
-    reorderAllLayers,
-    setLayerOpacity,
     setDrawLayerOpacity,
+    hasDrawLayer,
+    add3dLayers,
+    reorderAllLayers,
+    reorder3dLayers,
     setLayerTime,
     setBgLayer,
     setIs3dActive,
     setIs3dMesh,
-    hasLayer,
-    hasDrawLayer,
   }
 })
 

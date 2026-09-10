@@ -102,7 +102,7 @@ function toggleLayer(node: LayerTreeNodeModel) {
   const remoteEndpoint = currentRemoteEndpoint
 
   if (node.checked === true) {
-    mapStore.removeLayers(id)
+    mapStore.catalog.remove(id)
   } else {
     const remoteLayer = remoteEndpoint?.getLayerByName(name)
 
@@ -115,7 +115,7 @@ function toggleLayer(node: LayerTreeNodeModel) {
         })
       )
 
-      mapStore.addLayers(layer)
+      mapStore.catalog.add(layer)
     }
   }
 }
