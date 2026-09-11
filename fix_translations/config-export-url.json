@@ -1,0 +1,59 @@
+{
+  "exportLinks": [
+    {
+      "labelKey": "3D Print",
+      "icon": "fa-cube",
+      "useLocationInfoCoords": true,
+      "url": "https://3dprint.geoportail.lu/commande?easting={LUREF_X}&northing={LUREF_Y}&scale=2500"
+    },
+    {
+      "labelKey": "Lidar",
+      "icon": "fa-mountain",
+      "useLocationInfoCoords": true,
+      "url": "https://lidar.geoportail.lu?COORD_X={LUREF_X}&COORD_Y={LUREF_Y}&COORD_Z={ELEVATION}"
+    },
+    {
+      "labelKey": "Vue Oblique",
+      "icon": "fa-street-view",
+      "useLocationInfoCoords": true,
+      "target": "_geoportal_ext_obliques",
+      "url": "https://3d.geoportail.lu?state={VCS_OBLIQUE_STATE}",
+      "obliqueConfig": {
+        "cameraAltitude": 692,
+        "targetHeight": 292,
+        "distance": 400,
+        "heading": 0,
+        "pitch": -90,
+        "roll": 0,
+        "label": "Oblique Map",
+        "collection": "ACT2023_ImagesObliques_all"
+      }
+    },
+    {
+      "useLocationInfoCoords": true,
+      "labelKey": "ACT2BIM",
+      "icon": "fa-building",
+      "url": "https://act2bim.geoportail.lu/commande?easting={LUREF_X}&northing={LUREF_Y}"
+    },
+    {
+      "useLocationInfoCoords": true,
+      "labelKey": "Minecraft",
+      "icon": "fa-gamepad",
+      "url": "https://minecraft.geoportail.lu?easting={LUREF_X}&northing={LUREF_Y}"
+    },
+    {
+      "useLocationInfoCoords": true,
+      "labelKey": "Lien vers Cyclomédia",
+      "icon": "fa-globe",
+      "url": "http://streetsmart.cyclomedia.com/streetsmart?q={LUREF_X};{LUREF_Y}",
+      "userType": ["etat", "commune"],
+      "userRoles": ["MinTour", "ACT"]
+    },
+    {
+      "useLocationInfoCoords": true,
+      "labelKey": "Ouvrir streetView",
+      "icon": "fa-street-view",
+      "url": "https://www.google.com/maps/@?api=1&map_action=pano&viewpoint={LAT},{LON}&heading=0&pitch=0&fov=90"
+    }
+  ]
+}
