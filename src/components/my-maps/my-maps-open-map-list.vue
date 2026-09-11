@@ -54,8 +54,8 @@ const ownersOptions = computed(() =>
     }))
   )
 )
-const sortType = ref<SortType | undefined>(undefined)
-const sortAsc = ref(true)
+const sortType = ref<SortType>('last_feature_update')
+const sortAsc = ref(false)
 const filteredMaps = computed(() =>
   props.isLoadingMyMaps
     ? []
