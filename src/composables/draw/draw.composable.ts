@@ -22,6 +22,8 @@ type DrawInteractions = {
   drawPolygon: Draw
 }
 
+import { getSavedDrawLayerOpacity } from '@/services/state-persistor/state-persistor-layers.service'
+
 const drawSubLayers = new Map<string, VectorLayer>()
 
 function getGroupKeyId(feature: DrawnFeature): string {
@@ -39,7 +41,7 @@ function ensureSubLayer(groupId: string): VectorLayer {
       layers: '',
       type: 'DRAW',
       imageType: '',
-      opacity: 1,
+      opacity: getSavedDrawLayerOpacity(groupId) ?? 1,
     }
     subLayer = olLayerFactoryService.createOlLayer(layerSpec) as VectorLayer
     drawSubLayers.set(groupId, subLayer)

@@ -7,6 +7,7 @@ import { useMapStore } from '@/stores/map.store'
 import { useAppStore } from '@/stores/app.store'
 import { Layer } from '@/stores/map.store.model'
 import { DrawnFeature } from '@/services/ol-feature/ol-feature-drawn'
+import { getSavedDrawLayerOpacity } from '@/services/state-persistor/state-persistor-layers.service'
 
 export const LOCAL_DRAW_LAYER_ID = 'draw-local'
 export const MYMAP_DRAW_LAYER_PREFIX = 'draw-mymap-'
@@ -16,13 +17,14 @@ export function getMyMapLayerId(uuid: string): string {
 }
 
 function createDrawLayer(id: string, name: string): Layer {
+  const opacity = getSavedDrawLayerOpacity(id)
   return {
     id,
     name,
     layers: '',
     type: 'DRAW',
     imageType: '',
-    opacity: 1,
+    opacity: opacity ?? 1,
   }
 }
 
