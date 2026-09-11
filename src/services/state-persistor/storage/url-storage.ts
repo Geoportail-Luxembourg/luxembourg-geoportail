@@ -26,10 +26,10 @@ export class UrlStorage implements Storage {
     throw new Error('Method key() not implemented. ' + index)
   }
 
-  getStrippedUrl(optCoordinate?: number[] | undefined) {
+  getStrippedUrl(optCoordinate?: number[] | undefined, url?: string) {
     // stripped by embedded app parameters
-    const url = new URL(window.location.toString())
-    const params = new URLSearchParams(url.search)
+    const urlObj = new URL(url ?? window.location.toString())
+    const params = new URLSearchParams(urlObj.search)
 
     if (optCoordinate !== undefined) {
       params.set('X', Math.round(optCoordinate[0]).toString())
@@ -41,9 +41,9 @@ export class UrlStorage implements Storage {
     params.delete(SP_KEY_EMBEDDED_SERVER)
     params.delete(SP_KEY_EMBEDDED_SERVER_PROTOCOL)
 
-    url.search = params.toString()
+    urlObj.search = params.toString()
 
-    return url
+    return urlObj
   }
 
   /**
@@ -55,12 +55,12 @@ export class UrlStorage implements Storage {
     return url.pathname + url.search
   }
 
-  async getShortUrl(optCoordinate: number[] | undefined) {
-    const strippedUrl = this.getStrippedUrl(optCoordinate)
+  async getShortUrl(optCoordinate?: number[] | undefined, url?: string) {
+    // convert github pages and vite ports localhost 4173 or 5173
+    // to hosts accepted by the shortURL entrypoint
+    // TODO: remove when there is a v4 API available
+    const strippedUrl = this.getStrippedUrl(optCoordinate, url)
       .toString()
-      // convert github pages and vite ports localhost 4173 or 5173
-      // to hosts accepted by the shortURL entrypoint
-      // TODO: remove when there is a v4 API available
       .replace(
         /https:\/\/geoportail-luxembourg.github.io\/luxembourg-geoportail\/.+\//,
         import.meta.env.VITE_V3_API_HOST

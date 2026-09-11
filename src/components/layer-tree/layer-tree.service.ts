@@ -109,6 +109,25 @@ export class LayerTreeService {
       }
     }
   }
+
+  applyExpandedNodes(
+    tree: LayerTreeNodeModel,
+    expandedNodes: Record<string, boolean>
+  ): LayerTreeNodeModel {
+    const apply = (node: LayerTreeNodeModel): LayerTreeNodeModel => {
+      const nodeState = expandedNodes[String(node.id)]
+      const newNode = { ...node }
+      if (nodeState !== undefined) {
+        newNode.expanded = nodeState
+      }
+      if (newNode.children) {
+        newNode.children = newNode.children.map(apply)
+      }
+      return newNode
+    }
+
+    return apply(tree)
+  }
 }
 
 export const layerTreeService = new LayerTreeService()

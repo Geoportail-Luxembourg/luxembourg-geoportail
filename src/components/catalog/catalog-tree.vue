@@ -16,6 +16,7 @@ import { ThemeNodeModel } from '@/composables/themes/themes.model'
 import { useThemeStore } from '@/stores/config.store'
 import { useMapStore } from '@/stores/map.store'
 import { useAppStore } from '@/stores/app.store'
+import { useLayerTreeStore } from '@/stores/layer-tree.store'
 import LayerTreeNode from '@/components/layer-tree/layer-tree-node.vue'
 import { themesToLayerTree } from '@/components/layer-tree/layer-tree.mapper'
 import type { LayerTreeNodeModel } from '@/components/layer-tree/layer-tree.model'
@@ -27,6 +28,7 @@ import {
 const mapStore = useMapStore()
 const themeStore = useThemeStore()
 const appStore = useAppStore()
+const layerTreeStore = useLayerTreeStore()
 const layers = useLayers()
 const themes = useThemes()
 const catalogRoot = useTemplateRef<HTMLElement>('catalogRoot')
@@ -44,15 +46,25 @@ watchEffect(updateLayerTree)
 
 function updateLayerTree() {
   if (themeStore.theme && mapStore.layers) {
-    const treeModel =
-      layerTree.value &&
-      (layerTree.value.id as unknown as number) === themeStore.theme?.id
-        ? layerTree.value
-        : themesToLayerTree(themeStore.theme as ThemeNodeModel)
+    const treeIsStale =
+      !layerTree.value ||
+      (layerTree.value.id as unknown as number) !== themeStore.theme?.id
 
-    layerTree.value = layerTreeService.updateLayers(
+    const treeModel = treeIsStale
+      ? themesToLayerTree(themeStore.theme as ThemeNodeModel)
+      : layerTree.value!
+
+    if (treeIsStale) {
+      layerTreeStore.captureServerDefaults(treeModel)
+    }
+
+    const newTree = layerTreeService.updateLayers(
       treeModel as LayerTreeNodeModel,
       mapStore.layers
+    )
+    layerTree.value = layerTreeService.applyExpandedNodes(
+      newTree,
+      layerTreeStore.expandedNodes
     )
   }
 }
@@ -62,9 +74,10 @@ watchEffect(() => {
     const treeModel = layerTree3d.value
       ? layerTree3d.value
       : themesToLayerTree(layerTrees_3d.value)
-    layerTree3d.value = layerTreeService.updateLayers(
-      treeModel,
-      mapStore.layers3d
+    const newTree = layerTreeService.updateLayers(treeModel, mapStore.layers3d)
+    layerTree3d.value = layerTreeService.applyExpandedNodes(
+      newTree,
+      layerTreeStore.expandedNodes
     )
   }
 })
@@ -164,12 +177,18 @@ watch(layerToLocateInCatalog, id => {
 })
 
 function toggleParent(node: LayerTreeNodeModel, is3d: boolean) {
-  const rootTree = is3d ? layerTree3d : layerTree
-  rootTree.value = layerTreeService.toggleNode(
-    node.id,
-    rootTree.value as LayerTreeNodeModel,
-    'expanded'
-  )
+  const tree = is3d ? layerTree3d.value : layerTree.value
+  if (!tree) return
+
+  const updated = layerTreeService.toggleNode(node.id, tree, 'expanded')
+  if (is3d) {
+    layerTree3d.value = updated
+  } else {
+    layerTree.value = updated
+  }
+
+  const newExpanded = !node.expanded
+  layerTreeStore.setExpanded(node.id, newExpanded)
 }
 
 function toggleLayer(node: LayerTreeNodeModel, is3d: boolean) {

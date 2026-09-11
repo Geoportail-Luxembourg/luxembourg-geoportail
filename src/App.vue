@@ -24,6 +24,7 @@ import { statePersistorAppService } from '@/services/state-persistor/state-persi
 import { statePersistorStyleService } from '@/services/state-persistor/state-persistor-bgstyle.service'
 import { statePersistorMyMapService } from '@/services/state-persistor/state-persistor-mymap.service'
 import { statePersistorFeatureInfoService } from '@/services/state-persistor/state-persistor-featureinfo.service'
+import { statePersistorLayerTreeService } from '@/services/state-persistor/state-persistor-layer-tree.service'
 import useNetwork from '@/composables/network/network.composable'
 import useMobileTile from '@/composables/offline/mobile-tile.composable'
 import OfflineMobileButton from '@/components/offline/offline-mobile-button.vue'
@@ -64,6 +65,7 @@ statePersistorMyMapService.bootstrap()
 statePersistorBgLayerService.bootstrap()
 statePersistorLayersService.bootstrap()
 statePersistorThemeService.bootstrap()
+statePersistorLayerTreeService.bootstrap()
 statePersistorAppService.bootstrap()
 statePersistorStyleService.bootstrap()
 mvtStyleService.initBackgroundsConfigs()

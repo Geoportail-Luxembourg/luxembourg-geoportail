@@ -1,31 +1,48 @@
 <script setup lang="ts">
-import { ref, watch, onUnmounted } from 'vue'
+import { ref, computed, watch, onUnmounted } from 'vue'
 import { useTranslation } from 'i18next-vue'
 import { storeToRefs } from 'pinia'
 
 import { useAppStore } from '@/stores/app.store'
+import { useLayerTreeStore } from '@/stores/layer-tree.store'
 import { urlStorage } from '@/services/state-persistor/storage/url-storage'
+import { storageLayerTreeMapper } from '@/services/state-persistor/state-persistor-layer-tree.mapper'
+import { SP_KEY_EXPANDED_NODES } from '@/services/state-persistor/state-persistor.model'
 
 const { t } = useTranslation()
 const appStore = useAppStore()
+const layerTreeStore = useLayerTreeStore()
 const { myMapId, shareOpen } = storeToRefs(appStore)
 
 const url = ref('')
 const longurl = ref('')
 const showLongUrl = ref(false)
 const onlyMymaps = ref(false)
+const shareExpandedNodes = ref(false)
+
+const hasExpandedNodes = computed(
+  () => Object.keys(layerTreeStore.expandedNodes).length > 0
+)
 
 let urlWatchInterval: ReturnType<typeof setInterval> | null = null
 let lastCheckedUrl = ''
 
-// Helper function to get the final URL (with MyMaps-only transformation if needed)
+// Helper function to get the final URL (with MyMaps-only or expandedNodes transformation)
 function getFinalUrl(baseUrl: string): string {
+  const urlObj = new URL(baseUrl)
+
   if (onlyMymaps.value && myMapId.value) {
-    const urlObj = new URL(baseUrl)
     urlObj.search = `?map_id=${myMapId.value}`
-    return urlObj.toString()
   }
-  return baseUrl
+
+  if (shareExpandedNodes.value && hasExpandedNodes.value) {
+    const encoded = storageLayerTreeMapper.expandedNodesToStorage(
+      layerTreeStore.expandedNodes
+    )
+    urlObj.searchParams.set(SP_KEY_EXPANDED_NODES, encoded)
+  }
+
+  return urlObj.toString()
 }
 
 async function updateUrl() {
@@ -36,25 +53,8 @@ async function updateUrl() {
   lastCheckedUrl = finalUrl // Update the last checked URL
 
   try {
-    if (onlyMymaps.value && myMapId.value) {
-      // For MyMaps-only mode, call the shortener directly with the filtered URL
-      const data = new URLSearchParams()
-      data.set('url', finalUrl)
-
-      const response = await fetch(import.meta.env.VITE_SHORT_URL, {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/x-www-form-urlencoded',
-        },
-        body: data.toString(),
-      })
-      const mymapsShortUrl = await response.json()
-      url.value = mymapsShortUrl.short_url
-    } else {
-      // For normal mode, use the urlStorage service
-      const shortUrlResponse = await urlStorage.getShortUrl(undefined)
-      url.value = shortUrlResponse.short_url
-    }
+    const shortUrlResponse = await urlStorage.getShortUrl(undefined, finalUrl)
+    url.value = shortUrlResponse.short_url
   } catch (error) {
     // Fallback to long URL on error
     url.value = finalUrl
@@ -94,6 +94,12 @@ function stopUrlWatch() {
 
 // Watch onlyMymaps changes
 watch(onlyMymaps, () => {
+  if (shareOpen.value) {
+    updateUrl()
+  }
+})
+
+watch(shareExpandedNodes, () => {
   if (shareOpen.value) {
     updateUrl()
   }
@@ -166,6 +172,22 @@ const isMymapsSelected = () => !!myMapId.value
         class="font-bold block lux-text-default hover:cursor-pointer"
       >
         {{ t('Show long url', { ns: 'app' }) }}
+      </label>
+    </div>
+
+    <div v-if="hasExpandedNodes" class="flex gap-1 items-center">
+      <input
+        id="share-expanded-nodes-checkbox"
+        type="checkbox"
+        v-model="shareExpandedNodes"
+        class="hover:cursor-pointer"
+        data-cy="shareExpandedNodesCheckbox"
+      />
+      <label
+        for="share-expanded-nodes-checkbox"
+        class="font-bold block lux-text-default hover:cursor-pointer"
+      >
+        {{ t('Share current layer view', { ns: 'app' }) }}
       </label>
     </div>
 
