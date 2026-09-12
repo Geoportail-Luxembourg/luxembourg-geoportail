@@ -2,6 +2,7 @@
 import {
   computed,
   onMounted,
+  ref,
   ShallowRef,
   shallowRef,
   useTemplateRef,
@@ -12,11 +13,18 @@ import { useTranslation } from 'i18next-vue'
 import { useAppStore } from '@/stores/app.store'
 import { useMapStore } from '@/stores/map.store'
 import { useMetadataStore } from '@/stores/metadata.store'
+import { useDrawStore } from '@/stores/draw.store'
 import type { Layer, LayerId } from '@/stores/map.store.model'
 import useSortable from '@/composables/sortable'
 import { BLANK_BACKGROUNDLAYER } from '@/composables/background-layer/background-layer.model'
 import useMvtStyles from '@/composables/mvt-styles/mvt-styles.composable'
 import { useSliderComparatorStore } from '@/stores/slider-comparator.store'
+import useMyMaps from '@/composables/my-maps/my-maps.composable'
+import {
+  LOCAL_DRAW_LAYER_ID,
+  MYMAP_DRAW_LAYER_PREFIX,
+} from '@/composables/draw/draw-layer-sync.composable'
+import ModalConfirmDeleteAll from '@/components/draw/modal-confirm-delete-all.vue'
 
 import LayerItemBackground from './layer-item/layer-item-background.vue'
 import LayerItem from './layer-item/layer-item.vue'
@@ -26,8 +34,10 @@ const { t } = useTranslation()
 const { setMetadataLayer } = useMetadataStore()
 const mapStore = useMapStore()
 const appStore = useAppStore()
+const drawStore = useDrawStore()
 const styles = useMvtStyles()
 const sliderStore = useSliderComparatorStore()
+const myMaps = useMyMaps()
 const { bgLayer } = storeToRefs(mapStore)
 const { sliderActive } = storeToRefs(sliderStore)
 const { isOffLine } = storeToRefs(appStore)
@@ -35,7 +45,7 @@ const { setRemoteLayersOpen } = appStore
 
 const sortableLayers = useTemplateRef('sortableLayers')
 const sortableLayers3d = useTemplateRef('sortableLayers3d')
-const layers = computed(() => [...mapStore.layers].reverse())
+const layers = computed(() => [...mapStore.allLayers].reverse())
 const layers3d = computed(() => [...mapStore.layers3d].reverse())
 const isLayerOpenId: ShallowRef<LayerId | undefined> = shallowRef()
 const dragHandleClassName = 'drag-handle'
@@ -43,6 +53,7 @@ const bgLayerIsEditable = computed(() =>
   styles.isLayerStyleEditable(bgLayer.value)
 )
 const showAddLayerButton = computed(() => !isOffLine.value)
+const showConfirmDeleteDraw = ref(false)
 
 const emit = defineEmits(['displayCatalog'])
 
@@ -51,7 +62,7 @@ onMounted(() => {
   useSortable(<HTMLElement>sortableLayers3d.value, { onSort: sort3dMethod })
 })
 
-function sortMethod(elements: HTMLCollection, is3d?: boolean) {
+function sortMethod(elements: HTMLCollection) {
   // Keep layer IDs as strings since remote WMS layers use string IDs (e.g., "WMS||url||name")
   // Internal layers use numeric IDs which are stored as string attributes in the DOM
   const layersIds = [...elements]
@@ -62,15 +73,28 @@ function sortMethod(elements: HTMLCollection, is3d?: boolean) {
       return isNaN(numericId) ? id : numericId
     })
     .reverse()
-  mapStore.reorderLayers(layersIds, is3d)
+
+  mapStore.reorderAllLayers(layersIds)
 }
 
 function sort3dMethod(elements: HTMLCollection) {
-  sortMethod(elements, true)
+  const layersIds = [...elements]
+    .map(val => {
+      const id = val.id
+      const numericId = Number(id)
+      return isNaN(numericId) ? id : numericId
+    })
+    .reverse()
+
+  mapStore.reorder3dLayers(layersIds)
 }
 
 function changeOpacityLayer(layer: Layer, opacity: number) {
-  mapStore.setLayerOpacity(layer.id as number, opacity / 100) // TODO: replace "as number"
+  if (isLocalDrawLayer(layer) || isMyMapDrawLayer(layer)) {
+    mapStore.draw.setOpacity(layer.id, opacity / 100)
+  } else {
+    mapStore.catalog.setOpacity(layer.id, opacity / 100)
+  }
 }
 
 function changeTime(layer: Layer, dateStart?: string, dateEnd?: string) {
@@ -78,11 +102,33 @@ function changeTime(layer: Layer, dateStart?: string, dateEnd?: string) {
 }
 
 function clearLayers() {
-  mapStore.removeAllLayers()
+  mapStore.catalog.removeAll()
+  mapStore.draw.removeAll()
+}
+
+function isLocalDrawLayer(layer: Layer): boolean {
+  return layer.id === LOCAL_DRAW_LAYER_ID
+}
+
+function isMyMapDrawLayer(layer: Layer): boolean {
+  return (
+    typeof layer.id === 'string' && layer.id.startsWith(MYMAP_DRAW_LAYER_PREFIX)
+  )
 }
 
 function removeLayer(layer: Layer) {
-  mapStore.removeLayers(layer.id)
+  if (isLocalDrawLayer(layer)) {
+    showConfirmDeleteDraw.value = true
+  } else if (isMyMapDrawLayer(layer)) {
+    myMaps.closeMyMap()
+  } else {
+    mapStore.catalog.remove(layer.id)
+  }
+}
+
+function onConfirmDeleteDraw() {
+  showConfirmDeleteDraw.value = false
+  drawStore.removeAllFeatures()
 }
 
 function toggleAccordionItem(layer: Layer) {
@@ -121,6 +167,7 @@ function toggleLayerComparator() {
           :isOpen="isLayerOpenId === layer.id"
           :isLayerComparatorOpen="sliderActive"
           :displayLayerComparatorOpen="index === 0"
+          :isDrawingLayer="false"
           @clickRemove="removeLayer"
           @clickToggle="toggleAccordionItem"
           @clickToggleLayerComparator="toggleLayerComparator"
@@ -149,6 +196,7 @@ function toggleLayerComparator() {
           :isOpen="isLayerOpenId === layer.id"
           :isLayerComparatorOpen="sliderActive"
           :displayLayerComparatorOpen="index === 0"
+          :isDrawingLayer="isLocalDrawLayer(layer) || isMyMapDrawLayer(layer)"
           @clickRemove="removeLayer"
           @clickToggle="toggleAccordionItem"
           @clickToggleLayerComparator="toggleLayerComparator"
@@ -210,5 +258,11 @@ function toggleLayerComparator() {
     <div class="lux-preload">
       <i class="fa-solid fa-trash-can"></i>
     </div>
+
+    <ModalConfirmDeleteAll
+      v-if="showConfirmDeleteDraw"
+      @cancel="showConfirmDeleteDraw = false"
+      @confirm="onConfirmDeleteDraw"
+    />
   </div>
 </template>

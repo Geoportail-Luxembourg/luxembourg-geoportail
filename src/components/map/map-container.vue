@@ -14,6 +14,7 @@ import useDrawSelect from '@/composables/draw/draw-select.composable'
 import useFeatureInfo from '@/composables/info/feature-info.composable'
 import useDrawNotifications from '@/composables/draw/draw-notifications.composable'
 import useEdit from '@/composables/draw/edit.composable'
+import useDrawLayerSync from '@/composables/draw/draw-layer-sync.composable'
 import { statePersistorMapService } from '@/services/state-persistor/state-persistor-map.service'
 import { statePersistorFeaturesService } from '@/services/state-persistor/state-persistor-features.service'
 import { statePersistorLocationInfo } from '@/services/state-persistor/state-persistor-location-info'
@@ -61,7 +62,7 @@ if (props.v4_standalone) {
   // Initialise Draw functionality/create layer for Drawings
   useDrawNotifications()
   useEdit()
-  useDraw().addDrawLayer(olMap)
+  useDraw()
   // Initialise map listeners for feature selection
   useDrawSelect()
   // Initialise Feature Info
@@ -90,6 +91,9 @@ onMounted(() => {
     statePersistorFeaturesService.bootstrap()
     statePersistorLocationInfo.bootstrap()
     olMap.setTarget(mapContainer.value)
+
+    // Initialize draw layer sync after OlSynchronizer is created
+    useDrawLayerSync()
 
     // Direct access to olMap for cypress
     window.olMap = olMap

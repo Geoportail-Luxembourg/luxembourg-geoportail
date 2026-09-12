@@ -10,7 +10,6 @@ class OlLayerInteractionDrawHelper {
       source: new VectorSource({
         features: [],
       }),
-      zIndex: DEFAULT_DRAW_ZINDEX,
       // Use feature's own style function
       style: (feature, resolution) => {
         const featureStyle = (feature as any).getStyle()
