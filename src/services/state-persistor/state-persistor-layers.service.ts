@@ -106,24 +106,35 @@ class StatePersistorLayersService implements StatePersistorService {
     const rawLayerIds = storageLayerMapper.storageToLayerIds(
       storageHelper.getValue(SP_KEY_LAYERS) as string | null
     )
-    const opacityMap = new Map<LayerId, number>()
-    if (rawOpacities.length && rawLayerIds.length) {
-      for (let i = 0; i < rawLayerIds.length; i++) {
-        const opacity = rawOpacities[i]
-        if (opacity !== undefined) {
-          opacityMap.set(rawLayerIds[i], opacity)
+
+    if (version === 2) {
+      const opacities = this.getOpacitiesFromStorageV2()
+
+      if (opacities.length) {
+        layers?.forEach(
+          (layer, index) => layer && (layer.opacity = opacities[index] ?? 1)
+        )
+      }
+    } else {
+      const opacityMap = new Map<LayerId, number>()
+      if (rawOpacities.length && rawLayerIds.length) {
+        for (let i = 0; i < rawLayerIds.length; i++) {
+          const opacity = rawOpacities[i]
+          if (opacity !== undefined) {
+            opacityMap.set(rawLayerIds[i], opacity)
+          }
         }
       }
-    }
 
-    // Apply opacities to catalog layers
-    layers?.forEach(layer => {
-      if (layer && opacityMap.has(layer.id)) {
-        layer.opacity = opacityMap.get(layer.id)
-      } else if (layer) {
-        layer.opacity = 1
-      }
-    })
+      // Apply opacities to catalog layers
+      layers?.forEach(layer => {
+        if (layer && opacityMap.has(layer.id)) {
+          layer.opacity = opacityMap.get(layer.id)
+        } else if (layer) {
+          layer.opacity = 1
+        }
+      })
+    }
 
     this.restoreLayersTimes(layers)
 
