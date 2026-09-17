@@ -2,7 +2,7 @@ import { watch, watchEffect, WatchStopHandle } from 'vue'
 import { storeToRefs } from 'pinia'
 
 import { useMapStore } from '@/stores/map.store'
-import { Layer } from '@/stores/map.store.model'
+import { Layer, LayerId } from '@/stores/map.store.model'
 import { useThemeStore } from '@/stores/config.store'
 import i18next from 'i18next'
 import { useAppStore } from '@/stores/app.store'
@@ -29,6 +29,23 @@ import { storageHelper } from './storage/storage.helper'
 
 const STORAGE_SEPARATOR = '-'
 
+// Draw layer opacities saved from the last session, keyed by layer ID.
+// Read directly from storage so draw-layer-sync can use them even before restore() runs.
+export function getSavedDrawLayerOpacity(id: LayerId): number | undefined {
+  const rawLayerIds = storageLayerMapper.storageToLayerIds(
+    storageHelper.getValue(SP_KEY_LAYERS) as string | null
+  )
+  const rawOpacities = storageHelper.getValue(
+    SP_KEY_OPACITIES,
+    storageLayerMapper.layersOpacitiesToNumbers
+  )
+  const idx = rawLayerIds.indexOf(id)
+  if (idx !== -1 && rawOpacities[idx] !== undefined) {
+    return rawOpacities[idx]
+  }
+  return undefined
+}
+
 class StatePersistorLayersService implements StatePersistorService {
   bootstrap() {
     const themeStore = useThemeStore()
@@ -45,33 +62,29 @@ class StatePersistorLayersService implements StatePersistorService {
 
   persist() {
     const mapStore = useMapStore()
-    const { layers } = storeToRefs(mapStore)
+    const { allLayers } = storeToRefs(mapStore)
 
-    watch(
-      layers,
-      (value, oldValue) => {
-        if (oldValue !== value) {
-          storageHelper.setValue(
-            SP_KEY_LAYERS,
-            value,
-            storageLayerMapper.layersToLayerIds
-          )
+    watch(allLayers, (value, oldValue) => {
+      if (oldValue !== value) {
+        storageHelper.setValue(
+          SP_KEY_LAYERS,
+          value,
+          storageLayerMapper.layersToLayerIds
+        )
 
-          storageHelper.setValue(
-            SP_KEY_OPACITIES,
-            value,
-            storageLayerMapper.layersToLayerOpacities
-          )
+        storageHelper.setValue(
+          SP_KEY_OPACITIES,
+          value,
+          storageLayerMapper.layersToLayerOpacities
+        )
 
-          storageHelper.setValue(
-            SP_KEY_TIME_SELECTIONS,
-            value,
-            storageLayerMapper.layersToLayerTimes
-          )
-        }
-      },
-      { immediate: true }
-    )
+        storageHelper.setValue(
+          SP_KEY_TIME_SELECTIONS,
+          value,
+          storageLayerMapper.layersToLayerTimes
+        )
+      }
+    })
   }
 
   restore() {
@@ -84,7 +97,27 @@ class StatePersistorLayersService implements StatePersistorService {
         : storageLayerMapper.layerIdsToLayers
     )
 
-    this.restoreLayersOpacities(layers, version)
+    // Build a map of {id: opacity} from the stored order
+    const rawOpacities = this.getOpacitiesFromStorage()
+    const rawLayerIds = storageLayerMapper.storageToLayerIds(
+      storageHelper.getValue(SP_KEY_LAYERS) as string | null
+    )
+    const opacityMap = new Map<LayerId, number>()
+    if (rawOpacities.length && rawLayerIds.length) {
+      for (let i = 0; i < rawLayerIds.length; i++) {
+        if (rawOpacities[i] !== undefined) {
+          opacityMap.set(rawLayerIds[i], rawOpacities[i])
+        }
+      }
+    }
+
+    // Apply opacities to catalog layers
+    layers?.forEach(layer => {
+      if (layer && opacityMap.has(layer.id)) {
+        layer.opacity = opacityMap.get(layer.id)
+      }
+    })
+
     this.restoreLayersTimes(layers)
 
     if (version === 2) {
@@ -128,7 +161,12 @@ class StatePersistorLayersService implements StatePersistorService {
       }
     }
 
-    mapStore.addLayers(...layersToAdd)
+    mapStore.catalog.add(...layersToAdd)
+
+    // Restore the saved order of all layers (catalog + draw)
+    if (rawLayerIds.length > 0) {
+      mapStore.reorderAllLayers(rawLayerIds)
+    }
 
     // Track initial layers in Matomo (restored from URL/storage)
     const matomo = useMatomo()
@@ -192,7 +230,7 @@ class StatePersistorLayersService implements StatePersistorService {
               if (nowResolved.length > 0) {
                 // Restore opacities for the newly added layers using the
                 // original opacities string from the URL, aligned by position.
-                const rawOpacities = <string | null>(
+                const rawOpacities2 = <string | null>(
                   storageHelper.getValue(SP_KEY_OPACITIES)
                 )
                 const rawTimes = <string | null>(
@@ -204,8 +242,8 @@ class StatePersistorLayersService implements StatePersistorService {
                   .split('%2D')
                   .join('-')
                   .split(STORAGE_SEPARATOR)
-                const opacities = rawOpacities
-                  ? rawOpacities.split(STORAGE_SEPARATOR).map(Number)
+                const opacities = rawOpacities2
+                  ? rawOpacities2.split(STORAGE_SEPARATOR).map(Number)
                   : []
                 const times = rawTimes ? rawTimes.split('--').reverse() : []
 
@@ -220,7 +258,7 @@ class StatePersistorLayersService implements StatePersistorService {
                   }
                 })
 
-                mapStore.addLayers(...nowResolved)
+                mapStore.catalog.add(...nowResolved)
                 const matomo = useMatomo()
                 nowResolved.forEach(l => matomo.trackLayerAdd(l.name))
               }
@@ -230,19 +268,6 @@ class StatePersistorLayersService implements StatePersistorService {
           )
         }
       }
-    }
-  }
-
-  restoreLayersOpacities(layers: (Layer | undefined)[], version: number) {
-    const opacities =
-      version === 2
-        ? this.getOpacitiesFromStorageV2()
-        : this.getOpacitiesFromStorage()
-
-    if (opacities.length) {
-      layers?.forEach(
-        (layer, index) => layer && (layer.opacity = opacities[index] ?? 1)
-      )
     }
   }
 
