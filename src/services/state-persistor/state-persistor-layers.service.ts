@@ -64,27 +64,31 @@ class StatePersistorLayersService implements StatePersistorService {
     const mapStore = useMapStore()
     const { allLayers } = storeToRefs(mapStore)
 
-    watch(allLayers, (value, oldValue) => {
-      if (oldValue !== value) {
-        storageHelper.setValue(
-          SP_KEY_LAYERS,
-          value,
-          storageLayerMapper.layersToLayerIds
-        )
+    watch(
+      allLayers,
+      (value, oldValue) => {
+        if (oldValue !== value) {
+          storageHelper.setValue(
+            SP_KEY_LAYERS,
+            value,
+            storageLayerMapper.layersToLayerIds
+          )
 
-        storageHelper.setValue(
-          SP_KEY_OPACITIES,
-          value,
-          storageLayerMapper.layersToLayerOpacities
-        )
+          storageHelper.setValue(
+            SP_KEY_OPACITIES,
+            value,
+            storageLayerMapper.layersToLayerOpacities
+          )
 
-        storageHelper.setValue(
-          SP_KEY_TIME_SELECTIONS,
-          value,
-          storageLayerMapper.layersToLayerTimes
-        )
-      }
-    })
+          storageHelper.setValue(
+            SP_KEY_TIME_SELECTIONS,
+            value,
+            storageLayerMapper.layersToLayerTimes
+          )
+        }
+      },
+      { immediate: true }
+    )
   }
 
   restore() {
@@ -116,6 +120,8 @@ class StatePersistorLayersService implements StatePersistorService {
     layers?.forEach(layer => {
       if (layer && opacityMap.has(layer.id)) {
         layer.opacity = opacityMap.get(layer.id)
+      } else if (layer) {
+        layer.opacity = 1
       }
     })
 
