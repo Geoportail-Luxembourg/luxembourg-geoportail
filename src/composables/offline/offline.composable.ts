@@ -13,7 +13,7 @@ export default function useOffline() {
   const offlineLayers = useOfflineLayers()
   const { isOffLine } = storeToRefs(useAppStore())
   const { minZoom, maxZoom } = storeToRefs(mapStore)
-  const { removeAllLayers, setBgLayer } = mapStore
+  const { setBgLayer } = mapStore
 
   /**
    * Use this function in v3 to init localforage_v3 in v3
@@ -51,7 +51,7 @@ export default function useOffline() {
    */
   function doRestoreClearAll() {
     clearLayersCache()
-    removeAllLayers()
+    mapStore.catalog.removeAll()
     setBgLayer(null)
   }
 

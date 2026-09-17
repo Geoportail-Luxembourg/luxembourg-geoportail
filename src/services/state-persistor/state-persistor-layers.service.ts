@@ -105,8 +105,9 @@ class StatePersistorLayersService implements StatePersistorService {
     const opacityMap = new Map<LayerId, number>()
     if (rawOpacities.length && rawLayerIds.length) {
       for (let i = 0; i < rawLayerIds.length; i++) {
-        if (rawOpacities[i] !== undefined) {
-          opacityMap.set(rawLayerIds[i], rawOpacities[i])
+        const opacity = rawOpacities[i]
+        if (opacity !== undefined) {
+          opacityMap.set(rawLayerIds[i], opacity)
         }
       }
     }
