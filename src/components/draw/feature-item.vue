@@ -92,7 +92,7 @@ function onSubmitNewConcentricCircle(
       class="sortable-handle drag-handle fa fa-reorder ui-sortable-handle cursor-move"
     ></span>
     <!-- Toggle feature visibility -->
-    <button
+    <span
       data-cy="featItemActionVisibility"
       class="hover:text-tertiary min-w-5"
       @click.stop="onToggleFeatureVisibility"
@@ -104,7 +104,7 @@ function onSubmitNewConcentricCircle(
           'fa-eye-slash': !feature.featureStyle.isVisible,
         }"
       ></i>
-    </button>
+    </span>
     <!-- Type of feat. icon -->
     <span
       class="lux-icon"
