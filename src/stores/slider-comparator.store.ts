@@ -15,7 +15,7 @@ export const useSliderComparatorStore = defineStore(
     const sliderRatio: Ref<number> = ref(DEFAULT_SLIDER_RATIO)
     const sliderActive: Ref<boolean> = ref(DEFAULT_SLIDER_OPENED)
     const sliderTopLayer: ComputedRef<Layer> = computed(
-      () => [...mapStore.layers].reverse()[0]
+      () => [...mapStore.allLayers].reverse()[0]
     )
 
     function setRatio(ratio: number) {

@@ -1,7 +1,8 @@
 import { defineStore, acceptHMRUpdate } from 'pinia'
-import { ref, Ref, ShallowRef, shallowRef } from 'vue'
+import { computed, ref, Ref, ShallowRef, shallowRef } from 'vue'
 
 import useLayers from '@/composables/layers/layers.composable'
+import { useLayerOperations } from '@/composables/layers/layers-operations.composable'
 import { dateToISOString } from '@/services/time.utils'
 import { LayerId, Layer, MapContext } from './map.store.model'
 
@@ -9,7 +10,9 @@ export const useMapStore = defineStore('map', () => {
   const layersService = useLayers()
   const map: Ref<MapContext> = ref({})
   const layers: ShallowRef<Layer[]> = shallowRef([])
+  const drawLayers: ShallowRef<Layer[]> = shallowRef([])
   const layers3d: ShallowRef<Layer[]> = shallowRef([])
+  const layerOrder: Ref<LayerId[]> = ref([])
   const is3dActive: Ref<boolean> = ref(false)
   const is3dMesh: Ref<boolean> = ref(false)
   const bgLayer: Ref<Layer | undefined | null> = ref(undefined) // undefined => at start app | null => blank bgLayer
@@ -20,54 +23,62 @@ export const useMapStore = defineStore('map', () => {
   const zoom = ref<number | undefined | null>(undefined)
   const rotation = ref<number | undefined | null>(undefined)
 
+  function addToLayerOrder(layerId: LayerId) {
+    if (!layerOrder.value.includes(layerId)) {
+      layerOrder.value = [...layerOrder.value, layerId]
+    }
+  }
+
+  function removeFromLayerOrder(layerId: LayerId) {
+    layerOrder.value = layerOrder.value.filter(id => id !== layerId)
+  }
+
+  const allLayers = computed(() => {
+    const allLayersMap = new Map<LayerId, Layer>()
+    layers.value.forEach(l => allLayersMap.set(l.id, l))
+    drawLayers.value.forEach(l => allLayersMap.set(l.id, l))
+    if (layerOrder.value.length === 0) {
+      return [...layers.value, ...drawLayers.value]
+    }
+    return layerOrder.value
+      .map(id => allLayersMap.get(id))
+      .filter((l): l is Layer => !!l)
+  })
+
   function setBgLayer(layer: Layer | null) {
     bgLayer.value = layer
   }
 
-  function addLayers(...newLayers: Layer[]) {
-    layers.value = [...new Set([...layers.value, ...newLayers])]
-  }
+  // Shared layer operations
+  const catalog = useLayerOperations(layers, {
+    afterAdd: newLayers => newLayers.forEach(l => addToLayerOrder(l.id)),
+    afterRemove: ids => {
+      layers3d.value = layers3d.value.filter(l => !ids.includes(l.id))
+      ids.forEach(id => removeFromLayerOrder(id))
+    },
+  })
+
+  const draw = useLayerOperations(drawLayers, {
+    afterAdd: newLayers => newLayers.forEach(l => addToLayerOrder(l.id)),
+    afterRemove: ids => {
+      ids.forEach(id => removeFromLayerOrder(id))
+    },
+  })
 
   function add3dLayers(...newLayers: Layer[]) {
     layers3d.value = [...new Set([...layers3d.value, ...newLayers])]
   }
 
-  function removeLayers(...layerIds: LayerId[]) {
-    layers.value = layers.value.filter(
-      layer => layerIds.indexOf(layer.id) === -1
-    )
-    layers3d.value = layers3d.value.filter(
-      layer => layerIds.indexOf(layer.id) === -1
-    )
+  function reorderAllLayers(order: LayerId[]) {
+    layerOrder.value = order
   }
 
-  function removeAllLayers() {
-    layers.value = []
-  }
-
-  function hasLayer(layerId: LayerId) {
-    return !!layers.value?.find(layer => layer.id === layerId)
-  }
-
-  function reorderLayers(layersId: LayerId[], is3d = false) {
-    // TODO: When 3D feat. done, improve mapStores, use composable/inheritance to avoid
-    // duplicate functionnality like add/removing/reordering layers/3d layers
-    const layersRef = is3d ? layers3d : layers
-
-    layersRef.value = [
-      ...(layersRef.value?.sort(
+  function reorder3dLayers(layersId: LayerId[]) {
+    layers3d.value = [
+      ...(layers3d.value?.sort(
         (a, b) => layersId.indexOf(a.id) - layersId.indexOf(b.id)
       ) || []),
     ]
-  }
-
-  function setLayerOpacity(layerId: LayerId, opacity: number) {
-    layers.value = layers.value.map(elt => {
-      if (elt.id === layerId) {
-        return { ...elt, opacity: opacity, previousOpacity: elt.opacity }
-      }
-      return elt
-    })
   }
 
   function setLayerTime(
@@ -110,7 +121,10 @@ export const useMapStore = defineStore('map', () => {
   return {
     map,
     layers,
+    drawLayers,
+    allLayers,
     layers3d,
+    layerOrder,
     is3dActive,
     is3dMesh,
     bgLayer,
@@ -120,17 +134,15 @@ export const useMapStore = defineStore('map', () => {
     y,
     zoom,
     rotation,
-    addLayers,
+    catalog,
+    draw,
     add3dLayers,
-    removeLayers,
-    removeAllLayers,
-    reorderLayers,
-    setLayerOpacity,
+    reorderAllLayers,
+    reorder3dLayers,
     setLayerTime,
     setBgLayer,
     setIs3dActive,
     setIs3dMesh,
-    hasLayer,
   }
 })
 

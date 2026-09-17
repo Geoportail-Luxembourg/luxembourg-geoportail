@@ -4,7 +4,7 @@ import useLayers from '@/composables/layers/layers.composable'
 import { VectorSourceDict } from '@/composables/mvt-styles/mvt-styles.model'
 import { OfflineLayerTypeValue } from '@/composables/offline/offline.model'
 import { LayerTypeValue } from '@/composables/themes/themes.model'
-import { Layer, LayerFeature } from '@/stores/map.store.model'
+import { Layer, LayerFeature, LayerId } from '@/stores/map.store.model'
 
 import {
   OLLAYER_PROP_CURRENT_TIME,
@@ -27,6 +27,8 @@ import olLayerTargetExportHelper, {
   TargetExportLayer,
 } from './ol-layer-target-export.helper'
 
+const drawLayerRegistry = new Map<LayerId, VectorLayer>()
+
 export class OlLayerFactoryService {
   createOlLayer(
     layer: Layer | LayerFeature,
@@ -44,6 +46,16 @@ export class OlLayerFactoryService {
       switch (layer.type) {
         case 'position':
           return this.createOlLayerFeaturePosition(layer)
+        case LayerTypeValue.DRAW: {
+          const registered = drawLayerRegistry.get(layer.id)
+          if (registered) {
+            olLayer = registered
+          } else {
+            olLayer = <OlLayer>olLayerInteractionDrawHelper.createOlLayer()
+            drawLayerRegistry.set(layer.id, <VectorLayer>olLayer)
+          }
+          break
+        }
         case LayerTypeValue.WMS:
           olLayer = olLayerWmsHelper.createOlLayer(layer)
           break
@@ -102,6 +114,18 @@ export class OlLayerFactoryService {
     ) // Legacy for v3
     olLayer.set(OLLAYER_PROP_TIME, layer.time)
     olLayer.setOpacity(layer.opacity as number)
+  }
+
+  getDrawLayer(id: LayerId): VectorLayer | undefined {
+    return drawLayerRegistry.get(id)
+  }
+
+  hasDrawLayer(id: LayerId): boolean {
+    return drawLayerRegistry.has(id)
+  }
+
+  removeDrawLayer(id: LayerId): void {
+    drawLayerRegistry.delete(id)
   }
 }
 
