@@ -66,22 +66,22 @@ describe('Map Store', () => {
     it('add layer', () => {
       const mapStore = useMapStore()
       expect(mapStore.layers.length).toBe(0)
-      mapStore.addLayers(layer1)
+      mapStore.catalog.add(layer1)
       expect(mapStore.layers.length).toBe(1)
     })
 
     it('add layers', () => {
       const mapStore = useMapStore()
       expect(mapStore.layers.length).toBe(0)
-      mapStore.addLayers(layer1, layer2)
+      mapStore.catalog.add(layer1, layer2)
       expect(mapStore.layers.length).toBe(2)
     })
 
     it('add layers, must return new ref to array', () => {
       const mapStore = useMapStore()
-      mapStore.addLayers(layer1, layer2)
+      mapStore.catalog.add(layer1, layer2)
       const layers = mapStore.layers
-      mapStore.addLayers(layer4)
+      mapStore.catalog.add(layer4)
       const layersAdded = mapStore.layers
       expect(layersAdded.length).toBe(3)
       expect(layersAdded).not.toBe(layers)
@@ -89,89 +89,90 @@ describe('Map Store', () => {
 
     it('remove layer', () => {
       const mapStore = useMapStore()
-      mapStore.addLayers(layer1)
+      mapStore.catalog.add(layer1)
       expect(mapStore.layers.length).toBe(1)
-      mapStore.removeLayers(layer1.id)
+      mapStore.catalog.remove(layer1.id)
       expect(mapStore.layers.length).toBe(0)
     })
 
     it('remove layers', () => {
       const mapStore = useMapStore()
-      mapStore.addLayers(layer1, layer2, layer3)
+      mapStore.catalog.add(layer1, layer2, layer3)
       expect(mapStore.layers.length).toBe(3)
-      mapStore.removeLayers(layer1.id, layer2.id)
+      mapStore.catalog.remove(layer1.id, layer2.id)
       expect(mapStore.layers.length).toBe(1)
     })
 
     it('remove all layers', () => {
       const mapStore = useMapStore()
-      mapStore.addLayers(layer1, layer2, layer3)
+      mapStore.catalog.add(layer1, layer2, layer3)
       expect(mapStore.layers.length).toBe(3)
-      mapStore.removeAllLayers()
+      mapStore.catalog.removeAll()
       expect(mapStore.layers.length).toBe(0)
     })
 
-    it('reorder layers', () => {
+    it('reorder layers via layerOrder', () => {
       const mapStore = useMapStore()
-      mapStore.addLayers(layer1, layer2, layer3)
-      expect(mapStore.layers.length).toBe(3)
-      expect(mapStore.layers[0]).toStrictEqual(layer1)
-      expect(mapStore.layers[1]).toStrictEqual(layer2)
-      expect(mapStore.layers[2]).toStrictEqual(layer3)
-      mapStore.reorderLayers([layer2.id, layer3.id, layer1.id])
-      expect(mapStore.layers.length).toBe(3)
-      expect(mapStore.layers[0]).toStrictEqual(layer2)
-      expect(mapStore.layers[1]).toStrictEqual(layer3)
-      expect(mapStore.layers[2]).toStrictEqual(layer1)
-      mapStore.reorderLayers([layer3.id, layer2.id, layer4.id])
-      expect(mapStore.layers[0]).toStrictEqual(layer1)
-      expect(mapStore.layers[1]).toStrictEqual(layer3)
-      expect(mapStore.layers[2]).toStrictEqual(layer2)
+      mapStore.catalog.add(layer1, layer2, layer3)
+      expect(mapStore.allLayers.length).toBe(3)
+      expect(mapStore.allLayers[0]).toStrictEqual(layer1)
+      expect(mapStore.allLayers[1]).toStrictEqual(layer2)
+      expect(mapStore.allLayers[2]).toStrictEqual(layer3)
+      mapStore.reorderAllLayers([layer2.id, layer3.id, layer1.id])
+      expect(mapStore.allLayers.length).toBe(3)
+      expect(mapStore.allLayers[0]).toStrictEqual(layer2)
+      expect(mapStore.allLayers[1]).toStrictEqual(layer3)
+      expect(mapStore.allLayers[2]).toStrictEqual(layer1)
+      // layer4 is not in any collection, so it gets filtered out
+      mapStore.reorderAllLayers([layer3.id, layer2.id, layer4.id])
+      expect(mapStore.allLayers.length).toBe(2)
+      expect(mapStore.allLayers[0]).toStrictEqual(layer3)
+      expect(mapStore.allLayers[1]).toStrictEqual(layer2)
     })
 
     it('reorder layers, must return new ref to array', () => {
       const mapStore = useMapStore()
-      mapStore.addLayers(layer1, layer2)
-      expect(mapStore.layers.length).toBe(2)
-      const layers = mapStore.layers
-      mapStore.reorderLayers([layer2.id, layer3.id, layer1.id])
-      const layersReordered = mapStore.layers
+      mapStore.catalog.add(layer1, layer2)
+      expect(mapStore.allLayers.length).toBe(2)
+      const layers = mapStore.allLayers
+      mapStore.reorderAllLayers([layer2.id, layer3.id, layer1.id])
+      const layersReordered = mapStore.allLayers
       expect(layersReordered).not.toBe(layers)
     })
 
     it('has layer', () => {
       const mapStore = useMapStore()
-      expect(mapStore.hasLayer(layer1.id)).toBe(false)
-      expect(mapStore.hasLayer(layer2.id)).toBe(false)
-      expect(mapStore.hasLayer(layer3.id)).toBe(false)
-      expect(mapStore.hasLayer(layer4.id)).toBe(false)
-      mapStore.addLayers(layer1, layer2, layer3)
-      expect(mapStore.hasLayer(layer1.id)).toBe(true)
-      expect(mapStore.hasLayer(layer2.id)).toBe(true)
-      expect(mapStore.hasLayer(layer3.id)).toBe(true)
-      expect(mapStore.hasLayer(layer4.id)).toBe(false)
+      expect(mapStore.catalog.has(layer1.id)).toBe(false)
+      expect(mapStore.catalog.has(layer2.id)).toBe(false)
+      expect(mapStore.catalog.has(layer3.id)).toBe(false)
+      expect(mapStore.catalog.has(layer4.id)).toBe(false)
+      mapStore.catalog.add(layer1, layer2, layer3)
+      expect(mapStore.catalog.has(layer1.id)).toBe(true)
+      expect(mapStore.catalog.has(layer2.id)).toBe(true)
+      expect(mapStore.catalog.has(layer3.id)).toBe(true)
+      expect(mapStore.catalog.has(layer4.id)).toBe(false)
     })
 
     it('change layer opacity', () => {
       const mapStore = useMapStore()
-      mapStore.setLayerOpacity(layer3.id, 66)
+      mapStore.catalog.setOpacity(layer3.id, 66)
       expect(mapStore.layers.length).toBe(0)
-      mapStore.addLayers(layer1, layer2, layer3)
-      mapStore.setLayerOpacity(layer2.id, 32)
+      mapStore.catalog.add(layer1, layer2, layer3)
+      mapStore.catalog.setOpacity(layer2.id, 32)
       expect(mapStore.layers[0].opacity).toBe(undefined)
       expect(mapStore.layers[0].previousOpacity).toBe(undefined)
       expect(mapStore.layers[1].opacity).toBe(32)
       expect(mapStore.layers[1].previousOpacity).toBe(undefined)
       expect(mapStore.layers[2].opacity).toBe(undefined)
       expect(mapStore.layers[2].previousOpacity).toBe(undefined)
-      mapStore.setLayerOpacity(layer2.id, 47)
+      mapStore.catalog.setOpacity(layer2.id, 47)
       expect(mapStore.layers[0].opacity).toBe(undefined)
       expect(mapStore.layers[0].previousOpacity).toBe(undefined)
       expect(mapStore.layers[1].opacity).toBe(47)
       expect(mapStore.layers[1].previousOpacity).toBe(32)
       expect(mapStore.layers[2].opacity).toBe(undefined)
       expect(mapStore.layers[2].previousOpacity).toBe(undefined)
-      mapStore.setLayerOpacity(layer4.id, 99)
+      mapStore.catalog.setOpacity(layer4.id, 99)
       expect(mapStore.layers.length).toBe(3)
       expect(mapStore.layers[0].opacity).toBe(undefined)
       expect(mapStore.layers[0].previousOpacity).toBe(undefined)
@@ -237,7 +238,7 @@ describe('Map Store', () => {
 
     it('does not remove the layer being reselected', () => {
       const mapStore = useMapStore()
-      mapStore.addLayers(layer3)
+      mapStore.catalog.add(layer3)
 
       useLayers().toggleLayer(3, true, false)
 
@@ -252,7 +253,7 @@ describe('Map Store', () => {
       // TODO: make unit tests on each handleExclusion instead
       const mapStore = useMapStore()
       expect(mapStore.bgLayer).toBe(undefined)
-      mapStore.addLayers(layer2, layer3, layer4)
+      mapStore.catalog.add(layer2, layer3, layer4)
       expect(mapStore.layers.length).toBe(3)
       mapStore.setBgLayer(backgroundLayer)
       expect(mapStore.layers.length).toBe(3)
