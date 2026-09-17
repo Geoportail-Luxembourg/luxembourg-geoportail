@@ -48,6 +48,7 @@ function onToggleEditFeature() {
 }
 
 function onToggleFeatureVisibility() {
+  if (props.isEditing) onToggleEditFeature()
   emit('toggleFeatureVisibility', localFeature.id)
 }
 
@@ -90,6 +91,20 @@ function onSubmitNewConcentricCircle(
       v-if="props.isDraggable"
       class="sortable-handle drag-handle fa fa-reorder ui-sortable-handle cursor-move"
     ></span>
+    <!-- Toggle feature visibility -->
+    <button
+      data-cy="featItemActionVisibility"
+      class="hover:text-tertiary min-w-5"
+      @click.stop="onToggleFeatureVisibility"
+    >
+      <i
+        class="fa"
+        :class="{
+          'fa-eye': feature.featureStyle.isVisible,
+          'fa-eye-slash': !feature.featureStyle.isVisible,
+        }"
+      ></i>
+    </button>
     <!-- Type of feat. icon -->
     <span
       class="lux-icon"
@@ -124,7 +139,6 @@ function onSubmitNewConcentricCircle(
         :isEditingFeature="isEditing"
         @toggleEditFeature="onToggleEditFeature"
         @toggleDock="() => emit('toggleDock')"
-        @toggleFeatureVisibility="onToggleFeatureVisibility"
         @clickDelete="onClickDelete"
         @continueLine="() => emit('continueLine')"
         @resetInfo="onResetInfo"

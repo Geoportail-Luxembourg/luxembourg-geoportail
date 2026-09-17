@@ -1,6 +1,6 @@
-import { Geometry } from 'ol/geom'
-import { Layer } from 'ol/layer'
-import VectorSource from 'ol/source/Vector'
+import type { Geometry } from 'ol/geom'
+import type { Layer } from 'ol/layer'
+import type VectorSource from 'ol/source/Vector'
 
 function getDrawFeatures() {
   return cy
