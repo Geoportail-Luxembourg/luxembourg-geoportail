@@ -1,8 +1,9 @@
 <script setup lang="ts">
-import { provide } from 'vue'
+import { provide, computed } from 'vue'
 
 import { DrawnFeature } from '@/services/ol-feature/ol-feature-drawn'
 import { DrawnFeatureStyle } from '@/stores/draw.store.model'
+import useMyMaps from '@/composables/my-maps/my-maps.composable'
 
 import FeatureSubContent from './feature-sub-content.vue'
 import FeatureSubWrapper from './feature-sub-wrapper.vue'
@@ -36,6 +37,11 @@ const emit = defineEmits([
   'submitFeature',
   'submitNewConcentricCircle',
 ])
+
+const myMaps = useMyMaps()
+const isEditable = computed(() =>
+  localFeature.map_id ? !!myMaps.isMyMapEditable.value : true
+)
 
 provide('feature', localFeature)
 
@@ -93,6 +99,7 @@ function onSubmitNewConcentricCircle(
     ></span>
     <!-- Toggle feature visibility -->
     <span
+      v-if="isEditable"
       data-cy="featItemActionVisibility"
       class="hover:text-tertiary min-w-5"
       @click.stop="onToggleFeatureVisibility"
