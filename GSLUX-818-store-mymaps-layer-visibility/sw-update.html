@@ -1,0 +1,512 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Service Worker Updater</title>
+    <style>
+      * {
+        box-sizing: border-box;
+      }
+      body {
+        font-family: system-ui, sans-serif;
+        max-width: 900px;
+        margin: 30px auto;
+        padding: 20px;
+        background: #f0f2f5;
+      }
+      h1 {
+        color: #333;
+        margin-bottom: 4px;
+      }
+      .subtitle {
+        color: #666;
+        margin-bottom: 20px;
+        font-size: 14px;
+      }
+      .card {
+        background: white;
+        padding: 24px;
+        border-radius: 10px;
+        box-shadow: 0 2px 10px rgba(0, 0, 0, 0.08);
+        margin-bottom: 20px;
+      }
+      .actions {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 10px;
+        margin-bottom: 16px;
+      }
+      button {
+        background: #0d6efd;
+        color: white;
+        border: none;
+        padding: 10px 20px;
+        border-radius: 6px;
+        font-size: 14px;
+        cursor: pointer;
+        transition: background 0.15s;
+      }
+      button:hover {
+        background: #0b5ed7;
+      }
+      button.danger {
+        background: #dc3545;
+      }
+      button.danger:hover {
+        background: #bb2d3b;
+      }
+      button.secondary {
+        background: #6c757d;
+      }
+      button.secondary:hover {
+        background: #5c636a;
+      }
+      .status-badge {
+        display: inline-block;
+        padding: 3px 10px;
+        border-radius: 12px;
+        font-size: 12px;
+        font-weight: 600;
+        margin-left: 8px;
+      }
+      .badge-ok {
+        background: #d1e7dd;
+        color: #0a3622;
+      }
+      .badge-warn {
+        background: #fff3cd;
+        color: #664d03;
+      }
+      .badge-err {
+        background: #f8d7da;
+        color: #58151c;
+      }
+      #sw-meta {
+        font-size: 13px;
+        color: #555;
+        margin-bottom: 12px;
+        line-height: 1.8;
+      }
+      .cache-section {
+        margin-bottom: 16px;
+      }
+      .cache-title {
+        font-weight: 700;
+        font-size: 14px;
+        margin-bottom: 6px;
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        cursor: pointer;
+        user-select: none;
+      }
+      .cache-title:hover {
+        color: #0d6efd;
+      }
+      .cache-count {
+        background: #e9ecef;
+        border-radius: 10px;
+        padding: 2px 8px;
+        font-size: 12px;
+        font-weight: 500;
+      }
+      .url-list {
+        display: none;
+        background: #f8f9fa;
+        border: 1px solid #dee2e6;
+        border-radius: 6px;
+        padding: 10px 14px;
+        max-height: 300px;
+        overflow-y: auto;
+        font-size: 12px;
+        font-family: monospace;
+      }
+      .url-list.open {
+        display: block;
+      }
+      .url-list div {
+        padding: 2px 0;
+        border-bottom: 1px solid #f0f0f0;
+        word-break: break-all;
+        color: #333;
+      }
+      .url-list div:last-child {
+        border-bottom: none;
+      }
+      .url-list div:hover {
+        background: #e9ecef;
+      }
+      #log-output {
+        background: #1e1e1e;
+        color: #d4d4d4;
+        padding: 16px;
+        border-radius: 6px;
+        font-family: monospace;
+        font-size: 13px;
+        max-height: 250px;
+        overflow-y: auto;
+        white-space: pre-wrap;
+        word-break: break-all;
+      }
+      .filter-input {
+        width: 100%;
+        padding: 8px 12px;
+        border: 1px solid #ced4da;
+        border-radius: 6px;
+        font-size: 13px;
+        margin-bottom: 10px;
+        font-family: monospace;
+      }
+    </style>
+  </head>
+  <body>
+    <h1>🔧 Service Worker Debug</h1>
+    <p class="subtitle">Inspect and manage cached resources</p>
+
+    <!-- SW Meta info -->
+    <div class="card">
+      <div id="sw-meta">Loading SW info…</div>
+      <div class="actions">
+        <button onclick="refreshAll()">🔄 Refresh</button>
+        <button class="secondary" onclick="forceUpdate()">
+          ⬆️ Force SW Update
+        </button>
+        <button class="secondary" onclick="clearThemesOnly()">
+          🧹 Clear Themes Cache
+        </button>
+        <button class="danger" onclick="clearAndReload()">
+          🗑️ Clear All Caches & Reload
+        </button>
+      </div>
+      <div id="top-status"></div>
+    </div>
+
+    <!-- Cache inspector -->
+    <div class="card" id="cache-card">
+      <h2 style="margin-top: 0; font-size: 17px">📦 Cache Contents</h2>
+      <input
+        class="filter-input"
+        id="filter-input"
+        type="text"
+        placeholder="Filter URLs…"
+        oninput="applyFilter()"
+      />
+      <div id="cache-details">Loading…</div>
+    </div>
+
+    <!-- Log output -->
+    <div class="card">
+      <h2 style="margin-top: 0; font-size: 17px">📋 Log</h2>
+      <div id="log-output"></div>
+    </div>
+
+    <script>
+      const logEl = document.getElementById('log-output')
+      const topStatus = document.getElementById('top-status')
+      const swMeta = document.getElementById('sw-meta')
+      let allCacheData = [] // [{name, urls[]}]
+
+      function log(msg, type = 'info') {
+        const colors = {
+          info: '#d4d4d4',
+          ok: '#6a9955',
+          warn: '#dcdcaa',
+          err: '#f44747',
+        }
+        const color = colors[type] || colors.info
+        logEl.innerHTML += `<span style="color:${color}">${escHtml(msg)}</span>\n`
+        logEl.scrollTop = logEl.scrollHeight
+      }
+
+      function escHtml(str) {
+        return String(str)
+          .replace(/&/g, '&amp;')
+          .replace(/</g, '&lt;')
+          .replace(/>/g, '&gt;')
+      }
+
+      function badge(text, cls) {
+        return `<span class="status-badge ${cls}">${text}</span>`
+      }
+
+      async function refreshAll() {
+        logEl.textContent = ''
+        topStatus.innerHTML = ''
+        await loadSwMeta()
+        await loadCacheDetails()
+      }
+
+      async function loadSwMeta() {
+        if (!('serviceWorker' in navigator)) {
+          swMeta.innerHTML = '❌ Service Workers not supported in this browser'
+          return
+        }
+
+        const registrations = await navigator.serviceWorker.getRegistrations()
+        if (!registrations.length) {
+          swMeta.innerHTML = `⚠️ No Service Worker registered ${badge('NOT REGISTERED', 'badge-warn')}`
+          log('No SW registration found', 'warn')
+          return
+        }
+
+        const reg = registrations[0]
+        const activeState = reg.active?.state ?? 'none'
+        const swStateBadge =
+          activeState === 'activated'
+            ? badge('ACTIVE', 'badge-ok')
+            : badge(activeState.toUpperCase(), 'badge-warn')
+
+        // Get version from SW via message
+        let version = 'unknown'
+        let cacheVersion = 'unknown'
+        try {
+          const meta = await sendMessage(reg, { type: 'GET_SW_META' })
+          version = meta?.version ?? 'unknown'
+          cacheVersion = meta?.cacheVersion ?? 'unknown'
+        } catch {
+          /* SW might not respond */
+        }
+
+        // Fallback: extract version from actual cache names
+        if (cacheVersion === 'unknown') {
+          try {
+            const names = await caches.keys()
+            const match = names[0]?.match(/^(lux-geoportail-v4-v[\d.]+)/)
+            if (match) cacheVersion = match[1]
+          } catch {
+            /* ignore */
+          }
+        }
+
+        // Detect version mismatch between active SW and current caches
+        let mismatchWarning = ''
+        try {
+          const names = await caches.keys()
+          const hasOldCache = names.some(
+            n =>
+              !n.startsWith(cacheVersion) && n.startsWith('lux-geoportail-v4-')
+          )
+          if (hasOldCache) {
+            mismatchWarning = `<div style="margin-top:6px">${badge('⚠️ OLD CACHES DETECTED — reload to clean up', 'badge-warn')}</div>`
+          }
+        } catch {
+          /* ignore */
+        }
+
+        swMeta.innerHTML = `
+          <div><strong>Scope:</strong> ${escHtml(reg.scope)}</div>
+          <div><strong>SW State:</strong> ${swStateBadge}</div>
+          <div><strong>Waiting:</strong> ${reg.waiting ? badge('UPDATE PENDING', 'badge-warn') : 'none'}</div>
+          <div><strong>SW Version:</strong> <code>${escHtml(version)}</code></div>
+          <div><strong>Cache Version:</strong> <code>${escHtml(cacheVersion)}</code></div>
+          ${mismatchWarning}
+        `
+
+        log(`SW registered — scope: ${reg.scope}`, 'ok')
+        log(`Version: ${version} / cache: ${cacheVersion}`)
+      }
+
+      async function loadCacheDetails() {
+        const container = document.getElementById('cache-details')
+        container.innerHTML = 'Loading…'
+
+        try {
+          const cacheNames = await caches.keys()
+          if (!cacheNames.length) {
+            container.innerHTML = '<p style="color:#888">No caches found.</p>'
+            log('No caches found', 'warn')
+            return
+          }
+
+          allCacheData = []
+          for (const name of cacheNames) {
+            const cache = await caches.open(name)
+            const keys = await cache.keys()
+            const urls = keys.map(r => r.url)
+            allCacheData.push({ name, urls })
+            log(`Cache "${name}": ${urls.length} entries`)
+          }
+
+          renderCaches(allCacheData)
+        } catch (err) {
+          container.innerHTML = `<p style="color:red">Error: ${escHtml(err.message)}</p>`
+          log('Failed to load caches: ' + err.message, 'err')
+        }
+      }
+
+      function renderCaches(data) {
+        const filter = document
+          .getElementById('filter-input')
+          .value.toLowerCase()
+        const container = document.getElementById('cache-details')
+        container.innerHTML = ''
+
+        let totalShown = 0
+
+        for (const { name, urls } of data) {
+          const filtered = filter
+            ? urls.filter(u => u.toLowerCase().includes(filter))
+            : urls
+          totalShown += filtered.length
+
+          const section = document.createElement('div')
+          section.className = 'cache-section'
+
+          const title = document.createElement('div')
+          title.className = 'cache-title'
+          title.innerHTML = `
+            <span>▶ ${escHtml(name)}</span>
+            <span class="cache-count">${filtered.length} / ${urls.length}</span>
+          `
+
+          const list = document.createElement('div')
+          list.className = 'url-list'
+
+          if (!filtered.length) {
+            list.innerHTML = '<div style="color:#888">No matching URLs</div>'
+          } else {
+            filtered.forEach(url => {
+              const div = document.createElement('div')
+              div.textContent = url
+              list.appendChild(div)
+            })
+          }
+
+          title.addEventListener('click', () => {
+            list.classList.toggle('open')
+            title.querySelector('span').textContent = list.classList.contains(
+              'open'
+            )
+              ? `▼ ${name}`
+              : `▶ ${name}`
+          })
+
+          section.appendChild(title)
+          section.appendChild(list)
+          container.appendChild(section)
+        }
+
+        const total = data.reduce((s, c) => s + c.urls.length, 0)
+        const summary = document.createElement('p')
+        summary.style.cssText = 'font-size:13px;color:#555;margin-top:12px'
+        summary.textContent = filter
+          ? `Showing ${totalShown} / ${total} entries across ${data.length} caches (filtered)`
+          : `Total: ${total} entries across ${data.length} caches`
+        container.prepend(summary)
+      }
+
+      function applyFilter() {
+        if (allCacheData.length) renderCaches(allCacheData)
+      }
+
+      async function forceUpdate() {
+        log('Forcing SW update check…')
+        try {
+          const registrations = await navigator.serviceWorker.getRegistrations()
+          for (const reg of registrations) {
+            await reg.update()
+            log(`Update triggered for: ${reg.scope}`, 'ok')
+          }
+        } catch (err) {
+          log('Update failed: ' + err.message, 'err')
+        }
+      }
+
+      async function clearThemesOnly() {
+        log('Clearing only /themes cache entries…')
+        topStatus.innerHTML = ''
+
+        try {
+          const registrations = await navigator.serviceWorker.getRegistrations()
+          const reg = registrations[0]
+
+          if (reg?.active) {
+            const response = await sendMessage(reg, {
+              type: 'CLEAR_THEMES_CACHE',
+            })
+            if (response?.success) {
+              log('Themes cache cleared via SW message', 'ok')
+            } else {
+              log(
+                'SW reported error while clearing themes cache: ' +
+                  (response?.error || 'unknown error'),
+                'err'
+              )
+            }
+          } else {
+            const names = await caches.keys()
+            for (const name of names) {
+              const cache = await caches.open(name)
+              const keys = await cache.keys()
+              const targets = keys.filter(request => {
+                try {
+                  const url = new URL(request.url)
+                  return (
+                    url.pathname === '/themes' ||
+                    url.pathname.endsWith('/themes')
+                  )
+                } catch {
+                  return false
+                }
+              })
+
+              for (const target of targets) {
+                await cache.delete(target)
+                log(`Deleted themes entry from ${name}: ${target.url}`, 'ok')
+              }
+            }
+          }
+
+          topStatus.innerHTML =
+            '<p style="color:#0a3622;font-weight:bold">✅ Themes cache cleared</p>'
+          await refreshAll()
+        } catch (err) {
+          log('Failed to clear themes cache: ' + err.message, 'err')
+          topStatus.innerHTML =
+            '<p style="color:#58151c;font-weight:bold">❌ Failed to clear themes cache</p>'
+        }
+      }
+
+      async function clearAndReload() {
+        log('Clearing all caches and unregistering SW…')
+        try {
+          const registrations = await navigator.serviceWorker.getRegistrations()
+          for (const reg of registrations) {
+            await reg.unregister()
+            log(`Unregistered: ${reg.scope}`, 'ok')
+          }
+          const names = await caches.keys()
+          for (const name of names) {
+            await caches.delete(name)
+            log(`Deleted cache: ${name}`, 'ok')
+          }
+          topStatus.innerHTML =
+            '<p style="color:#28a745;font-weight:bold">✅ Done! Redirecting…</p>'
+          setTimeout(() => (window.location.href = '/'), 1500)
+        } catch (err) {
+          log('Failed: ' + err.message, 'err')
+        }
+      }
+
+      function sendMessage(reg, message) {
+        return new Promise((resolve, reject) => {
+          const channel = new MessageChannel()
+          const timeout = setTimeout(() => {
+            channel.port1.close()
+            reject(new Error('SW message timeout'))
+          }, 3000)
+          channel.port1.onmessage = e => {
+            clearTimeout(timeout)
+            channel.port1.close()
+            resolve(e.data)
+          }
+          reg.active?.postMessage(message, [channel.port2])
+        })
+      }
+
+      // Auto-load on page open
+      refreshAll()
+    </script>
+  </body>
+</html>
