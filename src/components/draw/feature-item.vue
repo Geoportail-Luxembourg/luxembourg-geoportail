@@ -1,8 +1,10 @@
 <script setup lang="ts">
-import { provide } from 'vue'
+import { provide, computed } from 'vue'
+import { useTranslation } from 'i18next-vue'
 
 import { DrawnFeature } from '@/services/ol-feature/ol-feature-drawn'
 import { DrawnFeatureStyle } from '@/stores/draw.store.model'
+import useMyMaps from '@/composables/my-maps/my-maps.composable'
 
 import FeatureSubContent from './feature-sub-content.vue'
 import FeatureSubWrapper from './feature-sub-wrapper.vue'
@@ -32,9 +34,17 @@ const emit = defineEmits([
   'toggleFeatureSub',
   'toggleEditFeature',
   'toggleDock',
+  'toggleFeatureVisibility',
   'submitFeature',
   'submitNewConcentricCircle',
 ])
+
+const myMaps = useMyMaps()
+const { t } = useTranslation()
+
+const isEditable = computed(() =>
+  localFeature.map_id ? !!myMaps.isMyMapEditable.value : true
+)
 
 provide('feature', localFeature)
 
@@ -44,6 +54,11 @@ function onToggleFeatureSub() {
 
 function onToggleEditFeature() {
   emit('toggleEditFeature', localFeature.id, !props.isEditing)
+}
+
+function onToggleFeatureVisibility() {
+  if (props.isEditing) onToggleEditFeature()
+  emit('toggleFeatureVisibility', localFeature.id)
 }
 
 function onClickDelete() {
@@ -85,6 +100,32 @@ function onSubmitNewConcentricCircle(
       v-if="props.isDraggable"
       class="sortable-handle drag-handle fa fa-reorder ui-sortable-handle cursor-move"
     ></span>
+    <!-- Toggle feature visibility -->
+    <span
+      v-if="isEditable"
+      data-cy="featItemActionVisibility"
+      class="hover:text-tertiary min-w-5"
+      role="button"
+      tabindex="0"
+      :aria-pressed="feature.featureStyle.isVisible ? 'true' : 'false'"
+      :aria-label="
+        feature.featureStyle.isVisible
+          ? t('Cacher l\'objet')
+          : t('Afficher l\'objet')
+      "
+      @click.stop="onToggleFeatureVisibility"
+      @keydown.enter.prevent="onToggleFeatureVisibility"
+      @keydown.space.prevent="onToggleFeatureVisibility"
+    >
+      <i
+        aria-hidden="true"
+        class="fa"
+        :class="{
+          'fa-eye': feature.featureStyle.isVisible,
+          'fa-eye-slash': !feature.featureStyle.isVisible,
+        }"
+      ></i>
+    </span>
     <!-- Type of feat. icon -->
     <span
       class="lux-icon"
