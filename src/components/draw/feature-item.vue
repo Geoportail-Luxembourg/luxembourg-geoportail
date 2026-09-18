@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import { provide, computed } from 'vue'
+import { useTranslation } from 'i18next-vue'
 
 import { DrawnFeature } from '@/services/ol-feature/ol-feature-drawn'
 import { DrawnFeatureStyle } from '@/stores/draw.store.model'
@@ -39,6 +40,8 @@ const emit = defineEmits([
 ])
 
 const myMaps = useMyMaps()
+const { t } = useTranslation()
+
 const isEditable = computed(() =>
   localFeature.map_id ? !!myMaps.isMyMapEditable.value : true
 )
@@ -102,9 +105,20 @@ function onSubmitNewConcentricCircle(
       v-if="isEditable"
       data-cy="featItemActionVisibility"
       class="hover:text-tertiary min-w-5"
+      role="button"
+      tabindex="0"
+      :aria-pressed="feature.featureStyle.isVisible ? 'true' : 'false'"
+      :aria-label="
+        feature.featureStyle.isVisible
+          ? t('Cacher l\'objet')
+          : t('Afficher l\'objet')
+      "
       @click.stop="onToggleFeatureVisibility"
+      @keydown.enter.prevent="onToggleFeatureVisibility"
+      @keydown.space.prevent="onToggleFeatureVisibility"
     >
       <i
+        aria-hidden="true"
         class="fa"
         :class="{
           'fa-eye': feature.featureStyle.isVisible,
