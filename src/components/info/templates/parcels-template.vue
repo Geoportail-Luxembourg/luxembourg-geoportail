@@ -229,7 +229,7 @@ function closePreviewMesurage() {
 h2 {
   font-size: 40px;
   line-height: 1;
-  padding: 12px 0 12px 12px;
+  padding: 12px 0 12px 0px;
   margin: 0;
   text-transform: uppercase;
   color: #fff;
