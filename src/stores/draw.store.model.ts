@@ -39,6 +39,7 @@ export interface DrawnFeatureStyle {
   stroke: number
   linestyle: string
   opacity: number
+  isVisible: boolean
   showOrientation: boolean
   shape: DrawnFeatureStyleShape
   symbolId: string | undefined
