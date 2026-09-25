@@ -116,9 +116,6 @@ export default function useMyMaps() {
         fetchMyMapFeatures(uuid),
       ])
 
-      // Set bg layer from mymap definition
-      setBgLayer(undefined, map.bg_layer)
-
       // Add mymap features as a regular MY_MAPS layer
       mapStore.addLayers({
         id: 'my_maps_' + map.uuid,
