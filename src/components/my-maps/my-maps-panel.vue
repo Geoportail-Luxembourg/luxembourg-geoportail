@@ -96,6 +96,11 @@ async function onMapSelected(uuid: string) {
   openMapModalState.value = false
 }
 
+async function onMapSelectedReadonly(uuid: string) {
+  myMapsHelper.openMyMapReadOnly(uuid)
+  openMapModalState.value = false
+}
+
 async function onMapDeleteOpenConfirm(map: MyMap) {
   openMapModalState.value = false
   openConfirmModal(map, 'delete')
@@ -279,6 +284,7 @@ watch(
     v-if="openMapModalState"
     @cancel="openMapModalState = false"
     @select="onMapSelected"
+    @select-readonly="onMapSelectedReadonly"
     @delete="onMapConfirmedDeletion"
   ></MyMapsOpenMap>
 </template>

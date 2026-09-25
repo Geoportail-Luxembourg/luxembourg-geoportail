@@ -27,6 +27,7 @@ import { DrawnFeature } from '@/services/ol-feature/ol-feature-drawn'
 import { useDrawStore } from '@/stores/draw.store'
 import { convertPolygonFeatureToCircle } from '@/composables/draw/draw-utils.composable'
 import useMap from '@/composables/map/map.composable'
+import olFormatGeoJSON from 'ol/format/GeoJSON'
 import { createEmpty, extend } from 'ol/extent'
 
 let watchersDefined = false
@@ -105,6 +106,59 @@ export default function useMyMaps() {
 
   function openMyMap(uuid: string) {
     myMapId.value = uuid
+  }
+
+  async function openMyMapReadOnly(uuid: string) {
+    myMapIsLoading.value = true
+    try {
+      const [map, features] = await Promise.all([
+        fetchMyMap(uuid),
+        fetchMyMapFeatures(uuid),
+      ])
+
+      // Add mymap features as a regular MY_MAPS layer
+      mapStore.addLayers({
+        id: 'my_maps_' + map.uuid,
+        name: map.title,
+        type: 'myMaps',
+        data: JSON.stringify(features),
+        layers: '',
+        imageType: 'image/png',
+        opacity: 1,
+      })
+
+      // Fit to features extent
+      const olMap = useMap().getOlMap()
+      const geojson = new olFormatGeoJSON()
+      const olFeatures = geojson.readFeatures(features, {
+        dataProjection: 'EPSG:2169',
+        featureProjection: 'EPSG:3857',
+      })
+      if (olFeatures.length > 0) {
+        const extent = createEmpty()
+        olFeatures.forEach(f => {
+          if (f.getGeometry()) {
+            extend(extent, f.getGeometry()!.getExtent())
+          }
+        })
+        if (
+          extent[0] !== Infinity &&
+          extent[1] !== Infinity &&
+          extent[2] !== -Infinity &&
+          extent[3] !== -Infinity &&
+          extent[0] < extent[2] &&
+          extent[1] < extent[3]
+        ) {
+          olMap.getView().fit(extent, { size: olMap.getSize() })
+        }
+      }
+    } catch (e) {
+      // eslint-disable-next-line no-console
+      console.error('[MyMaps] openMyMapReadOnly() - ERROR', e)
+      handleLoadMapError()
+    } finally {
+      myMapIsLoading.value = false
+    }
   }
 
   function closeMyMap() {
@@ -352,6 +406,7 @@ export default function useMyMaps() {
     clearMyMap,
     closeMyMap,
     openMyMap,
+    openMyMapReadOnly,
     applyToMyMap,
     resetFromMyMap,
   }
