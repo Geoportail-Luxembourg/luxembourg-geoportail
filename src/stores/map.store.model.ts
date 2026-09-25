@@ -22,6 +22,7 @@ export interface Layer {
   dimensions?: {}
   style?: string
   opacity?: number
+  data?: string
   previousOpacity?: number
   time?: LayerTime
   currentTimeMinValue?: string

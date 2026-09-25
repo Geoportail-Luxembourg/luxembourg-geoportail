@@ -65,6 +65,7 @@ export class OlSynchronizer {
             // eg. when switching to offline, the layer type changes
             // the layer should be removed and added again with a new factory
             openLayers.removeLayer(map, layer.id)
+            openLayers.removeFromCache(layer.id)
             openLayers.addLayer(map, layer)
           } else {
             openLayers.setLayerOpacity(map, layer.id, layer.opacity as number)

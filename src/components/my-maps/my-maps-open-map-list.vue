@@ -15,6 +15,7 @@ type SortType = 'title' | 'category' | 'owner' | 'last_feature_update'
 const emit = defineEmits<{
   (e: 'cancel'): void
   (e: 'select', uuid: string): void
+  (e: 'select-readonly', uuid: string): void
   (e: 'delete', map: MyMap): void
 }>()
 
@@ -349,7 +350,14 @@ function sortMap(
               >
                 {{ formatDate(map.last_feature_update) }}
               </td>
-              <td>
+              <td class="flex flex-row gap-2 py-2 justify-center">
+                <button
+                  v-if="!map.deletedWhileOffline"
+                  @click="emit('select-readonly', map.uuid)"
+                  :aria-label="t('Ouvrir en lecture seule') + ' ' + map.title"
+                >
+                  <i class="fa fa-eye" aria-hidden="true"></i>
+                </button>
                 <button
                   v-if="!map.deletedWhileOffline"
                   @click="emit('delete', map as unknown as MyMap)"
