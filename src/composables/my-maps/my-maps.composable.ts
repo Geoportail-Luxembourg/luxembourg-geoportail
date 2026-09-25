@@ -275,6 +275,8 @@ export default function useMyMaps() {
         // Si on se reconnecte, recharger la mymaps pour mettre à jour is_editable
         if (isAuthenticated && myMapId.value && myMap.value) {
           loadMyMap(myMapId.value)
+        } else if (!isAuthenticated && myMapId.value) {
+          loadMyMap(myMapId.value)
         }
       })
 
