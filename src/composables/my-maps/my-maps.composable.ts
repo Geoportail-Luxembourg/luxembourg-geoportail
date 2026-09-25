@@ -132,7 +132,8 @@ export default function useMyMaps() {
 
       // Fit to features extent
       const olMap = useMap().getOlMap()
-      const olFeatures = new olFormatGeoJSON().readFeatures(features, {
+      const geojson = new olFormatGeoJSON()
+      const olFeatures = geojson.readFeatures(features, {
         dataProjection: 'EPSG:2169',
         featureProjection: 'EPSG:3857',
       })
