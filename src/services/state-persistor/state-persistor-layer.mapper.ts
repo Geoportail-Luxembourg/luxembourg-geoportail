@@ -20,9 +20,10 @@ class StorageLayerMapper {
   layerIdsToLayers(layerIdsText: string | null) {
     const themes = useThemes()
     const layers = useLayers()
-    // Decode %2D back to dashes before splitting by separator (v3 compatibility)
     const layerIds = layerIdsText
-      ? layerIdsText.split('%2D').join('-').split(STORAGE_SEPARATOR)
+      ? layerIdsText
+          .split(STORAGE_SEPARATOR)
+          .map(id => id.split('%2D').join('-'))
       : []
 
     return layerIds
@@ -77,10 +78,22 @@ class StorageLayerMapper {
   layersToLayerIds(layers: Layer[] | null): string {
     return (
       layers
-        ?.map(layer => layer.id)
+        ?.map(layer => String(layer.id).replace(/-/g, '%2D'))
         .reverse()
         .join(STORAGE_SEPARATOR) || ''
     )
+  }
+
+  storageToLayerIds(text: string | null): (number | string)[] {
+    if (!text) return []
+    return text
+      .split(STORAGE_SEPARATOR)
+      .map(raw => {
+        const decoded = raw.split('%2D').join('-')
+        const num = Number(decoded)
+        return isNaN(num) ? decoded : num
+      })
+      .reverse()
   }
 
   layersToLayerOpacities(layers: Layer[] | null): string {

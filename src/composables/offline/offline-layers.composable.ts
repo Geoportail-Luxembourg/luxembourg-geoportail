@@ -8,7 +8,8 @@ import useThemes from '../themes/themes.composable'
 
 export default function useOfflineLayers() {
   const { initLayer } = useLayers()
-  const { addLayers, setBgLayer } = useMapStore()
+  const mapStore = useMapStore()
+  const { setBgLayer } = mapStore
   const { findBgLayerByName } = useThemes()
 
   function offlineLayerToLayer(offlineLayerSpec: OfflineLayerSpec): Layer {
@@ -54,7 +55,7 @@ export default function useOfflineLayers() {
         if (offlineLayerSpec.backgroundLayer) {
           setBgLayer(layer)
         } else {
-          addLayers(layer)
+          mapStore.catalog.add(layer)
         }
       } catch (e) {
         throw new Error('Invalid offline layer specification.')

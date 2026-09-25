@@ -240,7 +240,7 @@ export default function useLayers() {
     )
 
     if (excludedLayers.length > 0) {
-      mapStore.removeLayers(...excludedLayers.map(_layer => _layer.id))
+      mapStore.catalog.remove(...excludedLayers.map(_layer => _layer.id))
 
       // If a parcel layer has been removed, also clear parcel highlights
       const removedIsParcel = excludedLayers.some(
@@ -333,11 +333,11 @@ export default function useLayers() {
       const linkedLayers = layer.metadata?.linked_layers || []
 
       if (show === false) {
-        mapStore.removeLayers(layer.id as unknown as string, ...linkedLayers)
+        mapStore.catalog.remove(layer.id as unknown as string, ...linkedLayers)
       } else {
         handleExclusionLayers(layer)
 
-        const addLayers = is3d ? mapStore.add3dLayers : mapStore.addLayers
+        const addLayers = is3d ? mapStore.add3dLayers : mapStore.catalog.add
         const layersToAdd = [
           initLayer(layer),
           ...linkedLayers.map(layerId =>
