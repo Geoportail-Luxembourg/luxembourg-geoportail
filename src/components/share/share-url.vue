@@ -175,17 +175,19 @@ const isMymapsSelected = () => !!myMapId.value
       </label>
     </div>
 
-    <div v-if="hasExpandedNodes" class="flex gap-1 items-center">
+    <div class="flex gap-1 items-center">
       <input
         id="share-expanded-nodes-checkbox"
         type="checkbox"
         v-model="shareExpandedNodes"
         class="hover:cursor-pointer"
         data-cy="shareExpandedNodesCheckbox"
+        :disabled="!hasExpandedNodes"
       />
       <label
         for="share-expanded-nodes-checkbox"
         class="font-bold block lux-text-default hover:cursor-pointer"
+        :class="{ 'opacity-50': !hasExpandedNodes }"
       >
         {{ t('Share current layer view', { ns: 'app' }) }}
       </label>

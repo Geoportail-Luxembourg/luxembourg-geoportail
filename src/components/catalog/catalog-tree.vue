@@ -101,6 +101,7 @@ watch(layerToLocateInCatalog, id => {
       )
       if (found) {
         layerTree.value = node
+        updateExpandedNodesInStore(node)
         nextTick(() => {
           // A same layer id can appear multiple times in the tree (e.g. shared across themes)
           const els = catalogRoot.value?.querySelectorAll<HTMLElement>(
@@ -130,6 +131,15 @@ watch(layerToLocateInCatalog, id => {
       }
     }
     return false
+  }
+
+  function updateExpandedNodesInStore(node: LayerTreeNodeModel) {
+    if (node.expanded) {
+      layerTreeStore.setExpanded(node.id, true)
+    }
+    if (node.children) {
+      node.children.forEach(child => updateExpandedNodesInStore(child))
+    }
   }
 
   const switchThemeAndExpand = (
