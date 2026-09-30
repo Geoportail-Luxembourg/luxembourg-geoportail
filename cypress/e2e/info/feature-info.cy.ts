@@ -430,6 +430,25 @@ describe('Feature Info', () => {
         })
       })
 
+      it('renders the preview modal inside the package style scope', () => {
+        cy.get('body > .lux-tpl-root').should('not.exist')
+        cy.get('.measurement-type-header')
+          .first()
+          .parent()
+          .find('button')
+          .contains(/\d{2}\/\d{2}\/\d{4}|\d{4}/)
+          .first()
+          .click()
+        cy.get('body > .lux-tpl-root').should('exist')
+        cy.get(
+          'body > .lux-tpl-root [role="dialog"], body > .lux-tpl-root [aria-modal="true"]'
+        )
+          .should('exist')
+          .and($el => {
+            expect(getComputedStyle($el[0]).position).to.equal('fixed')
+          })
+      })
+
       it('opens and closes a measurement group', () => {
         cy.get('.measurement-type-header').first().click()
         cy.get('.measurement-type-header')

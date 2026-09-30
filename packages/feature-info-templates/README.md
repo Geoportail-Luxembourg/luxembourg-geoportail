@@ -91,6 +91,20 @@ rather than disabled because the templates genuinely depend on it — `border`
 utilities emit only a width and take their `border-style` from it, lists take
 their padding reset from it, headings their `font-size: inherit`.
 
+**Anything that leaves the container must re-apply the class.** Scoping is a
+descendant rule, so markup rendered outside `.lux-tpl-root` — a `<Teleport>`, a
+portal, anything appended to `<body>` — matches none of the package's CSS and
+falls back to browser defaults. The measurement preview modal teleports to
+`<body>` and therefore wraps itself in `<div class="lux-tpl-root">`; without it
+the modal loses `position: fixed`, its insets, its z-index and its sizing, and
+renders as a static block at the foot of the document.
+
+This is easy to miss in the geoportail, whose own Tailwind emits those utilities
+globally, so teleported markup keeps working there even when the wrapper is
+absent. `cypress/e2e/info/feature-info.cy.ts` asserts the modal's teleported
+root *is* `body > .lux-tpl-root` rather than checking its computed position, so
+the guard holds in any host.
+
 Theme colours are read from CSS custom properties, with the geoportail palette
 as the fallback. Override any of them on `.lux-tpl-root` (or above it):
 
