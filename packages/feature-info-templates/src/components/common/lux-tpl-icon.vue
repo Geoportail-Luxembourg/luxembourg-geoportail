@@ -36,5 +36,8 @@ defineProps<{
 .lux-tpl-icon {
   display: inline-block;
   vertical-align: -0.125em;
+  width: 1em;
+  height: 1em;
+  flex: none;
 }
 </style>

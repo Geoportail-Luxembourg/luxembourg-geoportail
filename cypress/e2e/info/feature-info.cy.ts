@@ -380,6 +380,68 @@ describe('Feature Info', () => {
       })
     })
 
+    describe('parcels — measurement hierarchy', () => {
+      // `parcels-cadastre.json` has `measurements: []`, so the whole nested
+      // section never rendered in a test. This fixture has 8 documents across
+      // three measurement numbers, all `target_audience: public`, which the
+      // template auto-expands — so the nested levels and their caret icons
+      // actually render here.
+      beforeEach(() => {
+        stubFeatureInfo('parcels-with-measurements')
+        cy.visit(
+          '/?lang=fr&X=672676&Y=6412435&version=3&zoom=11&layers=1376&opacities=1&bgLayer=orthogr_2013_global'
+        )
+        clickMapForFeatureInfo(450, 350)
+      })
+
+      it('renders one expandable group per measurement number, newest first', () => {
+        cy.get('.measurement-number-header').should('have.length', 3)
+        cy.get('.measurement-number-header')
+          .eq(0)
+          .should('contain.text', '4185')
+        cy.get('.measurement-number-header')
+          .eq(1)
+          .should('contain.text', '3887')
+        cy.get('.measurement-number-header')
+          .eq(2)
+          .should('contain.text', '1613')
+      })
+
+      it('auto-expands public documents down to their type groups', () => {
+        // 4185 -> ABORNEMENT + PLAN, 3887 -> PLAN, 1613 -> ABORNEMENT.
+        // Labels come from the `app` namespace via fallbackNS.
+        cy.get('.measurement-type-header').should('have.length', 4)
+        cy.get('.measurement-type-header')
+          .filter(':contains("Bornage")')
+          .should('have.length', 2)
+        cy.get('.measurement-type-header')
+          .filter(':contains("Plan")')
+          .should('have.length', 2)
+      })
+
+      it('renders every caret icon at text size', () => {
+        // 3 measurement-number carets + 4 document-type carets + the 2 view
+        // toggle icons. The size assertion is the point: the icons carry a
+        // viewBox, so if their width/height ever stop applying they fall back
+        // to the CSS default replaced size of 300x150 instead of disappearing.
+        cy.get('svg.lux-tpl-icon').should('have.length', 9)
+        cy.get('svg.lux-tpl-icon').each($icon => {
+          expect($icon[0].getBoundingClientRect().width).to.be.lessThan(32)
+        })
+      })
+
+      it('opens and closes a measurement group', () => {
+        cy.get('.measurement-type-header').first().click()
+        cy.get('.measurement-type-header')
+          .first()
+          .should('have.attr', 'aria-expanded', 'false')
+        cy.get('.measurement-type-header').first().click()
+        cy.get('.measurement-type-header')
+          .first()
+          .should('have.attr', 'aria-expanded', 'true')
+      })
+    })
+
     describe('mymaps', () => {
       // Was: getMymapsPath/getQRUrlForMyMaps from the app's url.utils plus
       // VITE_V3_API_HOST. Now: lib-owned helpers reading ctx.config.v3ApiHost.

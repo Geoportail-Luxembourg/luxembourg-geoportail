@@ -1,0 +1,186 @@
+[
+  {
+    "remote_template": false,
+    "template": "parcels.html",
+    "layer": "1376",
+    "ordered": false,
+    "features": [
+      {
+        "type": "Feature",
+        "geometry": {
+          "type": "Polygon",
+          "coordinates": [
+            [
+              [76947.19, 78093.645099999],
+              [77010.6, 78052.063100001],
+              [77024.181, 78060.5251],
+              [77035.114, 78050.3441],
+              [77071.15, 78016.459100001],
+              [77076.8602, 78011.2873],
+              [77039.2558, 77989.958900001],
+              [76962.9122, 77946.658500001],
+              [76954.9648, 77942.1511],
+              [76903.575, 77995.5067],
+              [76893.4365, 78004.9132],
+              [76884.5477, 78013.1602],
+              [76856.7664, 78043.8519],
+              [76823.3733, 78088.115900001],
+              [76811.7577, 78105.357999999],
+              [76922.934, 78168.2501],
+              [76929.444, 78156.1231],
+              [76934.861, 78147.1261],
+              [76940.398, 78137.986099999],
+              [76946.323, 78129.584100001],
+              [76953.802, 78119.9811],
+              [76965.438, 78105.903100001],
+              [76947.19, 78093.645099999]
+            ]
+          ]
+        },
+        "fid": "359_035E00497002540",
+        "id": "035E00497002540",
+        "attributes": {
+          "code_commu": "035",
+          "code_sup": "002540",
+          "code_secti": "E",
+          "textstring": "035E00497002540",
+          "num_cadast": "00497",
+          "type": 333.0,
+          "gid": 395961,
+          "name": null,
+          "id": "035E00497002540",
+          "label": null,
+          "PF": {
+            "commune_cad": 35,
+            "communeCad": 35,
+            "section_letter": "E",
+            "sectionLetter": "E",
+            "main_number": 497,
+            "mainNumber": 497,
+            "additional_number": 2540,
+            "additionalNumber": 2540,
+            "full_id": "035E00497002540",
+            "fullId": "035E00497002540",
+            "capacity": "2ha 94a 00ca",
+            "locality": "EICHERBUSCH",
+            "town_name": "LUXEMBOURG",
+            "townName": "LUXEMBOURG",
+            "section_name": "EE d'EICH",
+            "sectionDesignation": "EE d'EICH",
+            "measurement_number": 4185,
+            "measurementNumber": 4185,
+            "mutation_year": 1955,
+            "mutationYear": 1955,
+            "occupations": [],
+            "farming_types": ["bois"],
+            "farmingTypes": ["bois"],
+            "is_historic": false,
+            "isHistoric": false
+          },
+          "measurements": [
+            {
+              "measurementNumber": "4185",
+              "parcelId": "035E00497002540",
+              "measurementType": "ABORNEMENT",
+              "date_document": "2019-07-04T00:00:00",
+              "description": "ABORNEMENT",
+              "dossier_id": 136892,
+              "document_id": 425494,
+              "target_audience": "public",
+              "available_formats": ["pdf", "tiff"],
+              "is_downloadable": false
+            },
+            {
+              "measurementNumber": "4185",
+              "parcelId": "035E00497002540",
+              "measurementType": "ABORNEMENT",
+              "date_document": "2019-07-04T00:00:00",
+              "description": "ABORNEMENT",
+              "dossier_id": 136892,
+              "document_id": 425495,
+              "target_audience": "public",
+              "available_formats": ["pdf", "tiff"],
+              "is_downloadable": false
+            },
+            {
+              "measurementNumber": "4185",
+              "parcelId": "035E00497002540",
+              "measurementType": "ABORNEMENT",
+              "date_document": "2020-05-19T00:00:00",
+              "description": "ABORNEMENT",
+              "dossier_id": 136892,
+              "document_id": 425496,
+              "target_audience": "public",
+              "available_formats": ["pdf", "tiff"],
+              "is_downloadable": false
+            },
+            {
+              "measurementNumber": "4185",
+              "parcelId": "035E00497002540",
+              "measurementType": "ABORNEMENT",
+              "date_document": "2020-05-19T00:00:00",
+              "description": "ABORNEMENT",
+              "dossier_id": 136892,
+              "document_id": 425497,
+              "target_audience": "public",
+              "available_formats": ["pdf", "tiff"],
+              "is_downloadable": false
+            },
+            {
+              "measurementNumber": "4185",
+              "parcelId": "035E00497002540",
+              "measurementType": "PLAN",
+              "date_document": "2020-06-19T00:00:00",
+              "description": "PLAN",
+              "dossier_id": 136892,
+              "document_id": 425498,
+              "target_audience": "public",
+              "available_formats": ["pdf", "tiff"],
+              "is_downloadable": false
+            },
+            {
+              "measurementNumber": "3887",
+              "parcelId": "035E00497002540",
+              "measurementType": "PLAN",
+              "date_document": "2017-01-12T00:00:00",
+              "description": "PLAN",
+              "dossier_id": 136582,
+              "document_id": 424634,
+              "target_audience": "public",
+              "available_formats": ["pdf", "tiff"],
+              "is_downloadable": false
+            },
+            {
+              "measurementNumber": "1613",
+              "parcelId": "035E00497002540",
+              "measurementType": "ABORNEMENT",
+              "date_document": "1984-04-20T00:00:00",
+              "description": "ABORNEMENT",
+              "dossier_id": 121498,
+              "document_id": 379988,
+              "target_audience": "public",
+              "available_formats": ["pdf", "tiff"],
+              "is_downloadable": false
+            },
+            {
+              "measurementNumber": "1613",
+              "parcelId": "035E00497002540",
+              "measurementType": "ABORNEMENT",
+              "date_document": "1984-04-20T00:00:00",
+              "description": "ABORNEMENT",
+              "dossier_id": 121498,
+              "document_id": 379989,
+              "target_audience": "public",
+              "available_formats": ["pdf", "tiff"],
+              "is_downloadable": false
+            }
+          ]
+        },
+        "alias": {}
+      }
+    ],
+    "has_profile": false,
+    "total_features_count": 1,
+    "features_count": 1
+  }
+]

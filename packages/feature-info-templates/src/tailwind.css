@@ -15,6 +15,58 @@
 @tailwind components;
 @tailwind utilities;
 
+@layer base {
+  /*
+   * A deliberately small slice of Tailwind's preflight, scoped to our own
+   * subtree.
+   *
+   * `preflight: false` in tailwind.config.cjs is right — a library must not
+   * restyle its host's document. But the templates were written against the
+   * geoportail, where preflight IS on, so they silently depended on it. In the
+   * VC Map viewer that normalization is absent and the markup shows browser
+   * defaults instead: `.lux-btn` anchors get underlined, and the measurement
+   * hierarchy's <button>s render with native chrome.
+   *
+   * Only what the package's own markup relies on is reproduced here, and every
+   * selector is under `.lux-tpl-root` so nothing escapes into the host.
+   */
+  .lux-tpl-root *,
+  .lux-tpl-root *::before,
+  .lux-tpl-root *::after {
+    /* Tailwind's spacing utilities assume border-box. */
+    box-sizing: border-box;
+  }
+
+  .lux-tpl-root a {
+    /* Non-button links get their underline back from templates-styles.css,
+       which is both more specific and emitted later. */
+    text-decoration: none;
+  }
+
+  .lux-tpl-root button,
+  .lux-tpl-root input,
+  .lux-tpl-root select,
+  .lux-tpl-root textarea {
+    font-family: inherit;
+    font-size: 100%;
+    font-weight: inherit;
+    line-height: inherit;
+    color: inherit;
+    margin: 0;
+  }
+
+  .lux-tpl-root button {
+    /* Strip native button chrome; the utilities in the markup supply the real
+       appearance. Deliberately NOT resetting borders globally: the templates'
+       text inputs rely on the browser's default border. */
+    -webkit-appearance: button;
+    background-color: transparent;
+    background-image: none;
+    border: 0 solid;
+    padding: 0;
+  }
+}
+
 @layer components {
   /*
    * Button styles the templates rely on. In the geoportail these come from the
@@ -30,7 +82,7 @@
   .lux-tpl-root .lux-btn,
   .lux-tpl-root a.lux-btn,
   .lux-tpl-root .lux-btn-grey {
-    @apply cursor-pointer bg-white py-[6px] px-[12px] leading-snug text-primary hover:bg-primary hover:text-white;
+    @apply cursor-pointer bg-white py-[6px] px-[12px] leading-snug text-primary no-underline hover:bg-primary hover:text-white;
     border: 1px solid var(--color-gray, #ccc);
   }
 
