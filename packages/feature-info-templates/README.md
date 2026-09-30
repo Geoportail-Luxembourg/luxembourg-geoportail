@@ -85,8 +85,11 @@ await createLuxTplI18next(
 
 Templates must render inside an element with the class **`.lux-tpl-root`** —
 `<LuxTplRoot>` is just a `<div>` that adds it. The shipped stylesheet scopes
-every Tailwind utility under that class, so dropping it into a host document
-cannot restyle the host.
+every Tailwind utility *and* Tailwind's preflight reset under that class, so
+dropping it into a host document cannot restyle the host. Preflight is scoped
+rather than disabled because the templates genuinely depend on it — `border`
+utilities emit only a width and take their `border-style` from it, lists take
+their padding reset from it, headings their `font-size: inherit`.
 
 Theme colours are read from CSS custom properties, with the geoportail palette
 as the fallback. Override any of them on `.lux-tpl-root` (or above it):

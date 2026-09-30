@@ -145,7 +145,16 @@ arrives through props or the injected context.
      backgroundImage, icon-font `content` glyph map. Copy the needed extensions or keep
      those few app-asset cases as pure CSS. CI guard: build the lib CSS, grep templates
      for classes that didn't get emitted.
-   - keep `preflight:false`.
+   - ~~keep `preflight:false`~~ — **superseded 2026-09-30.** Turning preflight off
+     entirely was wrong: the templates were authored against the geoportail,
+     where it is on, so they depend on it. `border` utilities emit only a width
+     and rely on preflight's `border-style: solid` (so every border in the
+     package rendered as nothing in a Tailwind-less host); `<ul class="list-disc
+     pl-10">` relies on its padding reset (double indent without it); the 8 bare
+     `<h3>` and 6 bare `<h4>` rely on `font-size: inherit`. Preflight is now
+     **enabled but scoped** to `.lux-tpl-root` via `tailwindcss-scoped-preflight`
+     — a devDependency, so nothing ships — rather than hand-copied, so a Tailwind
+     bump carries through instead of drifting.
 3. **Assets.** `templates-styles.css:14` references
    `url('/src/assets/images/featureinfo/solarkataster_1.png')` (app-absolute — breaks in
    the package). Move the image into the package and reference it relatively.

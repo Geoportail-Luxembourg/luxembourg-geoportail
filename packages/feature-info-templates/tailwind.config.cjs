@@ -5,11 +5,19 @@
 // package sources through its own Tailwind pipeline (see tailwind.config.cjs at
 // the repo root), which is why nothing here may act globally.
 
+const {
+  scopedPreflightStyles,
+  isolateInsideOfContainer,
+} = require('tailwindcss-scoped-preflight')
+
 module.exports = {
-  corePlugins: {
-    // Disable preflight for lib mode - prevents CSS conflicts
-    preflight: false,
-  },
+  // Preflight stays ENABLED, but scoped (see `plugins` below). The templates
+  // were authored against the geoportail, where preflight is on, so they depend
+  // on it — `border` utilities emit only a width and rely on preflight's
+  // `border-style: solid`, `<ul>` relies on its padding reset, headings on
+  // `font-size: inherit`. Turning it off outright made all of that silently
+  // wrong in a Tailwind-less host like the VC Map viewer.
+  //
   // Selector strategy: every emitted utility is scoped under `.lux-tpl-root`,
   // so dropping the shipped stylesheet into a host document cannot restyle it.
   // Hosts render templates inside `<LuxTplRoot>` (or any element carrying the
@@ -49,5 +57,20 @@ module.exports = {
       },
     },
   },
-  plugins: [],
+  plugins: [
+    // Emits Tailwind's own preflight, rewritten to apply only inside
+    // `.lux-tpl-root`, so the package gets the baseline its markup expects
+    // without resetting the host's document.
+    //
+    // Deliberately not a hand-copied subset: the source of truth stays
+    // Tailwind's `preflight.css`, so a version bump carries through instead of
+    // drifting. `rootStyles: 'move to container'` relocates preflight's
+    // `html`/`body` rules onto `.lux-tpl-root` — prefixing them would give
+    // `.lux-tpl-root html`, which matches nothing.
+    scopedPreflightStyles({
+      isolationStrategy: isolateInsideOfContainer('.lux-tpl-root', {
+        rootStyles: 'move to container',
+      }),
+    }),
+  ],
 }
