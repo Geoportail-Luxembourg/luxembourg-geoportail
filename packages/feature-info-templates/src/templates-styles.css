@@ -5,9 +5,9 @@
 
 .lux-tpl-poi-title {
   font-size: 40px;
-  line-height: 40px;
-  margin-top: 22px;
-  margin-bottom: 11px;
+  line-height: 1;
+  margin-top: 0.55em;
+  margin-bottom: 0.275em;
 }
 
 .lux-tpl-solarkataster-button-old {
@@ -61,7 +61,7 @@
 
 /* Urplang Template Styles */
 .lux-tpl-urplang-title {
-  color: white;
+  color: var(--lux-tpl-white-by-default, #fff);
   font-size: 30px;
 }
 
@@ -136,7 +136,7 @@
   padding: 12px 0 12px 12px;
   margin: 0;
   text-transform: uppercase;
-  color: #fff;
+  color: var(--lux-tpl-white-by-default, #fff);
 }
 
 /* PDS Template Styles */

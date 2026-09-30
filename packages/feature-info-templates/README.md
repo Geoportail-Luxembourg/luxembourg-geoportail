@@ -100,6 +100,19 @@ as the fallback. Override any of them on `.lux-tpl-root` (or above it):
 | `--color-quaternary`  | `#20638f` | button hover                   |
 | `--color-gray`        | `#ccc`    | button borders                 |
 
+One more token is not a colour from the palette:
+
+| Property                     | Default | Used for                                        |
+| ---------------------------- | ------- | ----------------------------------------------- |
+| `--lux-tpl-white-by-default`  | `#fff`  | titles that sit on a background the host paints |
+
+Some template titles (`parcels`, `urplang`) set a foreground colour but not the
+background behind them — they assume the host's panel is dark, which the
+geoportail's themed info panel is. In a host with a light panel they would be
+invisible, so override this token there. It deliberately does **not** cover
+elements that paint their own background, such as the solar simulator button,
+whose contrast is self-contained.
+
 ### Sanitized HTML
 
 Server-supplied HTML in attribute values is sanitized by the package itself, via
