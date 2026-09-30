@@ -9,7 +9,6 @@ import {
   showAttributesByLang,
   sortedAttributeEntries,
 } from './template-utilities'
-import i18next from 'i18next'
 import { useLuxTplContext } from '../../context'
 import { vLuxHtml } from '../../sanitize-html'
 defineProps<{
@@ -19,7 +18,7 @@ defineProps<{
 defineEmits<{
   (e: 'export', payload: { feature: FeatureJSON; format: 'kml' | 'gpx' }): void
 }>()
-const { t } = useLuxTranslation('tooltips')
+const { t, i18next } = useLuxTranslation('tooltips')
 const { profileComponent } = useLuxTplContext()
 </script>
 <template>
