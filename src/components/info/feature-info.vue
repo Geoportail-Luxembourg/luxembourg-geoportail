@@ -24,6 +24,7 @@ import BatimentsTemplate from './templates/batiments-template.vue'
 import BusWoTitleTemplate from './templates/bus-wo-title-template.vue'
 import BusTemplate from './templates/bus-template.vue'
 import CasipoTemplate from './templates/casipo-template.vue'
+import UnavailableTemplate from './templates/unavailable-template.vue'
 import DefaultTemplate from './templates/default-template.vue'
 import DefaultTableTemplate from './templates/default-table-template.vue'
 import DefaultTableNoPrefixTemplate from './templates/default-table-no-prefix-template.vue'
@@ -114,6 +115,7 @@ const templates = {
   'viti_kleinlage.html': VitiKleinlageTemplate,
   'viti_name.html': VitiNameTemplate,
   'viti_parcels.html': VitiParcelsTemplate,
+  'unavailable.html': UnavailableTemplate,
 }
 
 const getTemplateComponent = (template: string) => {
