@@ -152,6 +152,21 @@
   margin-bottom: 10px;
 }
 
+.lux-tpl-casipo-mail label,
+.lux-tpl-forage-virtuel-mail label,
+.lux-tpl-pag-mail label,
+.lux-tpl-pds-mail label {
+  margin-right: 5px;
+}
+
+.lux-tpl-casipo-mail input[type='text'],
+.lux-tpl-forage-virtuel-mail input[type='text'],
+.lux-tpl-pag-mail input[type='text'],
+.lux-tpl-pds-mail input[type='text'] {
+  border: 1px solid rgb(118, 118, 118);
+  padding: 1px 2px;
+}
+
 /* ====================================
    End of Template Styles
    ==================================== */
