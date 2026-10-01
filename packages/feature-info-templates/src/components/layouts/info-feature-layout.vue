@@ -44,7 +44,7 @@ const { t } = useLuxTranslation()
     </slot>
 
     <!-- Direct link to the feature -->
-    <div v-if="hasValidFID(feature)">
+    <div v-if="currentUrl && hasValidFID(feature)">
       <a
         data-cy="defaultTemplateLink"
         class="print:hidden"

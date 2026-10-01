@@ -166,7 +166,7 @@ function canAccessSolarEconomicCalculator() {
             t('Aucune information disponible pour cette couche')
           }}</span>
         </div>
-        <div v-if="hasValidFID(feature)" class="no-print">
+        <div v-if="currentUrl && hasValidFID(feature)" class="no-print">
           <span
             ><a
               data-cy="defaultTemplateLink"
