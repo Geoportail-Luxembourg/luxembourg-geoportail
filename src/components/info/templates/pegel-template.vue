@@ -19,7 +19,7 @@ defineProps<{
         frameborder="0"
         :src="
           getTrustedUrl(
-            'http://geoportail.eau.etat.lu/pdf/112/' +
+            'https://geoportail.eau.etat.lu/pdf/112/' +
               feature.attributes.Nom +
               '.html'
           )
