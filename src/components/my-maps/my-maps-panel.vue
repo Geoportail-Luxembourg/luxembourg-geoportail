@@ -7,6 +7,7 @@ import SidePanelLayout from '@/components/common/side-panel-layout.vue'
 import DrawPanel from '@/components/draw/draw-panel.vue'
 import FeaturesList from '@/components/draw/features-list.vue'
 import useMyMaps from '@/composables/my-maps/my-maps.composable'
+import useMyMapsLayer from '@/composables/my-maps/use-my-maps-layer'
 import { useAlertNotificationsStore } from '@/stores/alert-notifications.store'
 import { AlertNotificationType } from '@/stores/alert-notifications.store.model'
 import { useAppStore } from '@/stores/app.store'
@@ -28,6 +29,7 @@ const { t } = useTranslation()
 const { addNotification } = useAlertNotificationsStore()
 const appStore = useAppStore()
 const myMapsHelper = useMyMaps()
+const myMapsLayerHelper = useMyMapsLayer()
 const { toggleShareOpen } = appStore
 const { myMap } = storeToRefs(appStore)
 const drawStore = useDrawStore()
@@ -93,6 +95,11 @@ async function onMapUpdated(uuid: string) {
 
 async function onMapSelected(uuid: string) {
   myMapsHelper.openMyMap(uuid)
+  openMapModalState.value = false
+}
+
+async function onMapSelectedReadonly(uuid: string) {
+  myMapsLayerHelper.openMyMapsLayer(uuid)
   openMapModalState.value = false
 }
 
@@ -279,6 +286,7 @@ watch(
     v-if="openMapModalState"
     @cancel="openMapModalState = false"
     @select="onMapSelected"
+    @select-readonly="onMapSelectedReadonly"
     @delete="onMapConfirmedDeletion"
   ></MyMapsOpenMap>
 </template>

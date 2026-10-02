@@ -24,8 +24,25 @@ export const useMapStore = defineStore('map', () => {
     bgLayer.value = layer
   }
 
+  function upsertLayers(...newLayers: Layer[]) {
+    const result = [...layers.value]
+    newLayers.forEach(newLayer => {
+      const index = result.findIndex(l => l.id === newLayer.id)
+      if (index >= 0) {
+        result[index] = newLayer
+      } else {
+        result.push(newLayer)
+      }
+    })
+    layers.value = result
+  }
+
   function addLayers(...newLayers: Layer[]) {
-    layers.value = [...new Set([...layers.value, ...newLayers])]
+    upsertLayers(...newLayers)
+  }
+
+  function replaceLayer(layer: Layer) {
+    upsertLayers(layer)
   }
 
   function add3dLayers(...newLayers: Layer[]) {
@@ -121,6 +138,8 @@ export const useMapStore = defineStore('map', () => {
     zoom,
     rotation,
     addLayers,
+    upsertLayers,
+    replaceLayer,
     add3dLayers,
     removeLayers,
     removeAllLayers,

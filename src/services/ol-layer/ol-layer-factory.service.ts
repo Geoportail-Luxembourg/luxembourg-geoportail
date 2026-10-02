@@ -17,6 +17,7 @@ import {
   OlLayer,
 } from './ol-layer.model'
 import olLayerWmsHelper from './ol-layer-wms.helper'
+import olLayerGeoJSONHelper from './ol-layer-geojson.helper'
 import olLayerWmtsHelper from './ol-layer-wmts.helper'
 import olLayerVectorHelper from './ol-layer-vector.helper'
 import { olLayerOfflineFactoryService } from './ol-layer-offline-factory'
@@ -50,6 +51,9 @@ export class OlLayerFactoryService {
         case LayerTypeValue.WMTS:
         case LayerTypeValue.BG_WMTS:
           olLayer = olLayerWmtsHelper.createOlLayer(layer)
+          break
+        case LayerTypeValue.MY_MAPS:
+          olLayer = olLayerGeoJSONHelper.createOlLayer(layer)
           break
         case OfflineLayerTypeValue.LAYER_OFFLINE_TILE:
         case OfflineLayerTypeValue.LAYER_OFFLINE_BG_VECTOR:

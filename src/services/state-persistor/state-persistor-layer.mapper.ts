@@ -5,6 +5,14 @@ import { BLANK_BACKGROUNDLAYER } from '@/composables/background-layer/background
 import { remoteLayerIdtoLayer } from '@/services/remote-layers/remote-layers.mapper'
 import { remoteLayersService } from '@/services/remote-layers/remote-layers.service'
 import { stringToBooleans, stringToNumbers } from '../utils'
+import {
+  decodeLayerIdFromStorage,
+  encodeLayerIdForStorage,
+} from '@/services/layer-id/layer-id-storage'
+import {
+  buildMyMapsLayerStub,
+  isMyMapsLayerId,
+} from '@/services/my-maps/my-maps-layer.service'
 
 const STORAGE_SEPARATOR = '-'
 const STORAGE_SEPARATOR_V2 = ','
@@ -20,13 +28,17 @@ class StorageLayerMapper {
   layerIdsToLayers(layerIdsText: string | null) {
     const themes = useThemes()
     const layers = useLayers()
-    // Decode %2D back to dashes before splitting by separator (v3 compatibility)
+    // Split on separator first: string layer ids may contain %2D-encoded dashes
     const layerIds = layerIdsText
-      ? layerIdsText.split('%2D').join('-').split(STORAGE_SEPARATOR)
+      ? layerIdsText.split(STORAGE_SEPARATOR).map(decodeLayerIdFromStorage)
       : []
 
     return layerIds
       .map(layerId => {
+        if (isMyMapsLayerId(layerId)) {
+          return layers.initLayer(buildMyMapsLayerStub(layerId))
+        }
+
         const layer = remoteLayersService.isRemoteLayer(layerId)
           ? remoteLayerIdtoLayer(layerId)
           : (themes.findById(parseInt(layerId, 10)) as unknown as Layer)
@@ -77,7 +89,7 @@ class StorageLayerMapper {
   layersToLayerIds(layers: Layer[] | null): string {
     return (
       layers
-        ?.map(layer => layer.id)
+        ?.map(layer => encodeLayerIdForStorage(layer.id))
         .reverse()
         .join(STORAGE_SEPARATOR) || ''
     )

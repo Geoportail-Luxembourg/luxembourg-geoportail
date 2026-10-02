@@ -14,7 +14,6 @@ import {
   deleteMyMapFeature,
   fetchMyMap,
   fetchMyMapFeatures,
-  MyMapFetchFeatureJson,
   MyMapSaveFeatureJson,
   saveMyMapFeature,
   updateMyMap,
@@ -23,14 +22,17 @@ import useThemes from '@/composables/themes/themes.composable'
 import useLayers from '@/composables/layers/layers.composable'
 import useBackgroundLayer from '@/composables/background-layer/background-layer.composable'
 import { useUserManagerStore } from '@/stores/user-manager.store'
-import { DrawnFeature } from '@/services/ol-feature/ol-feature-drawn'
 import { useDrawStore } from '@/stores/draw.store'
-import { convertPolygonFeatureToCircle } from '@/composables/draw/draw-utils.composable'
 import useMap from '@/composables/map/map.composable'
-import { createEmpty, extend } from 'ol/extent'
+import { featuresExtent, fitExtentToView } from '@/composables/map/fit-extent'
+import { buildMyMapsDrawnFeatures } from '@/services/my-maps/my-maps-layer.service'
 
 let watchersDefined = false
 
+/**
+ * Editable MyMap session (map_id in storage, draw features, apply/reset layers).
+ * Read-only MyMaps as a map layer: use-my-maps-layer.ts.
+ */
 export default function useMyMaps() {
   const { t } = useTranslation()
   const appStore = useAppStore()
@@ -71,19 +73,9 @@ export default function useMyMaps() {
         fetchMyMapFeatures(uuid),
       ])
 
-      const newFeatures = features.features?.map((f: MyMapFetchFeatureJson) => {
-        const feature = DrawnFeature.generateFromGeoJson(f, {
-          map_id: uuid,
-          id: f.id!, // !!! Force reattribution of id from backend
-          fid: f.id!, // !!! Force reattribution of fid from backend
-          display_order: f.properties?.display_order,
-        })
-        // Convert polygon geometries to circles if needed (circles are saved as polygons in MyMaps)
-        return convertPolygonFeatureToCircle(feature)
-      }) as DrawnFeature[]
+      const newFeatures = buildMyMapsDrawnFeatures(features, { map_id: uuid })
 
       myMap.value = map
-      // Set editable property based on authentication and map permissions
       newFeatures.forEach(f => {
         f.editable = authenticated.value && map.is_editable
       })
@@ -92,7 +84,6 @@ export default function useMyMaps() {
       drawStore.removeMyMapsFeature(uuid)
       drawnFeatures.value = [...drawnFeatures.value, ...newFeatures]
 
-      // Fit map to features extent after they are loaded (as in v3)
       fitToMyMapFeatures()
     } catch (e) {
       // eslint-disable-next-line no-console
@@ -164,36 +155,15 @@ export default function useMyMaps() {
    * Fit map view to the extent of all MyMap features (as in v3)
    */
   function fitToMyMapFeatures() {
-    const olMap = useMap().getOlMap()
-    const extent = createEmpty()
-
-    drawnFeaturesMyMaps.value.forEach(f => {
-      if (f.getGeometry()) {
-        extend(extent, f.getGeometry()!.getExtent())
-      }
-    })
-
-    // Only fit if extent is not empty and valid
-    if (
-      extent[0] !== Infinity &&
-      extent[1] !== Infinity &&
-      extent[2] !== -Infinity &&
-      extent[3] !== -Infinity &&
-      extent[0] < extent[2] &&
-      extent[1] < extent[3]
-    ) {
-      olMap.getView().fit(extent, { size: olMap.getSize() })
-    }
+    fitExtentToView(featuresExtent(drawnFeaturesMyMaps.value))
   }
 
   /**
    * Update the (app) map with the MyMap content: layers and bgLayer
    */
   function resetFromMyMap() {
-    // Set background layer, same as in MyMap definition
     setBgLayer(undefined, myMap.value?.bg_layer)
 
-    // Load layers from MyMaps definition and set layers to the map
     const myOpacities = myMap.value?.layers_opacity
       ? myMap.value?.layers_opacity.split(',').map(o => parseInt(o, 10))
       : []
@@ -224,8 +194,6 @@ export default function useMyMaps() {
 
     mapStore.removeAllLayers()
     mapStore.addLayers(...myLayers)
-
-    // Note: Map view will be fitted to features extent after they are loaded in loadMyMap()
   }
 
   function init() {
@@ -263,7 +231,7 @@ export default function useMyMaps() {
         }
       )
 
-      // Populate map (app map) content when MyMap is loaded
+      // Populate map (app) map content when MyMap is loaded
       watch(myMap, myMap => myMap && resetFromMyMap())
 
       // Update editable property of mymaps features when authentication changes
