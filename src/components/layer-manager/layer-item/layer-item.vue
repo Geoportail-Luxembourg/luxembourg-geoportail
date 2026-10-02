@@ -16,6 +16,7 @@ const props = defineProps<{
   isOpen: boolean
   isLayerComparatorOpen: boolean
   displayLayerComparatorOpen: boolean
+  isDrawingLayer: boolean
 }>()
 const emit = defineEmits<{
   (e: 'clickInfo', layer: Layer): void
@@ -66,7 +67,7 @@ function changeTime(dateStart?: string, dateEnd?: string) {
         :title="txtDraggableLabel"
       ></button>
       <button
-        v-if="showInfoButton"
+        v-if="showInfoButton && !isDrawingLayer"
         class="fa-solid fa-info mt-1"
         :aria-label="txtTitleLabel"
         :title="txtTitleLabel"
@@ -103,6 +104,7 @@ function changeTime(dateStart?: string, dateEnd?: string) {
       :isOpen="isOpen"
       :isLayerComparatorOpen="isLayerComparatorOpen"
       :displayLayerComparatorOpen="displayLayerComparatorOpen"
+      :isDrawingLayer="isDrawingLayer"
       @clickToggleLayerComparator="$emit('clickToggleLayerComparator', $event)"
       @changeOpacity="
         (layer: Layer, value: number) => $emit('changeOpacity', layer, value)

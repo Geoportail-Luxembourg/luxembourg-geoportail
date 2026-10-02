@@ -222,8 +222,8 @@ export default function useMyMaps() {
           .filter((l): l is Layer => l !== undefined)
       : []
 
-    mapStore.removeAllLayers()
-    mapStore.addLayers(...myLayers)
+    mapStore.catalog.removeAll()
+    mapStore.catalog.add(...myLayers)
 
     // Note: Map view will be fitted to features extent after they are loaded in loadMyMap()
   }

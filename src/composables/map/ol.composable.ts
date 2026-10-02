@@ -48,7 +48,9 @@ export default function useOpenLayers() {
       const baseLayer = arrayLayers.find(
         mapLayer => mapLayer.get('id') === layer.id
       )
-      baseLayer?.setZIndex(idx + 1)
+      if (baseLayer) {
+        baseLayer.setZIndex(idx + 1)
+      }
     })
   }
 

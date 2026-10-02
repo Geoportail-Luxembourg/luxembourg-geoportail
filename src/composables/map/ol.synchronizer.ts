@@ -24,7 +24,7 @@ export class OlSynchronizer {
     const { appliedStyle } = storeToRefs(styleStore)
 
     watch(
-      () => mapStore.layers,
+      () => mapStore.allLayers,
       (newLayers, oldLayers) => {
         const oldContext = {
           layers: oldLayers,
@@ -74,7 +74,7 @@ export class OlSynchronizer {
         })
 
         if (newContext.layers) {
-          openLayers.reorderLayers(map, newContext.layers)
+          openLayers.reorderLayers(map, mapStore.allLayers)
         }
       }
     )
