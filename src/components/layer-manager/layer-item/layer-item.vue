@@ -26,12 +26,16 @@ const emit = defineEmits<{
   (e: 'changeTime', dateStart?: string, dateEnd?: string): void
   (e: 'localiseInCatalog', layer: Layer): void
 }>()
-const { t, onClickInfo } = useLayer(props.layer, <SetupContext>{ emit })
+const { t, onClickInfo, supportsMetadata } = useLayer(props.layer, <
+  SetupContext
+>{ emit })
 const layersService = useLayers()
 const layerLabel = computed(() =>
   t(layersService.getLayerCurrentLabel(props.layer), { ns: 'layers' })
 )
-const showInfoButton = computed(() => !useOffline().isOffLine.value)
+const showInfoButton = computed(
+  () => !useOffline().isOffLine.value && supportsMetadata.value
+)
 
 const txtDraggableLabel = computed(() =>
   t('Sort "{{layerName}}" in the list', {
