@@ -13,5 +13,6 @@ export declare type MapLibreLayerType = typeof MapLibreLayer
 
 export enum MutationTypeValue {
   ON_LAYER_TYPE = 'ON_LAYER_TYPE',
+  ON_LAYER_DATA = 'ON_LAYER_DATA',
 }
 export type MutationType = `${MutationTypeValue}`
