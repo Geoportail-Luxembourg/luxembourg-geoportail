@@ -2,7 +2,7 @@ import { watch, watchEffect, WatchStopHandle } from 'vue'
 import { storeToRefs } from 'pinia'
 
 import { useMapStore } from '@/stores/map.store'
-import { Layer } from '@/stores/map.store.model'
+import { Layer, LayerId } from '@/stores/map.store.model'
 import { useThemeStore } from '@/stores/config.store'
 import i18next from 'i18next'
 import { useAppStore } from '@/stores/app.store'
@@ -11,7 +11,11 @@ import { AlertNotificationType } from '@/stores/alert-notifications.store.model'
 import { useMatomo } from '@/composables/matomo/matomo.composable'
 import useLayers from '@/composables/layers/layers.composable'
 import useThemes from '@/composables/themes/themes.composable'
-import { remoteLayersService } from '@/services/remote-layers/remote-layers.service'
+import { decodeLayerIdFromStorage } from '@/services/layer-id/layer-id-storage'
+import {
+  isAsyncLayerStub,
+  resolveLayerStub,
+} from '@/services/state-persistor/layer-restore-resolvers'
 
 import {
   SP_KEY_LAYERS,
@@ -32,13 +36,18 @@ const STORAGE_SEPARATOR = '-'
 class StatePersistorLayersService implements StatePersistorService {
   bootstrap() {
     const themeStore = useThemeStore()
+    let restored = false
     let stop: WatchStopHandle
     // eslint-disable-next-line prefer-const
     stop = watchEffect(() => {
-      if (themeStore.themes) {
-        this.restore()
-        this.persist()
-        stop && stop() // test if exists, for HMR support
+      // Guard: restore reads mapStore.layers (exclusion rules) which can
+      // re-trigger this effect when layers are added after MyMaps hydrate.
+      if (themeStore.themes && !restored) {
+        restored = true
+        this.restore().finally(() => {
+          this.persist()
+          stop && stop() // test if exists, for HMR support
+        })
       }
     })
   }
@@ -74,7 +83,7 @@ class StatePersistorLayersService implements StatePersistorService {
     )
   }
 
-  restore() {
+  async restore() {
     const version = storageHelper.getInitialVersion()
     const mapStore = useMapStore()
     const layers = storageHelper.getValue(
@@ -128,6 +137,8 @@ class StatePersistorLayersService implements StatePersistorService {
       }
     }
 
+    layersToAdd = await this.hydrateAsyncLayers(layersToAdd)
+
     mapStore.addLayers(...layersToAdd)
 
     // Track initial layers in Matomo (restored from URL/storage)
@@ -146,12 +157,10 @@ class StatePersistorLayersService implements StatePersistorService {
       )
       if (rawLayersValue) {
         const requestedIds = rawLayersValue
-          .split('%2D')
-          .join('-')
           .split(STORAGE_SEPARATOR)
-          .filter(id => !remoteLayersService.isRemoteLayer(id))
+          .map(decodeLayerIdFromStorage)
+          .filter(id => /^\d+$/.test(id))
           .map(id => parseInt(id, 10))
-          .filter(id => !isNaN(id))
 
         const resolvedIds = new Set(layersToAdd.map(l => l.id))
         const missingIds = requestedIds.filter(id => !resolvedIds.has(id))
@@ -231,6 +240,46 @@ class StatePersistorLayersService implements StatePersistorService {
         }
       }
     }
+  }
+
+  /**
+   * Fetch async layer stubs (eg. MyMaps) referenced by restored layer ids.
+   * Keeps original stack order. Drops layers that fail to load.
+   * Does not touch the map view: viewport stays owned by state-persistor-map.
+   */
+  private async hydrateAsyncLayers(layers: Layer[]): Promise<Layer[]> {
+    const stubs = layers.filter(l => isAsyncLayerStub(l))
+    if (stubs.length === 0) {
+      return layers
+    }
+
+    const hydrated = new Map<LayerId, Layer>()
+    await Promise.all(
+      stubs.map(async stub => {
+        try {
+          const layer = await resolveLayerStub(stub)
+          if (layer) {
+            hydrated.set(layer.id, layer)
+          }
+        } catch (e) {
+          // eslint-disable-next-line no-console
+          console.error(
+            '[StatePersistorLayers] hydrateAsyncLayers() - ERROR',
+            e
+          )
+          useAlertNotificationsStore().addNotification(
+            i18next.t(
+              "Une carte MyMaps n'a pas pu être restaurée depuis le stockage."
+            ),
+            AlertNotificationType.ERROR
+          )
+        }
+      })
+    )
+
+    return layers
+      .map(l => (isAsyncLayerStub(l) ? hydrated.get(l.id) : l))
+      .filter((l): l is Layer => l !== undefined)
   }
 
   restoreLayersOpacities(layers: (Layer | undefined)[], version: number) {

@@ -74,6 +74,7 @@ export enum LayerTypeValue {
   BG_MVT = 'BG MVT',
   '3D' = '3D',
   TILE_WMS = 'tileWMS',
+  MY_MAPS = 'myMaps',
 }
 
 export type LayerType = `${LayerTypeValue | OfflineLayerTypeValue}`
