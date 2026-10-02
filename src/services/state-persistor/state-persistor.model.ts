@@ -70,5 +70,5 @@ export abstract class StatePersistorRulesHelper {
 export interface StatePersistorService {
   bootstrap(): void
   persist(): void
-  restore(): void
+  restore(): void | Promise<void>
 }
