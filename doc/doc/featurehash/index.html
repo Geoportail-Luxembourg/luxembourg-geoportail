@@ -1,0 +1,142 @@
+<!doctype html>
+<html lang="fr">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Feature Encoder/Decoder</title>
+    <link rel="stylesheet" href="styles.css" />
+  </head>
+  <body>
+    <div class="container">
+      <h1>Feature Encoder/Decoder</h1>
+
+      <!-- Section d'encodage -->
+      <div class="section">
+        <h2>Encoder une feature</h2>
+        <div class="form-group">
+          <label for="featureInput">Feature JSON :</label>
+          <textarea
+            id="featureInput"
+            placeholder='Ex: [{"type": "Point", "coordinates": [0, 0], "properties": {"name": "Mon Point"}}]'
+          >
+[
+  {
+    "type": "Polygon",
+    "coordinates": [
+      [
+        [
+          670067,
+          6392767
+        ],
+        [
+          678898,
+          6396139
+        ],
+        [
+          681324,
+          6391190
+        ],
+        [
+          675065,
+            6390985
+        ]
+      ]
+    ],
+    "properties": {
+      "display_order": "0",
+      "angle": 0,
+      "color": "#ed1c24",
+      "description": "",
+      "stroke": 1.25,
+      "isLabel": false,
+      "linestyle": "plain",
+      "name": "Polygone 1",
+      "opacity": 0.2,
+      "showOrientation": false,
+      "shape": "circle",
+      "size": 10,
+      "isCircle": false
+    }
+  },
+  {
+    "type": "Point",
+    "coordinates": [
+      673100,
+        88526
+    ],
+    "properties": {
+      "display_order": "1",
+      "angle": 0,
+      "color": "#ed1c24",
+      "description": "",
+      "stroke": 1.25,
+      "isLabel": true,
+      "linestyle": "plain",
+      "name": "Point 2",
+      "opacity": 0.2,
+      "showOrientation": false,
+      "shape": "circle",
+      "size": 10,
+      "isCircle": false
+    }
+  },
+  {
+    "type": "Point",
+    "coordinates": [
+      680693,
+        90952
+    ],
+    "properties": {
+      "display_order": "2",
+      "angle": 0,
+      "color": "#ed1c24",
+      "description": "",
+      "stroke": 1.25,
+      "isLabel": false,
+      "linestyle": "plain",
+      "name": "Point 3",
+      "opacity": 0.2,
+      "showOrientation": false,
+      "shape": "circle",
+      "size": 10,
+      "isCircle": false
+    }
+  }
+]</textarea
+          >
+        </div>
+        <button id="encodeButton">Encoder</button>
+        <button id="copyEncodeButton" aria-label="Copier le résultat encodé">
+          Copier le résultat
+        </button>
+        <div class="result">
+          <h3>Résultat encodé :</h3>
+          <textarea id="encodedResult" readonly aria-readonly="true"></textarea>
+        </div>
+      </div>
+
+      <!-- Section de décodage -->
+      <div class="section">
+        <h2>Décoder une feature</h2>
+        <div class="form-group">
+          <label for="encodedInput">Chaîne encodée :</label>
+          <textarea
+            id="encodedInput"
+            placeholder="Collez la chaîne encodée ici"
+          >
+Fa%287rw9-yv67Hy8MskBnr*apE68HtdA~display_order*0%27a*0%27c*%2523ed1c24%27d*%27e*1.25%27i*false%27l*plain%27n*Polygone%25201%27o*0.2%27r*false%27s*circle%27t*10%27u*false%29p%28sn3a-wwd6H~display_order*1%27a*0%27c*%2523ed1c24%27d*%27e*1.25%27i*true%27l*plain%27n*Point%25202%27o*0.2%27r*false%27s*circle%27t*10%27u*false%29p%28bgja-hnj6H~display_order*2%27a*0%27c*%2523ed1c24%27d*%27e*1.25%27i*false%27l*plain%27n*Point%25203%27o*0.2%27r*false%27s*circle%27t*10%27u*false%29</textarea
+          >
+        </div>
+        <button id="decodeButton">Décoder</button>
+        <button id="copyDecodeButton" aria-label="Copier le JSON décodé">
+          Copier le JSON
+        </button>
+        <div class="result">
+          <h3>Résultat décodé :</h3>
+          <textarea id="decodedResult" readonly aria-readonly="true"></textarea>
+        </div>
+      </div>
+    </div>
+    <script type="module" src="src/app.js"></script>
+  </body>
+</html>
