@@ -386,6 +386,7 @@ export interface MyMapFetchFeatureJson {
     angle: number
     isLabel: boolean
     isCircle: boolean
+    isVisible: boolean
     symbolId: string
     symboltype: string
     display_order: number

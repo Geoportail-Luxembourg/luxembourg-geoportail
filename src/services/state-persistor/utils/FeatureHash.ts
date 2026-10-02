@@ -830,6 +830,7 @@ function castValue_(key: string, value: string) {
     'isLabel',
     'showMeasure',
     'showOrientation',
+    'isVisible',
   ]
 
   if (numProperties.includes(key)) {
@@ -1064,6 +1065,7 @@ type ShortParamKeys =
   | 'symbolId'
   | 'symboltype'
   | 'isCircle'
+  | 'isVisible'
 
 const SHORT_PARAM_: { [key in ShortParamKeys]: string } = {
   angle: 'a',
@@ -1078,6 +1080,7 @@ const SHORT_PARAM_: { [key in ShortParamKeys]: string } = {
   shape: 's',
   size: 't',
   isCircle: 'u',
+  isVisible: 'v',
   symbolId: 'symbolId',
   symboltype: 'symboltype',
 }
@@ -1093,6 +1096,7 @@ const STYLE_KEYS_: ShortParamKeys[] = [
   'size',
   'symbolId',
   'symboltype',
+  'isVisible',
 ]
 
 const featureHash = new FeatureHash({
