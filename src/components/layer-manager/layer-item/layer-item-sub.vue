@@ -4,6 +4,7 @@ import { useTranslation } from 'i18next-vue'
 
 import useLayers from '@/composables/layers/layers.composable'
 import { Layer } from '@/stores/map.store.model'
+import { useLayer } from '@/composables/layer'
 
 const props = defineProps<{
   layer: Layer
@@ -17,6 +18,7 @@ const emit = defineEmits([
   'localiseInCatalog',
 ])
 const { t } = useTranslation()
+const { supportsCatalogLocate } = useLayer(props.layer)
 const layersService = useLayers()
 const layerLabel = computed(() =>
   t(layersService.getLayerCurrentLabel(props.layer), { ns: 'layers' })
@@ -102,6 +104,7 @@ function dispatchChangeOpacity() {
     />
     <div class="flex justify-end items-center gap-x-2 ml-auto">
       <button
+        v-if="supportsCatalogLocate"
         data-cy="myLayerLocaliseInCatalog"
         role="button"
         :tabindex="!isOpen ? -1 : 0"
