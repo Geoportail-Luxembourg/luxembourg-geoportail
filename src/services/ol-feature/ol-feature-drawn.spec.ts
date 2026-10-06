@@ -5,6 +5,7 @@ import { Geometry, LineString, Point } from 'ol/geom'
 import useMap from '@/composables/map/map.composable'
 import * as ApiProfileService from '@/services/api/api-profile.service'
 import { DrawnFeature } from './ol-feature-drawn'
+import { getDefaultDrawnFeatureStyle } from './styles.helper'
 
 const mockViewSize = [99, 100]
 const profileDataFixtures = {
@@ -134,6 +135,83 @@ describe('DrawnFeature', () => {
         expect(ApiProfileService.fetchProfileJson).not.toHaveBeenCalledOnce()
         expect(profile).toStrictEqual(undefined)
       })
+    })
+  })
+
+  describe('#toProperties', () => {
+    it('should include isVisible in the returned properties', () => {
+      const feat = new DrawnFeature()
+      feat.featureStyle = { ...getDefaultDrawnFeatureStyle(), isVisible: false }
+
+      const props = feat.toProperties()
+
+      expect(props.isVisible).toBe(false)
+    })
+
+    it('should return isVisible as true when featureStyle.isVisible is true', () => {
+      const feat = new DrawnFeature()
+      feat.featureStyle = { ...getDefaultDrawnFeatureStyle(), isVisible: true }
+
+      const props = feat.toProperties()
+
+      expect(props.isVisible).toBe(true)
+    })
+  })
+
+  describe('#fromProperties', () => {
+    it('should read isVisible from properties', () => {
+      const feat = new DrawnFeature()
+      feat.featureStyle = getDefaultDrawnFeatureStyle()
+
+      feat.fromProperties({ isVisible: false })
+
+      expect(feat.featureStyle.isVisible).toBe(false)
+    })
+
+    it('should default isVisible to true when not provided in properties', () => {
+      const feat = new DrawnFeature()
+      feat.featureStyle = getDefaultDrawnFeatureStyle()
+
+      feat.fromProperties({})
+
+      expect(feat.featureStyle.isVisible).toBe(true)
+    })
+  })
+
+  describe('#getStyleFunction', () => {
+    it('should return empty array when isVisible is false', () => {
+      const feat = new DrawnFeature()
+      feat.setGeometry(new Point([0, 0]))
+      feat.featureStyle = { ...getDefaultDrawnFeatureStyle(), isVisible: false }
+
+      const styleFn = feat.getStyleFunction()
+      const styles = styleFn(feat, 1)
+
+      expect(styles).toEqual([])
+    })
+
+    it('should return styles when isVisible is true', () => {
+      const feat = new DrawnFeature()
+      feat.setGeometry(new Point([0, 0]))
+      feat.featureStyle = { ...getDefaultDrawnFeatureStyle(), isVisible: true }
+
+      const styleFn = feat.getStyleFunction()
+      const styles = styleFn(feat, 1)
+
+      expect(styles.length).toBeGreaterThan(0)
+    })
+
+    it('should return a new style function after featureStyle changes', () => {
+      const feat = new DrawnFeature()
+      feat.setGeometry(new Point([0, 0]))
+      feat.featureStyle = getDefaultDrawnFeatureStyle()
+
+      const styleFn1 = feat.getStyleFunction()
+
+      feat.featureStyle = { ...feat.featureStyle, isVisible: false }
+
+      const styleFn2 = feat.getStyleFunction()
+      expect(styleFn2).not.toBe(styleFn1)
     })
   })
 })
