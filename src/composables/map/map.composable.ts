@@ -165,12 +165,6 @@ export default function useMap() {
       return MutationTypeValue.ON_LAYER_TYPE
     }
 
-    if (newLayer?.geojson !== oldLayer?.geojson) {
-      // Layer payload changed (eg. MyMaps features hydrated after restore)
-      // Layer should be removed and added again
-      return MutationTypeValue.ON_LAYER_DATA
-    }
-
     return null
   }
 

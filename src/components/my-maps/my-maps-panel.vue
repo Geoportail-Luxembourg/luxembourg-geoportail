@@ -99,7 +99,8 @@ async function onMapSelected(uuid: string) {
 }
 
 async function onMapSelectedReadonly(uuid: string) {
-  myMapsLayerHelper.openMyMapsLayer(uuid)
+  const map = myMaps.value.find(m => m.uuid === uuid)
+  myMapsLayerHelper.openMyMapsLayer(uuid, map?.title ?? '')
   openMapModalState.value = false
 }
 
