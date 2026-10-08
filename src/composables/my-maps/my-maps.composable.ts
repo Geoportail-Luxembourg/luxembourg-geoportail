@@ -24,8 +24,8 @@ import useBackgroundLayer from '@/composables/background-layer/background-layer.
 import { useUserManagerStore } from '@/stores/user-manager.store'
 import { useDrawStore } from '@/stores/draw.store'
 import useMap from '@/composables/map/map.composable'
-import { featuresExtent, fitExtentToView } from '@/composables/map/fit-extent'
-import { buildMyMapsDrawnFeatures } from '@/services/my-maps/my-maps-layer.service'
+import { fitToView, getFeaturesExtent } from '@/composables/map/map.utils'
+import { buildMyMapsDrawnFeatures } from '@/services/my-maps/my-maps-layer.utils'
 
 let watchersDefined = false
 
@@ -155,7 +155,7 @@ export default function useMyMaps() {
    * Fit map view to the extent of all MyMap features (as in v3)
    */
   function fitToMyMapFeatures() {
-    fitExtentToView(featuresExtent(drawnFeaturesMyMaps.value))
+    fitToView(getFeaturesExtent(drawnFeaturesMyMaps.value))
   }
 
   /**
