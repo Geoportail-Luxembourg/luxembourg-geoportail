@@ -61,15 +61,10 @@ export class OlSynchronizer {
             oldContext
           )
 
-          if (
-            mutationType === MutationTypeValue.ON_LAYER_TYPE ||
-            mutationType === MutationTypeValue.ON_LAYER_DATA
-          ) {
+          if (mutationType === MutationTypeValue.ON_LAYER_TYPE) {
             // eg. when switching to offline, the layer type changes
-            // or when a layer payload is replaced (eg. MyMaps hydrated)
             // the layer should be removed and added again with a new factory
             openLayers.removeLayer(map, layer.id)
-            openLayers.removeFromCache(layer.id)
             openLayers.addLayer(map, layer)
           } else {
             openLayers.setLayerOpacity(map, layer.id, layer.opacity as number)

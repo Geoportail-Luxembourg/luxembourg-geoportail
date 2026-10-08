@@ -1,20 +1,8 @@
-import { Extent } from 'ol/extent'
-import { createEmpty, extend } from 'ol/extent'
-import olFormatGeoJSON from 'ol/format/GeoJSON'
-
 import { LayerImageType, LayerId, Layer } from '@/stores/map.store.model'
 import { LayerTypeValue } from '@/composables/themes/themes.model'
-import {
-  fetchMyMap,
-  fetchMyMapFeatures,
-  MyMapFetchFeaturesJson,
-} from '@/services/api/api-mymaps.service'
+import { MyMapFetchFeaturesJson } from '@/services/api/api-mymaps.service'
 import { DrawnFeature } from '@/services/ol-feature/ol-feature-drawn'
 import { convertPolygonFeatureToCircle } from '@/composables/draw/draw-utils.composable'
-import {
-  PROJECTION_LUX,
-  PROJECTION_WEBMERCATOR,
-} from '@/composables/map/map.composable'
 
 export const MY_MAPS_LAYER_ID_PREFIX = 'mymaps||'
 
@@ -30,81 +18,15 @@ export function uuidFromMyMapsLayerId(id: LayerId): string {
   return String(id).slice(MY_MAPS_LAYER_ID_PREFIX.length)
 }
 
-export function buildMyMapsLayer({
-  uuid,
-  title,
-  featuresGeoJson,
-}: {
-  uuid: string
-  title: string
-  featuresGeoJson: MyMapFetchFeaturesJson
-}): Layer {
+export function myMapsLayerIdToLayer(id: string, name = ''): Layer {
   return {
-    id: myMapsLayerId(uuid),
-    name: title,
-    type: LayerTypeValue.MY_MAPS,
-    layers: '',
-    imageType: LayerImageType.PNG,
-    opacity: 1,
-    geojson: JSON.stringify(featuresGeoJson),
-  }
-}
-
-export function buildMyMapsLayerStub(layerId: string): Layer {
-  return {
-    id: layerId,
-    name: '',
+    id,
+    name,
     type: LayerTypeValue.MY_MAPS,
     layers: '',
     imageType: LayerImageType.PNG,
     opacity: 1,
   }
-}
-
-export async function fetchMyMapsLayer(uuid: string): Promise<Layer> {
-  const [map, features] = await Promise.all([
-    fetchMyMap(uuid),
-    fetchMyMapFeatures(uuid),
-  ])
-
-  return buildMyMapsLayer({
-    uuid: map.uuid,
-    title: map.title,
-    featuresGeoJson: features,
-  })
-}
-
-export function myMapsFeaturesExtent(
-  features: MyMapFetchFeaturesJson
-): Extent | null {
-  const olFeatures = new olFormatGeoJSON().readFeatures(features, {
-    dataProjection: PROJECTION_LUX,
-    featureProjection: PROJECTION_WEBMERCATOR,
-  })
-
-  if (olFeatures.length === 0) {
-    return null
-  }
-
-  const extent = createEmpty()
-  olFeatures.forEach(f => {
-    if (f.getGeometry()) {
-      extend(extent, f.getGeometry()!.getExtent())
-    }
-  })
-
-  if (
-    extent[0] === Infinity ||
-    extent[1] === Infinity ||
-    extent[2] === -Infinity ||
-    extent[3] === -Infinity ||
-    extent[0] >= extent[2] ||
-    extent[1] >= extent[3]
-  ) {
-    return null
-  }
-
-  return extent
 }
 
 /**

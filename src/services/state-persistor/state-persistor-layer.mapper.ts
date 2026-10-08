@@ -10,7 +10,7 @@ import {
   encodeLayerIdForStorage,
 } from '@/services/state-persistor/utils/layer-id-storage'
 import {
-  buildMyMapsLayerStub,
+  myMapsLayerIdToLayer,
   isMyMapsLayerId,
 } from '@/services/my-maps/my-maps-layer.utils'
 
@@ -39,7 +39,7 @@ class StorageLayerMapper {
     return layerIds
       .map(layerId => {
         if (isMyMapsLayerId(layerId)) {
-          return layers.initLayer(buildMyMapsLayerStub(layerId))
+          return layers.initLayer(myMapsLayerIdToLayer(layerId))
         }
 
         const layer = remoteLayersService.isRemoteLayer(layerId)
