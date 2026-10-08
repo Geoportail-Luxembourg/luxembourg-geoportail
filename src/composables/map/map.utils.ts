@@ -4,7 +4,7 @@ import type { Feature } from 'ol'
 
 import useMap from '@/composables/map/map.composable'
 
-export function featuresExtent(features: Feature[]): Extent | null {
+export function getFeaturesExtent(features: Feature[]): Extent | null {
   if (features.length === 0) {
     return null
   }
@@ -30,7 +30,7 @@ export function featuresExtent(features: Feature[]): Extent | null {
   return extent
 }
 
-export function fitExtentToView(extent: Extent | null | undefined) {
+export function fitToView(extent: Extent | null | undefined) {
   if (!extent) {
     return
   }

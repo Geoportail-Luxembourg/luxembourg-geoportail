@@ -355,6 +355,8 @@ function sortMap(
                   v-if="!map.deletedWhileOffline"
                   @click="emit('select-readonly', map.uuid)"
                   :aria-label="t('Ouvrir en lecture seule') + ' ' + map.title"
+                  :title="t('Ouvrir en lecture seule') + ' ' + map.title"
+                  class="hover:text-blue-500"
                 >
                   <i class="fa fa-eye" aria-hidden="true"></i>
                 </button>

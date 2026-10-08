@@ -8,11 +8,11 @@ import { stringToBooleans, stringToNumbers } from '../utils'
 import {
   decodeLayerIdFromStorage,
   encodeLayerIdForStorage,
-} from '@/services/layer-id/layer-id-storage'
+} from '@/services/state-persistor/utils/layer-id-storage'
 import {
   buildMyMapsLayerStub,
   isMyMapsLayerId,
-} from '@/services/my-maps/my-maps-layer.service'
+} from '@/services/my-maps/my-maps-layer.utils'
 
 const STORAGE_SEPARATOR = '-'
 const STORAGE_SEPARATOR_V2 = ','
@@ -28,7 +28,10 @@ class StorageLayerMapper {
   layerIdsToLayers(layerIdsText: string | null) {
     const themes = useThemes()
     const layers = useLayers()
-    // Split on separator first: string layer ids may contain %2D-encoded dashes
+    // Split on separator first, then decode %2D back to dashes.
+    // Remote layer ids encode dashes as %2D (v3 convention, see remote-layers.mapper).
+    // Splitting before decoding prevents %2D-encoded dashes from being
+    // mistaken for the storage separator — v3 permalinks stay compatible.
     const layerIds = layerIdsText
       ? layerIdsText.split(STORAGE_SEPARATOR).map(decodeLayerIdFromStorage)
       : []

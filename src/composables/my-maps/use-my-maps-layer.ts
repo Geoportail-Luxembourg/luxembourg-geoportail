@@ -5,11 +5,12 @@ import { useAlertNotificationsStore } from '@/stores/alert-notifications.store'
 import { AlertNotificationType } from '@/stores/alert-notifications.store.model'
 import { useAppStore } from '@/stores/app.store'
 import { useMapStore } from '@/stores/map.store'
-import { fitExtentToView } from '@/composables/map/fit-extent'
+import { fitToView } from '@/composables/map/map.utils'
 import {
   fetchMyMapsLayer,
   myMapsFeaturesExtent,
-} from '@/services/my-maps/my-maps-layer.service'
+  myMapsLayerId,
+} from '@/services/my-maps/my-maps-layer.utils'
 import { MyMapFetchFeaturesJson } from '@/services/api/api-mymaps.service'
 
 /**
@@ -24,13 +25,19 @@ export default function useMyMapsLayer() {
   const { myMapIsLoading } = storeToRefs(appStore)
 
   async function openMyMapsLayer(uuid: string) {
+    if (mapStore.hasLayer(myMapsLayerId(uuid))) {
+      return
+    }
+
     myMapIsLoading.value = true
     try {
       const layer = await fetchMyMapsLayer(uuid)
-      mapStore.upsertLayers(layer)
+      mapStore.addLayers(layer)
+      appStore.setLayersOpen(true)
+      appStore.setMyLayersTabOpen(true)
 
       if (layer.geojson) {
-        fitExtentToView(
+        fitToView(
           myMapsFeaturesExtent(
             JSON.parse(layer.geojson) as MyMapFetchFeaturesJson
           )
