@@ -22,8 +22,6 @@ export interface Layer {
   dimensions?: {}
   style?: string
   opacity?: number
-  /** GeoJSON payload for vector layers (MyMaps). Not persisted — id only in permalink. */
-  geojson?: string
   previousOpacity?: number
   time?: LayerTime
   currentTimeMinValue?: string
