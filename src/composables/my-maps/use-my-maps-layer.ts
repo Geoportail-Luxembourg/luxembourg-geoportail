@@ -22,7 +22,6 @@ export default function useMyMapsLayer() {
 
     const layer = myMapsLayerIdToLayer(layerId, title)
     mapStore.addLayers(layer)
-    appStore.setLayersOpen(true)
     appStore.setMyLayersTabOpen(true)
   }
 
