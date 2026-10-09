@@ -30,6 +30,15 @@ export function myMapsLayerIdToLayer(id: string, name = ''): Layer {
 }
 
 /**
+ * Remove MyMaps read only layers from a list of layers.
+ */
+export function removeMyMapsLayers(layers: Layer[]): Layer[] {
+  return layers.filter(
+    l => !l.id.toString().startsWith(MY_MAPS_LAYER_ID_PREFIX)
+  )
+}
+
+/**
  * Single entry point to build MyMaps DrawnFeatures.
  * Same style pipeline as regular drawing; edit-mode styles stay gated on
  * __isBeingEdited__ (never set outside edit.composable).
