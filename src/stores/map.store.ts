@@ -99,6 +99,15 @@ export const useMapStore = defineStore('map', () => {
     })
   }
 
+  function setLayerName(layerId: LayerId, name: string) {
+    layers.value = layers.value.map(elt => {
+      if (elt.id === layerId) {
+        return { ...elt, name }
+      }
+      return elt
+    })
+  }
+
   function setIs3dActive(active: boolean) {
     is3dActive.value = active
   }
@@ -126,6 +135,7 @@ export const useMapStore = defineStore('map', () => {
     removeAllLayers,
     reorderLayers,
     setLayerOpacity,
+    setLayerName,
     setLayerTime,
     setBgLayer,
     setIs3dActive,
