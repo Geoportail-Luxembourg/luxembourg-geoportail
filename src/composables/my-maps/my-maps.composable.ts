@@ -25,7 +25,10 @@ import { useUserManagerStore } from '@/stores/user-manager.store'
 import { useDrawStore } from '@/stores/draw.store'
 import useMap from '@/composables/map/map.composable'
 import { fitToView, getFeaturesExtent } from '@/composables/map/map.utils'
-import { buildMyMapsDrawnFeatures } from '@/services/my-maps/my-maps-layer.utils'
+import {
+  removeMyMapsLayers,
+  buildMyMapsDrawnFeatures,
+} from '@/services/my-maps/my-maps-layer.utils'
 
 let watchersDefined = false
 
@@ -123,7 +126,8 @@ export default function useMyMaps() {
    */
   async function applyToMyMap() {
     if (myMap.value) {
-      const layersToSave = layers.value.reverse()
+      const layersToSave = removeMyMapsLayers(layers.value.reverse())
+
       myMap.value.bg_layer = bgLayer.value?.name ?? 'blank'
       myMap.value.bg_opacity = 1
       myMap.value.layers = layersToSave.map(l => l.name).join(',')
@@ -332,8 +336,9 @@ function myMapCompareLayers(
   layers: Layer[],
   bgLayer: Layer | null | undefined
 ) {
-  const selectedLayers = layers.map(l => l.name).join(',')
-  const selectedOpacities = layers.map(l => l.opacity).join(',')
+  const filteredLayers = removeMyMapsLayers(layers)
+  const selectedLayers = filteredLayers.map(l => l.name).join(',')
+  const selectedOpacities = filteredLayers.map(l => l.opacity).join(',')
 
   if (
     selectedLayers !== (myMap.layers ?? '') ||
