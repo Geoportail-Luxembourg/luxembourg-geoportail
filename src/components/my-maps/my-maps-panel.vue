@@ -98,9 +98,9 @@ async function onMapSelected(uuid: string) {
   openMapModalState.value = false
 }
 
-async function onMapSelectedReadonly(uuid: string) {
+async function onMapToggleReadonly(uuid: string) {
   const map = myMaps.value.find(m => m.uuid === uuid)
-  myMapsLayerHelper.openMyMapsLayer(uuid, map?.title ?? '')
+  myMapsLayerHelper.toggleMyMapsLayer(uuid, map?.title ?? '')
   openMapModalState.value = false
 }
 
@@ -287,7 +287,7 @@ watch(
     v-if="openMapModalState"
     @cancel="openMapModalState = false"
     @select="onMapSelected"
-    @select-readonly="onMapSelectedReadonly"
+    @toggle-readonly="onMapToggleReadonly"
     @delete="onMapConfirmedDeletion"
   ></MyMapsOpenMap>
 </template>
