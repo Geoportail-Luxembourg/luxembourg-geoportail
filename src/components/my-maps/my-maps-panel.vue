@@ -101,7 +101,6 @@ async function onMapSelected(uuid: string) {
 async function onMapToggleReadonly(uuid: string) {
   const map = myMaps.value.find(m => m.uuid === uuid)
   myMapsLayerHelper.toggleMyMapsLayer(uuid, map?.title ?? '')
-  openMapModalState.value = false
 }
 
 async function onMapDeleteOpenConfirm(map: MyMap) {
