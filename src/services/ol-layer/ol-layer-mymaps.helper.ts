@@ -1,11 +1,15 @@
 import VectorLayer from 'ol/layer/Vector'
 import VectorSource from 'ol/source/Vector'
 import { Layer } from '@/stores/map.store.model'
+import { useMapStore } from '@/stores/map.store'
 import {
   buildMyMapsDrawnFeatures,
   uuidFromMyMapsLayerId,
 } from '@/services/my-maps/my-maps-layer.utils'
-import { fetchMyMapFeatures } from '@/services/api/api-mymaps.service'
+import {
+  fetchMyMap,
+  fetchMyMapFeatures,
+} from '@/services/api/api-mymaps.service'
 import { OlLayer } from './ol-layer.model'
 
 class OlLayerMyMapsHelper {
@@ -13,12 +17,22 @@ class OlLayerMyMapsHelper {
     const source = new VectorSource({
       loader: async (_extent, _res, _proj, success, failure) => {
         try {
-          const json = await fetchMyMapFeatures(uuidFromMyMapsLayerId(layer.id))
-          const features = buildMyMapsDrawnFeatures(json, {
+          const uuid = uuidFromMyMapsLayerId(layer.id)
+          const [map, features] = await Promise.all([
+            fetchMyMap(uuid),
+            fetchMyMapFeatures(uuid),
+          ])
+          const drawnFeatures = buildMyMapsDrawnFeatures(features, {
             editable: false,
           })
-          source.addFeatures(features)
-          success?.(features)
+          source.addFeatures(drawnFeatures)
+
+          // Fill in the layer name if it was restored without one (permalink)
+          if (!layer.name && map.title) {
+            useMapStore().setLayerName(layer.id, map.title)
+          }
+
+          success?.(drawnFeatures)
         } catch {
           failure?.()
         }
