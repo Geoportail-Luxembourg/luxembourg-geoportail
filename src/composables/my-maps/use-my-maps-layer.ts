@@ -18,9 +18,10 @@ export default function useMyMapsLayer() {
   const mapStore = useMapStore()
   const openLayers = useOpenLayers()
 
-  function openMyMapsLayer(uuid: string, title: string) {
+  function toggleMyMapsLayer(uuid: string, title: string) {
     const layerId = myMapsLayerId(uuid)
     if (mapStore.hasLayer(layerId)) {
+      mapStore.removeLayers(layerId)
       return
     }
 
@@ -43,6 +44,6 @@ export default function useMyMapsLayer() {
   }
 
   return {
-    openMyMapsLayer,
+    toggleMyMapsLayer,
   }
 }
