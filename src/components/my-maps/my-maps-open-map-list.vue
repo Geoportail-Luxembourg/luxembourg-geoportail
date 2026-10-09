@@ -9,13 +9,18 @@ import { MyMapJson } from '@/services/api/api-mymaps.service'
 import { MyMap } from '@/stores/app.store.model'
 import { formatDate } from '@/services/common/formatting.utils'
 import { useAppStore } from '@/stores/app.store'
+import { useMapStore } from '@/stores/map.store'
+import {
+  isMyMapsLayerId,
+  myMapsLayerId,
+} from '@/services/my-maps/my-maps-layer.utils'
 
 type SortType = 'title' | 'category' | 'owner' | 'last_feature_update'
 
 const emit = defineEmits<{
   (e: 'cancel'): void
   (e: 'select', uuid: string): void
-  (e: 'select-readonly', uuid: string): void
+  (e: 'toggle-readonly', uuid: string): void
   (e: 'delete', map: MyMap): void
 }>()
 
@@ -26,6 +31,16 @@ const props = defineProps<{
 
 const { t } = useTranslation()
 const { isOffLine } = storeToRefs(useAppStore())
+const mapStore = useMapStore()
+const loadedMyMapsIds = computed(
+  () =>
+    new Set(
+      mapStore.layers.filter(l => isMyMapsLayerId(l.id)).map(l => String(l.id))
+    )
+)
+function isLayerLoaded(map: MyMapJson) {
+  return loadedMyMapsIds.value.has(myMapsLayerId(map.uuid))
+}
 const mapNameSearch = ref<string>('')
 const categorySearch = ref<string>('')
 const categoriesOptions = computed(() =>
@@ -353,12 +368,28 @@ function sortMap(
               <td class="flex flex-row gap-2 py-2 justify-center">
                 <button
                   v-if="!map.deletedWhileOffline"
-                  @click="emit('select-readonly', map.uuid)"
-                  :aria-label="t('Ouvrir en lecture seule') + ' ' + map.title"
-                  :title="t('Ouvrir en lecture seule') + ' ' + map.title"
+                  @click="emit('toggle-readonly', map.uuid)"
+                  :aria-label="
+                    (isLayerLoaded(map)
+                      ? t('Retirer la carte')
+                      : t('Ouvrir en lecture seule')) +
+                    ' ' +
+                    map.title
+                  "
+                  :title="
+                    (isLayerLoaded(map)
+                      ? t('Retirer la carte')
+                      : t('Ouvrir en lecture seule')) +
+                    ' ' +
+                    map.title
+                  "
                   class="hover:text-blue-500"
                 >
-                  <i class="fa fa-eye" aria-hidden="true"></i>
+                  <i
+                    class="fa"
+                    :class="isLayerLoaded(map) ? 'fa-eye-slash' : 'fa-eye'"
+                    aria-hidden="true"
+                  ></i>
                 </button>
                 <button
                   v-if="!map.deletedWhileOffline"
