@@ -1,4 +1,6 @@
 import { nextTick } from 'vue'
+import VectorLayer from 'ol/layer/Vector'
+import VectorSource from 'ol/source/Vector'
 
 import { useAppStore } from '@/stores/app.store'
 import { useMapStore } from '@/stores/map.store'
@@ -25,13 +27,16 @@ export default function useMyMapsLayer() {
       return
     }
 
-    mapStore.addLayers(myMapsLayerIdToLayer(layerId, title))
+    const layer = myMapsLayerIdToLayer(layerId, title)
+    mapStore.addLayers(layer)
     appStore.setLayersOpen(true)
     appStore.setMyLayersTabOpen(true)
 
     // Fit view once features load
     nextTick(() => {
-      const source = openLayers.getLayerFromCache(layerId)?.getSource()
+      const source = (
+        openLayers.getLayerFromCache(layer) as VectorLayer<VectorSource> | null
+      )?.getSource()
       if (!source) return
       if (source.getFeatures().length > 0) {
         fitToView(getFeaturesExtent(source.getFeatures()))
