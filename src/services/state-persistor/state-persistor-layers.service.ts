@@ -11,7 +11,7 @@ import { AlertNotificationType } from '@/stores/alert-notifications.store.model'
 import { useMatomo } from '@/composables/matomo/matomo.composable'
 import useLayers from '@/composables/layers/layers.composable'
 import useThemes from '@/composables/themes/themes.composable'
-import { remoteLayersService } from '@/services/remote-layers/remote-layers.service'
+import { decodeLayerIdFromStorage } from '@/services/state-persistor/utils/layer-id-storage'
 
 import {
   SP_KEY_LAYERS,
@@ -32,13 +32,18 @@ const STORAGE_SEPARATOR = '-'
 class StatePersistorLayersService implements StatePersistorService {
   bootstrap() {
     const themeStore = useThemeStore()
+    let restored = false
     let stop: WatchStopHandle
     // eslint-disable-next-line prefer-const
     stop = watchEffect(() => {
-      if (themeStore.themes) {
-        this.restore()
-        this.persist()
-        stop && stop() // test if exists, for HMR support
+      // Guard: restore reads mapStore.layers (exclusion rules) which can
+      // re-trigger this effect when layers are added after MyMaps hydrate.
+      if (themeStore.themes && !restored) {
+        restored = true
+        this.restore().finally(() => {
+          this.persist()
+          stop && stop() // test if exists, for HMR support
+        })
       }
     })
   }
@@ -74,7 +79,7 @@ class StatePersistorLayersService implements StatePersistorService {
     )
   }
 
-  restore() {
+  async restore() {
     const version = storageHelper.getInitialVersion()
     const mapStore = useMapStore()
     const layers = storageHelper.getValue(
@@ -146,12 +151,10 @@ class StatePersistorLayersService implements StatePersistorService {
       )
       if (rawLayersValue) {
         const requestedIds = rawLayersValue
-          .split('%2D')
-          .join('-')
           .split(STORAGE_SEPARATOR)
-          .filter(id => !remoteLayersService.isRemoteLayer(id))
+          .map(decodeLayerIdFromStorage)
+          .filter(id => /^\d+$/.test(id))
           .map(id => parseInt(id, 10))
-          .filter(id => !isNaN(id))
 
         const resolvedIds = new Set(layersToAdd.map(l => l.id))
         const missingIds = requestedIds.filter(id => !resolvedIds.has(id))

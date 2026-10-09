@@ -11,6 +11,7 @@ import useOpenLayers from '@/composables/map/ol.composable'
 import useMap from '@/composables/map/map.composable'
 import { statePersistorSliderComparatorService } from '@/services/state-persistor/state-persistor-slider-comparator.service'
 import { useSliderComparatorStore } from '@/stores/slider-comparator.store'
+import { getLayerDrawContext } from '@/services/ol-layer/ol-layer-draw-context'
 
 import SplitterElement from './splitter-element.vue'
 
@@ -73,13 +74,17 @@ watch(sliderOffset, () => {
 
 function activate() {
   const olLayer = openLayers.getLayerFromCache(sliderTopLayer.value)
+
   mapSize.value = olMap.value?.getSize()!
   if (!olLayer) return
+
+  let clipContext: CanvasRenderingContext2D | null = null
 
   olLayerPrerenderEvent = olLayer.on(
     <EventTypes>EventType.PRERENDER,
     function (event) {
-      const ctx = <CanvasRenderingContext2D>(<RenderEvent>event).context
+      const ctx = getLayerDrawContext(olLayer, <RenderEvent>event)
+      clipContext = ctx
 
       const width = sliderOffset.value + splitterElementOffset.value / 2
       const tl = getRenderPixel(<RenderEvent>event, [0, 0])
@@ -100,10 +105,9 @@ function activate() {
 
   olLayerPostrenderEvent = olLayer.on(
     <EventTypes>EventType.POSTRENDER,
-    function (e) {
-      const event = <RenderEvent>e
-      const ctx = <CanvasRenderingContext2D>event.context
-      ctx.restore()
+    function () {
+      clipContext?.restore()
+      clipContext = null
     }
   )
 

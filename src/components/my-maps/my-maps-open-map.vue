@@ -10,6 +10,7 @@ import MyMapConfirm from './my-map-confirm.vue'
 const emit = defineEmits<{
   (e: 'cancel'): void
   (e: 'select', uuid: string): void
+  (e: 'toggle-readonly', uuid: string): void
   (e: 'delete', muuid: string): void
 }>()
 
@@ -37,6 +38,7 @@ function onDelete(uuid: string) {
     :isLoadingMyMaps="isLoadingMyMaps"
     @cancel="emit('cancel')"
     @select="emit('select', $event)"
+    @toggle-readonly="emit('toggle-readonly', $event)"
     @delete="onDeleteOpenConfirm"
   ></MyMapsOpenMapList>
 

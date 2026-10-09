@@ -169,6 +169,39 @@ describe('StorageLayerMapper', () => {
         },
       ])
     })
+    it('returns a mymaps layer', () => {
+      expect(
+        storageLayerMapper.layerIdsToLayers('mymaps||a1b2%2Dc3d4')
+      ).toStrictEqual([
+        {
+          id: 'mymaps||a1b2-c3d4',
+          name: '',
+          layers: '',
+          type: 'myMaps',
+          imageType: 'image/png',
+          opacity: 1,
+          previousOpacity: 1,
+          currentTimeMinValue: undefined,
+        },
+      ])
+    })
+
+    it('decodes %2D dashes so encoded dashes are not treated as separators', () => {
+      expect(
+        storageLayerMapper.layerIdsToLayers('mymaps||a1b2%2Dc3d4')
+      ).toStrictEqual([
+        {
+          id: 'mymaps||a1b2-c3d4',
+          name: '',
+          layers: '',
+          type: 'myMaps',
+          imageType: 'image/png',
+          opacity: 1,
+          previousOpacity: 1,
+          currentTimeMinValue: undefined,
+        },
+      ])
+    })
   })
 
   describe('#layersOpacitiesToNumbers', () => {
@@ -189,6 +222,33 @@ describe('StorageLayerMapper', () => {
       expect(storageLayerMapper.layersToLayerIds([layer360, layerAnyId])).toBe(
         'AnyId-360'
       )
+    })
+
+    it('encodes dashes of mymaps layer ids', () => {
+      const myMapsLayer: Layer = {
+        id: 'mymaps||a1b2-c3d4',
+        name: 'my map',
+        layers: '',
+        type: 'myMaps',
+        imageType: 'image/png',
+      }
+      expect(storageLayerMapper.layersToLayerIds([myMapsLayer])).toBe(
+        'mymaps||a1b2%2Dc3d4'
+      )
+    })
+
+    it('round trips a mymaps layer id with dashes', () => {
+      const myMapsLayer: Layer = {
+        id: 'mymaps||a1b2-c3d4',
+        name: 'my map',
+        layers: '',
+        type: 'myMaps',
+        imageType: 'image/png',
+      }
+      const ids = storageLayerMapper.layersToLayerIds([myMapsLayer])
+      expect(storageLayerMapper.layerIdsToLayers(ids)).toMatchObject([
+        { id: myMapsLayer.id },
+      ])
     })
   })
 
