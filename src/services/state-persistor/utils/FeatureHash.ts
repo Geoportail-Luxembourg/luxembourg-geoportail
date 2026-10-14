@@ -836,7 +836,11 @@ function castValue_(key: string, value: string) {
   if (numProperties.includes(key)) {
     return +value
   } else if (boolProperties.includes(key)) {
-    return value === 'true'
+    if (key === 'isVisible' && value === undefined) {
+      return true
+    } else {
+      return value === 'true'
+    }
   } else {
     return value
   }
