@@ -168,7 +168,7 @@ describe('Export Panel', () => {
         .then(href => {
           expect(href).to.not.equal(undefined)
           expect(
-            /^https:\/\/3d\.geoportail\.lu\?state=.+$/.test(href ?? '')
+            /^https:\/\/3d\.geoportail\.lu\?state=.+&lang=.+$/.test(href ?? '')
           ).to.equal(true)
         })
     })
