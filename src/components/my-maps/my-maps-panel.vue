@@ -7,6 +7,7 @@ import SidePanelLayout from '@/components/common/side-panel-layout.vue'
 import DrawPanel from '@/components/draw/draw-panel.vue'
 import FeaturesList from '@/components/draw/features-list.vue'
 import useMyMaps from '@/composables/my-maps/my-maps.composable'
+import useMyMapsLayer from '@/composables/my-maps/my-maps-layer.composable'
 import { useAlertNotificationsStore } from '@/stores/alert-notifications.store'
 import { AlertNotificationType } from '@/stores/alert-notifications.store.model'
 import { useAppStore } from '@/stores/app.store'
@@ -28,10 +29,12 @@ const { t } = useTranslation()
 const { addNotification } = useAlertNotificationsStore()
 const appStore = useAppStore()
 const myMapsHelper = useMyMaps()
+const myMapsLayerHelper = useMyMapsLayer()
 const { toggleShareOpen } = appStore
 const { myMap } = storeToRefs(appStore)
 const drawStore = useDrawStore()
 const { drawnFeaturesMyMaps: features } = storeToRefs(drawStore)
+const { toggleMyMapsLayer, isMyMapsLayerActive } = useMyMapsLayer()
 
 const editFormModalState = ref<EditFormModeType | undefined>(undefined) // undefined => closed
 const editFormModalMyMap = shallowRef<MyMap | undefined>(undefined) // Current MyMap opened in Edit form
@@ -94,6 +97,11 @@ async function onMapUpdated(uuid: string) {
 async function onMapSelected(uuid: string) {
   myMapsHelper.openMyMap(uuid)
   openMapModalState.value = false
+}
+
+async function onMapToggleReadonly(uuid: string) {
+  const map = myMaps.value.find(m => m.uuid === uuid)
+  myMapsLayerHelper.toggleMyMapsLayer(uuid, map?.title ?? '')
 }
 
 async function onMapDeleteOpenConfirm(map: MyMap) {
@@ -205,6 +213,7 @@ watch(
       <div v-if="myMap">
         <MyMapInfo
           :myMap="myMap"
+          :isMyMapsLayerActive="isMyMapsLayerActive(myMap.uuid)"
           @close="myMapsHelper.closeMyMap"
           @delete="onMapDeleteOpenConfirm"
           @clear="onClearOpenConfirm"
@@ -217,6 +226,7 @@ watch(
           @saveLayers="myMapsHelper.applyToMyMap"
           @draw:mergelines="() => drawStore.toggleDrawMergeLinesModal(true)"
           @draw:cutlines="() => drawStore.toggleDrawCutLineMode()"
+          @toggleMyMapsLayer="() => toggleMyMapsLayer(myMap.uuid, myMap.title)"
         />
         <FeaturesList :features="features" idPrefix="mymap" />
       </div>
@@ -279,6 +289,7 @@ watch(
     v-if="openMapModalState"
     @cancel="openMapModalState = false"
     @select="onMapSelected"
+    @toggle-readonly="onMapToggleReadonly"
     @delete="onMapConfirmedDeletion"
   ></MyMapsOpenMap>
 </template>
