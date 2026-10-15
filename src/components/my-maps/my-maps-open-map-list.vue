@@ -385,11 +385,18 @@ function sortMap(
                   "
                   class="hover:text-blue-500"
                 >
-                  <i
-                    class="fa"
-                    :class="isLayerLoaded(map) ? 'fa-eye-slash' : 'fa-eye'"
+                  <img
+                    v-if="isLayerLoaded(map)"
+                    src="@/assets/icons/mymaps-remove-from-layers.svg"
+                    alt=""
                     aria-hidden="true"
-                  ></i>
+                  />
+                  <img
+                    v-else
+                    src="@/assets/icons/mymaps-add-to-layers.svg"
+                    alt=""
+                    aria-hidden="true"
+                  />
                 </button>
                 <button
                   v-if="!map.deletedWhileOffline"
