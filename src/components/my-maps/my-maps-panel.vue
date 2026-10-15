@@ -34,6 +34,7 @@ const { toggleShareOpen } = appStore
 const { myMap } = storeToRefs(appStore)
 const drawStore = useDrawStore()
 const { drawnFeaturesMyMaps: features } = storeToRefs(drawStore)
+const { toggleMyMapsLayer, isMyMapsLayerActive } = useMyMapsLayer()
 
 const editFormModalState = ref<EditFormModeType | undefined>(undefined) // undefined => closed
 const editFormModalMyMap = shallowRef<MyMap | undefined>(undefined) // Current MyMap opened in Edit form
@@ -212,6 +213,7 @@ watch(
       <div v-if="myMap">
         <MyMapInfo
           :myMap="myMap"
+          :isMyMapsLayerActive="isMyMapsLayerActive(myMap.uuid)"
           @close="myMapsHelper.closeMyMap"
           @delete="onMapDeleteOpenConfirm"
           @clear="onClearOpenConfirm"
@@ -224,6 +226,7 @@ watch(
           @saveLayers="myMapsHelper.applyToMyMap"
           @draw:mergelines="() => drawStore.toggleDrawMergeLinesModal(true)"
           @draw:cutlines="() => drawStore.toggleDrawCutLineMode()"
+          @toggleMyMapsLayer="() => toggleMyMapsLayer(myMap.uuid, myMap.title)"
         />
         <FeaturesList :features="features" idPrefix="mymap" />
       </div>
