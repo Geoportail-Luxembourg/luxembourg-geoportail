@@ -36,8 +36,6 @@ class StatePersistorLayersService implements StatePersistorService {
     let stop: WatchStopHandle
     // eslint-disable-next-line prefer-const
     stop = watchEffect(() => {
-      // Guard: restore reads mapStore.layers (exclusion rules) which can
-      // re-trigger this effect when layers are added after MyMaps hydrate.
       if (themeStore.themes && !restored) {
         restored = true
         this.restore().finally(() => {
