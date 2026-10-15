@@ -34,7 +34,7 @@ let watchersDefined = false
 
 /**
  * Editable MyMap session (map_id in storage, draw features, apply/reset layers).
- * Read-only MyMaps as a map layer: use-my-maps-layer.ts.
+ * Read-only MyMaps as a map layer: my-maps-layer.composable.ts
  */
 export default function useMyMaps() {
   const { t } = useTranslation()

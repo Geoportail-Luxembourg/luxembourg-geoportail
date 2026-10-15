@@ -7,7 +7,7 @@ import {
 
 /**
  * Read-only MyMaps as a regular map layer.
- * Editable MyMap session lives in my-maps.composable.ts.
+ * Editable MyMap session lives in my-maps-manage.composable.ts
  */
 export default function useMyMapsLayer() {
   const appStore = useAppStore()
