@@ -17,7 +17,7 @@
       "icon": "fa-street-view",
       "useLocationInfoCoords": true,
       "target": "_geoportal_ext_obliques",
-      "url": "https://3d.geoportail.lu?state={VCS_OBLIQUE_STATE}",
+      "url": "https://3d.geoportail.lu?state={VCS_OBLIQUE_STATE}&lang={LANG}",
       "obliqueConfig": {
         "cameraAltitude": 692,
         "targetHeight": 292,
