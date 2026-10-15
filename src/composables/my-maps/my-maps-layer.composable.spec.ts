@@ -4,7 +4,7 @@ import { useAppStore } from '@/stores/app.store'
 import { useMapStore } from '@/stores/map.store'
 import { LayerTypeValue } from '@/composables/themes/themes.model'
 
-import useMyMapsLayer from './use-my-maps-layer'
+import useMyMapsLayer from './my-maps-layer.composable'
 
 const uuid = 'a1b2-c3d4'
 const layerId = `mymaps||${uuid}`
