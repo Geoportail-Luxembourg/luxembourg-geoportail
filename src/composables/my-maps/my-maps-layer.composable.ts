@@ -25,7 +25,13 @@ export default function useMyMapsLayer() {
     appStore.setMyLayersTabOpen(true)
   }
 
+  function isMyMapsLayerActive(uuid: string): boolean {
+    const layerId = myMapsLayerId(uuid)
+    return mapStore.hasLayer(layerId)
+  }
+
   return {
     toggleMyMapsLayer,
+    isMyMapsLayerActive,
   }
 }
