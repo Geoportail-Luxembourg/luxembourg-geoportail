@@ -135,7 +135,7 @@ async function computeParams(
  */
 export default function useExportUrl(map?: OlMap) {
   const mapStore = useMapStore()
-  const { layers, x, y, zoom } = storeToRefs(mapStore)
+  const { bgLayer, layers, x, y, zoom } = storeToRefs(mapStore)
   const { locationInfoCoords } = storeToRefs(useLocationInfoStore())
   const { currentUser } = storeToRefs(useUserManagerStore())
   const resolvedHrefs = ref<Record<string, string>>({})
@@ -155,7 +155,7 @@ export default function useExportUrl(map?: OlMap) {
       targetExportLayer?.positionTarget(newX, newY)
     }
   })
-  watch([locationInfoCoords, layers, x, y, zoom], resolveAllHrefs)
+  watch([locationInfoCoords, bgLayer, layers, x, y, zoom], resolveAllHrefs)
   watch([allLinks, currentUser], ([newLinks]) => {
     links.value = filterLinks(newLinks)
     resolveAllHrefs()
@@ -203,6 +203,13 @@ export default function useExportUrl(map?: OlMap) {
     locationParamsCache = locationParams
   }
 
+  function buildSelectedLayers(): (string | number)[][] {
+    const selectedLayers = layers.value.map(l => [l.name, 1, 0])
+    const selectedBgLayer = bgLayer.value ? [bgLayer.value.name, 1, 0] : null
+    if (selectedBgLayer) selectedLayers.unshift(selectedBgLayer)
+    return selectedLayers
+  }
+
   function resolveUrlFromCache(link: ExportLink): string {
     if (!link.url) return ''
     const base =
@@ -217,7 +224,8 @@ export default function useExportUrl(map?: OlMap) {
             VCS_OBLIQUE_STATE: buildObliqueState(
               base.LON,
               base.LAT,
-              link.obliqueConfig
+              link.obliqueConfig,
+              buildSelectedLayers()
             ),
           }
         : {}),
