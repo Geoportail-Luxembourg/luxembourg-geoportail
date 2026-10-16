@@ -1,0 +1,23 @@
+{
+  "extends": "@vue/tsconfig/tsconfig.web.json",
+  "compilerOptions": {
+    "target": "ES2020",
+    "lib": ["ES2020", "DOM", "DOM.Iterable"],
+    "module": "ESNext",
+    "moduleResolution": "bundler",
+    "strict": true,
+    "strictPropertyInitialization": false,
+    "skipLibCheck": true,
+    // Type-checking only; `vite-plugin-dts` owns declaration emit.
+    "noEmit": true,
+    // @vue/tsconfig 0.1.x still sets these two; they are deprecated in TS 5.x
+    // and error out unless acknowledged. Same workaround as tsconfig.app.json.
+    "preserveValueImports": false,
+    "importsNotUsedAsValues": "remove",
+    "ignoreDeprecations": "5.0"
+    // No `paths` mapping, deliberately: the package resolves nothing outside
+    // its own tree, so a stray `@/...` import fails `npm run type-check`.
+  },
+  "include": ["src/**/*.ts", "src/**/*.vue", "env.d.ts"],
+  "exclude": ["src/**/*.spec.ts", "dist"]
+}
