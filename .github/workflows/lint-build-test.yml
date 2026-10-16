@@ -23,6 +23,10 @@ jobs:
           cache: 'npm'
       - run: npm ci
       - run: npm run lint
+      # Build the templates package on its own. It is published and consumed by
+      # the 3D viewer, so it must compile with no access to the app's sources:
+      # any leftover `@/...` import fails here (see its tsconfig — no paths).
+      - run: npm run build:templates
       - run: npm run type-check
       - run: npm run build-only -- --mode=e2e
       - run: npm run test:unit:ci
