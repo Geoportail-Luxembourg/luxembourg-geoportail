@@ -22,6 +22,7 @@
     "*.css"
   ],
   "scripts": {
+    "prepublishOnly": "npm run build",
     "build": "npm run type-check && vite build",
     "build:only": "vite build",
     "type-check": "vue-tsc -p tsconfig.json"
