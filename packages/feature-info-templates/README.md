@@ -214,3 +214,38 @@ E2E lives in the app, at `cypress/e2e/info/feature-info.cy.ts`.
 | `npm run type-check`   | `vue-tsc` with no `@/*` path mapping             |
 | `npm run build`        | type-check, then bundle + emit `.d.ts` and CSS   |
 | `npm run build:only`   | bundle without the type-check gate               |
+
+## Publishing
+
+`.github/workflows/publish-templates.yml` publishes on a `templates-v*` tag, via
+npm trusted publishing (OIDC — no token). Bump the version, merge, then tag the
+merge commit.
+
+Bump from the repo root:
+
+```bash
+npm version 0.2.0 -w @geoportallux/feature-info-templates --no-git-tag-version
+```
+
+or from this directory, where `-w` is not needed:
+
+```bash
+cd packages/feature-info-templates
+npm version 0.2.0 --no-git-tag-version
+```
+
+The root form also updates the version this package is recorded under in the
+root `package-lock.json`; the `cd` form may not, so check `git status` for a
+stale lockfile before committing. Then, once merged:
+
+```bash
+git tag templates-v0.2.0 && git push origin templates-v0.2.0   # from anywhere in the repo
+```
+
+`--no-git-tag-version` matters: `npm version` would otherwise create a `v0.2.0`
+tag, which is the wrong format and triggers the two workflows listening on
+`tags: '*'`. The workflow fails if the tag and `package.json` disagree, and
+`dist/` is gitignored so the tarball is always built in CI. Tags are not
+branch-bound, so a prerelease can be published from a feature branch before it
+merges — note it still takes the `latest` dist-tag unless you move it
+afterwards with `npm dist-tag`.
