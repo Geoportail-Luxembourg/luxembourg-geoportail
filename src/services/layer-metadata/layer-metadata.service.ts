@@ -16,6 +16,9 @@ import { layersMetadataCache } from './layer-metadata.cache'
 const GEONETWORK_URL = import.meta.env.VITE_GEONETWORK_URL
 const GET_LEGENDS_URL = import.meta.env.VITE_GET_LEGENDS_URL
 const GET_METADATA_URL = import.meta.env.VITE_GET_METADATA_URL
+const LEGEND_MODE = String(
+  import.meta.env.VITE_LEGEND_MODE || 'image'
+).toLowerCase()
 
 export class LayerMetadataService {
   /**
@@ -70,21 +73,29 @@ export class LayerMetadataService {
         )
       : { isError: true }
     const title = layer.name
-    const legendName = localMetadata?.legend_name || ''
     const layerId = layer?.id
-    const legendHtml = await this.getLegendHtml(
-      GET_LEGENDS_URL,
-      legendName,
-      layerId,
-      currentLanguage
-    )
-    const hasLegend = !!legendHtml && legendHtml.hasChildNodes()
+
+    const legendHtml =
+      LEGEND_MODE === 'html'
+        ? await this.getLegendHtml(
+            GET_LEGENDS_URL,
+            localMetadata?.legend_name || '',
+            layerId,
+            currentLanguage
+          )
+        : undefined
+    const legendUrl =
+      LEGEND_MODE === 'image'
+        ? this.getLegendImage(layerId, localMetadata?.legend_name || '')
+        : undefined
+    const hasLegend = !!legendHtml?.hasChildNodes() || !!legendUrl
 
     return <LayerMetadataModel>{
       ...metadata,
       title,
       hasLegend,
-      ...(hasLegend && { legendHtml }),
+      ...(legendHtml && { legendHtml }),
+      ...(legendUrl && { legendUrl }),
     }
   }
 
@@ -114,6 +125,24 @@ export class LayerMetadataService {
         }
       })
       .catch(() => ({ isError: true }))
+  }
+
+  getLegendImage(
+    layerId?: number,
+    legendName?: string,
+    lang?: string
+  ): string | undefined {
+    if (!layerId) {
+      return undefined
+    }
+
+    const params = new URLSearchParams({
+      lang: lang || 'fr',
+      name: legendName || '',
+      id: layerId.toString(),
+    })
+
+    return `/legends/get?${params.toString()}`
   }
 
   getLegendHtml(
