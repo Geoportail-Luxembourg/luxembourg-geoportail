@@ -82,15 +82,15 @@ legendMock.textContent = 'The mocked legend'
 
 describe('LayerMetadataService', () => {
   let spyLocalMetadata
-  let spyLegendImage
+  let spyLegendHtml
   beforeEach(() => {
     layerMetadataService.clearCache()
     spyLocalMetadata = vi
       .spyOn(layerMetadataService, 'getLocalMetadata')
       .mockReturnValue(metadataMock)
-    spyLegendImage = vi
-      .spyOn(layerMetadataService, 'getLegendImage')
-      .mockReturnValue('https://example.com/legend.png')
+    spyLegendHtml = vi
+      .spyOn(layerMetadataService, 'getLegendHtml')
+      .mockReturnValue(legendMock)
   })
 
   afterEach(() => {
@@ -103,15 +103,15 @@ describe('LayerMetadataService', () => {
     beforeEach(async () => {
       metadata = await layerMetadataService.getLayerMetadata(268, 'fr')
     })
-    it('should call getLocalMetadata and getLegendImage', () => {
+    it('should call getLocalMetadata and getLegendHtml', () => {
       expect(spyLocalMetadata).toHaveBeenCalledTimes(1)
-      expect(spyLegendImage).toHaveBeenCalledTimes(1)
+      expect(spyLegendHtml).toHaveBeenCalledTimes(1)
     })
     it('should get correct metadata', () => {
       expect(metadata).toEqual({
         ...metadataMock,
         hasLegend: true,
-        legendUrl: 'https://example.com/legend.png',
+        legendHtml: legendMock,
         title: 'districts_labels', // uses name from theme node
       })
     })
@@ -121,15 +121,15 @@ describe('LayerMetadataService', () => {
     beforeEach(async () => {
       metadata = await layerMetadataService.getLayerMetadata(556, 'fr')
     })
-    it('should call getLocalMetadata and getLegendImage', () => {
+    it('should call getLocalMetadata and getLegendHtml', () => {
       expect(spyLocalMetadata).toHaveBeenCalledTimes(1)
-      expect(spyLegendImage).toHaveBeenCalledTimes(1)
+      expect(spyLegendHtml).toHaveBeenCalledTimes(1)
     })
     it('should get correct metadata', () => {
       expect(metadata).toEqual({
         ...metadataMock,
         hasLegend: true,
-        legendUrl: 'https://example.com/legend.png',
+        legendHtml: legendMock,
         title: 'basemap_2015_global', // uses name from theme node
       })
     })
@@ -185,7 +185,7 @@ describe('LayerMetadataService', () => {
         title: '3d buildings',
         description: '',
         hasLegend: true,
-        legendUrl: 'https://example.com/legend.png',
+        legendHtml: legendMock,
         keywords: [],
         accessConstraints: 'none',
         serviceDescription:
