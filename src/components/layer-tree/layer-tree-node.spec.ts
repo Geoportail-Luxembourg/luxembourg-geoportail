@@ -8,6 +8,7 @@ const layerTreeNodeMock = {
   name: 'treenodename',
   checked: false,
   expanded: false,
+  favourite: false,
   depth: 0,
   children: [
     {
@@ -15,6 +16,7 @@ const layerTreeNodeMock = {
       name: 'treenodename_1',
       checked: false,
       expanded: false,
+      favourite: false,
       depth: 1,
       children: [],
     },
