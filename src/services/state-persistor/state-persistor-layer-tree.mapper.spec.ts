@@ -81,4 +81,36 @@ describe('StorageLayerTreeMapper', () => {
       expect(decoded).toEqual(original)
     })
   })
+
+  describe('#favouritesToStorage', () => {
+    it('serialises ids to a JSON array', () => {
+      expect(storageLayerTreeMapper.favouritesToStorage([12, 3])).toBe('[12,3]')
+    })
+
+    it('serialises empty and nullish values', () => {
+      expect(storageLayerTreeMapper.favouritesToStorage([])).toBe('[]')
+      expect(storageLayerTreeMapper.favouritesToStorage(null)).toBe('[]')
+      expect(storageLayerTreeMapper.favouritesToStorage(undefined)).toBe('[]')
+    })
+  })
+
+  describe('#storageToFavourites', () => {
+    it('round-trips ids', () => {
+      const value = storageLayerTreeMapper.favouritesToStorage([12, 3])
+      expect(storageLayerTreeMapper.storageToFavourites(value)).toEqual([12, 3])
+    })
+
+    it('returns an empty array for null or empty values', () => {
+      expect(storageLayerTreeMapper.storageToFavourites(null)).toEqual([])
+      expect(storageLayerTreeMapper.storageToFavourites('')).toEqual([])
+    })
+
+    it('returns an empty array for malformed JSON', () => {
+      expect(storageLayerTreeMapper.storageToFavourites('nope')).toEqual([])
+    })
+
+    it('returns an empty array for non-array JSON', () => {
+      expect(storageLayerTreeMapper.storageToFavourites('{"a":1}')).toEqual([])
+    })
+  })
 })

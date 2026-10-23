@@ -9,6 +9,7 @@ function makeTree(): LayerTreeNodeModel {
     name: 'root',
     checked: false,
     expanded: false,
+    favourite: false,
     depth: 0,
     children: [
       {
@@ -16,6 +17,7 @@ function makeTree(): LayerTreeNodeModel {
         name: 'parent-a',
         checked: false,
         expanded: false,
+        favourite: false,
         depth: 1,
         children: [
           {
@@ -23,6 +25,7 @@ function makeTree(): LayerTreeNodeModel {
             name: 'leaf-a1',
             checked: false,
             expanded: false,
+            favourite: false,
             depth: 2,
           },
           {
@@ -30,6 +33,7 @@ function makeTree(): LayerTreeNodeModel {
             name: 'leaf-a2',
             checked: false,
             expanded: false,
+            favourite: false,
             depth: 2,
           },
         ],
@@ -39,6 +43,7 @@ function makeTree(): LayerTreeNodeModel {
         name: 'parent-b',
         checked: false,
         expanded: false,
+        favourite: false,
         depth: 1,
         children: [
           {
@@ -46,6 +51,7 @@ function makeTree(): LayerTreeNodeModel {
             name: 'parent-b1',
             checked: false,
             expanded: false,
+            favourite: false,
             depth: 2,
             children: [
               {
@@ -53,6 +59,7 @@ function makeTree(): LayerTreeNodeModel {
                 name: 'leaf-b1a',
                 checked: false,
                 expanded: false,
+                favourite: false,
                 depth: 3,
               },
             ],
@@ -106,6 +113,77 @@ describe('layerTreeService.expandToLayer', () => {
     const { node } = layerTreeService.expandToLayer(10, tree)
     const parentB = node.children![1]
     expect(parentB.expanded).toBe(true)
+  })
+})
+
+describe('layerTreeService.buildFavouritesNode', () => {
+  function findNodeById(
+    tree: LayerTreeNodeModel,
+    id: number
+  ): LayerTreeNodeModel | undefined {
+    if (tree.id === id) return tree
+    for (const child of tree.children ?? []) {
+      const found = findNodeById(child, id)
+      if (found) return found
+    }
+    return undefined
+  }
+
+  it('returns the same tree when no node is favourited', () => {
+    const tree = makeTree()
+
+    const result = layerTreeService.buildFavouritesNode(tree, true)
+
+    expect(result).toBe(tree)
+  })
+
+  it('prepends a depth-1 favourites node with the favourited leaves', () => {
+    const tree = makeTree()
+    findNodeById(tree, 10)!.favourite = true
+
+    const result = layerTreeService.buildFavouritesNode(tree, true)
+    const favourites = result.children![0]
+
+    expect(favourites.id).toBe('favourites')
+    expect(favourites.depth).toBe(1)
+    expect(favourites.expanded).toBe(true)
+    expect(favourites.children!.map(child => child.id)).toEqual([10])
+    expect(favourites.children![0].depth).toBe(2)
+  })
+
+  it('collects only favourited leaves', () => {
+    const tree = makeTree()
+    findNodeById(tree, 10)!.favourite = true
+    findNodeById(tree, 200)!.favourite = true
+    findNodeById(tree, 1)!.favourite = true // parent node, must be ignored
+
+    const result = layerTreeService.buildFavouritesNode(tree, true)
+
+    expect(result.children![0].children!.map(child => child.id)).toEqual([
+      10, 200,
+    ])
+  })
+
+  it('is idempotent when rebuilt from its own output', () => {
+    const tree = makeTree()
+    findNodeById(tree, 10)!.favourite = true
+
+    const once = layerTreeService.buildFavouritesNode(tree, true)
+    const twice = layerTreeService.buildFavouritesNode(once, true)
+
+    expect(twice.children![0].id).toBe('favourites')
+    expect(twice.children).toHaveLength(tree.children!.length + 1)
+    expect(twice.children![0].children!.map(child => child.id)).toEqual([10])
+  })
+
+  it('re-applies the expanded flag on rebuild', () => {
+    const tree = makeTree()
+    findNodeById(tree, 10)!.favourite = true
+
+    const open = layerTreeService.buildFavouritesNode(tree, true)
+    const closed = layerTreeService.buildFavouritesNode(open, false)
+
+    expect(closed.children![0].expanded).toBe(false)
   })
 })
 

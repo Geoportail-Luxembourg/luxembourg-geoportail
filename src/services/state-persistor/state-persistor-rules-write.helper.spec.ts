@@ -25,6 +25,13 @@ describe('RulesWriteHelper', () => {
         })
       ).toBe(0)
     })
+    it('returns localStorage only for key favouriteLayers', () => {
+      expect(
+        RulesWriteHelper.processRulesForKey('favouriteLayers', {
+          favouriteLayers: '[12,3]',
+        })
+      ).toBe(0)
+    })
     it('returns local storage for other keys than version', () => {
       expect(
         RulesWriteHelper.processRulesForKey('any_key', { any_key: 'any_value' })

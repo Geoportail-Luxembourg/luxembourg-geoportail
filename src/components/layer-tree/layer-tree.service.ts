@@ -8,6 +8,8 @@ export const EXCLUDED_PARENT_LAYER_IDS = JSON.parse(
   import.meta.env.VITE_EXCLUDED_PARENT_LAYER_IDS || '[]'
 )
 
+export const FAVOURITES_NODE_ID = 'favourites'
+
 export class LayerTreeService {
   getLayerPresence(
     targetId: LayerId,
@@ -127,6 +129,63 @@ export class LayerTreeService {
     }
 
     return apply(tree)
+  }
+
+  applyFavouriteNodes(
+    tree: LayerTreeNodeModel,
+    favouriteIds: LayerId[]
+  ): LayerTreeNodeModel {
+    const apply = (node: LayerTreeNodeModel): LayerTreeNodeModel => {
+      const newNode = { ...node, favourite: favouriteIds.includes(node.id) }
+      if (newNode.children) {
+        newNode.children = newNode.children.map(apply)
+      }
+      return newNode
+    }
+
+    return apply(tree)
+  }
+
+  buildFavouritesNode(
+    tree: LayerTreeNodeModel,
+    expanded: boolean
+  ): LayerTreeNodeModel {
+    const base =
+      tree.children?.[0]?.id === FAVOURITES_NODE_ID
+        ? { ...tree, children: tree.children.slice(1) }
+        : tree
+
+    const favouriteLeaves: LayerTreeNodeModel[] = []
+    const seen = new Set<LayerId>()
+    const collect = (node: LayerTreeNodeModel) => {
+      if (!node.children) {
+        if (node.favourite && !seen.has(node.id)) {
+          seen.add(node.id)
+          favouriteLeaves.push({ ...node, depth: 2 })
+        }
+        return
+      }
+      node.children.forEach(collect)
+    }
+    collect(base)
+
+    if (favouriteLeaves.length === 0) return base
+
+    return {
+      ...base,
+      children: [
+        {
+          id: FAVOURITES_NODE_ID,
+          name: 'Favourites',
+          depth: 1,
+          expanded,
+          checked: false,
+          favourite: false,
+          children: favouriteLeaves,
+        },
+        ...(base.children ?? []),
+      ],
+    }
   }
 }
 

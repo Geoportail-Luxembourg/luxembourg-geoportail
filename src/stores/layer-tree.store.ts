@@ -5,6 +5,7 @@ import type { LayerTreeNodeModel } from '@/components/layer-tree/layer-tree.mode
 
 export const useLayerTreeStore = defineStore('layer-tree', () => {
   const expandedNodes: Ref<Record<string, boolean>> = ref({})
+  const favouriteLayerIds: Ref<LayerId[]> = ref([])
   const serverDefaults: Ref<Map<LayerId, boolean>> = ref(new Map())
 
   function captureServerDefaults(node: LayerTreeNodeModel) {
@@ -25,10 +26,21 @@ export const useLayerTreeStore = defineStore('layer-tree', () => {
     }
   }
 
+  function setFavourite(nodeId: LayerId, isFavourite: boolean) {
+    const current = favouriteLayerIds.value
+    favouriteLayerIds.value = isFavourite
+      ? current.includes(nodeId)
+        ? current
+        : [...current, nodeId]
+      : current.filter(id => id !== nodeId)
+  }
+
   return {
     expandedNodes,
+    favouriteLayerIds,
     serverDefaults,
     setExpanded,
+    setFavourite,
     captureServerDefaults,
   }
 })

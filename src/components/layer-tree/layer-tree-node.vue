@@ -14,6 +14,7 @@ const props = defineProps<{
 const emit = defineEmits<{
   (e: 'toggleLayer', node: LayerTreeNodeModel): void
   (e: 'toggleParent', node: LayerTreeNodeModel): void
+  (e: 'toggleFavourite', node: LayerTreeNodeModel): void
 }>()
 
 const { t } = useTranslation()
@@ -31,6 +32,10 @@ function toggleLayer(node: LayerTreeNodeModel) {
 
 function toggleParent(node: LayerTreeNodeModel) {
   emit('toggleParent', node)
+}
+
+function toggleFavourite(node: LayerTreeNodeModel) {
+  emit('toggleFavourite', node)
 }
 </script>
 
@@ -81,6 +86,7 @@ function toggleParent(node: LayerTreeNodeModel) {
         :node="child"
         @toggle-parent="toggleParent($event)"
         @toggle-layer="toggleLayer($event)"
+        @toggle-favourite="toggleFavourite($event)"
       ></layer-tree-node>
     </div>
   </div>
@@ -95,6 +101,23 @@ function toggleParent(node: LayerTreeNodeModel) {
       class="self-start before:text-[.85rem] before:transform before:translate-y-[.1rem] before:inline-block before:content-['\f129'] fa-solid fa-fw fa-fh fa-info"
       @click="setMetadataLayer(node as unknown as Layer)"
     ></button>
+    <button
+      :data-cy="`layerFavourite-${node.id}`"
+      class="self-start mr-1.5"
+      :aria-pressed="node.favourite"
+      :aria-label="
+        node.favourite
+          ? t('Remove {name} from favourites', { name: label, ns: 'app' })
+          : t('Add {name} to favourites', { name: label, ns: 'app' })
+      "
+      @click="toggleFavourite(node)"
+    >
+      <i
+        aria-hidden="true"
+        class="fa-star h-4"
+        :class="node.favourite ? 'fa-solid' : 'fa-regular'"
+      ></i>
+    </button>
     <button
       role="checkbox"
       :aria-checked="node.checked"
