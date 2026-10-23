@@ -32,9 +32,11 @@ const emit = defineEmits<{
   (e: 'saveLayers', map: MyMap): void
   (e: 'draw:mergelines', map: MyMap): void
   (e: 'draw:cutlines', map: MyMap): void
+  (e: 'toggleMyMapsLayer', map: MyMap): void
 }>()
 const props = defineProps<{
   myMap: MyMap
+  isMyMapsLayerActive: boolean
 }>()
 const map = useMap().getOlMap()
 const { generateDrawnFeature } = useDrawnFeatures()
@@ -54,6 +56,12 @@ const menuOptions = computed(() => {
     {
       label: 'Ouvrir une carte existante',
       action: () => emit('open'),
+    },
+    {
+      label: props.isMyMapsLayerActive
+        ? 'Retirer des couches'
+        : 'Ajouter en tant que couche',
+      action: () => emit('toggleMyMapsLayer', props.myMap),
     },
     {
       label: 'Créer une copie',

@@ -179,6 +179,31 @@ describe('Map Store', () => {
       expect(mapStore.layers[1].previousOpacity).toBe(32)
       expect(mapStore.layers[2].opacity).toBe(undefined)
     })
+
+    it('set layer name', () => {
+      const mapStore = useMapStore()
+      mapStore.addLayers(layer1, layer2)
+      mapStore.setLayerName(layer2.id, 'new_name')
+      expect(mapStore.layers[0].name).toBe('layer1_name')
+      expect(mapStore.layers[1].name).toBe('new_name')
+    })
+
+    it('set layer name, no-op for unknown layer', () => {
+      const mapStore = useMapStore()
+      mapStore.addLayers(layer1, layer2)
+      mapStore.setLayerName(layer3.id, 'new_name')
+      expect(mapStore.layers.length).toBe(2)
+      expect(mapStore.layers[0].name).toBe('layer1_name')
+      expect(mapStore.layers[1].name).toBe('layer2_name')
+    })
+
+    it('set layer name, must return new ref to array', () => {
+      const mapStore = useMapStore()
+      mapStore.addLayers(layer1, layer2)
+      const layers = mapStore.layers
+      mapStore.setLayerName(layer1.id, 'new_name')
+      expect(mapStore.layers).not.toBe(layers)
+    })
   })
 
   describe('Map Store -- Background layer', () => {
