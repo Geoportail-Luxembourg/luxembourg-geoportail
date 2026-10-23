@@ -62,9 +62,13 @@ function updateLayerTree() {
       treeModel as LayerTreeNodeModel,
       mapStore.layers
     )
-    layerTree.value = layerTreeService.applyExpandedNodes(
+    const expandedTree = layerTreeService.applyExpandedNodes(
       newTree,
       layerTreeStore.expandedNodes
+    )
+    layerTree.value = layerTreeService.applyFavouriteNodes(
+      expandedTree,
+      layerTreeStore.favouriteLayerIds
     )
   }
 }
@@ -75,9 +79,13 @@ watchEffect(() => {
       ? layerTree3d.value
       : themesToLayerTree(layerTrees_3d.value)
     const newTree = layerTreeService.updateLayers(treeModel, mapStore.layers3d)
-    layerTree3d.value = layerTreeService.applyExpandedNodes(
+    const expandedTree = layerTreeService.applyExpandedNodes(
       newTree,
       layerTreeStore.expandedNodes
+    )
+    layerTree3d.value = layerTreeService.applyFavouriteNodes(
+      expandedTree,
+      layerTreeStore.favouriteLayerIds
     )
   }
 })
@@ -204,6 +212,10 @@ function toggleParent(node: LayerTreeNodeModel, is3d: boolean) {
 function toggleLayer(node: LayerTreeNodeModel, is3d: boolean) {
   layers.toggleLayer(+node.id, !node.checked, is3d, true)
 }
+
+function toggleFavourite(node: LayerTreeNodeModel) {
+  layers.toggleFavourite(+node.id, !node.favourite)
+}
 </script>
 
 <template>
@@ -215,6 +227,7 @@ function toggleLayer(node: LayerTreeNodeModel, is3d: boolean) {
         :key="layerTree3d.id"
         @toggle-parent="node => toggleParent(node, true)"
         @toggle-layer="node => toggleLayer(node, true)"
+        @toggle-favourite="node => toggleFavourite(node)"
       ></layer-tree-node>
     </div>
 
@@ -225,6 +238,7 @@ function toggleLayer(node: LayerTreeNodeModel, is3d: boolean) {
       :key="layerTree.id"
       @toggle-parent="node => toggleParent(node, false)"
       @toggle-layer="node => toggleLayer(node, false)"
+      @toggle-favourite="node => toggleFavourite(node)"
     ></layer-tree-node>
   </div>
 </template>
