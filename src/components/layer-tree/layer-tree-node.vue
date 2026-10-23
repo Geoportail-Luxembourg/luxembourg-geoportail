@@ -103,12 +103,12 @@ function toggleFavourite(node: LayerTreeNodeModel) {
     ></button>
     <button
       :data-cy="`layerFavourite-${node.id}`"
-      class="mr-1.5"
+      class="self-start mr-1.5"
       @click="toggleFavourite(node)"
     >
       <i
         aria-hidden="true"
-        class="fa-star"
+        class="fa-star h-4"
         :class="node.favourite ? 'fa-solid' : 'fa-regular'"
       ></i>
     </button>
