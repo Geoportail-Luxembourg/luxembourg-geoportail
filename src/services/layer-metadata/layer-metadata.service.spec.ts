@@ -103,15 +103,15 @@ describe('LayerMetadataService', () => {
     beforeEach(async () => {
       metadata = await layerMetadataService.getLayerMetadata(268, 'fr')
     })
-    it('should call getLocalMetadata and getLegendHtml', () => {
+    it('should call getLocalMetadata and not fetch legend html in image mode', () => {
       expect(spyLocalMetadata).toHaveBeenCalledTimes(1)
-      expect(spyLegendHtml).toHaveBeenCalledTimes(1)
+      expect(spyLegendHtml).not.toHaveBeenCalled()
     })
     it('should get correct metadata', () => {
       expect(metadata).toEqual({
         ...metadataMock,
         hasLegend: true,
-        legendHtml: legendMock,
+        legendUrl: '/legends/get?lang=fr&name=districts&id=268',
         title: 'districts_labels', // uses name from theme node
       })
     })
@@ -121,15 +121,15 @@ describe('LayerMetadataService', () => {
     beforeEach(async () => {
       metadata = await layerMetadataService.getLayerMetadata(556, 'fr')
     })
-    it('should call getLocalMetadata and getLegendHtml', () => {
+    it('should call getLocalMetadata and not fetch legend html in image mode', () => {
       expect(spyLocalMetadata).toHaveBeenCalledTimes(1)
-      expect(spyLegendHtml).toHaveBeenCalledTimes(1)
+      expect(spyLegendHtml).not.toHaveBeenCalled()
     })
     it('should get correct metadata', () => {
       expect(metadata).toEqual({
         ...metadataMock,
         hasLegend: true,
-        legendHtml: legendMock,
+        legendUrl: '/legends/get?lang=fr&name=act%3Aroadmap_vt&id=556',
         title: 'basemap_2015_global', // uses name from theme node
       })
     })
@@ -185,7 +185,7 @@ describe('LayerMetadataService', () => {
         title: '3d buildings',
         description: '',
         hasLegend: true,
-        legendHtml: legendMock,
+        legendUrl: '/legends/get?lang=fr&name=&id=333',
         keywords: [],
         accessConstraints: 'none',
         serviceDescription:
