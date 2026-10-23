@@ -128,6 +128,21 @@ export class LayerTreeService {
 
     return apply(tree)
   }
+
+  applyFavouriteNodes(
+    tree: LayerTreeNodeModel,
+    favouriteIds: LayerId[]
+  ): LayerTreeNodeModel {
+    const apply = (node: LayerTreeNodeModel): LayerTreeNodeModel => {
+      const newNode = { ...node, favourite: favouriteIds.includes(node.id) }
+      if (newNode.children) {
+        newNode.children = newNode.children.map(apply)
+      }
+      return newNode
+    }
+
+    return apply(tree)
+  }
 }
 
 export const layerTreeService = new LayerTreeService()
