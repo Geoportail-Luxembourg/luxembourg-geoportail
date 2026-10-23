@@ -13,6 +13,7 @@ function makeNode(
     name: `node-${id}`,
     checked: false,
     expanded,
+    favourite: false,
     depth: 0,
     children,
   }

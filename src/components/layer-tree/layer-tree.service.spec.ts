@@ -9,6 +9,7 @@ function makeTree(): LayerTreeNodeModel {
     name: 'root',
     checked: false,
     expanded: false,
+    favourite: false,
     depth: 0,
     children: [
       {
@@ -16,6 +17,7 @@ function makeTree(): LayerTreeNodeModel {
         name: 'parent-a',
         checked: false,
         expanded: false,
+        favourite: false,
         depth: 1,
         children: [
           {
@@ -23,6 +25,7 @@ function makeTree(): LayerTreeNodeModel {
             name: 'leaf-a1',
             checked: false,
             expanded: false,
+            favourite: false,
             depth: 2,
           },
           {
@@ -30,6 +33,7 @@ function makeTree(): LayerTreeNodeModel {
             name: 'leaf-a2',
             checked: false,
             expanded: false,
+            favourite: false,
             depth: 2,
           },
         ],
@@ -39,6 +43,7 @@ function makeTree(): LayerTreeNodeModel {
         name: 'parent-b',
         checked: false,
         expanded: false,
+        favourite: false,
         depth: 1,
         children: [
           {
@@ -46,6 +51,7 @@ function makeTree(): LayerTreeNodeModel {
             name: 'parent-b1',
             checked: false,
             expanded: false,
+            favourite: false,
             depth: 2,
             children: [
               {
@@ -53,6 +59,7 @@ function makeTree(): LayerTreeNodeModel {
                 name: 'leaf-b1a',
                 checked: false,
                 expanded: false,
+                favourite: false,
                 depth: 3,
               },
             ],
