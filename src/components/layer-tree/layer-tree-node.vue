@@ -104,6 +104,12 @@ function toggleFavourite(node: LayerTreeNodeModel) {
     <button
       :data-cy="`layerFavourite-${node.id}`"
       class="self-start mr-1.5"
+      :aria-pressed="node.favourite"
+      :aria-label="
+        node.favourite
+          ? t('Remove {name} from favourites', { name: label, ns: 'app' })
+          : t('Add {name} to favourites', { name: label, ns: 'app' })
+      "
       @click="toggleFavourite(node)"
     >
       <i
