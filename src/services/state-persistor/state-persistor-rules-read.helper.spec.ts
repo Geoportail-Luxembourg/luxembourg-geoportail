@@ -31,6 +31,13 @@ describe('RulesReadHelper', () => {
         RulesReadHelper.processRulesForKey('layersOpen', { layersOpen: false })
       ).toBe(0)
     })
+    it('returns the localStorage as storage to read the favouriteLayers value', () => {
+      expect(
+        RulesReadHelper.processRulesForKey('favouriteLayers', {
+          favouriteLayers: '[12,3]',
+        })
+      ).toBe(0)
+    })
   })
 
   describe('#ruleUseLocalStorage', () => {

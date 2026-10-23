@@ -55,6 +55,44 @@ describe('layer-tree store', () => {
     })
   })
 
+  describe('#setFavourite', () => {
+    it('adds the id when favouriting', () => {
+      const store = useLayerTreeStore()
+
+      store.setFavourite(12, true)
+
+      expect(store.favouriteLayerIds).toEqual([12])
+    })
+
+    it('does not add a duplicate id', () => {
+      const store = useLayerTreeStore()
+
+      store.setFavourite(12, true)
+      store.setFavourite(12, true)
+
+      expect(store.favouriteLayerIds).toEqual([12])
+    })
+
+    it('removes only the given id when unfavouriting', () => {
+      const store = useLayerTreeStore()
+      store.setFavourite(12, true)
+      store.setFavourite(3, true)
+
+      store.setFavourite(12, false)
+
+      expect(store.favouriteLayerIds).toEqual([3])
+    })
+
+    it('unfavouriting an unknown id leaves the list unchanged', () => {
+      const store = useLayerTreeStore()
+      store.setFavourite(12, true)
+
+      store.setFavourite(99, false)
+
+      expect(store.favouriteLayerIds).toEqual([12])
+    })
+  })
+
   describe('#setExpanded', () => {
     it('adds entry when expanded differs from server default', () => {
       const store = useLayerTreeStore()
