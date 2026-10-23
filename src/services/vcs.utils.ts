@@ -37,7 +37,8 @@ export interface ObliqueConfig {
 export function buildObliqueState(
   lon: number,
   lat: number,
-  cfg: ObliqueConfig
+  cfg: ObliqueConfig,
+  selectedLayers: unknown[] = []
 ): string {
   const state = [
     [
@@ -50,7 +51,7 @@ export function buildObliqueState(
     ],
     cfg.label,
     LUX_VCS_MODULES,
-    [], // Layers (empty for oblique viewer)
+    selectedLayers,
     [],
     0,
     'ACT2023_ImagesObliques_all', // Oblique imagery dataset
