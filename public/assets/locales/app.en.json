@@ -337,6 +337,8 @@
   "Lancer éditeur externe ou importer json": "Start external editor or upload json",
   "large": "large",
   "Layer information: {name}": "Layer information: {name}",
+  "Add {name} to favourites": "Add {name} to favourites",
+  "Remove {name} from favourites": "Remove {name} from favourites",
   "layers": "Layers",
   "Layers": "Layers",
   "Le géoportail national du Grand-Duché du Luxembourg": "The official geoportal for the Grand-Duchy of Luxembourg",
