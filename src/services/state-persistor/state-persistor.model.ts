@@ -31,6 +31,7 @@ export const SP_KEYS_STYLE = ['roadmap', 'topomap', 'topomap_gray']
 export const SP_KEY_LAYERCOMPARATOR = 'lc'
 export const SP_KEY_LAYERCOMPARATOR_SLIDERRATIO = 'sliderRatio'
 export const SP_KEY_EXPANDED_NODES = 'expandedNodes'
+export const SP_KEY_FAVOURITE_LAYERS = 'favouriteLayers'
 
 // Keys for version 2, legacy
 export const SP_KEY_V2_BGLAYEROPACITY = 'bgOpacity' // Unused, just for legacy permalink

@@ -1,3 +1,5 @@
+import type { LayerId } from '@/stores/map.store.model'
+
 export class StorageLayerTreeMapper {
   /**
    * Encode expanded nodes to compact format: "-456,123,789"
@@ -31,6 +33,21 @@ export class StorageLayerTreeMapper {
       }
     }
     return expandedNodes
+  }
+
+  favouritesToStorage(ids: LayerId[] | undefined | null): string {
+    return JSON.stringify(ids ?? [])
+  }
+
+  storageToFavourites(value: string | null): LayerId[] {
+    if (!value) return []
+
+    try {
+      const parsed = JSON.parse(value)
+      return Array.isArray(parsed) ? parsed : []
+    } catch {
+      return []
+    }
   }
 }
 
