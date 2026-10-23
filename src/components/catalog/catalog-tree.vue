@@ -2,6 +2,7 @@
 import {
   computed,
   ShallowRef,
+  ref,
   shallowRef,
   watchEffect,
   watch,
@@ -23,6 +24,7 @@ import type { LayerTreeNodeModel } from '@/components/layer-tree/layer-tree.mode
 import {
   layerTreeService,
   EXCLUDED_PARENT_LAYER_IDS,
+  FAVOURITES_NODE_ID,
 } from '@/components/layer-tree/layer-tree.service'
 
 const mapStore = useMapStore()
@@ -37,6 +39,7 @@ const layerTree3d: ShallowRef<LayerTreeNodeModel | undefined> = shallowRef()
 const showDefaultCatalog = computed(
   () => !mapStore.is3dActive || (mapStore.is3dActive && !mapStore.is3dMesh)
 )
+const favouritesExpanded = ref(true)
 
 const { layerTrees_3d } = storeToRefs(themeStore)
 const { layerToLocateInCatalog } = storeToRefs(appStore)
@@ -66,9 +69,13 @@ function updateLayerTree() {
       newTree,
       layerTreeStore.expandedNodes
     )
-    layerTree.value = layerTreeService.applyFavouriteNodes(
+    const favouriteTree = layerTreeService.applyFavouriteNodes(
       expandedTree,
       layerTreeStore.favouriteLayerIds
+    )
+    layerTree.value = layerTreeService.buildFavouritesNode(
+      favouriteTree,
+      favouritesExpanded.value
     )
   }
 }
@@ -195,6 +202,11 @@ watch(layerToLocateInCatalog, id => {
 })
 
 function toggleParent(node: LayerTreeNodeModel, is3d: boolean) {
+  if (node.id === FAVOURITES_NODE_ID) {
+    favouritesExpanded.value = !favouritesExpanded.value
+    return
+  }
+
   const tree = is3d ? layerTree3d.value : layerTree.value
   if (!tree) return
 
