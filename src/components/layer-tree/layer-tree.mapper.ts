@@ -13,5 +13,6 @@ export function themesToLayerTree(
     children: children?.map(child => themesToLayerTree(child, depth + 1)),
     checked: false,
     expanded: metadata?.is_expanded || false,
+    favourite: false,
   }
 }
