@@ -3,6 +3,11 @@
   "version": "0.1.0",
   "description": "Shared GetFeatureInfo templates for the Luxembourg geoportal (2D app and 3D viewer).",
   "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Geoportail-Luxembourg/luxembourg-geoportail.git",
+    "directory": "packages/feature-info-templates"
+  },
   "type": "module",
   "files": [
     "dist"
