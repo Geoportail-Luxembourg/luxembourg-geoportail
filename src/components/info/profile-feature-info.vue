@@ -2,7 +2,7 @@
 import { computed } from 'vue'
 import { useTranslation } from 'i18next-vue'
 import FeatureElevationProfile from '@/components/feature-elevation-profile/feature-elevation-profile.vue'
-import { FeatureJSON } from '@/services/info/feature-info.model'
+import { FeatureJSON } from '@geoportallux/feature-info-templates'
 import GeoJSON from 'ol/format/GeoJSON'
 import useMap, { PROJECTION_LUX } from '@/composables/map/map.composable'
 import { DrawnFeature } from '@/services/ol-feature/ol-feature-drawn'

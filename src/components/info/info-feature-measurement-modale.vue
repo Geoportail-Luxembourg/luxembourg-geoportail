@@ -3,7 +3,7 @@ import { computed } from 'vue'
 import { useTranslation } from 'i18next-vue'
 import { sanitizeUrl } from '@braintree/sanitize-url'
 import ModalDialog from '@/components/common/modal-dialog.vue'
-import { FeatureMeasurement } from '@/services/info/feature-info.model'
+import { FeatureMeasurement } from '@geoportallux/feature-info-templates'
 
 const props = defineProps<{
   measurement: FeatureMeasurement

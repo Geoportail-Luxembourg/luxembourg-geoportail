@@ -1,4 +1,4 @@
-import { FeatureInfoJSON } from '../info/feature-info.model'
+import { FeatureInfoJSON } from '@geoportallux/feature-info-templates'
 import { fetchApi } from './api.service'
 
 const INFO_SERVICE_URL = import.meta.env.VITE_GET_INFO_SERVICE_URL
