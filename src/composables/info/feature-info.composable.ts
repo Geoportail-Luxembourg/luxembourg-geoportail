@@ -9,7 +9,7 @@ import { useFeatureInfoStore } from '@/stores/feature-info.store'
 import {
   FeatureInfoJSON,
   FeatureJSON,
-} from '@/services/info/feature-info.model'
+} from '@geoportallux/feature-info-templates'
 import { MapBrowserEvent } from 'ol'
 import { ref, watch, watchEffect } from 'vue'
 import { storeToRefs } from 'pinia'

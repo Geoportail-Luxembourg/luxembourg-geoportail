@@ -8,7 +8,7 @@ import GeoJSON from 'ol/format/GeoJSON'
 import {
   FeatureInfoJSON,
   FeatureJSON,
-} from '@/services/info/feature-info.model'
+} from '@geoportallux/feature-info-templates'
 import {
   exportFeatureService,
   ExportFormat,
