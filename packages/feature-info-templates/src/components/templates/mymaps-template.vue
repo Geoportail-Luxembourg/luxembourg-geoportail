@@ -3,7 +3,7 @@ import { useLuxTranslation } from '../../i18n'
 import type { FeatureInfoJSON, FeatureJSON } from '../../models'
 import InfoFeatureLayout from '../layouts/info-feature-layout.vue'
 import { getMymapsPath, getQRUrlForMyMaps } from './template-utilities'
-import { useLuxTplContext } from '../../context'
+import { injectLuxTplContext } from '../../context'
 defineProps<{
   layers: FeatureInfoJSON
   currentUrl?: string
@@ -12,7 +12,7 @@ defineEmits<{
   (e: 'export', payload: { feature: FeatureJSON; format: 'kml' | 'gpx' }): void
 }>()
 const { t } = useLuxTranslation('tooltips')
-const { config, profileComponent } = useLuxTplContext()
+const { config, profileComponent } = injectLuxTplContext()
 </script>
 
 <template>

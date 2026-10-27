@@ -65,8 +65,8 @@ export interface LuxTplConfig {
 
 /**
  * The single dependency-injection surface the feature-info templates rely on.
- * Provided by the host via {@link provideLuxTplContext} (or the default Vue
- * plugin `install`), consumed by templates via {@link useLuxTplContext}.
+ * Provided by the host via {@link provideLuxTplContext}, consumed by templates
+ * via {@link injectLuxTplContext}.
  */
 export interface LuxTplContext {
   config: LuxTplConfig
@@ -102,6 +102,6 @@ export function provideLuxTplContext(ctx: LuxTplContext): void {
 }
 
 /** Consume the template context from within a template's `setup()`. */
-export function useLuxTplContext(): LuxTplContext {
+export function injectLuxTplContext(): LuxTplContext {
   return inject(LUX_TPL_CONTEXT, fallbackContext)
 }

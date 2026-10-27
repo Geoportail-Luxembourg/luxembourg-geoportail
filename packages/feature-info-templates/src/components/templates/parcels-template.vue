@@ -6,7 +6,7 @@ import type { FeatureInfoJSON, FeatureMeasurement } from '../../models'
 import { formatDate, translateAndjoin } from './template-utilities'
 import InfoFeatureLayout from '../layouts/info-feature-layout.vue'
 import InfoFeatureMeasurementModale from '../info-feature-measurement-modale.vue'
-import { useLuxTplContext } from '../../context'
+import { injectLuxTplContext } from '../../context'
 import LuxTplIcon from '../common/lux-tpl-icon.vue'
 
 const props = defineProps<{
@@ -16,7 +16,7 @@ const props = defineProps<{
 
 defineEmits<{ (e: 'export', payload: unknown): void }>()
 
-const { config, isThemeAvailable: isThemeAvailableCtx } = useLuxTplContext()
+const { config, isThemeAvailable: isThemeAvailableCtx } = injectLuxTplContext()
 const isThemeAvailable = (name: string) => isThemeAvailableCtx?.(name) ?? false
 const DOWNLOAD_MEASUREMENT_URL = config.downloadMeasurementUrl ?? ''
 const THUMBNAIL_MEASUREMENT_URL = config.thumbnailMeasurementUrl ?? ''

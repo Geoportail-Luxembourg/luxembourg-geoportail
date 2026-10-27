@@ -8,7 +8,7 @@ import {
   sortedAttributeEntries,
 } from './template-utilities'
 import InfoFeatureLayout from '../layouts/info-feature-layout.vue'
-import { useLuxTplContext } from '../../context'
+import { injectLuxTplContext } from '../../context'
 import { vLuxHtml } from '../../sanitize-html'
 
 defineProps<{
@@ -19,7 +19,7 @@ defineEmits<{
   (e: 'export', payload: { feature: FeatureJSON; format: 'kml' | 'gpx' }): void
 }>()
 const { t, i18next } = useLuxTranslation('tooltips')
-const { profileComponent } = useLuxTplContext()
+const { profileComponent } = injectLuxTplContext()
 </script>
 <template>
   <InfoFeatureLayout :layers="layers" :currentUrl="currentUrl">

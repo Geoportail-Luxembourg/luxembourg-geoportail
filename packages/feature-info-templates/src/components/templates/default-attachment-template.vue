@@ -9,7 +9,7 @@ import {
   showAttributesByLang,
   sortedAttributeEntries,
 } from './template-utilities'
-import { useLuxTplContext } from '../../context'
+import { injectLuxTplContext } from '../../context'
 import { vLuxHtml } from '../../sanitize-html'
 
 defineProps<{
@@ -20,7 +20,7 @@ defineEmits<{
   (e: 'export', payload: { feature: FeatureJSON; format: 'kml' | 'gpx' }): void
 }>()
 const { t, i18next } = useLuxTranslation('tooltips')
-const { config, profileComponent } = useLuxTplContext()
+const { config, profileComponent } = injectLuxTplContext()
 const DOWNLOAD_PDF_URL = config.downloadPdfUrl
 </script>
 <template>

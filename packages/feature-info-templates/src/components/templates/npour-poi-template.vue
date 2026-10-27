@@ -3,7 +3,7 @@ import type { FeatureInfoJSON, FeatureJSON } from '../../models'
 import InfoFeatureLayout from '../layouts/info-feature-layout.vue'
 import { useLuxTranslation } from '../../i18n'
 import { hasProperty } from './template-utilities'
-import { useLuxTplContext } from '../../context'
+import { injectLuxTplContext } from '../../context'
 import LuxTplIcon from '../common/lux-tpl-icon.vue'
 
 defineProps<{
@@ -15,7 +15,7 @@ defineEmits<{
 }>()
 const { t } = useLuxTranslation('tooltips')
 const { i18next } = useLuxTranslation('tooltips')
-const { profileComponent } = useLuxTplContext()
+const { profileComponent } = injectLuxTplContext()
 </script>
 <template>
   <InfoFeatureLayout :layers="layers" :currentUrl="currentUrl">

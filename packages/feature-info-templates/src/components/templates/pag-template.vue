@@ -3,7 +3,7 @@ import { useLuxTranslation } from '../../i18n'
 import { ref, computed } from 'vue'
 import type { Ref } from 'vue'
 import type { FeatureInfoJSON, FeatureJSON } from '../../models'
-import { useLuxTplContext } from '../../context'
+import { injectLuxTplContext } from '../../context'
 
 const props = defineProps<{
   layers: FeatureInfoJSON
@@ -14,7 +14,7 @@ defineEmits<{
 }>()
 const layers = props.layers
 
-const { config, user, notify } = useLuxTplContext()
+const { config, user, notify } = injectLuxTplContext()
 const mail: Ref<string> = ref('')
 const userMail = computed(() => user.value?.mail || '')
 mail.value = userMail.value
