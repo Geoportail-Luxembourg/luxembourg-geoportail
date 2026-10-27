@@ -24,6 +24,7 @@
     "coverage-report": "nyc report",
     "type-check:dev": "npm run type-check -- --watch",
     "type-check": "vue-tsc --noEmit -p tsconfig.vitest.json --composite false",
+    "type-check:templates": "npm run type-check -w @geoportallux/feature-info-templates",
     "lint:js": "eslint . --ext .vue,.js,.cjs,.mjs,.ts,.cts,.mts --ignore-path .prettierignore --quiet",
     "lint:prettier": "prettier --check . --ignore-path .prettierignore",
     "lint": "npm run lint:js && npm run lint:prettier",
@@ -41,8 +42,7 @@
     "i18n:tx:pull:v3-to-v4": "npm run i18n:tx:pull && npm run i18n:tx:transform:v3",
     "i18n:tx:push-app": "tx push -r geoportailv3-lu.geoportailv3-webcomponents -s -t -f",
     "fetch-translations": "tx pull -a -t && node tools/translations/transform-tx-v3-po-to-v4-json.cjs",
-    "prepare": "husky install",
-    "type-check:templates": "npm run type-check -w @geoportallux/feature-info-templates"
+    "prepare": "husky install"
   },
   "files": [
     "*",
