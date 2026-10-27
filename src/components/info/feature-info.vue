@@ -20,7 +20,7 @@ import {
   getTemplateComponent,
   LUX_TPL_I18N,
 } from '@geoportallux/feature-info-templates'
-import useLuxTplContext, {
+import useGeoportailLuxTplContext, {
   getLuxTplI18n,
 } from '@/composables/info/lux-tpl-context.composable'
 import ProfileFeatureInfo from '@/components/info/profile-feature-info.vue'
@@ -36,7 +36,7 @@ const map = useMap().getOlMap()
 
 // Provide the dependency-injection context the templates rely on,
 // wiring it to the geoportail stores/environment and i18next.
-provideLuxTplContext(useLuxTplContext(ProfileFeatureInfo))
+provideLuxTplContext(useGeoportailLuxTplContext(ProfileFeatureInfo))
 provide(LUX_TPL_I18N, getLuxTplI18n())
 
 // For print, save ref to element to access content in print composable

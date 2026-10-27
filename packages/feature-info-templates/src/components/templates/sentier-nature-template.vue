@@ -3,7 +3,7 @@ import { useLuxTranslation } from '../../i18n'
 import type { FeatureInfoJSON, FeatureJSON } from '../../models'
 import { hasAttributes } from './template-utilities'
 import InfoFeatureLayout from '../layouts/info-feature-layout.vue'
-import { useLuxTplContext } from '../../context'
+import { injectLuxTplContext } from '../../context'
 
 const props = defineProps<{
   layers: FeatureInfoJSON
@@ -14,7 +14,7 @@ defineEmits<{
   (e: 'export', payload: { feature: FeatureJSON; format: 'kml' | 'gpx' }): void
 }>()
 
-const { config, profileComponent } = useLuxTplContext()
+const { config, profileComponent } = injectLuxTplContext()
 const DOWNLOAD_RESOURCE_URL = config.downloadResourceUrl
 const { t } = useLuxTranslation('tooltips')
 

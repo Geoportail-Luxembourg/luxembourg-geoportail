@@ -10,7 +10,7 @@ import {
   getTrustedUrl,
   sortedAttributeEntries,
 } from './template-utilities'
-import { useLuxTplContext } from '../../context'
+import { injectLuxTplContext } from '../../context'
 import { vLuxHtml } from '../../sanitize-html'
 
 defineProps({
@@ -27,7 +27,7 @@ defineEmits<{
   (e: 'export', payload: { feature: FeatureJSON; format: 'kml' | 'gpx' }): void
 }>()
 const { t, i18next } = useLuxTranslation('tooltips')
-const { config, user, profileComponent } = useLuxTplContext()
+const { config, user, profileComponent } = injectLuxTplContext()
 
 function isNoSolarNorWaterLink(label: string, attributeEntry: AttributeEntry) {
   return (

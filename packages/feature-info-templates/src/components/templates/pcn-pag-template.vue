@@ -3,14 +3,14 @@ import { useLuxTranslation } from '../../i18n'
 import type { FeatureInfoJSON } from '../../models'
 import InfoFeatureLayout from '../layouts/info-feature-layout.vue'
 import { joinAttributes } from './template-utilities'
-import { useLuxTplContext } from '../../context'
+import { injectLuxTplContext } from '../../context'
 
 defineProps<{
   layers: FeatureInfoJSON
   currentUrl?: string
 }>()
 
-const { config } = useLuxTplContext()
+const { config } = injectLuxTplContext()
 const DOWNLOAD_PAGREPORT_URL = config.downloadPagReportUrl
 const { t } = useLuxTranslation('tooltips')
 </script>

@@ -46,7 +46,7 @@ function parseRoleIds(raw: string | undefined): number[] {
  * `setup()` (it reads Pinia stores). Pass the elevation-profile component the
  * templates should render when a feature has a profile.
  */
-export default function useLuxTplContext(
+export default function useGeoportailLuxTplContext(
   profileComponent?: Component
 ): LuxTplContext {
   const { currentUser } = storeToRefs(useUserManagerStore())

@@ -2,14 +2,14 @@
 import type { FeatureInfoJSON } from '../../models'
 import { useLuxTranslation } from '../../i18n'
 import InfoFeatureLayout from '../layouts/info-feature-layout.vue'
-import { useLuxTplContext } from '../../context'
+import { injectLuxTplContext } from '../../context'
 
 defineProps<{
   layers: FeatureInfoJSON
   currentUrl?: string
 }>()
 const { t } = useLuxTranslation('tooltips')
-const { config } = useLuxTplContext()
+const { config } = injectLuxTplContext()
 const DOWNLOAD_SKETCH_URL = config.downloadSketchUrl
 </script>
 

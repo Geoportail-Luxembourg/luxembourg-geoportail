@@ -2,9 +2,9 @@
 import { useLuxTranslation } from '../../i18n'
 import type { FeatureInfoJSON } from '../../models'
 import InfoFeatureLayout from '../layouts/info-feature-layout.vue'
-import { useLuxTplContext } from '../../context'
+import { injectLuxTplContext } from '../../context'
 
-const { config, notify } = useLuxTplContext()
+const { config, notify } = injectLuxTplContext()
 const SHOP_URL = config.shopUrl
 const SHOP_IPV6_URL = config.shopIpv6Url
 

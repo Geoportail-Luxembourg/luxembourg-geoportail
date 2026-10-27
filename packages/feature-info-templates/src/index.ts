@@ -29,7 +29,7 @@ export {
 export {
   LUX_TPL_CONTEXT,
   provideLuxTplContext,
-  useLuxTplContext,
+  injectLuxTplContext,
 } from './context'
 export type {
   LuxTplContext,

@@ -4,13 +4,13 @@ import { useLuxTranslation } from '../i18n'
 import { sanitizeUrl } from '@braintree/sanitize-url'
 import ModalDialog from './common/modal-dialog.vue'
 import type { FeatureMeasurement } from '../models'
-import { useLuxTplContext } from '../context'
+import { injectLuxTplContext } from '../context'
 
 const props = defineProps<{
   measurement: FeatureMeasurement
 }>()
 
-const { config } = useLuxTplContext()
+const { config } = injectLuxTplContext()
 const DOWNLOAD_PREVIEW_URL = config.downloadPreviewUrl ?? ''
 const DOWNLOAD_MEASUREMENT_URL = config.downloadMeasurementUrl ?? ''
 
