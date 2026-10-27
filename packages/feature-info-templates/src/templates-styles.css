@@ -1,7 +1,8 @@
-/* ====================================
-   Template Styles - lib-tpl
-   Extracted from component templates
-   ==================================== */
+/*
+ * Template styles that utilities express poorly: descendant rules, groups
+ * shared across templates, image buttons. One-off values belong in a tailwind utility in the markup.
+ * Styles here are kept as plain global classes. Hosts can override them or set values of css variables like --lux-tpl-white-by-default.
+ */
 
 .lux-tpl-poi-title {
   font-size: 40px;
@@ -59,77 +60,11 @@
   text-decoration: underline;
 }
 
-/* Urplang Template Styles */
 .lux-tpl-urplang-title {
   color: var(--lux-tpl-white-by-default, #fff);
   font-size: 30px;
 }
 
-/* Parcels Template Styles */
-
-/* Casipo Template Styles */
-.lux-tpl-casipo-checkbox {
-  margin-bottom: 15px;
-}
-
-.lux-tpl-casipo-checkbox input[type='checkbox'] {
-  vertical-align: middle;
-  margin-right: 5px;
-}
-
-.lux-tpl-casipo-form-container {
-  margin-left: 20px;
-}
-
-.lux-tpl-casipo-form-container label {
-  display: inline;
-}
-
-.lux-tpl-casipo-mail {
-  margin-bottom: 10px;
-}
-
-/* Forage Virtuel Template Styles */
-.lux-tpl-forage-virtuel-form-container {
-  margin-left: 20px;
-}
-
-.lux-tpl-forage-virtuel-form-container label {
-  display: inline;
-}
-
-.lux-tpl-forage-virtuel-mail {
-  margin-bottom: 10px;
-}
-
-/* NPOUR POI Template Styles */
-.lux-tpl-npour-poi-h3 {
-  font-size: 28px;
-}
-
-/* PAG Template Styles */
-.lux-tpl-pag-checkbox {
-  margin-bottom: 15px;
-}
-
-.lux-tpl-pag-checkbox input[type='checkbox'] {
-  vertical-align: middle;
-  margin-right: 5px;
-}
-
-.lux-tpl-pag-form-container {
-  margin-left: 20px;
-}
-
-.lux-tpl-pag-form-container label {
-  display: inline;
-}
-
-.lux-tpl-pag-mail {
-  margin-bottom: 10px;
-}
-
-/* Parcels Template Styles */
 .lux-tpl-parcels-template-h2 {
   font-size: 40px;
   line-height: 1;
@@ -139,34 +74,33 @@
   color: var(--lux-tpl-white-by-default, #fff);
 }
 
-/* PDS Template Styles */
-.lux-tpl-pds-form-container {
+/* Report order form (casipo, forage-virtuel, pag, pag-staging, pds) */
+.lux-tpl-order-form {
   margin-left: 20px;
 }
 
-.lux-tpl-pds-form-container label {
+.lux-tpl-order-form label {
   display: inline;
 }
 
-.lux-tpl-pds-mail {
+.lux-tpl-order-mail {
   margin-bottom: 10px;
 }
 
-.lux-tpl-casipo-mail label,
-.lux-tpl-forage-virtuel-mail label,
-.lux-tpl-pag-mail label,
-.lux-tpl-pds-mail label {
+.lux-tpl-order-mail label {
   margin-right: 5px;
 }
 
-.lux-tpl-casipo-mail input[type='text'],
-.lux-tpl-forage-virtuel-mail input[type='text'],
-.lux-tpl-pag-mail input[type='text'],
-.lux-tpl-pds-mail input[type='text'] {
+.lux-tpl-order-mail input[type='text'] {
   border: 1px solid rgb(118, 118, 118);
   padding: 1px 2px;
 }
 
-/* ====================================
-   End of Template Styles
-   ==================================== */
+.lux-tpl-order-checkbox {
+  margin-bottom: 15px;
+}
+
+.lux-tpl-order-checkbox input[type='checkbox'] {
+  vertical-align: middle;
+  margin-right: 5px;
+}

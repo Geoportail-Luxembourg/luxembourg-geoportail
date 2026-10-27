@@ -65,8 +65,8 @@ async function generateRepport() {
       }}</label>
       <br />
       <br />
-      <div class="lux-tpl-forage-virtuel-form-container">
-        <div class="lux-tpl-forage-virtuel-mail">
+      <div class="lux-tpl-order-form">
+        <div class="lux-tpl-order-mail">
           <label>{{ t('Adresse Email') }}</label>
           <input type="text" v-model="mail" style="width: 165px" />
         </div>
