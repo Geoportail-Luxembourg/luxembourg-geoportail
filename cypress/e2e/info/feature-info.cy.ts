@@ -277,26 +277,24 @@ describe('Feature Info', () => {
         cy.get('.lux-tpl-poi-title')
           .first()
           .should('contain.text', 'Cadastre des sites potentiellement pollués')
-        cy.get('.lux-tpl-casipo-mail input').should('exist')
-        cy.get('.lux-tpl-casipo-checkbox input[type="checkbox"]').should(
-          'exist'
-        )
+        cy.get('.lux-tpl-order-mail input').should('exist')
+        cy.get('.lux-tpl-order-checkbox input[type="checkbox"]').should('exist')
         // 'Commander rapport' has no `tooltips` entry — it resolves only
         // because installTooltipFallbackTranslations() hydrates the namespace
         // from `app`, which moved into the package with the templates.
-        cy.get('.lux-tpl-casipo-form-container')
+        cy.get('.lux-tpl-order-form')
           .parent()
           .find('button')
           .should('contain.text', 'Commander le rapport')
       })
       it('prefills no email for an anonymous user', () => {
         // ctx.user is null when nobody is signed in, so the field stays empty.
-        cy.get('.lux-tpl-casipo-mail input').should('have.value', '')
+        cy.get('.lux-tpl-order-mail input').should('have.value', '')
       })
       it('notifies through the host when the email is missing', () => {
         // Exercises ctx.notify -> the app's alert-notifications store.
         cy.get('[data-cy="notification"]').should('not.exist')
-        cy.get('.lux-tpl-casipo-form-container').parent().find('button').click()
+        cy.get('.lux-tpl-order-form').parent().find('button').click()
         cy.get('[data-cy="notification"]')
           .should('exist')
           .and('contain.text', 'Veuillez saisir une adresse email valide')
@@ -315,11 +313,13 @@ describe('Feature Info', () => {
         cy.get('.lux-tpl-poi-title')
           .first()
           .should('contain.text', "Plan d'aménagement général")
-        cy.get('.lux-tpl-pag-mail input').should('exist').and('have.value', '')
-        cy.get('.lux-tpl-pag-checkbox input[type="checkbox"]').should('exist')
+        cy.get('.lux-tpl-order-mail input')
+          .should('exist')
+          .and('have.value', '')
+        cy.get('.lux-tpl-order-checkbox input[type="checkbox"]').should('exist')
       })
       it('notifies through the host when the email is missing', () => {
-        cy.get('.lux-tpl-pag-form-container').parent().find('button').click()
+        cy.get('.lux-tpl-order-form').parent().find('button').click()
         cy.get('[data-cy="notification"]')
           .should('exist')
           .and('contain.text', 'Veuillez saisir une adresse email valide')

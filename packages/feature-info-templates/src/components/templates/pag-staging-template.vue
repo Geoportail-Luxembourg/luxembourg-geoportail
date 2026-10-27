@@ -84,12 +84,12 @@ async function generateRepport() {
       }}</label>
       <br />
       <br />
-      <div class="lux-tpl-pag-form-container">
-        <div class="lux-tpl-pag-mail">
+      <div class="lux-tpl-order-form">
+        <div class="lux-tpl-order-mail">
           <label>{{ t('Adresse Email') }}</label>
           <input type="text" v-model="mail" style="width: 165px" />
         </div>
-        <div class="lux-tpl-pag-checkbox">
+        <div class="lux-tpl-order-checkbox">
           <input type="checkbox" v-model="isChecked" id="terms" />
           <!-- eslint-disable vue/no-v-html -- developer-authored translated
                string carrying target="_blank"; DOMPurify's default ALLOWED_ATTR

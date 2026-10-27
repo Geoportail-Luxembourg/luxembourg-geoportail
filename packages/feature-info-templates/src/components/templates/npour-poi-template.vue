@@ -21,31 +21,31 @@ const { profileComponent } = useLuxTplContext()
   <InfoFeatureLayout :layers="layers" :currentUrl="currentUrl">
     <template #feature-content="{ feature }">
       <h3
-        class="lux-tpl-npour-poi-h3"
+        class="text-[28px]"
         v-if="i18next.language == 'de' && hasProperty('title_de', feature, 0)"
       >
         {{ feature.attributes.title_de }}
       </h3>
       <h3
-        class="lux-tpl-npour-poi-h3"
+        class="text-[28px]"
         v-if="i18next.language == 'en' && hasProperty('title_en', feature, 0)"
       >
         {{ feature.attributes.title_en }}
       </h3>
       <h3
-        class="lux-tpl-npour-poi-h3"
+        class="text-[28px]"
         v-if="i18next.language == 'lb' && hasProperty('title_nl', feature, 0)"
       >
         {{ feature.attributes.title_nl }}
       </h3>
       <h3
-        class="lux-tpl-npour-poi-h3"
+        class="text-[28px]"
         v-if="i18next.language == 'fr' && hasProperty('title_fr', feature, 0)"
       >
         {{ feature.attributes.title_fr }}
       </h3>
       <h3
-        class="lux-tpl-npour-poi-h3"
+        class="text-[28px]"
         v-if="i18next.language == 'de' && hasProperty('nom_de', feature, 0)"
       >
         {{ feature.attributes.nom_de }}
