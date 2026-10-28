@@ -1,6 +1,6 @@
 {
   "name": "@geoportallux/feature-info-templates",
-  "version": "0.1.0",
+  "version": "1.0.0-alpha.0",
   "description": "Shared GetFeatureInfo templates for the Luxembourg geoportal (2D app and 3D viewer).",
   "license": "MIT",
   "repository": {
