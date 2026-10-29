@@ -93,6 +93,30 @@ describe('layer-tree store', () => {
     })
   })
 
+  describe('#setFavouriteNodesExpanded', () => {
+    it('defaults to expanded', () => {
+      expect(useLayerTreeStore().favouriteNodesExpanded).toBe(true)
+    })
+
+    it('collapses and re-expands the favourites nodes', () => {
+      const store = useLayerTreeStore()
+
+      store.setFavouriteNodesExpanded(false)
+      expect(store.favouriteNodesExpanded).toBe(false)
+
+      store.setFavouriteNodesExpanded(true)
+      expect(store.favouriteNodesExpanded).toBe(true)
+    })
+
+    it('is not affected by expandedNodes changes', () => {
+      const store = useLayerTreeStore()
+
+      store.setExpanded(5, true)
+
+      expect(store.favouriteNodesExpanded).toBe(true)
+    })
+  })
+
   describe('#setExpanded', () => {
     it('adds entry when expanded differs from server default', () => {
       const store = useLayerTreeStore()
