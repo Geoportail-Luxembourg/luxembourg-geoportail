@@ -226,7 +226,9 @@ watch(
           @saveLayers="myMapsHelper.applyToMyMap"
           @draw:mergelines="() => drawStore.toggleDrawMergeLinesModal(true)"
           @draw:cutlines="() => drawStore.toggleDrawCutLineMode()"
-          @toggleMyMapsLayer="() => toggleMyMapsLayer(myMap.uuid, myMap.title)"
+          @toggleMyMapsLayer="
+            (map: MyMap) => toggleMyMapsLayer(map.uuid, map.title)
+          "
         />
         <FeaturesList :features="features" idPrefix="mymap" />
       </div>
