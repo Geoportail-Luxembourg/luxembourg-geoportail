@@ -82,17 +82,17 @@ function cancelRename() {
 </script>
 
 <template>
-  <div class="bookmark-panel" data-cy="bookmarkPanel">
+  <div class="mb-2" data-cy="bookmarkPanel">
     <expandable-panel
       :title="t('My bookmarks', { ns: 'app' })"
       :expanded="expanded"
       @toggle-panel="expanded = !expanded"
     />
 
-    <div v-if="expanded" class="bookmark-body bg-secondary text-tertiary">
-      <div class="bookmark-add-row">
+    <div v-if="expanded" class="bg-secondary text-tertiary px-2 py-1.5">
+      <div class="flex justify-end pb-1.5">
         <button
-          class="bookmark-add"
+          class="inline-flex items-center gap-1.5 border border-current rounded px-2 py-0.5 text-[0.8rem] cursor-pointer"
           data-cy="bookmarkAddCurrentView"
           :title="t('Add current view', { ns: 'app' })"
           :aria-label="t('Add current view', { ns: 'app' })"
@@ -103,14 +103,13 @@ function cancelRename() {
         </button>
       </div>
 
-      <ul v-if="draft || bookmarks.length" class="bookmark-list">
-        <li v-if="draft" class="bookmark-item">
+      <ul v-if="draft || bookmarks.length" class="list-none m-0 p-0">
+        <li v-if="draft" class="flex items-center gap-1 py-1.5 px-1">
           <input
             ref="nameInput"
             v-model="draftName"
-            class="bookmark-input"
+            class="form-control bg-secondary text-white px-3 py-[6px] focus:outline-none"
             type="text"
-            :placeholder="t('Bookmark name', { ns: 'app' })"
             data-cy="bookmarkDraftInput"
             @keydown.enter="confirmDraft"
             @keydown.esc="cancelDraft"
@@ -120,14 +119,14 @@ function cancelRename() {
         <li
           v-for="bookmark in bookmarks"
           :key="bookmark.id"
-          class="bookmark-item"
+          class="flex items-center gap-1 py-1.5 px-1"
           :data-cy="`bookmarkItem-${bookmark.id}`"
         >
           <input
             v-if="editingId === bookmark.id"
             ref="nameInput"
             v-model="editName"
-            class="bookmark-input"
+            class="form-control bg-secondary text-white px-3 py-[6px] focus:outline-none"
             type="text"
             :data-cy="`bookmarkRenameInput-${bookmark.id}`"
             @keydown.enter="confirmRename(bookmark.id)"
@@ -136,16 +135,20 @@ function cancelRename() {
           />
           <template v-else>
             <button
-              class="bookmark-name"
+              class="group flex items-center gap-1.5 flex-1 min-w-0 text-left cursor-pointer"
               :title="bookmark.name"
               @click="goTo(bookmark)"
             >
               <i aria-hidden="true" class="fa-solid fa-location-dot"></i>
-              <span class="bookmark-name-label">{{ bookmark.name }}</span>
+              <span
+                class="overflow-hidden text-ellipsis whitespace-nowrap group-hover:underline"
+              >
+                {{ bookmark.name }}
+              </span>
             </button>
-            <span class="bookmark-actions">
+            <span class="flex gap-1">
               <button
-                class="bookmark-action"
+                class="cursor-pointer p-0.5"
                 :title="t('Rename bookmark', { ns: 'app' })"
                 :aria-label="t('Rename bookmark', { ns: 'app' })"
                 :data-cy="`bookmarkRename-${bookmark.id}`"
@@ -154,7 +157,7 @@ function cancelRename() {
                 <i aria-hidden="true" class="fa-solid fa-pencil"></i>
               </button>
               <button
-                class="bookmark-action"
+                class="cursor-pointer p-0.5"
                 :title="t('Delete bookmark', { ns: 'app' })"
                 :aria-label="t('Delete bookmark', { ns: 'app' })"
                 :data-cy="`bookmarkDelete-${bookmark.id}`"
@@ -169,87 +172,3 @@ function cancelRename() {
     </div>
   </div>
 </template>
-
-<style scoped>
-.bookmark-panel {
-  margin-bottom: 0.5rem;
-}
-
-.bookmark-body {
-  padding: 0.375rem 0.5rem;
-}
-
-.bookmark-add-row {
-  display: flex;
-  justify-content: flex-end;
-  padding-bottom: 0.375rem;
-}
-
-.bookmark-add {
-  display: inline-flex;
-  align-items: center;
-  gap: 0.375rem;
-  background: transparent;
-  border: 1px solid currentColor;
-  border-radius: 4px;
-  padding: 0.125rem 0.5rem;
-  font-size: 0.8rem;
-  cursor: pointer;
-}
-
-.bookmark-list {
-  list-style: none;
-  margin: 0;
-  padding: 0;
-}
-
-.bookmark-item {
-  display: flex;
-  align-items: center;
-  gap: 0.25rem;
-  padding: 0.375rem 0.25rem;
-}
-
-.bookmark-name {
-  display: flex;
-  align-items: center;
-  gap: 0.375rem;
-  flex: 1;
-  min-width: 0;
-  text-align: left;
-  background: transparent;
-  border: none;
-  padding: 0;
-  cursor: pointer;
-}
-
-.bookmark-name-label {
-  overflow: hidden;
-  text-overflow: ellipsis;
-  white-space: nowrap;
-}
-
-.bookmark-name:hover .bookmark-name-label {
-  text-decoration: underline;
-}
-
-.bookmark-actions {
-  display: flex;
-  gap: 0.25rem;
-}
-
-.bookmark-action {
-  background: transparent;
-  border: none;
-  cursor: pointer;
-  padding: 0.125rem;
-}
-
-.bookmark-input {
-  flex: 1;
-  min-width: 0;
-  padding: 0.125rem 0.25rem;
-  color: inherit;
-  background: transparent;
-}
-</style>
