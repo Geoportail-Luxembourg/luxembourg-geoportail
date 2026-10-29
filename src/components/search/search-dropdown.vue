@@ -952,7 +952,7 @@ function getThemeLinks(layerId: number): string {
                 @keydown.enter.stop="onInfoClick(result)"
                 @keydown.space.stop.prevent="onInfoClick(result)"
               ></button>
-<button
+              <button
                 v-if="result.showBookmarkButton && result.entry"
                 class="search-result-bookmark self-start ml-1"
                 :aria-pressed="isBookmarked(result)"
