@@ -148,6 +148,7 @@ export class LayerTreeService {
 
   buildFavouritesNode(
     tree: LayerTreeNodeModel,
+    favouriteChildren: LayerTreeNodeModel[],
     expanded: boolean
   ): LayerTreeNodeModel {
     const base =
@@ -155,21 +156,7 @@ export class LayerTreeService {
         ? { ...tree, children: tree.children.slice(1) }
         : tree
 
-    const favouriteLeaves: LayerTreeNodeModel[] = []
-    const seen = new Set<LayerId>()
-    const collect = (node: LayerTreeNodeModel) => {
-      if (!node.children) {
-        if (node.favourite && !seen.has(node.id)) {
-          seen.add(node.id)
-          favouriteLeaves.push({ ...node, depth: 2 })
-        }
-        return
-      }
-      node.children.forEach(collect)
-    }
-    collect(base)
-
-    if (favouriteLeaves.length === 0) return base
+    if (favouriteChildren.length === 0) return base
 
     return {
       ...base,
@@ -181,7 +168,7 @@ export class LayerTreeService {
           expanded,
           checked: false,
           favourite: false,
-          children: favouriteLeaves,
+          children: favouriteChildren,
         },
         ...(base.children ?? []),
       ],
