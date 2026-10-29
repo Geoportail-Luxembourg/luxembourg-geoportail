@@ -2,7 +2,6 @@
 import {
   computed,
   ShallowRef,
-  ref,
   shallowRef,
   watchEffect,
   watch,
@@ -39,11 +38,11 @@ const layerTree3d: ShallowRef<LayerTreeNodeModel | undefined> = shallowRef()
 const showDefaultCatalog = computed(
   () => !mapStore.is3dActive || (mapStore.is3dActive && !mapStore.is3dMesh)
 )
-const favouritesExpanded = ref(true)
 
 const { layerTrees_3d } = storeToRefs(themeStore)
 const { layerToLocateInCatalog } = storeToRefs(appStore)
 const { themeName } = storeToRefs(themeStore)
+const { favouriteNodesExpanded } = storeToRefs(layerTreeStore)
 
 watchEffect(updateLayerTree)
 
@@ -75,13 +74,13 @@ function updateLayerTree() {
     )
     layerTree.value = layerTreeService.buildFavouritesNode(
       favouriteTree,
-      buildFavouriteChildren(),
-      favouritesExpanded.value
+      buildFavouriteLayerNodes(),
+      favouriteNodesExpanded.value
     )
   }
 }
 
-function buildFavouriteChildren(): LayerTreeNodeModel[] {
+function buildFavouriteLayerNodes(): LayerTreeNodeModel[] {
   return layerTreeStore.favouriteLayerIds
     .map(id => themes.findById(id))
     .filter((themeNode): themeNode is ThemeNodeModel => !!themeNode)
@@ -96,7 +95,7 @@ function buildFavouriteChildren(): LayerTreeNodeModel[] {
     })
 }
 
-function thematicTree(tree: LayerTreeNodeModel): LayerTreeNodeModel {
+function stripFavouritesNode(tree: LayerTreeNodeModel): LayerTreeNodeModel {
   return tree.children?.[0]?.id === FAVOURITES_NODE_ID
     ? { ...tree, children: tree.children.slice(1) }
     : tree
@@ -128,14 +127,12 @@ watch(layerToLocateInCatalog, id => {
 
   const tryExpand = (allowExcludedFallback = false) => {
     if (layerTree.value) {
-      const layerPresence = getLayerPresence(layerTree.value)
+      const catalogTree = stripFavouritesNode(layerTree.value)
+      const layerPresence = getLayerPresence(catalogTree)
       if (!layerPresence.hasAny) return false
       if (!allowExcludedFallback && !layerPresence.hasAllowed) return false
 
-      const { found, node } = layerTreeService.expandToLayer(
-        id,
-        layerTree.value
-      )
+      const { found, node } = layerTreeService.expandToLayer(id, catalogTree)
       if (found) {
         layerTree.value = node
         updateExpandedNodesInStore(node)
@@ -147,11 +144,13 @@ watch(layerToLocateInCatalog, id => {
           const elsArray = els ? Array.from(els) : []
           const el =
             // Prefer an occurrence that is NOT nested inside an excluded parent node
+            // and NOT the copy inside the favourites box
             elsArray.find(
               el =>
                 !EXCLUDED_PARENT_LAYER_IDS.some((parentId: number) =>
                   el.closest(`[data-cy="subLayerLabel-${parentId}"]`)
-                )
+                ) &&
+                !el.closest(`[data-cy="subLayerLabel-${FAVOURITES_NODE_ID}"]`)
             ) ??
             // Fallback only when explicitly allowed
             (allowExcludedFallback ? elsArray[0] : undefined)
@@ -198,7 +197,7 @@ watch(layerToLocateInCatalog, id => {
   if (tryExpand()) return
 
   const currentLayerPresence = layerTree.value
-    ? getLayerPresence(layerTree.value)
+    ? getLayerPresence(stripFavouritesNode(layerTree.value))
     : undefined
 
   const themeNames = themes.findThemeNamesByLayerId(id)
@@ -225,7 +224,7 @@ watch(layerToLocateInCatalog, id => {
 
 function toggleParent(node: LayerTreeNodeModel, is3d: boolean) {
   if (node.id === FAVOURITES_NODE_ID) {
-    favouritesExpanded.value = !favouritesExpanded.value
+    layerTreeStore.setFavouriteNodesExpanded(!favouriteNodesExpanded.value)
     return
   }
 
@@ -248,7 +247,7 @@ function toggleLayer(node: LayerTreeNodeModel, is3d: boolean) {
   const inCurrentTheme = tree
     ? layerTreeService.getLayerPresence(
         +node.id,
-        thematicTree(tree),
+        stripFavouritesNode(tree),
         EXCLUDED_PARENT_LAYER_IDS
       ).hasAny
     : false
@@ -257,7 +256,7 @@ function toggleLayer(node: LayerTreeNodeModel, is3d: boolean) {
 }
 
 function toggleFavourite(node: LayerTreeNodeModel) {
-  layers.toggleFavourite(+node.id, !node.favourite)
+  layers.setFavourite(+node.id, !node.favourite)
 }
 </script>
 

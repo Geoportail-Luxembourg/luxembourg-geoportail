@@ -342,7 +342,7 @@ function isFavourite(result: { layer_id?: LayerId }): boolean {
 
 function onFavouriteClick(result: { layer_id?: LayerId }) {
   if (result.layer_id === undefined) return
-  useLayers().toggleFavourite(result.layer_id, !isFavourite(result))
+  useLayers().setFavourite(result.layer_id, !isFavourite(result))
 }
 
 // eslint-disable-next-line @typescript-eslint/no-unused-vars

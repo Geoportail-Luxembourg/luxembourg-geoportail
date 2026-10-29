@@ -366,7 +366,7 @@ export default function useLayers() {
     }
   }
 
-  function toggleFavourite(id: LayerId, newState = true) {
+  function setFavourite(id: LayerId, newState = true) {
     useLayerTreeStore().setFavourite(id, newState)
   }
 
@@ -376,6 +376,6 @@ export default function useLayers() {
     getLayerCurrentTime,
     handleExclusionLayers,
     toggleLayer,
-    toggleFavourite,
+    setFavourite,
   }
 }
