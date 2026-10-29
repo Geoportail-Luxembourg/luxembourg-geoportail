@@ -1,4 +1,6 @@
 {
+  "Ajouter la mymaps dans mes couches actives": "Mymaps bei meng aktiv Layeren derbäisetzen",
+  "Retirer la mymaps de mes couches actives": "Mymaps aus menge aktive Layeren ewechhuelen",
   "(Deactivates zoom and pan on the profile!)": "(Deaktivéiert d'Zoom- a Pan-Funktiounen am Profil)",
   "+ Add external Wms": "+ Externe WM(T)S bäisetzen",
   "+ Add layers": "+ Layeren bäisetzen",
@@ -22,6 +24,7 @@
   "Afficher les liens": "Afficher les liens",
   "Afficher une catégorie par couche": "Eng Kategorie uweisen",
   "Aide": "Hëllef",
+  "Ajouter en tant que couche": "Als Layer derbäisetzen",
   "Ajouter étape à mon itinéraire": "Tëschestopp bäisetzen",
   "Ajouter une étape": "Tëschestopp bäisetzen",
   "Altitude: ": "Héicht",
@@ -654,6 +657,7 @@
   "Restart app": "D'App nei starten",
   "Résultats de recherche d'adresse": "Résultats de recherche d'adresse",
   "Résumé de l'itinéraire": "Résumé de l'itinéraire",
+  "Retirer des couches": "Aus de Layeren ewechshuelen",
   "Retry": "Nach eng Kéier probéiren",
   "Revision date": "Revisiounsdatum",
   "Route du": "Wee vum",

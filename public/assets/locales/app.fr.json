@@ -1,4 +1,6 @@
 {
+  "Ajouter la mymaps dans mes couches actives": "Ajouter la mymaps dans mes couches actives",
+  "Retirer la mymaps de mes couches actives": "Retirer la mymaps de mes couches actives",
   "(Deactivates zoom and pan on the profile!)": "(Désactive le zoom et le pan sur le profil!)",
   "+ Add external Wms": "+ Ajouter WM(T)S externe",
   "+ Add layers": "+ Ajouter des couches",
@@ -22,6 +24,7 @@
   "Afficher les liens": "Afficher les liens",
   "Afficher une catégorie par couche": "Afficher une catégorie par couche",
   "Aide": "Aide",
+  "Ajouter en tant que couche": "Ajouter en tant que couche",
   "Ajouter étape à mon itinéraire": "Ajouter étape à mon itinéraire",
   "Ajouter une étape": "Ajouter une étape",
   "Altitude: ": "Altitude",
@@ -644,6 +647,7 @@
   "Restart app": "Redémarrer l'application",
   "Résultats de recherche d'adresse": "Résultats de recherche d'adresse",
   "Résumé de l'itinéraire": "Résumé de l'itinéraire",
+  "Retirer des couches": "Retirer des couches",
   "Retry": "Recommencez",
   "Revision date": "Date de révision",
   "Route du": "Route du",
