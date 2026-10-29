@@ -31,6 +31,11 @@ describe('RulesReadHelper', () => {
         RulesReadHelper.processRulesForKey('layersOpen', { layersOpen: false })
       ).toBe(0)
     })
+    it('returns the localStorage as storage to read the bookmarks value', () => {
+      expect(
+        RulesReadHelper.processRulesForKey('bookmarks', { bookmarks: '[]' })
+      ).toBe(0)
+    })
   })
 
   describe('#ruleUseLocalStorage', () => {
