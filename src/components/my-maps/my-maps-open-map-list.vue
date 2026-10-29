@@ -370,18 +370,14 @@ function sortMap(
                   v-if="!map.deletedWhileOffline"
                   @click="emit('toggle-readonly', map.uuid)"
                   :aria-label="
-                    (isLayerLoaded(map)
-                      ? t('Retirer la carte')
-                      : t('Ouvrir en lecture seule')) +
-                    ' ' +
-                    map.title
+                    isLayerLoaded(map)
+                      ? t('Retirer la mymaps de mes couches actives')
+                      : t('Ajouter la mymaps dans mes couches actives')
                   "
                   :title="
-                    (isLayerLoaded(map)
-                      ? t('Retirer la carte')
-                      : t('Ouvrir en lecture seule')) +
-                    ' ' +
-                    map.title
+                    isLayerLoaded(map)
+                      ? t('Retirer la mymaps de mes couches actives')
+                      : t('Ajouter la mymaps dans mes couches actives')
                   "
                   class="hover:text-blue-500"
                 >
