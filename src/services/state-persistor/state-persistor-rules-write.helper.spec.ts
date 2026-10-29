@@ -25,7 +25,7 @@ describe('RulesWriteHelper', () => {
         })
       ).toBe(0)
     })
-it('returns localStorage only for key bookmarks', () => {
+    it('returns localStorage only for key bookmarks', () => {
       expect(
         RulesWriteHelper.processRulesForKey('bookmarks', {
           bookmarks: '[]',
