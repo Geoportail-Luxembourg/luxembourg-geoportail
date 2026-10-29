@@ -75,9 +75,31 @@ function updateLayerTree() {
     )
     layerTree.value = layerTreeService.buildFavouritesNode(
       favouriteTree,
+      buildFavouriteChildren(),
       favouritesExpanded.value
     )
   }
+}
+
+function buildFavouriteChildren(): LayerTreeNodeModel[] {
+  return layerTreeStore.favouriteLayerIds
+    .map(id => themes.findById(id))
+    .filter((themeNode): themeNode is ThemeNodeModel => !!themeNode)
+    .map(themeNode => {
+      const child = themesToLayerTree(themeNode)
+      return {
+        ...child,
+        depth: 2,
+        favourite: true,
+        checked: !!mapStore.layers.find(l => l.id === child.id),
+      }
+    })
+}
+
+function thematicTree(tree: LayerTreeNodeModel): LayerTreeNodeModel {
+  return tree.children?.[0]?.id === FAVOURITES_NODE_ID
+    ? { ...tree, children: tree.children.slice(1) }
+    : tree
 }
 
 watchEffect(() => {
@@ -222,7 +244,16 @@ function toggleParent(node: LayerTreeNodeModel, is3d: boolean) {
 }
 
 function toggleLayer(node: LayerTreeNodeModel, is3d: boolean) {
-  layers.toggleLayer(+node.id, !node.checked, is3d, true)
+  const tree = is3d ? layerTree3d.value : layerTree.value
+  const inCurrentTheme = tree
+    ? layerTreeService.getLayerPresence(
+        +node.id,
+        thematicTree(tree),
+        EXCLUDED_PARENT_LAYER_IDS
+      ).hasAny
+    : false
+
+  layers.toggleLayer(+node.id, !node.checked, is3d, inCurrentTheme)
 }
 
 function toggleFavourite(node: LayerTreeNodeModel) {
