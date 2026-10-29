@@ -8,6 +8,7 @@ import { useMapStore } from '@/stores/map.store'
 import { matchCoordinate } from '@/services/search/coordinate.service'
 import { useThemeStore } from '@/stores/config.store'
 import useLayers from '@/composables/layers/layers.composable'
+import { useLayerTreeStore } from '@/stores/layer-tree.store'
 import useBackgroundLayer from '@/composables/background-layer/background-layer.composable'
 import useThemes from '@/composables/themes/themes.composable'
 import { useRoutingStore } from '@/stores/routing.store'
@@ -40,6 +41,7 @@ const filterIconColor = computed(() =>
 )
 
 const { findThemeNamesByLayerId } = useThemes()
+const layerTreeStore = useLayerTreeStore()
 const { t, i18next } = useTranslation()
 const { maxZoom } = storeToRefs(useMapStore())
 const filterPanelRef = ref()
@@ -62,6 +64,7 @@ const searchResults = ref<
       entry: object
       showRoutingButton: boolean
       showInfoButton: boolean
+      showFavouriteButton?: boolean
     }[]
   }[]
 >([])
@@ -302,6 +305,7 @@ function processResultLayersearch(data: any, selectResult: Function) {
         language: item.language,
         showRoutingButton: false,
         showInfoButton: true,
+        showFavouriteButton: true,
       }
     }),
   })
@@ -327,6 +331,18 @@ function onInfoClick(result: {
       setMetadataLayer(layer as Layer)
     }
   }
+}
+
+function isFavourite(result: { layer_id?: LayerId }): boolean {
+  return (
+    result.layer_id !== undefined &&
+    layerTreeStore.favouriteLayerIds.includes(result.layer_id)
+  )
+}
+
+function onFavouriteClick(result: { layer_id?: LayerId }) {
+  if (result.layer_id === undefined) return
+  useLayers().toggleFavourite(result.layer_id, !isFavourite(result))
 }
 
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
@@ -903,6 +919,33 @@ function getThemeLinks(layerId: number): string {
                 @keydown.enter.stop="onInfoClick(result)"
                 @keydown.space.stop.prevent="onInfoClick(result)"
               ></button>
+              <button
+                v-if="
+                  result.showFavouriteButton && result.layer_id !== undefined
+                "
+                class="search-result-favourite self-start"
+                :aria-pressed="isFavourite(result)"
+                :aria-label="
+                  isFavourite(result)
+                    ? t('Remove {name} from favourites', {
+                        name: result.name ?? '',
+                        ns: 'app',
+                      })
+                    : t('Add {name} to favourites', {
+                        name: result.name ?? '',
+                        ns: 'app',
+                      })
+                "
+                @click.stop="onFavouriteClick(result)"
+                @keydown.enter.stop="onFavouriteClick(result)"
+                @keydown.space.stop.prevent="onFavouriteClick(result)"
+              >
+                <i
+                  aria-hidden="true"
+                  class="fa-star"
+                  :class="isFavourite(result) ? 'fa-solid' : 'fa-regular'"
+                ></i>
+              </button>
             </li>
           </ul>
         </li>
@@ -1091,5 +1134,11 @@ function getThemeLinks(layerId: number): string {
   margin-left: auto;
   color: #888;
   font-weight: bold;
+}
+
+.search-result-favourite {
+  color: #888;
+  font-weight: bold;
+  padding-left: 6px;
 }
 </style>
