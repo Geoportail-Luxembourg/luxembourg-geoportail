@@ -169,6 +169,22 @@ describe('buildObliqueState', () => {
     expect(result[2]).toEqual(LUX_VCS_MODULES)
   })
 
+  it('sets selectedLayers at index 3', () => {
+    const layers = [
+      ['LayerA', 1, 0],
+      ['LayerB', 1, 0],
+    ]
+    const result = JSON.parse(
+      buildObliqueState(LON, LAT, obliqueConfig, layers)
+    )
+    expect(result[3]).toEqual(layers)
+  })
+
+  it('defaults selectedLayers to empty array at index 3', () => {
+    const result = JSON.parse(buildObliqueState(LON, LAT, obliqueConfig))
+    expect(result[3]).toEqual([])
+  })
+
   it('sets 0 at index 5 (formerly plugins)', () => {
     const result = JSON.parse(buildObliqueState(LON, LAT, obliqueConfig))
     expect(result[5]).toBe(0)
