@@ -365,7 +365,7 @@ function sortMap(
               >
                 {{ formatDate(map.last_feature_update) }}
               </td>
-              <td class="flex flex-row gap-2 py-2 justify-center">
+              <td class="flex min-w-max flex-row gap-2 py-2 justify-center">
                 <button
                   v-if="!map.deletedWhileOffline"
                   @click="emit('toggle-readonly', map.uuid)"
