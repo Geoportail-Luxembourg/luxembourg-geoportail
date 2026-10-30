@@ -13,7 +13,7 @@ import { extend, Extent } from 'ol/extent'
 import { FitOptions } from 'ol/View'
 import { Size } from 'ol/size'
 import { PROJECTION_LUX } from '@/composables/map/map.composable'
-import { FeatureJSON } from './feature-info.model'
+import { FeatureJSON } from '@geoportallux/feature-info-templates'
 
 export const FEATURE_LAYER_TYPE = 'featureInfoLayer'
 export const HIGHLIGHT_MAX_ZOOM = 17

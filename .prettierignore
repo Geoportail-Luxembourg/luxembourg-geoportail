@@ -24,6 +24,8 @@
 /src/bundle/runtime-dom/
 /_site/
 /dist/
+/dist-lux-tpl/
+/packages/*/dist/
 /out-tsc/
 .parcel-cache
 .env
@@ -34,6 +36,7 @@
 
 # documentation (standalone tools)
 /public/doc/
+*.md
 
 storybook-static
 custom-elements.json

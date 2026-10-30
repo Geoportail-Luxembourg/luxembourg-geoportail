@@ -1,0 +1,41 @@
+name: Publish feature-info-templates
+
+# Package-scoped tag so bumping the app never publishes the package.
+on:
+  push:
+    tags:
+      - 'templates-v*'
+
+jobs:
+  publish:
+    runs-on: ubuntu-latest
+    environment:
+      name: npm
+      url: https://www.npmjs.com/package/@geoportallux/feature-info-templates
+    permissions:
+      contents: read
+      id-token: write # OIDC: npm trusted publishing, no NPM_TOKEN needed
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version-file: '.nvmrc'
+          cache: npm
+          registry-url: 'https://registry.npmjs.org/'
+
+      - run: npm ci
+
+      # The tag carries the version humans read; package.json carries the one
+      # npm publishes. A mismatch is hard to undo, so fail before publishing.
+      - name: Check the tag matches the package version
+        run: |
+          version=$(node -p "require('./packages/feature-info-templates/package.json').version")
+          test "templates-v$version" = "$GITHUB_REF_NAME" \
+            || { echo "tag $GITHUB_REF_NAME does not match version $version"; exit 1; }
+
+      # `files` is ["dist"] and dist is gitignored, so this is what gives the
+      # tarball its contents. Runs type-check first.
+      - run: npm run build:templates
+
+      - run: npm publish -w @geoportallux/feature-info-templates --access public
