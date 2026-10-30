@@ -9,6 +9,7 @@ function makeTree(): LayerTreeNodeModel {
     name: 'root',
     checked: false,
     expanded: false,
+    favourite: false,
     depth: 0,
     children: [
       {
@@ -16,6 +17,7 @@ function makeTree(): LayerTreeNodeModel {
         name: 'parent-a',
         checked: false,
         expanded: false,
+        favourite: false,
         depth: 1,
         children: [
           {
@@ -23,6 +25,7 @@ function makeTree(): LayerTreeNodeModel {
             name: 'leaf-a1',
             checked: false,
             expanded: false,
+            favourite: false,
             depth: 2,
           },
           {
@@ -30,6 +33,7 @@ function makeTree(): LayerTreeNodeModel {
             name: 'leaf-a2',
             checked: false,
             expanded: false,
+            favourite: false,
             depth: 2,
           },
         ],
@@ -39,6 +43,7 @@ function makeTree(): LayerTreeNodeModel {
         name: 'parent-b',
         checked: false,
         expanded: false,
+        favourite: false,
         depth: 1,
         children: [
           {
@@ -46,6 +51,7 @@ function makeTree(): LayerTreeNodeModel {
             name: 'parent-b1',
             checked: false,
             expanded: false,
+            favourite: false,
             depth: 2,
             children: [
               {
@@ -53,6 +59,7 @@ function makeTree(): LayerTreeNodeModel {
                 name: 'leaf-b1a',
                 checked: false,
                 expanded: false,
+                favourite: false,
                 depth: 3,
               },
             ],
@@ -106,6 +113,108 @@ describe('layerTreeService.expandToLayer', () => {
     const { node } = layerTreeService.expandToLayer(10, tree)
     const parentB = node.children![1]
     expect(parentB.expanded).toBe(true)
+  })
+})
+
+describe('layerTreeService.buildFavouritesNode', () => {
+  function favouriteChild(id: number): LayerTreeNodeModel {
+    return {
+      id,
+      name: `fav-${id}`,
+      depth: 2,
+      checked: false,
+      expanded: false,
+      favourite: true,
+    }
+  }
+
+  it('returns the same tree when no favourite children are provided', () => {
+    const tree = makeTree()
+
+    const result = layerTreeService.buildFavouritesNode(tree, [], true)
+
+    expect(result).toBe(tree)
+  })
+
+  it('prepends a depth-1 favourites node with the provided children', () => {
+    const tree = makeTree()
+
+    const result = layerTreeService.buildFavouritesNode(
+      tree,
+      [favouriteChild(10)],
+      true
+    )
+    const favourites = result.children![0]
+
+    expect(favourites.id).toBe('favourites')
+    expect(favourites.depth).toBe(1)
+    expect(favourites.expanded).toBe(true)
+    expect(favourites.children).toHaveLength(1)
+    expect(favourites.children![0].id).toBe(10)
+    expect(favourites.children![0].favourite).toBe(true)
+    expect(result.children).toHaveLength(tree.children!.length + 1)
+  })
+
+  it('keeps the original tree children after the favourites node', () => {
+    const tree = makeTree()
+
+    const result = layerTreeService.buildFavouritesNode(
+      tree,
+      [favouriteChild(10)],
+      true
+    )
+
+    expect(result.children![1].id).toBe(tree.children![0].id)
+    expect(result.children![2].id).toBe(tree.children![1].id)
+  })
+
+  it('is idempotent when rebuilt from its own output', () => {
+    const tree = makeTree()
+
+    const once = layerTreeService.buildFavouritesNode(
+      tree,
+      [favouriteChild(10)],
+      true
+    )
+    const twice = layerTreeService.buildFavouritesNode(
+      once,
+      [favouriteChild(10)],
+      true
+    )
+
+    expect(twice.children![0].id).toBe('favourites')
+    expect(twice.children).toHaveLength(tree.children!.length + 1)
+    expect(twice.children![0].children!.map(child => child.id)).toEqual([10])
+  })
+
+  it('removes the favourites node when there is nothing to display', () => {
+    const tree = makeTree()
+    const once = layerTreeService.buildFavouritesNode(
+      tree,
+      [favouriteChild(10)],
+      true
+    )
+
+    const twice = layerTreeService.buildFavouritesNode(once, [], true)
+
+    expect(twice.children!.some(child => child.id === 'favourites')).toBe(false)
+  })
+
+  it('re-applies the expanded flag on rebuild', () => {
+    const tree = makeTree()
+
+    const open = layerTreeService.buildFavouritesNode(
+      tree,
+      [favouriteChild(10)],
+      true
+    )
+    const closed = layerTreeService.buildFavouritesNode(
+      open,
+      [favouriteChild(10)],
+      false
+    )
+
+    expect(closed.children![0].expanded).toBe(false)
   })
 })
 

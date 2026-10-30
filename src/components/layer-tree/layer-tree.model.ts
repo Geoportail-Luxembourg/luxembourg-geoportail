@@ -9,6 +9,7 @@ export interface LayerTreeNodeModel {
   label?: string
   checked: boolean
   expanded: boolean
+  favourite: boolean
   depth: number
   children?: LayerTreeNodeModel[]
 }

@@ -64,6 +64,7 @@ describe('remoteLayersToLayerTreeMapper', () => {
           children: undefined,
           checked: false,
           expanded: false,
+          favourite: false,
         },
         {
           id: 'WMS||http://example.com||Layer3',
@@ -73,6 +74,7 @@ describe('remoteLayersToLayerTreeMapper', () => {
           children: [],
           checked: false,
           expanded: false,
+          favourite: false,
         },
         {
           id: 'WMS||http://example.com||Layer1',
@@ -88,6 +90,7 @@ describe('remoteLayersToLayerTreeMapper', () => {
               children: undefined,
               checked: false,
               expanded: false,
+              favourite: false,
             },
             {
               id: 'WMS||http://example.com||Layer1%2D2',
@@ -97,14 +100,17 @@ describe('remoteLayersToLayerTreeMapper', () => {
               children: undefined,
               checked: false,
               expanded: false,
+              favourite: false,
             },
           ],
           checked: false,
           expanded: false,
+          favourite: false,
         },
       ],
       checked: false,
       expanded: false,
+      favourite: false,
     }
     beforeEach(() => {
       setActivePinia(createPinia())
@@ -150,6 +156,7 @@ describe('remoteLayersToLayerTreeMapper', () => {
           children: undefined,
           checked: false,
           expanded: false,
+          favourite: false,
         },
         {
           id: 'WMTS||http://example.com||Layer1%2D2',
@@ -159,10 +166,12 @@ describe('remoteLayersToLayerTreeMapper', () => {
           children: undefined,
           checked: false,
           expanded: false,
+          favourite: false,
         },
       ],
       checked: false,
       expanded: false,
+      favourite: false,
     }
     beforeEach(() => {
       setActivePinia(createPinia())

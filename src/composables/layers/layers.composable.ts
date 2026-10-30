@@ -9,6 +9,7 @@ import {
 } from '@/stores/map.store.model'
 import { TimeResolution } from '@/services/time.utils'
 import { useMapStore } from '@/stores/map.store'
+import { useLayerTreeStore } from '@/stores/layer-tree.store'
 import { useThemeStore } from '@/stores/config.store'
 import { useAlertNotificationsStore } from '@/stores/alert-notifications.store'
 import useThemes from '@/composables/themes/themes.composable'
@@ -365,11 +366,16 @@ export default function useLayers() {
     }
   }
 
+  function setFavourite(id: LayerId, newState = true) {
+    useLayerTreeStore().setFavourite(id, newState)
+  }
+
   return {
     initLayer,
     getLayerCurrentLabel,
     getLayerCurrentTime,
     handleExclusionLayers,
     toggleLayer,
+    setFavourite,
   }
 }
