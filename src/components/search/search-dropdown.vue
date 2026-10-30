@@ -8,6 +8,12 @@ import { useMapStore } from '@/stores/map.store'
 import { matchCoordinate } from '@/services/search/coordinate.service'
 import { useThemeStore } from '@/stores/config.store'
 import useLayers from '@/composables/layers/layers.composable'
+import { useBookmarkStore } from '@/stores/bookmark.store'
+import {
+  bookmarkLocation,
+  entryLocationKey,
+  entryName,
+} from '@/services/search/bookmark-location'
 import useBackgroundLayer from '@/composables/background-layer/background-layer.composable'
 import useThemes from '@/composables/themes/themes.composable'
 import { useRoutingStore } from '@/stores/routing.store'
@@ -62,6 +68,7 @@ const searchResults = ref<
       entry: object
       showRoutingButton: boolean
       showInfoButton: boolean
+      showBookmarkButton?: boolean
     }[]
   }[]
 >([])
@@ -223,6 +230,7 @@ function processResultFulltextsearch(data: any, selectResult: Function) {
           entry: feature,
           showRoutingButton: true,
           showInfoButton: false,
+          showBookmarkButton: true,
         }
       }),
     })
@@ -245,6 +253,7 @@ function processResultFulltextsearch(data: any, selectResult: Function) {
           entry: feature,
           showRoutingButton: true,
           showInfoButton: false,
+          showBookmarkButton: true,
         }
       }),
     })
@@ -267,6 +276,7 @@ function processResultFeaturesearch(data: any, selectResult: Function) {
         entry: feature,
         showRoutingButton: true,
         showInfoButton: false,
+        showBookmarkButton: true,
       }
     }),
   })
@@ -327,6 +337,44 @@ function onInfoClick(result: {
       setMetadataLayer(layer as Layer)
     }
   }
+}
+
+const bookmarkStore = useBookmarkStore()
+
+function bookmarkKey(result: { entry: object }): string | undefined {
+  const projCode = olLayerSearchService.map.getView().getProjection().getCode()
+  return entryLocationKey(result.entry, projCode)
+}
+
+function isBookmarked(result: { entry: object }): boolean {
+  const key = bookmarkKey(result)
+  return key !== undefined && bookmarkStore.findByKey(key) !== undefined
+}
+
+function onBookmarkClick(result: { entry: object; label: string }) {
+  const key = bookmarkKey(result)
+  if (!key) return
+
+  const existing = bookmarkStore.findByKey(key)
+  if (existing) {
+    bookmarkStore.removeBookmark(existing.id)
+    return
+  }
+
+  const view = olLayerSearchService.map.getView()
+  const location = bookmarkLocation(
+    result.entry,
+    view,
+    olLayerSearchService.map.getSize()
+  )
+  if (!location) return
+
+  bookmarkStore.addBookmark({
+    name: entryName(result.entry, result.label),
+    center: location.center,
+    zoom: location.zoom,
+    key,
+  })
 }
 
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
@@ -674,6 +722,7 @@ function getDataCoordinates(newQuery: string, token: number) {
         entry: feature,
         showRoutingButton: true,
         showInfoButton: false,
+        showBookmarkButton: true,
       }
     }),
   })
@@ -903,6 +952,31 @@ function getThemeLinks(layerId: number): string {
                 @keydown.enter.stop="onInfoClick(result)"
                 @keydown.space.stop.prevent="onInfoClick(result)"
               ></button>
+              <button
+                v-if="result.showBookmarkButton && result.entry"
+                class="search-result-bookmark self-start ml-1"
+                :aria-pressed="isBookmarked(result)"
+                :aria-label="
+                  isBookmarked(result)
+                    ? t('Remove {name} from bookmarks', {
+                        name: entryName(result.entry, result.label),
+                        ns: 'app',
+                      })
+                    : t('Add {name} to bookmarks', {
+                        name: entryName(result.entry, result.label),
+                        ns: 'app',
+                      })
+                "
+                @click.stop="onBookmarkClick(result)"
+                @keydown.enter.stop="onBookmarkClick(result)"
+                @keydown.space.stop.prevent="onBookmarkClick(result)"
+              >
+                <i
+                  aria-hidden="true"
+                  class="fa-bookmark"
+                  :class="isBookmarked(result) ? 'fa-solid' : 'fa-regular'"
+                ></i>
+              </button>
             </li>
           </ul>
         </li>
@@ -1091,5 +1165,11 @@ function getThemeLinks(layerId: number): string {
   margin-left: auto;
   color: #888;
   font-weight: bold;
+}
+
+.search-result-bookmark {
+  color: #888;
+  font-weight: bold;
+  padding-left: 6px;
 }
 </style>
