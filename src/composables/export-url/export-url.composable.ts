@@ -158,7 +158,10 @@ export default function useExportUrl(map?: OlMap) {
       targetExportLayer?.positionTarget(newX, newY)
     }
   })
-  watch([locationInfoCoords, bgLayer, layers, x, y, zoom, lang], resolveAllHrefs)
+  watch(
+    [locationInfoCoords, bgLayer, layers, x, y, zoom, lang],
+    resolveAllHrefs
+  )
   watch([allLinks, currentUser], ([newLinks]) => {
     links.value = filterLinks(newLinks)
     resolveAllHrefs()
