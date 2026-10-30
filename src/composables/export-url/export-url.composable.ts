@@ -15,6 +15,7 @@ import { Layer } from '@/stores/map.store.model'
 import type { BaseParams, ExportLink } from './export-url.model'
 import { TargetExportLayer } from '@/services/ol-layer/ol-layer-target-export.helper'
 import { olLayerFactoryService } from '@/services/ol-layer/ol-layer-factory.service'
+import { useAppStore } from '@/stores/app.store'
 
 export function interpolateUrl(
   url: string,
@@ -134,7 +135,9 @@ async function computeParams(
  * @param map - The OpenLayers map instance used to compute view-based parameters.
  */
 export default function useExportUrl(map?: OlMap) {
+  const appStore = useAppStore()
   const mapStore = useMapStore()
+  const { lang } = storeToRefs(appStore)
   const { bgLayer, layers, x, y, zoom } = storeToRefs(mapStore)
   const { locationInfoCoords } = storeToRefs(useLocationInfoStore())
   const { currentUser } = storeToRefs(useUserManagerStore())
@@ -155,7 +158,10 @@ export default function useExportUrl(map?: OlMap) {
       targetExportLayer?.positionTarget(newX, newY)
     }
   })
-  watch([locationInfoCoords, bgLayer, layers, x, y, zoom], resolveAllHrefs)
+  watch(
+    [locationInfoCoords, bgLayer, layers, x, y, zoom, lang],
+    resolveAllHrefs
+  )
   watch([allLinks, currentUser], ([newLinks]) => {
     links.value = filterLinks(newLinks)
     resolveAllHrefs()
@@ -229,6 +235,9 @@ export default function useExportUrl(map?: OlMap) {
             ),
           }
         : {}),
+      ...{
+        LANG: lang.value,
+      },
     }
 
     return interpolateUrl(link.url, params)

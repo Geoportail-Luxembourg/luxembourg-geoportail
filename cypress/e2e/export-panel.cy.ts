@@ -98,10 +98,9 @@ describe('Export Panel', () => {
 
   describe('Generated URLs', () => {
     beforeEach(() => {
-      // Wait for locationInfo element to exist in DOM, ensuring location-info.vue is
-      // mounted and OL map event listeners are set up before right-clicking
-      cy.get('[data-cy="locationInfo"]').should('be.hidden')
-      // Right-click on the map to set location info coords
+      // OL drops pointer events until first render (frameState null);
+      // rendered canvas means frameState exists
+      cy.get('div.ol-viewport canvas').should('exist')
       cy.get('div.ol-viewport').rightclick(350, 300, { force: true })
       cy.get('[data-cy="locationInfo"]').should('be.visible')
       cy.get('[data-cy="exportButton"]').click()
@@ -168,7 +167,7 @@ describe('Export Panel', () => {
         .then(href => {
           expect(href).to.not.equal(undefined)
           expect(
-            /^https:\/\/3d\.geoportail\.lu\?state=.+$/.test(href ?? '')
+            /^https:\/\/3d\.geoportail\.lu\?state=.+&lang=.+$/.test(href ?? '')
           ).to.equal(true)
         })
     })
