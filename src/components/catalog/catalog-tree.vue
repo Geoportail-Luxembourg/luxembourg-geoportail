@@ -143,14 +143,12 @@ watch(layerToLocateInCatalog, id => {
           )
           const elsArray = els ? Array.from(els) : []
           const el =
-            // Prefer an occurrence that is NOT nested inside an excluded parent node
+            // Prefer an occurrence that is NOT in a locate-excluded context
             // and NOT the copy inside the favourites box
             elsArray.find(
               el =>
-                !EXCLUDED_PARENT_LAYER_IDS.some((parentId: number) =>
-                  el.closest(`[data-cy="subLayerLabel-${parentId}"]`)
-                ) &&
-                !el.closest(`[data-cy="subLayerLabel-${FAVOURITES_NODE_ID}"]`)
+                !el.hasAttribute('data-locate-excluded') &&
+                !el.hasAttribute('data-locate-favourites')
             ) ??
             // Fallback only when explicitly allowed
             (allowExcludedFallback ? elsArray[0] : undefined)

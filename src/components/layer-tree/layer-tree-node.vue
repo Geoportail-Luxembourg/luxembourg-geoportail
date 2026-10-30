@@ -5,12 +5,21 @@ import { useTranslation } from 'i18next-vue'
 import { useMetadataStore } from '@/stores/metadata.store'
 import { Layer } from '@/stores/map.store.model'
 import ExpandablePanel from '@/components/common/expandable-panel.vue'
+import {
+  EXCLUDED_PARENT_LAYER_IDS,
+  FAVOURITES_NODE_ID,
+} from './layer-tree.service'
 
 import type { LayerTreeNodeModel } from './layer-tree.model'
 
-const props = defineProps<{
-  node: LayerTreeNodeModel
-}>()
+const props = withDefaults(
+  defineProps<{
+    node: LayerTreeNodeModel
+    locateExcluded?: boolean
+    inFavouritesBox?: boolean
+  }>(),
+  { locateExcluded: false, inFavouritesBox: false }
+)
 const emit = defineEmits<{
   (e: 'toggleLayer', node: LayerTreeNodeModel): void
   (e: 'toggleParent', node: LayerTreeNodeModel): void
@@ -24,6 +33,13 @@ const isRoot = props.node.depth === 0
 const isMaxDepth = props.node.depth >= 10
 const label = computed(() =>
   t(props.node.label ?? props.node.name, { ns: 'layers' })
+)
+const locateExcludedContext = computed(
+  () =>
+    props.locateExcluded || EXCLUDED_PARENT_LAYER_IDS.includes(+props.node.id)
+)
+const inFavouritesBoxContext = computed(
+  () => props.inFavouritesBox || props.node.id === FAVOURITES_NODE_ID
 )
 
 function toggleLayer(node: LayerTreeNodeModel) {
@@ -84,6 +100,8 @@ function toggleFavourite(node: LayerTreeNodeModel) {
         v-for="child in node.children"
         :key="child.id"
         :node="child"
+        :locate-excluded="locateExcludedContext"
+        :in-favourites-box="inFavouritesBoxContext"
         @toggle-parent="toggleParent($event)"
         @toggle-layer="toggleLayer($event)"
         @toggle-favourite="toggleFavourite($event)"
@@ -94,6 +112,8 @@ function toggleFavourite(node: LayerTreeNodeModel) {
     v-else
     class="flex text-tertiary pr-2"
     :data-info="`layerRow-${node.id}`"
+    :data-locate-excluded="locateExcludedContext || undefined"
+    :data-locate-favourites="inFavouritesBoxContext || undefined"
   >
     <button
       :data-cy="`layerMetadata-${node.id}`"
