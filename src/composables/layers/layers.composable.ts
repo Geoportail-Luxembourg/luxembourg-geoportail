@@ -338,21 +338,19 @@ export default function useLayers() {
         handleExclusionLayers(layer)
 
         const addLayers = is3d ? mapStore.add3dLayers : mapStore.addLayers
-        const layersToAdd = [
-          initLayer(layer),
-          ...linkedLayers.map(layerId =>
-            // TODO: not sure if the layer exclusion is working correctly for linked layers?
-            // we might need somthing like the commented code below:
-            // {
-            //   const newLinkedLayer = themes.findById(parseInt(layerId, 10)) as unknown as Layer
-            //   handleExclusionLayers(newLinkedLayer)
-            //   return initLayer(newLinkedLayer)
-            // }
-            initLayer(
-              themes.findById(parseInt(layerId, 10)) as unknown as Layer
-            )
-          ),
-        ]
+        const layersToAdd = [initLayer(layer)]
+        // Add linkedLayers only if not already added
+        linkedLayers.forEach(layerId => {
+          const linkedLayer = themes.findById(
+            parseInt(layerId, 10)
+          ) as unknown as Layer
+          if (
+            linkedLayer &&
+            !mapStore.hasLayer(linkedLayer.id as unknown as string)
+          ) {
+            layersToAdd.push(initLayer(linkedLayer))
+          }
+        })
 
         addLayers(...layersToAdd)
 
