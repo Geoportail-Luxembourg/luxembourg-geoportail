@@ -91,13 +91,22 @@ describe('bookmark-location', () => {
   })
 
   describe('#bookmarkLocation', () => {
-    it('keeps the current zoom for point results', () => {
+    it('uses the search zoom ceiling for point results', () => {
+      const view = new View({ center: [0, 0], zoom: 5 })
+
+      const location = bookmarkLocation(geoJsonPoint(), view, [1000, 800], 19)
+
+      expect(location).toBeDefined()
+      expect(location!.zoom).toBe(19)
+    })
+
+    it('falls back to the fit ceiling when no maxZoom is given', () => {
       const view = new View({ center: [0, 0], zoom: 5 })
 
       const location = bookmarkLocation(geoJsonPoint(), view, [1000, 800])
 
       expect(location).toBeDefined()
-      expect(location!.zoom).toBe(5)
+      expect(location!.zoom).toBe(17)
     })
 
     it('fits area results and clamps the zoom', () => {
@@ -107,6 +116,20 @@ describe('bookmark-location', () => {
 
       expect(location).toBeDefined()
       expect(location!.zoom).toBeLessThanOrEqual(17)
+    })
+
+    it('clamps fitted area results to the search zoom ceiling', () => {
+      const view = new View({ center: [0, 0], zoom: 5 })
+
+      const location = bookmarkLocation(
+        geoJsonBigSquare(),
+        view,
+        [1000, 800],
+        12
+      )
+
+      expect(location).toBeDefined()
+      expect(location!.zoom).toBeLessThanOrEqual(12)
     })
 
     it('returns undefined without geometry', () => {

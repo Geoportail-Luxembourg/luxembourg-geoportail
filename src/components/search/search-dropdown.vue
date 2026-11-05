@@ -365,7 +365,8 @@ function onBookmarkClick(result: { entry: object; label: string }) {
   const location = bookmarkLocation(
     result.entry,
     view,
-    olLayerSearchService.map.getSize()
+    olLayerSearchService.map.getSize(),
+    maxZoom.value
   )
   if (!location) return
 
