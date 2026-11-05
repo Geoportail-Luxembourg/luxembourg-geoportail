@@ -81,13 +81,15 @@ export interface BookmarkLocation {
 }
 
 /**
- * Location to store for a bookmark: point results keep the current zoom,
- * area results are fitted (clamped to MAX_FIT_ZOOM).
+ * Location to store for a bookmark: point results use the search zoom
+ * ceiling (same as clicking the result), area results are fitted and
+ * clamped to that ceiling.
  */
 export function bookmarkLocation(
   entry: unknown,
   view: View,
-  mapSize: number[] | undefined
+  mapSize: number[] | undefined,
+  maxZoom?: number
 ): BookmarkLocation | undefined {
   const extent = entryExtent(entry, view.getProjection().getCode())
   if (!extent) return undefined
@@ -96,17 +98,18 @@ export function bookmarkLocation(
     (extent[0] + extent[2]) / 2,
     (extent[1] + extent[3]) / 2,
   ]
-  const currentZoom = view.getZoom() ?? 10
+  const zoomLimit = Math.min(maxZoom ?? MAX_FIT_ZOOM, view.getMaxZoom())
 
   if (isPointExtent(extent) || !mapSize) {
-    return { center, zoom: currentZoom }
+    return { center, zoom: zoomLimit }
   }
 
   const resolution = view.getResolutionForExtent(extent, mapSize)
-  if (resolution === undefined) return { center, zoom: currentZoom }
-  const zoom = view.getZoomForResolution(resolution)
-  if (zoom === undefined) return { center, zoom: currentZoom }
-  return { center, zoom: Math.min(zoom, MAX_FIT_ZOOM) }
+  const fitZoom = view.getZoomForResolution(resolution)
+  return {
+    center,
+    zoom: fitZoom === undefined ? zoomLimit : Math.min(fitZoom, zoomLimit),
+  }
 }
 
 /**
