@@ -128,7 +128,7 @@ function cancelRename() {
         <li
           v-for="bookmark in bookmarks"
           :key="bookmark.id"
-          class="flex items-center gap-1 py-1.5 px-1"
+          class="flex items-center gap-1"
           :data-cy="`bookmarkItem-${bookmark.id}`"
         >
           <input
