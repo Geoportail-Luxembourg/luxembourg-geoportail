@@ -27,6 +27,13 @@ export default defineConfig(({ mode }) => {
     resolve: {
       alias: {
         '@': fileURLToPath(new URL('./src', import.meta.url)),
+        // Same source-consumption rule as vite.config.ts.
+        '@geoportallux/feature-info-templates': fileURLToPath(
+          new URL(
+            './packages/feature-info-templates/src/index.ts',
+            import.meta.url
+          )
+        ),
       },
     },
     optimizeDeps: {

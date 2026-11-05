@@ -63,6 +63,16 @@ In Lux v4 standalone, local files `app.fr.json` and `client.fr.json` are used.
 
 When Lux is used in lib mode 📦, it is possible to oerride i18next configuration to customize file paths to get translations from v3 directly (instead of delivering both v4 and v3 i18n files).
 
+## 📦 packages/feature-info-templates
+
+The GetFeatureInfo templates live in their own workspace package,
+`@geoportallux/feature-info-templates`, shared with the VC Map 3D viewer plugin.
+The app consumes it as **source** through an alias in `vite.config.ts`, not as a
+built bundle. See
+[its README](./packages/feature-info-templates/README.md) before changing
+anything under `packages/` — the package may not import from `src/`, and the
+build enforces that.
+
 ## 📦 Build as a lib for integration (in geoportal v3)
 
 In order to use the new Lux components made with Vuejs as an external dep, the library must be built and imported in the V3 project.
