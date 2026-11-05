@@ -341,17 +341,37 @@ function onInfoClick(result: {
 
 const bookmarkStore = useBookmarkStore()
 
-function bookmarkKey(result: { entry: object }): string | undefined {
-  const projCode = olLayerSearchService.map.getView().getProjection().getCode()
-  return entryLocationKey(result.entry, projCode)
+const POINT_HIGHLIGHT_LAYER_NAMES = ['Localité', 'Commune']
+
+function displayEntryFor(entry: object, layerName: string | undefined): object {
+  const center = findAPointOnFeature(entry)
+  return POINT_HIGHLIGHT_LAYER_NAMES.includes(layerName ?? '') && center
+    ? makePointEntry(entry, center)
+    : entry
 }
 
-function isBookmarked(result: { entry: object }): boolean {
+function bookmarkEntry(result: { entry: object; layer_name?: string }): object {
+  return displayEntryFor(result.entry, result.layer_name)
+}
+
+function bookmarkKey(result: {
+  entry: object
+  layer_name?: string
+}): string | undefined {
+  const projCode = olLayerSearchService.map.getView().getProjection().getCode()
+  return entryLocationKey(bookmarkEntry(result), projCode)
+}
+
+function isBookmarked(result: { entry: object; layer_name?: string }): boolean {
   const key = bookmarkKey(result)
   return key !== undefined && bookmarkStore.findByKey(key) !== undefined
 }
 
-function onBookmarkClick(result: { entry: object; label: string }) {
+function onBookmarkClick(result: {
+  entry: object
+  label: string
+  layer_name?: string
+}) {
   const key = bookmarkKey(result)
   if (!key) return
 
@@ -361,9 +381,10 @@ function onBookmarkClick(result: { entry: object; label: string }) {
     return
   }
 
+  const entry = bookmarkEntry(result)
   const view = olLayerSearchService.map.getView()
   const location = bookmarkLocation(
-    result.entry,
+    entry,
     view,
     olLayerSearchService.map.getSize(),
     maxZoom.value
@@ -371,7 +392,7 @@ function onBookmarkClick(result: { entry: object; label: string }) {
   if (!location) return
 
   bookmarkStore.addBookmark({
-    name: entryName(result.entry, result.label),
+    name: entryName(entry, result.label),
     center: location.center,
     zoom: location.zoom,
     key,
@@ -491,14 +512,12 @@ async function selectResultFullTextSearch(result: {
   layer_name: string
   entry: object
 }) {
-  const pointHighlightLayerNames = ['Localité', 'Commune']
   const highlightEntry = (entry: object) => {
-    const center = findAPointOnFeature(entry)
-    const displayEntry =
-      pointHighlightLayerNames.includes(result.layer_name) && center
-        ? makePointEntry(entry, center)
-        : entry
-    olLayerSearchService.highlightFeatures([displayEntry], true, maxZoom.value)
+    olLayerSearchService.highlightFeatures(
+      [displayEntryFor(entry, result.layer_name)],
+      true,
+      maxZoom.value
+    )
   }
 
   try {
@@ -960,11 +979,11 @@ function getThemeLinks(layerId: number): string {
                 :aria-label="
                   isBookmarked(result)
                     ? t('Remove {name} from bookmarks', {
-                        name: entryName(result.entry, result.label),
+                        name: entryName(bookmarkEntry(result), result.label),
                         ns: 'app',
                       })
                     : t('Add {name} to bookmarks', {
-                        name: entryName(result.entry, result.label),
+                        name: entryName(bookmarkEntry(result), result.label),
                         ns: 'app',
                       })
                 "
