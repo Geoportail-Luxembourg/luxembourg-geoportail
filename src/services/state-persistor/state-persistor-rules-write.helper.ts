@@ -6,6 +6,7 @@ import {
   SP_KEY_VERSION,
   SP_KEY_SERIAL,
   SP_KEYS_STYLE,
+  SP_KEY_FAVOURITE_LAYERS,
   SP_KEY_LAYERCOMPARATOR,
   SP_KEY_LAYERCOMPARATOR_SLIDERRATIO,
   StatePersistorRulesHelper,
@@ -23,6 +24,9 @@ export abstract class RulesWriteHelper extends StatePersistorRulesHelper {
       return SP_AVAILABLE_STORAGES.permalink
     }
     if (key === SP_KEY_LAYERS_OPEN) {
+      return SP_AVAILABLE_STORAGES.localStorage
+    }
+    if (key === SP_KEY_FAVOURITE_LAYERS) {
       return SP_AVAILABLE_STORAGES.localStorage
     }
     if (SP_KEYS_STYLE.includes(key)) {
