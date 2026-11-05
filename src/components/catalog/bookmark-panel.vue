@@ -1,5 +1,6 @@
 <script setup lang="ts">
-import { ref, nextTick, watch } from 'vue'
+import { ref, nextTick, watch, useTemplateRef } from 'vue'
+import type { ComponentPublicInstance } from 'vue'
 import { storeToRefs } from 'pinia'
 import { useTranslation } from 'i18next-vue'
 
@@ -17,11 +18,19 @@ const draft = ref<{ center: [number, number]; zoom: number } | null>(null)
 const draftName = ref('')
 const editingId = ref<string | null>(null)
 const editName = ref('')
-const nameInput = ref<HTMLInputElement>()
+const draftInput = useTemplateRef<HTMLInputElement>('draftInput')
+let renameInputEl: HTMLInputElement | null = null
 
-watch([draft, editingId], () => {
-  if (draft.value || editingId.value) {
-    nextTick(() => nameInput.value?.focus())
+function bindRenameInput(el: Element | ComponentPublicInstance | null) {
+  renameInputEl = (el as HTMLInputElement | null) ?? null
+}
+
+watch([draft, editingId], async () => {
+  await nextTick()
+  if (editingId.value) {
+    renameInputEl?.focus()
+  } else if (draft.value) {
+    draftInput.value?.focus()
   }
 })
 
@@ -106,9 +115,9 @@ function cancelRename() {
       <ul v-if="draft || bookmarks.length" class="list-none m-0 p-0">
         <li v-if="draft" class="flex items-center gap-1 py-1.5 px-1">
           <input
-            ref="nameInput"
+            ref="draftInput"
             v-model="draftName"
-            class="form-control bg-secondary text-white px-3 py-[6px] focus:outline-none"
+            class="form-control bg-white/50 px-3 py-[6px] focus:outline-none"
             type="text"
             data-cy="bookmarkDraftInput"
             @keydown.enter="confirmDraft"
@@ -124,9 +133,9 @@ function cancelRename() {
         >
           <input
             v-if="editingId === bookmark.id"
-            ref="nameInput"
+            :ref="bindRenameInput"
             v-model="editName"
-            class="form-control bg-secondary text-white px-3 py-[6px] focus:outline-none"
+            class="form-control bg-white/50 px-3 py-[6px] focus:outline-none"
             type="text"
             :data-cy="`bookmarkRenameInput-${bookmark.id}`"
             @keydown.enter="confirmRename(bookmark.id)"
