@@ -8,6 +8,17 @@ To start local dev environment with HMR support:
 $ npm run start
 ```
 
+That is all you need for the map to appear — v4 has no backend of its own. The themes request is
+not proxied in dev, so `config.store.ts` falls back to `src/__fixtures__/themes.api.fixture.ts`:
+**the layer catalog you develop against is a frozen snapshot**, not the live API. If a layer looks
+wrong, suspect the fixture before your code. Features that call out to v3 (MyMaps, auth,
+MySymbols, print, feature info) additionally need the CORS browser extension described at the
+bottom of this file.
+
+> ⚠️ **Development today is the standalone Vue application.** The web-component / library mode
+> documented further down is **dormant** — it is not deleted, but no new features are built for
+> it. Read the 📦 section as historical.
+
 ## 🔧 Scripts
 
 - `start` runs your app for development, reloading on file changes, will run `npm run dev`
@@ -56,14 +67,33 @@ For e2e tests, the code is instrumented with the Istanbul library to obtain resu
 
 ## 🖋️ Translations i18n
 
-In Lux v4 standalone, local files `app.fr.json` and `client.fr.json` are used.
+Translation files live in `public/assets/locales/<ns>.<lng>.json` and are fetched at runtime by the
+i18next HTTP backend. Namespaces are `app`, `layers`, `legends`, `server` and `tooltips`; languages
+are `fr` (default), `de`, `en` and `lb`, falling back to `en`.
 
-- `app.fr.json` contains both specific i18n from v4 that does not exists in v3 (eg. title, aria label, etc) and the content of the original v3 app.fr.json
-- `client.fr.json` contains the same key/values as in v3 (it is a copy), update this file whenever there is an update in v3.
+- `app.<lng>.json` contains both v4-specific strings (title, aria labels, …) and the content of the
+  original v3 `app.fr.json`.
+- `client.<lng>.json` used to carry a copy of v3's keys. ⚠️ **These files are now empty** — the keys
+  were migrated into the other namespaces (see `tools/translations/README.md` and the
+  `--prune-client` option).
+- ⚠️ `layers-<lng>.json` files (dash) also sit in that folder. The load path is `<ns>.<lng>.json`
+  (dot), so **the dash variants are dead weight and never loaded**.
+
+Two i18next settings are deliberate: both `nsSeparator` and `keySeparator` are `false`, because some
+keys contain `:` and keys are literal strings rather than dotted paths. i18next is also initialised
+and awaited **before** `app.mount()`, to avoid a Firefox render race.
+
+Translations are managed in Transifex via the `npm run i18n:*` scripts and are rarely hand-edited.
 
 When Lux is used in lib mode 📦, it is possible to oerride i18next configuration to customize file paths to get translations from v3 directly (instead of delivering both v4 and v3 i18n files).
 
 ## 📦 Build as a lib for integration (in geoportal v3)
+
+> ⚠️ **Dormant.** This mode is no longer really used; development happens in the standalone app.
+> The entry point (`src/bundle/lib.ts`), its config (`vite-dist.config.ts`) and the `build:lib:*`
+> scripts all still exist, and `bundle/lib.ts` duplicates `App.vue`'s state-persistor
+> bootstrapping — so if you change bootstrap order in `App.vue`, check `bundle/lib.ts` too.
+> Everything below is kept for reference, not as a current workflow.
 
 In order to use the new Lux components made with Vuejs as an external dep, the library must be built and imported in the V3 project.
 
