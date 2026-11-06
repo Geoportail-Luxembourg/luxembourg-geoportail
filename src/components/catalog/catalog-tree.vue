@@ -18,6 +18,7 @@ import { useMapStore } from '@/stores/map.store'
 import { useAppStore } from '@/stores/app.store'
 import { useLayerTreeStore } from '@/stores/layer-tree.store'
 import LayerTreeNode from '@/components/layer-tree/layer-tree-node.vue'
+import BookmarkPanel from '@/components/catalog/bookmark-panel.vue'
 import { themesToLayerTree } from '@/components/layer-tree/layer-tree.mapper'
 import type { LayerTreeNodeModel } from '@/components/layer-tree/layer-tree.model'
 import {
@@ -208,6 +209,9 @@ function toggleLayer(node: LayerTreeNodeModel, is3d: boolean) {
 
 <template>
   <div ref="catalogRoot">
+    <!-- Bookmarks, displayed above the catalog tree -->
+    <bookmark-panel></bookmark-panel>
+
     <!-- 3D layers catalog, only displayed when 3D is active -->
     <div class="mb-7" v-if="layerTree3d && mapStore.is3dActive">
       <layer-tree-node
