@@ -779,5 +779,11 @@
   "Ouvrir streetView desc": "Ouvrir Street View",
   "Close go to panel": "Fermer le panneau 'Aller vers'",
   "Open go to panel": "Ouvrir le panneau 'Aller vers'",
-  "Go to": "Aller vers"
+  "Go to": "Aller vers",
+  "f_place": "Lieu",
+  "f_title": "Nom",
+  "f_type_label": "Type de monument",
+  "f_addr": "Adresse",
+  "f_image_url": "Image",
+  "f_detail_url": "Fiche détaillée"
 }
