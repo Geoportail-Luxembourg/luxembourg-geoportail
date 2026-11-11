@@ -779,5 +779,11 @@
   "Ouvrir streetView desc": "Street View opmaachen",
   "Close go to panel": "De Panel 'Géi op' zoumaachen",
   "Open go to panel": "De Panel 'Géi op' opmaachen",
-  "Go to": "Géi op"
+  "Go to": "Géi op",
+  "f_place": "Uertschaft",
+  "f_title": "Numm",
+  "f_type_label": "Monumentstyp",
+  "f_addr": "Adress",
+  "f_image_url": "Bild",
+  "f_detail_url": "Detailer kucken"
 }

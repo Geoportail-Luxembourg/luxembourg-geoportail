@@ -779,5 +779,11 @@
   "Ouvrir streetView desc": "Street View öffnen",
   "Close go to panel": "Schließen Sie das 'Gehe zu'-Panel",
   "Open go to panel": "Öffnen Sie das 'Gehe zu'-Panel",
-  "Go to": "Gehe zu"
+  "Go to": "Gehe zu",
+  "f_place": "Ort",
+  "f_title": "Name",
+  "f_type_label": "Denkmaltyp",
+  "f_addr": "Adresse",
+  "f_image_url": "Bild",
+  "f_detail_url": "Details ansehen"
 }
