@@ -776,5 +776,11 @@
   "Ouvrir streetView desc": "Open Street View",
   "Close go to panel": "Close 'Go to' panel",
   "Open go to panel": "Open 'Go to' panel",
-  "Go to": "Go to"
+  "Go to": "Go to",
+  "f_place": "Location",
+  "f_title": "Name",
+  "f_type_label": "Type of Monument",
+  "f_addr": "Address",
+  "f_image_url": "Image",
+  "f_detail_url": "View details",
 }
