@@ -2,15 +2,6 @@ export function getQRUrl(shortUrl: string | undefined) {
   return shortUrl && `${import.meta.env.VITE_QR_URL}?url=${shortUrl}`
 }
 
-export function getQRUrlForMyMaps(mapId: string | undefined) {
-  // legacy: getQrCodeForMymapsUrl
-  return mapId !== undefined
-    ? `${import.meta.env.VITE_QR_URL}?url=${
-        import.meta.env.VITE_QR_URL
-      }?map_id=${mapId}`
-    : undefined
-}
-
 export function getMymapsPath(resource: string) {
   if (resource) {
     if (resource.startsWith('data:image')) {

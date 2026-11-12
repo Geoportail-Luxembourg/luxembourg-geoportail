@@ -22,7 +22,6 @@ export {
   translateAndjoin,
   formatDate,
   getMymapsPath,
-  getQRUrlForMyMaps,
 } from './components/templates/template-utilities'
 
 // The single host dependency surface.
