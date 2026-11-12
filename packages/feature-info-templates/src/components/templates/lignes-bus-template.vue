@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import type { FeatureInfoJSON } from '../../models'
 import { useLuxTranslation } from '../../i18n'
+import { injectLuxTplContext } from '../../context'
 defineProps<{
   layers: FeatureInfoJSON
   currentUrl?: string
@@ -9,6 +10,7 @@ defineEmits<{
   (e: 'export'): void
 }>()
 const { t } = useLuxTranslation('tooltips')
+const { config } = injectLuxTplContext()
 </script>
 <template>
   <h1 class="lux-tpl-poi-title">
@@ -62,9 +64,11 @@ const { t } = useLuxTranslation('tooltips')
         </td>
         <td>
           <!-- TODO: this link will not be interpreted by v4 yet as MyMaps has not been migrated -->
-          <a :href="`?map_id=${feature.attributes.map_id}`" target="_blank">{{
-            feature.attributes.map_description
-          }}</a>
+          <a
+            :href="`${config.geoportalUrl ?? ''}?map_id=${feature.attributes.map_id}`"
+            target="_blank"
+            >{{ feature.attributes.map_description }}</a
+          >
         </td>
       </tr>
     </tbody>
