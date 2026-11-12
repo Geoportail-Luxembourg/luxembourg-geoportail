@@ -71,7 +71,7 @@ const { config, profileComponent } = injectLuxTplContext()
       /><br />
       <a
         class="fid-link no-print"
-        :href="`?map_id=${feature.attributes.map_id}`"
+        :href="`${config.geoportalUrl ?? ''}?map_id=${feature.attributes.map_id}`"
         target="_blank"
         >{{ t('Lien vers la carte') }}</a
       >

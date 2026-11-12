@@ -55,6 +55,8 @@ export interface LuxTplConfig {
   downloadResourceUrl?: string
   /** Measurement preview base URL (VITE_DOWNLOAD_PREVIEW_URL). */
   downloadPreviewUrl?: string
+  /** 2D geoportal URL for map links (`?map_id=`); unset, they stay relative to the host. */
+  geoportalUrl?: string
   /** QR code service base URL (VITE_QR_URL). */
   qrUrl?: string
   /** Legacy v3 API host, used to resolve mymaps resource paths (VITE_V3_API_HOST). */
