@@ -66,7 +66,11 @@ const { config, profileComponent } = injectLuxTplContext()
       />
       <img
         :src="
-          getQRUrlForMyMaps(feature.attributes.map_id as string, config.qrUrl)
+          getQRUrlForMyMaps(
+            feature.attributes.map_id as string,
+            config.qrUrl,
+            config.geoportalUrl
+          )
         "
       /><br />
       <a
