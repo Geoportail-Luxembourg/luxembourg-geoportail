@@ -250,10 +250,10 @@ export function getMymapsPath(
  */
 export function getQRUrlForMyMaps(
   mapId: string | undefined,
-  qrUrl = ''
+  qrUrl = '',
+  geoportalUrl = window.location.href
 ): string | undefined {
-  // legacy: getQrCodeForMymapsUrl
   return mapId !== undefined
-    ? `${qrUrl}?url=${qrUrl}?map_id=${mapId}`
+    ? `${qrUrl}?url=${encodeURIComponent(new URL(`?map_id=${mapId}`, geoportalUrl).href)}`
     : undefined
 }
