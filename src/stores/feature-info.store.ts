@@ -1,4 +1,4 @@
-import { FeatureInfoJSON } from '@/services/info/feature-info.model'
+import type { FeatureInfoJSON } from '@geoportallux/feature-info-templates'
 import { acceptHMRUpdate, defineStore } from 'pinia'
 import { shallowRef, ShallowRef } from 'vue'
 

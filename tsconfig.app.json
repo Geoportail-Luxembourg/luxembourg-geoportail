@@ -5,6 +5,7 @@
     "env.d.ts",
     "src/**/*",
     "src/**/*.vue",
+    "packages/feature-info-templates/src/**/*",
     "node_modules/vitest/globals.d.ts"
   ],
   "exclude": ["src/**/__tests__/*"],
@@ -12,7 +13,11 @@
     "composite": true,
     "baseUrl": ".",
     "paths": {
-      "@/*": ["./src/*"]
+      "@/*": ["./src/*"],
+      // Resolve the workspace package to its sources, matching the Vite alias.
+      "@geoportallux/feature-info-templates": [
+        "./packages/feature-info-templates/src/index.ts"
+      ]
     },
     "strict": true,
     "strictPropertyInitialization": false,
