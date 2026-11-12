@@ -4,6 +4,7 @@ import InfoFeatureLayout from '../layouts/info-feature-layout.vue'
 import { useLuxTranslation } from '../../i18n'
 import { hasProperty } from './template-utilities'
 import { injectLuxTplContext } from '../../context'
+import LuxFeatureProfile from '../../profile/feature-profile.vue'
 import LuxTplIcon from '../common/lux-tpl-icon.vue'
 
 defineProps<{
@@ -15,7 +16,7 @@ defineEmits<{
 }>()
 const { t } = useLuxTranslation('tooltips')
 const { i18next } = useLuxTranslation('tooltips')
-const { profileComponent } = injectLuxTplContext()
+const { profileMapAdapter } = injectLuxTplContext()
 </script>
 <template>
   <InfoFeatureLayout :layers="layers" :currentUrl="currentUrl">
@@ -149,9 +150,8 @@ const { profileComponent } = injectLuxTplContext()
         <span>{{ feature.attributes['longueur sentier'] }}</span>
       </div>
 
-      <component
-        :is="profileComponent"
-        v-if="profileComponent"
+      <LuxFeatureProfile
+        v-if="profileMapAdapter"
         :feature="feature"
         @export="
           (payload: { feature: FeatureJSON; format: 'kml' | 'gpx' }) =>

@@ -11,6 +11,7 @@ import {
   sortedAttributeEntries,
 } from './template-utilities'
 import { injectLuxTplContext } from '../../context'
+import LuxFeatureProfile from '../../profile/feature-profile.vue'
 import { vLuxHtml } from '../../sanitize-html'
 
 defineProps({
@@ -27,7 +28,7 @@ defineEmits<{
   (e: 'export', payload: { feature: FeatureJSON; format: 'kml' | 'gpx' }): void
 }>()
 const { t, i18next } = useLuxTranslation('tooltips')
-const { config, user, profileComponent } = injectLuxTplContext()
+const { config, user, profileMapAdapter } = injectLuxTplContext()
 
 function isNoSolarNorWaterLink(label: string, attributeEntry: AttributeEntry) {
   return (
@@ -151,9 +152,8 @@ function canAccessSolarEconomicCalculator() {
             </div>
           </div>
         </div>
-        <div v-if="layers.has_profile && profileComponent">
-          <component
-            :is="profileComponent"
+        <div v-if="layers.has_profile && profileMapAdapter">
+          <LuxFeatureProfile
             :feature="feature"
             @export="
               (payload: { feature: FeatureJSON; format: 'kml' | 'gpx' }) =>

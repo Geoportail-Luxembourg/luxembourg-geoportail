@@ -105,7 +105,7 @@ describe('Feature Info', () => {
     })
     describe('Display profile and exports in feature info', () => {
       // The block carries `has_profile: true`, so the template renders the
-      // host-injected profile component; its elevation data is stubbed too.
+      // package profile; its elevation data is stubbed too.
       beforeEach(() => {
         stubFeatureInfo('profile-pistes-cyclables')
         cy.intercept(
@@ -465,8 +465,8 @@ describe('Feature Info', () => {
           .should('contain.text', "Réseau d'itinéraires cyclables régionaux")
         cy.get('[data-cy="defaultTemplateAttributes"]').should('exist')
       })
-      it('renders the elevation profile injected by the host', () => {
-        // has_profile: true -> the template renders ctx.profileComponent.
+      it('renders the elevation profile', () => {
+        // has_profile: true and a host profileMapAdapter -> the template renders the profile.
         cy.get('[data-cy="featItemProfile"]').should('exist')
       })
     })

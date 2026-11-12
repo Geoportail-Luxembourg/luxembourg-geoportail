@@ -4,6 +4,7 @@ import type { FeatureInfoJSON, FeatureJSON } from '../../models'
 import { hasAttributes } from './template-utilities'
 import InfoFeatureLayout from '../layouts/info-feature-layout.vue'
 import { injectLuxTplContext } from '../../context'
+import LuxFeatureProfile from '../../profile/feature-profile.vue'
 
 const props = defineProps<{
   layers: FeatureInfoJSON
@@ -14,7 +15,7 @@ defineEmits<{
   (e: 'export', payload: { feature: FeatureJSON; format: 'kml' | 'gpx' }): void
 }>()
 
-const { config, profileComponent } = injectLuxTplContext()
+const { config, profileMapAdapter } = injectLuxTplContext()
 const DOWNLOAD_RESOURCE_URL = config.downloadResourceUrl
 const { t } = useLuxTranslation('tooltips')
 
@@ -51,9 +52,8 @@ function getDirectLink(feature: FeatureJSON) {
           </div>
         </div>
 
-        <component
-          :is="profileComponent"
-          v-if="profileComponent"
+        <LuxFeatureProfile
+          v-if="profileMapAdapter"
           :feature="feature"
           @export="
             (payload: { feature: FeatureJSON; format: 'kml' | 'gpx' }) =>

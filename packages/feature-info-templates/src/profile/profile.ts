@@ -1,3 +1,5 @@
+import type { Geometry } from 'geojson'
+
 /** Response of the geoportail `profile.json` service (coordinates in EPSG:2169). */
 export interface ProfileJson {
   profile: ProfileJsonEntry[]
@@ -51,6 +53,67 @@ export function profileCsv(
     const [lon, lat] = toLonLat([x, y])
     return `${csv}${dist},${values.dhm},${x},${y},${lon},${lat}\n`
   }, 'dist,MNT,y,x,lon,lat\n')
+}
+
+/** The line parts of a geometry, collections flattened (as the 2D app's profile). */
+export function extractLineParts(g?: Geometry): number[][][] {
+  switch (g?.type) {
+    case 'LineString':
+      return [g.coordinates]
+    case 'MultiLineString':
+      return g.coordinates
+    case 'GeometryCollection':
+      return g.geometries.flatMap(extractLineParts)
+    default:
+      return []
+  }
+}
+
+/**
+ * Adds the length along the line as a third coordinate. Like profile.json, the
+ * gaps between parts don't count.
+ */
+export function addLengthAlongLine(parts: number[][][]): number[][][] {
+  let along = 0
+  return parts.map(part =>
+    part.map((xy, i) => {
+      if (i) {
+        along += Math.hypot(xy[0] - part[i - 1][0], xy[1] - part[i - 1][1])
+      }
+      return [xy[0], xy[1], along]
+    })
+  )
+}
+
+/** The point [x, y, along] of a line with lengths closest to `xy`, and its squared distance. */
+export function findClosestPoint(
+  parts: number[][][],
+  [x, y]: number[]
+): { point: number[]; sqDist: number } {
+  let best = { point: [] as number[], sqDist: Infinity }
+  for (const part of parts) {
+    part.forEach((a, i) => {
+      const b = part[i + 1] ?? a
+      const dx = b[0] - a[0]
+      const dy = b[1] - a[1]
+      const t =
+        dx || dy
+          ? Math.min(
+              1,
+              Math.max(
+                0,
+                ((x - a[0]) * dx + (y - a[1]) * dy) / (dx ** 2 + dy ** 2)
+              )
+            )
+          : 0
+      const point = a.map((v, j) => v + t * (b[j] - v))
+      const sqDist = (point[0] - x) ** 2 + (point[1] - y) ** 2
+      if (sqDist < best.sqDist) {
+        best = { point, sqDist }
+      }
+    })
+  }
+  return best
 }
 
 export function formatElevation(value: number, digits = 0): string {
