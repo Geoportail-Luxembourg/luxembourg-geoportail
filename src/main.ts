@@ -1,6 +1,7 @@
 import i18next from 'i18next'
 import backend from 'i18next-http-backend'
 import I18NextVue from 'i18next-vue'
+import { getLuxTplI18n } from '@/composables/info/lux-tpl-context.composable'
 
 import { createApp } from 'vue'
 import VueDOMPurifyHTML from 'vue-dompurify-html'
@@ -8,7 +9,10 @@ import { createPinia } from 'pinia'
 
 import formatMeasureDirective from '@/directives/format-measure.directive'
 import { initProjections } from '@/services/projection.utils'
-import { installTooltipFallbackTranslations } from '@geoportallux/feature-info-templates'
+import {
+  installTooltipFallbackTranslations,
+  LUX_TPL_I18N,
+} from '@geoportallux/feature-info-templates'
 import { useThemeStore } from '@/stores/config.store'
 
 import App from './App.vue'
@@ -49,6 +53,7 @@ i18next
 
     app.use(createPinia())
     app.use(I18NextVue, { i18next })
+    app.provide(LUX_TPL_I18N, getLuxTplI18n())
     app.use(VueDOMPurifyHTML)
     app.use(formatMeasureDirective)
 

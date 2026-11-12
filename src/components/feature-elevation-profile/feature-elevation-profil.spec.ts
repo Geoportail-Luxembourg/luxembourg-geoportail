@@ -1,5 +1,5 @@
 import { nextTick } from 'vue'
-import { flushPromises, mount, shallowMount } from '@vue/test-utils'
+import { flushPromises, mount } from '@vue/test-utils'
 import { GlobalMountOptions } from '@vue/test-utils/dist/types'
 import { createTestingPinia } from '@pinia/testing'
 import { describe, it, expect, vi } from 'vitest'
@@ -11,7 +11,10 @@ import { DrawnFeature } from '@/services/ol-feature/ol-feature-drawn'
 import FeatureElevationProfile from './feature-elevation-profile.vue'
 import { exportFeatureService } from '@/services/export-feature/export-feature.service'
 import { useProfilePositionStore } from '@/stores/profile-position.store'
-import ElevationProfile from '../common/graph/elevation-profile.vue'
+import {
+  LUX_TPL_I18N,
+  LuxElevationProfile,
+} from '@geoportallux/feature-info-templates'
 
 const global: GlobalMountOptions | undefined = {
   plugins: [
@@ -27,6 +30,9 @@ const global: GlobalMountOptions | undefined = {
     }),
     formatMeasureDirective,
   ],
+  provide: {
+    [LUX_TPL_I18N]: { i18next: {}, getFixedT: () => (key: string) => key },
+  },
 }
 
 const mockedFeatureWithData = <DrawnFeature>(<unknown>{
@@ -75,7 +81,7 @@ vi.mock('@/composables/map/profile-position.composable', () => ({
 
 describe('FeatureElevationProfile', () => {
   it('Display elevation ,cumulation gain and loss according to profileData', async () => {
-    const wrapper = shallowMount(FeatureElevationProfile, {
+    const wrapper = mount(FeatureElevationProfile, {
       props: { feature: mockedFeatureWithData },
       global,
     })
@@ -119,7 +125,7 @@ describe('FeatureElevationProfile', () => {
   })
 
   it("Call 'exportFeatureService.export' when on click export csv button", async () => {
-    const wrapper = shallowMount(FeatureElevationProfile, {
+    const wrapper = mount(FeatureElevationProfile, {
       props: { feature: mockedFeatureWithData },
       global,
     })
@@ -141,7 +147,7 @@ describe('FeatureElevationProfile', () => {
     await flushPromises()
     await nextTick()
 
-    const elevationProfile = wrapper.findComponent(ElevationProfile)
+    const elevationProfile = wrapper.findComponent(LuxElevationProfile)
     elevationProfile.vm.$emit('hover:profile', { x: 10, y: 20 })
 
     expect(profilePositionStore.setPosition).toHaveBeenCalledWith(10, 20)

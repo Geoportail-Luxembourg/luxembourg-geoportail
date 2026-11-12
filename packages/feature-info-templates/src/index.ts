@@ -54,3 +54,18 @@ export type {
   FeatureMeasurement,
   AttributeEntry,
 } from './models'
+
+export { default as LuxElevationChart } from './profile/elevation-chart.vue'
+export { default as LuxElevationProfile } from './profile/elevation-profile.vue'
+export {
+  toProfileData,
+  profileCsv,
+  formatElevation,
+  formatLength,
+} from './profile/profile'
+export type {
+  ProfileJson,
+  ProfileJsonEntry,
+  ProfileData,
+  ProfileDataEntry,
+} from './profile/profile'

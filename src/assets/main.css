@@ -499,10 +499,6 @@
     overflow-y: auto;
   }
 
-  .lux-profile {
-    @apply w-full text-black bg-white border border-black p-1;
-  }
-
   .lux-info-table th,
   .lux-info-table td {
     @apply text-white text-left text-sm p-0;

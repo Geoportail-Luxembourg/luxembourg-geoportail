@@ -63,6 +63,8 @@ import { useUserManagerStore } from '@/stores/user-manager.store'
 import i18next, { InitOptions } from 'i18next'
 import backend from 'i18next-http-backend'
 import I18NextVue from 'i18next-vue'
+import { LUX_TPL_I18N } from '@geoportallux/feature-info-templates'
+import { getLuxTplI18n } from '@/composables/info/lux-tpl-context.composable'
 import App from '../App.vue'
 import ProfileDraw from './components/profile_v3/profile-draw_v3.vue'
 import ProfileInfos from './components/profile_v3/profile-infos_v3.vue'
@@ -103,6 +105,7 @@ export default async function useLuxLib(options: LuxLibOptions) {
 
   app.use(createPinia())
   app.use(I18NextVue, { i18next })
+  app.provide(LUX_TPL_I18N, getLuxTplI18n())
   app.use(VueDOMPurifyHTML)
   app.use(formatMeasureDirective)
 
