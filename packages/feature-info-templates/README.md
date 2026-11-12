@@ -97,6 +97,20 @@ await createLuxTplI18next(
 )
 ```
 
+### Elevation profile
+
+Templates render the host's `profileComponent` for features with a profile.
+The package ships the map-independent parts to build one; fetching, projecting
+and downloads stay with the host:
+
+- `toProfileData(json)` adds elevation gain/loss to a `profile.json` response
+  (EPSG:2169 coordinates);
+- `<LuxElevationProfile>` renders the Δ values, a CSV button and the chart
+  (props `profileData`, `highlightDistance`, `message`; events `hover:profile`
+  with the hovered point, `out:profile`, `csv`; default slot for host buttons);
+- `<LuxElevationChart>` is the chart alone;
+- `profileCsv(data, toLonLat)` returns the CSV content.
+
 ## Styling contract
 
 Templates must render inside an element with the class **`.lux-tpl-root`** —
