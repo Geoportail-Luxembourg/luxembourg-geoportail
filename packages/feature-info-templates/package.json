@@ -38,6 +38,7 @@
   },
   "dependencies": {
     "@braintree/sanitize-url": "^7.1.0",
+    "@types/geojson": "^7946.0.16",
     "d3-array": "^3.2.4",
     "d3-axis": "^3.0.0",
     "d3-scale": "^4.0.2",

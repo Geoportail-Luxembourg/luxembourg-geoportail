@@ -57,7 +57,7 @@ provideLuxTplContext({
   },
   user: computed(() => currentUser.value),
   notify: (message, type) => host.notify(message, type),
-  profileComponent: MyProfileChart, // omit if the host has no profiles
+  profileMapAdapter: myProfileMapAdapter, // omit if the host has no profiles
   isThemeAvailable: name => host.hasTheme(name),
 })
 provide(LUX_TPL_I18N, createLuxTplI18n(i18next))
@@ -99,9 +99,20 @@ await createLuxTplI18next(
 
 ### Elevation profile
 
-Templates render the host's `profileComponent` for features with a profile.
-The package ships the map-independent parts to build one; fetching, projecting
-and downloads stay with the host:
+Templates show an elevation profile for features with `has_profile`: it fetches
+`config.profileUrl` (without credentials), shows the Δ values and the chart,
+downloads the CSV and emits `export` with `{ feature, format: 'kml' | 'gpx' }`
+for the host to write the file. Only the map is the host's, through the
+context's `profileMapAdapter` (`LuxTplProfileMapAdapter`, EPSG:2169 coordinates); without
+it, no profile is shown:
+
+- `setPosition(xy?)` shows the position marker, or hides it;
+- `onPointerMove(cb)` calls `cb(xy, metresPerPixel)` on map pointer moves and
+  returns the unlisten function: a pointer within 8 px of the line highlights
+  the chart;
+- `toLonLat(xy)` converts for the CSV.
+
+For the host's own profiles (drawings, routing), the parts are exported too:
 
 - `toProfileData(json)` adds elevation gain/loss to a `profile.json` response
   (EPSG:2169 coordinates);
@@ -115,7 +126,7 @@ and downloads stay with the host:
 
 Templates must render inside an element with the class **`.lux-tpl-root`** —
 any element of yours will do. The shipped stylesheet scopes
-every Tailwind utility *and* Tailwind's preflight reset under that class, so
+every Tailwind utility _and_ Tailwind's preflight reset under that class, so
 dropping it into a host document cannot restyle the host. Preflight is scoped
 rather than disabled because the templates genuinely depend on it — `border`
 utilities emit only a width and take their `border-style` from it, lists take
@@ -132,26 +143,26 @@ renders as a static block at the foot of the document.
 This is easy to miss in the geoportail, whose own Tailwind emits those utilities
 globally, so teleported markup keeps working there even when the wrapper is
 absent. `cypress/e2e/info/feature-info.cy.ts` asserts the modal's teleported
-root *is* `body > .lux-tpl-root` rather than checking its computed position, so
+root _is_ `body > .lux-tpl-root` rather than checking its computed position, so
 the guard holds in any host.
 
 Theme colours are read from CSS custom properties, with the geoportail palette
 as the fallback. Override any of them on `.lux-tpl-root` (or above it):
 
-| Property              | Default   | Used for                       |
-| --------------------- | --------- | ------------------------------ |
-| `--color-default`     | `#333`    | body text                      |
-| `--color-primary`     | `#2980b9` | links, primary buttons         |
-| `--color-secondary`   | `#97bbd3` | secondary accents              |
-| `--color-tertiary`    | `#1f5d87` | tertiary accents               |
-| `--color-quaternary`  | `#20638f` | button hover                   |
-| `--color-gray`        | `#ccc`    | button borders                 |
+| Property             | Default   | Used for               |
+| -------------------- | --------- | ---------------------- |
+| `--color-default`    | `#333`    | body text              |
+| `--color-primary`    | `#2980b9` | links, primary buttons |
+| `--color-secondary`  | `#97bbd3` | secondary accents      |
+| `--color-tertiary`   | `#1f5d87` | tertiary accents       |
+| `--color-quaternary` | `#20638f` | button hover           |
+| `--color-gray`       | `#ccc`    | button borders         |
 
 One more token is not a colour from the palette:
 
 | Property                     | Default | Used for                                        |
 | ---------------------------- | ------- | ----------------------------------------------- |
-| `--lux-tpl-white-by-default`  | `#fff`  | titles that sit on a background the host paints |
+| `--lux-tpl-white-by-default` | `#fff`  | titles that sit on a background the host paints |
 
 Some template titles (`parcels`, `urplang`) set a foreground colour but not the
 background behind them — they assume the host's panel is dark, which the
@@ -186,7 +197,7 @@ templates without registering anything.
 
 Two things worth knowing. DOMPurify runs with its default configuration, so
 `target` is **not** in `ALLOWED_ATTR` — a `target="_blank"` inside a
-server-supplied value is dropped. And the directive is deliberately *not* named
+server-supplied value is dropped. And the directive is deliberately _not_ named
 `v-dompurify-html`: that was a global the geoportail happened to install, so a
 template that forgot it still worked in that one app and rendered blank
 everywhere else. `v-lux-html` fails the same way in every host, and
@@ -238,16 +249,16 @@ only by the Tailwind sheet: `src/index.ts` is the public API plus
 `templates-styles.css`, and `src/lib-entry.ts`, the build entry, adds
 `src/tailwind.css` on top.
 
-|                          | Geoportail (this repo)                                                                                                             | External host                                                                      |
-| ------------------------ | ---------------------------------------------------------------------------------------------------------------------------------- | ---------------------------------------------------------------------------------- |
-| Code                     | `src/index.ts`, via the alias in `vite.config.ts` and `vite-dist.config.ts`; no package build, HMR on edit                         | `dist/lux-tpl.js`, through `package.json` `exports`                                |
-| Types                    | `src/`, via `paths` in `tsconfig.app.json`                                                                                         | `dist/index.d.ts`                                                                  |
-| Tailwind utilities       | the app's own Tailwind pass (the root `tailwind.config.cjs` scans this package's `src/`), emitted globally                        | prebuilt in `dist/style.css`, scoped under `.lux-tpl-root`                         |
-| Preflight reset          | the app's, global                                                                                                                  | Tailwind's, scoped to `.lux-tpl-root`                                              |
-| `templates-styles.css`   | imported by `src/index.ts`, processed by the app's Vite                                                                            | bundled into `dist/style.css`                                                      |
-| `.lux-btn`, `.lux-btn-grey` | the app's `src/assets/main.css`                                                                                                 | the copy in `src/tailwind.css`                                                     |
-| Theme colours            | the app's `:root` custom properties                                                                                                | the same properties if the host sets them, else the geoportail fallbacks          |
-| Stylesheet import        | **none** — importing `style.css` would emit the utilities twice                                                                    | `import '@geoportallux/feature-info-templates/style.css'`                          |
+|                             | Geoportail (this repo)                                                                                     | External host                                                            |
+| --------------------------- | ---------------------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------ |
+| Code                        | `src/index.ts`, via the alias in `vite.config.ts` and `vite-dist.config.ts`; no package build, HMR on edit | `dist/lux-tpl.js`, through `package.json` `exports`                      |
+| Types                       | `src/`, via `paths` in `tsconfig.app.json`                                                                 | `dist/index.d.ts`                                                        |
+| Tailwind utilities          | the app's own Tailwind pass (the root `tailwind.config.cjs` scans this package's `src/`), emitted globally | prebuilt in `dist/style.css`, scoped under `.lux-tpl-root`               |
+| Preflight reset             | the app's, global                                                                                          | Tailwind's, scoped to `.lux-tpl-root`                                    |
+| `templates-styles.css`      | imported by `src/index.ts`, processed by the app's Vite                                                    | bundled into `dist/style.css`                                            |
+| `.lux-btn`, `.lux-btn-grey` | the app's `src/assets/main.css`                                                                            | the copy in `src/tailwind.css`                                           |
+| Theme colours               | the app's `:root` custom properties                                                                        | the same properties if the host sets them, else the geoportail fallbacks |
+| Stylesheet import           | **none** — importing `style.css` would emit the utilities twice                                            | `import '@geoportallux/feature-info-templates/style.css'`                |
 
 Because the geoportail provides the utilities, the reset and the buttons
 globally, it hides styling gaps an external host hits: markup outside
@@ -279,20 +290,20 @@ Two guards exist because the geoportail cannot reproduce the failure they catch
 — it provides globals (a preflight reset, a live i18next singleton, an
 app-registered sanitize directive) that a bare host does not:
 
-| Guard | Catches |
-| --- | --- |
-| `src/components/templates/sanitized-html.spec.ts` | a template using a directive the package does not own |
+| Guard                                                | Catches                                                                               |
+| ---------------------------------------------------- | ------------------------------------------------------------------------------------- |
+| `src/components/templates/sanitized-html.spec.ts`    | a template using a directive the package does not own                                 |
 | `src/components/templates/injected-language.spec.ts` | reading `i18next.language` from the module singleton instead of the injected instance |
 
 E2E lives in the app, at `cypress/e2e/info/feature-info.cy.ts`.
 
 ## Scripts
 
-| Command                | What it does                                     |
-| ---------------------- | ------------------------------------------------ |
-| `npm run type-check`   | `vue-tsc` with no `@/*` path mapping             |
-| `npm run build`        | type-check, then bundle + emit `.d.ts` and CSS   |
-| `npm run build:only`   | bundle without the type-check gate               |
+| Command              | What it does                                   |
+| -------------------- | ---------------------------------------------- |
+| `npm run type-check` | `vue-tsc` with no `@/*` path mapping           |
+| `npm run build`      | type-check, then bundle + emit `.d.ts` and CSS |
+| `npm run build:only` | bundle without the type-check gate             |
 
 ## Publishing
 
