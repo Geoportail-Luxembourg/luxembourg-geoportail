@@ -9,6 +9,7 @@ import {
 } from './template-utilities'
 import InfoFeatureLayout from '../layouts/info-feature-layout.vue'
 import { injectLuxTplContext } from '../../context'
+import LuxFeatureProfile from '../../profile/feature-profile.vue'
 import { vLuxHtml } from '../../sanitize-html'
 
 defineProps<{
@@ -19,7 +20,7 @@ defineEmits<{
   (e: 'export', payload: { feature: FeatureJSON; format: 'kml' | 'gpx' }): void
 }>()
 const { t, i18next } = useLuxTranslation('tooltips')
-const { profileComponent } = injectLuxTplContext()
+const { profileMapAdapter } = injectLuxTplContext()
 </script>
 <template>
   <InfoFeatureLayout :layers="layers" :currentUrl="currentUrl">
@@ -113,9 +114,8 @@ const { profileComponent } = injectLuxTplContext()
             ></span>
           </span>
         </div>
-        <div v-if="layers.has_profile && profileComponent">
-          <component
-            :is="profileComponent"
+        <div v-if="layers.has_profile && profileMapAdapter">
+          <LuxFeatureProfile
             :feature="feature"
             @export="
               (payload: { feature: FeatureJSON; format: 'kml' | 'gpx' }) =>

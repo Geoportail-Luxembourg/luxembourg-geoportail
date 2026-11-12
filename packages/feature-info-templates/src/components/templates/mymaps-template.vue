@@ -4,6 +4,7 @@ import type { FeatureInfoJSON, FeatureJSON } from '../../models'
 import InfoFeatureLayout from '../layouts/info-feature-layout.vue'
 import { getMymapsPath, getQRUrlForMyMaps } from './template-utilities'
 import { injectLuxTplContext } from '../../context'
+import LuxFeatureProfile from '../../profile/feature-profile.vue'
 defineProps<{
   layers: FeatureInfoJSON
   currentUrl?: string
@@ -12,7 +13,7 @@ defineEmits<{
   (e: 'export', payload: { feature: FeatureJSON; format: 'kml' | 'gpx' }): void
 }>()
 const { t } = useLuxTranslation('tooltips')
-const { config, profileComponent } = injectLuxTplContext()
+const { config, profileMapAdapter } = injectLuxTplContext()
 </script>
 
 <template>
@@ -55,9 +56,8 @@ const { config, profileComponent } = injectLuxTplContext()
         {{ feature.attributes.length }} Km<br
       /></span>
 
-      <component
-        :is="profileComponent"
-        v-if="profileComponent"
+      <LuxFeatureProfile
+        v-if="profileMapAdapter"
         :feature="feature"
         @export="
           (payload: { feature: FeatureJSON; format: 'kml' | 'gpx' }) =>
@@ -66,12 +66,16 @@ const { config, profileComponent } = injectLuxTplContext()
       />
       <img
         :src="
-          getQRUrlForMyMaps(feature.attributes.map_id as string, config.qrUrl)
+          getQRUrlForMyMaps(
+            feature.attributes.map_id as string,
+            config.qrUrl,
+            config.geoportalUrl
+          )
         "
       /><br />
       <a
         class="fid-link no-print"
-        :href="`?map_id=${feature.attributes.map_id}`"
+        :href="`${config.geoportalUrl ?? ''}?map_id=${feature.attributes.map_id}`"
         target="_blank"
         >{{ t('Lien vers la carte') }}</a
       >

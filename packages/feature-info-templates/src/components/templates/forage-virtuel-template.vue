@@ -2,6 +2,7 @@
 import { useLuxTranslation } from '../../i18n'
 import { ref, computed } from 'vue'
 import type { Ref } from 'vue'
+import type { Point } from 'geojson'
 import type { FeatureInfoJSON, FeatureJSON } from '../../models'
 import { injectLuxTplContext } from '../../context'
 
@@ -29,8 +30,8 @@ async function generateRepport() {
   }
 
   const payload = new URLSearchParams({
-    x: String(layers.features[0].geometry.coordinates[0]),
-    y: String(layers.features[0].geometry.coordinates[1]),
+    x: String((layers.features[0].geometry as Point).coordinates[0]),
+    y: String((layers.features[0].geometry as Point).coordinates[1]),
     email: mail.value,
     staging: 'false', // Assuming staging is always false for this example
   })

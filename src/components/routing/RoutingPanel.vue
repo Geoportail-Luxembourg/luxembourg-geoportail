@@ -330,7 +330,7 @@
                 </dd>
               </div>
             </dl>
-            <elevation-profile
+            <lux-elevation-chart
               :profile-data="profileData"
               @hover:profile="(_, dist) => highlightProfilePoint(dist)"
               @out:profile="clearHighlight()"
@@ -428,7 +428,7 @@ import type Geometry from 'ol/geom/Geometry'
 import SidePanelLayout from '@/components/common/side-panel-layout.vue'
 import useRouting from '@/composables/routing/routing.composable'
 import useSortable from '@/composables/sortable'
-import ElevationProfile from '@/components/common/graph/elevation-profile.vue'
+import { LuxElevationChart } from '@geoportallux/feature-info-templates'
 import { useRoutingStore } from '@/stores/routing.store'
 import { useAppStore } from '@/stores/app.store'
 import useAddressSearch from '@/composables/address-search/address-search.composable'

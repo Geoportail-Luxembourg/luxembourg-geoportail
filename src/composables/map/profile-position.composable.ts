@@ -15,7 +15,7 @@ import { LineString, Point } from 'ol/geom'
 import { transform } from 'ol/proj'
 import { Coordinate } from 'ol/coordinate'
 
-import { ProfileData } from '@/components/common/graph/elevation-profile'
+import type { ProfileData } from '@geoportallux/feature-info-templates'
 import useOpenLayers from '@/composables/map/ol.composable'
 import useMap, { PROJECTION_LUX } from '@/composables/map/map.composable'
 import { useProfilePositionStore } from '@/stores/profile-position.store'
