@@ -9,6 +9,7 @@ import { toLonLat } from 'ol/proj'
 
 import useControl from '@/composables/control/control.composable'
 import { useMapStore } from '@/stores/map.store'
+import { useAppStore } from '@/stores/app.store'
 import { useMatomo } from '@/composables/matomo/matomo.composable'
 import {
   LUX_VCS_COORDINATES,
@@ -19,6 +20,7 @@ import {
 } from '@/services/vcs.utils'
 
 const mapStore = useMapStore()
+const appStore = useAppStore()
 const { t } = useTranslation()
 const matomo = useMatomo()
 const props = withDefaults(
@@ -55,7 +57,7 @@ const linkTo3dMap = computed(() => {
     'cesium'
   )
 
-  return `${LUX_VCS_URL}?state=${encodeURIComponent(state)}`
+  return `${LUX_VCS_URL}?state=${encodeURIComponent(state)}&lang=${appStore.lang}`
 })
 
 onMounted(() => {
