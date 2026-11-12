@@ -2,6 +2,8 @@ import { transform, toLonLat } from 'ol/proj'
 import type { Extent } from 'ol/extent'
 import type View from 'ol/View'
 
+import { isGeoJsonSearchEntry, SearchEntry } from './search-entry.model'
+
 const MAX_FIT_ZOOM = 17
 
 type Coordinate = [number, number]
@@ -19,28 +21,17 @@ function collectPoints(coords: unknown, out: Coordinate[]): void {
   coords.forEach(point => collectPoints(point, out))
 }
 
-function isGeoJsonFeature(entry: unknown): entry is {
-  geometry?: { coordinates?: unknown }
-} {
-  return (
-    typeof entry === 'object' &&
-    entry !== null &&
-    !('getGeometry' in entry) &&
-    'geometry' in entry
-  )
-}
-
 /**
  * Bounding box of a search result entry in the map projection.
  * Raw GeoJSON entries are EPSG:4326 and get transformed; OL features
  * already live in the map projection.
  * Returns null when the entry carries no geometry.
  */
-export function entryExtent(
-  entry: unknown,
+export function getEntryExtent(
+  entry: SearchEntry,
   viewProjCode: string
 ): Extent | null {
-  if (isGeoJsonFeature(entry)) {
+  if (isGeoJsonSearchEntry(entry)) {
     const points: Coordinate[] = []
     collectPoints(entry.geometry?.coordinates, points)
     if (points.length === 0) return null
@@ -50,11 +41,7 @@ export function entryExtent(
     return bboxOf(projected)
   }
 
-  const geometry = (
-    entry as { getGeometry?: () => { getExtent?: () => Extent } | null }
-  )?.getGeometry?.()
-  const extent = geometry?.getExtent?.()
-  return extent ?? null
+  return entry.getGeometry()?.getExtent() ?? null
 }
 
 function bboxOf(points: Coordinate[]): Extent {
@@ -85,13 +72,13 @@ export interface BookmarkLocation {
  * ceiling (same as clicking the result), area results are fitted and
  * clamped to that ceiling.
  */
-export function bookmarkLocation(
-  entry: unknown,
+export function getBookmarkLocation(
+  entry: SearchEntry,
   view: View,
   mapSize: number[] | undefined,
   maxZoom?: number
 ): BookmarkLocation | undefined {
-  const extent = entryExtent(entry, view.getProjection().getCode())
+  const extent = getEntryExtent(entry, view.getProjection().getCode())
   if (!extent) return undefined
 
   const center: Coordinate = [
@@ -116,11 +103,11 @@ export function bookmarkLocation(
  * Stable key for a location (independent of zoom level), used to toggle
  * search-result bookmarks on and off.
  */
-export function entryLocationKey(
-  entry: unknown,
+export function getEntryLocationKey(
+  entry: SearchEntry,
   viewProjCode: string
 ): string | undefined {
-  const extent = entryExtent(entry, viewProjCode)
+  const extent = getEntryExtent(entry, viewProjCode)
   if (!extent) return undefined
   const center: Coordinate = [
     (extent[0] + extent[2]) / 2,
@@ -133,29 +120,20 @@ export function entryLocationKey(
  * Display name extracted from the entry itself, falling back to the
  * preformatted result label.
  */
-export function entryName(entry: unknown, fallback: string): string {
-  if (isGeoJsonFeature(entry)) {
-    const properties = (entry as { properties?: { label?: unknown } })
-      .properties
-    if (typeof properties?.label === 'string' && properties.label) {
-      return properties.label
-    }
-  } else {
-    const feature = entry as {
-      get?: (key: string) => unknown
-    }
-    if (typeof feature?.get === 'function') {
-      const label = feature.get('label')
-      if (typeof label === 'string' && label) return label
-    }
+export function getEntryName(entry: SearchEntry, fallback: string): string {
+  if (isGeoJsonSearchEntry(entry)) {
+    const label = entry.properties?.label
+    return typeof label === 'string' && label ? label : fallback
   }
-  return fallback
+
+  const label = entry.get('label')
+  return typeof label === 'string' && label ? label : fallback
 }
 
 /**
  * Human-readable fallback name for view bookmarks: "6.13456, 49.61234".
  */
-export function coordinateName(center: Coordinate): string {
+export function getCoordinateName(center: Coordinate): string {
   const [lon, lat] = toLonLat(center)
   return `${lon.toFixed(5)}, ${lat.toFixed(5)}`
 }

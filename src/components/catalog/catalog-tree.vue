@@ -209,7 +209,6 @@ function toggleLayer(node: LayerTreeNodeModel, is3d: boolean) {
 
 <template>
   <div ref="catalogRoot">
-    <!-- Bookmarks, displayed above the catalog tree -->
     <bookmark-panel></bookmark-panel>
 
     <!-- 3D layers catalog, only displayed when 3D is active -->

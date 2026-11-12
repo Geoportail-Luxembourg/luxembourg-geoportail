@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import { ref, watch, nextTick, computed } from 'vue'
+import type { Ref } from 'vue'
 import { useTranslation } from 'i18next-vue'
 import { fetchApi } from '@/services/api/api.service'
 import { storeToRefs } from 'pinia'
@@ -10,10 +11,19 @@ import { useThemeStore } from '@/stores/config.store'
 import useLayers from '@/composables/layers/layers.composable'
 import { useBookmarkStore } from '@/stores/bookmark.store'
 import {
-  bookmarkLocation,
-  entryLocationKey,
-  entryName,
+  getBookmarkLocation,
+  getEntryLocationKey,
+  getEntryName,
 } from '@/services/search/bookmark-location'
+import {
+  GeoJsonSearchEntry,
+  SearchEntry,
+  toGeoJsonSearchEntry,
+} from '@/services/search/search-entry.model'
+import type {
+  SearchResultGroup,
+  SearchResultItem,
+} from '@/services/search/search-result.model'
 import useBackgroundLayer from '@/composables/background-layer/background-layer.composable'
 import useThemes from '@/composables/themes/themes.composable'
 import { useRoutingStore } from '@/stores/routing.store'
@@ -23,7 +33,7 @@ import { curFilters, esMatch } from '@/composables/search/search-filters'
 import { transformExtent } from 'ol/proj.js'
 import useMap from '@/composables/map/map.composable'
 import { useMetadataStore } from '@/stores/metadata.store'
-import { LayerId, Layer } from '@/stores/map.store.model'
+import { Layer } from '@/stores/map.store.model'
 import { useMatomo } from '@/composables/matomo/matomo.composable'
 import useFeatureInfo from '@/composables/info/feature-info.composable'
 import GeoJSON from 'ol/format/GeoJSON'
@@ -52,26 +62,8 @@ const filterPanelRef = ref()
 // Define reactive variables
 const searchQuery = ref('')
 const isOpenResults = ref(false)
-const searchResults = ref<
-  {
-    header: string
-    groupKey: string
-    selectResult: Function
-    results: {
-      label: string
-      url?: string
-      text?: string
-      layer_id?: LayerId
-      name?: string
-      layer_name?: string
-      language?: string
-      entry: object
-      showRoutingButton: boolean
-      showInfoButton: boolean
-      showBookmarkButton?: boolean
-    }[]
-  }[]
->([])
+
+const searchResults = ref([]) as Ref<SearchResultGroup[]>
 
 const isLoading = ref(false) // Track loading state
 const layerLookup: { [key: string]: string[] } = {
@@ -128,8 +120,11 @@ function addLayerFromSearch(layer_name: string) {
   })
 }
 
-function makePointEntry(entry: any, center: [number, number]): object {
-  const raw = entry?.toJSON ? entry.toJSON() : entry
+function makePointEntry(
+  entry: SearchEntry,
+  center: [number, number]
+): GeoJsonSearchEntry {
+  const raw = toGeoJsonSearchEntry(entry)
   return {
     type: 'Feature',
     geometry: { type: 'Point', coordinates: center },
@@ -138,9 +133,9 @@ function makePointEntry(entry: any, center: [number, number]): object {
   }
 }
 
-function findAPointOnFeature(entry: any): [number, number] | null {
+function findAPointOnFeature(entry: SearchEntry): [number, number] | null {
   try {
-    const raw = entry?.toJSON ? entry.toJSON() : entry
+    const raw = toGeoJsonSearchEntry(entry)
     const geom = raw?.geometry
 
     if (!geom) {
@@ -318,18 +313,7 @@ function processResultLayersearch(data: any, selectResult: Function) {
 }
 
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
-function onInfoClick(result: {
-  label: string
-  url?: string
-  text?: string
-  layer_id?: LayerId
-  name?: string
-  layer_name?: string
-  language?: string
-  entry: object
-  showRoutingButton: boolean
-  showInfoButton: boolean
-}) {
+function onInfoClick(result: SearchResultItem) {
   const { findAnyLayerById } = useThemes()
   if (result.layer_id) {
     const layer = findAnyLayerById(result.layer_id)
@@ -343,37 +327,46 @@ const bookmarkStore = useBookmarkStore()
 
 const POINT_HIGHLIGHT_LAYER_NAMES = ['Localité', 'Commune']
 
-function displayEntryFor(entry: object, layerName: string | undefined): object {
+function getDisplayEntry(
+  entry: SearchEntry,
+  layerName: string | undefined
+): SearchEntry {
   const center = findAPointOnFeature(entry)
   return POINT_HIGHLIGHT_LAYER_NAMES.includes(layerName ?? '') && center
     ? makePointEntry(entry, center)
     : entry
 }
 
-function bookmarkEntry(result: { entry: object; layer_name?: string }): object {
-  return displayEntryFor(result.entry, result.layer_name)
+function getBookmarkEntry(result: SearchResultItem): SearchEntry | undefined {
+  return result.entry
+    ? getDisplayEntry(result.entry, result.layer_name)
+    : undefined
 }
 
-function bookmarkKey(result: {
-  entry: object
-  layer_name?: string
-}): string | undefined {
+function getBookmarkKey(result: SearchResultItem): string | undefined {
+  const entry = getBookmarkEntry(result)
+  if (!entry) return undefined
   const projCode = olLayerSearchService.map.getView().getProjection().getCode()
-  return entryLocationKey(bookmarkEntry(result), projCode)
+  return getEntryLocationKey(entry, projCode)
 }
 
-function isBookmarked(result: { entry: object; layer_name?: string }): boolean {
-  const key = bookmarkKey(result)
+function isBookmarked(result: SearchResultItem): boolean {
+  const key = getBookmarkKey(result)
   return key !== undefined && bookmarkStore.findByKey(key) !== undefined
 }
 
-function onBookmarkClick(result: {
-  entry: object
-  label: string
-  layer_name?: string
-}) {
-  const key = bookmarkKey(result)
-  if (!key) return
+function getBookmarkLabel(result: SearchResultItem): string {
+  const entry = getBookmarkEntry(result)
+  const name = entry ? getEntryName(entry, result.label) : result.label
+  return isBookmarked(result)
+    ? t('Remove {name} from bookmarks', { name, ns: 'app' })
+    : t('Add {name} to bookmarks', { name, ns: 'app' })
+}
+
+function onBookmarkClick(result: SearchResultItem) {
+  const key = getBookmarkKey(result)
+  const entry = getBookmarkEntry(result)
+  if (!key || !entry) return
 
   const existing = bookmarkStore.findByKey(key)
   if (existing) {
@@ -381,9 +374,8 @@ function onBookmarkClick(result: {
     return
   }
 
-  const entry = bookmarkEntry(result)
   const view = olLayerSearchService.map.getView()
-  const location = bookmarkLocation(
+  const location = getBookmarkLocation(
     entry,
     view,
     olLayerSearchService.map.getSize(),
@@ -392,7 +384,7 @@ function onBookmarkClick(result: {
   if (!location) return
 
   bookmarkStore.addBookmark({
-    name: entryName(entry, result.label),
+    name: getEntryName(entry, result.label),
     center: location.center,
     zoom: location.zoom,
     key,
@@ -400,18 +392,7 @@ function onBookmarkClick(result: {
 }
 
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
-function onRoutingClick(result: {
-  label: string
-  url?: string
-  text?: string
-  layer_id?: LayerId
-  name?: string
-  layer_name?: string
-  language?: string
-  entry: object
-  showRoutingButton: boolean
-  showInfoButton: boolean
-}) {
+function onRoutingClick(result: SearchResultItem) {
   const routingStore = useRoutingStore()
 
   toggleRoutingOpen(true)
@@ -492,11 +473,8 @@ function processResultCmssearch(data: any, selectResult: Function) {
   })
 }
 
-function selectResultFeatureSearch(result: {
-  label: string
-  layer_name: string
-  entry: object
-}) {
+function selectResultFeatureSearch(result: SearchResultItem) {
+  if (!result.entry) return
   trackSearchCategory(result.layer_name || 'Features')
   searchQuery.value = result.label // Set the selected label as the
   olLayerSearchService.highlightFeatures(
@@ -507,27 +485,25 @@ function selectResultFeatureSearch(result: {
   )
 }
 
-async function selectResultFullTextSearch(result: {
-  label: string
-  layer_name: string
-  entry: object
-}) {
-  const highlightEntry = (entry: object) => {
+async function selectResultFullTextSearch(result: SearchResultItem) {
+  const highlightEntry = (entry: SearchEntry) => {
     olLayerSearchService.highlightFeatures(
-      [displayEntryFor(entry, result.layer_name)],
+      [getDisplayEntry(entry, result.layer_name)],
       true,
       maxZoom.value
     )
   }
 
+  if (!result.entry) return
+
   try {
     trackSearchCategory(result.layer_name || 'Addresses')
     searchQuery.value = result.label
-    addLayerFromSearch(result.layer_name)
+    addLayerFromSearch(result.layer_name ?? '')
     await nextTick()
 
     const center = findAPointOnFeature(result.entry)
-    const layerNameList = layerLookup[result.layer_name] || []
+    const layerNameList = layerLookup[result.layer_name ?? ''] || []
 
     // Show highlight immediately as fallback
     highlightEntry(result.entry)
@@ -583,10 +559,8 @@ function selectResultCmsSearch(result: {
   searchQuery.value = result.label // Set the selected label as the query
 }
 
-function selectResultCoordinateSearch(result: {
-  label: string
-  entry: object
-}) {
+function selectResultCoordinateSearch(result: SearchResultItem) {
+  if (!result.entry) return
   trackSearchCategory('Coordinates')
   searchQuery.value = result.label // Set the selected label as the
   olLayerSearchService.highlightFeatures([result.entry], true, maxZoom.value)
@@ -976,17 +950,8 @@ function getThemeLinks(layerId: number): string {
                 v-if="result.showBookmarkButton && result.entry"
                 class="search-result-bookmark self-start ml-1"
                 :aria-pressed="isBookmarked(result)"
-                :aria-label="
-                  isBookmarked(result)
-                    ? t('Remove {name} from bookmarks', {
-                        name: entryName(bookmarkEntry(result), result.label),
-                        ns: 'app',
-                      })
-                    : t('Add {name} to bookmarks', {
-                        name: entryName(bookmarkEntry(result), result.label),
-                        ns: 'app',
-                      })
-                "
+                :aria-label="getBookmarkLabel(result)"
+                :title="getBookmarkLabel(result)"
                 @click.stop="onBookmarkClick(result)"
                 @keydown.enter.stop="onBookmarkClick(result)"
                 @keydown.space.stop.prevent="onBookmarkClick(result)"

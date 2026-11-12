@@ -6,14 +6,14 @@ import { useTranslation } from 'i18next-vue'
 
 import ExpandablePanel from '@/components/common/expandable-panel.vue'
 import { useBookmarkStore, Bookmark } from '@/stores/bookmark.store'
-import { coordinateName } from '@/services/search/bookmark-location'
+import { getCoordinateName } from '@/services/search/bookmark-location'
 import useMap from '@/composables/map/map.composable'
 
 const { t } = useTranslation()
 const bookmarkStore = useBookmarkStore()
 const { bookmarks } = storeToRefs(bookmarkStore)
 
-const expanded = ref(true)
+const expanded = ref(bookmarks.value.length > 0)
 const draft = ref<{ center: [number, number]; zoom: number } | null>(null)
 const draftName = ref('')
 const editingId = ref<string | null>(null)
@@ -24,6 +24,13 @@ let renameInputEl: HTMLInputElement | null = null
 function bindRenameInput(el: Element | ComponentPublicInstance | null) {
   renameInputEl = (el as HTMLInputElement | null) ?? null
 }
+
+watch(
+  () => bookmarks.value.length,
+  (count, previous) => {
+    if (count > previous) expanded.value = true
+  }
+)
 
 watch([draft, editingId], async () => {
   await nextTick()
@@ -58,7 +65,7 @@ function confirmDraft() {
   if (!draft.value) return
   const name = draftName.value.trim()
   bookmarkStore.addBookmark({
-    name: name || coordinateName(draft.value.center),
+    name: name || getCoordinateName(draft.value.center),
     center: draft.value.center,
     zoom: draft.value.zoom,
   })
@@ -99,52 +106,74 @@ function cancelRename() {
     />
 
     <div v-if="expanded" class="bg-secondary text-tertiary px-2 py-1.5">
-      <div class="flex justify-end pb-1.5">
+      <div class="flex items-center gap-1 pb-1.5">
+        <template v-if="draft">
+          <input
+            ref="draftInput"
+            v-model="draftName"
+            class="form-control h-7 min-w-0 flex-1 rounded bg-white/50 px-2 py-0 text-[0.8rem] text-inherit"
+            type="text"
+            :placeholder="t('Bookmark name', { ns: 'app' })"
+            data-cy="bookmarkDraftInput"
+            @keydown.enter="confirmDraft"
+            @keydown.esc="cancelDraft"
+          />
+          <button
+            class="inline-flex h-7 w-7 shrink-0 cursor-pointer items-center justify-center rounded border border-current"
+            :title="t('Save bookmark', { ns: 'app' })"
+            :aria-label="t('Save bookmark', { ns: 'app' })"
+            data-cy="bookmarkConfirmDraft"
+            @click="confirmDraft"
+          >
+            <i aria-hidden="true" class="fa-solid fa-check text-[0.8rem]"></i>
+          </button>
+        </template>
         <button
-          class="inline-flex items-center gap-1.5 border border-current rounded px-2 py-0.5 text-[0.8rem] cursor-pointer"
+          v-else
+          class="inline-flex h-7 items-center gap-1.5 rounded border border-current px-2 text-[0.8rem] cursor-pointer"
           data-cy="bookmarkAddCurrentView"
           :title="t('Add current view', { ns: 'app' })"
           :aria-label="t('Add current view', { ns: 'app' })"
           @click="startCreate"
         >
-          <i aria-hidden="true" class="fa-solid fa-plus"></i>
+          <i
+            aria-hidden="true"
+            class="fa-solid fa-plus text-[0.7em] leading-none"
+          ></i>
           {{ t('Add current view', { ns: 'app' }) }}
         </button>
       </div>
 
-      <ul v-if="draft || bookmarks.length" class="list-none m-0 p-0">
-        <li v-if="draft" class="flex items-center gap-1 py-1.5 px-1">
-          <input
-            ref="draftInput"
-            v-model="draftName"
-            class="form-control bg-white/50 px-3 py-[6px] focus:outline-none"
-            type="text"
-            data-cy="bookmarkDraftInput"
-            @keydown.enter="confirmDraft"
-            @keydown.esc="cancelDraft"
-            @blur="confirmDraft"
-          />
-        </li>
+      <ul v-if="bookmarks.length" class="list-none m-0 p-0">
         <li
           v-for="bookmark in bookmarks"
           :key="bookmark.id"
-          class="flex items-center gap-1"
+          class="flex min-h-7 items-center gap-1"
           :data-cy="`bookmarkItem-${bookmark.id}`"
         >
-          <input
-            v-if="editingId === bookmark.id"
-            :ref="bindRenameInput"
-            v-model="editName"
-            class="form-control bg-white/50 px-3 py-[6px] focus:outline-none"
-            type="text"
-            :data-cy="`bookmarkRenameInput-${bookmark.id}`"
-            @keydown.enter="confirmRename(bookmark.id)"
-            @keydown.esc="cancelRename"
-            @blur="confirmRename(bookmark.id)"
-          />
+          <template v-if="editingId === bookmark.id">
+            <input
+              :ref="bindRenameInput"
+              v-model="editName"
+              class="form-control h-7 min-w-0 flex-1 rounded bg-white/50 px-2 py-0 text-[0.8rem] text-inherit"
+              type="text"
+              :data-cy="`bookmarkRenameInput-${bookmark.id}`"
+              @keydown.enter="confirmRename(bookmark.id)"
+              @keydown.esc="cancelRename"
+            />
+            <button
+              class="inline-flex h-7 w-7 shrink-0 cursor-pointer items-center justify-center rounded border border-current"
+              :title="t('Save bookmark', { ns: 'app' })"
+              :aria-label="t('Save bookmark', { ns: 'app' })"
+              :data-cy="`bookmarkConfirmRename-${bookmark.id}`"
+              @click="confirmRename(bookmark.id)"
+            >
+              <i aria-hidden="true" class="fa-solid fa-check text-[0.8rem]"></i>
+            </button>
+          </template>
           <template v-else>
             <button
-              class="group flex items-center gap-1.5 flex-1 min-w-0 text-left cursor-pointer"
+              class="group flex h-7 min-w-0 flex-1 items-center gap-1.5 text-left cursor-pointer"
               :title="bookmark.name"
               @click="goTo(bookmark)"
             >
@@ -155,26 +184,24 @@ function cancelRename() {
                 {{ bookmark.name }}
               </span>
             </button>
-            <span class="flex gap-1">
-              <button
-                class="cursor-pointer p-0.5"
-                :title="t('Rename bookmark', { ns: 'app' })"
-                :aria-label="t('Rename bookmark', { ns: 'app' })"
-                :data-cy="`bookmarkRename-${bookmark.id}`"
-                @click="startRename(bookmark)"
-              >
-                <i aria-hidden="true" class="fa-solid fa-pencil"></i>
-              </button>
-              <button
-                class="cursor-pointer p-0.5"
-                :title="t('Delete bookmark', { ns: 'app' })"
-                :aria-label="t('Delete bookmark', { ns: 'app' })"
-                :data-cy="`bookmarkDelete-${bookmark.id}`"
-                @click="bookmarkStore.removeBookmark(bookmark.id)"
-              >
-                <i aria-hidden="true" class="fa-solid fa-trash"></i>
-              </button>
-            </span>
+            <button
+              class="inline-flex h-7 w-7 shrink-0 cursor-pointer items-center justify-center"
+              :title="t('Rename bookmark', { ns: 'app' })"
+              :aria-label="t('Rename bookmark', { ns: 'app' })"
+              :data-cy="`bookmarkRename-${bookmark.id}`"
+              @click="startRename(bookmark)"
+            >
+              <i aria-hidden="true" class="fa-solid fa-pencil"></i>
+            </button>
+            <button
+              class="inline-flex h-7 w-7 shrink-0 cursor-pointer items-center justify-center"
+              :title="t('Delete bookmark', { ns: 'app' })"
+              :aria-label="t('Delete bookmark', { ns: 'app' })"
+              :data-cy="`bookmarkDelete-${bookmark.id}`"
+              @click="bookmarkStore.removeBookmark(bookmark.id)"
+            >
+              <i aria-hidden="true" class="fa-solid fa-trash"></i>
+            </button>
           </template>
         </li>
       </ul>
