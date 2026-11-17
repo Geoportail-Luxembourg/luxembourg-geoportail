@@ -108,7 +108,7 @@ function canAccessSolarEconomicCalculator() {
               <a
                 data-cy="defaultTemplateSolarLink"
                 v-if="isSolarLink(layers.layerLabel, attributeEntry)"
-                :href="`https://solar.klima-agence.lu/?lng=${i18next.language !== 'lb' ? i18next.language : 'de'}`"
+                :href="`${config.solarUrl ?? ''}/?lng=${i18next.language !== 'lb' ? i18next.language : 'de'}`"
                 target="_blank"
               >
                 <button class="lux-tpl-solarkataster-button">

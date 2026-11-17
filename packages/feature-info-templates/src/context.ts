@@ -33,6 +33,12 @@ export interface LuxTplConfig {
   shopUrl?: string
   /** Shop base URL for IPv6 hosts (VITE_SHOP_IPV6_URL). */
   shopIpv6Url?: string
+  /** Parcel extract and measurement order service (VITE_COMMANDE_URL). */
+  commandeUrl?: string
+  /** Parcel history viewer (VITE_HISTORIQUE_URL). */
+  historiqueUrl?: string
+  /** Solar simulator (VITE_SOLAR_URL). */
+  solarUrl?: string
   /** Bus schedule widget base URL (VITE_BUS_WIDGET_URL). */
   busWidgetUrl?: string
   /** Sketch/report PDF download base URL (VITE_DOWNLOAD_PDF_URL). */
