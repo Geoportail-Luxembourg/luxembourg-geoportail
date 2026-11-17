@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { useLuxTranslation } from '../../i18n'
-import type { FeatureInfoJSON, FeatureJSON } from '../../models'
+import type { FeatureInfoJSON } from '../../models'
 import InfoFeatureLayout from '../layouts/info-feature-layout.vue'
 import { getMymapsPath, getQRUrlForMyMaps } from './template-utilities'
 import { injectLuxTplContext } from '../../context'
@@ -8,9 +8,6 @@ import LuxFeatureProfile from '../../profile/feature-profile.vue'
 defineProps<{
   layers: FeatureInfoJSON
   currentUrl?: string
-}>()
-defineEmits<{
-  (e: 'export', payload: { feature: FeatureJSON; format: 'kml' | 'gpx' }): void
 }>()
 const { t } = useLuxTranslation('tooltips')
 const { config, profileMapAdapter } = injectLuxTplContext()
@@ -56,14 +53,7 @@ const { config, profileMapAdapter } = injectLuxTplContext()
         {{ feature.attributes.length }} Km<br
       /></span>
 
-      <LuxFeatureProfile
-        v-if="profileMapAdapter"
-        :feature="feature"
-        @export="
-          (payload: { feature: FeatureJSON; format: 'kml' | 'gpx' }) =>
-            $emit('export', payload)
-        "
-      />
+      <LuxFeatureProfile v-if="profileMapAdapter" :feature="feature" />
       <img
         :src="
           getQRUrlForMyMaps(

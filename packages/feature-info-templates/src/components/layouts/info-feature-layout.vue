@@ -15,10 +15,6 @@ withDefaults(
   }
 )
 
-defineEmits<{
-  (e: 'export', payload: { feature: FeatureJSON; format: 'kml' | 'gpx' }): void
-}>()
-
 const { t } = useLuxTranslation()
 </script>
 

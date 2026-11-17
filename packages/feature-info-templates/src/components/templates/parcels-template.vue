@@ -14,8 +14,6 @@ const props = defineProps<{
   currentUrl?: string
 }>()
 
-defineEmits<{ (e: 'export', payload: unknown): void }>()
-
 const { config, isThemeAvailable: isThemeAvailableCtx } = injectLuxTplContext()
 const isThemeAvailable = (name: string) => isThemeAvailableCtx?.(name) ?? false
 const DOWNLOAD_MEASUREMENT_URL = config.downloadMeasurementUrl ?? ''

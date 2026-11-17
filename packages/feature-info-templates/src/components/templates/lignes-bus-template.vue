@@ -6,9 +6,6 @@ defineProps<{
   layers: FeatureInfoJSON
   currentUrl?: string
 }>()
-defineEmits<{
-  (e: 'export'): void
-}>()
 const { t } = useLuxTranslation('tooltips')
 const { config } = injectLuxTplContext()
 </script>

@@ -1,4 +1,5 @@
 import { inject, provide, ref, type InjectionKey, type Ref } from 'vue'
+import type { FeatureJSON } from './models'
 
 /**
  * Notification severity understood by the templates. The host maps these onto
@@ -76,6 +77,8 @@ export interface LuxTplContext {
    * `has_profile`. Hosts without it show no profile.
    */
   profileMapAdapter?: LuxTplProfileMapAdapter
+  /** Writes a feature as KML or GPX; unset hides the profile's export buttons. */
+  exportFeature?: (feature: FeatureJSON, format: 'kml' | 'gpx') => void
   /** Whether a given theme is available in the host. Defaults to always false. */
   isThemeAvailable?: (name: string) => boolean
 }

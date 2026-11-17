@@ -2,7 +2,11 @@ import { computed } from 'vue'
 import { storeToRefs } from 'pinia'
 import i18next from 'i18next'
 import { createLuxTplI18n } from '@geoportallux/feature-info-templates'
+import { Feature } from 'ol'
+import { Geometry } from 'ol/geom'
+import GeoJSON from 'ol/format/GeoJSON'
 import type {
+  FeatureJSON,
   LuxTplI18n,
   LuxTplContext,
   LuxTplNotifyType,
@@ -11,6 +15,11 @@ import { useUserManagerStore } from '@/stores/user-manager.store'
 import { useAlertNotificationsStore } from '@/stores/alert-notifications.store'
 import { AlertNotificationType } from '@/stores/alert-notifications.store.model'
 import { useThemeStore } from '@/stores/config.store'
+import useMap, { PROJECTION_LUX } from '@/composables/map/map.composable'
+import {
+  exportFeatureService,
+  FeatExport,
+} from '@/services/export-feature/export-feature.service'
 import useLuxTplProfileMapAdapter from '@/composables/info/lux-tpl-profile-map-adapter.composable'
 
 const NOTIFY_TYPE_MAP: Record<LuxTplNotifyType, AlertNotificationType> = {
@@ -32,6 +41,27 @@ export function getLuxTplI18n(): LuxTplI18n {
     luxTplI18nInstance = createLuxTplI18n(i18next)
   }
   return luxTplI18nInstance
+}
+
+function exportFeature(feature: FeatureJSON, format: 'kml' | 'gpx') {
+  const map = useMap().getOlMap()
+  if (feature.attributes && !feature.properties) {
+    feature.properties = feature.attributes as unknown as Record<
+      string,
+      unknown
+    >
+  }
+  const olFeature = new GeoJSON().readFeature(feature, {
+    dataProjection: PROJECTION_LUX,
+    featureProjection: map.getView().getProjection(),
+  })
+  exportFeatureService.export(
+    map,
+    format,
+    <FeatExport>[<Feature<Geometry>>olFeature],
+    feature.attributes.name || format,
+    true
+  )
 }
 
 function parseRoleIds(raw: string | undefined): number[] {
@@ -81,6 +111,7 @@ export default function useGeoportailLuxTplContext(): LuxTplContext {
     notify: (message, type = 'info') =>
       addNotification(message, NOTIFY_TYPE_MAP[type]),
     profileMapAdapter: useLuxTplProfileMapAdapter(),
+    exportFeature,
     isThemeAvailable: (name: string) =>
       themes.value?.some(theme => theme.name === name) ?? false,
   }

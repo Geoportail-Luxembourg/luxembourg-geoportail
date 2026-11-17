@@ -11,10 +11,6 @@ const props = defineProps<{
   currentUrl?: string
 }>()
 
-defineEmits<{
-  (e: 'export', payload: { feature: FeatureJSON; format: 'kml' | 'gpx' }): void
-}>()
-
 const { config, profileMapAdapter } = injectLuxTplContext()
 const DOWNLOAD_RESOURCE_URL = config.downloadResourceUrl
 const { t } = useLuxTranslation('tooltips')
@@ -52,14 +48,7 @@ function getDirectLink(feature: FeatureJSON) {
           </div>
         </div>
 
-        <LuxFeatureProfile
-          v-if="profileMapAdapter"
-          :feature="feature"
-          @export="
-            (payload: { feature: FeatureJSON; format: 'kml' | 'gpx' }) =>
-              $emit('export', payload)
-          "
-        />
+        <LuxFeatureProfile v-if="profileMapAdapter" :feature="feature" />
       </template>
 
       <div v-else>
