@@ -98,6 +98,29 @@ await createLuxTplI18next(
 )
 ```
 
+### Querying
+
+Both hosts send the same `/getfeatureinfo` request for a click:
+
+```ts
+const params = buildGetFeatureInfoParams({
+  layers, // queryable layer ids, top first
+  point, // EPSG:2169
+  coordinate, // EPSG:3857
+  resolution, // EPSG:3857 units per pixel
+  size, // map size in pixels
+  pixel, // clicked pixel
+  extent, // optional EPSG:3857 view extent, derived when omitted
+})
+const content = normalizeFeatureInfo(
+  await fetchFeatureInfo(url, params, credentials),
+  layerId => hostLabel(layerId) // falls back to the backend's label
+)
+```
+
+The boxes scale with the resolution (`20 ×` for points and lines, `1 ×` for
+polygons), the zoom is derived from it, and entries without features are dropped.
+
 ### Elevation profile
 
 Templates show an elevation profile for features with `has_profile`: it fetches
