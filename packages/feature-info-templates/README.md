@@ -5,10 +5,11 @@ The GetFeatureInfo templates of the Luxembourg geoportal, packaged so both the
 
 The package is **self-contained**: nothing under `src/` imports from outside the
 package, and it registers no globals on the host app and requires none.
+`npm run build` fails if that rule is broken, and ESLint flags it in the editor.
+
 Everything host-specific — URLs, the logged-in user, notifications, the
-elevation-profile component, theme availability — arrives through one injected
-context. `npm run build` fails if that rule is broken, and ESLint flags it in
-the editor.
+profile's map adapter, direct links, KML/GPX export, theme availability —
+arrives through one injected context; templates take only the `layers` prop.
 
 ## Install
 
@@ -58,6 +59,7 @@ provideLuxTplContext({
   user: computed(() => currentUser.value),
   notify: (message, type) => host.notify(message, type),
   profileMapAdapter: myProfileMapAdapter, // omit if the host has no profiles
+  featureLink: fid => `${host.url}&fid=${fid}`, // omit to hide direct links
   exportFeature: (feature, format) => host.download(feature, format), // KML/GPX; omit to hide
   isThemeAvailable: name => host.hasTheme(name),
 })
@@ -73,7 +75,6 @@ Then render, wrapped in the styling boundary:
     :key="i"
     :is="getTemplateComponent(layers.template)"
     :layers="layers"
-    :currentUrl="currentUrl"
   />
 </div>
 ```

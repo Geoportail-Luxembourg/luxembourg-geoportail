@@ -5,13 +5,12 @@ import { getTrustedUrlByLang } from './template-utilities'
 import { injectLuxTplContext } from '../../context'
 defineProps<{
   layers: FeatureInfoJSON
-  currentUrl?: string
 }>()
 const { config } = injectLuxTplContext()
 const BUS_WIDGET_URL = config.busWidgetUrl
 </script>
 <template>
-  <InfoFeatureLayout :layers="layers" :currentUrl="currentUrl">
+  <InfoFeatureLayout :layers="layers">
     <template #feature-content="{ feature }">
       <h3>{{ feature.attributes.name }}</h3>
       <iframe

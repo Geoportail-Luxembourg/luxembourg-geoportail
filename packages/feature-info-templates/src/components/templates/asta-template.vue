@@ -4,12 +4,11 @@ import { useLuxTranslation } from '../../i18n'
 import InfoFeatureLayout from '../layouts/info-feature-layout.vue'
 defineProps<{
   layers: FeatureInfoJSON
-  currentUrl?: string
 }>()
 const { t } = useLuxTranslation('tooltips')
 </script>
 <template>
-  <InfoFeatureLayout :layers="layers" :currentUrl="currentUrl">
+  <InfoFeatureLayout :layers="layers">
     <template #feature-content="{ feature }">
       <span>{{ t('Numero EFA') }}</span> : {{ feature.attributes.code_elem
       }}{{ feature.attributes.efa }}<br />

@@ -19,13 +19,9 @@ defineProps({
     type: Object as () => FeatureInfoJSON,
     required: true,
   },
-  currentUrl: {
-    type: String,
-    required: false,
-  },
 })
 const { t, i18next } = useLuxTranslation('tooltips')
-const { config, user, profileMapAdapter } = injectLuxTplContext()
+const { config, user, profileMapAdapter, featureLink } = injectLuxTplContext()
 
 function isNoSolarNorWaterLink(label: string, attributeEntry: AttributeEntry) {
   return (
@@ -157,11 +153,11 @@ function canAccessSolarEconomicCalculator() {
             t('Aucune information disponible pour cette couche')
           }}</span>
         </div>
-        <div v-if="currentUrl && hasValidFID(feature)" class="no-print">
+        <div v-if="featureLink && hasValidFID(feature)" class="no-print">
           <span
             ><a
               data-cy="defaultTemplateLink"
-              :href="currentUrl + '&fid=' + feature.fid"
+              :href="featureLink(feature.fid)"
               target="_blank"
               >{{ t('Lien direct vers cet objet') }}</a
             ></span

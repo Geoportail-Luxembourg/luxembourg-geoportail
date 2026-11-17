@@ -8,24 +8,19 @@ import LuxFeatureProfile from '../../profile/feature-profile.vue'
 
 const props = defineProps<{
   layers: FeatureInfoJSON
-  currentUrl?: string
 }>()
 
 const { config, profileMapAdapter } = injectLuxTplContext()
 const DOWNLOAD_RESOURCE_URL = config.downloadResourceUrl
 const { t } = useLuxTranslation('tooltips')
 
-function getDirectLink(feature: FeatureJSON) {
-  return `${props.currentUrl}&fid=${props.layers.layer}_${feature.attributes.id_qr}`
+function fid(feature: FeatureJSON) {
+  return `${props.layers.layer}_${feature.attributes.id_qr}`
 }
 </script>
 
 <template>
-  <InfoFeatureLayout
-    :layers="layers"
-    :currentUrl="currentUrl"
-    :getDirectLink="getDirectLink"
-  >
+  <InfoFeatureLayout :layers="layers" :fid="fid">
     <template #feature-content="{ feature }">
       <h4>{{ feature.attributes.sentier }}</h4>
 

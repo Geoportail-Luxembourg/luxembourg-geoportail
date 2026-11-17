@@ -111,6 +111,7 @@ export default function useGeoportailLuxTplContext(): LuxTplContext {
     notify: (message, type = 'info') =>
       addNotification(message, NOTIFY_TYPE_MAP[type]),
     profileMapAdapter: useLuxTplProfileMapAdapter(),
+    featureLink: fid => `${window.location.href}&fid=${fid}`,
     exportFeature,
     isThemeAvailable: (name: string) =>
       themes.value?.some(theme => theme.name === name) ?? false,

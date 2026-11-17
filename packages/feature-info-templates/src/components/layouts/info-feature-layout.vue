@@ -3,17 +3,17 @@ import '../../templates-styles.css'
 import type { FeatureInfoJSON, FeatureJSON } from '../../models'
 import { useLuxTranslation } from '../../i18n'
 import { hasValidFID } from '../templates/template-utilities'
+import { injectLuxTplContext } from '../../context'
 
 withDefaults(
   defineProps<{
     layers: FeatureInfoJSON
-    currentUrl?: string
-    getDirectLink?: (feature: FeatureJSON, currentUrl?: string) => string
+    fid?: (feature: FeatureJSON) => string
   }>(),
-  {
-    getDirectLink: (feature, currentUrl) => `${currentUrl}&fid=${feature.fid}`,
-  }
+  { fid: (feature: FeatureJSON) => feature.fid }
 )
+
+const { featureLink } = injectLuxTplContext()
 
 const { t } = useLuxTranslation()
 </script>
@@ -40,11 +40,11 @@ const { t } = useLuxTranslation()
     </slot>
 
     <!-- Direct link to the feature -->
-    <div v-if="currentUrl && hasValidFID(feature)">
+    <div v-if="featureLink && hasValidFID(feature)">
       <a
         data-cy="defaultTemplateLink"
         class="print:hidden"
-        :href="getDirectLink(feature, currentUrl)"
+        :href="featureLink(fid(feature))"
         target="_blank"
       >
         {{ t('Lien direct vers cet objet') }}

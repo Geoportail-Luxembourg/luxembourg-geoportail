@@ -18,7 +18,6 @@ defineProps({
     required: true,
   },
 })
-const currentUrl = window.location.href
 
 // Provide the dependency-injection context the templates rely on,
 // wiring it to the geoportail stores/environment and i18next.
@@ -60,7 +59,6 @@ const setPrintableRef = (el: Element | ComponentPublicInstance | null) => {
       :key="index"
       :is="getTemplateComponent(layers.template)"
       :layers="layers"
-      :currentUrl="currentUrl"
     />
   </div>
 </template>

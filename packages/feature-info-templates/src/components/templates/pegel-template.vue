@@ -5,12 +5,11 @@ import InfoFeatureLayout from '../layouts/info-feature-layout.vue'
 
 defineProps<{
   layers: FeatureInfoJSON
-  currentUrl?: string
 }>()
 </script>
 
 <template>
-  <InfoFeatureLayout :layers="layers" :currentUrl="currentUrl">
+  <InfoFeatureLayout :layers="layers">
     <template #feature-content="{ feature }">
       <h3>{{ feature.attributes.Nom }}</h3>
       <iframe
