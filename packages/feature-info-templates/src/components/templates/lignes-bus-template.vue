@@ -4,7 +4,6 @@ import { useLuxTranslation } from '../../i18n'
 import { injectLuxTplContext } from '../../context'
 defineProps<{
   layers: FeatureInfoJSON
-  currentUrl?: string
 }>()
 const { t } = useLuxTranslation('tooltips')
 const { config } = injectLuxTplContext()

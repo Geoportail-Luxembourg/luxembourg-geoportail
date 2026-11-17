@@ -15,14 +15,13 @@ import { vLuxHtml } from '../../sanitize-html'
 
 defineProps<{
   layers: FeatureInfoJSON
-  currentUrl?: string
 }>()
 const { t, i18next } = useLuxTranslation('tooltips')
 const { config, profileMapAdapter } = injectLuxTplContext()
 const DOWNLOAD_PDF_URL = config.downloadPdfUrl
 </script>
 <template>
-  <InfoFeatureLayout :layers="layers" :currentUrl="currentUrl">
+  <InfoFeatureLayout :layers="layers">
     <template #feature-content="{ feature }">
       <h4 v-if="feature.attributes.label">
         {{ t(feature.attributes.label) }}

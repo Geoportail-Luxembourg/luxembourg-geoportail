@@ -6,13 +6,12 @@ import { hasProperty } from './template-utilities'
 
 defineProps<{
   layers: FeatureInfoJSON
-  currentUrl?: string
 }>()
 const { t } = useLuxTranslation('tooltips')
 const { i18next } = useLuxTranslation('tooltips')
 </script>
 <template>
-  <InfoFeatureLayout :layers="layers" :currentUrl="currentUrl">
+  <InfoFeatureLayout :layers="layers">
     <template #feature-content="{ feature }">
       <h3
         class="text-[28px]"

@@ -7,14 +7,13 @@ import { injectLuxTplContext } from '../../context'
 import LuxFeatureProfile from '../../profile/feature-profile.vue'
 defineProps<{
   layers: FeatureInfoJSON
-  currentUrl?: string
 }>()
 const { t } = useLuxTranslation('tooltips')
 const { config, profileMapAdapter } = injectLuxTplContext()
 </script>
 
 <template>
-  <InfoFeatureLayout :layers="layers" :currentUrl="currentUrl">
+  <InfoFeatureLayout :layers="layers">
     <template #feature-content="{ feature }">
       <h4>{{ feature.attributes.sentier }}</h4>
       <a

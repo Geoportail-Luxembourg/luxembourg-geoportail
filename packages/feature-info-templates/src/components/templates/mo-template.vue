@@ -10,7 +10,6 @@ const SHOP_IPV6_URL = config.shopIpv6Url
 
 defineProps<{
   layers: FeatureInfoJSON
-  currentUrl?: string
 }>()
 const { t } = useLuxTranslation('tooltips')
 
@@ -48,7 +47,7 @@ const orderAffaire = async function (numCommune: string, numMesurage: string) {
 </script>
 
 <template>
-  <InfoFeatureLayout :layers="layers" :currentUrl="currentUrl">
+  <InfoFeatureLayout :layers="layers">
     <template #feature-content="{ feature }">
       <h3>{{ feature.attributes.K_MEASUREMENTID }}</h3>
       <span>{{ t('Affaire') }}</span> : {{ feature.attributes.K_MEASUREMENTID

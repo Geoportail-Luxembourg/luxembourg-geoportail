@@ -77,6 +77,8 @@ export interface LuxTplContext {
    * `has_profile`. Hosts without it show no profile.
    */
   profileMapAdapter?: LuxTplProfileMapAdapter
+  /** Direct link to a feature from its fid (the 2D `fid` param); unset hides the link. */
+  featureLink?: (fid: string) => string
   /** Writes a feature as KML or GPX; unset hides the profile's export buttons. */
   exportFeature?: (feature: FeatureJSON, format: 'kml' | 'gpx') => void
   /** Whether a given theme is available in the host. Defaults to always false. */

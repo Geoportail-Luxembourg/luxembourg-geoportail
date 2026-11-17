@@ -11,7 +11,6 @@ import LuxTplIcon from '../common/lux-tpl-icon.vue'
 
 const props = defineProps<{
   layers: FeatureInfoJSON
-  currentUrl?: string
 }>()
 
 const { config, isThemeAvailable: isThemeAvailableCtx } = injectLuxTplContext()
@@ -230,7 +229,7 @@ function closePreviewMesurage() {
     @close="closePreviewMesurage"
   />
 
-  <InfoFeatureLayout :layers="layers" :currentUrl="currentUrl">
+  <InfoFeatureLayout :layers="layers">
     <template #feature-content="{ feature }">
       <div v-if="!feature.attributes.PF">
         {{ t('No parcel data available') }}

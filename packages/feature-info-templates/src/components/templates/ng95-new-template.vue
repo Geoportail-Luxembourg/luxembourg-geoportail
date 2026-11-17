@@ -6,7 +6,6 @@ import { injectLuxTplContext } from '../../context'
 
 defineProps<{
   layers: FeatureInfoJSON
-  currentUrl?: string
 }>()
 const { t } = useLuxTranslation('tooltips')
 const { config } = injectLuxTplContext()
@@ -14,7 +13,7 @@ const DOWNLOAD_SKETCH_URL = config.downloadSketchUrl
 </script>
 
 <template>
-  <InfoFeatureLayout :layers="layers" :currentUrl="currentUrl">
+  <InfoFeatureLayout :layers="layers">
     <template #feature-content="{ feature }">
       <h4>{{ t(feature.attributes.Nom as string) }}</h4>
       <span>{{ t('Elevation') }}</span> : {{ feature.attributes['nouv. cote']

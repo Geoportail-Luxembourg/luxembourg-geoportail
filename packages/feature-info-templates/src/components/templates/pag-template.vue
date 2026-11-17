@@ -7,7 +7,6 @@ import { injectLuxTplContext } from '../../context'
 
 const props = defineProps<{
   layers: FeatureInfoJSON
-  currentUrl?: string
 }>()
 const layers = props.layers
 

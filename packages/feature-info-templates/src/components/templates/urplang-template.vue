@@ -5,14 +5,13 @@ import InfoFeatureLayout from '../layouts/info-feature-layout.vue'
 
 defineProps<{
   layers: FeatureInfoJSON
-  currentUrl?: string
 }>()
 
 const { t } = useLuxTranslation('tooltips')
 </script>
 
 <template>
-  <InfoFeatureLayout :layers="layers" :currentUrl="currentUrl">
+  <InfoFeatureLayout :layers="layers">
     <template #feature-content="{ feature }">
       <h2 class="lux-tpl-urplang-title">
         {{ feature.attributes.nom_commune }} {{ feature.attributes.section }}
