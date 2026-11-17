@@ -2,15 +2,12 @@
 import { useLuxTranslation } from '../../i18n'
 import { ref, computed } from 'vue'
 import type { Ref } from 'vue'
-import type { FeatureInfoJSON, FeatureJSON } from '../../models'
+import type { FeatureInfoJSON } from '../../models'
 import { injectLuxTplContext } from '../../context'
 
 const props = defineProps<{
   layers: FeatureInfoJSON
   currentUrl?: string
-}>()
-defineEmits<{
-  (e: 'export', payload: { feature: FeatureJSON; format: 'kml' | 'gpx' }): void
 }>()
 const layers = props.layers
 

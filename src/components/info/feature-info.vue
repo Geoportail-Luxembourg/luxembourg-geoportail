@@ -2,19 +2,7 @@
 import { ComponentPublicInstance, provide } from 'vue'
 import { storeToRefs } from 'pinia'
 import { usePrintStore } from '@/stores/print.store'
-import { Feature } from 'ol'
-import { Geometry } from 'ol/geom'
-import GeoJSON from 'ol/format/GeoJSON'
-import {
-  FeatureInfoJSON,
-  FeatureJSON,
-} from '@geoportallux/feature-info-templates'
-import {
-  exportFeatureService,
-  ExportFormat,
-  FeatExport,
-} from '@/services/export-feature/export-feature.service'
-import useMap, { PROJECTION_LUX } from '@/composables/map/map.composable'
+import { FeatureInfoJSON } from '@geoportallux/feature-info-templates'
 import {
   provideLuxTplContext,
   getTemplateComponent,
@@ -31,7 +19,6 @@ defineProps({
   },
 })
 const currentUrl = window.location.href
-const map = useMap().getOlMap()
 
 // Provide the dependency-injection context the templates rely on,
 // wiring it to the geoportail stores/environment and i18next.
@@ -42,28 +29,6 @@ provide(LUX_TPL_I18N, getLuxTplI18n())
 const { featureInfoPrintableRef } = storeToRefs(usePrintStore())
 const setPrintableRef = (el: Element | ComponentPublicInstance | null) => {
   featureInfoPrintableRef.value = el ?? undefined
-}
-
-function onExport(payload: { feature: FeatureJSON; format: ExportFormat }) {
-  if (payload.feature.attributes && !payload.feature.properties) {
-    payload.feature.properties = payload.feature
-      .attributes as unknown as Record<string, unknown>
-  }
-  const olFeature = new GeoJSON().readFeature(payload.feature, {
-    dataProjection: PROJECTION_LUX,
-    featureProjection: map.getView().getProjection(),
-  })
-  exportFeatureService.export(
-    map,
-    payload.format,
-    <FeatExport>[<Feature<Geometry>>olFeature],
-    payload.feature.attributes.name || payload.format,
-    true
-  )
-}
-function onExportWrapper(...args: unknown[]) {
-  const [payload] = args
-  onExport(payload as { feature: FeatureJSON; format: 'kml' | 'gpx' })
 }
 </script>
 <template>
@@ -96,7 +61,6 @@ function onExportWrapper(...args: unknown[]) {
       :is="getTemplateComponent(layers.template)"
       :layers="layers"
       :currentUrl="currentUrl"
-      @export="onExportWrapper"
     />
   </div>
 </template>

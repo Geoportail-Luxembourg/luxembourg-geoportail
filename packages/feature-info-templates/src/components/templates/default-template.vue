@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import type { AttributeEntry, FeatureInfoJSON, FeatureJSON } from '../../models'
+import type { AttributeEntry, FeatureInfoJSON } from '../../models'
 import { useLuxTranslation } from '../../i18n'
 import {
   hasAttributes,
@@ -24,9 +24,6 @@ defineProps({
     required: false,
   },
 })
-defineEmits<{
-  (e: 'export', payload: { feature: FeatureJSON; format: 'kml' | 'gpx' }): void
-}>()
 const { t, i18next } = useLuxTranslation('tooltips')
 const { config, user, profileMapAdapter } = injectLuxTplContext()
 
@@ -153,13 +150,7 @@ function canAccessSolarEconomicCalculator() {
           </div>
         </div>
         <div v-if="layers.has_profile && profileMapAdapter">
-          <LuxFeatureProfile
-            :feature="feature"
-            @export="
-              (payload: { feature: FeatureJSON; format: 'kml' | 'gpx' }) =>
-                $emit('export', payload)
-            "
-          />
+          <LuxFeatureProfile :feature="feature" />
         </div>
         <div v-if="!hasAttributes(feature)" class="no-print">
           <span>{{
