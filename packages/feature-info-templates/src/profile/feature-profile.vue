@@ -14,11 +14,8 @@ import { injectLuxTplContext } from '../context'
 import { useLuxTranslation } from '../i18n'
 
 const props = defineProps<{ feature: FeatureJSON }>()
-defineEmits<{
-  (e: 'export', payload: { feature: FeatureJSON; format: 'kml' | 'gpx' }): void
-}>()
 
-const { config, profileMapAdapter } = injectLuxTplContext()
+const { config, profileMapAdapter, exportFeature } = injectLuxTplContext()
 const mapAdapter = profileMapAdapter!
 const { t } = useLuxTranslation()
 const lines = extractLineParts(props.feature.geometry)
@@ -111,16 +108,16 @@ function exportCsv() {
       @out:profile="onOut"
       @csv="exportCsv"
     />
-    <div>
+    <div v-if="exportFeature">
       <button
         class="lux-feature-info-export"
-        @click="$emit('export', { feature, format: 'kml' })"
+        @click="exportFeature(feature, 'kml')"
       >
         {{ t('Exporter KMl') }}
       </button>
       <button
         class="lux-feature-info-export"
-        @click="$emit('export', { feature, format: 'gpx' })"
+        @click="exportFeature(feature, 'gpx')"
       >
         {{ t('Exporter GPX') }}
       </button>

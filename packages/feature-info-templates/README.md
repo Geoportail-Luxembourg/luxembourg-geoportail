@@ -5,10 +5,11 @@ The GetFeatureInfo templates of the Luxembourg geoportal, packaged so both the
 
 The package is **self-contained**: nothing under `src/` imports from outside the
 package, and it registers no globals on the host app and requires none.
+`npm run build` fails if that rule is broken, and ESLint flags it in the editor.
+
 Everything host-specific — URLs, the logged-in user, notifications, the
-elevation-profile component, theme availability — arrives through one injected
-context. `npm run build` fails if that rule is broken, and ESLint flags it in
-the editor.
+profile's map adapter, direct links, KML/GPX export, theme availability —
+arrives through one injected context; templates take only the `layers` prop.
 
 ## Install
 
@@ -58,6 +59,8 @@ provideLuxTplContext({
   user: computed(() => currentUser.value),
   notify: (message, type) => host.notify(message, type),
   profileMapAdapter: myProfileMapAdapter, // omit if the host has no profiles
+  featureLink: fid => `${host.url}&fid=${fid}`, // omit to hide direct links
+  exportFeature: (feature, format) => host.download(feature, format), // KML/GPX; omit to hide
   isThemeAvailable: name => host.hasTheme(name),
 })
 provide(LUX_TPL_I18N, createLuxTplI18n(i18next))
@@ -72,8 +75,6 @@ Then render, wrapped in the styling boundary:
     :key="i"
     :is="getTemplateComponent(layers.template)"
     :layers="layers"
-    :currentUrl="currentUrl"
-    @export="onExport"
   />
 </div>
 ```
@@ -97,12 +98,35 @@ await createLuxTplI18next(
 )
 ```
 
+### Querying
+
+Both hosts send the same `/getfeatureinfo` request for a click:
+
+```ts
+const params = buildGetFeatureInfoParams({
+  layers, // queryable layer ids, top first
+  point, // EPSG:2169
+  coordinate, // EPSG:3857
+  resolution, // EPSG:3857 units per pixel
+  size, // map size in pixels
+  pixel, // clicked pixel
+  extent, // optional EPSG:3857 view extent, derived when omitted
+})
+const content = normalizeFeatureInfo(
+  await fetchFeatureInfo(url, params, credentials),
+  layerId => hostLabel(layerId) // falls back to the backend's label
+)
+```
+
+The boxes scale with the resolution (`20 ×` for points and lines, `1 ×` for
+polygons), the zoom is derived from it, and entries without features are dropped.
+
 ### Elevation profile
 
 Templates show an elevation profile for features with `has_profile`: it fetches
 `config.profileUrl` (without credentials), shows the Δ values and the chart,
-downloads the CSV and emits `export` with `{ feature, format: 'kml' | 'gpx' }`
-for the host to write the file. Only the map is the host's, through the
+downloads the CSV, and its KML/GPX buttons call the context's
+`exportFeature(feature, format)` (hidden without it). The map is the host's, through the
 context's `profileMapAdapter` (`LuxTplProfileMapAdapter`, EPSG:2169 coordinates); without
 it, no profile is shown:
 

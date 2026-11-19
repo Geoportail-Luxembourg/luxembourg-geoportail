@@ -5,14 +5,13 @@ import InfoFeatureLayout from '../layouts/info-feature-layout.vue'
 
 defineProps<{
   layers: FeatureInfoJSON
-  currentUrl?: string
 }>()
 
 const { t, i18next } = useLuxTranslation('tooltips')
 </script>
 
 <template>
-  <InfoFeatureLayout :layers="layers" :currentUrl="currentUrl">
+  <InfoFeatureLayout :layers="layers">
     <template #feature-content="{ feature }">
       <h2>{{ feature.attributes['title_' + i18next.language] }}</h2>
       <div v-if="feature.attributes.media_filename_0">

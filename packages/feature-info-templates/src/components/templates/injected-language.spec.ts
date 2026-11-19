@@ -64,7 +64,6 @@ describe('language comes from the injected instance', () => {
           textstring: '1234',
           PF: { mainNumber: 1, additionalNumber: 2 },
         }),
-        currentUrl: 'https://map.geoportail.lu/',
       },
     }).html()
 
@@ -82,7 +81,6 @@ describe('language comes from the injected instance', () => {
           ...layersWith({ href: 'https://maps.tetraeder.solar/x' }),
           layerLabel: 'myenergy_solarkataster_luxemburg_solar_potentials',
         },
-        currentUrl: 'https://map.geoportail.lu/',
       },
     }).html()
 

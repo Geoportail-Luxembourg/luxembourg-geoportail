@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import type { FeatureInfoJSON, FeatureJSON } from '../../models'
+import type { FeatureInfoJSON } from '../../models'
 import InfoFeatureLayout from '../layouts/info-feature-layout.vue'
 import { useLuxTranslation } from '../../i18n'
 import { hasProperty } from './template-utilities'
@@ -9,17 +9,13 @@ import LuxTplIcon from '../common/lux-tpl-icon.vue'
 
 defineProps<{
   layers: FeatureInfoJSON
-  currentUrl?: string
-}>()
-defineEmits<{
-  (e: 'export', payload: { feature: FeatureJSON; format: 'kml' | 'gpx' }): void
 }>()
 const { t } = useLuxTranslation('tooltips')
 const { i18next } = useLuxTranslation('tooltips')
 const { profileMapAdapter } = injectLuxTplContext()
 </script>
 <template>
-  <InfoFeatureLayout :layers="layers" :currentUrl="currentUrl">
+  <InfoFeatureLayout :layers="layers">
     <template #feature-content="{ feature }">
       <h3
         class="text-[28px]"
@@ -150,14 +146,7 @@ const { profileMapAdapter } = injectLuxTplContext()
         <span>{{ feature.attributes['longueur sentier'] }}</span>
       </div>
 
-      <LuxFeatureProfile
-        v-if="profileMapAdapter"
-        :feature="feature"
-        @export="
-          (payload: { feature: FeatureJSON; format: 'kml' | 'gpx' }) =>
-            $emit('export', payload)
-        "
-      />
+      <LuxFeatureProfile v-if="profileMapAdapter" :feature="feature" />
     </template>
   </InfoFeatureLayout>
 </template>

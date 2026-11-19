@@ -81,7 +81,6 @@ describe.each(attributeValueTemplates)('%s template', (_name, Component) => {
       ...mountOptions,
       props: {
         layers: layersWith({ description }),
-        currentUrl: 'https://map.geoportail.lu/?lang=fr',
       },
     })
 
@@ -118,7 +117,6 @@ describe('adresse template', () => {
       ...mountOptions,
       props: {
         layers: layersWith({ label }),
-        currentUrl: 'https://map.geoportail.lu/?lang=fr',
       },
     })
 

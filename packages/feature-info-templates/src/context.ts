@@ -1,4 +1,5 @@
 import { inject, provide, ref, type InjectionKey, type Ref } from 'vue'
+import type { FeatureJSON } from './models'
 
 /**
  * Notification severity understood by the templates. The host maps these onto
@@ -32,6 +33,12 @@ export interface LuxTplConfig {
   shopUrl?: string
   /** Shop base URL for IPv6 hosts (VITE_SHOP_IPV6_URL). */
   shopIpv6Url?: string
+  /** Parcel extract and measurement order service (VITE_COMMANDE_URL). */
+  commandeUrl?: string
+  /** Parcel history viewer (VITE_HISTORIQUE_URL). */
+  historiqueUrl?: string
+  /** Solar simulator (VITE_SOLAR_URL). */
+  solarUrl?: string
   /** Bus schedule widget base URL (VITE_BUS_WIDGET_URL). */
   busWidgetUrl?: string
   /** Sketch/report PDF download base URL (VITE_DOWNLOAD_PDF_URL). */
@@ -76,6 +83,10 @@ export interface LuxTplContext {
    * `has_profile`. Hosts without it show no profile.
    */
   profileMapAdapter?: LuxTplProfileMapAdapter
+  /** Direct link to a feature from its fid (the 2D `fid` param); unset hides the link. */
+  featureLink?: (fid: string) => string
+  /** Writes a feature as KML or GPX; unset hides the profile's export buttons. */
+  exportFeature?: (feature: FeatureJSON, format: 'kml' | 'gpx') => void
   /** Whether a given theme is available in the host. Defaults to always false. */
   isThemeAvailable?: (name: string) => boolean
 }
