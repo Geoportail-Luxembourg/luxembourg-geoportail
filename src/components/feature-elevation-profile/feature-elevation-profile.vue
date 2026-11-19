@@ -18,8 +18,10 @@ import { Feature } from 'ol'
 import { Geometry } from 'ol/geom'
 import { transform } from 'ol/proj'
 
-import ElevationProfile from '@/components/common/graph/elevation-profile.vue'
-import { ProfileData } from '@/components/common/graph/elevation-profile'
+import {
+  LuxElevationProfile,
+  type ProfileData,
+} from '@geoportallux/feature-info-templates'
 import useProfilePosition from '@/composables/map/profile-position.composable'
 import { useProfilePositionStore } from '@/stores/profile-position.store'
 import { DrawnFeature } from '@/services/ol-feature/ol-feature-drawn'
@@ -58,15 +60,6 @@ const hasCloseListener = computed(
   () => getCurrentInstance()?.vnode?.props?.onClose
 ) // NB. useAttrs() not working as close event is defined with "emit"
 const profileData: ShallowRef<ProfileData | undefined> = shallowRef(undefined)
-const profileDataLength = computed(() => profileData.value?.length || 0)
-const profileDataLastValue = computed(
-  () => profileData.value && profileData.value[profileDataLength.value - 1]
-)
-const elevationGain = computed(() => profileDataLastValue.value?.elevationGain)
-const elevationLoss = computed(() => profileDataLastValue.value?.elevationLoss)
-const cumulativeElevation = computed(
-  () => profileDataLastValue.value?.cumulativeElevation
-)
 const isLoading = computed(() => props.feature && !profileData.value)
 const isDrawing = computed(() => !props.feature)
 
@@ -160,64 +153,28 @@ function onOutProfile() {
 </script>
 
 <template>
-  <div data-cy="featItemProfile" class="lux-profile relative">
-    <!-- Top: elevation +- in meters, Export CSV button and close button -->
-    <div class="flex justify-between w-full px-1 gap-3 whitespace-nowrap">
-      <div class="grow cursor-default" data-cy="featItemProfileCumul">
-        <template v-if="profileData">
-          <span>
-            &Delta;+<span v-format-measure.elevation="elevationGain"></span>
-          </span>
-          <span>
-            &Delta;<span v-format-measure.elevation="elevationLoss"></span>
-          </span>
-          <span>
-            &Delta;<span
-              v-format-measure.elevation="cumulativeElevation"
-            ></span>
-          </span>
-        </template>
-      </div>
-
-      <button
-        data-cy="featItemProfileCSV"
-        class="profile-export no-print text-secondary hover:underline"
-        v-if="enableExportCSV && profileData"
-        @click="() => exportCSV()"
-      >
-        {{ t('Export csv') }}
-      </button>
-
-      <!-- Display close button only if there is a listener "onClose" in the parent -->
-      <button
-        v-if="hasCloseListener"
-        :aria-label="t('Close')"
-        class="fa-solid fa-close text-secondary hover:text-tertiary"
-        @click="$emit('close')"
-      ></button>
-    </div>
-
-    <!-- Loading message -->
-    <div
-      v-if="isLoading || isDrawing"
-      class="no-print w-full absolute mt-2 text-center"
-    >
-      <span class="text-gray-700 rounded p-2 bg-[rgba(120,120,120,0.5)]">{{
-        isLoading
-          ? t('Please wait, the profile is loading.')
-          : isDrawing
-            ? t('Draw a line on the map to display an elevation profile.')
-            : ''
-      }}</span>
-    </div>
-
-    <!-- Graph -->
-    <elevation-profile
-      :profileData="profileData"
-      class="w-full"
-      :highlightDistance="profilePosition.highlightDistance.value"
-      @hover:profile="onHoverProfile"
-      @out:profile="onOutProfile"
-    />
-  </div>
+  <lux-elevation-profile
+    data-cy="featItemProfile"
+    :profileData="profileData"
+    :highlightDistance="profilePosition.highlightDistance.value"
+    :enableExportCSV="enableExportCSV"
+    :message="
+      isLoading
+        ? t('Please wait, the profile is loading.')
+        : isDrawing
+          ? t('Draw a line on the map to display an elevation profile.')
+          : undefined
+    "
+    @hover:profile="onHoverProfile"
+    @out:profile="onOutProfile"
+    @csv="exportCSV"
+  >
+    <!-- Display close button only if there is a listener "onClose" in the parent -->
+    <button
+      v-if="hasCloseListener"
+      :aria-label="t('Close')"
+      class="fa-solid fa-close text-secondary hover:text-tertiary"
+      @click="$emit('close')"
+    ></button>
+  </lux-elevation-profile>
 </template>

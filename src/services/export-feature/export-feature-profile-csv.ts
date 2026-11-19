@@ -5,10 +5,7 @@ import { toLonLat } from 'ol/proj'
 import { DrawnFeature } from '@/services/ol-feature/ol-feature-drawn'
 import { ExportFeature } from './export-feature'
 import { PROJECTION_LUX } from '@/composables/map/map.composable'
-import {
-  ProfileData,
-  ProfileDataEntry,
-} from '@/components/common/graph/elevation-profile'
+import { profileCsv } from '@geoportallux/feature-info-templates'
 
 export class ExportFeatureProfileCsv extends ExportFeature<Feature<Geometry>> {
   /**
@@ -25,21 +22,8 @@ export class ExportFeatureProfileCsv extends ExportFeature<Feature<Geometry>> {
   async generateContent(feature: Feature<Geometry>) {
     const profileData = await (<DrawnFeature>feature).getProfile()
 
-    return profileData ? this.getCsvContent(profileData) : ''
-  }
-
-  private getCsvContent(profileData: ProfileData) {
-    const csvHeader = 'dist,MNT,y,x,lon,lat\n'
-
-    return profileData.reduce(
-      (acc: string, item) => acc + this.getCsvContentRow(item),
-      csvHeader
-    )
-  }
-
-  private getCsvContentRow(item: ProfileDataEntry) {
-    const lonlat = toLonLat([item.x, item.y], PROJECTION_LUX)
-
-    return `${item.dist},${item.values.dhm},${item.x},${item.y},${lonlat[0]},${lonlat[1]}\n`
+    return profileData
+      ? profileCsv(profileData, xy => toLonLat(xy, PROJECTION_LUX))
+      : ''
   }
 }

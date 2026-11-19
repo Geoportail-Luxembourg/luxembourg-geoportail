@@ -1,11 +1,4 @@
-import {
-  inject,
-  provide,
-  ref,
-  type Component,
-  type InjectionKey,
-  type Ref,
-} from 'vue'
+import { inject, provide, ref, type InjectionKey, type Ref } from 'vue'
 
 /**
  * Notification severity understood by the templates. The host maps these onto
@@ -55,6 +48,10 @@ export interface LuxTplConfig {
   downloadResourceUrl?: string
   /** Measurement preview base URL (VITE_DOWNLOAD_PREVIEW_URL). */
   downloadPreviewUrl?: string
+  /** 2D geoportal URL for map links (`?map_id=`); unset, they stay relative to the host. */
+  geoportalUrl?: string
+  /** Elevation profile service (VITE_PROFILE_URL), public: called without credentials. */
+  profileUrl?: string
   /** QR code service base URL (VITE_QR_URL). */
   qrUrl?: string
   /** Legacy v3 API host, used to resolve mymaps resource paths (VITE_V3_API_HOST). */
@@ -75,12 +72,25 @@ export interface LuxTplContext {
   /** Emit a notification/toast through the host's notification system. */
   notify: (message: string, type?: LuxTplNotifyType) => void
   /**
-   * Elevation-profile component rendered when a feature has `has_profile`.
-   * Left undefined by hosts (e.g. the 3D viewer) that do not support profiles.
+   * The host map's part of the elevation profile shown for features with
+   * `has_profile`. Hosts without it show no profile.
    */
-  profileComponent?: Component
+  profileMapAdapter?: LuxTplProfileMapAdapter
   /** Whether a given theme is available in the host. Defaults to always false. */
   isThemeAvailable?: (name: string) => boolean
+}
+
+/** Coordinates are EPSG:2169, like the profile. */
+export interface LuxTplProfileMapAdapter {
+  /** Shows the profile position marker; undefined hides it. */
+  setPosition(xy?: number[]): void
+  /**
+   * Calls back on pointer moves over the map with the position and the
+   * metres per pixel there. Returns the unlisten function.
+   */
+  onPointerMove(cb: (xy: number[], resolution: number) => void): () => void
+  /** EPSG:2169 → lon/lat, for the CSV. */
+  toLonLat(xy: number[]): number[]
 }
 
 export const LUX_TPL_CONTEXT: InjectionKey<LuxTplContext> =

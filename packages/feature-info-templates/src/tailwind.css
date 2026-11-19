@@ -13,9 +13,14 @@
      the `.lux-tpl-root` ancestor is explicit. */
   .lux-tpl-root .lux-btn,
   .lux-tpl-root a.lux-btn,
-  .lux-tpl-root .lux-btn-grey {
+  .lux-tpl-root .lux-btn-grey,
+  .lux-tpl-root .lux-feature-info-export {
     @apply cursor-pointer bg-white py-[6px] px-[12px] leading-snug text-primary hover:bg-primary hover:text-white;
     border: 1px solid var(--color-gray, #ccc);
+  }
+
+  .lux-tpl-root .lux-feature-info-export {
+    @apply m-2;
   }
 
   .lux-tpl-root .lux-btn:disabled,

@@ -22,7 +22,6 @@ export {
   translateAndjoin,
   formatDate,
   getMymapsPath,
-  getQRUrlForMyMaps,
 } from './components/templates/template-utilities'
 
 // The single host dependency surface.
@@ -36,6 +35,7 @@ export type {
   LuxTplConfig,
   LuxTplUser,
   LuxTplNotifyType,
+  LuxTplProfileMapAdapter,
 } from './context'
 
 // Lib-owned i18n, so the package needs no i18next-vue.
@@ -50,8 +50,23 @@ export {
 export type {
   FeatureJSON,
   FeatureInfoJSON,
-  GeometryJSON,
   Attributes,
   FeatureMeasurement,
   AttributeEntry,
 } from './models'
+
+export { default as LuxElevationChart } from './profile/elevation-chart.vue'
+export { default as LuxElevationProfile } from './profile/elevation-profile.vue'
+export {
+  toProfileData,
+  profileCsv,
+  extractLineParts,
+  formatElevation,
+  formatLength,
+} from './profile/profile'
+export type {
+  ProfileJson,
+  ProfileJsonEntry,
+  ProfileData,
+  ProfileDataEntry,
+} from './profile/profile'

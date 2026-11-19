@@ -1,4 +1,4 @@
-import { computed, type Component } from 'vue'
+import { computed } from 'vue'
 import { storeToRefs } from 'pinia'
 import i18next from 'i18next'
 import { createLuxTplI18n } from '@geoportallux/feature-info-templates'
@@ -11,6 +11,7 @@ import { useUserManagerStore } from '@/stores/user-manager.store'
 import { useAlertNotificationsStore } from '@/stores/alert-notifications.store'
 import { AlertNotificationType } from '@/stores/alert-notifications.store.model'
 import { useThemeStore } from '@/stores/config.store'
+import useLuxTplProfileMapAdapter from '@/composables/info/lux-tpl-profile-map-adapter.composable'
 
 const NOTIFY_TYPE_MAP: Record<LuxTplNotifyType, AlertNotificationType> = {
   info: AlertNotificationType.INFO,
@@ -43,12 +44,9 @@ function parseRoleIds(raw: string | undefined): number[] {
 /**
  * Build the {@link LuxTplContext} the feature-info templates rely on, wiring it
  * to the geoportail's stores and environment. Must be called from a component
- * `setup()` (it reads Pinia stores). Pass the elevation-profile component the
- * templates should render when a feature has a profile.
+ * `setup()` (it reads Pinia stores and the map).
  */
-export default function useGeoportailLuxTplContext(
-  profileComponent?: Component
-): LuxTplContext {
+export default function useGeoportailLuxTplContext(): LuxTplContext {
   const { currentUser } = storeToRefs(useUserManagerStore())
   const { addNotification } = useAlertNotificationsStore()
   const { themes } = storeToRefs(useThemeStore())
@@ -69,6 +67,7 @@ export default function useGeoportailLuxTplContext(
       downloadPagReportUrl: import.meta.env.VITE_DOWNLOAD_PAGREPORT_URL,
       downloadResourceUrl: import.meta.env.VITE_DOWNLOAD_RESOURCE_URL,
       downloadPreviewUrl: import.meta.env.VITE_DOWNLOAD_PREVIEW_URL,
+      profileUrl: import.meta.env.VITE_PROFILE_URL,
       qrUrl: import.meta.env.VITE_QR_URL,
       v3ApiHost: import.meta.env.VITE_V3_API_HOST,
       solarEconomicAllowedRoleIds: parseRoleIds(
@@ -81,7 +80,7 @@ export default function useGeoportailLuxTplContext(
     }),
     notify: (message, type = 'info') =>
       addNotification(message, NOTIFY_TYPE_MAP[type]),
-    profileComponent,
+    profileMapAdapter: useLuxTplProfileMapAdapter(),
     isThemeAvailable: (name: string) =>
       themes.value?.some(theme => theme.name === name) ?? false,
   }

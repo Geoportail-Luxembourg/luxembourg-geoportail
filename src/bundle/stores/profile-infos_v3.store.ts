@@ -3,7 +3,7 @@ import { acceptHMRUpdate, defineStore } from 'pinia'
 import { Map } from 'ol'
 
 import { DrawnFeature } from '@/services/ol-feature/ol-feature-drawn'
-import { ProfileData } from '@/components/common/graph/elevation-profile'
+import type { ProfileData } from '@geoportallux/feature-info-templates'
 
 /**
  * This store is a wrapper to use original <feature-elevation-profile> in v3.
