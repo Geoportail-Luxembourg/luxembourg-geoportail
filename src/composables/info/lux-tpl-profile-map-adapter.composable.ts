@@ -1,6 +1,7 @@
 import { storeToRefs } from 'pinia'
 import { MapBrowserEvent } from 'ol'
 import { listen, unlistenByKey } from 'ol/events'
+import BaseEvent from 'ol/events/Event'
 import { getPointResolution, toLonLat, transform } from 'ol/proj'
 import type { LuxTplProfileMapAdapter } from '@geoportallux/feature-info-templates'
 import useMap, { PROJECTION_LUX } from '@/composables/map/map.composable'
@@ -34,7 +35,8 @@ export default function useLuxTplProfileMapAdapter(): LuxTplProfileMapAdapter {
       const key = listen(
         map,
         'pointermove',
-        throttle((evt: MapBrowserEvent<PointerEvent>) => {
+        throttle((event: Event | BaseEvent) => {
+          const evt = event as MapBrowserEvent
           if (evt.dragging || drawStateActive.value) {
             return
           }
