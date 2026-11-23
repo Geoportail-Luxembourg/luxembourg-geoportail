@@ -8,6 +8,7 @@ import {
   computed,
   getCurrentInstance,
   onMounted,
+  ref,
   ShallowRef,
   shallowRef,
   watch,
@@ -56,7 +57,10 @@ const hasCloseListener = computed(
   () => getCurrentInstance()?.vnode?.props?.onClose
 ) // NB. useAttrs() not working as close event is defined with "emit"
 const profileData: ShallowRef<ProfileData | undefined> = shallowRef(undefined)
-const isLoading = computed(() => props.feature && !profileData.value)
+const loadFailed = ref(false)
+const isLoading = computed(
+  () => props.feature && !profileData.value && !loadFailed.value
+)
 const isDrawing = computed(() => !props.feature)
 const { highlightDistance, onHover, onOut } = useProfileMapHover(
   useLuxTplProfileMapAdapter(() => props.activatePositioning),
@@ -79,6 +83,7 @@ function featureLines() {
 }
 
 async function loadProfile() {
+  loadFailed.value = false
   if (!props.feature) {
     return
   }
@@ -88,6 +93,7 @@ async function loadProfile() {
     profileData.value = data
   } catch (error) {
     profileData.value = undefined
+    loadFailed.value = true
   }
 }
 
@@ -154,9 +160,11 @@ function exportCSV() {
     :message="
       isLoading
         ? t('Please wait, the profile is loading.')
-        : isDrawing
-          ? t('Draw a line on the map to display an elevation profile.')
-          : undefined
+        : loadFailed
+          ? t('The profile could not be loaded.')
+          : isDrawing
+            ? t('Draw a line on the map to display an elevation profile.')
+            : undefined
     "
     @hover:profile="onHover"
     @out:profile="onOut"

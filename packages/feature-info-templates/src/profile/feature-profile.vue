@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { onMounted, ref, shallowRef } from 'vue'
+import { onMounted, onUnmounted, ref, shallowRef } from 'vue'
 import LuxElevationProfile from './elevation-profile.vue'
 import {
   fetchProfile,
@@ -7,7 +7,7 @@ import {
   profileCsv,
   toProfileData,
 } from './profile'
-import type { ProfileData, ProfileJson } from './profile'
+import type { ProfileData } from './profile'
 import { useProfileMapHover } from './profile-map-hover'
 import type { FeatureJSON } from '../models'
 import { injectLuxTplContext } from '../context'
@@ -26,23 +26,32 @@ const { highlightDistance, onHover, onOut } = useProfileMapHover(
   profileData
 )
 
+const request = new AbortController()
+onUnmounted(() => request.abort())
+
 onMounted(async () => {
   if (!profileMapAdapter || !lines.length || !config.profileUrl) {
     return
   }
   message.value = t('Please wait, the profile is loading.')
-  const json: ProfileJson | undefined = await fetchProfile(config.profileUrl, {
-    geom: JSON.stringify(
-      lines.length === 1
-        ? { type: 'LineString', coordinates: lines[0] }
-        : { type: 'MultiLineString', coordinates: lines }
-    ),
-    id: props.feature.id,
-  }).catch(() => undefined)
-  if (json) {
+  try {
+    const json = await fetchProfile(
+      config.profileUrl,
+      {
+        geom: JSON.stringify(
+          lines.length === 1
+            ? { type: 'LineString', coordinates: lines[0] }
+            : { type: 'MultiLineString', coordinates: lines }
+        ),
+        id: props.feature.id,
+      },
+      { signal: request.signal }
+    )
     profileData.value = toProfileData(json)
+    message.value = undefined
+  } catch {
+    message.value = t('The profile could not be loaded.')
   }
-  message.value = undefined
 })
 
 function exportCsv() {
