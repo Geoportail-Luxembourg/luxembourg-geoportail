@@ -15,10 +15,11 @@ let markerOwner: symbol | undefined
 /**
  * Links a profile chart to its line on the map: pointing near the line
  * highlights the chart, hovering the chart moves the map marker. `lines` are
- * the line parts in EPSG:2169. Must be called from a component `setup()`.
+ * the line parts in EPSG:2169. Without `adapter` (a host without map), it does
+ * nothing. Must be called from a component `setup()`.
  */
 export function useProfileMapHover(
-  adapter: LuxTplProfileMapAdapter,
+  adapter: LuxTplProfileMapAdapter | undefined,
   lines: MaybeRefOrGetter<number[][][]>,
   profileData: MaybeRefOrGetter<ProfileData | undefined>
 ) {
@@ -44,10 +45,10 @@ export function useProfileMapHover(
   function setMarker(xy?: number[]) {
     if (xy) {
       markerOwner = self
-      adapter.setPosition(xy)
+      adapter?.setPosition(xy)
     } else if (markerOwner === self) {
       markerOwner = undefined
-      adapter.setPosition()
+      adapter?.setPosition()
     }
   }
 
@@ -60,7 +61,7 @@ export function useProfileMapHover(
     setMarker()
   }
 
-  const unlisten = adapter.onPointerMove((xy, resolution) => {
+  const unlisten = adapter?.onPointerMove((xy, resolution) => {
     const data = toValue(profileData)
     if (!data?.length || !sampleLengths.length) {
       return
@@ -78,7 +79,7 @@ export function useProfileMapHover(
   })
   // Before unmount, while the host's marker watchers still run.
   onBeforeUnmount(() => {
-    unlisten()
+    unlisten?.()
     onOut()
   })
 

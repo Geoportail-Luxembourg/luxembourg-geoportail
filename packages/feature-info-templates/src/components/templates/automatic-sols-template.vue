@@ -8,7 +8,6 @@ import {
   sortedAttributeEntries,
 } from './template-utilities'
 import InfoFeatureLayout from '../layouts/info-feature-layout.vue'
-import { injectLuxTplContext } from '../../context'
 import LuxFeatureProfile from '../../profile/feature-profile.vue'
 import { vLuxHtml } from '../../sanitize-html'
 
@@ -16,7 +15,6 @@ defineProps<{
   layers: FeatureInfoJSON
 }>()
 const { t, i18next } = useLuxTranslation('tooltips')
-const { profileMapAdapter } = injectLuxTplContext()
 </script>
 <template>
   <InfoFeatureLayout :layers="layers">
@@ -110,7 +108,7 @@ const { profileMapAdapter } = injectLuxTplContext()
             ></span>
           </span>
         </div>
-        <div v-if="layers.has_profile && profileMapAdapter">
+        <div v-if="layers.has_profile">
           <LuxFeatureProfile :feature="feature" />
         </div>
       </template>

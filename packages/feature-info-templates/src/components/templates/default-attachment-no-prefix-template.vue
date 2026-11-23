@@ -17,7 +17,7 @@ defineProps<{
   layers: FeatureInfoJSON
 }>()
 const { t, i18next } = useLuxTranslation('tooltips')
-const { config, profileMapAdapter } = injectLuxTplContext()
+const { config } = injectLuxTplContext()
 const DOWNLOAD_PDF_URL = config.downloadPdfUrl
 </script>
 <template>
@@ -78,7 +78,7 @@ const DOWNLOAD_PDF_URL = config.downloadPdfUrl
           </span>
         </div>
 
-        <div v-if="layers.has_profile && profileMapAdapter">
+        <div v-if="layers.has_profile">
           <LuxFeatureProfile :feature="feature" />
         </div>
       </template>

@@ -10,7 +10,7 @@ const props = defineProps<{
   layers: FeatureInfoJSON
 }>()
 
-const { config, profileMapAdapter } = injectLuxTplContext()
+const { config } = injectLuxTplContext()
 const DOWNLOAD_RESOURCE_URL = config.downloadResourceUrl
 const { t } = useLuxTranslation('tooltips')
 
@@ -43,7 +43,7 @@ function fid(feature: FeatureJSON) {
           </div>
         </div>
 
-        <LuxFeatureProfile v-if="profileMapAdapter" :feature="feature" />
+        <LuxFeatureProfile :feature="feature" />
       </template>
 
       <div v-else>

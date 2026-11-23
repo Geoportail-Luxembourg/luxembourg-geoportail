@@ -21,7 +21,7 @@ defineProps({
   },
 })
 const { t, i18next } = useLuxTranslation('tooltips')
-const { config, user, profileMapAdapter, featureLink } = injectLuxTplContext()
+const { config, user, featureLink } = injectLuxTplContext()
 
 function isNoSolarNorWaterLink(label: string, attributeEntry: AttributeEntry) {
   return (
@@ -145,7 +145,7 @@ function canAccessSolarEconomicCalculator() {
             </div>
           </div>
         </div>
-        <div v-if="layers.has_profile && profileMapAdapter">
+        <div v-if="layers.has_profile">
           <LuxFeatureProfile :feature="feature" />
         </div>
         <div v-if="!hasAttributes(feature)" class="no-print">
