@@ -39,6 +39,16 @@ export interface LuxTplConfig {
   historiqueUrl?: string
   /** Solar simulator (VITE_SOLAR_URL). */
   solarUrl?: string
+  /** State intranet parcel register (VITE_PF_URL). */
+  pfUrl?: string
+  /** Geoportail file server, for terms of use PDFs (VITE_FILES_URL). */
+  filesUrl?: string
+  /** Weather station widget (VITE_METEO_URL). */
+  meteoUrl?: string
+  /** Water level station pages (VITE_PEGEL_URL). */
+  pegelUrl?: string
+  /** Public transport lines and schedules (VITE_MOBILITEIT_URL). */
+  mobiliteitUrl?: string
   /** Bus schedule widget base URL (VITE_BUS_WIDGET_URL). */
   busWidgetUrl?: string
   /** Sketch/report PDF download base URL (VITE_DOWNLOAD_PDF_URL). */
