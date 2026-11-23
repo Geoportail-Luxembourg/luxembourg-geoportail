@@ -1,3 +1,8 @@
+<script lang="ts">
+/** The profile that last placed the shared map marker. */
+let markerOwner: symbol | undefined
+</script>
+
 <script setup lang="ts">
 import { onMounted, onUnmounted, ref, shallowRef } from 'vue'
 import LuxElevationProfile from './elevation-profile.vue'
@@ -55,13 +60,26 @@ onMounted(async () => {
   message.value = undefined
 })
 
+const self = Symbol()
+
+/** Places the marker, or clears it if this profile placed it last. */
+function setMarker(xy?: number[]) {
+  if (xy) {
+    markerOwner = self
+    mapAdapter.setPosition(xy)
+  } else if (markerOwner === self) {
+    markerOwner = undefined
+    mapAdapter.setPosition()
+  }
+}
+
 function onHover(point: ProfileDataEntry) {
-  mapAdapter.setPosition(mapPoint ?? [point.x, point.y])
+  setMarker(mapPoint ?? [point.x, point.y])
   mapPoint = undefined
 }
 
 function onOut() {
-  mapAdapter.setPosition()
+  setMarker()
 }
 
 const unlisten = mapAdapter.onPointerMove((xy, resolution) => {
@@ -74,7 +92,7 @@ const unlisten = mapAdapter.onPointerMove((xy, resolution) => {
     const data = profileData.value
     const i = sampleLengths.findIndex(along => along >= point[2])
     highlightDistance.value = data[i < 0 ? data.length - 1 : i].dist
-    mapAdapter.setPosition(mapPoint)
+    setMarker(mapPoint)
   } else if (highlightDistance.value !== undefined) {
     highlightDistance.value = undefined
     onOut()
