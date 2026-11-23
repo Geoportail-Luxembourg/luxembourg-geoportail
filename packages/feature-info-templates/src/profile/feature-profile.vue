@@ -7,6 +7,7 @@ let markerOwner: symbol | undefined
 import { onMounted, onUnmounted, ref, shallowRef } from 'vue'
 import LuxElevationProfile from './elevation-profile.vue'
 import {
+  fetchProfile,
   findClosestPoint,
   extractLineParts,
   profileCsv,
@@ -36,21 +37,14 @@ onMounted(async () => {
     return
   }
   message.value = t('Please wait, the profile is loading.')
-  const json: ProfileJson | undefined = await fetch(config.profileUrl, {
-    method: 'POST',
-    body: new URLSearchParams({
-      geom: JSON.stringify(
-        lines.length === 1
-          ? { type: 'LineString', coordinates: lines[0] }
-          : { type: 'MultiLineString', coordinates: lines }
-      ),
-      nbPoints: '100',
-      layers: 'dhm',
-      id: String(props.feature.id),
-    }),
-  })
-    .then(r => (r.ok ? r.json() : undefined))
-    .catch(() => undefined)
+  const json: ProfileJson | undefined = await fetchProfile(config.profileUrl, {
+    geom: JSON.stringify(
+      lines.length === 1
+        ? { type: 'LineString', coordinates: lines[0] }
+        : { type: 'MultiLineString', coordinates: lines }
+    ),
+    id: props.feature.id,
+  }).catch(() => undefined)
   if (json) {
     profileData.value = toProfileData(json)
     sampleLengths = profileData.value.map(
