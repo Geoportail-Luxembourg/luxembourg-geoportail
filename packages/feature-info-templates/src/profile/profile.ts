@@ -22,6 +22,39 @@ export interface ProfileDataEntry extends ProfileJsonEntry {
   elevationLoss: number
 }
 
+export interface ProfileQuery {
+  /** Stringified GeoJSON (Multi)LineString in EPSG:2169. */
+  geom: string
+  id?: string | number
+  /** Elevation models, `dhm` by default. */
+  layers?: string
+  /** Samples along the line (100 gives 101 points). */
+  nbPoints?: number
+}
+
+/** Posts a line to the geoportail `profile.json` service. */
+export async function fetchProfile(
+  url: string,
+  { geom, id, layers = 'dhm', nbPoints = 100 }: ProfileQuery,
+  init?: Pick<RequestInit, 'credentials' | 'signal'>
+): Promise<ProfileJson> {
+  const response = await fetch(url, {
+    ...init,
+    method: 'POST',
+    body: new URLSearchParams({
+      geom,
+      nbPoints: String(nbPoints),
+      layers,
+      id: String(id),
+    }),
+  })
+  if (!response.ok) {
+    const body = await response.text().catch(() => '')
+    throw new Error(`profile: HTTP ${response.status} ${body}`)
+  }
+  return response.json()
+}
+
 /** Adds the running elevation gain, loss and balance to each profile point. */
 export function toProfileData({ profile }: ProfileJson): ProfileData {
   let elevationGain = 0

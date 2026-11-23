@@ -1,8 +1,8 @@
-import type { ProfileJson } from '@geoportallux/feature-info-templates'
-import { fetchApi } from './api.service'
+import { fetchProfile } from '@geoportallux/feature-info-templates'
 import { createLogger } from '@/lib/logging/namespacedLogger'
 
 const PROFILE_URL = import.meta.env.VITE_PROFILE_URL
+const CREDENTIALS_ORIGIN = import.meta.env.VITE_CREDENTIALS_ORIGIN
 
 /**
  * Get the profile of a LineString geom
@@ -18,26 +18,14 @@ export async function fetchProfileJson(
   layers = 'dhm',
   nbPoints = 100
 ) {
-  const payload = { geom, nbPoints: nbPoints + '', layers, id: id + '' }
-  const response = await fetchApi(PROFILE_URL, payload, 'POST')
-
-  if (!response.ok) {
-    // Try to capture server response body for debugging
-    let text = ''
-    try {
-      text = await response.text()
-    } catch (e) {
-      // ignore
-    }
-    const { error: apiError } = createLogger('PROFILE')
-    apiError('[fetchProfileJson] non-ok response', {
-      status: response.status,
-      body: text,
-    })
+  try {
+    return await fetchProfile(
+      PROFILE_URL,
+      { geom, id, layers, nbPoints },
+      { credentials: CREDENTIALS_ORIGIN }
+    )
+  } catch (error) {
+    createLogger('PROFILE').error('[fetchProfileJson]', error)
     throw new Error('Error while trying to get profile')
   }
-
-  const json = <ProfileJson>await response.json()
-
-  return json
 }

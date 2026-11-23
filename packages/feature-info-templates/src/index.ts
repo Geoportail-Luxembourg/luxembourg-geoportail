@@ -65,6 +65,7 @@ export type { GetFeatureInfoQuery } from './feature-info-request'
 export { default as LuxElevationChart } from './profile/elevation-chart.vue'
 export { default as LuxElevationProfile } from './profile/elevation-profile.vue'
 export {
+  fetchProfile,
   toProfileData,
   profileCsv,
   extractLineParts,
@@ -76,4 +77,5 @@ export type {
   ProfileJsonEntry,
   ProfileData,
   ProfileDataEntry,
+  ProfileQuery,
 } from './profile/profile'
