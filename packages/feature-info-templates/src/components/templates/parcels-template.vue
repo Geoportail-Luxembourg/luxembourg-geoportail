@@ -305,7 +305,7 @@ function closePreviewMesurage() {
         >
           <a
             class="lux-btn inline-block mb-1"
-            :href="`https://xxpfo.intranet.etat.lu/xxpfoi/detail_parcelle.do?noParcelle=${feature.attributes.textstring}`"
+            :href="`${config.pfUrl ?? ''}/detail_parcelle.do?noParcelle=${feature.attributes.textstring}`"
             target="_blank"
             rel="noopener noreferrer"
             >{{ t('Ouvrir la PF') }}</a

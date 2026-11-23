@@ -31,21 +31,21 @@ const { config } = injectLuxTplContext()
       >
         <td v-if="feature.attributes.category_id === 404">
           <a
-            href="https://www.mobiliteit.lu/fr/horaires-et-lignes/tram/"
+            :href="`${config.mobiliteitUrl ?? ''}/fr/horaires-et-lignes/tram/`"
             target="_blank"
             >{{ feature.attributes.label }}</a
           >
         </td>
         <td v-if="feature.attributes.category_id === 403">
           <a
-            href="https://www.mobiliteit.lu/fr/horaires-et-lignes/trains/"
+            :href="`${config.mobiliteitUrl ?? ''}/fr/horaires-et-lignes/trains/`"
             target="_blank"
             >{{ feature.attributes.label }}</a
           >
         </td>
         <td v-if="(feature.attributes.category_id ?? 0) < 403">
           <a
-            :href="`https://www.mobiliteit.lu/fr/ligne/bus-${
+            :href="`${config.mobiliteitUrl ?? ''}/fr/ligne/bus-${
               feature.attributes.label
             }-${
               feature.attributes.category_id === 400
