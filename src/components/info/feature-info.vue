@@ -1,16 +1,13 @@
 <script setup lang="ts">
-import { ComponentPublicInstance, provide } from 'vue'
+import { ComponentPublicInstance } from 'vue'
 import { storeToRefs } from 'pinia'
 import { usePrintStore } from '@/stores/print.store'
 import { FeatureInfoJSON } from '@geoportallux/feature-info-templates'
 import {
   provideLuxTplContext,
   getTemplateComponent,
-  LUX_TPL_I18N,
 } from '@geoportallux/feature-info-templates'
-import useGeoportailLuxTplContext, {
-  getLuxTplI18n,
-} from '@/composables/info/lux-tpl-context.composable'
+import useGeoportailLuxTplContext from '@/composables/info/lux-tpl-context.composable'
 
 defineProps({
   content: {
@@ -19,10 +16,9 @@ defineProps({
   },
 })
 
-// Provide the dependency-injection context the templates rely on,
-// wiring it to the geoportail stores/environment and i18next.
+// Provide the dependency-injection context the templates rely on, wiring it
+// to the geoportail stores/environment (their i18n is provided app-wide).
 provideLuxTplContext(useGeoportailLuxTplContext())
-provide(LUX_TPL_I18N, getLuxTplI18n())
 
 // For print, save ref to element to access content in print composable
 const { featureInfoPrintableRef } = storeToRefs(usePrintStore())
