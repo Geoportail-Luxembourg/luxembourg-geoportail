@@ -16,19 +16,18 @@ import { useLuxTranslation } from '../i18n'
 const props = defineProps<{ feature: FeatureJSON }>()
 
 const { config, profileMapAdapter, exportFeature } = injectLuxTplContext()
-const mapAdapter = profileMapAdapter!
 const { t } = useLuxTranslation()
 const lines = extractLineParts(props.feature.geometry)
 const profileData = shallowRef<ProfileData>()
 const message = ref<string>()
 const { highlightDistance, onHover, onOut } = useProfileMapHover(
-  mapAdapter,
+  profileMapAdapter,
   lines,
   profileData
 )
 
 onMounted(async () => {
-  if (!lines.length || !config.profileUrl) {
+  if (!profileMapAdapter || !lines.length || !config.profileUrl) {
     return
   }
   message.value = t('Please wait, the profile is loading.')
@@ -47,9 +46,12 @@ onMounted(async () => {
 })
 
 function exportCsv() {
+  if (!profileMapAdapter || !profileData.value) {
+    return
+  }
   const a = document.createElement('a')
   a.href = URL.createObjectURL(
-    new Blob([profileCsv(profileData.value!, mapAdapter.toLonLat)], {
+    new Blob([profileCsv(profileData.value, profileMapAdapter.toLonLat)], {
       type: 'text/csv',
     })
   )
@@ -60,8 +62,10 @@ function exportCsv() {
 </script>
 
 <template>
-  <div v-if="lines.length" data-cy="featItemProfile">
+  <div v-if="lines.length">
     <LuxElevationProfile
+      v-if="profileMapAdapter"
+      data-cy="featItemProfile"
       :profileData="profileData"
       :message="message"
       :highlightDistance="highlightDistance"

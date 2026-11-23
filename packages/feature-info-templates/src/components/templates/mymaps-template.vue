@@ -9,7 +9,7 @@ defineProps<{
   layers: FeatureInfoJSON
 }>()
 const { t } = useLuxTranslation('tooltips')
-const { config, profileMapAdapter } = injectLuxTplContext()
+const { config } = injectLuxTplContext()
 </script>
 
 <template>
@@ -52,7 +52,7 @@ const { config, profileMapAdapter } = injectLuxTplContext()
         {{ feature.attributes.length }} Km<br
       /></span>
 
-      <LuxFeatureProfile v-if="profileMapAdapter" :feature="feature" />
+      <LuxFeatureProfile :feature="feature" />
       <img
         :src="
           getQRUrlForMyMaps(
