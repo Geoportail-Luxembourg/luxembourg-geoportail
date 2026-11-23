@@ -1,3 +1,5 @@
+import { existsSync } from 'node:fs'
+import { join } from 'node:path'
 import { describe, it, expect } from 'vitest'
 import { mount } from '@vue/test-utils'
 
@@ -26,6 +28,16 @@ describe('ElevationChart', () => {
       global,
     })
     expect(wrapper.find('img').exists()).toBe(true)
+  })
+
+  it('points the placeholder at an existing image', () => {
+    const wrapper = mount(ElevationChart, {
+      props: { profileData: undefined },
+      global,
+    })
+    const src = wrapper.find('img').attributes('src')!
+    // Vite serves it from the project root, which vitest runs in.
+    expect(existsSync(join(process.cwd(), new URL(src).pathname))).toBe(true)
   })
 
   it('displays the graph with profile data', () => {
