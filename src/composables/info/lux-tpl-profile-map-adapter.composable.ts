@@ -1,3 +1,4 @@
+import { MaybeRefOrGetter, toValue } from 'vue'
 import { storeToRefs } from 'pinia'
 import { MapBrowserEvent } from 'ol'
 import { listen, unlistenByKey } from 'ol/events'
@@ -13,9 +14,12 @@ import { throttle } from '@/services/utils'
 /**
  * The 2D map's part of the templates' elevation profile. Must be called from a
  * component `setup()`.
+ * @param activatePositioning Off, the marker is hidden and map pointer moves are ignored.
  */
-export default function useLuxTplProfileMapAdapter(): LuxTplProfileMapAdapter {
-  useProfilePosition()
+export default function useLuxTplProfileMapAdapter(
+  activatePositioning: MaybeRefOrGetter<boolean | undefined> = true
+): LuxTplProfileMapAdapter {
+  useProfilePosition(activatePositioning)
   const map = useMap().getOlMap()
   const { setPosition } = useProfilePositionStore()
   const { drawStateActive } = storeToRefs(useDrawStore())
@@ -37,7 +41,11 @@ export default function useLuxTplProfileMapAdapter(): LuxTplProfileMapAdapter {
         'pointermove',
         throttle((event: Event | BaseEvent) => {
           const evt = event as MapBrowserEvent
-          if (evt.dragging || drawStateActive.value) {
+          if (
+            evt.dragging ||
+            drawStateActive.value ||
+            toValue(activatePositioning) === false
+          ) {
             return
           }
           const view = map.getView()

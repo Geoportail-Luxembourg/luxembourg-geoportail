@@ -8,7 +8,6 @@ import {
   computed,
   getCurrentInstance,
   onMounted,
-  onUnmounted,
   ShallowRef,
   shallowRef,
   watch,
@@ -16,20 +15,21 @@ import {
 import { useTranslation } from 'i18next-vue'
 import { Feature } from 'ol'
 import { Geometry } from 'ol/geom'
-import { transform } from 'ol/proj'
+import GeoJSON from 'ol/format/GeoJSON'
 
 import {
   LuxElevationProfile,
+  extractLineParts,
+  useProfileMapHover,
   type ProfileData,
 } from '@geoportallux/feature-info-templates'
-import useProfilePosition from '@/composables/map/profile-position.composable'
-import { useProfilePositionStore } from '@/stores/profile-position.store'
+import useLuxTplProfileMapAdapter from '@/composables/info/lux-tpl-profile-map-adapter.composable'
+import useMap, { PROJECTION_LUX } from '@/composables/map/map.composable'
 import { DrawnFeature } from '@/services/ol-feature/ol-feature-drawn'
 import {
   exportFeatureService,
   FeatExport,
 } from '@/services/export-feature/export-feature.service'
-import { PROJECTION_LUX } from '@/composables/map/map.composable'
 
 const CSV_DEFAULT_FILENAME = 'mnt'
 
@@ -49,12 +49,8 @@ const props = withDefaults(
   }
 )
 
-const profilePosition = useProfilePosition(
-  undefined,
-  () => props.activatePositioning
-)
-const profilePositionStore = useProfilePositionStore()
 const { t } = useTranslation()
+const map = useMap().getOlMap()
 
 const hasCloseListener = computed(
   () => getCurrentInstance()?.vnode?.props?.onClose
@@ -62,6 +58,25 @@ const hasCloseListener = computed(
 const profileData: ShallowRef<ProfileData | undefined> = shallowRef(undefined)
 const isLoading = computed(() => props.feature && !profileData.value)
 const isDrawing = computed(() => !props.feature)
+const { highlightDistance, onHover, onOut } = useProfileMapHover(
+  useLuxTplProfileMapAdapter(() => props.activatePositioning),
+  // Re-read on each new profile: editing the line resets it.
+  () => (profileData.value ? featureLines() : []),
+  profileData
+)
+
+/** The feature's line parts in EPSG:2169, like the profile. */
+function featureLines() {
+  const geometry = props.feature?.getGeometry()
+  return geometry
+    ? extractLineParts(
+        new GeoJSON().writeGeometryObject(geometry, {
+          dataProjection: PROJECTION_LUX,
+          featureProjection: map.getView().getProjection(),
+        })
+      )
+    : []
+}
 
 async function loadProfile() {
   if (!props.feature) {
@@ -79,10 +94,6 @@ async function loadProfile() {
 onMounted(() => {
   // Force get profile data when mounted (eg. when user click on a another drawn line, must populate data)
   loadProfile()
-})
-
-onUnmounted(() => {
-  profilePositionStore.setPosition(undefined, undefined)
 })
 
 // watchEffect(() => {
@@ -123,10 +134,6 @@ watch(
   }
 )
 
-watch(profileData, profileData => {
-  profilePosition.profileData.value = profileData
-})
-
 function exportCSV() {
   props.feature &&
     exportFeatureService.export(
@@ -136,27 +143,13 @@ function exportCSV() {
       props.feature.label || CSV_DEFAULT_FILENAME
     )
 }
-
-function onHoverProfile<T extends { x: number; y: number }>(point: T) {
-  const coords = transform(
-    [point.x, point.y],
-    PROJECTION_LUX,
-    props.feature?.map.getView().getProjection()
-  )
-
-  profilePositionStore.setPosition(coords[0], coords[1])
-}
-
-function onOutProfile() {
-  profilePositionStore.setPosition(undefined, undefined)
-}
 </script>
 
 <template>
   <lux-elevation-profile
     data-cy="featItemProfile"
     :profileData="profileData"
-    :highlightDistance="profilePosition.highlightDistance.value"
+    :highlightDistance="highlightDistance"
     :enableExportCSV="enableExportCSV"
     :message="
       isLoading
@@ -165,8 +158,8 @@ function onOutProfile() {
           ? t('Draw a line on the map to display an elevation profile.')
           : undefined
     "
-    @hover:profile="onHoverProfile"
-    @out:profile="onOutProfile"
+    @hover:profile="onHover"
+    @out:profile="onOut"
     @csv="exportCSV"
   >
     <!-- Display close button only if there is a listener "onClose" in the parent -->

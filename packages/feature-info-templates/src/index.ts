@@ -64,6 +64,7 @@ export type { GetFeatureInfoQuery } from './feature-info-request'
 
 export { default as LuxElevationChart } from './profile/elevation-chart.vue'
 export { default as LuxElevationProfile } from './profile/elevation-profile.vue'
+export { useProfileMapHover } from './profile/profile-map-hover'
 export {
   fetchProfile,
   toProfileData,
