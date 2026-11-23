@@ -56,10 +56,13 @@ describe('toProfileData', () => {
 })
 
 describe('profileCsv', () => {
-  it('writes one row per point', () => {
-    const csv = profileCsv(toProfileData({ profile: [point(0, 100)] }), () => [
-      6, 49,
-    ])
-    expect(csv).toBe('dist,MNT,y,x,lon,lat\n0,100,0,0,6,49\n')
+  it('writes one row per point, columns matching the header', () => {
+    const csv = profileCsv(
+      toProfileData({
+        profile: [{ dist: 0, values: { dhm: 100 }, x: 70000, y: 80000 }],
+      }),
+      () => [6, 49]
+    )
+    expect(csv).toBe('dist,MNT,x,y,lon,lat\n0,100,70000,80000,6,49\n')
   })
 })

@@ -85,7 +85,7 @@ export function profileCsv(
   return data.reduce((csv, { dist, values, x, y }) => {
     const [lon, lat] = toLonLat([x, y])
     return `${csv}${dist},${values.dhm},${x},${y},${lon},${lat}\n`
-  }, 'dist,MNT,y,x,lon,lat\n')
+  }, 'dist,MNT,x,y,lon,lat\n')
 }
 
 /** The line parts of a geometry, collections flattened (as the 2D app's profile). */
