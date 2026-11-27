@@ -11,8 +11,8 @@ const props = defineProps<{
   measurement: FeatureMeasurement
 }>()
 
-const { config } = injectLuxTplContext()
-const urls = luxTplUrls(config.geoportalUrl)
+const { geoportalUrl } = injectLuxTplContext()
+const urls = luxTplUrls(geoportalUrl)
 const DOWNLOAD_PREVIEW_URL = urls.downloadPreviewUrl
 const DOWNLOAD_MEASUREMENT_URL = urls.downloadMeasurementUrl
 

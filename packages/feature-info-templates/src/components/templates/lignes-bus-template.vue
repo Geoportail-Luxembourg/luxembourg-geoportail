@@ -6,7 +6,7 @@ defineProps<{
   layers: FeatureInfoJSON
 }>()
 const { t } = useLuxTranslation('tooltips')
-const { config } = injectLuxTplContext()
+const { geoportalUrl } = injectLuxTplContext()
 </script>
 <template>
   <h1 class="lux-tpl-poi-title">
@@ -59,7 +59,7 @@ const { config } = injectLuxTplContext()
         <td>
           <!-- TODO: this link will not be interpreted by v4 yet as MyMaps has not been migrated -->
           <a
-            :href="`${config.geoportalUrl ?? ''}?map_id=${feature.attributes.map_id}`"
+            :href="`${geoportalUrl ?? ''}?map_id=${feature.attributes.map_id}`"
             target="_blank"
             >{{ feature.attributes.map_description }}</a
           >

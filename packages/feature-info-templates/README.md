@@ -56,9 +56,7 @@ Vue i18n plugin would clobber the host's global `$t`):
 
 ```ts
 provideLuxTplContext({
-  config: {
-    geoportalUrl: 'https://map.geoportail.lu/', // omit when the host is the geoportal
-  },
+  geoportalUrl: 'https://map.geoportail.lu/', // omit when the host is the geoportal
   user: computed(() => currentUser.value),
   notify: (message, type) => host.notify(message, type),
   profileMapAdapter: myProfileMapAdapter, // omit if the host has no profiles
@@ -161,7 +159,7 @@ from the root `.env*` files (`vite.config.ts` sets `envDir` to the repo root):
 
 Each var holds the full URL with its fixed path and query params; the template
 appends only the parts it interpolates (e.g. `VITE_DOWNLOAD_SKETCH_NEW_URL` +
-`&id=…`). Relative URLs are resolved against `config.geoportalUrl` and stay
+`&id=…`). Relative URLs are resolved against the context's `geoportalUrl` and stay
 relative without it. The solar economic calculator's role ids
 (`VITE_SOLAR_ECONOMIC_ALLOWED_ROLE_IDS`) come from the env too.
 

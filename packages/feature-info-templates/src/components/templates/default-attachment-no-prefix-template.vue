@@ -18,8 +18,8 @@ defineProps<{
   layers: FeatureInfoJSON
 }>()
 const { t, i18next } = useLuxTranslation('tooltips')
-const { config } = injectLuxTplContext()
-const urls = luxTplUrls(config.geoportalUrl)
+const { geoportalUrl } = injectLuxTplContext()
+const urls = luxTplUrls(geoportalUrl)
 const DOWNLOAD_PDF_URL = urls.downloadPdfUrl
 </script>
 <template>

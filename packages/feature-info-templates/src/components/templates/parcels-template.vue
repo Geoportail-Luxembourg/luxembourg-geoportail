@@ -14,8 +14,9 @@ const props = defineProps<{
   layers: FeatureInfoJSON
 }>()
 
-const { config, isThemeAvailable: isThemeAvailableCtx } = injectLuxTplContext()
-const urls = luxTplUrls(config.geoportalUrl)
+const { geoportalUrl, isThemeAvailable: isThemeAvailableCtx } =
+  injectLuxTplContext()
+const urls = luxTplUrls(geoportalUrl)
 const isThemeAvailable = (name: string) => isThemeAvailableCtx?.(name) ?? false
 const DOWNLOAD_MEASUREMENT_URL = urls.downloadMeasurementUrl
 const THUMBNAIL_MEASUREMENT_URL = urls.thumbnailMeasurementUrl

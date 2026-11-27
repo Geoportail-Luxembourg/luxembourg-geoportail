@@ -15,21 +15,16 @@ export interface LuxTplUser {
 }
 
 /**
- * Host-dependent values. The templates read their URLs from the root env
- * files (see `env.ts`); `geoportalUrl` is the base for the relative ones.
- */
-export interface LuxTplConfig {
-  /** 2D geoportal URL for map links (`?map_id=`) and relative URLs; unset, they stay relative to the host. */
-  geoportalUrl?: string
-}
-
-/**
  * The single dependency-injection surface the feature-info templates rely on.
  * Provided by the host via {@link provideLuxTplContext}, consumed by templates
  * via {@link injectLuxTplContext}.
  */
 export interface LuxTplContext {
-  config: LuxTplConfig
+  /**
+   * 2D geoportal URL, for map links (`?map_id=`) and as the base of the
+   * relative URLs from the env; unset, they stay relative to the host.
+   */
+  geoportalUrl?: string
   /** Currently authenticated user, or `null` when anonymous. Reactive. */
   user: Ref<LuxTplUser | null>
   /** Emit a notification/toast through the host's notification system. */
@@ -68,7 +63,6 @@ export const LUX_TPL_CONTEXT: InjectionKey<LuxTplContext> =
  * (rather than throwing) in isolation, e.g. in unit tests or Storybook.
  */
 const fallbackContext: LuxTplContext = {
-  config: {},
   user: ref(null),
   notify: () => {},
 }

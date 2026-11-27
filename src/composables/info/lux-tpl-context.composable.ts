@@ -75,7 +75,6 @@ export default function useGeoportailLuxTplContext(): LuxTplContext {
   const { themes } = storeToRefs(useThemeStore())
 
   return {
-    config: {},
     user: computed(() => {
       const u = currentUser.value
       return u ? { mail: u.mail, roleId: u.roleId } : null

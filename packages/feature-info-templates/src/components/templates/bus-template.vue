@@ -7,8 +7,8 @@ import { luxTplUrls } from '../../env'
 defineProps<{
   layers: FeatureInfoJSON
 }>()
-const { config } = injectLuxTplContext()
-const urls = luxTplUrls(config.geoportalUrl)
+const { geoportalUrl } = injectLuxTplContext()
+const urls = luxTplUrls(geoportalUrl)
 const BUS_WIDGET_URL = urls.busWidgetUrl
 </script>
 <template>

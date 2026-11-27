@@ -16,8 +16,8 @@ import { useLuxTranslation } from '../i18n'
 
 const props = defineProps<{ feature: FeatureJSON }>()
 
-const { config, profileMapAdapter, exportFeature } = injectLuxTplContext()
-const urls = luxTplUrls(config.geoportalUrl)
+const { geoportalUrl, profileMapAdapter, exportFeature } = injectLuxTplContext()
+const urls = luxTplUrls(geoportalUrl)
 const { t } = useLuxTranslation()
 const lines = extractLineParts(props.feature.geometry)
 const profileData = shallowRef<ProfileData>()

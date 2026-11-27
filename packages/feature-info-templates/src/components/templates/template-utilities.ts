@@ -225,7 +225,7 @@ export function formatDate(
 /**
  * Resolve a mymaps resource path against the legacy v3 API host.
  * @param resource The resource path or data URI
- * @param v3ApiHost The v3 API host base URL (from the host config)
+ * @param v3ApiHost The v3 API host base URL (from the env)
  */
 export function getMymapsPath(
   resource: string,
@@ -246,7 +246,7 @@ export function getMymapsPath(
 /**
  * Build the QR-code image URL for a mymaps map id.
  * @param mapId The mymaps map id
- * @param qrUrl The QR service base URL (from the host config)
+ * @param qrUrl The QR service base URL (from the env)
  */
 export function getQRUrlForMyMaps(
   mapId: string | undefined,

@@ -10,8 +10,8 @@ defineProps<{
   layers: FeatureInfoJSON
 }>()
 const { t } = useLuxTranslation('tooltips')
-const { config } = injectLuxTplContext()
-const urls = luxTplUrls(config.geoportalUrl)
+const { geoportalUrl } = injectLuxTplContext()
+const urls = luxTplUrls(geoportalUrl)
 </script>
 
 <template>
@@ -60,13 +60,13 @@ const urls = luxTplUrls(config.geoportalUrl)
           getQRUrlForMyMaps(
             feature.attributes.map_id as string,
             urls.qrUrl,
-            config.geoportalUrl
+            geoportalUrl
           )
         "
       /><br />
       <a
         class="fid-link no-print"
-        :href="`${config.geoportalUrl ?? ''}?map_id=${feature.attributes.map_id}`"
+        :href="`${geoportalUrl ?? ''}?map_id=${feature.attributes.map_id}`"
         target="_blank"
         >{{ t('Lien vers la carte') }}</a
       >

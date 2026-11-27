@@ -11,8 +11,8 @@ const props = defineProps<{
 }>()
 const layers = props.layers
 
-const { config, user, notify } = injectLuxTplContext()
-const urls = luxTplUrls(config.geoportalUrl)
+const { geoportalUrl, user, notify } = injectLuxTplContext()
+const urls = luxTplUrls(geoportalUrl)
 const mail: Ref<string> = ref('')
 const userMail = computed(() => user.value?.mail || '')
 mail.value = userMail.value

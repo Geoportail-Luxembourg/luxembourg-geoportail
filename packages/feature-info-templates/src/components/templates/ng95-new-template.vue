@@ -9,8 +9,8 @@ defineProps<{
   layers: FeatureInfoJSON
 }>()
 const { t } = useLuxTranslation('tooltips')
-const { config } = injectLuxTplContext()
-const urls = luxTplUrls(config.geoportalUrl)
+const { geoportalUrl } = injectLuxTplContext()
+const urls = luxTplUrls(geoportalUrl)
 const DOWNLOAD_SKETCH_NEW_URL = urls.downloadSketchNewUrl
 </script>
 
