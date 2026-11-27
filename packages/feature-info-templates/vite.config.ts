@@ -9,6 +9,8 @@ const require = createRequire(import.meta.url)
 // Note: there is deliberately no `@` → app-src alias here. The package must not
 // reach outside its own directory; a residual `@/...` import fails the build.
 export default defineConfig({
+  // The templates read their URLs from the app's env files, baked in at build time.
+  envDir: resolve(__dirname, '../..'),
   plugins: [
     vue(),
     dts({
