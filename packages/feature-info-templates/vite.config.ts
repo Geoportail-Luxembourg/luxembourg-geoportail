@@ -19,7 +19,7 @@ export default defineConfig({
       // Flatten `src/` out of the emitted tree so the declarations land at
       // dist/index.d.ts, where package.json `types`/`exports` point.
       entryRoot: 'src',
-      include: ['src/**/*.ts', 'src/**/*.vue'],
+      include: ['src/**/*.ts', 'src/**/*.vue', 'env.d.ts'],
     }),
   ],
   css: {
