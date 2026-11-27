@@ -11,7 +11,7 @@ import {
   sortedAttributeEntries,
 } from './template-utilities'
 import { injectLuxTplContext } from '../../context'
-import { luxTplUrls, solarEconomicAllowedRoleIds } from '../../env'
+import { solarEconomicAllowedRoleIds } from '../../env'
 import LuxFeatureProfile from '../../profile/feature-profile.vue'
 import { vLuxHtml } from '../../sanitize-html'
 
@@ -22,8 +22,7 @@ defineProps({
   },
 })
 const { t, i18next } = useLuxTranslation('tooltips')
-const { config, user, featureLink } = injectLuxTplContext()
-const urls = luxTplUrls(config.geoportalUrl)
+const { user, featureLink } = injectLuxTplContext()
 
 function isNoSolarNorWaterLink(label: string, attributeEntry: AttributeEntry) {
   return (
@@ -107,7 +106,7 @@ function canAccessSolarEconomicCalculator() {
               <a
                 data-cy="defaultTemplateSolarLink"
                 v-if="isSolarLink(layers.layerLabel, attributeEntry)"
-                :href="`${urls.solarUrl}?lng=${i18next.language !== 'lb' ? i18next.language : 'de'}`"
+                :href="`https://solar.klima-agence.lu/?lng=${i18next.language !== 'lb' ? i18next.language : 'de'}`"
                 target="_blank"
               >
                 <button class="lux-tpl-solarkataster-button">

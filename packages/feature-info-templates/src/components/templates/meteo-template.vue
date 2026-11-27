@@ -1,14 +1,9 @@
 <script setup lang="ts">
 import type { FeatureInfoJSON } from '../../models'
 import InfoFeatureLayout from '../layouts/info-feature-layout.vue'
-import { injectLuxTplContext } from '../../context'
-import { luxTplUrls } from '../../env'
 defineProps<{
   layers: FeatureInfoJSON
 }>()
-
-const { config } = injectLuxTplContext()
-const urls = luxTplUrls(config.geoportalUrl)
 </script>
 <template>
   <InfoFeatureLayout :layers="layers">
@@ -22,7 +17,7 @@ const urls = luxTplUrls(config.geoportalUrl)
         height="150"
         width="300"
         frameborder="0"
-        :src="`${urls.meteoUrl}&lid=${feature.attributes.sid}`"
+        :src="`https://dlr-web-daten1.aspdienste.de/cgi-bin/sinfoam.pl?c=92&nid=01&lid=${feature.attributes.sid}`"
       >
       </iframe>
     </template>

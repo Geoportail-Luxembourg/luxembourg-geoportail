@@ -3,10 +3,8 @@ import { useLuxTranslation } from '../../i18n'
 import type { FeatureInfoJSON } from '../../models'
 import InfoFeatureLayout from '../layouts/info-feature-layout.vue'
 import { injectLuxTplContext } from '../../context'
-import { luxTplUrls } from '../../env'
 
-const { config, notify } = injectLuxTplContext()
-const urls = luxTplUrls(config.geoportalUrl)
+const { notify } = injectLuxTplContext()
 
 defineProps<{
   layers: FeatureInfoJSON
@@ -15,11 +13,13 @@ const { t } = useLuxTranslation('tooltips')
 
 const orderAffaire = async function (numCommune: string, numMesurage: string) {
   const isIpv6 = location.search.includes('ipv6=true')
-  const urlBase = isIpv6 ? urls.shopIpv6OrderUrl : urls.shopOrderUrl
+  const urlBase = isIpv6
+    ? 'https://shop.app.geoportail.lu'
+    : 'https://shop.geoportail.lu'
 
-  const url = `${urlBase}&numCommune=${encodeURIComponent(
+  const url = `${urlBase}/Portail/commande/webservices/orderAffaireV3.jsp?numCommune=${encodeURIComponent(
     numCommune
-  )}&numMesurage=${encodeURIComponent(numMesurage)}`
+  )}&numMesurage=${encodeURIComponent(numMesurage)}&ticket=`
 
   try {
     const response = await fetch(url, {

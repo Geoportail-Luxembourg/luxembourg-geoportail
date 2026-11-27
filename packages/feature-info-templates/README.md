@@ -151,8 +151,8 @@ For the host's own profiles (drawings, routing), the parts are exported too:
 
 ## URLs
 
-`src/env.ts` reads every URL from the root `.env*` files (`vite.config.ts` sets
-`envDir` to the repo root):
+`src/env.ts` reads the environment-dependent URLs (geoportal backend services)
+from the root `.env*` files (`vite.config.ts` sets `envDir` to the repo root):
 
 - in the geoportail, which compiles the package from source, the values of the
   current mode apply (dev, e2e, staging);
@@ -160,10 +160,13 @@ For the host's own profiles (drawings, routing), the parts are exported too:
   Changing a URL for the 3D viewer therefore takes a package release.
 
 Each var holds the full URL with its fixed path and query params; the template
-appends only the parts it interpolates (e.g. `VITE_COMMANDE_PARCEL_URL` +
-`&ids=…&lang=…`). Relative URLs are resolved against `config.geoportalUrl`
-and stay relative without it. The solar economic calculator's role ids
+appends only the parts it interpolates (e.g. `VITE_DOWNLOAD_SKETCH_NEW_URL` +
+`&id=…`). Relative URLs are resolved against `config.geoportalUrl` and stay
+relative without it. The solar economic calculator's role ids
 (`VITE_SOLAR_ECONOMIC_ALLOWED_ROLE_IDS`) come from the env too.
+
+External URLs that are the same in every environment (commande, shop,
+mobiliteit, …) stay hardcoded in the templates.
 
 ## Styling contract
 

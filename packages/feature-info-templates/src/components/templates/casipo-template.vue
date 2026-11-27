@@ -95,10 +95,7 @@ async function generateRepport() {
             for="terms"
             v-html="
               t(
-                'En cochant cette case, l\'utilisateur déclare avoir lu, compris et accepté les <a target=\'_blank\' rel=\'noopener noreferrer\' href=\'{{url}}\'>conditions générales d\'utilisation </a>de ce site web',
-                {
-                  url: urls.casipoTermsUrl,
-                }
+                'En cochant cette case, l\'utilisateur déclare avoir lu, compris et accepté les <a target=\'_blank\' rel=\'noopener noreferrer\' href=\'https://files.geoportail.lu/Conditions_utilisation_CASIPO.pdf\'>conditions générales d\'utilisation </a>de ce site web'
               )
             "
           ></label>

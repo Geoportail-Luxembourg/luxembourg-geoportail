@@ -289,7 +289,7 @@ function closePreviewMesurage() {
         <div v-if="isThemeAvailable('go')">
           <a
             class="lux-btn inline-block mb-1"
-            :href="`${urls.shopExpressMesurageUrl}&ids=['${feature.attributes.textstring}']&lang=${i18next.language}`"
+            :href="`https://shop.geoportail.lu/Portail/express_mesurage/?ids=['${feature.attributes.textstring}']&camefrom=mapv3_go&lang=${i18next.language}`"
             target="_blank"
             rel="noopener noreferrer"
             >{{ t('Constitution de dossier de mesurage') }}</a
@@ -304,7 +304,7 @@ function closePreviewMesurage() {
         >
           <a
             class="lux-btn inline-block mb-1"
-            :href="`${urls.pfUrl}?noParcelle=${feature.attributes.textstring}`"
+            :href="`https://xxpfo.intranet.etat.lu/xxpfoi/detail_parcelle.do?noParcelle=${feature.attributes.textstring}`"
             target="_blank"
             rel="noopener noreferrer"
             >{{ t('Ouvrir la PF') }}</a
@@ -838,14 +838,14 @@ function closePreviewMesurage() {
         </div>
         <a
           class="lux-btn inline-block mb-1"
-          :href="`${urls.historiqueUrl}?id=${feature.attributes.textstring}`"
+          :href="`https://historique.geoportail.lu/?id=${feature.attributes.textstring}`"
           target="_blank"
           rel="noopener noreferrer"
           >{{ t('Historique de la parcelle') }}</a
         >
         <a
           class="lux-btn inline-block mb-1"
-          :href="`${urls.commandeParcelUrl}&ids=['${feature.attributes.textstring}']&lang=${i18next.language}`"
+          :href="`https://commande.geoportail.lu/?ids=['${feature.attributes.textstring}']&camefrom=mapv3&lang=${i18next.language}`"
           target="_blank"
           rel="noopener noreferrer"
           >{{ t('Commander un extrait') }}</a

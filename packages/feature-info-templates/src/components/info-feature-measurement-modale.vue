@@ -102,7 +102,7 @@ const downloadUrl = computed(() => {
           v-if="!measurement.is_downloadable"
           class="lux-btn ml-3"
           target="_blank"
-          :href="`${urls.commandeMeasurementUrl}&lang=${i18next.language}&ids=['${measurement.parcelId}']&remark=${measurement.description}`"
+          :href="`https://commande.geoportail.lu?&camefrom=mapv3&lang=${i18next.language}&documents=MESURAGE;EXTRAIT_MIXTE&ids=['${measurement.parcelId}']&remark=${measurement.description}`"
         >
           {{ t('Commander') }}
         </a>

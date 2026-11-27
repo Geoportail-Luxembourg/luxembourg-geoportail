@@ -15,45 +15,12 @@ export function resolveUrl(url: string | undefined, base?: string): string {
 export function luxTplUrls(base?: string) {
   return {
     casipoUrl: resolveUrl(import.meta.env.VITE_CASIPO_PROD_URL, base),
-    casipoTermsUrl: resolveUrl(import.meta.env.VITE_CASIPO_TERMS_URL, base),
     forageVirtuelUrl: resolveUrl(
       import.meta.env.VITE_FORAGE_VIRTUEL_PROD_URL,
       base
     ),
     pagUrl: resolveUrl(import.meta.env.VITE_PAG_PROD_URL, base),
-    pagTermsUrl: resolveUrl(import.meta.env.VITE_PAG_TERMS_URL, base),
     pdsUrl: resolveUrl(import.meta.env.VITE_PDS_PROD_URL, base),
-    shopOrderUrl: resolveUrl(import.meta.env.VITE_SHOP_ORDER_URL, base),
-    shopIpv6OrderUrl: resolveUrl(
-      import.meta.env.VITE_SHOP_IPV6_ORDER_URL,
-      base
-    ),
-    shopExpressMesurageUrl: resolveUrl(
-      import.meta.env.VITE_SHOP_EXPRESS_MESURAGE_URL,
-      base
-    ),
-    commandeParcelUrl: resolveUrl(
-      import.meta.env.VITE_COMMANDE_PARCEL_URL,
-      base
-    ),
-    commandeMeasurementUrl: resolveUrl(
-      import.meta.env.VITE_COMMANDE_MEASUREMENT_URL,
-      base
-    ),
-    historiqueUrl: resolveUrl(import.meta.env.VITE_HISTORIQUE_URL, base),
-    solarUrl: resolveUrl(import.meta.env.VITE_SOLAR_URL, base),
-    pfUrl: resolveUrl(import.meta.env.VITE_PF_URL, base),
-    meteoUrl: resolveUrl(import.meta.env.VITE_METEO_URL, base),
-    pegelUrl: resolveUrl(import.meta.env.VITE_PEGEL_URL, base),
-    mobiliteitTramUrl: resolveUrl(
-      import.meta.env.VITE_MOBILITEIT_TRAM_URL,
-      base
-    ),
-    mobiliteitTrainUrl: resolveUrl(
-      import.meta.env.VITE_MOBILITEIT_TRAIN_URL,
-      base
-    ),
-    mobiliteitBusUrl: resolveUrl(import.meta.env.VITE_MOBILITEIT_BUS_URL, base),
     busWidgetUrl: resolveUrl(import.meta.env.VITE_BUS_WIDGET_URL, base),
     downloadPdfUrl: resolveUrl(import.meta.env.VITE_DOWNLOAD_PDF_URL, base),
     downloadSketchUrl: resolveUrl(
