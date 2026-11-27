@@ -4,12 +4,11 @@ import InfoFeatureLayout from '../layouts/info-feature-layout.vue'
 import { useLuxTranslation } from '../../i18n'
 defineProps<{
   layers: FeatureInfoJSON
-  currentUrl?: string
 }>()
 const { t } = useLuxTranslation('tooltips')
 </script>
 <template>
-  <InfoFeatureLayout :layers="layers" :currentUrl="currentUrl">
+  <InfoFeatureLayout :layers="layers">
     <template #feature-content="{ feature }">
       <span>{{ t('Type') }}</span> :
       <span>{{ t('bat_' + feature.attributes.type) }}</span

@@ -7,7 +7,6 @@ import { injectLuxTplContext } from '../../context'
 
 defineProps<{
   layers: FeatureInfoJSON
-  currentUrl?: string
 }>()
 
 const { config } = injectLuxTplContext()
@@ -16,7 +15,7 @@ const { t } = useLuxTranslation('tooltips')
 </script>
 
 <template>
-  <InfoFeatureLayout :layers="layers" :currentUrl="currentUrl">
+  <InfoFeatureLayout :layers="layers">
     <template #layer-content>
       <a
         v-if="layers.features.length"

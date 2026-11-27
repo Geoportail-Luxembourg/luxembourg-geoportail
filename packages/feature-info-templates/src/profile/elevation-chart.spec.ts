@@ -1,3 +1,5 @@
+import { existsSync } from 'node:fs'
+import { join } from 'node:path'
 import { describe, it, expect } from 'vitest'
 import { mount } from '@vue/test-utils'
 
@@ -28,6 +30,16 @@ describe('ElevationChart', () => {
     expect(wrapper.find('img').exists()).toBe(true)
   })
 
+  it('points the placeholder at an existing image', () => {
+    const wrapper = mount(ElevationChart, {
+      props: { profileData: undefined },
+      global,
+    })
+    const src = wrapper.find('img').attributes('src')!
+    // Vite serves it from the project root, which vitest runs in.
+    expect(existsSync(join(process.cwd(), new URL(src).pathname))).toBe(true)
+  })
+
   it('displays the graph with profile data', () => {
     const profileData = toProfileData({
       profile: [point(0, 10), point(5, 20)],
@@ -56,10 +68,13 @@ describe('toProfileData', () => {
 })
 
 describe('profileCsv', () => {
-  it('writes one row per point', () => {
-    const csv = profileCsv(toProfileData({ profile: [point(0, 100)] }), () => [
-      6, 49,
-    ])
-    expect(csv).toBe('dist,MNT,y,x,lon,lat\n0,100,0,0,6,49\n')
+  it('writes one row per point, columns matching the header', () => {
+    const csv = profileCsv(
+      toProfileData({
+        profile: [{ dist: 0, values: { dhm: 100 }, x: 70000, y: 80000 }],
+      }),
+      () => [6, 49]
+    )
+    expect(csv).toBe('dist,MNT,x,y,lon,lat\n0,100,70000,80000,6,49\n')
   })
 })

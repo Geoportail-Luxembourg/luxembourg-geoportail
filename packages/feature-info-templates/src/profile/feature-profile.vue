@@ -2,96 +2,65 @@
 import { onMounted, onUnmounted, ref, shallowRef } from 'vue'
 import LuxElevationProfile from './elevation-profile.vue'
 import {
-  findClosestPoint,
+  fetchProfile,
   extractLineParts,
   profileCsv,
   toProfileData,
-  addLengthAlongLine,
 } from './profile'
-import type { ProfileData, ProfileDataEntry, ProfileJson } from './profile'
+import type { ProfileData } from './profile'
+import { useProfileMapHover } from './profile-map-hover'
 import type { FeatureJSON } from '../models'
 import { injectLuxTplContext } from '../context'
 import { useLuxTranslation } from '../i18n'
 
 const props = defineProps<{ feature: FeatureJSON }>()
-defineEmits<{
-  (e: 'export', payload: { feature: FeatureJSON; format: 'kml' | 'gpx' }): void
-}>()
 
-const { config, profileMapAdapter } = injectLuxTplContext()
-const mapAdapter = profileMapAdapter!
+const { config, profileMapAdapter, exportFeature } = injectLuxTplContext()
 const { t } = useLuxTranslation()
 const lines = extractLineParts(props.feature.geometry)
-const line = addLengthAlongLine(lines)
 const profileData = shallowRef<ProfileData>()
 const message = ref<string>()
-const highlightDistance = ref<number>()
-let sampleLengths: number[] = []
-let mapPoint: number[] | undefined
+const { highlightDistance, onHover, onOut } = useProfileMapHover(
+  profileMapAdapter,
+  lines,
+  profileData
+)
+
+const request = new AbortController()
+onUnmounted(() => request.abort())
 
 onMounted(async () => {
-  if (!lines.length || !config.profileUrl) {
+  if (!profileMapAdapter || !lines.length || !config.profileUrl) {
     return
   }
   message.value = t('Please wait, the profile is loading.')
-  const json: ProfileJson | undefined = await fetch(config.profileUrl, {
-    method: 'POST',
-    body: new URLSearchParams({
-      geom: JSON.stringify(
-        lines.length === 1
-          ? { type: 'LineString', coordinates: lines[0] }
-          : { type: 'MultiLineString', coordinates: lines }
-      ),
-      nbPoints: '100',
-      layers: 'dhm',
-      id: String(props.feature.id),
-    }),
-  })
-    .then(r => (r.ok ? r.json() : undefined))
-    .catch(() => undefined)
-  if (json) {
-    profileData.value = toProfileData(json)
-    sampleLengths = profileData.value.map(
-      p => findClosestPoint(line, [p.x, p.y]).point[2]
+  try {
+    const json = await fetchProfile(
+      config.profileUrl,
+      {
+        geom: JSON.stringify(
+          lines.length === 1
+            ? { type: 'LineString', coordinates: lines[0] }
+            : { type: 'MultiLineString', coordinates: lines }
+        ),
+        id: props.feature.id,
+      },
+      { signal: request.signal }
     )
+    profileData.value = toProfileData(json)
+    message.value = undefined
+  } catch {
+    message.value = t('The profile could not be loaded.')
   }
-  message.value = undefined
-})
-
-function onHover(point: ProfileDataEntry) {
-  mapAdapter.setPosition(mapPoint ?? [point.x, point.y])
-  mapPoint = undefined
-}
-
-function onOut() {
-  mapAdapter.setPosition()
-}
-
-const unlisten = mapAdapter.onPointerMove((xy, resolution) => {
-  if (!profileData.value) {
-    return
-  }
-  const { point, sqDist } = findClosestPoint(line, xy)
-  if (sqDist < (8 * resolution) ** 2) {
-    mapPoint = point.slice(0, 2)
-    const data = profileData.value
-    const i = sampleLengths.findIndex(along => along >= point[2])
-    highlightDistance.value = data[i < 0 ? data.length - 1 : i].dist
-    mapAdapter.setPosition(mapPoint)
-  } else if (highlightDistance.value !== undefined) {
-    highlightDistance.value = undefined
-    onOut()
-  }
-})
-onUnmounted(() => {
-  unlisten()
-  onOut()
 })
 
 function exportCsv() {
+  if (!profileMapAdapter || !profileData.value) {
+    return
+  }
   const a = document.createElement('a')
   a.href = URL.createObjectURL(
-    new Blob([profileCsv(profileData.value!, mapAdapter.toLonLat)], {
+    new Blob([profileCsv(profileData.value, profileMapAdapter.toLonLat)], {
       type: 'text/csv',
     })
   )
@@ -102,8 +71,10 @@ function exportCsv() {
 </script>
 
 <template>
-  <div v-if="lines.length" data-cy="featItemProfile">
+  <div v-if="lines.length">
     <LuxElevationProfile
+      v-if="profileMapAdapter"
+      data-cy="featItemProfile"
       :profileData="profileData"
       :message="message"
       :highlightDistance="highlightDistance"
@@ -111,16 +82,16 @@ function exportCsv() {
       @out:profile="onOut"
       @csv="exportCsv"
     />
-    <div>
+    <div v-if="exportFeature">
       <button
         class="lux-feature-info-export"
-        @click="$emit('export', { feature, format: 'kml' })"
+        @click="exportFeature(feature, 'kml')"
       >
         {{ t('Exporter KMl') }}
       </button>
       <button
         class="lux-feature-info-export"
-        @click="$emit('export', { feature, format: 'gpx' })"
+        @click="exportFeature(feature, 'gpx')"
       >
         {{ t('Exporter GPX') }}
       </button>

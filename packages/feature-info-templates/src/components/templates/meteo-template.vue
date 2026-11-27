@@ -1,13 +1,15 @@
 <script setup lang="ts">
 import type { FeatureInfoJSON } from '../../models'
 import InfoFeatureLayout from '../layouts/info-feature-layout.vue'
+import { injectLuxTplContext } from '../../context'
 defineProps<{
   layers: FeatureInfoJSON
-  currentUrl?: string
 }>()
+
+const { config } = injectLuxTplContext()
 </script>
 <template>
-  <InfoFeatureLayout :layers="layers" :currentUrl="currentUrl">
+  <InfoFeatureLayout :layers="layers">
     <template #feature-content="{ feature }">
       <h3>
         {{ feature.attributes.stationsname }} {{ feature.attributes.sid }}
@@ -18,7 +20,7 @@ defineProps<{
         height="150"
         width="300"
         frameborder="0"
-        :src="`https://dlr-web-daten1.aspdienste.de/cgi-bin/sinfoam.pl?c=92&nid=01&lid=${feature.attributes.sid}`"
+        :src="`${config.meteoUrl ?? ''}?c=92&nid=01&lid=${feature.attributes.sid}`"
       >
       </iframe>
     </template>

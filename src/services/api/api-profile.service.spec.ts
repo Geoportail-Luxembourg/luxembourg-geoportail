@@ -1,56 +1,45 @@
-import { describe, it, expect, vi, beforeEach, MockedFunction } from 'vitest'
+import { describe, it, expect, vi, afterEach } from 'vitest'
 import { fetchProfileJson } from './api-profile.service'
-import { fetchApi } from './api.service'
-
-vi.mock('./api.service', () => ({
-  fetchApi: vi.fn(),
-}))
 
 describe('Fetch Profile Service', () => {
-  const mockFetchApi = fetchApi as MockedFunction<typeof fetchApi>
   const PROFILE_URL = import.meta.env.VITE_PROFILE_URL
+  const mockGeom =
+    '{"type":"LineString","coordinates":[[102,0],[103,1],[104,0],[105,1]]}'
 
-  beforeEach(() => {
-    vi.clearAllMocks()
+  afterEach(() => {
+    vi.unstubAllGlobals()
   })
 
-  it('should return the JSON response when fetchApi resolves successfully', async () => {
-    const mockId = 123
-    const mockGeom =
-      '{"type":"LineString","coordinates":[[102,0],[103,1],[104,0],[105,1]]}'
-    const mockResponse = <Response>{
-      ok: true,
-      json: async () => ({
-        someKey: 'someValue',
-      }),
-    }
-    mockFetchApi.mockResolvedValueOnce(mockResponse)
+  it('posts the line to the profile service and returns its JSON', async () => {
+    const fetchMock = vi
+      .fn()
+      .mockResolvedValue(
+        new Response('{"someKey":"someValue"}', { status: 200 })
+      )
+    vi.stubGlobal('fetch', fetchMock)
 
-    const result = await fetchProfileJson(mockGeom, mockId, 'dhm', 50)
-    expect(mockFetchApi).toHaveBeenCalledWith(
-      PROFILE_URL,
-      {
-        geom: mockGeom,
-        nbPoints: '50',
-        layers: 'dhm',
-        id: mockId + '',
-      },
-      'POST'
-    )
+    const result = await fetchProfileJson(mockGeom, 123, 'dhm', 50)
+
+    const [url, init] = fetchMock.mock.calls[0]
+    expect(url).toBe(PROFILE_URL)
+    expect(init.method).toBe('POST')
+    expect(Object.fromEntries(init.body)).toEqual({
+      geom: mockGeom,
+      nbPoints: '50',
+      layers: 'dhm',
+      id: '123',
+    })
     expect(result).toEqual({ someKey: 'someValue' })
   })
 
   it('should throw an error when the response is not ok', async () => {
-    const mockId = 123
-    const mockGeom =
-      '{"type":"LineString","coordinates":[[102,0],[103,1],[104,0],[105,1]]}'
-    const mockResponse = <Response>{
-      ok: false,
-      json: async () => ({}),
-    }
+    vi.stubGlobal(
+      'fetch',
+      vi.fn().mockResolvedValue(new Response('boom', { status: 500 }))
+    )
+    vi.spyOn(console, 'error').mockImplementation(() => {})
 
-    mockFetchApi.mockResolvedValueOnce(mockResponse)
-    await expect(fetchProfileJson(mockGeom, mockId)).rejects.toThrow(
+    await expect(fetchProfileJson(mockGeom, 123)).rejects.toThrow(
       'Error while trying to get profile'
     )
   })

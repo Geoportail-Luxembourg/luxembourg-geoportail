@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import type { FeatureInfoJSON, FeatureJSON } from '../../models'
+import type { FeatureInfoJSON } from '../../models'
 import InfoFeatureLayout from '../layouts/info-feature-layout.vue'
 import { useLuxTranslation } from '../../i18n'
 import {
@@ -9,21 +9,15 @@ import {
   showAttributesByLang,
   sortedAttributeEntries,
 } from './template-utilities'
-import { injectLuxTplContext } from '../../context'
 import LuxFeatureProfile from '../../profile/feature-profile.vue'
 import { vLuxHtml } from '../../sanitize-html'
 defineProps<{
   layers: FeatureInfoJSON
-  currentUrl?: string
-}>()
-defineEmits<{
-  (e: 'export', payload: { feature: FeatureJSON; format: 'kml' | 'gpx' }): void
 }>()
 const { t, i18next } = useLuxTranslation('tooltips')
-const { profileMapAdapter } = injectLuxTplContext()
 </script>
 <template>
-  <InfoFeatureLayout :layers="layers" :currentUrl="currentUrl">
+  <InfoFeatureLayout :layers="layers">
     <template #feature-content="{ feature }">
       <h4 v-if="feature.attributes.label">
         {{ t(feature.attributes.label) }}
@@ -58,14 +52,8 @@ const { profileMapAdapter } = injectLuxTplContext()
             </div>
           </span>
         </div>
-        <div v-if="layers.has_profile && profileMapAdapter">
-          <LuxFeatureProfile
-            :feature="feature"
-            @export="
-              (payload: { feature: FeatureJSON; format: 'kml' | 'gpx' }) =>
-                $emit('export', payload)
-            "
-          />
+        <div v-if="layers.has_profile">
+          <LuxFeatureProfile :feature="feature" />
         </div>
       </template>
       <div v-else>

@@ -2,15 +2,11 @@
 import { useLuxTranslation } from '../../i18n'
 import { ref, computed } from 'vue'
 import type { Ref } from 'vue'
-import type { FeatureInfoJSON, FeatureJSON } from '../../models'
+import type { FeatureInfoJSON } from '../../models'
 import { injectLuxTplContext } from '../../context'
 
 const props = defineProps<{
   layers: FeatureInfoJSON
-  currentUrl?: string
-}>()
-defineEmits<{
-  (e: 'export', payload: { feature: FeatureJSON; format: 'kml' | 'gpx' }): void
 }>()
 const layers = props.layers
 
@@ -98,7 +94,10 @@ async function generateRepport() {
             for="terms"
             v-html="
               t(
-                'En cochant cette case, l\'utilisateur déclare avoir lu, compris et accepté les <a target=\'_blank\' rel=\'noopener noreferrer\' href=\'https://files.geoportail.lu/Conditions_utilisation_CASIPO.pdf\'>conditions générales d\'utilisation </a>de ce site web'
+                'En cochant cette case, l\'utilisateur déclare avoir lu, compris et accepté les <a target=\'_blank\' rel=\'noopener noreferrer\' href=\'{{url}}\'>conditions générales d\'utilisation </a>de ce site web',
+                {
+                  url: `${config.filesUrl ?? ''}/Conditions_utilisation_CASIPO.pdf`,
+                }
               )
             "
           ></label>

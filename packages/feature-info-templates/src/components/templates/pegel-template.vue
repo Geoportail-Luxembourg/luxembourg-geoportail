@@ -2,15 +2,17 @@
 import type { FeatureInfoJSON } from '../../models'
 import { getTrustedUrl } from './template-utilities'
 import InfoFeatureLayout from '../layouts/info-feature-layout.vue'
+import { injectLuxTplContext } from '../../context'
 
 defineProps<{
   layers: FeatureInfoJSON
-  currentUrl?: string
 }>()
+
+const { config } = injectLuxTplContext()
 </script>
 
 <template>
-  <InfoFeatureLayout :layers="layers" :currentUrl="currentUrl">
+  <InfoFeatureLayout :layers="layers">
     <template #feature-content="{ feature }">
       <h3>{{ feature.attributes.Nom }}</h3>
       <iframe
@@ -19,9 +21,7 @@ defineProps<{
         frameborder="0"
         :src="
           getTrustedUrl(
-            'https://geoportail.eau.etat.lu/pdf/112/' +
-              feature.attributes.Nom +
-              '.html'
+            `${config.pegelUrl ?? ''}/` + feature.attributes.Nom + '.html'
           )
         "
       ></iframe>

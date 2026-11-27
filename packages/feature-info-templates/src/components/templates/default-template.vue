@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import type { AttributeEntry, FeatureInfoJSON, FeatureJSON } from '../../models'
+import type { AttributeEntry, FeatureInfoJSON } from '../../models'
 import { useLuxTranslation } from '../../i18n'
 import {
   hasAttributes,
@@ -19,16 +19,9 @@ defineProps({
     type: Object as () => FeatureInfoJSON,
     required: true,
   },
-  currentUrl: {
-    type: String,
-    required: false,
-  },
 })
-defineEmits<{
-  (e: 'export', payload: { feature: FeatureJSON; format: 'kml' | 'gpx' }): void
-}>()
 const { t, i18next } = useLuxTranslation('tooltips')
-const { config, user, profileMapAdapter } = injectLuxTplContext()
+const { config, user, featureLink } = injectLuxTplContext()
 
 function isNoSolarNorWaterLink(label: string, attributeEntry: AttributeEntry) {
   return (
@@ -115,7 +108,7 @@ function canAccessSolarEconomicCalculator() {
               <a
                 data-cy="defaultTemplateSolarLink"
                 v-if="isSolarLink(layers.layerLabel, attributeEntry)"
-                :href="`https://solar.klima-agence.lu/?lng=${i18next.language !== 'lb' ? i18next.language : 'de'}`"
+                :href="`${config.solarUrl ?? ''}/?lng=${i18next.language !== 'lb' ? i18next.language : 'de'}`"
                 target="_blank"
               >
                 <button class="lux-tpl-solarkataster-button">
@@ -152,25 +145,19 @@ function canAccessSolarEconomicCalculator() {
             </div>
           </div>
         </div>
-        <div v-if="layers.has_profile && profileMapAdapter">
-          <LuxFeatureProfile
-            :feature="feature"
-            @export="
-              (payload: { feature: FeatureJSON; format: 'kml' | 'gpx' }) =>
-                $emit('export', payload)
-            "
-          />
+        <div v-if="layers.has_profile">
+          <LuxFeatureProfile :feature="feature" />
         </div>
         <div v-if="!hasAttributes(feature)" class="no-print">
           <span>{{
             t('Aucune information disponible pour cette couche')
           }}</span>
         </div>
-        <div v-if="currentUrl && hasValidFID(feature)" class="no-print">
+        <div v-if="featureLink && hasValidFID(feature)" class="no-print">
           <span
             ><a
               data-cy="defaultTemplateLink"
-              :href="currentUrl + '&fid=' + feature.fid"
+              :href="featureLink(feature.fid)"
               target="_blank"
               >{{ t('Lien direct vers cet objet') }}</a
             ></span

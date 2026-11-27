@@ -1,28 +1,13 @@
 <script setup lang="ts">
-import { ComponentPublicInstance, provide } from 'vue'
+import { ComponentPublicInstance } from 'vue'
 import { storeToRefs } from 'pinia'
 import { usePrintStore } from '@/stores/print.store'
-import { Feature } from 'ol'
-import { Geometry } from 'ol/geom'
-import GeoJSON from 'ol/format/GeoJSON'
-import {
-  FeatureInfoJSON,
-  FeatureJSON,
-} from '@geoportallux/feature-info-templates'
-import {
-  exportFeatureService,
-  ExportFormat,
-  FeatExport,
-} from '@/services/export-feature/export-feature.service'
-import useMap, { PROJECTION_LUX } from '@/composables/map/map.composable'
+import { FeatureInfoJSON } from '@geoportallux/feature-info-templates'
 import {
   provideLuxTplContext,
   getTemplateComponent,
-  LUX_TPL_I18N,
 } from '@geoportallux/feature-info-templates'
-import useGeoportailLuxTplContext, {
-  getLuxTplI18n,
-} from '@/composables/info/lux-tpl-context.composable'
+import useGeoportailLuxTplContext from '@/composables/info/lux-tpl-context.composable'
 
 defineProps({
   content: {
@@ -30,40 +15,15 @@ defineProps({
     required: true,
   },
 })
-const currentUrl = window.location.href
-const map = useMap().getOlMap()
 
-// Provide the dependency-injection context the templates rely on,
-// wiring it to the geoportail stores/environment and i18next.
+// Provide the dependency-injection context the templates rely on, wiring it
+// to the geoportail stores/environment (their i18n is provided app-wide).
 provideLuxTplContext(useGeoportailLuxTplContext())
-provide(LUX_TPL_I18N, getLuxTplI18n())
 
 // For print, save ref to element to access content in print composable
 const { featureInfoPrintableRef } = storeToRefs(usePrintStore())
 const setPrintableRef = (el: Element | ComponentPublicInstance | null) => {
   featureInfoPrintableRef.value = el ?? undefined
-}
-
-function onExport(payload: { feature: FeatureJSON; format: ExportFormat }) {
-  if (payload.feature.attributes && !payload.feature.properties) {
-    payload.feature.properties = payload.feature
-      .attributes as unknown as Record<string, unknown>
-  }
-  const olFeature = new GeoJSON().readFeature(payload.feature, {
-    dataProjection: PROJECTION_LUX,
-    featureProjection: map.getView().getProjection(),
-  })
-  exportFeatureService.export(
-    map,
-    payload.format,
-    <FeatExport>[<Feature<Geometry>>olFeature],
-    payload.feature.attributes.name || payload.format,
-    true
-  )
-}
-function onExportWrapper(...args: unknown[]) {
-  const [payload] = args
-  onExport(payload as { feature: FeatureJSON; format: 'kml' | 'gpx' })
 }
 </script>
 <template>
@@ -95,8 +55,6 @@ function onExportWrapper(...args: unknown[]) {
       :key="index"
       :is="getTemplateComponent(layers.template)"
       :layers="layers"
-      :currentUrl="currentUrl"
-      @export="onExportWrapper"
     />
   </div>
 </template>

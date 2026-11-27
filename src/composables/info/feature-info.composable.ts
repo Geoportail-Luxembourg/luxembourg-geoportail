@@ -1,14 +1,16 @@
 import useMap, {
   PROJECTION_LUX,
-  PROJECTION_WEBMERCATOR,
   PROJECTION_WGS84,
 } from '@/composables/map/map.composable'
 import { listen } from 'ol/events'
 import { featureInfoLayerService } from '@/services/info/feature-info-layer.service'
 import { useFeatureInfoStore } from '@/stores/feature-info.store'
 import {
+  buildGetFeatureInfoParams,
+  fetchFeatureInfo,
   FeatureInfoJSON,
   FeatureJSON,
+  normalizeFeatureInfo,
 } from '@geoportallux/feature-info-templates'
 import { MapBrowserEvent } from 'ol'
 import { ref, watch, watchEffect } from 'vue'
@@ -26,13 +28,15 @@ import { useMapStore } from '@/stores/map.store'
 import { useLocationInfoStore } from '@/stores/location-info.store'
 import { useLidarStore } from '@/stores/lidar.store'
 import { useElevationProfileStore } from '@/stores/elevation-profile.store'
-import { getFeatureInfoJson } from '@/services/api/api-feature-info.service'
 import { OLLAYER_PROP_METADATA } from '@/services/ol-layer/ol-layer.model'
 import { olLayerSearchService } from '@/services/ol-layer/ol-layer-search.service'
 import { isParcelLayerIdent } from '@/composables/layers/layers.composable'
 import ImageLayer from 'ol/layer/Image'
 import { ImageWMS } from 'ol/source'
 import { isInActiveMode } from './info.utils'
+
+const INFO_SERVICE_URL = import.meta.env.VITE_GET_INFO_SERVICE_URL
+const CREDENTIALS = import.meta.env.VITE_CREDENTIALS_ORIGIN
 
 export default function useFeatureInfo() {
   const map = useMap().getOlMap()
@@ -219,32 +223,31 @@ export default function useFeatureInfo() {
     const fids = fid.split(',')
     for (const curFid of fids) {
       const fId = curFid.split('_')[0]
-      const layersList = [fId]
-      const layerLabel: { [key: string]: string } = {}
 
       try {
-        if (layersList.length > 0) {
-          setLoading(true)
-          map.getViewport().style.cursor = 'wait'
+        setLoading(true)
+        map.getViewport().style.cursor = 'wait'
 
-          const data = await getFeatureInfoJson({ fid: curFid })
+        const node = findById(fId)
+        const data = normalizeFeatureInfo(
+          await fetchFeatureInfo(
+            INFO_SERVICE_URL,
+            { fid: curFid },
+            CREDENTIALS
+          ),
+          () => node?.layers as string | undefined
+        )
 
-          let openInfoPanel = false
-          if (screenSizeIsAtLeast('sm')) {
-            openInfoPanel = true
-            setDisplayStarOnMobile(false)
-          } else {
-            setDisplayStarOnMobile(true)
-          }
+        let openInfoPanel = false
+        if (screenSizeIsAtLeast('sm')) {
+          openInfoPanel = true
+          setDisplayStarOnMobile(false)
+        } else {
+          setDisplayStarOnMobile(true)
+        }
 
-          const node = findById(fId)
-          if (node) {
-            layerLabel[fId] = node.layers as string
-          }
-
-          if (data.length > 0) {
-            showInfo(true, data, layerLabel, openInfoPanel, true)
-          }
+        if (data.length > 0) {
+          showInfo(true, data, openInfoPanel, true)
         }
       } catch (error) {
         done()
@@ -296,44 +299,30 @@ export default function useFeatureInfo() {
     layerLabel: { [key: string]: string },
     shiftKey: boolean,
     fit: boolean,
-    fixedBuffers?: { big: number; small: number },
     keepHighlightOnEmpty = false
   ): Promise<boolean> {
-    const resolution = map.getView().getResolution() || 1
-    const bigBuffer = fixedBuffers ? fixedBuffers.big : 20 * resolution
-    const smallBuffer = fixedBuffers ? fixedBuffers.small : 1 * resolution
-
-    const big_box = [
-      [pointLux[0] - bigBuffer, pointLux[1] + bigBuffer],
-      [pointLux[0] + bigBuffer, pointLux[1] - bigBuffer],
-    ]
-    const small_box = [
-      [pointLux[0] - smallBuffer, pointLux[1] + smallBuffer],
-      [pointLux[0] + smallBuffer, pointLux[1] - smallBuffer],
-    ]
-
     setLoading(true)
     map.getViewport().style.cursor = 'wait'
 
+    const view = map.getView()
     const size = map.getSize() || [0, 0]
-    const extent = map.getView().calculateExtent(size)
-    const params = {
-      layers: layersList.join(),
-      box1: big_box.join(),
-      box2: small_box.join(),
-      srs: PROJECTION_WEBMERCATOR,
-      zoom: map.getView().getZoom(),
-      BBOX: extent.join(','),
-      WIDTH: size[0],
-      HEIGHT: size[1],
-      X: Math.round(pixel[0]),
-      Y: Math.round(pixel[1]),
-    }
+    const params = buildGetFeatureInfoParams({
+      layers: layersList,
+      point: pointLux,
+      coordinate: transform(pointLux, PROJECTION_LUX, view.getProjection()),
+      resolution: view.getResolution() || 1,
+      size,
+      pixel,
+      extent: view.calculateExtent(size),
+    })
 
     try {
-      const data = await getFeatureInfoJson(params)
+      const data = normalizeFeatureInfo(
+        await fetchFeatureInfo(INFO_SERVICE_URL, params, CREDENTIALS),
+        id => layerLabel[id]
+      )
       if (data.length > 0) {
-        showInfo(shiftKey, data, layerLabel, true, fit)
+        showInfo(shiftKey, data, true, fit)
         return true
       } else {
         if (!keepHighlightOnEmpty) {
@@ -364,13 +353,11 @@ export default function useFeatureInfo() {
   function showInfo(
     shiftKey: boolean,
     data: FeatureInfoJSON[],
-    layerLabel: { [key: string]: string },
     openInfoPanel: boolean,
     fit: boolean
   ) {
     if (shiftKey) {
       data.forEach(item => {
-        item['layerLabel'] = layerLabel[item.layer]
         let found = false
         for (let iLayer = 0; iLayer < responses.value.length; iLayer++) {
           if (responses.value[iLayer].layer === item.layer) {
@@ -406,9 +393,6 @@ export default function useFeatureInfo() {
       })
     } else {
       responses.value = data
-      responses.value.forEach(item => {
-        item['layerLabel'] = layerLabel[item.layer]
-      })
     }
     const content: FeatureInfoJSON[] = responses.value.filter(item => {
       return 'features' in item && item.features.length > 0
@@ -534,7 +518,6 @@ export default function useFeatureInfo() {
       layerLabel,
       false,
       true,
-      undefined,
       true
     )
   }

@@ -3,7 +3,6 @@ import type { FeatureInfoJSON } from '../../models'
 import { useLuxTranslation } from '../../i18n'
 defineProps<{
   layers: FeatureInfoJSON
-  currentUrl?: string
 }>()
 const { t, i18next } = useLuxTranslation('tooltips')
 </script>

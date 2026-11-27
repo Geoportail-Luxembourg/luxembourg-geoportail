@@ -26,7 +26,7 @@ const mockFeatureWithData = <DrawnFeature>(<unknown>{
   getProfile: vi.fn(() => Promise.resolve(mockProfileData)),
 })
 const expectedCsvContent =
-  'dist,MNT,y,x,lon,lat\n0,100,1000,2000,1100,2100\n10,150,1500,2500,1600,2600\n'
+  'dist,MNT,x,y,lon,lat\n0,100,1000,2000,1100,2100\n10,150,1500,2500,1600,2600\n'
 
 describe('ExportFeatureProfileCsv', () => {
   describe('#export', () => {

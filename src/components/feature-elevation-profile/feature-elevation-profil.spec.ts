@@ -37,6 +37,7 @@ const global: GlobalMountOptions | undefined = {
 
 const mockedFeatureWithData = <DrawnFeature>(<unknown>{
   getProfile: vi.fn(() => Promise.resolve(datasetFixtures)),
+  getGeometry: () => undefined,
   profileData: undefined,
   map: { getView: () => ({ getProjection: () => 'EPSG:4326' }) },
   label: 'Feature Label with data',
@@ -64,6 +65,7 @@ vi.mock('@/composables/map/map.composable', () => ({
     getOlMap: () => ({
       addLayer: vi.fn(),
       addFeatureLayer: vi.fn(),
+      addEventListener: vi.fn(),
       getView: () => ({ getProjection: vi.fn() }),
     }),
   }),
@@ -72,11 +74,7 @@ vi.mock('@/composables/map/map.composable', () => ({
 }))
 
 vi.mock('@/composables/map/profile-position.composable', () => ({
-  default: () => ({
-    constructProfileLine: vi.fn(),
-    profileData: { value: undefined },
-    highlightDistance: { value: undefined },
-  }),
+  default: vi.fn(),
 }))
 
 describe('FeatureElevationProfile', () => {
@@ -101,6 +99,22 @@ describe('FeatureElevationProfile', () => {
     })
 
     expect(wrapper.text()).toContain('Please wait, the profile is loading.')
+  })
+
+  it('Display an error message when the profile cannot be loaded', async () => {
+    const wrapper = mount(FeatureElevationProfile, {
+      props: {
+        feature: <DrawnFeature>(<unknown>{
+          getProfile: vi.fn(() => Promise.reject(new Error('offline'))),
+          profileData: undefined,
+        }),
+      },
+      global,
+    })
+    await flushPromises()
+
+    expect(wrapper.text()).toContain('The profile could not be loaded.')
+    expect(wrapper.text()).not.toContain('Please wait')
   })
 
   it('Does not display a close button if there is no listerner for "onClose"', () => {

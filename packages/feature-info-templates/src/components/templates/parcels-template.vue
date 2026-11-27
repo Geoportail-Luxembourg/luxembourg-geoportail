@@ -11,15 +11,15 @@ import LuxTplIcon from '../common/lux-tpl-icon.vue'
 
 const props = defineProps<{
   layers: FeatureInfoJSON
-  currentUrl?: string
 }>()
-
-defineEmits<{ (e: 'export', payload: unknown): void }>()
 
 const { config, isThemeAvailable: isThemeAvailableCtx } = injectLuxTplContext()
 const isThemeAvailable = (name: string) => isThemeAvailableCtx?.(name) ?? false
 const DOWNLOAD_MEASUREMENT_URL = config.downloadMeasurementUrl ?? ''
 const THUMBNAIL_MEASUREMENT_URL = config.thumbnailMeasurementUrl ?? ''
+const COMMANDE_URL = config.commandeUrl ?? ''
+const SHOP_URL = config.shopUrl ?? ''
+const HISTORIQUE_URL = config.historiqueUrl ?? ''
 const { t, i18next } = useLuxTranslation('tooltips')
 
 function getDocumentFormats(document: FeatureMeasurement): string[] {
@@ -232,7 +232,7 @@ function closePreviewMesurage() {
     @close="closePreviewMesurage"
   />
 
-  <InfoFeatureLayout :layers="layers" :currentUrl="currentUrl">
+  <InfoFeatureLayout :layers="layers">
     <template #feature-content="{ feature }">
       <div v-if="!feature.attributes.PF">
         {{ t('No parcel data available') }}
@@ -290,7 +290,7 @@ function closePreviewMesurage() {
         <div v-if="isThemeAvailable('go')">
           <a
             class="lux-btn inline-block mb-1"
-            :href="`https://shop.geoportail.lu/Portail/express_mesurage/?ids=['${feature.attributes.textstring}']&camefrom=mapv3_go&lang=${i18next.language}`"
+            :href="`${SHOP_URL}/Portail/express_mesurage/?ids=['${feature.attributes.textstring}']&camefrom=mapv3_go&lang=${i18next.language}`"
             target="_blank"
             rel="noopener noreferrer"
             >{{ t('Constitution de dossier de mesurage') }}</a
@@ -305,7 +305,7 @@ function closePreviewMesurage() {
         >
           <a
             class="lux-btn inline-block mb-1"
-            :href="`https://xxpfo.intranet.etat.lu/xxpfoi/detail_parcelle.do?noParcelle=${feature.attributes.textstring}`"
+            :href="`${config.pfUrl ?? ''}/detail_parcelle.do?noParcelle=${feature.attributes.textstring}`"
             target="_blank"
             rel="noopener noreferrer"
             >{{ t('Ouvrir la PF') }}</a
@@ -839,14 +839,14 @@ function closePreviewMesurage() {
         </div>
         <a
           class="lux-btn inline-block mb-1"
-          :href="`https://historique.geoportail.lu/?id=${feature.attributes.textstring}`"
+          :href="`${HISTORIQUE_URL}/?id=${feature.attributes.textstring}`"
           target="_blank"
           rel="noopener noreferrer"
           >{{ t('Historique de la parcelle') }}</a
         >
         <a
           class="lux-btn inline-block mb-1"
-          :href="`https://commande.geoportail.lu/?ids=['${feature.attributes.textstring}']&camefrom=mapv3&lang=${i18next.language}`"
+          :href="`${COMMANDE_URL}/?ids=['${feature.attributes.textstring}']&camefrom=mapv3&lang=${i18next.language}`"
           target="_blank"
           rel="noopener noreferrer"
           >{{ t('Commander un extrait') }}</a

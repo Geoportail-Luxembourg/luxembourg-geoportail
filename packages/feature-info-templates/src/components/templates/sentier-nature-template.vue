@@ -8,28 +8,19 @@ import LuxFeatureProfile from '../../profile/feature-profile.vue'
 
 const props = defineProps<{
   layers: FeatureInfoJSON
-  currentUrl?: string
 }>()
 
-defineEmits<{
-  (e: 'export', payload: { feature: FeatureJSON; format: 'kml' | 'gpx' }): void
-}>()
-
-const { config, profileMapAdapter } = injectLuxTplContext()
+const { config } = injectLuxTplContext()
 const DOWNLOAD_RESOURCE_URL = config.downloadResourceUrl
 const { t } = useLuxTranslation('tooltips')
 
-function getDirectLink(feature: FeatureJSON) {
-  return `${props.currentUrl}&fid=${props.layers.layer}_${feature.attributes.id_qr}`
+function fid(feature: FeatureJSON) {
+  return `${props.layers.layer}_${feature.attributes.id_qr}`
 }
 </script>
 
 <template>
-  <InfoFeatureLayout
-    :layers="layers"
-    :currentUrl="currentUrl"
-    :getDirectLink="getDirectLink"
-  >
+  <InfoFeatureLayout :layers="layers" :fid="fid">
     <template #feature-content="{ feature }">
       <h4>{{ feature.attributes.sentier }}</h4>
 
@@ -52,14 +43,7 @@ function getDirectLink(feature: FeatureJSON) {
           </div>
         </div>
 
-        <LuxFeatureProfile
-          v-if="profileMapAdapter"
-          :feature="feature"
-          @export="
-            (payload: { feature: FeatureJSON; format: 'kml' | 'gpx' }) =>
-              $emit('export', payload)
-          "
-        />
+        <LuxFeatureProfile :feature="feature" />
       </template>
 
       <div v-else>

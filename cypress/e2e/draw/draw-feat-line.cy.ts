@@ -98,7 +98,7 @@ describe('Draw "Line"', () => {
       cy.readFile(downloadPath).should('exist')
 
       cy.readFile(downloadPath).then(content => {
-        expect(content).to.contain('dist,MNT,y,x,lon,lat')
+        expect(content).to.contain('dist,MNT,x,y,lon,lat')
         expect(content.split('\n').length).to.be.greaterThan(2)
       })
     })
