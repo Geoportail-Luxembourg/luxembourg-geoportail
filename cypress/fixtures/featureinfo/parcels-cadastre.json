@@ -1,0 +1,230 @@
+[
+  {
+    "remote_template": false,
+    "template": "parcels.html",
+    "layer": "1376",
+    "ordered": false,
+    "features": [
+      {
+        "type": "Feature",
+        "geometry": {
+          "type": "Polygon",
+          "coordinates": [
+            [
+              [75519.3766, 75007.411599999],
+              [75525.8571, 75000.0371],
+              [75527.3054, 74998.3891],
+              [75515.525, 74989.809499999],
+              [75510.9649, 74986.488399999],
+              [75510.5098, 74986.1569],
+              [75507.1879, 74989.9716],
+              [75507.9784, 74990.6185],
+              [75504.0031, 74996.1161],
+              [75507.1523, 74998.4299],
+              [75516.0755, 75004.986199999],
+              [75519.3766, 75007.411599999]
+            ]
+          ]
+        },
+        "fid": "359_061F00569006548",
+        "id": "061F00569006548",
+        "attributes": {
+          "code_commu": "061",
+          "code_sup": "006548",
+          "code_secti": "F",
+          "textstring": "061F00569006548",
+          "num_cadast": "00569",
+          "type": 510.0,
+          "gid": 425366,
+          "name": null,
+          "id": "061F00569006548",
+          "label": null,
+          "PF": {
+            "commune_cad": 61,
+            "communeCad": 61,
+            "section_letter": "F",
+            "sectionLetter": "F",
+            "main_number": 569,
+            "mainNumber": 569,
+            "additional_number": 6548,
+            "additionalNumber": 6548,
+            "full_id": "061F00569006548",
+            "fullId": "061F00569006548",
+            "capacity": "0ha 02a 16ca",
+            "locality": "Boulevard de Verdun",
+            "town_name": "LUXEMBOURG",
+            "townName": "LUXEMBOURG",
+            "section_name": "HoF de MERL-NORD",
+            "sectionDesignation": "HoF de MERL-NORD",
+            "measurement_number": 0,
+            "measurementNumber": 0,
+            "mutation_year": null,
+            "mutationYear": null,
+            "occupations": ["b\u00e2timent \u00e0 habitation"],
+            "farming_types": ["place (occup\u00e9e)"],
+            "farmingTypes": ["place (occup\u00e9e)"],
+            "is_historic": false,
+            "isHistoric": false
+          },
+          "measurements": []
+        },
+        "alias": {}
+      },
+      {
+        "type": "Feature",
+        "geometry": {
+          "type": "Polygon",
+          "coordinates": [
+            [
+              [75512.854, 75014.834000001],
+              [75519.3766, 75007.411599999],
+              [75516.0755, 75004.986199999],
+              [75507.1523, 74998.4299],
+              [75504.0031, 74996.1161],
+              [75498.013, 75004.4001],
+              [75512.854, 75014.834000001]
+            ]
+          ]
+        },
+        "fid": "359_061F00569004417",
+        "id": "061F00569004417",
+        "attributes": {
+          "code_commu": "061",
+          "code_sup": "004417",
+          "code_secti": "F",
+          "textstring": "061F00569004417",
+          "num_cadast": "00569",
+          "type": 510.0,
+          "gid": 426022,
+          "name": null,
+          "id": "061F00569004417",
+          "label": null,
+          "PF": {
+            "commune_cad": 61,
+            "communeCad": 61,
+            "section_letter": "F",
+            "sectionLetter": "F",
+            "main_number": 569,
+            "mainNumber": 569,
+            "additional_number": 4417,
+            "additionalNumber": 4417,
+            "full_id": "061F00569004417",
+            "fullId": "061F00569004417",
+            "capacity": "0ha 01a 92ca",
+            "locality": "Avenue Gaston Diderich",
+            "town_name": "LUXEMBOURG",
+            "townName": "LUXEMBOURG",
+            "section_name": "HoF de MERL-NORD",
+            "sectionDesignation": "HoF de MERL-NORD",
+            "measurement_number": 838,
+            "measurementNumber": 838,
+            "mutation_year": 1953,
+            "mutationYear": 1953,
+            "occupations": ["b\u00e2timent \u00e0 habitation"],
+            "farming_types": ["place (occup\u00e9e)"],
+            "farmingTypes": ["place (occup\u00e9e)"],
+            "is_historic": false,
+            "isHistoric": false
+          },
+          "measurements": [
+            {
+              "measurementNumber": "838",
+              "parcelId": "061F00569004417",
+              "measurementType": "PLAN",
+              "date_document": "1953-01-30T00:00:00",
+              "description": "PLAN",
+              "dossier_id": 141363,
+              "document_id": 436348,
+              "target_audience": "public",
+              "available_formats": ["pdf", "tiff"],
+              "is_downloadable": false
+            }
+          ]
+        },
+        "alias": {}
+      },
+      {
+        "type": "Feature",
+        "geometry": {
+          "type": "Polygon",
+          "coordinates": [
+            [
+              [75498.013, 75004.4001],
+              [75504.0031, 74996.1161],
+              [75507.9784, 74990.6185],
+              [75507.1879, 74989.9716],
+              [75510.5098, 74986.1569],
+              [75510.9649, 74986.488399999],
+              [75511.6051, 74985.603],
+              [75500.4402, 74977.6327],
+              [75496.5397, 74984.8007],
+              [75491.8472, 74993.4242],
+              [75489.293, 74998.118000001],
+              [75492.76, 75000.707],
+              [75498.013, 75004.4001]
+            ]
+          ]
+        },
+        "fid": "359_061F00565006547",
+        "id": "061F00565006547",
+        "attributes": {
+          "code_commu": "061",
+          "code_sup": "006547",
+          "code_secti": "F",
+          "textstring": "061F00565006547",
+          "num_cadast": "00565",
+          "type": 510.0,
+          "gid": 431213,
+          "name": null,
+          "id": "061F00565006547",
+          "label": null,
+          "PF": {
+            "commune_cad": 61,
+            "communeCad": 61,
+            "section_letter": "F",
+            "sectionLetter": "F",
+            "main_number": 565,
+            "mainNumber": 565,
+            "additional_number": 6547,
+            "additionalNumber": 6547,
+            "full_id": "061F00565006547",
+            "fullId": "061F00565006547",
+            "capacity": "0ha 02a 82ca",
+            "locality": "Avenue Gaston Diderich",
+            "town_name": "LUXEMBOURG",
+            "townName": "LUXEMBOURG",
+            "section_name": "HoF de MERL-NORD",
+            "sectionDesignation": "HoF de MERL-NORD",
+            "measurement_number": 5594,
+            "measurementNumber": 5594,
+            "mutation_year": null,
+            "mutationYear": null,
+            "occupations": ["b\u00e2timent \u00e0 habitation"],
+            "farming_types": ["place (occup\u00e9e)"],
+            "farmingTypes": ["place (occup\u00e9e)"],
+            "is_historic": false,
+            "isHistoric": false
+          },
+          "measurements": [
+            {
+              "measurementNumber": "5594",
+              "parcelId": "061F00565006547",
+              "measurementType": "PLAN",
+              "date_document": "2005-08-22T00:00:00",
+              "description": "PLAN",
+              "dossier_id": 174902,
+              "document_id": 514755,
+              "target_audience": "public",
+              "available_formats": ["pdf", "tiff"],
+              "is_downloadable": false
+            }
+          ]
+        },
+        "alias": {}
+      }
+    ],
+    "has_profile": false,
+    "total_features_count": 3,
+    "features_count": 3
+  }
+]

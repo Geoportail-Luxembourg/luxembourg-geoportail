@@ -1,0 +1,106 @@
+/*
+ * Template styles that utilities express poorly: descendant rules, groups
+ * shared across templates, image buttons. One-off values belong in a tailwind utility in the markup.
+ * Styles here are kept as plain global classes. Hosts can override them or set values of css variables like --lux-tpl-white-by-default.
+ */
+
+.lux-tpl-poi-title {
+  font-size: 40px;
+  line-height: 1;
+  margin-top: 0.55em;
+  margin-bottom: 0.275em;
+}
+
+.lux-tpl-solarkataster-button-old {
+  background-image: url('./assets/solarkataster_1.png');
+  width: 200px;
+  height: 100px;
+  background-size: 196px 96px;
+  background-repeat: no-repeat;
+}
+
+.lux-tpl-solarkataster-button {
+  background-color: #1c2d4b;
+  color: #fff;
+  font-family: Arial, sans-serif;
+  font-weight: 700;
+  border: none;
+  border-radius: 9999px;
+  width: 100%;
+  padding: 14px 28px;
+  line-height: 1.2;
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+}
+
+.lux-tpl-feature-info {
+  background-color: rgba(255, 255, 255, 0.5);
+  margin: 5px;
+  padding: 10px;
+  overflow-wrap: anywhere;
+  word-break: normal;
+}
+
+.lux-tpl-feature-info h4 {
+  margin-top: 11px;
+  margin-bottom: 11px;
+  font-size: 20px;
+}
+
+.lux-tpl-feature-info label {
+  font-weight: 700;
+  margin-bottom: 5px;
+}
+
+.lux-tpl-feature-info a:not(.lux-btn) {
+  color: #000;
+  text-decoration: underline;
+}
+
+.lux-tpl-urplang-title {
+  color: var(--lux-tpl-white-by-default, #fff);
+  font-size: 30px;
+}
+
+.lux-tpl-parcels-template-h2 {
+  font-size: 40px;
+  line-height: 1;
+  padding: 12px 0;
+  margin: 0;
+  text-transform: uppercase;
+  color: var(--lux-tpl-white-by-default, #fff);
+}
+
+/* Report order form (casipo, forage-virtuel, pag, pag-staging, pds) */
+.lux-tpl-order-form {
+  margin-left: 20px;
+}
+
+.lux-tpl-order-form label {
+  display: inline;
+}
+
+.lux-tpl-order-mail {
+  margin-bottom: 10px;
+}
+
+.lux-tpl-order-mail label {
+  margin-right: 5px;
+}
+
+.lux-tpl-order-mail input[type='text'] {
+  border: 1px solid rgb(118, 118, 118);
+  padding: 1px 2px;
+}
+
+.lux-tpl-order-checkbox {
+  margin-bottom: 15px;
+}
+
+.lux-tpl-order-checkbox input[type='checkbox'] {
+  vertical-align: middle;
+  margin-right: 5px;
+}

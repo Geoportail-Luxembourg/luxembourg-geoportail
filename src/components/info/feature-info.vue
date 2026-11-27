@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { ComponentPublicInstance } from 'vue'
+import { ComponentPublicInstance, provide } from 'vue'
 import { storeToRefs } from 'pinia'
 import { usePrintStore } from '@/stores/print.store'
 import { Feature } from 'ol'
@@ -8,55 +8,22 @@ import GeoJSON from 'ol/format/GeoJSON'
 import {
   FeatureInfoJSON,
   FeatureJSON,
-} from '@/services/info/feature-info.model'
+} from '@geoportallux/feature-info-templates'
 import {
   exportFeatureService,
   ExportFormat,
   FeatExport,
 } from '@/services/export-feature/export-feature.service'
 import useMap, { PROJECTION_LUX } from '@/composables/map/map.composable'
-import AdresseTemplate from './templates/adresse-template.vue'
-import AeroTemplate from './templates/aero-template.vue'
-import AffairesTemplate from './templates/affaires-template.vue'
-import AstaTemplate from './templates/asta-template.vue'
-import AutomaticSolsTemplate from './templates/automatic-sols-template.vue'
-import BatimentsTemplate from './templates/batiments-template.vue'
-import BusWoTitleTemplate from './templates/bus-wo-title-template.vue'
-import BusTemplate from './templates/bus-template.vue'
-import CasipoTemplate from './templates/casipo-template.vue'
-import UnavailableTemplate from './templates/unavailable-template.vue'
-import DefaultTemplate from './templates/default-template.vue'
-import DefaultTableTemplate from './templates/default-table-template.vue'
-import DefaultTableNoPrefixTemplate from './templates/default-table-no-prefix-template.vue'
-import FlikTemplate from './templates/flik-template.vue'
-import ForageVirtuelTemplate from './templates/forage-virtuel-template.vue'
-import LignesBusTemplate from './templates/lignes-bus-template.vue'
-import MeteoTemplate from './templates/meteo-template.vue'
-import MeteoluxEuropeTemplate from './templates/meteolux-europe-template.vue'
-import MeteoluxGrTemplate from './templates/meteolux-gr-template.vue'
-import MymapsTemplate from './templates/mymaps-template.vue'
-import MoTemplate from './templates/mo-template.vue'
-import Ng95Template from './templates/ng95-template.vue'
-import Ng95NewTemplate from './templates/ng95-new-template.vue'
-import NpOurPoiTemplate from './templates/npour-poi-template.vue'
-import NpOurWoAddressPoiTemplate from './templates/npour-wo-address-poi-template.vue'
-import PcnPagTemplate from './templates/pcn-pag-template.vue'
-import PagTemplate from './templates/pag-template.vue'
-import PagStagingTemplate from './templates/pag-staging-template.vue'
-import PdsTemplate from './templates/pds-template.vue'
-import PegelTemplate from './templates/pegel-template.vue'
-// import PoiEatTemplate from './templates/poi-eat-template.vue'
-// import PoiTemplate from './templates/poi-template.vue'
-import RemembrementsTemplate from './templates/remembrements-template.vue'
-import SentierNatureTemplate from './templates/sentier-nature-template.vue'
-import UrplandTemplate from './templates/urplang-template.vue'
-import VitiFlikTemplate from './templates/viti-flik.vue'
-import VitiKleinlageTemplate from './templates/viti-kleinlage.vue'
-import VitiNameTemplate from './templates/viti-name.vue'
-import VitiParcelsTemplate from './templates/viti-parcels.vue'
-import ParcelsTemplate from './templates/parcels-template.vue'
-import DefaultAttachmentNoPrefixTemplate from './templates/default-attachment-no-prefix-template.vue'
-import DefaultAttachment from './templates/default-attachment-template.vue'
+import {
+  provideLuxTplContext,
+  getTemplateComponent,
+  LUX_TPL_I18N,
+} from '@geoportallux/feature-info-templates'
+import useGeoportailLuxTplContext, {
+  getLuxTplI18n,
+} from '@/composables/info/lux-tpl-context.composable'
+import ProfileFeatureInfo from '@/components/info/profile-feature-info.vue'
 
 defineProps({
   content: {
@@ -67,59 +34,15 @@ defineProps({
 const currentUrl = window.location.href
 const map = useMap().getOlMap()
 
+// Provide the dependency-injection context the templates rely on,
+// wiring it to the geoportail stores/environment and i18next.
+provideLuxTplContext(useGeoportailLuxTplContext(ProfileFeatureInfo))
+provide(LUX_TPL_I18N, getLuxTplI18n())
+
 // For print, save ref to element to access content in print composable
 const { featureInfoPrintableRef } = storeToRefs(usePrintStore())
 const setPrintableRef = (el: Element | ComponentPublicInstance | null) => {
   featureInfoPrintableRef.value = el ?? undefined
-}
-
-const templates = {
-  'adresse.html': AdresseTemplate,
-  'aero.html': AeroTemplate,
-  'affaires.html': AffairesTemplate,
-  'asta_esp.html': AstaTemplate,
-  'automatic_sols.html': AutomaticSolsTemplate,
-  'batiments.html': BatimentsTemplate,
-  'bus_wo_title.html': BusWoTitleTemplate,
-  'bus.html': BusTemplate,
-  'casipo.html': CasipoTemplate,
-  'default.html': DefaultTemplate,
-  'default_attachment.html': DefaultAttachment,
-  'default_attachment_no_prefix.html': DefaultAttachmentNoPrefixTemplate,
-  'default_table.html': DefaultTableTemplate,
-  'default_table_no_prefix.html': DefaultTableNoPrefixTemplate,
-  'flik.html': FlikTemplate,
-  'forage_virtuel.html': ForageVirtuelTemplate,
-  'lignes_bus.html': LignesBusTemplate,
-  'meteo.html': MeteoTemplate,
-  'meteolux_europe.html': MeteoluxEuropeTemplate,
-  'meteolux_gr.html': MeteoluxGrTemplate,
-  'mymaps.html': MymapsTemplate,
-  'mo.html': MoTemplate,
-  'ng95.html': Ng95Template,
-  'ng95_new.html': Ng95NewTemplate,
-  'npour_poi.html': NpOurPoiTemplate,
-  'npour_poi_wo_address.html': NpOurWoAddressPoiTemplate,
-  'parcels.html': ParcelsTemplate,
-  'parcels_prof.html': ParcelsTemplate,
-  'parcels_go.html': ParcelsTemplate,
-  'pcn_pag.html': PcnPagTemplate,
-  'pag.html': PagTemplate,
-  'pag_staging.html': PagStagingTemplate,
-  'pds.html': PdsTemplate,
-  'pegel.html': PegelTemplate,
-  'remembrements.html': RemembrementsTemplate,
-  'sentier_nature.html': SentierNatureTemplate,
-  'urplang.html': UrplandTemplate,
-  'viti_flik.html': VitiFlikTemplate,
-  'viti_kleinlage.html': VitiKleinlageTemplate,
-  'viti_name.html': VitiNameTemplate,
-  'viti_parcels.html': VitiParcelsTemplate,
-  'unavailable.html': UnavailableTemplate,
-}
-
-const getTemplateComponent = (template: string) => {
-  return templates[template as keyof typeof templates] || DefaultTemplate
 }
 
 function onExport(payload: { feature: FeatureJSON; format: ExportFormat }) {
@@ -166,7 +89,7 @@ function onExportWrapper(...args: unknown[]) {
   <div
     :ref="setPrintableRef"
     v-if="content && content.length"
-    class="absolute w-11/12"
+    class="lux-tpl-root absolute w-11/12"
   >
     <component
       v-for="(layers, index) in content"
