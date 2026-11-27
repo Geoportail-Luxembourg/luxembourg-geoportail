@@ -30,7 +30,10 @@ import useMap, {
 } from '@/composables/map/map.composable'
 import { fetchProfileJson } from '@/services/api/api-profile.service'
 import { colorStringToRgba } from '@/services/colors.utils'
-import { ProfileData } from '@/components/common/graph/elevation-profile'
+import {
+  toProfileData,
+  type ProfileData,
+} from '@geoportallux/feature-info-templates'
 import { getDefaultDrawnFeatureStyle } from './styles.helper'
 import GeoJSON from 'ol/format/GeoJSON'
 import { convertCircleFeatureToPolygon } from '@/composables/draw/draw-utils.composable'
@@ -238,39 +241,10 @@ export class DrawnFeature extends Feature {
         encodeOptions
       )
 
-      const profileData = await fetchProfileJson(geomJson, this.id)
-
-      let elevationGain = 0
-      let elevationLoss = 0
-      let cumulativeElevation = 0
-      let lastElevation: number | undefined
-
       // Cache result
-      this.profileData = profileData.profile.map(d => {
-        const row = {
-          ...d,
-          cumulativeElevation: 0,
-          elevationGain: 0,
-          elevationLoss: 0,
-        }
-        const curElevation = row.values.dhm
-        if (lastElevation !== undefined) {
-          const elevation = curElevation - lastElevation
-          cumulativeElevation = cumulativeElevation + elevation
-          if (elevation > 0) {
-            elevationGain = elevationGain + elevation
-          } else {
-            elevationLoss = elevationLoss + elevation
-          }
-        }
-
-        row.cumulativeElevation = cumulativeElevation
-        row.elevationGain = elevationGain
-        row.elevationLoss = elevationLoss
-        lastElevation = curElevation
-
-        return row
-      })
+      this.profileData = toProfileData(
+        await fetchProfileJson(geomJson, this.id)
+      )
     }
 
     return this.profileData

@@ -1,20 +1,8 @@
+import type { ProfileJson } from '@geoportallux/feature-info-templates'
 import { fetchApi } from './api.service'
 import { createLogger } from '@/lib/logging/namespacedLogger'
 
 const PROFILE_URL = import.meta.env.VITE_PROFILE_URL
-
-export interface ProfileJson {
-  profile: ProfileJsonEntry[]
-}
-
-export interface ProfileJsonEntry {
-  dist: number
-  values: {
-    dhm: number
-  }
-  x: number
-  y: number
-}
 
 /**
  * Get the profile of a LineString geom

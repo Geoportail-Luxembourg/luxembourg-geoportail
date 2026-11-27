@@ -1,16 +1,13 @@
+import type { Geometry } from 'geojson'
+
 export interface FeatureJSON {
   type: string
-  geometry: GeometryJSON
+  geometry: Geometry
   fid: string
   id: string
   attributes: Attributes
   alias: Record<string, unknown>
   properties?: Record<string, unknown>
-}
-
-export interface GeometryJSON {
-  type: string
-  coordinates: number[][][]
 }
 
 export type FeatureMeasurement = Record<string, string>
