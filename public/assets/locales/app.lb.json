@@ -1,4 +1,5 @@
 {
+  "Favourites": "Meng Liblingslayer",
   "Ajouter la mymaps dans mes couches actives": "Mymaps bei meng aktiv Layeren derbäisetzen",
   "Retirer la mymaps de mes couches actives": "Mymaps aus menge aktive Layeren ewechhuelen",
   "(Deactivates zoom and pan on the profile!)": "(Deaktivéiert d'Zoom- a Pan-Funktiounen am Profil)",
@@ -360,6 +361,8 @@
   "Delete bookmark": "Säitemarken läschen",
   "Add {name} to bookmarks": "{name} zu Lesezeichen derbäimaachen",
   "Remove {name} from bookmarks": "{name} aus Lesezeichen ewechhuelen",
+  "Add {name} to favourites": "{name} zu den Favoriten derbäimaachen",
+  "Remove {name} from favourites": "{name} aus den Favoriten ewechhuelen",
   "layers": "Layeren",
   "Layers": "Layer",
   "Le géoportail national du Grand-Duché du Luxembourg": "Den offizielle Geoportal vu Lëtzebuerg",

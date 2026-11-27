@@ -36,8 +36,14 @@ describe('RulesReadHelper', () => {
         RulesReadHelper.processRulesForKey('bookmarks', { bookmarks: '[]' })
       ).toBe(0)
     })
+    it('returns the localStorage as storage to read the favouriteLayers value', () => {
+      expect(
+        RulesReadHelper.processRulesForKey('favouriteLayers', {
+          favouriteLayers: '[12,3]',
+        })
+      ).toBe(0)
+    })
   })
-
   describe('#ruleUseLocalStorage', () => {
     it('returns false by default for every key', () => {
       expect(RulesReadHelper.ruleUseLocalStorage({ theme: 'eau' })).toBe(false)

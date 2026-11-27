@@ -1,4 +1,5 @@
 {
+  "Favourites": "My favourite layers",
   "Ajouter la mymaps dans mes couches actives": "Add the mymaps to my active layers",
   "Retirer la mymaps de mes couches actives": "Remove the mymaps from my active layers",
   "(Deactivates zoom and pan on the profile!)": "(Deactivates zoom and pan on the profile!)",
@@ -348,6 +349,8 @@
   "Delete bookmark": "Delete bookmark",
   "Add {name} to bookmarks": "Add {name} to bookmarks",
   "Remove {name} from bookmarks": "Remove {name} from bookmarks",
+  "Add {name} to favourites": "Add {name} to favourites",
+  "Remove {name} from favourites": "Remove {name} from favourites",
   "layers": "Layers",
   "Layers": "Layers",
   "Le géoportail national du Grand-Duché du Luxembourg": "The official geoportal for the Grand-Duchy of Luxembourg",

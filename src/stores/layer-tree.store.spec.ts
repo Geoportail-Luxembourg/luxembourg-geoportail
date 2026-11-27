@@ -13,6 +13,7 @@ function makeNode(
     name: `node-${id}`,
     checked: false,
     expanded,
+    favourite: false,
     depth: 0,
     children,
   }
@@ -51,6 +52,68 @@ describe('layer-tree store', () => {
 
       expect(store.serverDefaults.size).toBe(2)
       expect(store.serverDefaults.get(2)).toBe(false)
+    })
+  })
+
+  describe('#setFavourite', () => {
+    it('adds the id when favouriting', () => {
+      const store = useLayerTreeStore()
+
+      store.setFavourite(12, true)
+
+      expect(store.favouriteLayerIds).toEqual([12])
+    })
+
+    it('does not add a duplicate id', () => {
+      const store = useLayerTreeStore()
+
+      store.setFavourite(12, true)
+      store.setFavourite(12, true)
+
+      expect(store.favouriteLayerIds).toEqual([12])
+    })
+
+    it('removes only the given id when unfavouriting', () => {
+      const store = useLayerTreeStore()
+      store.setFavourite(12, true)
+      store.setFavourite(3, true)
+
+      store.setFavourite(12, false)
+
+      expect(store.favouriteLayerIds).toEqual([3])
+    })
+
+    it('unfavouriting an unknown id leaves the list unchanged', () => {
+      const store = useLayerTreeStore()
+      store.setFavourite(12, true)
+
+      store.setFavourite(99, false)
+
+      expect(store.favouriteLayerIds).toEqual([12])
+    })
+  })
+
+  describe('#setFavouriteNodesExpanded', () => {
+    it('defaults to expanded', () => {
+      expect(useLayerTreeStore().favouriteNodesExpanded).toBe(true)
+    })
+
+    it('collapses and re-expands the favourites nodes', () => {
+      const store = useLayerTreeStore()
+
+      store.setFavouriteNodesExpanded(false)
+      expect(store.favouriteNodesExpanded).toBe(false)
+
+      store.setFavouriteNodesExpanded(true)
+      expect(store.favouriteNodesExpanded).toBe(true)
+    })
+
+    it('is not affected by expandedNodes changes', () => {
+      const store = useLayerTreeStore()
+
+      store.setExpanded(5, true)
+
+      expect(store.favouriteNodesExpanded).toBe(true)
     })
   })
 

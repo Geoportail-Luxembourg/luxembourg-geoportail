@@ -1,4 +1,5 @@
 {
+  "Favourites": "Mes couches préférées",
   "Ajouter la mymaps dans mes couches actives": "Ajouter la mymaps dans mes couches actives",
   "Retirer la mymaps de mes couches actives": "Retirer la mymaps de mes couches actives",
   "(Deactivates zoom and pan on the profile!)": "(Désactive le zoom et le pan sur le profil!)",
@@ -350,6 +351,8 @@
   "Delete bookmark": "Supprimer le signet",
   "Add {name} to bookmarks": "Ajouter {name} aux signets",
   "Remove {name} from bookmarks": "Retirer {name} des signets",
+  "Add {name} to favourites": "Ajouter {name} aux favoris",
+  "Remove {name} from favourites": "Retirer {name} des favoris",
   "layers": "Couches",
   "Layers": "Layers",
   "Le géoportail national du Grand-Duché du Luxembourg": "Le géoportail national du Grand-Duché du Luxembourg",

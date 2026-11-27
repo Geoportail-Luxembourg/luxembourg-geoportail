@@ -9,6 +9,7 @@ import {
   SP_KEY_SERIAL,
   SP_KEYS_STYLE,
   SP_KEY_BOOKMARKS,
+  SP_KEY_FAVOURITE_LAYERS,
   StatePersistorRulesHelper,
 } from './state-persistor.model'
 
@@ -44,6 +45,9 @@ export abstract class RulesReadHelper extends StatePersistorRulesHelper {
       return SP_AVAILABLE_STORAGES.localStorage
     }
     if (key === SP_KEY_BOOKMARKS) {
+      return SP_AVAILABLE_STORAGES.localStorage
+    }
+    if (key === SP_KEY_FAVOURITE_LAYERS) {
       return SP_AVAILABLE_STORAGES.localStorage
     }
     return undefined

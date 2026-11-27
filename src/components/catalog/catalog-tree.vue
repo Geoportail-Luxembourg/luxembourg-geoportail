@@ -24,6 +24,7 @@ import type { LayerTreeNodeModel } from '@/components/layer-tree/layer-tree.mode
 import {
   layerTreeService,
   EXCLUDED_PARENT_LAYER_IDS,
+  FAVOURITES_NODE_ID,
 } from '@/components/layer-tree/layer-tree.service'
 
 const mapStore = useMapStore()
@@ -42,6 +43,7 @@ const showDefaultCatalog = computed(
 const { layerTrees_3d } = storeToRefs(themeStore)
 const { layerToLocateInCatalog } = storeToRefs(appStore)
 const { themeName } = storeToRefs(themeStore)
+const { favouriteNodesExpanded } = storeToRefs(layerTreeStore)
 
 watchEffect(updateLayerTree)
 
@@ -63,11 +65,41 @@ function updateLayerTree() {
       treeModel as LayerTreeNodeModel,
       mapStore.layers
     )
-    layerTree.value = layerTreeService.applyExpandedNodes(
+    const expandedTree = layerTreeService.applyExpandedNodes(
       newTree,
       layerTreeStore.expandedNodes
     )
+    const favouriteTree = layerTreeService.applyFavouriteNodes(
+      expandedTree,
+      layerTreeStore.favouriteLayerIds
+    )
+    layerTree.value = layerTreeService.buildFavouritesNode(
+      favouriteTree,
+      buildFavouriteLayerNodes(),
+      favouriteNodesExpanded.value
+    )
   }
+}
+
+function buildFavouriteLayerNodes(): LayerTreeNodeModel[] {
+  return layerTreeStore.favouriteLayerIds
+    .map(id => themes.findById(id))
+    .filter((themeNode): themeNode is ThemeNodeModel => !!themeNode)
+    .map(themeNode => {
+      const child = themesToLayerTree(themeNode)
+      return {
+        ...child,
+        depth: 2,
+        favourite: true,
+        checked: !!mapStore.layers.find(l => l.id === child.id),
+      }
+    })
+}
+
+function stripFavouritesNode(tree: LayerTreeNodeModel): LayerTreeNodeModel {
+  return tree.children?.[0]?.id === FAVOURITES_NODE_ID
+    ? { ...tree, children: tree.children.slice(1) }
+    : tree
 }
 
 watchEffect(() => {
@@ -76,9 +108,13 @@ watchEffect(() => {
       ? layerTree3d.value
       : themesToLayerTree(layerTrees_3d.value)
     const newTree = layerTreeService.updateLayers(treeModel, mapStore.layers3d)
-    layerTree3d.value = layerTreeService.applyExpandedNodes(
+    const expandedTree = layerTreeService.applyExpandedNodes(
       newTree,
       layerTreeStore.expandedNodes
+    )
+    layerTree3d.value = layerTreeService.applyFavouriteNodes(
+      expandedTree,
+      layerTreeStore.favouriteLayerIds
     )
   }
 })
@@ -92,14 +128,12 @@ watch(layerToLocateInCatalog, id => {
 
   const tryExpand = (allowExcludedFallback = false) => {
     if (layerTree.value) {
-      const layerPresence = getLayerPresence(layerTree.value)
+      const catalogTree = stripFavouritesNode(layerTree.value)
+      const layerPresence = getLayerPresence(catalogTree)
       if (!layerPresence.hasAny) return false
       if (!allowExcludedFallback && !layerPresence.hasAllowed) return false
 
-      const { found, node } = layerTreeService.expandToLayer(
-        id,
-        layerTree.value
-      )
+      const { found, node } = layerTreeService.expandToLayer(id, catalogTree)
       if (found) {
         layerTree.value = node
         updateExpandedNodesInStore(node)
@@ -110,12 +144,12 @@ watch(layerToLocateInCatalog, id => {
           )
           const elsArray = els ? Array.from(els) : []
           const el =
-            // Prefer an occurrence that is NOT nested inside an excluded parent node
+            // Prefer an occurrence that is NOT in a locate-excluded context
+            // and NOT the copy inside the favourites box
             elsArray.find(
               el =>
-                !EXCLUDED_PARENT_LAYER_IDS.some((parentId: number) =>
-                  el.closest(`[data-cy="subLayerLabel-${parentId}"]`)
-                )
+                !el.hasAttribute('data-locate-excluded') &&
+                !el.hasAttribute('data-locate-favourites')
             ) ??
             // Fallback only when explicitly allowed
             (allowExcludedFallback ? elsArray[0] : undefined)
@@ -162,7 +196,7 @@ watch(layerToLocateInCatalog, id => {
   if (tryExpand()) return
 
   const currentLayerPresence = layerTree.value
-    ? getLayerPresence(layerTree.value)
+    ? getLayerPresence(stripFavouritesNode(layerTree.value))
     : undefined
 
   const themeNames = themes.findThemeNamesByLayerId(id)
@@ -188,6 +222,11 @@ watch(layerToLocateInCatalog, id => {
 })
 
 function toggleParent(node: LayerTreeNodeModel, is3d: boolean) {
+  if (node.id === FAVOURITES_NODE_ID) {
+    layerTreeStore.setFavouriteNodesExpanded(!favouriteNodesExpanded.value)
+    return
+  }
+
   const tree = is3d ? layerTree3d.value : layerTree.value
   if (!tree) return
 
@@ -203,7 +242,20 @@ function toggleParent(node: LayerTreeNodeModel, is3d: boolean) {
 }
 
 function toggleLayer(node: LayerTreeNodeModel, is3d: boolean) {
-  layers.toggleLayer(+node.id, !node.checked, is3d, true)
+  const tree = is3d ? layerTree3d.value : layerTree.value
+  const inCurrentTheme = tree
+    ? layerTreeService.getLayerPresence(
+        +node.id,
+        stripFavouritesNode(tree),
+        EXCLUDED_PARENT_LAYER_IDS
+      ).hasAny
+    : false
+
+  layers.toggleLayer(+node.id, !node.checked, is3d, inCurrentTheme)
+}
+
+function toggleFavourite(node: LayerTreeNodeModel) {
+  layers.setFavourite(+node.id, !node.favourite)
 }
 </script>
 
@@ -218,6 +270,7 @@ function toggleLayer(node: LayerTreeNodeModel, is3d: boolean) {
         :key="layerTree3d.id"
         @toggle-parent="node => toggleParent(node, true)"
         @toggle-layer="node => toggleLayer(node, true)"
+        @toggle-favourite="node => toggleFavourite(node)"
       ></layer-tree-node>
     </div>
 
@@ -228,6 +281,7 @@ function toggleLayer(node: LayerTreeNodeModel, is3d: boolean) {
       :key="layerTree.id"
       @toggle-parent="node => toggleParent(node, false)"
       @toggle-layer="node => toggleLayer(node, false)"
+      @toggle-favourite="node => toggleFavourite(node)"
     ></layer-tree-node>
   </div>
 </template>

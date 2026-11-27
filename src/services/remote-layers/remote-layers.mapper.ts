@@ -37,6 +37,7 @@ export function remoteLayersToLayerTreeMapper(
       .map(child => remoteLayersToLayerTreeMapper(child, urlWms, depth + 1)),
     checked: mapStore.hasLayer(id),
     expanded: false,
+    favourite: false,
   }
 }
 

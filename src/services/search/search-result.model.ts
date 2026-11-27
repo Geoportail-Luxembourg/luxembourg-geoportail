@@ -14,6 +14,7 @@ export interface SearchResultItem {
   showRoutingButton: boolean
   showInfoButton: boolean
   showBookmarkButton?: boolean
+  showFavouriteButton?: boolean
 }
 
 export interface SearchResultGroup {
