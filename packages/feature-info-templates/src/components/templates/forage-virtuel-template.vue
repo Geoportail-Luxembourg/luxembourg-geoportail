@@ -5,19 +5,21 @@ import type { Ref } from 'vue'
 import type { Point } from 'geojson'
 import type { FeatureInfoJSON } from '../../models'
 import { injectLuxTplContext } from '../../context'
+import { luxTplUrls } from '../../env'
 
 const props = defineProps<{
   layers: FeatureInfoJSON
 }>()
 const layers = props.layers
 
-const { config, user, notify } = injectLuxTplContext()
+const { geoportalUrl, user, notify } = injectLuxTplContext()
+const urls = luxTplUrls(geoportalUrl)
 const mail: Ref<string> = ref('')
 const userMail = computed(() => user.value?.mail || '')
 mail.value = userMail.value
 
 const { t } = useLuxTranslation('tooltips')
-const URL_FORAGE_VIRTUEL_PROD = config.forageVirtuelUrl
+const URL_FORAGE_VIRTUEL_PROD = urls.forageVirtuelUrl
 
 async function generateRepport() {
   if (!mail.value && !/^\S+@\S+\.\S+$/.test(mail.value)) {
@@ -31,7 +33,7 @@ async function generateRepport() {
     email: mail.value,
     staging: 'false', // Assuming staging is always false for this example
   })
-  fetch(URL_FORAGE_VIRTUEL_PROD ?? '', {
+  fetch(URL_FORAGE_VIRTUEL_PROD, {
     method: 'POST',
     headers: {
       'Content-Type': 'application/x-www-form-urlencoded',

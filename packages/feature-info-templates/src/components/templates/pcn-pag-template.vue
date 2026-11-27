@@ -4,13 +4,15 @@ import type { FeatureInfoJSON } from '../../models'
 import InfoFeatureLayout from '../layouts/info-feature-layout.vue'
 import { joinAttributes } from './template-utilities'
 import { injectLuxTplContext } from '../../context'
+import { luxTplUrls } from '../../env'
 
 defineProps<{
   layers: FeatureInfoJSON
 }>()
 
-const { config } = injectLuxTplContext()
-const DOWNLOAD_PAGREPORT_URL = config.downloadPagReportUrl
+const { geoportalUrl } = injectLuxTplContext()
+const urls = luxTplUrls(geoportalUrl)
+const DOWNLOAD_PAGREPORT_URL = urls.downloadPagReportUrl
 const { t } = useLuxTranslation('tooltips')
 </script>
 
@@ -21,7 +23,7 @@ const { t } = useLuxTranslation('tooltips')
         v-if="layers.features.length"
         class="lux-btn"
         download
-        :href="`${DOWNLOAD_PAGREPORT_URL}/${joinAttributes(
+        :href="`${DOWNLOAD_PAGREPORT_URL}${joinAttributes(
           layers.features,
           'OBJECTID',
           ','
@@ -40,7 +42,7 @@ const { t } = useLuxTranslation('tooltips')
       <a
         class="lux-btn"
         download
-        :href="`${DOWNLOAD_PAGREPORT_URL}/${feature.attributes.OBJECTID}.pdf`"
+        :href="`${DOWNLOAD_PAGREPORT_URL}${feature.attributes.OBJECTID}.pdf`"
         target="_blank"
         >{{ t('Generer Rapport (peut prendre 30 sec)') }}</a
       >

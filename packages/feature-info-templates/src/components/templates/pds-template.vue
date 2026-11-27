@@ -4,19 +4,21 @@ import { ref, computed } from 'vue'
 import type { Ref } from 'vue'
 import type { FeatureInfoJSON } from '../../models'
 import { injectLuxTplContext } from '../../context'
+import { luxTplUrls } from '../../env'
 
 const props = defineProps<{
   layers: FeatureInfoJSON
 }>()
 const layers = props.layers
 
-const { config, user, notify } = injectLuxTplContext()
+const { geoportalUrl, user, notify } = injectLuxTplContext()
+const urls = luxTplUrls(geoportalUrl)
 const mail: Ref<string> = ref('')
 const userMail = computed(() => user.value?.mail || '')
 mail.value = userMail.value
 
 const { t } = useLuxTranslation('tooltips')
-const URL_PDS_PROD = config.pdsUrl
+const URL_PDS_PROD = urls.pdsUrl
 
 function joinAttributes(features: any, attr: string, sep: string) {
   return features
@@ -38,10 +40,7 @@ async function generateRepport() {
   })
 
   fetch(
-    URL_PDS_PROD +
-      '/report/' +
-      joinAttributes(layers.features, 'textstring', ',') +
-      '.pdf',
+    URL_PDS_PROD + joinAttributes(layers.features, 'textstring', ',') + '.pdf',
     {
       method: 'POST',
       headers: {

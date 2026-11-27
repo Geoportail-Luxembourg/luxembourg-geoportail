@@ -11,11 +11,13 @@ import type { ProfileData } from './profile'
 import { useProfileMapHover } from './profile-map-hover'
 import type { FeatureJSON } from '../models'
 import { injectLuxTplContext } from '../context'
+import { luxTplUrls } from '../env'
 import { useLuxTranslation } from '../i18n'
 
 const props = defineProps<{ feature: FeatureJSON }>()
 
-const { config, profileMapAdapter, exportFeature } = injectLuxTplContext()
+const { geoportalUrl, profileMapAdapter, exportFeature } = injectLuxTplContext()
+const urls = luxTplUrls(geoportalUrl)
 const { t } = useLuxTranslation()
 const lines = extractLineParts(props.feature.geometry)
 const profileData = shallowRef<ProfileData>()
@@ -30,13 +32,13 @@ const request = new AbortController()
 onUnmounted(() => request.abort())
 
 onMounted(async () => {
-  if (!profileMapAdapter || !lines.length || !config.profileUrl) {
+  if (!profileMapAdapter || !lines.length || !urls.profileUrl) {
     return
   }
   message.value = t('Please wait, the profile is loading.')
   try {
     const json = await fetchProfile(
-      config.profileUrl,
+      urls.profileUrl,
       {
         geom: JSON.stringify(
           lines.length === 1

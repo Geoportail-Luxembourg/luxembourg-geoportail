@@ -3,13 +3,15 @@ import type { FeatureInfoJSON } from '../../models'
 import { useLuxTranslation } from '../../i18n'
 import InfoFeatureLayout from '../layouts/info-feature-layout.vue'
 import { injectLuxTplContext } from '../../context'
+import { luxTplUrls } from '../../env'
 
 defineProps<{
   layers: FeatureInfoJSON
 }>()
 const { t } = useLuxTranslation('tooltips')
-const { config } = injectLuxTplContext()
-const DOWNLOAD_SKETCH_URL = config.downloadSketchUrl
+const { geoportalUrl } = injectLuxTplContext()
+const urls = luxTplUrls(geoportalUrl)
+const DOWNLOAD_SKETCH_NEW_URL = urls.downloadSketchNewUrl
 </script>
 
 <template>
@@ -26,7 +28,7 @@ const DOWNLOAD_SKETCH_URL = config.downloadSketchUrl
           class="no-print"
           target="_blank"
           download
-          :href="`${DOWNLOAD_SKETCH_URL}?id=${feature.attributes.OBJECTID}&type=new`"
+          :href="`${DOWNLOAD_SKETCH_NEW_URL}&id=${feature.attributes.OBJECTID}`"
         >
           {{ t('Obtenir le fichier sous format pdf') }}
         </a>

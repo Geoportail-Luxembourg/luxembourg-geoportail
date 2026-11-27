@@ -32,7 +32,6 @@ export {
 } from './context'
 export type {
   LuxTplContext,
-  LuxTplConfig,
   LuxTplUser,
   LuxTplNotifyType,
   LuxTplProfileMapAdapter,

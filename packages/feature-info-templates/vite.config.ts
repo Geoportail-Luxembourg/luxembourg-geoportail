@@ -7,8 +7,11 @@ import dts from 'vite-plugin-dts'
 const require = createRequire(import.meta.url)
 
 // Note: there is deliberately no `@` → app-src alias here. The package must not
-// reach outside its own directory; a residual `@/...` import fails the build.
+// import from outside its own directory (only the env files are read from the
+// repo root); a residual `@/...` import fails the build.
 export default defineConfig({
+  // The templates read their URLs from the app's env files, baked in at build time.
+  envDir: resolve(__dirname, '../..'),
   plugins: [
     vue(),
     dts({
@@ -16,7 +19,7 @@ export default defineConfig({
       // Flatten `src/` out of the emitted tree so the declarations land at
       // dist/index.d.ts, where package.json `types`/`exports` point.
       entryRoot: 'src',
-      include: ['src/**/*.ts', 'src/**/*.vue'],
+      include: ['src/**/*.ts', 'src/**/*.vue', 'env.d.ts'],
     }),
   ],
   css: {

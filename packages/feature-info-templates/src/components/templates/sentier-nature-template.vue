@@ -4,14 +4,16 @@ import type { FeatureInfoJSON, FeatureJSON } from '../../models'
 import { hasAttributes } from './template-utilities'
 import InfoFeatureLayout from '../layouts/info-feature-layout.vue'
 import { injectLuxTplContext } from '../../context'
+import { luxTplUrls } from '../../env'
 import LuxFeatureProfile from '../../profile/feature-profile.vue'
 
 const props = defineProps<{
   layers: FeatureInfoJSON
 }>()
 
-const { config } = injectLuxTplContext()
-const DOWNLOAD_RESOURCE_URL = config.downloadResourceUrl
+const { geoportalUrl } = injectLuxTplContext()
+const urls = luxTplUrls(geoportalUrl)
+const DOWNLOAD_RESOURCE_URL = urls.downloadResourceUrl
 const { t } = useLuxTranslation('tooltips')
 
 function fid(feature: FeatureJSON) {
@@ -35,7 +37,7 @@ function fid(feature: FeatureJSON) {
             <a
               class="lux-btn"
               style="padding-top: 0.5rem; padding-bottom: 0.5rem"
-              :href="`${DOWNLOAD_RESOURCE_URL}?fid=${layers.layer}_${feature.attributes.objectid}&attribute=link&id_attribute=objectid`"
+              :href="`${DOWNLOAD_RESOURCE_URL}&fid=${layers.layer}_${feature.attributes.objectid}`"
               target="_blank"
             >
               {{ t('Télécharger la brochure') }}</a

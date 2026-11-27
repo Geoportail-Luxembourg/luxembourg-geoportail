@@ -4,20 +4,22 @@ import { ref, computed } from 'vue'
 import type { Ref } from 'vue'
 import type { FeatureInfoJSON } from '../../models'
 import { injectLuxTplContext } from '../../context'
+import { luxTplUrls } from '../../env'
 
 const props = defineProps<{
   layers: FeatureInfoJSON
 }>()
 const layers = props.layers
 
-const { config, user, notify } = injectLuxTplContext()
+const { geoportalUrl, user, notify } = injectLuxTplContext()
+const urls = luxTplUrls(geoportalUrl)
 const mail: Ref<string> = ref('')
 const userMail = computed(() => user.value?.mail || '')
 mail.value = userMail.value
 
 const isChecked: Ref<boolean> = ref(false)
 const { t } = useLuxTranslation('tooltips')
-const URL_CASIPO_PROD = config.casipoUrl
+const URL_CASIPO_PROD = urls.casipoUrl
 
 function joinAttributes(features: any, attr: string, sep: string) {
   return features
@@ -44,7 +46,6 @@ async function generateRepport() {
 
   fetch(
     URL_CASIPO_PROD +
-      '/report/' +
       joinAttributes(layers.features, 'textstring', ',') +
       '.pdf',
     {
@@ -94,10 +95,7 @@ async function generateRepport() {
             for="terms"
             v-html="
               t(
-                'En cochant cette case, l\'utilisateur déclare avoir lu, compris et accepté les <a target=\'_blank\' rel=\'noopener noreferrer\' href=\'{{url}}\'>conditions générales d\'utilisation </a>de ce site web',
-                {
-                  url: `${config.filesUrl ?? ''}/Conditions_utilisation_CASIPO.pdf`,
-                }
+                'En cochant cette case, l\'utilisateur déclare avoir lu, compris et accepté les <a target=\'_blank\' rel=\'noopener noreferrer\' href=\'https://files.geoportail.lu/Conditions_utilisation_CASIPO.pdf\'>conditions générales d\'utilisation </a>de ce site web'
               )
             "
           ></label>

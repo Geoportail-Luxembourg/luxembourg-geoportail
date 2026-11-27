@@ -7,9 +7,12 @@ The package is **self-contained**: nothing under `src/` imports from outside the
 package, and it registers no globals on the host app and requires none.
 `npm run build` fails if that rule is broken, and ESLint flags it in the editor.
 
-Everything host-specific — URLs, the logged-in user, notifications, the
-profile's map adapter, direct links, KML/GPX export, theme availability —
+Everything host-specific — the geoportal URL, the logged-in user, notifications,
+the profile's map adapter, direct links, KML/GPX export, theme availability —
 arrives through one injected context; templates take only the `layers` prop.
+
+The URLs the templates link to or call come from the geoportail's root `.env*`
+files, the single source of truth for both hosts (see [URLs](#urls)).
 
 ## Install
 
@@ -53,9 +56,7 @@ Vue i18n plugin would clobber the host's global `$t`):
 
 ```ts
 provideLuxTplContext({
-  config: {
-    /* the URLs your host knows; every field is optional */
-  },
+  geoportalUrl: 'https://map.geoportail.lu/', // omit when the host is the geoportal
   user: computed(() => currentUser.value),
   notify: (message, type) => host.notify(message, type),
   profileMapAdapter: myProfileMapAdapter, // omit if the host has no profiles
@@ -124,7 +125,7 @@ polygons), the zoom is derived from it, and entries without features are dropped
 ### Elevation profile
 
 Templates show an elevation profile for features with `has_profile`: it fetches
-`config.profileUrl` (without credentials), shows the Δ values and the chart,
+`VITE_PROFILE_URL` (without credentials), shows the Δ values and the chart,
 downloads the CSV, and its KML/GPX buttons call the context's
 `exportFeature(feature, format)` (hidden without it). The map is the host's, through the
 context's `profileMapAdapter` (`LuxTplProfileMapAdapter`, EPSG:2169 coordinates); without
@@ -145,6 +146,28 @@ For the host's own profiles (drawings, routing), the parts are exported too:
   with the hovered point, `out:profile`, `csv`; default slot for host buttons);
 - `<LuxElevationChart>` is the chart alone;
 - `profileCsv(data, toLonLat)` returns the CSV content.
+
+## URLs
+
+`src/env.ts` reads the environment-dependent URLs (geoportal backend services)
+from the root `.env*` files (`vite.config.ts` sets `envDir` to the repo root):
+
+- in the geoportail, which compiles the package from source, the values of the
+  current mode apply (dev, e2e, staging);
+- the published `dist` has the production `.env` values baked in at build time.
+  Changing a URL for the 3D viewer therefore takes a package release.
+
+Each var holds the full URL with its fixed path and query params; the template
+appends only the parts it interpolates (e.g. `VITE_DOWNLOAD_SKETCH_NEW_URL` +
+`&id=…`). Relative URLs are resolved against the context's `geoportalUrl` and stay
+relative without it, or when it is not a valid absolute URL.
+`VITE_QR_URL` and `VITE_V3_API_HOST` are absolute in `.env`, so they ignore
+`geoportalUrl`: a 3D viewer pointed at another backend still gets QR codes and
+mymaps images from production. The solar economic calculator's role ids
+(`VITE_SOLAR_ECONOMIC_ALLOWED_ROLE_IDS`) come from the env too.
+
+External URLs that are the same in every environment (commande, shop,
+mobiliteit, …) stay hardcoded in the templates.
 
 ## Styling contract
 
@@ -334,6 +357,9 @@ E2E lives in the app, at `cypress/e2e/info/feature-info.cy.ts`.
 `.github/workflows/publish-templates.yml` publishes on a `templates-v*` tag, via
 npm trusted publishing (OIDC — no token). Bump the version, merge, then tag the
 merge commit.
+
+Publish only through CI: the build also loads the gitignored `.env.local`
+from the repo root, so a local `npm publish` could bake your overrides in.
 
 Bump from the repo root:
 

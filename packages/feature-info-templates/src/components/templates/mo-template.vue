@@ -4,9 +4,7 @@ import type { FeatureInfoJSON } from '../../models'
 import InfoFeatureLayout from '../layouts/info-feature-layout.vue'
 import { injectLuxTplContext } from '../../context'
 
-const { config, notify } = injectLuxTplContext()
-const SHOP_URL = config.shopUrl
-const SHOP_IPV6_URL = config.shopIpv6Url
+const { notify } = injectLuxTplContext()
 
 defineProps<{
   layers: FeatureInfoJSON
@@ -15,7 +13,9 @@ const { t } = useLuxTranslation('tooltips')
 
 const orderAffaire = async function (numCommune: string, numMesurage: string) {
   const isIpv6 = location.search.includes('ipv6=true')
-  const urlBase = isIpv6 ? SHOP_IPV6_URL : SHOP_URL
+  const urlBase = isIpv6
+    ? 'https://shop.app.geoportail.lu'
+    : 'https://shop.geoportail.lu'
 
   const url = `${urlBase}/Portail/commande/webservices/orderAffaireV3.jsp?numCommune=${encodeURIComponent(
     numCommune

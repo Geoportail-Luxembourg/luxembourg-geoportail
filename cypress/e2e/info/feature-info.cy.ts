@@ -444,7 +444,7 @@ describe('Feature Info', () => {
 
     describe('mymaps', () => {
       // Was: getMymapsPath/getQRUrlForMyMaps from the app's url.utils plus
-      // VITE_V3_API_HOST. Now: lib-owned helpers reading ctx.config.v3ApiHost.
+      // VITE_V3_API_HOST. Now: lib-owned helpers reading VITE_V3_API_HOST.
       beforeEach(() => {
         stubFeatureInfo('mymaps-pistes-velo')
         // The block carries has_profile, so a profile is requested too; its

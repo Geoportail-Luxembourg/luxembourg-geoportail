@@ -6,7 +6,7 @@ defineProps<{
   layers: FeatureInfoJSON
 }>()
 const { t } = useLuxTranslation('tooltips')
-const { config } = injectLuxTplContext()
+const { geoportalUrl } = injectLuxTplContext()
 </script>
 <template>
   <h1 class="lux-tpl-poi-title">
@@ -31,23 +31,21 @@ const { config } = injectLuxTplContext()
       >
         <td v-if="feature.attributes.category_id === 404">
           <a
-            :href="`${config.mobiliteitUrl ?? ''}/fr/horaires-et-lignes/tram/`"
+            href="https://www.mobiliteit.lu/fr/horaires-et-lignes/tram/"
             target="_blank"
             >{{ feature.attributes.label }}</a
           >
         </td>
         <td v-if="feature.attributes.category_id === 403">
           <a
-            :href="`${config.mobiliteitUrl ?? ''}/fr/horaires-et-lignes/trains/`"
+            href="https://www.mobiliteit.lu/fr/horaires-et-lignes/trains/"
             target="_blank"
             >{{ feature.attributes.label }}</a
           >
         </td>
         <td v-if="(feature.attributes.category_id ?? 0) < 403">
           <a
-            :href="`${config.mobiliteitUrl ?? ''}/fr/ligne/bus-${
-              feature.attributes.label
-            }-${
+            :href="`https://www.mobiliteit.lu/fr/ligne/bus-${feature.attributes.label}-${
               feature.attributes.category_id === 400
                 ? 'avl'
                 : feature.attributes.category_id === 401
@@ -61,7 +59,7 @@ const { config } = injectLuxTplContext()
         <td>
           <!-- TODO: this link will not be interpreted by v4 yet as MyMaps has not been migrated -->
           <a
-            :href="`${config.geoportalUrl ?? ''}?map_id=${feature.attributes.map_id}`"
+            :href="`${geoportalUrl ?? ''}?map_id=${feature.attributes.map_id}`"
             target="_blank"
             >{{ feature.attributes.map_description }}</a
           >

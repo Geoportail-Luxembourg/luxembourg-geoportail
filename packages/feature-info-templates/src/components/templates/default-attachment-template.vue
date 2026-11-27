@@ -10,6 +10,7 @@ import {
   sortedAttributeEntries,
 } from './template-utilities'
 import { injectLuxTplContext } from '../../context'
+import { luxTplUrls } from '../../env'
 import LuxFeatureProfile from '../../profile/feature-profile.vue'
 import { vLuxHtml } from '../../sanitize-html'
 
@@ -17,8 +18,9 @@ defineProps<{
   layers: FeatureInfoJSON
 }>()
 const { t, i18next } = useLuxTranslation('tooltips')
-const { config } = injectLuxTplContext()
-const DOWNLOAD_PDF_URL = config.downloadPdfUrl
+const { geoportalUrl } = injectLuxTplContext()
+const urls = luxTplUrls(geoportalUrl)
+const DOWNLOAD_PDF_URL = urls.downloadPdfUrl
 </script>
 <template>
   <InfoFeatureLayout :layers="layers">

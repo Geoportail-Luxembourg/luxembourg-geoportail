@@ -5,15 +5,16 @@ import { sanitizeUrl } from '@braintree/sanitize-url'
 import ModalDialog from './common/modal-dialog.vue'
 import type { FeatureMeasurement } from '../models'
 import { injectLuxTplContext } from '../context'
+import { luxTplUrls } from '../env'
 
 const props = defineProps<{
   measurement: FeatureMeasurement
 }>()
 
-const { config } = injectLuxTplContext()
-const DOWNLOAD_PREVIEW_URL = config.downloadPreviewUrl ?? ''
-const DOWNLOAD_MEASUREMENT_URL = config.downloadMeasurementUrl ?? ''
-const COMMANDE_URL = config.commandeUrl ?? ''
+const { geoportalUrl } = injectLuxTplContext()
+const urls = luxTplUrls(geoportalUrl)
+const DOWNLOAD_PREVIEW_URL = urls.downloadPreviewUrl
+const DOWNLOAD_MEASUREMENT_URL = urls.downloadMeasurementUrl
 
 const { t, i18next } = useLuxTranslation()
 
@@ -101,7 +102,7 @@ const downloadUrl = computed(() => {
           v-if="!measurement.is_downloadable"
           class="lux-btn ml-3"
           target="_blank"
-          :href="`${COMMANDE_URL}?&camefrom=mapv3&lang=${i18next.language}&documents=MESURAGE;EXTRAIT_MIXTE&ids=['${measurement.parcelId}']&remark=${measurement.description}`"
+          :href="`https://commande.geoportail.lu?&camefrom=mapv3&lang=${i18next.language}&documents=MESURAGE;EXTRAIT_MIXTE&ids=['${measurement.parcelId}']&remark=${measurement.description}`"
         >
           {{ t('Commander') }}
         </a>

@@ -28,7 +28,6 @@ const mountProfile = (context: object, props = { feature }) =>
           getFixedT: () => (key: string) => key,
         },
         [LUX_TPL_CONTEXT]: {
-          config: { profileUrl: '/profile.json' },
           user: ref(null),
           notify: () => {},
           ...context,

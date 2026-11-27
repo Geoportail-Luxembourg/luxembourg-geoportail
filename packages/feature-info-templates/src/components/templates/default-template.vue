@@ -11,6 +11,7 @@ import {
   sortedAttributeEntries,
 } from './template-utilities'
 import { injectLuxTplContext } from '../../context'
+import { solarEconomicAllowedRoleIds } from '../../env'
 import LuxFeatureProfile from '../../profile/feature-profile.vue'
 import { vLuxHtml } from '../../sanitize-html'
 
@@ -21,7 +22,7 @@ defineProps({
   },
 })
 const { t, i18next } = useLuxTranslation('tooltips')
-const { config, user, featureLink } = injectLuxTplContext()
+const { user, featureLink } = injectLuxTplContext()
 
 function isNoSolarNorWaterLink(label: string, attributeEntry: AttributeEntry) {
   return (
@@ -54,10 +55,7 @@ function isAudioLink(attributeEntry: AttributeEntry) {
 
 function canAccessSolarEconomicCalculator() {
   const roleId = user.value?.roleId
-  return (
-    roleId !== undefined &&
-    (config.solarEconomicAllowedRoleIds ?? []).includes(roleId)
-  )
+  return roleId !== undefined && solarEconomicAllowedRoleIds.includes(roleId)
 }
 </script>
 <template>
@@ -108,7 +106,7 @@ function canAccessSolarEconomicCalculator() {
               <a
                 data-cy="defaultTemplateSolarLink"
                 v-if="isSolarLink(layers.layerLabel, attributeEntry)"
-                :href="`${config.solarUrl ?? ''}/?lng=${i18next.language !== 'lb' ? i18next.language : 'de'}`"
+                :href="`https://solar.klima-agence.lu/?lng=${i18next.language !== 'lb' ? i18next.language : 'de'}`"
                 target="_blank"
               >
                 <button class="lux-tpl-solarkataster-button">
