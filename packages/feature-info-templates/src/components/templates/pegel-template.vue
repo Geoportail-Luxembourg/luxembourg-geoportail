@@ -3,12 +3,14 @@ import type { FeatureInfoJSON } from '../../models'
 import { getTrustedUrl } from './template-utilities'
 import InfoFeatureLayout from '../layouts/info-feature-layout.vue'
 import { injectLuxTplContext } from '../../context'
+import { luxTplUrls } from '../../env'
 
 defineProps<{
   layers: FeatureInfoJSON
 }>()
 
 const { config } = injectLuxTplContext()
+const urls = luxTplUrls(config.geoportalUrl)
 </script>
 
 <template>
@@ -20,9 +22,7 @@ const { config } = injectLuxTplContext()
         height="1500"
         frameborder="0"
         :src="
-          getTrustedUrl(
-            `${config.pegelUrl ?? ''}/` + feature.attributes.Nom + '.html'
-          )
+          getTrustedUrl(`${urls.pegelUrl}/` + feature.attributes.Nom + '.html')
         "
       ></iframe>
     </template>

@@ -4,12 +4,14 @@ import type { FeatureInfoJSON } from '../../models'
 import InfoFeatureLayout from '../layouts/info-feature-layout.vue'
 import { getMymapsPath, getQRUrlForMyMaps } from './template-utilities'
 import { injectLuxTplContext } from '../../context'
+import { luxTplUrls } from '../../env'
 import LuxFeatureProfile from '../../profile/feature-profile.vue'
 defineProps<{
   layers: FeatureInfoJSON
 }>()
 const { t } = useLuxTranslation('tooltips')
 const { config } = injectLuxTplContext()
+const urls = luxTplUrls(config.geoportalUrl)
 </script>
 
 <template>
@@ -21,7 +23,7 @@ const { config } = injectLuxTplContext()
           feature.attributes.image && feature.attributes.image.trim() !== ''
         "
         :href="
-          getMymapsPath(feature.attributes.image as string, config.v3ApiHost)
+          getMymapsPath(feature.attributes.image as string, urls.v3ApiHost)
         "
         target="_blank"
       >
@@ -33,7 +35,7 @@ const { config } = injectLuxTplContext()
           :src="
             getMymapsPath(
               feature.attributes.thumbnail as string,
-              config.v3ApiHost
+              urls.v3ApiHost
             )
           " /></a
       ><br />
@@ -57,7 +59,7 @@ const { config } = injectLuxTplContext()
         :src="
           getQRUrlForMyMaps(
             feature.attributes.map_id as string,
-            config.qrUrl,
+            urls.qrUrl,
             config.geoportalUrl
           )
         "

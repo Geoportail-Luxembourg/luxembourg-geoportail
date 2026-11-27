@@ -7,8 +7,8 @@ import { LUX_TPL_I18N } from '../../i18n'
 import type { FeatureInfoJSON } from '../../models'
 import PagTemplate from './pag-template.vue'
 
-describe('templates take their URLs from the config', () => {
-  it('the PAG terms link to the configured file server', async () => {
+describe('templates take their URLs from the env', () => {
+  it('the PAG terms link to the file server of the env', async () => {
     const i18next = createInstance()
     await i18next.init({ lng: 'fr', resources: {} })
     const html = mount(PagTemplate, {
@@ -25,7 +25,7 @@ describe('templates take their URLs from the config', () => {
             getFixedT: () => i18next.t,
           },
           [LUX_TPL_CONTEXT as symbol]: {
-            config: { filesUrl: 'https://files.example.lu' },
+            config: {},
             user: ref(null),
             notify: () => {},
           },
@@ -35,7 +35,7 @@ describe('templates take their URLs from the config', () => {
 
     // The URL is interpolated into the translated terms, not part of the key.
     expect(html).to.match(
-      /href="https:(\/|&#x2F;){2}files\.example\.lu(\/|&#x2F;)pag(\/|&#x2F;)Disclaimer\.pdf"/
+      /href="https:(\/|&#x2F;){2}files\.geoportail\.lu(\/|&#x2F;)pag(\/|&#x2F;)Disclaimer\.pdf"/
     )
   })
 })

@@ -5,15 +5,17 @@ import { sanitizeUrl } from '@braintree/sanitize-url'
 import ModalDialog from './common/modal-dialog.vue'
 import type { FeatureMeasurement } from '../models'
 import { injectLuxTplContext } from '../context'
+import { luxTplUrls } from '../env'
 
 const props = defineProps<{
   measurement: FeatureMeasurement
 }>()
 
 const { config } = injectLuxTplContext()
-const DOWNLOAD_PREVIEW_URL = config.downloadPreviewUrl ?? ''
-const DOWNLOAD_MEASUREMENT_URL = config.downloadMeasurementUrl ?? ''
-const COMMANDE_URL = config.commandeUrl ?? ''
+const urls = luxTplUrls(config.geoportalUrl)
+const DOWNLOAD_PREVIEW_URL = urls.downloadPreviewUrl
+const DOWNLOAD_MEASUREMENT_URL = urls.downloadMeasurementUrl
+const COMMANDE_URL = urls.commandeUrl
 
 const { t, i18next } = useLuxTranslation()
 

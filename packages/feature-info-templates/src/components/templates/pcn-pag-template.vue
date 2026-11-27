@@ -4,13 +4,15 @@ import type { FeatureInfoJSON } from '../../models'
 import InfoFeatureLayout from '../layouts/info-feature-layout.vue'
 import { joinAttributes } from './template-utilities'
 import { injectLuxTplContext } from '../../context'
+import { luxTplUrls } from '../../env'
 
 defineProps<{
   layers: FeatureInfoJSON
 }>()
 
 const { config } = injectLuxTplContext()
-const DOWNLOAD_PAGREPORT_URL = config.downloadPagReportUrl
+const urls = luxTplUrls(config.geoportalUrl)
+const DOWNLOAD_PAGREPORT_URL = urls.downloadPagReportUrl
 const { t } = useLuxTranslation('tooltips')
 </script>
 

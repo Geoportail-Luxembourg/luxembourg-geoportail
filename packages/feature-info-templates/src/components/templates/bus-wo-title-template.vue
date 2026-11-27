@@ -3,11 +3,13 @@ import type { FeatureInfoJSON } from '../../models'
 import InfoFeatureLayout from '../layouts/info-feature-layout.vue'
 import { getTrustedUrlByLang } from './template-utilities'
 import { injectLuxTplContext } from '../../context'
+import { luxTplUrls } from '../../env'
 defineProps<{
   layers: FeatureInfoJSON
 }>()
 const { config } = injectLuxTplContext()
-const BUS_WIDGET_URL = config.busWidgetUrl
+const urls = luxTplUrls(config.geoportalUrl)
+const BUS_WIDGET_URL = urls.busWidgetUrl
 </script>
 <template>
   <InfoFeatureLayout :layers="layers">

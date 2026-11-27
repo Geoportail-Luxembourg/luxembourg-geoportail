@@ -2,11 +2,13 @@
 import type { FeatureInfoJSON } from '../../models'
 import { useLuxTranslation } from '../../i18n'
 import { injectLuxTplContext } from '../../context'
+import { luxTplUrls } from '../../env'
 defineProps<{
   layers: FeatureInfoJSON
 }>()
 const { t } = useLuxTranslation('tooltips')
 const { config } = injectLuxTplContext()
+const urls = luxTplUrls(config.geoportalUrl)
 </script>
 <template>
   <h1 class="lux-tpl-poi-title">
@@ -31,21 +33,21 @@ const { config } = injectLuxTplContext()
       >
         <td v-if="feature.attributes.category_id === 404">
           <a
-            :href="`${config.mobiliteitUrl ?? ''}/fr/horaires-et-lignes/tram/`"
+            :href="`${urls.mobiliteitUrl}/fr/horaires-et-lignes/tram/`"
             target="_blank"
             >{{ feature.attributes.label }}</a
           >
         </td>
         <td v-if="feature.attributes.category_id === 403">
           <a
-            :href="`${config.mobiliteitUrl ?? ''}/fr/horaires-et-lignes/trains/`"
+            :href="`${urls.mobiliteitUrl}/fr/horaires-et-lignes/trains/`"
             target="_blank"
             >{{ feature.attributes.label }}</a
           >
         </td>
         <td v-if="(feature.attributes.category_id ?? 0) < 403">
           <a
-            :href="`${config.mobiliteitUrl ?? ''}/fr/ligne/bus-${
+            :href="`${urls.mobiliteitUrl}/fr/ligne/bus-${
               feature.attributes.label
             }-${
               feature.attributes.category_id === 400

@@ -15,66 +15,12 @@ export interface LuxTplUser {
 }
 
 /**
- * All environment-dependent URLs and values the templates need, injected by the
- * host so the templates carry no `import.meta.env` coupling. Every field is
- * optional: a host that does not wire a given URL simply disables the feature
- * that depends on it.
+ * Host-dependent values. The templates read their URLs from the root env
+ * files (see `env.ts`); `geoportalUrl` is the base for the relative ones.
  */
 export interface LuxTplConfig {
-  /** CASIPO report service base URL (VITE_CASIPO_PROD_URL). */
-  casipoUrl?: string
-  /** Forage virtuel report service base URL (VITE_FORAGE_VIRTUEL_PROD_URL). */
-  forageVirtuelUrl?: string
-  /** PAG report service base URL (VITE_PAG_PROD_URL). */
-  pagUrl?: string
-  /** PDS report service base URL (VITE_PDS_PROD_URL). */
-  pdsUrl?: string
-  /** Shop base URL for GML orders (VITE_SHOP_URL). */
-  shopUrl?: string
-  /** Shop base URL for IPv6 hosts (VITE_SHOP_IPV6_URL). */
-  shopIpv6Url?: string
-  /** Parcel extract and measurement order service (VITE_COMMANDE_URL). */
-  commandeUrl?: string
-  /** Parcel history viewer (VITE_HISTORIQUE_URL). */
-  historiqueUrl?: string
-  /** Solar simulator (VITE_SOLAR_URL). */
-  solarUrl?: string
-  /** State intranet parcel register (VITE_PF_URL). */
-  pfUrl?: string
-  /** Geoportail file server, for terms of use PDFs (VITE_FILES_URL). */
-  filesUrl?: string
-  /** Weather station widget (VITE_METEO_URL). */
-  meteoUrl?: string
-  /** Water level station pages (VITE_PEGEL_URL). */
-  pegelUrl?: string
-  /** Public transport lines and schedules (VITE_MOBILITEIT_URL). */
-  mobiliteitUrl?: string
-  /** Bus schedule widget base URL (VITE_BUS_WIDGET_URL). */
-  busWidgetUrl?: string
-  /** Sketch/report PDF download base URL (VITE_DOWNLOAD_PDF_URL). */
-  downloadPdfUrl?: string
-  /** Croquis download base URL (VITE_DOWNLOAD_SKETCH_URL). */
-  downloadSketchUrl?: string
-  /** Measurement document download base URL (VITE_DOWNLOAD_MEASUREMENT_URL). */
-  downloadMeasurementUrl?: string
-  /** Measurement thumbnail base URL (VITE_THUMBNAIL_MEASUREMENT_URL). */
-  thumbnailMeasurementUrl?: string
-  /** PAG report download base URL (VITE_DOWNLOAD_PAGREPORT_URL). */
-  downloadPagReportUrl?: string
-  /** Generic resource download base URL (VITE_DOWNLOAD_RESOURCE_URL). */
-  downloadResourceUrl?: string
-  /** Measurement preview base URL (VITE_DOWNLOAD_PREVIEW_URL). */
-  downloadPreviewUrl?: string
-  /** 2D geoportal URL for map links (`?map_id=`); unset, they stay relative to the host. */
+  /** 2D geoportal URL for map links (`?map_id=`) and relative URLs; unset, they stay relative to the host. */
   geoportalUrl?: string
-  /** Elevation profile service (VITE_PROFILE_URL), public: called without credentials. */
-  profileUrl?: string
-  /** QR code service base URL (VITE_QR_URL). */
-  qrUrl?: string
-  /** Legacy v3 API host, used to resolve mymaps resource paths (VITE_V3_API_HOST). */
-  v3ApiHost?: string
-  /** Role ids allowed to access the solar economic calculator (parsed from VITE_SOLAR_ECONOMIC_ALLOWED_ROLE_IDS). */
-  solarEconomicAllowedRoleIds?: number[]
 }
 
 /**

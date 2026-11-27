@@ -4,6 +4,7 @@ import { ref, computed } from 'vue'
 import type { Ref } from 'vue'
 import type { FeatureInfoJSON } from '../../models'
 import { injectLuxTplContext } from '../../context'
+import { luxTplUrls } from '../../env'
 
 const props = defineProps<{
   layers: FeatureInfoJSON
@@ -11,12 +12,13 @@ const props = defineProps<{
 const layers = props.layers
 
 const { config, user, notify } = injectLuxTplContext()
+const urls = luxTplUrls(config.geoportalUrl)
 const mail: Ref<string> = ref('')
 const userMail = computed(() => user.value?.mail || '')
 mail.value = userMail.value
 
 const { t } = useLuxTranslation('tooltips')
-const URL_PDS_PROD = config.pdsUrl
+const URL_PDS_PROD = urls.pdsUrl
 
 function joinAttributes(features: any, attr: string, sep: string) {
   return features

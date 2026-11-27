@@ -7,6 +7,7 @@ import { formatDate, translateAndjoin } from './template-utilities'
 import InfoFeatureLayout from '../layouts/info-feature-layout.vue'
 import InfoFeatureMeasurementModale from '../info-feature-measurement-modale.vue'
 import { injectLuxTplContext } from '../../context'
+import { luxTplUrls } from '../../env'
 import LuxTplIcon from '../common/lux-tpl-icon.vue'
 
 const props = defineProps<{
@@ -14,12 +15,13 @@ const props = defineProps<{
 }>()
 
 const { config, isThemeAvailable: isThemeAvailableCtx } = injectLuxTplContext()
+const urls = luxTplUrls(config.geoportalUrl)
 const isThemeAvailable = (name: string) => isThemeAvailableCtx?.(name) ?? false
-const DOWNLOAD_MEASUREMENT_URL = config.downloadMeasurementUrl ?? ''
-const THUMBNAIL_MEASUREMENT_URL = config.thumbnailMeasurementUrl ?? ''
-const COMMANDE_URL = config.commandeUrl ?? ''
-const SHOP_URL = config.shopUrl ?? ''
-const HISTORIQUE_URL = config.historiqueUrl ?? ''
+const DOWNLOAD_MEASUREMENT_URL = urls.downloadMeasurementUrl
+const THUMBNAIL_MEASUREMENT_URL = urls.thumbnailMeasurementUrl
+const COMMANDE_URL = urls.commandeUrl
+const SHOP_URL = urls.shopUrl
+const HISTORIQUE_URL = urls.historiqueUrl
 const { t, i18next } = useLuxTranslation('tooltips')
 
 function getDocumentFormats(document: FeatureMeasurement): string[] {
@@ -305,7 +307,7 @@ function closePreviewMesurage() {
         >
           <a
             class="lux-btn inline-block mb-1"
-            :href="`${config.pfUrl ?? ''}/detail_parcelle.do?noParcelle=${feature.attributes.textstring}`"
+            :href="`${urls.pfUrl}/detail_parcelle.do?noParcelle=${feature.attributes.textstring}`"
             target="_blank"
             rel="noopener noreferrer"
             >{{ t('Ouvrir la PF') }}</a

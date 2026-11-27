@@ -3,10 +3,12 @@ import { useLuxTranslation } from '../../i18n'
 import type { FeatureInfoJSON } from '../../models'
 import InfoFeatureLayout from '../layouts/info-feature-layout.vue'
 import { injectLuxTplContext } from '../../context'
+import { luxTplUrls } from '../../env'
 
 const { config, notify } = injectLuxTplContext()
-const SHOP_URL = config.shopUrl
-const SHOP_IPV6_URL = config.shopIpv6Url
+const urls = luxTplUrls(config.geoportalUrl)
+const SHOP_URL = urls.shopUrl
+const SHOP_IPV6_URL = urls.shopIpv6Url
 
 defineProps<{
   layers: FeatureInfoJSON

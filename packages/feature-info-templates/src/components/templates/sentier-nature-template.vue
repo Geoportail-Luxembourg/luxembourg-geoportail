@@ -4,6 +4,7 @@ import type { FeatureInfoJSON, FeatureJSON } from '../../models'
 import { hasAttributes } from './template-utilities'
 import InfoFeatureLayout from '../layouts/info-feature-layout.vue'
 import { injectLuxTplContext } from '../../context'
+import { luxTplUrls } from '../../env'
 import LuxFeatureProfile from '../../profile/feature-profile.vue'
 
 const props = defineProps<{
@@ -11,7 +12,8 @@ const props = defineProps<{
 }>()
 
 const { config } = injectLuxTplContext()
-const DOWNLOAD_RESOURCE_URL = config.downloadResourceUrl
+const urls = luxTplUrls(config.geoportalUrl)
+const DOWNLOAD_RESOURCE_URL = urls.downloadResourceUrl
 const { t } = useLuxTranslation('tooltips')
 
 function fid(feature: FeatureJSON) {
