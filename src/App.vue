@@ -25,6 +25,7 @@ import { statePersistorStyleService } from '@/services/state-persistor/state-per
 import { statePersistorMyMapService } from '@/services/state-persistor/state-persistor-mymap.service'
 import { statePersistorFeatureInfoService } from '@/services/state-persistor/state-persistor-featureinfo.service'
 import { statePersistorLayerTreeService } from '@/services/state-persistor/state-persistor-layer-tree.service'
+import { statePersistorBookmarkService } from '@/services/state-persistor/state-persistor-bookmark.service'
 import { statePersistorFavouritesService } from '@/services/state-persistor/state-persistor-favourites.service'
 import useNetwork from '@/composables/network/network.composable'
 import useMobileTile from '@/composables/offline/mobile-tile.composable'
@@ -67,6 +68,7 @@ statePersistorBgLayerService.bootstrap()
 statePersistorLayersService.bootstrap()
 statePersistorThemeService.bootstrap()
 statePersistorLayerTreeService.bootstrap()
+statePersistorBookmarkService.bootstrap()
 statePersistorFavouritesService.bootstrap()
 statePersistorAppService.bootstrap()
 statePersistorStyleService.bootstrap()
