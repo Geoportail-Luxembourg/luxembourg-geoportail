@@ -18,6 +18,10 @@ describe('resolveUrl', () => {
     )
   })
 
+  it('keeps the URL with an invalid base', () => {
+    expect(resolveUrl('/casipo/report/', 'map.lu')).toBe('/casipo/report/')
+  })
+
   it('returns an empty string for an unset var', () => {
     expect(resolveUrl(undefined, 'https://map.lu/')).toBe('')
   })

@@ -160,7 +160,10 @@ from the root `.env*` files (`vite.config.ts` sets `envDir` to the repo root):
 Each var holds the full URL with its fixed path and query params; the template
 appends only the parts it interpolates (e.g. `VITE_DOWNLOAD_SKETCH_NEW_URL` +
 `&id=…`). Relative URLs are resolved against the context's `geoportalUrl` and stay
-relative without it. The solar economic calculator's role ids
+relative without it, or when it is not a valid absolute URL.
+`VITE_QR_URL` and `VITE_V3_API_HOST` are absolute in `.env`, so they ignore
+`geoportalUrl`: a 3D viewer pointed at another backend still gets QR codes and
+mymaps images from production. The solar economic calculator's role ids
 (`VITE_SOLAR_ECONOMIC_ALLOWED_ROLE_IDS`) come from the env too.
 
 External URLs that are the same in every environment (commande, shop,
@@ -354,6 +357,9 @@ E2E lives in the app, at `cypress/e2e/info/feature-info.cy.ts`.
 `.github/workflows/publish-templates.yml` publishes on a `templates-v*` tag, via
 npm trusted publishing (OIDC — no token). Bump the version, merge, then tag the
 merge commit.
+
+Publish only through CI: the build also loads the gitignored `.env.local`
+from the repo root, so a local `npm publish` could bake your overrides in.
 
 Bump from the repo root:
 

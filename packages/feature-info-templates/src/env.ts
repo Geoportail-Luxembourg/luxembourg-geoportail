@@ -5,7 +5,15 @@ export function resolveUrl(url: string | undefined, base?: string): string {
   if (!url) {
     return ''
   }
-  return base ? new URL(url, base).href : url
+  if (!base) {
+    return url
+  }
+  try {
+    return new URL(url, base).href
+  } catch {
+    // A misconfigured base must not keep the templates from rendering.
+    return url
+  }
 }
 
 /**
