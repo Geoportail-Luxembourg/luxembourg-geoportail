@@ -23,7 +23,7 @@ const { t } = useLuxTranslation('tooltips')
         v-if="layers.features.length"
         class="lux-btn"
         download
-        :href="`${DOWNLOAD_PAGREPORT_URL}/${joinAttributes(
+        :href="`${DOWNLOAD_PAGREPORT_URL}${joinAttributes(
           layers.features,
           'OBJECTID',
           ','
@@ -42,7 +42,7 @@ const { t } = useLuxTranslation('tooltips')
       <a
         class="lux-btn"
         download
-        :href="`${DOWNLOAD_PAGREPORT_URL}/${feature.attributes.OBJECTID}.pdf`"
+        :href="`${DOWNLOAD_PAGREPORT_URL}${feature.attributes.OBJECTID}.pdf`"
         target="_blank"
         >{{ t('Generer Rapport (peut prendre 30 sec)') }}</a
       >

@@ -32,24 +32,18 @@ const urls = luxTplUrls(config.geoportalUrl)
         class="lux-tpl-feature-info"
       >
         <td v-if="feature.attributes.category_id === 404">
-          <a
-            :href="`${urls.mobiliteitUrl}/fr/horaires-et-lignes/tram/`"
-            target="_blank"
-            >{{ feature.attributes.label }}</a
-          >
+          <a :href="urls.mobiliteitTramUrl" target="_blank">{{
+            feature.attributes.label
+          }}</a>
         </td>
         <td v-if="feature.attributes.category_id === 403">
-          <a
-            :href="`${urls.mobiliteitUrl}/fr/horaires-et-lignes/trains/`"
-            target="_blank"
-            >{{ feature.attributes.label }}</a
-          >
+          <a :href="urls.mobiliteitTrainUrl" target="_blank">{{
+            feature.attributes.label
+          }}</a>
         </td>
         <td v-if="(feature.attributes.category_id ?? 0) < 403">
           <a
-            :href="`${urls.mobiliteitUrl}/fr/ligne/bus-${
-              feature.attributes.label
-            }-${
+            :href="`${urls.mobiliteitBusUrl}${feature.attributes.label}-${
               feature.attributes.category_id === 400
                 ? 'avl'
                 : feature.attributes.category_id === 401

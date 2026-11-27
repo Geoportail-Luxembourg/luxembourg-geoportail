@@ -37,7 +37,7 @@ function fid(feature: FeatureJSON) {
             <a
               class="lux-btn"
               style="padding-top: 0.5rem; padding-bottom: 0.5rem"
-              :href="`${DOWNLOAD_RESOURCE_URL}?fid=${layers.layer}_${feature.attributes.objectid}&attribute=link&id_attribute=objectid`"
+              :href="`${DOWNLOAD_RESOURCE_URL}&fid=${layers.layer}_${feature.attributes.objectid}`"
               target="_blank"
             >
               {{ t('Télécharger la brochure') }}</a

@@ -107,7 +107,7 @@ function canAccessSolarEconomicCalculator() {
               <a
                 data-cy="defaultTemplateSolarLink"
                 v-if="isSolarLink(layers.layerLabel, attributeEntry)"
-                :href="`${urls.solarUrl}/?lng=${i18next.language !== 'lb' ? i18next.language : 'de'}`"
+                :href="`${urls.solarUrl}?lng=${i18next.language !== 'lb' ? i18next.language : 'de'}`"
                 target="_blank"
               >
                 <button class="lux-tpl-solarkataster-button">

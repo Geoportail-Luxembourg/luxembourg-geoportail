@@ -19,9 +19,6 @@ const urls = luxTplUrls(config.geoportalUrl)
 const isThemeAvailable = (name: string) => isThemeAvailableCtx?.(name) ?? false
 const DOWNLOAD_MEASUREMENT_URL = urls.downloadMeasurementUrl
 const THUMBNAIL_MEASUREMENT_URL = urls.thumbnailMeasurementUrl
-const COMMANDE_URL = urls.commandeUrl
-const SHOP_URL = urls.shopUrl
-const HISTORIQUE_URL = urls.historiqueUrl
 const { t, i18next } = useLuxTranslation('tooltips')
 
 function getDocumentFormats(document: FeatureMeasurement): string[] {
@@ -292,7 +289,7 @@ function closePreviewMesurage() {
         <div v-if="isThemeAvailable('go')">
           <a
             class="lux-btn inline-block mb-1"
-            :href="`${SHOP_URL}/Portail/express_mesurage/?ids=['${feature.attributes.textstring}']&camefrom=mapv3_go&lang=${i18next.language}`"
+            :href="`${urls.shopExpressMesurageUrl}&ids=['${feature.attributes.textstring}']&lang=${i18next.language}`"
             target="_blank"
             rel="noopener noreferrer"
             >{{ t('Constitution de dossier de mesurage') }}</a
@@ -307,7 +304,7 @@ function closePreviewMesurage() {
         >
           <a
             class="lux-btn inline-block mb-1"
-            :href="`${urls.pfUrl}/detail_parcelle.do?noParcelle=${feature.attributes.textstring}`"
+            :href="`${urls.pfUrl}?noParcelle=${feature.attributes.textstring}`"
             target="_blank"
             rel="noopener noreferrer"
             >{{ t('Ouvrir la PF') }}</a
@@ -841,14 +838,14 @@ function closePreviewMesurage() {
         </div>
         <a
           class="lux-btn inline-block mb-1"
-          :href="`${HISTORIQUE_URL}/?id=${feature.attributes.textstring}`"
+          :href="`${urls.historiqueUrl}?id=${feature.attributes.textstring}`"
           target="_blank"
           rel="noopener noreferrer"
           >{{ t('Historique de la parcelle') }}</a
         >
         <a
           class="lux-btn inline-block mb-1"
-          :href="`${COMMANDE_URL}/?ids=['${feature.attributes.textstring}']&camefrom=mapv3&lang=${i18next.language}`"
+          :href="`${urls.commandeParcelUrl}&ids=['${feature.attributes.textstring}']&lang=${i18next.language}`"
           target="_blank"
           rel="noopener noreferrer"
           >{{ t('Commander un extrait') }}</a

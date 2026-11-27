@@ -159,7 +159,9 @@ For the host's own profiles (drawings, routing), the parts are exported too:
 - the published `dist` has the production `.env` values baked in at build time.
   Changing a URL for the 3D viewer therefore takes a package release.
 
-Relative URLs are resolved against `config.geoportalUrl`
+Each var holds the full URL with its fixed path and query params; the template
+appends only the parts it interpolates (e.g. `VITE_COMMANDE_PARCEL_URL` +
+`&ids=…&lang=…`). Relative URLs are resolved against `config.geoportalUrl`
 and stay relative without it. The solar economic calculator's role ids
 (`VITE_SOLAR_ECONOMIC_ALLOWED_ROLE_IDS`) come from the env too.
 

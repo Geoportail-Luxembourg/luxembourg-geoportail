@@ -22,7 +22,7 @@ const urls = luxTplUrls(config.geoportalUrl)
         height="150"
         width="300"
         frameborder="0"
-        :src="`${urls.meteoUrl}?c=92&nid=01&lid=${feature.attributes.sid}`"
+        :src="`${urls.meteoUrl}&lid=${feature.attributes.sid}`"
       >
       </iframe>
     </template>

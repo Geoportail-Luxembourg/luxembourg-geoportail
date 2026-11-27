@@ -25,7 +25,7 @@ describe('resolveUrl', () => {
 
 describe('luxTplUrls', () => {
   it('reads the env', () => {
-    expect(luxTplUrls().filesUrl).toBe(import.meta.env.VITE_FILES_URL)
+    expect(luxTplUrls().pagTermsUrl).toBe(import.meta.env.VITE_PAG_TERMS_URL)
   })
 })
 

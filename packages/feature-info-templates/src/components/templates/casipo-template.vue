@@ -46,7 +46,6 @@ async function generateRepport() {
 
   fetch(
     URL_CASIPO_PROD +
-      '/report/' +
       joinAttributes(layers.features, 'textstring', ',') +
       '.pdf',
     {
@@ -98,7 +97,7 @@ async function generateRepport() {
               t(
                 'En cochant cette case, l\'utilisateur déclare avoir lu, compris et accepté les <a target=\'_blank\' rel=\'noopener noreferrer\' href=\'{{url}}\'>conditions générales d\'utilisation </a>de ce site web',
                 {
-                  url: `${urls.filesUrl}/Conditions_utilisation_CASIPO.pdf`,
+                  url: urls.casipoTermsUrl,
                 }
               )
             "

@@ -45,10 +45,7 @@ async function generateRepport() {
   })
 
   fetch(
-    URL_PAG_PROD +
-      '/report/' +
-      joinAttributes(layers.features, 'OBJECTID', ',') +
-      '.pdf',
+    URL_PAG_PROD + joinAttributes(layers.features, 'OBJECTID', ',') + '.pdf',
     {
       method: 'POST',
       headers: {
@@ -97,7 +94,7 @@ async function generateRepport() {
             v-html="
               t(
                 'En cochant cette case, l\'utilisateur déclare avoir lu, compris et accepté les <a target=\'_blank\' rel=\'noopener noreferrer\' href=\'{{url}}\'>conditions générales d\'utilisation </a>de ce site web',
-                { url: `${urls.filesUrl}/pag/Disclaimer.pdf` }
+                { url: urls.pagTermsUrl }
               )
             "
           ></label>

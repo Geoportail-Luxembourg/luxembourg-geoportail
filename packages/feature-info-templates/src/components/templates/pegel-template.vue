@@ -21,9 +21,7 @@ const urls = luxTplUrls(config.geoportalUrl)
         width="300"
         height="1500"
         frameborder="0"
-        :src="
-          getTrustedUrl(`${urls.pegelUrl}/` + feature.attributes.Nom + '.html')
-        "
+        :src="getTrustedUrl(urls.pegelUrl + feature.attributes.Nom + '.html')"
       ></iframe>
     </template>
   </InfoFeatureLayout>

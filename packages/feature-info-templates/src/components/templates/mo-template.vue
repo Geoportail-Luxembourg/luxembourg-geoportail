@@ -7,8 +7,6 @@ import { luxTplUrls } from '../../env'
 
 const { config, notify } = injectLuxTplContext()
 const urls = luxTplUrls(config.geoportalUrl)
-const SHOP_URL = urls.shopUrl
-const SHOP_IPV6_URL = urls.shopIpv6Url
 
 defineProps<{
   layers: FeatureInfoJSON
@@ -17,11 +15,11 @@ const { t } = useLuxTranslation('tooltips')
 
 const orderAffaire = async function (numCommune: string, numMesurage: string) {
   const isIpv6 = location.search.includes('ipv6=true')
-  const urlBase = isIpv6 ? SHOP_IPV6_URL : SHOP_URL
+  const urlBase = isIpv6 ? urls.shopIpv6OrderUrl : urls.shopOrderUrl
 
-  const url = `${urlBase}/Portail/commande/webservices/orderAffaireV3.jsp?numCommune=${encodeURIComponent(
+  const url = `${urlBase}&numCommune=${encodeURIComponent(
     numCommune
-  )}&numMesurage=${encodeURIComponent(numMesurage)}&ticket=`
+  )}&numMesurage=${encodeURIComponent(numMesurage)}`
 
   try {
     const response = await fetch(url, {

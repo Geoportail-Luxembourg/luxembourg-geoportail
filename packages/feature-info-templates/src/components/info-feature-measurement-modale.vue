@@ -15,7 +15,6 @@ const { config } = injectLuxTplContext()
 const urls = luxTplUrls(config.geoportalUrl)
 const DOWNLOAD_PREVIEW_URL = urls.downloadPreviewUrl
 const DOWNLOAD_MEASUREMENT_URL = urls.downloadMeasurementUrl
-const COMMANDE_URL = urls.commandeUrl
 
 const { t, i18next } = useLuxTranslation()
 
@@ -103,7 +102,7 @@ const downloadUrl = computed(() => {
           v-if="!measurement.is_downloadable"
           class="lux-btn ml-3"
           target="_blank"
-          :href="`${COMMANDE_URL}?&camefrom=mapv3&lang=${i18next.language}&documents=MESURAGE;EXTRAIT_MIXTE&ids=['${measurement.parcelId}']&remark=${measurement.description}`"
+          :href="`${urls.commandeMeasurementUrl}&lang=${i18next.language}&ids=['${measurement.parcelId}']&remark=${measurement.description}`"
         >
           {{ t('Commander') }}
         </a>

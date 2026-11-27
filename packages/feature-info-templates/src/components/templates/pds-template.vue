@@ -40,10 +40,7 @@ async function generateRepport() {
   })
 
   fetch(
-    URL_PDS_PROD +
-      '/report/' +
-      joinAttributes(layers.features, 'textstring', ',') +
-      '.pdf',
+    URL_PDS_PROD + joinAttributes(layers.features, 'textstring', ',') + '.pdf',
     {
       method: 'POST',
       headers: {

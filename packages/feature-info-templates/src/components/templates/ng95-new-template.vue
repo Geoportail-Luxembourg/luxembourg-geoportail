@@ -11,7 +11,7 @@ defineProps<{
 const { t } = useLuxTranslation('tooltips')
 const { config } = injectLuxTplContext()
 const urls = luxTplUrls(config.geoportalUrl)
-const DOWNLOAD_SKETCH_URL = urls.downloadSketchUrl
+const DOWNLOAD_SKETCH_NEW_URL = urls.downloadSketchNewUrl
 </script>
 
 <template>
@@ -28,7 +28,7 @@ const DOWNLOAD_SKETCH_URL = urls.downloadSketchUrl
           class="no-print"
           target="_blank"
           download
-          :href="`${DOWNLOAD_SKETCH_URL}?id=${feature.attributes.OBJECTID}&type=new`"
+          :href="`${DOWNLOAD_SKETCH_NEW_URL}&id=${feature.attributes.OBJECTID}`"
         >
           {{ t('Obtenir le fichier sous format pdf') }}
         </a>
